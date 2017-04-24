@@ -1,12 +1,27 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
+
+PROJECT(log4cpp)
+
+# Policy to address @foo@ variable expansion
+if(POLICY CMP0053)
+  cmake_policy(SET CMP0053 NEW)
+endif()
+
+MESSAGE(STATUS "Using files from ${log4cpp_DIR}")
 # Files in the project (Relative to this CMAKE file)
+SET(log4cpp_DIR )
+IF(log4cpp_DIR STREQUAL "")
+  SET(log4cpp_DIR "${CMAKE_BINARY_DIR}/log4cpp/src/log4cpp/")
+ENDIF()
+	
 FILE(GLOB SOURCE
-    "../../lib/log4cpp/*.hh"
-  "../../lib/log4cpp/src/*.cpp"
-  "../../lib/log4cpp/threading/*.hh"  
+    "${log4cpp_DIR}/*.hh"
+    "${log4cpp_DIR}/src/*.cpp"
+    "${log4cpp_DIR}/threading/*.hh"  
 )
-# The DLL we are building
+
 ADD_LIBRARY(log4cpp SHARED ${SOURCE})
-TARGET_INCLUDE_DIRECTORIES(log4cpp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/log4cpp/include)
+TARGET_INCLUDE_DIRECTORIES(log4cpp PRIVATE ${log4cpp_DIR}/include)
 # Preprocessor Definitions
 IF (WIN32)
   SET(FLAGS)
