@@ -1,45 +1,38 @@
-# Files in the project (Relative to this CMAKE file)
+# Files in the project 
 
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateCDMBindings.cmake)
+include(cmake/GenerateCDMBindings.cmake)
 
-FILE(GLOB BIND_FILES
-    "${CMAKE_BINARY_DIR}/bind/cpp/*.hxx"
-    "${CMAKE_BINARY_DIR}/bind/cpp/*.cxx"
+file(GLOB BIND_FILES
+    "schema/cpp/bind/*.hxx"
+    "schema/cpp/bind/*.cxx"
 )
-IF(MSVC)
+if(MSVC)
   FILE(GLOB_RECURSE MIN_BIND_FILES
-    "${CMAKE_BINARY_DIR}/bind/cpp/min/*.hxx"
-    "${CMAKE_BINARY_DIR}/bind/cpp/min/*.cxx"
+    "schema/cpp/bind/min/*.hxx"
+    "schema/cpp/bind/min/*.cxx"
   )
   SOURCE_GROUP("" FILES ${MIN_BIND_FILES})
   SET(SOURCE ${MIN_BIND_FILES})
-ELSE(MSVC)
+else(MSVC)
   SOURCE_GROUP("" FILES ${BIND_FILES})
   SET(SOURCE ${BIND_FILES})
-ENDIF(MSVC)
+endif(MSVC)
+
+if(NOT SOURCE)
+  list(APPEND SOURCE "Error_No_Bindings_Created") 
+endif()
 
 # The DLL we are building
-ADD_LIBRARY(DataModelBindings ${SOURCE})
+add_library(DataModelBindings ${SOURCE})
 # Preprocessor Definitions and Include Paths
-TARGET_INCLUDE_DIRECTORIES(DataModelBindings PRIVATE ${bindings_DIR}/)  
-TARGET_INCLUDE_DIRECTORIES(DataModelBindings PRIVATE ${xsd_DIR}/libxsd)
-TARGET_INCLUDE_DIRECTORIES(DataModelBindings PRIVATE ${xerces_DIR}/src/)
-SET(FLAGS)
-LIST(APPEND FLAGS " -DXML_LIBRARY")
-SET_TARGET_PROPERTIES(DataModelBindings PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
+target_include_directories(DataModelBindings PRIVATE ./schema/cpp/bind)
+target_include_directories(DataModelBindings PRIVATE ${xsd_DIR}/libxsd)
+target_include_directories(DataModelBindings PRIVATE ${xerces_DIR}/include/)
+set(FLAGS)
+list(APPEND FLAGS " -DXML_LIBRARY")
+set_target_properties(DataModelBindings PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
 
-IF(APPLE)
-    SET_TARGET_PROPERTIES(DataModelBindings PROPERTIES MACOSX_RPATH ON)
-ENDIF()
+if(APPLE)
+    set_target_properties(DataModelBindings PROPERTIES MACOSX_RPATH ON)
+endif()
 
-# Prep bin
-SET(CONFIG_STRING)
-IF(WIN32)
-  SET(CONFIG_STRING ${CMAKE_CFG_INTDIR})
-ELSE()
-  STRING(TOLOWER ${CMAKE_BUILD_TYPE} CONFIG_STRING)
-ENDIF()
-
-ADD_CUSTOM_COMMAND(TARGET DataModelBindings POST_BUILD 
-                   COMMAND ${EXECUTABLE_CALL} ${ANT_PREFIX}ant -Denv=${env} -f \"${CMAKE_CURRENT_SOURCE_DIR}/build.xml\" refreshBin
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:DataModelBindings> ${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${CONFIG_STRING}${EX_CONFIG})

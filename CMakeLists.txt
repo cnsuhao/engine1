@@ -1,67 +1,16 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.2)
 
-PROJECT(BioGears)
+project(BioGears)
 
 # Policy to address @foo@ variable expansion
 if(POLICY CMP0053)
   cmake_policy(SET CMP0053 NEW)
 endif()
 
-set(BioGears_VERSION_MAJOR 6)
-set(BioGears_VERSION_MINOR 2)
-set(BioGears_VERSION_PATCH 0)
-set(BioGears_VERSION "${BioGears_VERSION_MAJOR}.${BioGears_VERSION_MINOR}.${BioGears_VERSION_PATCH}")
-
-
-
-SET(CMAK_CONFIGURATION_TYPES Debug Release RelWithDebInfo CACHE TYPE INTERNAL FORCE )
-IF(MSVC)  
-  SET(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1" CACHE TYPE INTERNAL FORCE)
-ENDIF()
-
-IF(MINGW)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--kill-at -std=gnu++0x")#turn on C++11
-  SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--kill-at")
-ENDIF()
-
-IF(APPLE)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
-ENDIF()
-
-IF(CMAKE_GENERATOR STREQUAL "Unix Makefiles")
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-ENDIF()
-IF(UNIX)
-    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
-ENDIF()
-
-SET(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
-SET(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
-
-IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-    MESSAGE( STATUS "64 bits compiler detected" )
-    SET( EX_PLATFORM 64 )
-    SET( EX_CONFIG "64" )
-  SET(FIND_LIBRARY_USE_LIB64_PATHS ON)
-ELSE( CMAKE_SIZEOF_VOID_P EQUAL 8 ) 
-    MESSAGE( STATUS "32 bits compiler detected" )
-    SET( EX_PLATFORM 32 )
-    SET( EX_CONFIG "" )
-  SET(FIND_LIBRARY_USE_LIB64_PATHS OFF)
-ENDIF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-
-ADD_DEFINITIONS(-DXSD_CXX11)
-
-SET(EXTERNAL_INCLUDE_DIR ${CMAKE_BINARY_DIR}/install/include )
-
-INCLUDE(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External_Eigen.cmake)#Pulls Headers Only
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External_log4cpp.cmake)#Pulls and Compiles
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External_xerces.cmake)#Pulls and Compiles
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External_xsd.cmake)#Pulls Headers Only
-
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CDMBindings.cmake)
-#IF(NOT updateXSD)
-  
-#ENDIF
-
+## Pull and Compile dependencies
+set (Pull_Dependencies false CACHE BOOL "Initial pull and build of all dependent libraries/executables")
+if(Pull_Dependencies)
+  include(cmake/ExternalDependencies.cmake)
+elseif(NOT Pull_Dependencies)
+  include(cmake/BioGears.cmake)
+endif()

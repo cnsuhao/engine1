@@ -1,4 +1,9 @@
-MESSAGE( STATUS "Generating Schema Bindings" )
+
+file(GLOB_RECURSE OLD_BINDING_FILES "schema/cpp/bind/*")
+file(GLOB_RECURSE XSD_FILES "schema/xsd/*")
+add_custom_target(GenerateBindings 
+)
+message( STATUS "Generating Schema Bindings" )
 # There are two ways I generate the bind code:
 # - Per XSD type : These are in the cpp/ folder
 # - Per XSD file : These are in the cpp/min folder
@@ -11,17 +16,19 @@ MESSAGE( STATUS "Generating Schema Bindings" )
 # I tried precompiled headers in MinGW but that did not really work as I expected..
 # Shoot me an email if you have any ideas (aaron.bray@kitware.com)
 
-FILE(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/bind/cpp/")
-FILE(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bind/cpp/")
-FILE(COPY "${CMAKE_CURRENT_SOURCE_DIR}/schema/cpp/custom-double/" 
-     DESTINATION "${CMAKE_BINARY_DIR}/bind/cpp"
-	 FILES_MATCHING PATTERN "*.hxx" PATTERN "biogears-cdm.cxx")
+set(bindings_DIR "${CMAKE_CURRENT_SOURCE_DIR}/schema/cpp/bind")
+
+foreach(f ${OLD_BINDING_FILES})
+  file(REMOVE $f)
+endforeach()
+file(MAKE_DIRECTORY "${bindings_DIR}/min/cdm")
+file(MAKE_DIRECTORY "${bindings_DIR}/min/biogears")
+file(COPY "schema/cpp/custom-double/" 
+     DESTINATION "${bindings_DIR}"
+     FILES_MATCHING PATTERN "*.hxx" PATTERN "biogears-cdm.cxx")
 
 #Generate normally, which is a file per type 
-FILE(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/bind/cpp/min")
-FILE(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bind/cpp/min/cdm")
-FILE(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bind/cpp/min/biogears")
-EXECUTE_PROCESS(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
+execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
                                            --std c++11 
                                            --file-per-type
                                            --extern-xml-schema data-model-schema.xsd
@@ -34,46 +41,58 @@ EXECUTE_PROCESS(COMMAND ${xsd_DIR}/bin/xsd cxx-tree
                                            --generate-default-ctor 
                                            --custom-type "double=double"
                                            --custom-type "decimal=long double"
-                                           --hxx-epilogue-file ${CMAKE_BINARY_DIR}/bind/cpp/xml-schema-epilogue.hxx
+                                           --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
                                            --export-symbol "__declspec(dllexport)"
                                            ${CMAKE_CURRENT_SOURCE_DIR}/schema/xsd/BioGearsDataModel.xsd
-                WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bind/cpp/")
+                WORKING_DIRECTORY "${bindings_DIR}/")
+execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
+                                           --std c++11 
+                                           --generate-xml-schema
+                                           --generate-polymorphic 
+                                           --polymorphic-type-all 
+                                           --generate-serialization 
+                                           --generate-ostream 
+                                           --generate-doxygen 
+                                           --generate-default-ctor 
+                                           --export-symbol "__declspec(dllexport)"
+                                           ${bindings_DIR}/data-model-schema.xsd
+                WORKING_DIRECTORY "${bindings_DIR}/")
 #Generate cxx/hxx file for each xsd file (faster to build)
-FILE(GLOB CDM_XSD "${CMAKE_CURRENT_SOURCE_DIR}/schema/xsd/cdm/*.xsd")
-FOREACH(ITEM ${CDM_XSD})
-MESSAGE(STATUS ${ITEM})
-EXECUTE_PROCESS(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
-                                           --std c++11 
-                                           --generate-polymorphic 
-                                           --polymorphic-type-all 
-                                           --generate-serialization 
-                                           --generate-ostream 
-                                           --generate-doxygen 
-                                           --generate-default-ctor 
-                                           --custom-type "double=double"
-                                           --custom-type "decimal=long double"
-                                           --hxx-epilogue-file ${CMAKE_BINARY_DIR}/bind/cpp/xml-schema-epilogue.hxx
-                                           --export-symbol "__declspec(dllexport)"
-                                           ${ITEM}
-                WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bind/cpp/min/cdm")
-ENDFOREACH()
-FILE(GLOB BGE_XSD "${CMAKE_CURRENT_SOURCE_DIR}/schema/xsd/biogears/*.xsd")
-FOREACH(ITEM ${CDM_XSD})
-EXECUTE_PROCESS(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
-                                           --std c++11 
-                                           --generate-polymorphic 
-                                           --polymorphic-type-all 
-                                           --generate-serialization 
-                                           --generate-ostream 
-                                           --generate-doxygen 
-                                           --generate-default-ctor 
-                                           --custom-type "double=double"
-                                           --custom-type "decimal=long double"
-                                           --hxx-epilogue-file ${CMAKE_BINARY_DIR}/bind/cpp/xml-schema-epilogue.hxx
-                                           --export-symbol "__declspec(dllexport)"
-                                           ${ITEM}
-                WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bind/cpp/min/biogears")
-ENDFOREACH()
+file(GLOB CDM_XSD "${CMAKE_CURRENT_SOURCE_DIR}/schema/xsd/cdm/*.xsd")
+foreach(ITEM ${CDM_XSD})
+  message(STATUS "Processing ${ITEM}")
+  execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
+                                             --std c++11 
+                                             --generate-polymorphic 
+                                             --polymorphic-type-all 
+                                             --generate-serialization 
+                                             --generate-ostream 
+                                             --generate-doxygen 
+                                             --generate-default-ctor 
+                                             --custom-type "double=double"
+                                             --custom-type "decimal=long double"
+                                             --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
+                                             --export-symbol "__declspec(dllexport)"
+                                             ${ITEM}
+                  WORKING_DIRECTORY "${bindings_DIR}/min/cdm")
+endforeach()
+file(GLOB BGE_XSD "${CMAKE_CURRENT_SOURCE_DIR}/schema/xsd/biogears/*.xsd")
+foreach(ITEM ${BGE_XSD})
+  message(STATUS "Processing ${ITEM}")
+  execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
+                                             --std c++11 
+                                             --generate-polymorphic 
+                                             --polymorphic-type-all 
+                                             --generate-serialization 
+                                             --generate-ostream 
+                                             --generate-doxygen 
+                                             --generate-default-ctor 
+                                             --custom-type "double=double"
+                                             --custom-type "decimal=long double"
+                                             --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
+                                             --export-symbol "__declspec(dllexport)"
+                                             ${ITEM}
+                  WORKING_DIRECTORY "${bindings_DIR}/min/biogears")
+endforeach()
 
-SET(bindings_DIR "${CMAKE_BINARY_DIR}/bind/cpp")
-MESSAGE(STATUS "bindings are here : ${bindings_DIR}" )
+message(STATUS "bindings are here : ${bindings_DIR}" )
