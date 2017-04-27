@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.2)
 
 PROJECT(log4cpp)
 
@@ -7,46 +7,86 @@ if(POLICY CMP0053)
   cmake_policy(SET CMP0053 NEW)
 endif()
 
-MESSAGE(STATUS "Using files from ${log4cpp_DIR}")
-# Files in the project (Relative to this CMAKE file)
-SET(log4cpp_DIR )
-IF(log4cpp_DIR STREQUAL "")
-  SET(log4cpp_DIR "${CMAKE_BINARY_DIR}/log4cpp/src/log4cpp/")
-ENDIF()
-	
-FILE(GLOB SOURCE
-    "${log4cpp_DIR}/*.hh"
-    "${log4cpp_DIR}/src/*.cpp"
-    "${log4cpp_DIR}/threading/*.hh"  
+include_directories ( include )
+include_directories ( . )
+add_library(log4cpp SHARED 
+  src/Appender.cpp
+  src/AppenderSkeleton.cpp
+  src/AppendersFactory.cpp
+  src/BufferingAppender.cpp
+  src/FactoryParams.cpp
+  src/LayoutsFactory.cpp
+  src/LevelEvaluator.cpp
+  src/Localtime.cpp
+  src/PassThroughLayout.cpp
+  src/TriggeringEventEvaluatorFactory.cpp
+  src/LayoutAppender.cpp
+  src/FileAppender.cpp
+  src/DailyRollingFileAppender.cpp
+  src/RollingFileAppender.cpp
+  src/FixedContextCategory.cpp
+  src/IdsaAppender.cpp
+  src/OstreamAppender.cpp
+  src/StringQueueAppender.cpp
+  src/SyslogAppender.cpp
+  src/RemoteSyslogAppender.cpp
+  src/SimpleLayout.cpp
+  src/BasicLayout.cpp
+  src/PatternLayout.cpp
+  src/Category.cpp
+  src/CategoryStream.cpp
+  src/HierarchyMaintainer.cpp
+  src/Configurator.cpp
+  src/BasicConfigurator.cpp
+  src/SimpleConfigurator.cpp
+  src/PropertyConfigurator.cpp
+  src/PropertyConfiguratorImpl.cpp
+  src/LoggingEvent.cpp
+  src/Priority.cpp
+  src/NDC.cpp
+  src/Filter.cpp
+  src/TimeStamp.cpp
+  src/StringUtil.cpp
+  src/Properties.cpp
+  src/Win32DebugAppender.cpp
+  src/NTEventLogAppender.cpp
+  src/DllMain.cpp
+  src/DummyThreads.cpp
+  src/MSThreads.cpp
+  src/OmniThreads.cpp
+  src/PThreads.cpp
+  src/PortabilityImpl.cpp
+  src/AbortAppender.cpp
 )
-
-ADD_LIBRARY(log4cpp SHARED ${SOURCE})
-TARGET_INCLUDE_DIRECTORIES(log4cpp PRIVATE ${log4cpp_DIR}/include)
 # Preprocessor Definitions
-IF (WIN32)
-  SET(FLAGS)
-  SET(FLAGS "${FLAGS} -D LOG4CPP_HAS_DLL")
-  SET(FLAGS "${FLAGS} -D LOG4CPP_BUILD_DLL")
-  SET(FLAGS "${FLAGS} -D _CRT_SECURE_NO_WARNINGS")
+if (WIN32)
+  set(FLAGS)
+  set(FLAGS "${FLAGS} -D LOG4CPP_HAS_DLL")
+  set(FLAGS "${FLAGS} -D LOG4CPP_BUILD_DLL")
+  set(FLAGS "${FLAGS} -D _CRT_SECURE_NO_WARNINGS")
 #  MESSAGE(${FLAGS})
-  SET_TARGET_PROPERTIES(log4cpp PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
-  TARGET_LINK_LIBRARIES(log4cpp ws2_32 advapi32)
-#  SET_TARGET_PROPERTIES(log4cpp PROPERTIES LINK_FLAGS /NODEFAULTLIB:msvcrt )
-ENDIF (WIN32)                            
+  set_target_properties(log4cpp PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
+  target_link_libraries(log4cpp ws2_32 advapi32)
+#  set_target_properties(log4cpp PROPERTIES LINK_FLAGS /NODEFAULTLIB:msvcrt )
+else (WIN32)
+  if (APPLE)
+    add_definitions ( -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
+    set_target_properties(log4cpp PROPERTIES MACOSX_RPATH ON)
+  else (APPLE)
+    add_definitions ( -pthread -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
+  endif (APPLE)
+endif (WIN32)
 
-IF(APPLE)
-    SET_TARGET_PROPERTIES(log4cpp PROPERTIES MACOSX_RPATH ON)
-ENDIF()
+install (
+  DIRECTORY include/log4cpp
+  DESTINATION include
+  PATTERN "config.h" EXCLUDE
+  PATTERN ".svn" EXCLUDE
+  PATTERN "*.am" EXCLUDE
+  PATTERN "*.in" EXCLUDE
+  )
 
-# Copy to the bin
-SET(CONFIG_STRING)
-IF(WIN32)
-  SET(CONFIG_STRING ${CMAKE_CFG_INTDIR})
-ELSE()
-  STRING(TOLOWER ${CMAKE_BUILD_TYPE} CONFIG_STRING)
-ENDIF()
-
-ADD_CUSTOM_COMMAND(TARGET log4cpp POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${CONFIG_STRING}${EX_CONFIG}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:log4cpp> ${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${CONFIG_STRING}${EX_CONFIG}
-)           
+install (TARGETS log4cpp
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin)
+  

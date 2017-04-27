@@ -57,11 +57,7 @@ set(xsd_DIR ${CMAKE_BINARY_DIR}/xsd/install)
 set(xerces_DIR ${CMAKE_BINARY_DIR}/xerces/install)
 set(dirent_DIR ${CMAKE_BINARY_DIR}/dirent/install)
 
-include(cmake/CDMBindings.cmake)
-include(cmake/CDM.cmake)
-include(cmake/BioGearsEngine.cmake)
-include(cmake/BioGearsScenarioDriver.cmake)
-#if(NOT updateXSD)
-  
-#endif
-
+ADD_SUBDIRECTORY(schema)
+ADD_SUBDIRECTORY(cdm)
+ADD_SUBDIRECTORY(engine)
+#ADD_SUBDIRECTORY(test)

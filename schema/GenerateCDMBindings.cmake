@@ -1,9 +1,3 @@
-
-file(GLOB_RECURSE OLD_BINDING_FILES "schema/cpp/bind/*")
-file(GLOB_RECURSE XSD_FILES "schema/xsd/*")
-add_custom_target(GenerateBindings 
-)
-message( STATUS "Generating Schema Bindings" )
 # There are two ways I generate the bind code:
 # - Per XSD type : These are in the cpp/ folder
 # - Per XSD file : These are in the cpp/min folder
@@ -16,14 +10,18 @@ message( STATUS "Generating Schema Bindings" )
 # I tried precompiled headers in MinGW but that did not really work as I expected..
 # Shoot me an email if you have any ideas (aaron.bray@kitware.com)
 
-set(bindings_DIR "${CMAKE_CURRENT_SOURCE_DIR}/schema/cpp/bind")
+message( STATUS "Generating Schema Bindings" )
+
+set(bindings_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cpp/bind")
+file(GLOB_RECURSE OLD_BINDING_FILES "${bindings_DIR}/*")
+file(GLOB_RECURSE XSD_FILES "xsd/*")
 
 foreach(f ${OLD_BINDING_FILES})
   file(REMOVE $f)
 endforeach()
 file(MAKE_DIRECTORY "${bindings_DIR}/min/cdm")
 file(MAKE_DIRECTORY "${bindings_DIR}/min/biogears")
-file(COPY "schema/cpp/custom-double/" 
+file(COPY "cpp/custom-double/" 
      DESTINATION "${bindings_DIR}"
      FILES_MATCHING PATTERN "*.hxx" PATTERN "biogears-cdm.cxx")
 
@@ -43,7 +41,7 @@ execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree
                                            --custom-type "decimal=long double"
                                            --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
                                            --export-symbol "__declspec(dllexport)"
-                                           ${CMAKE_CURRENT_SOURCE_DIR}/schema/xsd/BioGearsDataModel.xsd
+                                           ${CMAKE_CURRENT_SOURCE_DIR}/xsd/BioGearsDataModel.xsd
                 WORKING_DIRECTORY "${bindings_DIR}/")
 execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
                                            --std c++11 
@@ -58,7 +56,7 @@ execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree
                                            ${bindings_DIR}/data-model-schema.xsd
                 WORKING_DIRECTORY "${bindings_DIR}/")
 #Generate cxx/hxx file for each xsd file (faster to build)
-file(GLOB CDM_XSD "${CMAKE_CURRENT_SOURCE_DIR}/schema/xsd/cdm/*.xsd")
+file(GLOB CDM_XSD "${CMAKE_CURRENT_SOURCE_DIR}/xsd/cdm/*.xsd")
 foreach(ITEM ${CDM_XSD})
   message(STATUS "Processing ${ITEM}")
   execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
@@ -76,7 +74,7 @@ foreach(ITEM ${CDM_XSD})
                                              ${ITEM}
                   WORKING_DIRECTORY "${bindings_DIR}/min/cdm")
 endforeach()
-file(GLOB BGE_XSD "${CMAKE_CURRENT_SOURCE_DIR}/schema/xsd/biogears/*.xsd")
+file(GLOB BGE_XSD "${CMAKE_CURRENT_SOURCE_DIR}/xsd/biogears/*.xsd")
 foreach(ITEM ${BGE_XSD})
   message(STATUS "Processing ${ITEM}")
   execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 

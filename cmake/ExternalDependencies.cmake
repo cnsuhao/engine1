@@ -39,6 +39,8 @@ ExternalProject_Add( log4cpp
   PREFIX log4cpp
   URL "https://sourceforge.net/projects/log4cpp/files/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.2.tar.gz"
   URL_HASH MD5=c70eac7334e2f3cbeac307dc78532be4
+  UPDATE_COMMAND 
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp.cmake ${log4cpp_DIR}/CMakeLists.txt
   INSTALL_DIR "${log4cpp_INSTALL}"
   CMAKE_ARGS
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
@@ -104,7 +106,7 @@ ExternalProject_Add( xerces
   GIT_TAG "cmake-trunk"
   INSTALL_DIR "${xerces_INSTALL}"
   CMAKE_ARGS
-        -DBUILD_SHARED_LIBS:BOOL=OFF
+        -DBUILD_SHARED_LIBS:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:STRING=${xerces_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${xerces_INSTALL}/include
   BUILD_IN_SOURCE 1
