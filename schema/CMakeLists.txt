@@ -41,13 +41,15 @@ if(MSVC)
   target_link_libraries(DataModelBindings advapi32.lib)
 endif()
 add_custom_command(TARGET DataModelBindings POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:DataModelBindings> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:DataModelBindings> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/xsd ${INSTALL_BIN})
 install(TARGETS DataModelBindings 
         RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
 install(TARGETS DataModelBindings 
         RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
 install(TARGETS DataModelBindings 
         RUNTIME CONFIGURATIONS RelWithDebug DESTINATION ${INSTALL_BIN}/relwithdebug${EX_CONFIG})
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/xsd DESTINATION ${INSTALL_BIN})
 
 message(STATUS ${CMAKE_BINARY_DIR}/CMakeFiles/generate.stamp)
 add_custom_target(GenerateBindings)
