@@ -1,6 +1,6 @@
 # Files in the project 
 
-#include(${CMAKE_CURRENT_SOURCE_DIR}/GenerateCDMBindings.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/GenerateCDMBindings.cmake)
 
 file(GLOB BIND_FILES
     "cpp/bind/*.hxx"
@@ -49,8 +49,12 @@ install(TARGETS DataModelBindings
 install(TARGETS DataModelBindings 
         RUNTIME CONFIGURATIONS RelWithDebug DESTINATION ${INSTALL_BIN}/relwithdebug${EX_CONFIG})
 
+message(STATUS ${CMAKE_BINARY_DIR}/CMakeFiles/generate.stamp)
 add_custom_target(GenerateBindings)
-add_custom_command(TARGET GenerateBindings PRE_BUILD 
-  COMMAND cmake ${CMAKE_CURRENT_SOURCE_DIR} 
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+add_custom_command(TARGET GenerateBindings POST_BUILD 
+  #DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/cpp/bindings.timestamp
+  COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/CMakeFiles/generate.stamp
+  COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/schema/CMakeFiles/generate.stamp.depend)
+#add_custom_command(TARGET GenerateBindings POST_BUILD
+#  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/cpp/bindings.timestamp)
 

@@ -10,8 +10,8 @@
 # I tried precompiled headers in MinGW but that did not really work as I expected..
 # Shoot me an email if you have any ideas (aaron.bray@kitware.com)
 
-message( STATUS "Generating Schema Bindings" )
-
+message(STATUS "Generating Schema Bindings" )
+message(STATUS "Using Code Synthesis XSD : ${XSD_EXECUTABLE}")
 set(bindings_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cpp/bind")
 file(GLOB_RECURSE OLD_BINDING_FILES "${bindings_DIR}/*")
 file(GLOB_RECURSE XSD_FILES "xsd/*")
@@ -26,7 +26,7 @@ file(COPY "cpp/custom-double/"
      FILES_MATCHING PATTERN "*.hxx" PATTERN "biogears-cdm.cxx")
 
 #Generate normally, which is a file per type 
-execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
+execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
                                            --std c++11 
                                            --file-per-type
                                            --extern-xml-schema data-model-schema.xsd
@@ -43,7 +43,7 @@ execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree
                                            --export-symbol "__declspec(dllexport)"
                                            ${CMAKE_CURRENT_SOURCE_DIR}/xsd/BioGearsDataModel.xsd
                 WORKING_DIRECTORY "${bindings_DIR}/")
-execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
+execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
                                            --std c++11 
                                            --generate-xml-schema
                                            --generate-polymorphic 
@@ -59,7 +59,7 @@ execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree
 file(GLOB CDM_XSD "${CMAKE_CURRENT_SOURCE_DIR}/xsd/cdm/*.xsd")
 foreach(ITEM ${CDM_XSD})
   message(STATUS "Processing ${ITEM}")
-  execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
+  execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
                                              --std c++11 
                                              --generate-polymorphic 
                                              --polymorphic-type-all 
@@ -77,7 +77,7 @@ endforeach()
 file(GLOB BGE_XSD "${CMAKE_CURRENT_SOURCE_DIR}/xsd/biogears/*.xsd")
 foreach(ITEM ${BGE_XSD})
   message(STATUS "Processing ${ITEM}")
-  execute_process(COMMAND ${xsd_DIR}/bin/xsd cxx-tree 
+  execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
                                              --std c++11 
                                              --generate-polymorphic 
                                              --polymorphic-type-all 
