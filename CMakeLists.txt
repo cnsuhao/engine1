@@ -7,15 +7,6 @@ if(POLICY CMP0053)
   cmake_policy(SET CMP0053 NEW)
 endif()
 
-find_package(Java REQUIRED)
-include(useJava)
-if(_JAVA_HOME)
-  # Overwrite Java if the env variable is set
-  set(Java_JAVA_EXECUTABLE ${_JAVA_HOME}/bin/java)
-endif()
-message(STATUS "Java Home : ${_JAVA_HOME}")
-message(STATUS "Using Java : ${Java_JAVA_EXECUTABLE}")
-
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   message( STATUS "64 bits compiler detected" )    
   set( EX_CONFIG "64" )
@@ -109,8 +100,10 @@ elseif(NOT PULL_DEPENDENCIES)
     CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
   install(FILES ${DLIBS}
     CONFIGURATIONS RelWithDeb DESTINATION ${INSTALL_BIN}/relwithdeb${EX_CONFIG})    
-
+  # TODO put a USE_JAVA option in (you would get no JNI, jar, and test suite, but maybe you just want the C++ SDK)
   # Java Compiling
+  find_package(Java REQUIRED)
+  include(useJava)
   file(GLOB_RECURSE JAVA_FILES 
     "${CMAKE_SOURCE_DIR}/schema/java/*.java"
     "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
@@ -137,62 +130,46 @@ elseif(NOT PULL_DEPENDENCIES)
       COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${INSTALL_BIN})
   install_jar(BioGears.jar ${INSTALL_BIN})
 
-  set(JAVA_CLASSPATH BioGears.jar;
-        ../jar/jcommon-1.0.16.jar;
-        ../jar/jdom-2.0.2.jar;
-        ../jar/jfreechart-1.0.13.jar;
-        ../jar/guava-11.0.2.jar;
-        ../jar/log4j-1.2.17.jar;
-        ../jar/poi-3.13-20150929.jar;
-        ../jar/poi-ooxml-3.13-20150929.jar;
-        ../jar/poi-ooxml-schemas-3.13-20150929.jar;
-        ../jar/pdfbox-2.0.0-RC3.jar;
-        ../jar/reflections-0.9.9-RC1-uberjar.jar;
-        ../jar/xmlbeans-2.6.0.jar;
-        ../jar/zip4j-1.3.1.jar)
 # BioGears Testing
   enable_testing()
   add_test(NAME genData
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.biogears.dataset.DataSetReader
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=GenData -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
   add_test(NAME genStates
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/InitialPatientStates.config
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=InitialPatientStates -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
   add_test(NAME runDebug
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/DebugRun.config
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=DebugRun -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
   add_test(NAME runCDMUnitTests
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/CDMUnitTests.config
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=CDMUnitTests -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
   add_test(NAME runBGEUnitTests
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/BGEUnitTests.config
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=BGEUnitTests -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
   add_test(NAME runSystemValidation
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/ValidationSystems.config
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=SystemValidation -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
-  add_test(NAME runPatientalidation
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/ValidationPatients.config
+  add_test(NAME runPatientValidation
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=PatientValidation -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
   add_test(NAME runVerification
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/VerificationScenarios.config
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=VerificationScenarios -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
   add_test(NAME runDrugValidation
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/ValidationDrugs.config
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=ValidationDrugs -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
   add_test(NAME runLongVerification
-    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/LongVerificationScenarios.config
+    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=LongVerificationScenarios -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
     WORKING_DIRECTORY ${INSTALL_BIN})
-  
- 
-# Sinice I am using wildcard role up of files AND I am generating binding files
-# I need a way to force CMAKE to rerun and build everyting to add and remove new/old
-# files from any make files or projects when the Data Model is changed 
-# Make a target that will rebuild cmake, and thus regenerate binding file and projects that point to those new bind files
-  add_custom_target(refreshCMake)
-  add_custom_command(TARGET refreshCMake POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/CMakeFiles/generate.stamp
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/schema/CMakeFiles/generate.stamp.depend
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/cdm/CMakeFiles/generate.stamp.depend
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/engine/CMakeFiles/generate.stamp.depend
-    COMMAND ${CMAKE_COMMAND} .)
+
+    # TODO More Test Targets
+    # Rebasing
+    # mil.tatrc.physiology.utilities.testing.Rebase [from to (config|ALL)]
+    #
+    # Ploting
+    # mil.tatrc.physiology.utilities.csv.plots.PlotDriver
+    #
+    # Reconfigure the config file (in memory) so we can test serialization
+    # mil.tatrc.physiology.utilities.testing.Reconfiguration
 endif()

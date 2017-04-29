@@ -239,7 +239,7 @@ void BioGearsEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDri
 
   Cardiovascular& cv = (Cardiovascular&)bg.GetCardiovascular();
   cv.m_TuneCircuit = true;// Run the circuit as constructed
-  //cv.m_TuningFile = "./UnitTests/BioGearsTests/"+ sTestName+"Tuning.txt";
+  //cv.m_TuningFile = "./test_results/unit_tests/biogears/"+ sTestName+"Tuning.txt";
 
   SEFluidCircuit& cvCircuit = bg.GetCircuits().GetActiveCardiovascularCircuit();
   

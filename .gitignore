@@ -4,20 +4,17 @@
 /bin/patients/
 /bin/substances/
 
-/bin/markdown/
 /bin/compare_results/
-/bin/graph_results/
-/bin/UnitTests/
 /bin/debug/
 /bin/debug64/
+/bin/graph_results/
 /bin/relwithdebinfo/
 /bin/relwithdebinfo64/
 /bin/release/
 /bin/release64/
-/bin/scenarios/
-/bin/states/
 /bin/stable/
-/bin/validation/
+/bin/states/
+/bin/test_results/
 /bin/xsd/
 /bin/*.jar
 /bin/*.log

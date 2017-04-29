@@ -19,12 +19,12 @@ specific language governing permissions and limitations under the License.
 
 int main(int argc, char* argv[])
 {
-  std::string cdmDir = ".\\UnitTests\\CDMTests";
-  Logger cdmLogger(cdmDir + "\\CDMTests.log");
+  std::string cdmDir = ".\\test_results\\unit_tests\\cdm";
+  Logger cdmLogger(cdmDir + "\\CDMUnitTests.log");
   CommonDataModelTest cdmTest(&cdmLogger);
 
-  std::string bgDir = ".\\UnitTests\\BioGearsTests";
-  Logger bgeLogger(bgDir + "\\BioGearsTests.log");
+  std::string bgDir = ".\\test_results\\unit_tests\\biogears";
+  Logger bgeLogger(bgDir + "\\BioGearsUnitTests.log");
   BioGearsEngineTest bgeTest(&bgeLogger);
 
   if (argc == 1)
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
       //bgeTest.AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(bgDir);
 
       // Our CV Characterization Driver  (Not part of the test suite)
-      //std::string cvDir = ".\\UnitTests\\CVTuningTests";
+      //std::string cvDir = ".\\test_results\\unit_tests\\biogears\\CVTuningTests";
       //MKDIR(cvDir.c_str());
       //bgeTest.CardiovascularCircuitScaleTests(cvDir);
 
@@ -311,9 +311,9 @@ int main(int argc, char* argv[])
   }
   else
   {
-    if (cdmTest.RunTest(argv[1], ".\\UnitTests\\CDMTests"))
+    if (cdmTest.RunTest(argv[1], ".\\test_results\\unit_tests\\cdm"))
       return 0;
-    if (bgeTest.RunTest(argv[1], ".\\UnitTests\\BioGearsTests"))
+    if (bgeTest.RunTest(argv[1], ".\\test_results\\unit_tests\\biogears"))
       return 0;
   }
   return 1;

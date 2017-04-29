@@ -445,7 +445,7 @@ void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance&
     trk.Track("RightAlveoliParticulateDeposited_ug", time, rightAlveoliParticulate == nullptr ? 0 : rightAlveoliParticulate->GetMassDeposited(MassUnit::ug));
 
     if (i == 0)
-      trk.CreateFile(std::string(".\\UnitTests\\BioGearsTests\\"+substance.GetName()+"DepositionFraction.txt").c_str(), file);
+      trk.CreateFile(std::string(".\\test_results\\unit_tests\\biogears\\"+substance.GetName()+"DepositionFraction.txt").c_str(), file);
     trk.StreamTrackToFile(file);
     
     time += deltaT_s;

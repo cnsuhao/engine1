@@ -21,8 +21,8 @@ public class PatientValidation extends ValdiationTool
 {
   public PatientValidation()
   {
-    DEST_DIRECTORY = "./validation/";
-    DEFAULT_DIRECTORY = "../docs/validation/";
+    DEST_DIRECTORY = "./test_results/tables/";
+    DEFAULT_DIRECTORY = "../test/validation/";
     DEFAULT_FILE = "PatientValidationData.xlsx";
     TABLE_TYPE = "Patient";
     HEADER_PREPEND = "Patient";

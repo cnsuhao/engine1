@@ -227,18 +227,20 @@ public class TestReport
       CDMSerializer.writeFile(toDirectory + this.fileName, unload());
   }
 
-  public String toHTML()
+  public String toHTML(String title)
   {
-    return toHTML(null);
+    return toHTML(title, null);
   }
 
-  public String toHTML(Map<String,List<String>> groups)
+  public String toHTML(String title, Map<String,List<String>> groups)
   {
     boolean sortResults = true;
     StringBuilder buffer = new StringBuilder();
     buffer.append("<html>");
+    buffer.append("<head><title>"+title+"</title></head>");
     buffer.append("<body>");
-
+    buffer.append("<h1>"+title+"</h1><br>");
+    
     // Any Test Suites Not Run?
     buffer.append("<table border=\"1\">");
     buffer.append("<tr><th>Missing Reports</th></tr>");

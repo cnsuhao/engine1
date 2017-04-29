@@ -12,8 +12,10 @@ specific language governing permissions and limitations under the License.
 package mil.tatrc.physiology.testing;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -61,7 +63,12 @@ public class TestDriver
       me.environment = args[2];
       me.architecture = args[3];
     }
-    me.processConfigFile(args[0]);
+    File configFile = new File(args[0]);
+    if(!configFile.exists())
+    {
+      System.err.println("Config file "+configFile.getName()+" does not exist");
+    }
+    me.processConfigFile(configFile);
 
     int     availableThreads = Runtime.getRuntime().availableProcessors();
     boolean isPlotting;
@@ -151,7 +158,7 @@ public class TestDriver
   public String architecture = "";
   public String commitHash = "";
 
-  protected String name;
+  protected String testName;
   protected String reportName;
   
   protected int    numThreads=0;
@@ -222,24 +229,25 @@ public class TestDriver
     public void handleFatal(String msg) { Log.fatal("["+name+"] "+msg,""); }
   }
 
-  public void processConfigFile(String configFile)
-  {        
-    this.name = configFile.substring(0, configFile.lastIndexOf('.'));
-    Log.setFileName(this.name+".log");
+  public void processConfigFile(File configFile)
+  {    
+    this.testName = configFile.getName();
+    this.testName = this.testName.substring(0,this.testName.lastIndexOf('.'));
+    Log.setFileName("./test_results/"+this.testName+".log");
 
     String key;
     String value;
 
     this.percentDifference = 2.0;
 
-    this.reportName = null;
+    this.reportName = "TestDriver Report";
     
     this.executors.clear();
     this.jobs.clear();
 
     boolean ExecuteJobs=true;
     boolean PlotResults=true;
-    String currentGroup = this.name;
+    String currentGroup = this.testName;
 
     // Parse the config file
     // TODO, make sure all \ are converted to /
@@ -255,7 +263,7 @@ public class TestDriver
         {
           currentGroup = line.substring(6).trim();
           if(currentGroup.isEmpty())
-            currentGroup = this.name;
+            currentGroup = this.testName;
           continue;
         }
         if(line.indexOf('=') == -1)
@@ -647,7 +655,7 @@ public class TestDriver
   {
     List<String> currentGroup;
     TestReport report = new TestReport();    
-    report.setFullReportPath(".\\"+this.name+"Report.xml");    
+    report.setFullReportPath("./test_results/"+this.testName+"Report.xml");    
     for(TestJob job : this.jobs)
     {
       String group = job2groups.get(job);
@@ -692,7 +700,18 @@ public class TestDriver
         }
       }
     }    
-    report.write();   
+    report.write();
+    // Write the HTML to a file
+    try
+    {
+      BufferedWriter out = new BufferedWriter(new FileWriter("./test_results/"+this.testName+".html"));
+      out.write(report.toHTML(this.reportName,groups));
+      out.close();
+    }
+    catch(Exception ex)
+    {
+      Log.error("Unable to write HTML report for "+this.testName,ex);
+    }
   }
 
   static void DeleteTestResults(String hint, boolean executeJobs, boolean plotResults)

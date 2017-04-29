@@ -19,8 +19,8 @@ public class SystemValidation extends ValdiationTool
 {
   public SystemValidation()
   {
-    DEST_DIRECTORY = "./validation/";
-    DEFAULT_DIRECTORY = "../docs/validation/";
+    DEST_DIRECTORY = "./test_results/tables/";
+    DEFAULT_DIRECTORY = "../test/validation/";
     DEFAULT_FILE = "SystemValidationData.xlsx";
     TABLE_TYPE = "System";
   }

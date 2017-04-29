@@ -12,9 +12,11 @@ specific language governing permissions and limitations under the License.
 package mil.tatrc.physiology.testing.validation;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.*;
 import java.net.InetAddress;
@@ -130,7 +132,7 @@ public abstract class ValdiationTool
         return;
       }
       // Read in props file
-      File file = new File("ValidationTables.config");
+      File file = new File("../test/config/ValidationTables.config");
       FileInputStream fileInput = new FileInputStream(file);
       Properties config = new Properties();
       config.load(fileInput);
@@ -139,10 +141,11 @@ public abstract class ValdiationTool
       
       html.append("<html>");
       html.append("<body>");
+      html.append("<h1>"+TABLE_TYPE+"Validation</h1><br>");
       
       // Get a list of all the results files we have to work with
       
-      File vdir = new File("./Scenarios/Validation/");
+      File vdir = new File("./test_results/scenarios/Validation/");
       String[] vFiles = vdir.list();
       
       // Now read in the spreadsheet      
@@ -179,7 +182,7 @@ public abstract class ValdiationTool
           try
           {          
             // Look for a results file
-            CSVContents results = new CSVContents("./Scenarios/Validation/"+resultsName);
+            CSVContents results = new CSVContents("./test_results/scenarios/Validation/"+resultsName);
             results.readAll(resultData);              
             // Find any assessments
             assessments = new HashMap<String,SEPatientAssessment>();      
@@ -187,7 +190,7 @@ public abstract class ValdiationTool
             {
               if(vFile.indexOf(sheetName)>-1 && vFile.indexOf('@')>-1)
               {
-                Object aData = CDMSerializer.readFile("./Scenarios/Validation/"+vFile);
+                Object aData = CDMSerializer.readFile("./test_results/scenarios/Validation/"+vFile);
                 if(aData instanceof PatientAssessmentData)
                 {
                   String aClassName = "SE"+aData.getClass().getSimpleName();
@@ -449,7 +452,16 @@ public abstract class ValdiationTool
       WriteHTML(badSheets,fileName+" Errors");
       html.append("</body>");
       html.append("</html>");
-      
+      try
+      {
+        BufferedWriter out = new BufferedWriter(new FileWriter("./test_results/"+TABLE_TYPE+"Validation.html"));
+        out.write(html.toString());
+        out.close();
+      }
+      catch(Exception ex)
+      {
+        Log.error("Unable to write "+TABLE_TYPE+" HTML validation report",ex);
+      }
     }
     catch(Exception ex)
     {
@@ -461,6 +473,7 @@ public abstract class ValdiationTool
     {
       String line;
       File vDir = new File(destinationDirectory);
+      vDir.mkdir();
       PrintWriter writer = new PrintWriter(destinationDirectory+"/AllValidationTables.md", "UTF-8");
       
       for (String fName : vDir.list())
