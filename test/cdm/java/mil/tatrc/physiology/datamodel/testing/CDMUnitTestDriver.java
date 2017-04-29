@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 package mil.tatrc.physiology.datamodel.testing;
 
 import mil.tatrc.physiology.utilities.Log;
-import mil.tatrc.physiology.utilities.testing.TestDriver;
-import mil.tatrc.physiology.utilities.testing.TestDriver.TestJob;
+import mil.tatrc.physiology.testing.TestDriver;
+import mil.tatrc.physiology.testing.TestDriver.TestJob;
 
 public class CDMUnitTestDriver implements TestDriver.Executor
 {

@@ -7,6 +7,15 @@ if(POLICY CMP0053)
   cmake_policy(SET CMP0053 NEW)
 endif()
 
+find_package(Java REQUIRED)
+include(useJava)
+if(_JAVA_HOME)
+  # Overwrite Java if the env variable is set
+  set(Java_JAVA_EXECUTABLE ${_JAVA_HOME}/bin/java)
+endif()
+message(STATUS "Java Home : ${_JAVA_HOME}")
+message(STATUS "Using Java : ${Java_JAVA_EXECUTABLE}")
+
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   message( STATUS "64 bits compiler detected" )    
   set( EX_CONFIG "64" )
@@ -26,6 +35,8 @@ endif()
 string(TOLOWER ${CONFIGURATION} CONFIGURATION)
 
 set(INSTALL_BIN ${CMAKE_SOURCE_DIR}/bin/)
+
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 ## Pull and Compile dependencies
 set (PULL_DEPENDENCIES false CACHE BOOL "Initial pull and build of all dependent libraries/executables")
@@ -62,10 +73,6 @@ elseif(NOT PULL_DEPENDENCIES)
   set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
   set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 
-  
-
-
-  set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/dirent/install)  
   find_package(Dirent REQUIRED)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_BINARY_DIR}/eigen/install)
@@ -80,8 +87,8 @@ elseif(NOT PULL_DEPENDENCIES)
   ADD_SUBDIRECTORY(schema)
   ADD_SUBDIRECTORY(cdm)
   ADD_SUBDIRECTORY(engine)
-  #ADD_SUBDIRECTORY(test)
-  
+  ADD_SUBDIRECTORY(test)
+
   # I should probably just make these a copy....error out if they are not there...
   file(GLOB DLIBS 
     ${CMAKE_BINARY_DIR}/log4cpp/install/bin/*.dll
@@ -92,7 +99,7 @@ elseif(NOT PULL_DEPENDENCIES)
     CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
   install(FILES ${DLIBS}
     CONFIGURATIONS RelWithDeb DESTINATION ${INSTALL_BIN}/relwithdeb${EX_CONFIG})
-    
+
   file(GLOB DLIBS 
     ${CMAKE_BINARY_DIR}/xerces/install/bin/*.dll
     ${CMAKE_BINARY_DIR}/xerces/install/bin/*.so)
@@ -102,5 +109,90 @@ elseif(NOT PULL_DEPENDENCIES)
     CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
   install(FILES ${DLIBS}
     CONFIGURATIONS RelWithDeb DESTINATION ${INSTALL_BIN}/relwithdeb${EX_CONFIG})    
+
+  # Java Compiling
+  file(GLOB_RECURSE JAVA_FILES 
+    "${CMAKE_SOURCE_DIR}/schema/java/*.java"
+    "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
+    "${CMAKE_SOURCE_DIR}/engine/java/*.java"
+    "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"
+    "${CMAKE_SOURCE_DIR}/test/engine/java/*.java"
+    "${CMAKE_SOURCE_DIR}/test/driver/java/*.java")
+  add_jar(BioGears.jar ${JAVA_FILES}
+      INCLUDE_JARS 
+        ${CMAKE_SOURCE_DIR}/jar/jcommon-1.0.16.jar
+        ${CMAKE_SOURCE_DIR}/jar/jdom-2.0.2.jar
+        ${CMAKE_SOURCE_DIR}/jar/jfreechart-1.0.13.jar
+        ${CMAKE_SOURCE_DIR}/jar/guava-11.0.2.jar
+        ${CMAKE_SOURCE_DIR}/jar/log4j-1.2.17.jar
+        ${CMAKE_SOURCE_DIR}/jar/poi-3.13-20150929.jar
+        ${CMAKE_SOURCE_DIR}/jar/poi-ooxml-3.13-20150929.jar
+        ${CMAKE_SOURCE_DIR}/jar/poi-ooxml-schemas-3.13-20150929.jar
+        ${CMAKE_SOURCE_DIR}/jar/pdfbox-2.0.0-RC3.jar
+        ${CMAKE_SOURCE_DIR}/jar/reflections-0.9.9-RC1-uberjar.jar
+        ${CMAKE_SOURCE_DIR}/jar/zip4j-1.3.1.jar
+      OUTPUT_NAME BioGears)
+  get_target_property(_jarFile BioGears.jar JAR_FILE)
+  add_custom_command(TARGET BioGears.jar POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${INSTALL_BIN})
+  install_jar(BioGears.jar ${INSTALL_BIN})
+
+  set(JAVA_CLASSPATH BioGears.jar;
+        ../jar/jcommon-1.0.16.jar;
+        ../jar/jdom-2.0.2.jar;
+        ../jar/jfreechart-1.0.13.jar;
+        ../jar/guava-11.0.2.jar;
+        ../jar/log4j-1.2.17.jar;
+        ../jar/poi-3.13-20150929.jar;
+        ../jar/poi-ooxml-3.13-20150929.jar;
+        ../jar/poi-ooxml-schemas-3.13-20150929.jar;
+        ../jar/pdfbox-2.0.0-RC3.jar;
+        ../jar/reflections-0.9.9-RC1-uberjar.jar;
+        ../jar/xmlbeans-2.6.0.jar;
+        ../jar/zip4j-1.3.1.jar)
+# BioGears Testing
+  enable_testing()
+  add_test(NAME genData
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.biogears.dataset.DataSetReader
+    WORKING_DIRECTORY ${INSTALL_BIN})
+  add_test(NAME genStates
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/InitialPatientStates.config
+    WORKING_DIRECTORY ${INSTALL_BIN})
+  add_test(NAME runDebug
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/DebugRun.config
+    WORKING_DIRECTORY ${INSTALL_BIN})
+  add_test(NAME runCDMUnitTests
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/CDMUnitTests.config
+    WORKING_DIRECTORY ${INSTALL_BIN})
+  add_test(NAME runBGEUnitTests
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/BGEUnitTests.config
+    WORKING_DIRECTORY ${INSTALL_BIN})
+  add_test(NAME runSystemValidation
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/ValidationSystems.config
+    WORKING_DIRECTORY ${INSTALL_BIN})
+  add_test(NAME runPatientalidation
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/ValidationPatients.config
+    WORKING_DIRECTORY ${INSTALL_BIN})
+  add_test(NAME runVerification
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/VerificationScenarios.config
+    WORKING_DIRECTORY ${INSTALL_BIN})
+  add_test(NAME runDrugValidation
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/ValidationDrugs.config
+    WORKING_DIRECTORY ${INSTALL_BIN})
+  add_test(NAME runLongVerification
+    COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/LongVerificationScenarios.config
+    WORKING_DIRECTORY ${INSTALL_BIN})
   
+ 
+# Sinice I am using wildcard role up of files AND I am generating binding files
+# I need a way to force CMAKE to rerun and build everyting to add and remove new/old
+# files from any make files or projects when the Data Model is changed 
+# Make a target that will rebuild cmake, and thus regenerate binding file and projects that point to those new bind files
+  add_custom_target(refreshCMake)
+  add_custom_command(TARGET refreshCMake POST_BUILD 
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/CMakeFiles/generate.stamp
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/schema/CMakeFiles/generate.stamp.depend
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/cdm/CMakeFiles/generate.stamp.depend
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/engine/CMakeFiles/generate.stamp.depend
+    COMMAND ${CMAKE_COMMAND} .)
 endif()

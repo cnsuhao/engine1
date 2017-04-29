@@ -15,8 +15,8 @@ import mil.tatrc.physiology.biogears.engine.*;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
-import mil.tatrc.physiology.utilities.testing.TestDriver;
-import mil.tatrc.physiology.utilities.testing.TestDriver.TestJob;
+import mil.tatrc.physiology.testing.TestDriver;
+import mil.tatrc.physiology.testing.TestDriver.TestJob;
 
 public class ScenarioTestDriver implements TestDriver.Executor
 {

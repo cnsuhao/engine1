@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-package mil.tatrc.physiology.utilities.testing.validation;
+package mil.tatrc.physiology.testing.validation;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,7 +30,6 @@ import mil.tatrc.physiology.datamodel.properties.SEScalar;
 import mil.tatrc.physiology.utilities.WaveformUtils;
 import mil.tatrc.physiology.utilities.csv.CSVContents;
 import mil.tatrc.physiology.utilities.DoubleUtils;
-import mil.tatrc.physiology.utilities.EmailUtil;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.StringUtils;
 import mil.tatrc.physiology.utilities.UnitConverter;
@@ -103,7 +102,7 @@ public abstract class ValdiationTool
     public double warningTolerance = 30;
   }
 
-  public void loadData(String revision, String env, String arch, boolean sendEmail)
+  public void loadData(String revision, String env, String arch)
   {
     String directoryName = DEFAULT_DIRECTORY;
     String fileName = DEFAULT_FILE;
@@ -137,33 +136,7 @@ public abstract class ValdiationTool
       config.load(fileInput);
       fileInput.close();
       
-      // Set up the Email object
-      String hostname = "Unknown";
-      try
-      {
-        InetAddress addr = InetAddress.getLocalHost();
-        hostname = addr.getHostName();
-      }
-      catch(Exception ex)
-      {
-        System.out.println("Hostname can not be resolved");
-      }    
-      EmailUtil email = new EmailUtil();
-      String subj = env+" "+arch+" "+TABLE_TYPE+" Validation from "+hostname + " Revision " + revision;
-      email.setSubject(subj);
-      email.setSender(config.getProperty("sender"));
-      email.setSMTP(config.getProperty("smtp"));
-      if(hostname.equals(config.get("buildhost")))
-      {
-        Log.info("Emailling all recipients " + subj);
-        for(String recipient : config.getProperty("recipients").split(","))
-          email.addRecipient(recipient.trim());
-      }
-      else
-      {// Running on your own machine, just send it to yourself
-        Log.info("Emailling local runner " + subj);
-        email.addRecipient(System.getProperty("user.name")+"@ara.com");
-      }
+      
       html.append("<html>");
       html.append("<body>");
       
@@ -476,8 +449,7 @@ public abstract class ValdiationTool
       WriteHTML(badSheets,fileName+" Errors");
       html.append("</body>");
       html.append("</html>");
-      if(sendEmail)
-        email.sendHTML(html.toString());
+      
     }
     catch(Exception ex)
     {

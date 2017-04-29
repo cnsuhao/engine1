@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import org.jfree.util.Log;
+import mil.tatrc.physiology.utilities.Log;
 
 import mil.tatrc.physiology.datamodel.CDMSerializer;
 import mil.tatrc.physiology.datamodel.bind.Scalar0To1Data;

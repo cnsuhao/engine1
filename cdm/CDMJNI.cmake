@@ -1,49 +1,33 @@
-# Files in the project (Relative to this CMAKE file)
-SOURCE_GROUP("" FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/CommonDataModelJNI.cpp)
-# The DLL we are building
-ADD_LIBRARY(CommonDataModelJNI SHARED ${CMAKE_CURRENT_SOURCE_DIR}/cpp/CommonDataModelJNI.cpp)
-# Preprocessor Definitions and Include Paths
-TARGET_INCLUDE_DIRECTORIES(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
-TARGET_INCLUDE_DIRECTORIES(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/cpp)
-TARGET_INCLUDE_DIRECTORIES(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../schema/cpp)
-TARGET_INCLUDE_DIRECTORIES(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
-TARGET_INCLUDE_DIRECTORIES(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/log4cpp/include)
-TARGET_INCLUDE_DIRECTORIES(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/Eigen-3.3.1)
-TARGET_INCLUDE_DIRECTORIES(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/${XERCES_VER}/src)
-TARGET_INCLUDE_DIRECTORIES(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/${XSD_VER}/libxsd)
+source_group("" FILES cpp/CommonDataModelJNI.cpp)
 
-SET_TARGET_PROPERTIES(CommonDataModelJNI PROPERTIES COMPILE_FLAGS "${CDM_JNI_FLAGS}" PREFIX "")      
-IF(APPLE)
-    SET_TARGET_PROPERTIES(CommonDataModelJNI PROPERTIES MACOSX_RPATH ON)
-ENDIF()
+add_library(CommonDataModelJNI SHARED cpp/CommonDataModelJNI.cpp)
 
-FIND_PACKAGE(JNI)
+find_package(JNI REQUIRED)
+target_include_directories(CommonDataModelJNI PRIVATE ${JNI_INCLUDE_DIRS})
+target_include_directories(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
+target_include_directories(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
+target_include_directories(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../schema/cpp/)
+target_include_directories(CommonDataModelJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../test/cdm/cpp)
+target_include_directories(CommonDataModelJNI PRIVATE ${EIGEN3_INCLUDE_DIR})
+target_include_directories(CommonDataModelJNI PRIVATE ${LOG4CPP_INCLUDE_DIR})
+target_include_directories(CommonDataModelJNI PRIVATE ${XercesC_INCLUDE_DIR})
+target_include_directories(CommonDataModelJNI PRIVATE ${XSD_INCLUDE_DIR})
 
-IF (JNI_FOUND)
-  TARGET_INCLUDE_DIRECTORIES(CommonDataModelJNI PRIVATE ${JNI_INCLUDE_DIRS})
-ENDIF()
+set(CDM_JNI_FLAGS)
+set_target_properties(CommonDataModelJNI PROPERTIES COMPILE_FLAGS "${CDM_JNI_FLAGS}" PREFIX "")      
 
+if(APPLE)
+    set_target_properties(CommonDataModelJNI PROPERTIES MACOSX_RPATH ON)
+endif()
 
 # Dependent Libraries
-TARGET_LINK_LIBRARIES(CommonDataModelJNI CommonDataModelTest)
+target_link_libraries(CommonDataModelJNI CommonDataModelUnitTests)
 
-# Generate cxx/hxx files from xsd
-
-IF (APPLE)
-    ADD_CUSTOM_COMMAND(TARGET CommonDataModelJNI
-        POST_BUILD COMMAND
-        ${CMAKE_INSTALL_NAME_TOOL} -add_rpath "@executable_path/../Java/x64"
-        $<TARGET_FILE:CommonDataModelJNI>)
-ENDIF()
-
-# Copy to the bin
-SET(CONFIG_STRING)
-IF(WIN32)
-  SET(CONFIG_STRING ${CMAKE_CFG_INTDIR})
-ELSE()
-  STRING(TOLOWER ${CMAKE_BUILD_TYPE} CONFIG_STRING)
-ENDIF()
-
-ADD_CUSTOM_COMMAND(TARGET CommonDataModelJNI POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModelJNI> ${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${CONFIG_STRING}${EX_CONFIG}
-)
+add_custom_command(TARGET CommonDataModelJNI POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModelJNI> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
+install(TARGETS CommonDataModelJNI 
+        RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+install(TARGETS CommonDataModelJNI 
+        RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+install(TARGETS CommonDataModelJNI 
+        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})

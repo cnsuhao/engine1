@@ -1,19 +1,24 @@
+/bin/config
+/bin/environments
+/bin/nutrition/
+/bin/patients/
+/bin/substances/
+
 /bin/markdown/
 /bin/compare_results/
 /bin/graph_results/
 /bin/UnitTests/
-/bin/Debug/
-/bin/Debug64/
-/bin/RelWithDebInfo/
-/bin/RelWithDebInfo64/
-/bin/Release/
-/bin/Release64/
-/bin/Scenarios/
+/bin/debug/
+/bin/debug64/
+/bin/relwithdebinfo/
+/bin/relwithdebinfo64/
+/bin/release/
+/bin/release64/
+/bin/scenarios/
 /bin/states/
 /bin/stable/
 /bin/validation/
 /bin/xsd/
-/bin/UCEDefs.txt
 /bin/*.jar
 /bin/*.log
 /bin/*.xml
@@ -29,5 +34,9 @@
 /schema/cpp/bind/min/
 /schema/cpp/bind/*.hxx
 /schema/cpp/bind/*.cxx
+
+/test/build/
+
+/verification/
 
 

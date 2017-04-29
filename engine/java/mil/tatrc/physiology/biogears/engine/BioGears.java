@@ -83,7 +83,7 @@ public class BioGears
     UnitConverter.initialize(System.getProperty("user.dir"));
     List<String> libs = new ArrayList<String>();
     libs.add("BioGearsEngine");
-    libs.add("BioGearsEngineTest");
+    libs.add("BioGearsEngineUnitTests");
     libs.add("BioGearsEngineJNI");
         
     FileUtils.loadLibraries(libs);

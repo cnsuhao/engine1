@@ -14,7 +14,7 @@ package mil.tatrc.physiology.datamodel.system.environment;
 
 import java.util.*;
 
-import org.jfree.util.Log;
+import mil.tatrc.physiology.utilities.Log;
 
 import mil.tatrc.physiology.datamodel.CDMSerializer;
 import mil.tatrc.physiology.datamodel.bind.EnumSubstanceState;

@@ -38,15 +38,13 @@ public class UnitConverter
 //    try{Files.copy(new File(UCEDefsPath).toPath(), new File(UCEDefsHomePath).toPath(), REPLACE_EXISTING);}
 //    catch (IOException e){}
     
-    if(!FileUtils.loadLibrary("xerces-c_3_1_vc120") && // This is for the windows/msvc code synthesis library
-       !FileUtils.loadLibrary("libxerces-c-3-1") &&    // This is for building code synthesis with a gcc compiler (MinGW) using their make file
-       !FileUtils.loadLibrary("libxerces-c-3.1"))      // This is for building code synthesis with xcode
+    if(!FileUtils.loadLibrary("xerces-c"))      // This is for building code synthesis with xcode
       throw new RuntimeException("Could not find xerces library");
     List<String>libs = new ArrayList<String>();
     libs.add("log4cpp");
     libs.add("DataModelBindings");
     libs.add("CommonDataModel");
-    libs.add("CommonDataModelTest");
+    libs.add("CommonDataModelUnitTests");
     libs.add("CommonDataModelJNI");          
     if(!FileUtils.loadLibraries(libs))
       throw new RuntimeException("Could not find all dependent libraries : " + libs);

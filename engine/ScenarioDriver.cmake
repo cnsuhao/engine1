@@ -31,4 +31,4 @@ install(TARGETS BioGearsScenarioDriver
 install(TARGETS BioGearsScenarioDriver 
         RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
 install(TARGETS BioGearsScenarioDriver 
-        RUNTIME CONFIGURATIONS RelWithDebug DESTINATION ${INSTALL_BIN}/relwithdebug${EX_CONFIG})
+        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})

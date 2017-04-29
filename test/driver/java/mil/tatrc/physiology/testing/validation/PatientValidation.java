@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-package mil.tatrc.physiology.utilities.testing.validation;
+package mil.tatrc.physiology.testing.validation;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -34,11 +34,11 @@ public class PatientValidation extends ValdiationTool
     PatientValidation me = new PatientValidation();
     if(args.length!=3)
     {
-      me.loadData("Local","MSVC","x86",true);
+      me.loadData("Local","MSVC","x86");
     }
     else
     {      
-      me.loadData(args[0], args[1], args[2], true);
+      me.loadData(args[0], args[1], args[2]);
     }
   }
   

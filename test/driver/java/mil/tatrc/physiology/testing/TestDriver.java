@@ -9,13 +9,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-package mil.tatrc.physiology.utilities.testing;
+package mil.tatrc.physiology.testing;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.*;
 
 import mil.tatrc.physiology.datamodel.CDMSerializer;
@@ -23,15 +22,13 @@ import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
 import mil.tatrc.physiology.datamodel.bind.TestReportData;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.scenario.SEScenarioAutoSerialization;
-import mil.tatrc.physiology.utilities.EmailUtil;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
 import mil.tatrc.physiology.utilities.UnitConverter;
-import mil.tatrc.physiology.utilities.csv.CSVComparison;
+import mil.tatrc.physiology.testing.csv.CSVComparison;
 import mil.tatrc.physiology.utilities.csv.plots.CSVComparePlotter;
 import mil.tatrc.physiology.utilities.csv.plots.CSVComparePlotter.PlotType;
-import mil.tatrc.physiology.utilities.csv.plots.PlotDriver;
 
 public class TestDriver
 {
@@ -155,16 +152,11 @@ public class TestDriver
   public String commitHash = "";
 
   protected String name;
-
+  protected String reportName;
+  
   protected int    numThreads=0;
   protected double percentDifference=2.0;
 
-  boolean sendEmail = true;
-  protected  String emailRecipients;    
-  protected String emailSender;
-  protected String emailSubject;
-  protected String emailSMTP;
-  
   protected boolean useStates=false;
   protected SEScenarioAutoSerialization autoSerialization=null;
   protected String patientFiles;
@@ -240,12 +232,8 @@ public class TestDriver
 
     this.percentDifference = 2.0;
 
-    this.emailRecipients = null;
-    this.emailSender = null;
-    this.emailSubject = null;
-    this.emailSMTP = null;
-    this.sendEmail = true;
-
+    this.reportName = null;
+    
     this.executors.clear();
     this.jobs.clear();
 
@@ -277,14 +265,9 @@ public class TestDriver
         key = line.substring(0, line.indexOf('='));
         value = line.substring(line.indexOf("=") + 1);
 
-        if(key.equalsIgnoreCase("Subject"))
-        { this.emailSubject = value; continue; }
-        if(key.equalsIgnoreCase("Sender"))
-        { this.emailSender = value; continue; }
-        if(key.equalsIgnoreCase("SMTP"))
-        { this.emailSMTP = value; continue; }
-        if(key.equalsIgnoreCase("Recipients"))
-        { this.emailRecipients = value; continue; }
+        if(key.equalsIgnoreCase("ReportName"))
+        { this.reportName = value; continue; }
+  
         if(key.equalsIgnoreCase("PercentDifference"))
         { this.percentDifference = Double.parseDouble(value); continue; }
         if(key.equalsIgnoreCase("Threads"))
@@ -320,13 +303,7 @@ public class TestDriver
           if(value.equalsIgnoreCase("false"))
             PlotResults=false; 
           continue; 
-        }
-        if(key.equalsIgnoreCase("SendEmail"))
-        { 
-          if(value.equalsIgnoreCase("false"))
-            this.sendEmail = false; 
-          continue; 
-        }
+        }       
         if(key.equalsIgnoreCase("Executor"))
         {
           Class<TestDriver.Executor> clazz = null;
@@ -715,52 +692,7 @@ public class TestDriver
         }
       }
     }    
-    report.write();
-    if(this.sendEmail)
-      email(report);
-  }
-
-  protected void email(TestReport report)
-  {
-    if(this.emailSubject==null||this.emailRecipients==null||
-        this.emailSender==null||this.emailSMTP==null)
-    {
-      Log.error("Not sending email since all nessesary email info was not provided");
-      return;
-    }
-
-    //Get the name of the computer
-    String hostname = "Unknown";
-    try
-    {
-      InetAddress addr = InetAddress.getLocalHost();
-      hostname = addr.getHostName();
-    }
-    catch(Exception ex)
-    {
-      System.out.println("Hostname can not be resolved");
-    }  
-    //Get revision number if found add it to the email and make a copy of the bin
-    String commit= "";
-    if (commitHash != null && !commitHash.equals("") && !commitHash.equals("00000000"))
-    {
-      commit= " Commit " + commitHash.substring(0, 8);
-    }
-
-    String environmentString = "";
-    if (environment != null && !environment.equals(""))
-    {
-      environmentString = environment + " " + architecture + " - ";
-    }
-
-    // Email out a summary of all the reports we made
-    EmailUtil email = new EmailUtil();
-    email.setSubject(environmentString + this.emailSubject + " from "+hostname+commit);
-    email.setSender(this.emailSender);
-    email.setSMTP(this.emailSMTP);
-    for(String recipient : this.emailRecipients.split(","))
-      email.addRecipient(recipient.trim());
-    email.sendHTML(report.toHTML(groups));
+    report.write();   
   }
 
   static void DeleteTestResults(String hint, boolean executeJobs, boolean plotResults)

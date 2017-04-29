@@ -150,7 +150,7 @@ set(CDM_FLAGS "${CDM_FLAGS} -D EIGEN_MPL2_ONLY")
 set(CDM_FLAGS "${CDM_FLAGS} -D COMMONDATAMODEL_EXPORTS")
 set(CDM_FLAGS "${CDM_FLAGS} -D UNICODE")
 set(CDM_FLAGS "${CDM_FLAGS} -D _UNICODE")
-if(MSVC)  
+if(MSVC)
   set(CDM_FLAGS "${CDM_FLAGS} -Zm215")
   if(EX_PLATFORM EQUAL 64)
     #Make sure to prepend a space
@@ -182,4 +182,4 @@ install(TARGETS CommonDataModel
 install(TARGETS CommonDataModel 
         RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
 install(TARGETS CommonDataModel 
-        RUNTIME CONFIGURATIONS RelWithDebug DESTINATION ${INSTALL_BIN}/relwithdebug${EX_CONFIG})
+        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})

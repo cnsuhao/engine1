@@ -93,4 +93,19 @@ foreach(ITEM ${BGE_XSD})
                   WORKING_DIRECTORY "${bindings_DIR}/min/biogears")
 endforeach()
 
+# Generating the Java bindings
+find_program(Java_XJC_EXECUTABLE
+    NAMES xjc
+    HINTS ${_JAVA_HINTS}
+    PATHS ${_JAVA_PATHS}
+  )
+  message(STATUS "Java XJC : ${Java_XJC_EXECUTABLE}")
+
+file(REMOVE_RECURSE "${CMAKE_SOURCE_DIR}/schema/java")
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/schema/java")
+file(REMOVE_RECURSE "${CMAKE_SOURCE_DIR}/schema/build")
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/schema/build")
+
+execute_process(COMMAND ${Java_XJC_EXECUTABLE} -d ${CMAKE_SOURCE_DIR}/schema/java -p mil.tatrc.physiology.datamodel.bind ${CMAKE_SOURCE_DIR}/schema/xsd/BioGearsDataModel.xsd)
+
 message(STATUS "bindings are here : ${bindings_DIR}" )

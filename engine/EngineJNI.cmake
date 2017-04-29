@@ -1,52 +1,34 @@
-# Files in the project (Relative to this CMAKE file)
-SOURCE_GROUP("" FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BioGearsEngineJNI.h
-                      ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BioGearsEngineJNI.cpp)
-# The DLL we are building
-ADD_LIBRARY(BioGearsEngineJNI SHARED ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BioGearsEngineJNI.h
-                                     ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BioGearsEngineJNI.cpp)
-# Preprocessor Definitions and Include Paths
-SET(BioGearsEngineJNI_FLAGS)
-TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
-TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/cpp)
-TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
-TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../schema/cpp/)
-TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
-TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/log4cpp/include)
-TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/Eigen-3.3.1)
-TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/${XERCES_VER}/src)
-TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/${XSD_VER}/libxsd)
+source_group("" FILES cpp/BioGearsEngineJNI.h
+                      cpp/BioGearsEngineJNI.cpp)
 
-FIND_PACKAGE(JNI)
+add_library(BioGearsEngineJNI SHARED cpp/BioGearsEngineJNI.h
+                                     cpp/BioGearsEngineJNI.cpp)
+find_package(JNI REQUIRED)
+target_include_directories(BioGearsEngineJNI PRIVATE ${JNI_INCLUDE_DIRS})
+target_include_directories(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
+target_include_directories(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
+target_include_directories(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../schema/cpp/)
+target_include_directories(BioGearsEngineJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../test/engine/cpp)
+target_include_directories(BioGearsEngineJNI PRIVATE ${EIGEN3_INCLUDE_DIR})
+target_include_directories(BioGearsEngineJNI PRIVATE ${LOG4CPP_INCLUDE_DIR})
+target_include_directories(BioGearsEngineJNI PRIVATE ${XercesC_INCLUDE_DIR})
+target_include_directories(BioGearsEngineJNI PRIVATE ${XSD_INCLUDE_DIR})
 
-IF (JNI_FOUND)
-    TARGET_INCLUDE_DIRECTORIES(BioGearsEngineJNI PRIVATE ${JNI_INCLUDE_DIRS})
-ENDIF()
+set(BioGearsEngineJNI_FLAGS)
+set_target_properties(BioGearsEngineJNI PROPERTIES COMPILE_FLAGS "${BioGearsEngineJNI_FLAGS}" PREFIX "")
 
-SET_TARGET_PROPERTIES(BioGearsEngineJNI PROPERTIES COMPILE_FLAGS "${BioGearsEngineJNI_FLAGS}" PREFIX "")
+if(APPLE)
+    set_target_properties(CommonDataModelJNI PROPERTIES MACOSX_RPATH ON)
+endif()
 
-IF(APPLE)
-    SET_TARGET_PROPERTIES(BioGearsEngineJNI PROPERTIES MACOSX_RPATH ON)
-ENDIF()
+target_link_libraries(BioGearsEngineJNI BioGearsEngineUnitTests)
 
-# Dependent Libraries
-TARGET_LINK_LIBRARIES(BioGearsEngineJNI BioGearsEngineTest)
-# Generate cxx/hxx files from xsd
+add_custom_command(TARGET BioGearsEngineJNI POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BioGearsEngineJNI> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
+install(TARGETS BioGearsEngineJNI 
+        RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+install(TARGETS BioGearsEngineJNI 
+        RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+install(TARGETS BioGearsEngineJNI 
+        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
 
-IF (APPLE)
-    ADD_CUSTOM_COMMAND(TARGET BioGearsEngineJNI
-        POST_BUILD COMMAND
-        ${CMAKE_INSTALL_NAME_TOOL} -add_rpath "@executable_path/../Java/x64"
-        $<TARGET_FILE:BioGearsEngineJNI>)
-ENDIF()
-
-# Copy to the bin
-SET(CONFIG_STRING)
-IF(WIN32)
-  SET(CONFIG_STRING ${CMAKE_CFG_INTDIR})
-ELSE()
-  STRING(TOLOWER ${CMAKE_BUILD_TYPE} CONFIG_STRING)
-ENDIF()
-
-ADD_CUSTOM_COMMAND(TARGET BioGearsEngineJNI POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BioGearsEngineJNI> ${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${CONFIG_STRING}${EX_CONFIG}
-)

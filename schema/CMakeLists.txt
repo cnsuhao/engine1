@@ -42,21 +42,11 @@ if(MSVC)
 endif()
 add_custom_command(TARGET DataModelBindings POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:DataModelBindings> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/xsd ${INSTALL_BIN})
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/xsd ${INSTALL_BIN}/xsd)
 install(TARGETS DataModelBindings 
         RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
 install(TARGETS DataModelBindings 
         RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
 install(TARGETS DataModelBindings 
-        RUNTIME CONFIGURATIONS RelWithDebug DESTINATION ${INSTALL_BIN}/relwithdebug${EX_CONFIG})
+        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/xsd DESTINATION ${INSTALL_BIN})
-
-message(STATUS ${CMAKE_BINARY_DIR}/CMakeFiles/generate.stamp)
-add_custom_target(GenerateBindings)
-add_custom_command(TARGET GenerateBindings POST_BUILD 
-  #DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/cpp/bindings.timestamp
-  COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/CMakeFiles/generate.stamp
-  COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/schema/CMakeFiles/generate.stamp.depend)
-#add_custom_command(TARGET GenerateBindings POST_BUILD
-#  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/cpp/bindings.timestamp)
-

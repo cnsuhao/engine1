@@ -15,7 +15,7 @@ package mil.tatrc.physiology.datamodel.patient.actions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jfree.util.Log;
+import mil.tatrc.physiology.utilities.Log;
 
 import mil.tatrc.physiology.datamodel.CDMSerializer;
 import mil.tatrc.physiology.datamodel.bind.EnumOnOff;

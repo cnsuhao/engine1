@@ -17,8 +17,8 @@ import java.util.List;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.UnitConverter;
-import mil.tatrc.physiology.utilities.testing.TestDriver;
-import mil.tatrc.physiology.utilities.testing.TestDriver.TestJob;
+import mil.tatrc.physiology.testing.TestDriver;
+import mil.tatrc.physiology.testing.TestDriver.TestJob;
 
 public class BGEUnitTestDriver implements TestDriver.Executor
 {
@@ -28,7 +28,7 @@ public class BGEUnitTestDriver implements TestDriver.Executor
     UnitConverter.initialize(System.getProperty("user.dir"));
     List<String> libs = new ArrayList<String>();
     libs.add("BioGearsEngine");
-    libs.add("BioGearsEngineTest");
+    libs.add("BioGearsEngineUnitTests");
     libs.add("BioGearsEngineJNI");         
     FileUtils.loadLibraries(libs);
   }

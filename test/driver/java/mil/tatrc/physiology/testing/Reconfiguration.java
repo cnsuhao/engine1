@@ -1,4 +1,4 @@
-package mil.tatrc.physiology.utilities.testing;
+package mil.tatrc.physiology.testing;
 
 
 import java.io.*;

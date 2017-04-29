@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 /**
  * 
  */
-package mil.tatrc.physiology.utilities.testing;
+package mil.tatrc.physiology.testing;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

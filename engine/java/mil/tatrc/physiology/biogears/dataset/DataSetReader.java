@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
  **************************************************************************************/
 
-package mil.tatrc.physiology.datamodel.dataset;
+package mil.tatrc.physiology.biogears.dataset;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -93,10 +93,10 @@ public class DataSetReader
       XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile);
       evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();
       
-      String contentVersion = "";
-      Properties props = new Properties();
-      props.load(new FileInputStream("../src/build.properties"));
-      contentVersion = props.getProperty("biogears.version");
+      String contentVersion = "6.2.0";
+      //Properties props = new Properties();
+      //props.load(new FileInputStream("../src/build.properties"));
+      //contentVersion = props.getProperty("biogears.version");
 
       List<SEPatient> patients = readPatients(xlWBook.getSheet("Patients"));
       for(SEPatient p : patients)
