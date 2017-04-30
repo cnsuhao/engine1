@@ -1,4 +1,5 @@
 include(ExternalProject)
+project(ExternalDependencies)
 ##################################
 ## EIGEN                        ##
 ## Used for general matrix math ##
@@ -46,7 +47,6 @@ ExternalProject_Add( log4cpp
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
         -DCMAKE_INSTALL_PREFIX:STRING=${log4cpp_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${log4cpp_INSTALL}/include
-  BUILD_IN_SOURCE 1
 )
 
 message(STATUS "log4cpp is here : ${log4cpp_DIR}" )
@@ -109,7 +109,6 @@ ExternalProject_Add( xerces
         -DBUILD_SHARED_LIBS:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:STRING=${xerces_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${xerces_INSTALL}/include
-  BUILD_IN_SOURCE 1
 )
 
 message(STATUS "xerces is here : ${xerces_DIR}" )
@@ -132,7 +131,26 @@ ExternalProject_Add( dirent
         -DBUILD_SHARED_LIBS:BOOL=OFF
         -DCMAKE_INSTALL_PREFIX:STRING=${dirent_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${dirent_INSTALL}/include
-  BUILD_IN_SOURCE 1
 )
 message(STATUS "dirent is here : ${dirent_DIR}" )
 endif()
+
+## Generate the BioGears project after dependencies have been built
+#ExternalProject_Add( SetupBioGears
+#    PREFIX SetupBioGears
+#    DEPENDS Eigen log4cpp xsd xerces dirent
+#    SOURCE_DIR ${CMAKE_SOURCE_DIR}
+#    BINARY_DIR ${CMAKE_BINARY_DIR}
+#    CMAKE_ARGS
+#          -DSUPERBUILD:BOOL=OFF
+#  )
+
+  ## Generate the BioGears project after dependencies have been built
+#add_custom_target(SetupBioGears
+#                  DEPENDS eigen log4cpp xsd xerces dirent)
+#add_custom_command(TARGET SetupBioGears PRE_BUILD
+#  COMMAND cmake -DSUPERBUILD:BOOL=OFF  ${CMAKE_SOURCE_DIR}/CMakeLists.txt
+#  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/BioGearz)
+#message(STATUS "Where I want to put BG build : ${CMAKE_BINARY_DIR}")
+#add_custom_command(TARGET MakeBioGears POST_BUILD
+#  COMMAND ${CMAKE_COMMAND} -DConfig:STRING=GenData -P ${CMAKE_SOURCE_DIR}/cmake/devScripts.cmake)
