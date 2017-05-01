@@ -32,6 +32,9 @@
 /schema/cpp/bind/*.hxx
 /schema/cpp/bind/*.cxx
 
+/sdk/include
+/sdk/lib
+
 /test/build/
 
 /verification/

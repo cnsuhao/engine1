@@ -116,3 +116,5 @@ Now you can generate the SDK by calling CPack as follows :
 
 BioGears began at Applied Research Associates, Inc. (ARA) with oversight from 
 the Telemedicine and Advanced Technology Research Center (TATRC) under award W81XWH-13-2-0068
+
+All files are released under the Apache 2.0 license

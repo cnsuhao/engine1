@@ -21,6 +21,9 @@ ExternalProject_Add( Eigen
         -DINCLUDE_INSTALL_DIR:STRING=${Eigen_INSTALL}/include
 )
 
+# Install Headers
+install(DIRECTORY ${EIGEN3_INCLUDE_DIR}
+        DESTINATION ${INSTALL_INC})
 
 message(STATUS "Eigen is here : ${Eigen_DIR}" )
 
@@ -52,6 +55,34 @@ ExternalProject_Add( log4cpp
         -DCMAKE_INSTALL_PREFIX:STRING=${log4cpp_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${log4cpp_INSTALL}/include
 )
+
+# You should only be building the release versions of these libs
+# This will copy those release versions to all supported configuration locations
+# If you need to debug into these libraries, you can, just know that the release
+# libs will be replaced with debug versions. 
+
+# Install Headers
+install(DIRECTORY ${LOG4CPP_INCLUDE_DIR}
+        DESTINATION ${INSTALL_INC})
+# Install Bin
+file(GLOB L4C_BIN 
+  ${log4cpp_INSTALL}/bin/*.dll)
+install(FILES ${L4C_BIN}
+  DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+install(FILES ${L4C_BIN}
+  DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+install(FILES ${L4C_BIN}
+  DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+# Install Libs
+file(GLOB L4C_LIB 
+  ${log4cpp_INSTALL}/lib/*.lib
+  ${log4cpp_INSTALL}/lib/*.so)
+install(FILES ${L4C_LIB}
+  DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+install(FILES ${L4C_LIB}
+  DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+install(FILES ${L4C_LIB}
+  DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
 
 message(STATUS "log4cpp is here : ${log4cpp_DIR}" )
 
@@ -91,6 +122,10 @@ ExternalProject_Add( xsd
 
 message(STATUS "xsd is here : ${xsd_DIR}" )
 
+# Install Headers
+install(DIRECTORY ${xsd_INSTALL}/libxsd/xsd
+        DESTINATION ${INSTALL_INC}/include)
+
 ###############################
 ## XERCES                    ##
 ## XML Serialization support ##
@@ -114,6 +149,30 @@ ExternalProject_Add( xerces
         -DINCLUDE_INSTALL_DIR:STRING=${xerces_INSTALL}/include
 )
 
+# Install Headers
+install(DIRECTORY ${XercesC_INCLUDE_DIR}
+        DESTINATION ${INSTALL_INC})
+# Install Bin
+file(GLOB X_BIN 
+  ${xerces_INSTALL}/bin/*.dll)
+install(FILES ${X_BIN}
+  DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+install(FILES ${X_BIN}
+  DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+install(FILES ${X_BIN}
+  DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+# Install Libs
+file(GLOB X_LIB 
+  ${xerces_INSTALL}/lib/*.lib
+  ${xerces_INSTALL}/lib/*.so)
+install(FILES ${X_LIB}
+  DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+install(FILES ${X_LIB}
+  DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+install(FILES ${X_LIB}
+  DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
+
+
 message(STATUS "xerces is here : ${xerces_DIR}" )
 if(WIN32)
 ##########################################
@@ -136,6 +195,11 @@ ExternalProject_Add( dirent
         -DINCLUDE_INSTALL_DIR:STRING=${dirent_INSTALL}/include
 )
 message(STATUS "dirent is here : ${dirent_DIR}" )
+
+
+# Install Headers
+install(DIRECTORY ${DIRENT_INCLUDE_DIR}
+        DESTINATION ${INSTALL_INC})
 endif()
 
 ## Generate the BioGears project after dependencies have been built

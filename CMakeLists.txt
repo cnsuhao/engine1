@@ -2,6 +2,28 @@ cmake_minimum_required(VERSION 3.2)
 
 project(BioGears_SuperBuild)
 
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  message( STATUS "64 bits compiler detected" )    
+  set( EX_CONFIG "64" )
+  set(FIND_LIBRARY_USE_LIB64_PATHS ON)
+else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) 
+  message( STATUS "32 bits compiler detected" )
+  set( EX_CONFIG "" )
+  set(FIND_LIBRARY_USE_LIB64_PATHS OFF)
+endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+
+SET(CONFIGURATION)
+if(WIN32)
+  set(CONFIGURATION ${CMAKE_CFG_INTDIR})
+else()
+  set(CONFIGURATION ${CMAKE_BUILD_TYPE})
+endif()
+string(TOLOWER ${CONFIGURATION} CONFIGURATION)
+
+set(INSTALL_BIN ${CMAKE_SOURCE_DIR}/bin)
+set(INSTALL_INC ${CMAKE_SOURCE_DIR}/sdk)
+set(INSTALL_LIB ${CMAKE_SOURCE_DIR}/sdk/lib)
+
 if(UNIX AND NOT APPLE)
   set(LINUX TRUE)
 endif()
