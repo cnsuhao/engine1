@@ -1,11 +1,11 @@
-BioGears 
-===========
+BioGears Engine 
+===============
 
-BioGears is a C++ based human physiology simulation library.
+The BioGears engine is a C++ library for human physiology simulation.
 It is intended to provide accurate and consistent physiology data to medical education, research, and training technologies. 
-The libraries built (*.dll/*.so) can be integrated wil standalone application, hardware simulators, sensor interfaces, and other simulation models of all fidelities.
+The libraries built (*.dll/*.so) can be integrated with standalone applications, hardware simulators and sensor interfaces, and other physiology models of all fidelities.
 
-BioGears high-level objectives include:
+The BioGears engine high-level objectives include:
 -   Create a publicly available physiology research platform that
     enables accurate and consistent simulated physiology across training
     applications
@@ -112,3 +112,7 @@ cmake -DTYPE:STRING=genStates -P ../cmake/Scripts.cmake
 
 Now you can generate the SDK by calling CPack as follows :
 
+## Programmatics
+
+BioGears began at Applied Research Associates, Inc. (ARA) with oversight from 
+the Telemedicine and Advanced Technology Research Center (TATRC) under award W81XWH-13-2-0068
