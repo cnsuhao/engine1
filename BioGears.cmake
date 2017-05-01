@@ -106,7 +106,7 @@ file(GLOB_RECURSE JAVA_FILES
   "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"
   "${CMAKE_SOURCE_DIR}/test/engine/java/*.java"
   "${CMAKE_SOURCE_DIR}/test/driver/java/*.java")
-add_jar(BioGears ${JAVA_FILES}
+add_jar(BioGearsJava ${JAVA_FILES}
     INCLUDE_JARS 
       ${CMAKE_SOURCE_DIR}/jar/jcommon-1.0.16.jar
       ${CMAKE_SOURCE_DIR}/jar/jdom-2.0.2.jar
@@ -120,10 +120,10 @@ add_jar(BioGears ${JAVA_FILES}
       ${CMAKE_SOURCE_DIR}/jar/reflections-0.9.9-RC1-uberjar.jar
       ${CMAKE_SOURCE_DIR}/jar/zip4j-1.3.1.jar
     OUTPUT_NAME BioGears)
-get_target_property(_jarFile BioGears JAR_FILE)
-add_custom_command(TARGET BioGears POST_BUILD
+get_target_property(_jarFile BioGearsJava JAR_FILE)
+add_custom_command(TARGET BioGearsJava POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${INSTALL_BIN})
-install_jar(BioGears ${INSTALL_BIN})
+install_jar(BioGearsJava ${INSTALL_BIN})
 
 # BioGears Testing
 enable_testing()
