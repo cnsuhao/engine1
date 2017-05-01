@@ -2,7 +2,7 @@
 # Mostly these are calling the test suite driver and validator classes in Java
 
 find_package(Java REQUIRED)
-include(useJava)
+include(UseJava)
 if(_JAVA_HOME)
   # Overwrite Java if the env variable is set
   
