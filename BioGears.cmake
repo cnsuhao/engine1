@@ -98,7 +98,7 @@ install(FILES ${DLIBS}
 # TODO put a USE_JAVA option in (you would get no JNI, jar, and test suite, but maybe you just want the C++ SDK)
 # Java Compiling
 find_package(Java REQUIRED)
-include(useJava)
+include(UseJava)
 file(GLOB_RECURSE JAVA_FILES 
   "${CMAKE_SOURCE_DIR}/schema/java/*.java"
   "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
@@ -106,7 +106,7 @@ file(GLOB_RECURSE JAVA_FILES
   "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"
   "${CMAKE_SOURCE_DIR}/test/engine/java/*.java"
   "${CMAKE_SOURCE_DIR}/test/driver/java/*.java")
-add_jar(BioGears.jar ${JAVA_FILES}
+add_jar(BioGears ${JAVA_FILES}
     INCLUDE_JARS 
       ${CMAKE_SOURCE_DIR}/jar/jcommon-1.0.16.jar
       ${CMAKE_SOURCE_DIR}/jar/jdom-2.0.2.jar
@@ -120,10 +120,10 @@ add_jar(BioGears.jar ${JAVA_FILES}
       ${CMAKE_SOURCE_DIR}/jar/reflections-0.9.9-RC1-uberjar.jar
       ${CMAKE_SOURCE_DIR}/jar/zip4j-1.3.1.jar
     OUTPUT_NAME BioGears)
-get_target_property(_jarFile BioGears.jar JAR_FILE)
-add_custom_command(TARGET BioGears.jar POST_BUILD
+get_target_property(_jarFile BioGears JAR_FILE)
+add_custom_command(TARGET BioGears POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${INSTALL_BIN})
-install_jar(BioGears.jar ${INSTALL_BIN})
+install_jar(BioGears ${INSTALL_BIN})
 
 # BioGears Testing
 enable_testing()
