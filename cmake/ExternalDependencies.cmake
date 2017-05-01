@@ -63,19 +63,19 @@ set(xsd_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/xsd/install")
 
 if(MSVC)
   set(xsd_URL "http://www.codesynthesis.com/download/xsd/4.0/windows/i686/xsd-4.0.0-i686-windows.zip")
-  set(xsd_HASH "25f9074f39d91699d56881eb6d3bae53")
+  set(xsd_HASH "d129469e109784c663387ca8bee5ac627434cfca")
 elseif(APPLE)
   set(xsd_URL "http://www.codesynthesis.com/download/xsd/4.0/macosx/i686/xsd-4.0.0-i686-macosx.tar.bz2")
-  set(xsd_HASH "")
+  set(xsd_HASH "bb96454da6acafb93180368220d555e2b9747023")
 elseif(UNIX)
   set(xsd_URL "http://www.codesynthesis.com/download/xsd/4.0/linux-gnu/x86_64/xsd-4.0.0-x86_64-linux-gnu.tar.bz2")
-  set(xsd_HASH "")
+  set(xsd_HASH "5eeb2eeca0d893949e3677bb374e7b96f19770d6")
 endif()
 		
 ExternalProject_Add( xsd
   PREFIX xsd
   URL ${xsd_URL}
-  URL_HASH MD5=${xsd_HASH}
+  URL_HASH SHA1=${xsd_HASH}
   UPDATE_COMMAND ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
