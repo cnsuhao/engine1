@@ -34,8 +34,8 @@ target_link_libraries(BioGearsEngineUnitTests BioGearsEngine)
 add_custom_command(TARGET BioGearsEngineUnitTests POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BioGearsEngineUnitTests> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
 install(TARGETS BioGearsEngineUnitTests 
-        RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+        RUNTIME CONFIGURATIONS Release LIBRARY DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
 install(TARGETS BioGearsEngineUnitTests 
-        RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+        RUNTIME CONFIGURATIONS Debug LIBRARY DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
 install(TARGETS BioGearsEngineUnitTests 
-        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+        RUNTIME CONFIGURATIONS RelWithDebInfo LIBRARY DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
