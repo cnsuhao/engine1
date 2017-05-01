@@ -25,6 +25,14 @@ file(COPY "cpp/custom-double/"
      DESTINATION "${bindings_DIR}"
      FILES_MATCHING PATTERN "*.hxx" PATTERN "biogears-cdm.cxx")
 
+if(WIN32)
+  set(EXPORT_SYMBOL --export-symbol "__declspec(dllexport)")
+elseif( CMAKE_COMPILER_IS_GNUCXX AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 4)
+  set(EXPORT_SYMBOL --export-symbol "__attribute__ ((visibility (\"default\")))")
+else()
+  set(EXPORT_SYMBOL)
+endif()
+
 #Generate normally, which is a file per type 
 execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
                                            --std c++11 
@@ -40,7 +48,7 @@ execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree
                                            --custom-type "double=double"
                                            --custom-type "decimal=long double"
                                            --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
-                                           --export-symbol "__declspec(dllexport)"
+                                           ${EXPORT_SYMBOL}
                                            ${CMAKE_CURRENT_SOURCE_DIR}/xsd/BioGearsDataModel.xsd
                 WORKING_DIRECTORY "${bindings_DIR}/")
 execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
@@ -52,7 +60,7 @@ execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree
                                            --generate-ostream 
                                            --generate-doxygen 
                                            --generate-default-ctor 
-                                           --export-symbol "__declspec(dllexport)"
+                                           ${EXPORT_SYMBOL}
                                            ${bindings_DIR}/data-model-schema.xsd
                 WORKING_DIRECTORY "${bindings_DIR}/")
 #Generate cxx/hxx file for each xsd file (faster to build)
@@ -70,7 +78,7 @@ foreach(ITEM ${CDM_XSD})
                                              --custom-type "double=double"
                                              --custom-type "decimal=long double"
                                              --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
-                                             --export-symbol "__declspec(dllexport)"
+                                             ${EXPORT_SYMBOL}
                                              ${ITEM}
                   WORKING_DIRECTORY "${bindings_DIR}/min/cdm")
 endforeach()
@@ -88,7 +96,7 @@ foreach(ITEM ${BGE_XSD})
                                              --custom-type "double=double"
                                              --custom-type "decimal=long double"
                                              --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
-                                             --export-symbol "__declspec(dllexport)"
+                                             ${EXPORT_SYMBOL}
                                              ${ITEM}
                   WORKING_DIRECTORY "${bindings_DIR}/min/biogears")
 endforeach()
