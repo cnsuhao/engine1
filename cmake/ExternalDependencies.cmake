@@ -24,7 +24,6 @@ ExternalProject_Add( Eigen
 
 message(STATUS "Eigen is here : ${Eigen_DIR}" )
 
-
 ###################################################
 ## LOG4CPP                                       ##
 ## General logging utility                       ##
@@ -35,6 +34,10 @@ message( STATUS "External project - Log4cpp" )
 set(log4cpp_VERSION "1.1.2" )
 set(log4cpp_DIR "${CMAKE_BINARY_DIR}/log4cpp/src/log4cpp")
 set(log4cpp_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/log4cpp/install")
+
+if(UNIX)
+  set(CONFIGURE "./configure")
+endif()
 		
 ExternalProject_Add( log4cpp
   PREFIX log4cpp
@@ -42,6 +45,7 @@ ExternalProject_Add( log4cpp
   URL_HASH MD5=c70eac7334e2f3cbeac307dc78532be4
   UPDATE_COMMAND 
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp.cmake ${log4cpp_DIR}/CMakeLists.txt
+    COMMAND ${CONFIGURE}
   INSTALL_DIR "${log4cpp_INSTALL}"
   CMAKE_ARGS
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
@@ -102,7 +106,6 @@ set(xerces_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/xerces/install")
 ExternalProject_Add( xerces
   PREFIX xerces
   GIT_REPOSITORY "https://github.com/rleigh-codelibre/xerces-c.git"
-  GIT_SHALLOW 1
   GIT_TAG "cmake-trunk"
   INSTALL_DIR "${xerces_INSTALL}"
   CMAKE_ARGS

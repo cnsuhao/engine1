@@ -88,5 +88,6 @@ install (
 
 install (TARGETS log4cpp
   ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
   
