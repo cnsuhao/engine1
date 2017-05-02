@@ -39,7 +39,7 @@ BioGears builds out of source, meaning the code base is seperated from the build
 This means you will need two folders for BioGears, one for the source code and one for the build files.
 Generally, I create a single directory to house these two folders.
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 mkdir BioGears
 cd BioGears
 mkdir src
@@ -67,7 +67,7 @@ make # if you are using visual studio, open the BioGears.sln and build the Relea
 Once you have build the code base, you must generate the data required by the BioGears engine.
 Execute the following script from the bin directory:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 cmake -DTYPE:STRING=genData -P ../cmake/Scripts.cmake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -82,7 +82,7 @@ You will need to download the latest scenario/verification zip <a href="https://
 In the near future, we will link the verification data to this repository, so it will be downloaded automatically.
 
 To run the driver, change directory in your cmd/bash shell to the bin directory and execute the following :
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # First ensure the release directory (or debug if that is what you are running) is on your path
 PATH=%PATH%;./release # for windows
 PATH=$PATH:./release # for linux
@@ -97,7 +97,7 @@ BioGears provides a test harnes, written in Java, that will :
 - Generate an plot image file for each data column of the csv file over the time of the scenario
 
 To run the test driver change directory in your cmd/bash shell to the bin directory and execute the Scripts.cmake in the following way :
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 cmake -DTYPE:STRING=<option> -P ../cmake/Scripts.cmake 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -132,7 +132,7 @@ To generate these patient states, exeute the following option :
 Once you have build the code base, you must generate the data required by the BioGears engine.
 Execute the following script from the bin directory:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 cmake -DTYPE:STRING=genStates -P ../cmake/Scripts.cmake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
