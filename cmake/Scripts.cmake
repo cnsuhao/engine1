@@ -12,28 +12,25 @@ endif()
 #  You tell me what JDK/JRE you want to use
 #set(Java_JAVA_EXECUTABLE "/the_jdk_I_want/bin/java)
 
-if(WIN32)
-  set(sep ";")
-else()
-  set(sep ":")
-endif()
-
-set(JAVA_CLASSPATH BioGears.jar${sep}
-        ../jar/jcommon-1.0.16.jar${sep}
-        ../jar/jdom-2.0.2.jar${sep}
-        ../jar/jfreechart-1.0.13.jar${sep}
-        ../jar/guava-11.0.2.jar${sep}
-        ../jar/log4j-1.2.17.jar${sep}
-        ../jar/poi-3.13-20150929.jar${sep}
-        ../jar/poi-ooxml-3.13-20150929.jar${sep}
-        ../jar/poi-ooxml-schemas-3.13-20150929.jar${sep}
-        ../jar/pdfbox-2.0.0-RC3.jar${sep}
-        ../jar/reflections-0.9.9-RC1-uberjar.jar${sep}
-        ../jar/xmlbeans-2.6.0.jar${sep}
+set(JAVA_CLASSPATH BioGears.jar
+        ../jar/jcommon-1.0.16.jar
+        ../jar/jdom-2.0.2.jar
+        ../jar/jfreechart-1.0.13.jar
+        ../jar/guava-11.0.2.jar
+        ../jar/log4j-1.2.17.jar
+        ../jar/poi-3.13-20150929.jar
+        ../jar/poi-ooxml-3.13-20150929.jar
+        ../jar/poi-ooxml-schemas-3.13-20150929.jar
+        ../jar/pdfbox-2.0.0-RC3.jar
+        ../jar/reflections-0.9.9-RC1-uberjar.jar
+        ../jar/xmlbeans-2.6.0.jar
         ../jar/zip4j-1.3.1.jar)
 
-message(STATUS ${JAVA_CLASSPATH})
-message(STATUS ${Java_JAVA_EXECUTABLE})
+if(NOT WIN32)
+  string(REPLACE ";" ":" JAVA_CLASSPATH "${JAVA_CLASSPATH}")
+endif()
+
+
 if(TYPE STREQUAL "SystemValidation")
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ../test/config/ValidationSystems.config)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.validation.SystemValidation)
