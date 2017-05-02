@@ -22,7 +22,7 @@ ExternalProject_Add( Eigen
 )
 list(APPEND BioGears_DEPENDENCIES Eigen)
 # Install Headers
-install(DIRECTORY ${EIGEN3_INCLUDE_DIR}
+install(DIRECTORY ${Eigen_INSTALL}/include
         DESTINATION ${INSTALL_INC})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/eigen/install)
 message(STATUS "Eigen is here : ${Eigen_DIR}" )
@@ -63,21 +63,27 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/log4cpp/install)
 # libs will be replaced with debug versions. 
 
 # Install Headers
-install(DIRECTORY ${LOG4CPP_INCLUDE_DIR}
+install(DIRECTORY ${log4cpp_INSTALL}/include
         DESTINATION ${INSTALL_INC})
 # Install Bin
-file(GLOB L4C_BIN 
-  ${log4cpp_INSTALL}/bin/*.dll)
-install(FILES ${L4C_BIN}
-  DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-install(FILES ${L4C_BIN}
-  DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-install(FILES ${L4C_BIN}
-  DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+if(WIN32)
+  set(L4C_DLL ${log4cpp_INSTALL}/bin/log4cpp.dll)
+else()
+  set(L4C_DLL ${log4cpp_INSTALL}/lib/liblog4cpp.so)
+endif()
+
+install(FILES ${L4C_DLL}
+    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+install(FILES ${L4C_DLL}
+    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+install(FILES ${L4C_DLL}
+    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
 # Install Libs
-file(GLOB L4C_LIB 
-  ${log4cpp_INSTALL}/lib/*.lib
-  ${log4cpp_INSTALL}/lib/*.so)
+if(WIN32)
+  set(L4C_LIB ${log4cpp_INSTALL}/lib/log4cpp.lib)
+else()
+  set(L4C_LIB ${log4cpp_INSTALL}/lib/liblog4cpp.so)
+endif()
 install(FILES ${L4C_LIB}
   DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
 install(FILES ${L4C_LIB}
@@ -139,7 +145,7 @@ message( STATUS "External project - XERCES" )
 if(WIN32)
   set(xerces_TRANSCODER "windows")
 else()
-  set(xerces_TRANSCODER "icu")
+  set(xerces_TRANSCODER "iconv")
 endif()
 
 set(xerces_VERSION "3.1.x" )
@@ -152,6 +158,7 @@ ExternalProject_Add( xerces
   INSTALL_DIR "${xerces_INSTALL}"
   CMAKE_ARGS
         -DBUILD_SHARED_LIBS:BOOL=ON
+        -Dnetwork:BOOL=OFF
         -Dtranscoder:STRING=${xerces_TRANSCODER}
         -DCMAKE_INSTALL_PREFIX:STRING=${xerces_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${xerces_INSTALL}/include
@@ -159,28 +166,35 @@ ExternalProject_Add( xerces
 list(APPEND BioGears_DEPENDENCIES xerces)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/xerces/install)
 # Install Headers
-install(DIRECTORY ${XercesC_INCLUDE_DIR}
+install(DIRECTORY ${xerces_INSTALL}/include
         DESTINATION ${INSTALL_INC})
-# Install Bin
-file(GLOB X_BIN 
-  ${xerces_INSTALL}/bin/*.dll)
-install(FILES ${X_BIN}
-  DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-install(FILES ${X_BIN}
-  DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-install(FILES ${X_BIN}
-  DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+# Install Binaries
+if(WIN32)
+  set(X_DLL ${xerces_INSTALL}/bin/xerces-c.dll)
+  set(X_DLL_output xerces-c.dll)
+else()
+  set(X_DLL ${xerces_INSTALL}/lib/libxerces-c.so.3.1)
+  set(X_DLL_output libxerces-c.so)
+endif()
+install(FILES ${X_DLL}
+  DESTINATION ${INSTALL_BIN}/release${EX_CONFIG} RENAME ${X_DLL_output})
+install(FILES ${X_DLL}
+  DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG} RENAME ${X_DLL_output})
+install(FILES ${X_DLL}
+  DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG} RENAME ${X_DLL_output})
 # Install Libs
-file(GLOB X_LIB 
-  ${xerces_INSTALL}/lib/*.lib
-  ${xerces_INSTALL}/lib/*.so)
+if(WIN32)
+  set(X_LIB ${xerces_INSTALL}/lib/xerces-c.lib)
+else()
+  set(X_LIB ${xerces_INSTALL}/lib/libxerces-c.so
+            ${xerces_INSTALL}/lib/libxerces-c.so.3.1)
+endif()
 install(FILES ${X_LIB}
   DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
 install(FILES ${X_LIB}
   DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
 install(FILES ${X_LIB}
   DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
-
 
 message(STATUS "xerces is here : ${xerces_DIR}" )
 if(WIN32)
@@ -207,7 +221,7 @@ if(WIN32)
   list(APPEND BioGears_DEPENDENCIES dirent)
   list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/dirent/install)
   # Install Headers
-  install(DIRECTORY ${DIRENT_INCLUDE_DIR}
+  install(DIRECTORY ${dirent_INSTALL}/include
           DESTINATION ${INSTALL_INC})
 endif()
 
