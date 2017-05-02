@@ -90,13 +90,17 @@ PATH=$PATH:./release # for linux
 BioGearsScenarioDriver ../verification/Scenarios/Patient/BasicStandard.xml 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are going to run the BioGearsSceanrioDriver through visual studio, make sure you click 'Set as Startup Project'
-Right-Click the Project and select settings
-Click on 'Configuration Options->Debugging' on the left tree in the properties dialog
-Make sure you are on the Configuration you intend to run (Or set all configurations)
-Put the directory to your bin directory as the 'Working Directory'
-Enter the relative path to the associated directory containing the dlls for your selected configuration into the 'Envirionment' field.
-For example, this is what you would enter to run against the 64bit release dll's: PATH=PATH;./release64
+If you are going to run the BioGearsSceanrioDriver through visual studio follow these steps
+- Right-click the BioGearsScenarioDriver project and select 'Set as Startup Project'
+- Right-click the Project and select settings
+- Make sure you are on the appropriate configuration in the Configuration drop down. The one you intend to run
+  - You probably want to do this for all configuration in the solution
+- Click on 'Configuration Options->Debugging' on the left tree in the properties dialog
+- Put the directory to your bin directory as the 'Working Directory'
+- Enter the relative path to the associated directory containing the dlls for your selected configuration into the 'Envirionment' field.
+  - For example, this is what you would enter to run against the 64bit release dll's: PATH=PATH;./release64
+  
+<b> You will also want to do this for the UnitTestDriver if you want to run that through visual studio as well </b>
 
 ### Java Based Testing Suite
 
