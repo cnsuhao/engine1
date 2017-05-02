@@ -54,6 +54,7 @@ cd builds
 cmake -DCMAKE_BUILD_TYPE:String=Release -DSUPERBUILD:BOOL=ON ../src
 # Build the makefile or solution
 make # if you are using visual studio, open the ExternalDependencies.sln and build the Release configuration
+# MAKE SURE YOU BUILD THE INSTALL TARGET/PROJECT
 # With the dependencies built, run cmake again to generate the engine solution/makefile
 cmake -DCMAKE_BUILD_TYPE:String=Release -DSUPERBUILD:BOOL=OFF ../src
 # Build the makefile or solution
@@ -88,6 +89,14 @@ PATH=%PATH%;./release # for windows
 PATH=$PATH:./release # for linux
 BioGearsScenarioDriver ../verification/Scenarios/Patient/BasicStandard.xml 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are going to run the BioGearsSceanrioDriver through visual studio, make sure you click 'Set as Startup Project'
+Right-Click the Project and select settings
+Click on 'Configuration Options->Debugging' on the left tree in the properties dialog
+Make sure you are on the Configuration you intend to run (Or set all configurations)
+Put the directory to your bin directory as the 'Working Directory'
+Enter the relative path to the associated directory containing the dlls for your selected configuration into the 'Envirionment' field.
+For example, this is what you would enter to run against the 64bit release dll's: PATH=PATH;./release64
 
 ### Java Based Testing Suite
 

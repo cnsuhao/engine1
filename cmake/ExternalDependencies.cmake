@@ -22,7 +22,7 @@ ExternalProject_Add( Eigen
 )
 
 # Install Headers
-install(DIRECTORY ${EIGEN3_INCLUDE_DIR}
+install(DIRECTORY ${Eigen_INSTALL}/include
         DESTINATION ${INSTALL_INC})
 
 message(STATUS "Eigen is here : ${Eigen_DIR}" )
@@ -62,21 +62,24 @@ ExternalProject_Add( log4cpp
 # libs will be replaced with debug versions. 
 
 # Install Headers
-install(DIRECTORY ${LOG4CPP_INCLUDE_DIR}
+install(DIRECTORY ${log4cpp_INSTALL}/include
         DESTINATION ${INSTALL_INC})
 # Install Bin
-file(GLOB L4C_BIN 
-  ${log4cpp_INSTALL}/bin/*.dll)
-install(FILES ${L4C_BIN}
-  DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-install(FILES ${L4C_BIN}
-  DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-install(FILES ${L4C_BIN}
-  DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+if(WIN32)
+  set(L4C_DLL ${log4cpp_INSTALL}/bin/log4cpp.dll)
+  install(FILES ${L4C_DLL}
+    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+  install(FILES ${L4C_DLL}
+    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+  install(FILES ${L4C_DLL}
+    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+endif()
 # Install Libs
-file(GLOB L4C_LIB 
-  ${log4cpp_INSTALL}/lib/*.lib
-  ${log4cpp_INSTALL}/lib/*.so)
+if(WIN32)
+  set(L4C_LIB ${log4cpp_INSTALL}/lib/log4cpp.lib)
+else()
+  set(L4C_LIB ${log4cpp_INSTALL}/lib/log4cpp.so)
+endif()
 install(FILES ${L4C_LIB}
   DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
 install(FILES ${L4C_LIB}
@@ -156,21 +159,25 @@ ExternalProject_Add( xerces
 )
 
 # Install Headers
-install(DIRECTORY ${XercesC_INCLUDE_DIR}
+install(DIRECTORY ${xerces_INSTALL}/include
         DESTINATION ${INSTALL_INC})
-# Install Bin
-file(GLOB X_BIN 
-  ${xerces_INSTALL}/bin/*.dll)
-install(FILES ${X_BIN}
-  DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-install(FILES ${X_BIN}
-  DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-install(FILES ${X_BIN}
-  DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+# Install Bin          
+if(WIN32)
+  set(X_DLL ${xerces_INSTALL}/bin/xerces-c.dll)
+  install(FILES ${X_DLL}
+    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+  install(FILES ${X_DLL}
+    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+  install(FILES ${X_DLL}
+    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+endif()
+
 # Install Libs
-file(GLOB X_LIB 
-  ${xerces_INSTALL}/lib/*.lib
-  ${xerces_INSTALL}/lib/*.so)
+if(WIN32)
+  set(X_LIB ${xerces_INSTALL}/lib/xerces-c.lib)
+else()
+  set(X_LIB ${xerces_INSTALL}/lib/xerces-c.so)
+endif()
 install(FILES ${X_LIB}
   DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
 install(FILES ${X_LIB}
@@ -204,7 +211,7 @@ message(STATUS "dirent is here : ${dirent_DIR}" )
 
 
 # Install Headers
-install(DIRECTORY ${DIRENT_INCLUDE_DIR}
+install(DIRECTORY ${dirent_INSTALL}/include
         DESTINATION ${INSTALL_INC})
 endif()
 
