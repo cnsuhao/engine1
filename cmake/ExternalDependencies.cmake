@@ -141,6 +141,8 @@ install(DIRECTORY ${xsd_INSTALL}/libxsd/xsd
 message( STATUS "External project - XERCES" )
 if(WIN32)
   set(xerces_TRANSCODER "-Dtranscoder:STRING=windows")
+elseif()
+  set(xerces_TRANSCODER "-Dtranscoder:STRING=iconv")
 endif()
 
 set(xerces_VERSION "3.1.x" )
