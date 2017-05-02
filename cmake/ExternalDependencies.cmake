@@ -136,7 +136,7 @@ install(DIRECTORY ${xsd_INSTALL}/libxsd/xsd
 message( STATUS "External project - XERCES" )
 if(WIN32)
   set(xerces_TRANSCODER "windows")
-elseif()
+else()
   set(xerces_TRANSCODER "icu")
 endif()
 

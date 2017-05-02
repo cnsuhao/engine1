@@ -93,6 +93,7 @@ add_jar(BioGearsJava ${JAVA_FILES}
     OUTPUT_NAME BioGears)
 get_target_property(_jarFile BioGearsJava JAR_FILE)
 add_custom_command(TARGET BioGearsJava POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}
     COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${INSTALL_BIN})
 install_jar(BioGearsJava ${INSTALL_BIN})
 

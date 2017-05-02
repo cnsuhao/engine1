@@ -16,6 +16,7 @@ target_include_directories(UnitTestDriver PRIVATE ${XSD_INCLUDE_DIR})
 target_link_libraries(UnitTestDriver CommonDataModelUnitTests BioGearsEngineUnitTests)
 
 add_custom_command(TARGET UnitTestDriver POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:UnitTestDriver> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
 install(TARGETS UnitTestDriver 
         RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})

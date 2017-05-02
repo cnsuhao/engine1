@@ -24,6 +24,7 @@ endif()
 target_link_libraries(CommonDataModelJNI CommonDataModelUnitTests)
 
 add_custom_command(TARGET CommonDataModelJNI POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModelJNI> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
 install(TARGETS CommonDataModelJNI 
         RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}

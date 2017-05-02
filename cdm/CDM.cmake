@@ -176,6 +176,7 @@ target_link_libraries(CommonDataModel DataModelBindings)
 target_link_libraries(CommonDataModel ${LOG4CPP_LIBRARIES})
 
 add_custom_command(TARGET CommonDataModel POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModel> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
 install(TARGETS CommonDataModel 
         RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
