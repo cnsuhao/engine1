@@ -20,11 +20,11 @@ ExternalProject_Add( Eigen
         -DCMAKE_INSTALL_PREFIX:STRING=${Eigen_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${Eigen_INSTALL}/include
 )
-
+list(APPEND BioGears_DEPENDENCIES Eigen)
 # Install Headers
 install(DIRECTORY ${EIGEN3_INCLUDE_DIR}
         DESTINATION ${INSTALL_INC})
-
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/eigen/install)
 message(STATUS "Eigen is here : ${Eigen_DIR}" )
 
 ###################################################
@@ -55,7 +55,8 @@ ExternalProject_Add( log4cpp
         -DCMAKE_INSTALL_PREFIX:STRING=${log4cpp_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${log4cpp_INSTALL}/include
 )
-
+list(APPEND BioGears_DEPENDENCIES log4cpp)
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/log4cpp/install)
 # You should only be building the release versions of these libs
 # This will copy those release versions to all supported configuration locations
 # If you need to debug into these libraries, you can, just know that the release
@@ -119,7 +120,8 @@ ExternalProject_Add( xsd
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${xsd_DIR}/libxsd ${xsd_INSTALL}/libxsd
 
 )
-
+list(APPEND BioGears_DEPENDENCIES xsd)
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/xsd/install)
 message(STATUS "xsd is here : ${xsd_DIR}" )
 
 # Install Headers
@@ -154,7 +156,8 @@ ExternalProject_Add( xerces
         -DCMAKE_INSTALL_PREFIX:STRING=${xerces_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${xerces_INSTALL}/include
 )
-
+list(APPEND BioGears_DEPENDENCIES xerces)
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/xerces/install)
 # Install Headers
 install(DIRECTORY ${XercesC_INCLUDE_DIR}
         DESTINATION ${INSTALL_INC})
@@ -181,49 +184,70 @@ install(FILES ${X_LIB}
 
 message(STATUS "xerces is here : ${xerces_DIR}" )
 if(WIN32)
-##########################################
-## DIRENT                               ##
-## Platform generic file system utility,##
-## that is not included in msvc/mingw   ##
-##########################################
+  ##########################################
+  ## DIRENT                               ##
+  ## Platform generic file system utility,##
+  ## that is not included in msvc/mingw   ##
+  ##########################################
 
-message( STATUS "External project - dirent" )
-set(dirent_DIR "${CMAKE_BINARY_DIR}/dirent/src/dirent")
-set(dirent_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/dirent/install")
-ExternalProject_Add( dirent
-  PREFIX dirent
-  GIT_REPOSITORY "https://github.com/tronkko/dirent.git"
-  GIT_SHALLOW 1
-  INSTALL_DIR "${dirent_INSTALL}"
-  CMAKE_ARGS
-        -DBUILD_SHARED_LIBS:BOOL=OFF
-        -DCMAKE_INSTALL_PREFIX:STRING=${dirent_INSTALL}
-        -DINCLUDE_INSTALL_DIR:STRING=${dirent_INSTALL}/include
-)
-message(STATUS "dirent is here : ${dirent_DIR}" )
-
-
-# Install Headers
-install(DIRECTORY ${DIRENT_INCLUDE_DIR}
-        DESTINATION ${INSTALL_INC})
+  message( STATUS "External project - dirent" )
+  set(dirent_DIR "${CMAKE_BINARY_DIR}/dirent/src/dirent")
+  set(dirent_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/dirent/install")
+  ExternalProject_Add( dirent
+    PREFIX dirent
+    GIT_REPOSITORY "https://github.com/tronkko/dirent.git"
+    GIT_SHALLOW 1
+    INSTALL_DIR "${dirent_INSTALL}"
+    CMAKE_ARGS
+          -DBUILD_SHARED_LIBS:BOOL=OFF
+          -DCMAKE_INSTALL_PREFIX:STRING=${dirent_INSTALL}
+          -DINCLUDE_INSTALL_DIR:STRING=${dirent_INSTALL}/include
+  )
+  message(STATUS "dirent is here : ${dirent_DIR}" )
+  list(APPEND BioGears_DEPENDENCIES dirent)
+  list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/dirent/install)
+  # Install Headers
+  install(DIRECTORY ${DIRENT_INCLUDE_DIR}
+          DESTINATION ${INSTALL_INC})
 endif()
 
-## Generate the BioGears project after dependencies have been built
-#ExternalProject_Add( SetupBioGears
-#    PREFIX SetupBioGears
-#    DEPENDS Eigen log4cpp xsd xerces dirent
-#    SOURCE_DIR ${CMAKE_SOURCE_DIR}
-#    BINARY_DIR ${CMAKE_BINARY_DIR}
-#    CMAKE_ARGS
-#          -DSUPERBUILD:BOOL=OFF
-#  )
+# Support ccache
+if( CMAKE_VERSION VERSION_LESS 3.4 )
+  set( CMAKE_CXX_COMPILER_LAUNCHER_FLAG )
+  set( CMAKE_C_COMPILER_LAUNCHER_FLAG )
+else()
+  set( CMAKE_CXX_COMPILER_LAUNCHER_FLAG
+    -DCMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=${CMAKE_CXX_COMPILER_LAUNCHER} )
+  set( CMAKE_C_COMPILER_LAUNCHER_FLAG
+    -DCMAKE_C_COMPILER_LAUNCHER:FILEPATH=${CMAKE_C_COMPILER_LAUNCHER} )
+endif()
 
-  ## Generate the BioGears project after dependencies have been built
-#add_custom_target(SetupBioGears
-#                  DEPENDS eigen log4cpp xsd xerces dirent)
-#add_custom_command(TARGET SetupBioGears PRE_BUILD
-#  COMMAND cmake -DSUPERBUILD:BOOL=OFF  ${CMAKE_SOURCE_DIR}/CMakeLists.txt
-#  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/BioGearz)
-#message(STATUS "Where I want to put BG build : ${CMAKE_BINARY_DIR}")
-#add_custom_command(TARGET MakeBioGears POST_BUILD
-#  COMMAND ${CMAKE_COMMAND} -DConfig:STRING=GenData -P ${CMAKE_SOURCE_DIR}/cmake/devScripts.cmake)
+# ExternalProject_Add doesn't like to work with lists: it keeps only the first element
+string(REPLACE ";" "::" CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
+
+# Generate the BioGears project after dependencies have been built
+ExternalProject_Add( SetupBioGears
+    DEPENDS Eigen ${BioGears_DEPENDENCIES}
+    DOWNLOAD_COMMAND ""
+    DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}
+    SOURCE_DIR ${CMAKE_SOURCE_DIR}
+    BINARY_DIR ${CMAKE_BINARY_DIR}/SetupBioGears-build
+    CMAKE_GENERATOR ${CMAKE_GENERATOR}
+    BUILD_AWAYS 1
+    LIST_SEPARATOR ::
+    CMAKE_ARGS
+          -DSUPERBUILD:BOOL=OFF
+          -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
+          -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+          -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+          -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+          -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+          -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+          ${CMAKE_CXX_COMPILER_LAUNCHER_FLAG}
+          ${CMAKE_C_COMPILER_LAUNCHER_FLAG}
+          -DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
+          -DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
+          -DBUILD_SHARED_LIBS:BOOL=${shared}
+          -DBUILD_TESTING:BOOL=${BUILD_TESTING}
+          -DMAKECOMMAND:STRING=${MAKECOMMAND}
+  )
