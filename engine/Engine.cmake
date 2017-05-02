@@ -68,6 +68,7 @@ endif()
 target_link_libraries(BioGearsEngine CommonDataModel)
 
 add_custom_command(TARGET BioGearsEngine POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BioGearsEngine> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
 install(TARGETS BioGearsEngine 
         RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}

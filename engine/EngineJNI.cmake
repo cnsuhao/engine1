@@ -24,6 +24,7 @@ endif()
 target_link_libraries(BioGearsEngineJNI BioGearsEngineUnitTests)
 
 add_custom_command(TARGET BioGearsEngineJNI POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BioGearsEngineJNI> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
 install(TARGETS BioGearsEngineJNI 
         RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}

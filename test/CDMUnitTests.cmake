@@ -30,6 +30,7 @@ ENDIF()
 target_link_libraries(CommonDataModelUnitTests CommonDataModel)
 
 add_custom_command(TARGET CommonDataModelUnitTests POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModelUnitTests> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
 install(TARGETS CommonDataModelUnitTests 
         RUNTIME CONFIGURATIONS Release LIBRARY DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
