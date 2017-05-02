@@ -25,7 +25,7 @@ find_library(LOG4CPP_LIBRARIES
 if (LOG4CPP_INCLUDE_DIR AND LOG4CPP_LIBRARIES)
   set(LOG4CPP_FOUND TRUE)
   mark_as_advanced(LOG4CPP_LIBRARIES LOG4CPP_INCLUDE_DIR)
-elseif()
+else()
   message(FATAL_ERROR "Could NOT find LOG4CPP library")
 endif()
 

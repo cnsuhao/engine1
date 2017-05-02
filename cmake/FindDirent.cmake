@@ -18,7 +18,7 @@ find_path(DIRENT_INCLUDE_DIR dirent.h
 if (DIRENT_INCLUDE_DIR)
   set(DIRENT_FOUND TRUE)
   mark_as_advanced(DIRENT_INCLUDE_DIR)
-elseif()
+else()
   message(FATAL_ERROR "Could NOT find dirent")
 endif()
 
