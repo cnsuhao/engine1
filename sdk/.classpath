@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="howto/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/BioGears.jar"/>
+	<classpathentry kind="var" path="PHYSIOLOGY_HOME/bin/BioGears.jar"/>
 	<classpathentry kind="output" path="howto/build/java"/>
 </classpath>

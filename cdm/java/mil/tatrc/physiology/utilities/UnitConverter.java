@@ -37,11 +37,15 @@ public class UnitConverter
     
 //    try{Files.copy(new File(UCEDefsPath).toPath(), new File(UCEDefsHomePath).toPath(), REPLACE_EXISTING);}
 //    catch (IOException e){}
-    
-    if(!FileUtils.loadLibrary("xerces-c"))      // This is for building code synthesis with xcode
-      throw new RuntimeException("Could not find xerces library");
     List<String>libs = new ArrayList<String>();
-    libs.add("log4cpp");
+    if(System.getProperty("os.name").toLowerCase().startsWith("win"))
+    {
+      if(!FileUtils.loadLibrary("xerces-c"))      // This is for building code synthesis with xcode
+        throw new RuntimeException("Could not find xerces library");    
+      libs.add("log4cpp");
+    }
+    else
+      libs.add("liblog4cpp");
     libs.add("DataModelBindings");
     libs.add("CommonDataModel");
     libs.add("CommonDataModelUnitTests");
