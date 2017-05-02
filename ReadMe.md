@@ -48,8 +48,18 @@ git clone https://gitlab.kitware.com/BioGears/engine
 cd ..
 mkdir builds
 cd builds
-
-
+# feel free to make subfolders here, like msvc2017x64 or something
+# Generate a make file/msvc solution for the external dependencies
+# Note you need to provide cmake the source directory at the end (relative or absolute)
+cmake -DCMAKE_BUILD_TYPE:String=Release -DSUPERBUILD:BOOL=ON ../src
+# Build the makefile or solution
+make # if you are using visual studio, open the ExternalDependencies.sln and build the Release configuration
+# With the dependencies built, run cmake again to generate the engine solution/makefile
+cmake -DCMAKE_BUILD_TYPE:String=Release -DSUPERBUILD:BOOL=OFF ../src
+# Build the makefile or solution
+make # if you are using visual studio, open the BioGears.sln and build the Release configuration
+# make sure to run the INSTALL target to set up the SDK if you want to use it
+# You are ready to code and Run Tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Running and Testing
@@ -65,6 +75,20 @@ BioGears provides a few driver programs to execute the physiology libraries buil
 
 ### BioGears Scenario Driver
 
+The BioGears Scenario Driver is a simple C++ driver that reads a scenario XML file and creates a CSV file with results.
+See <a href="https://biogearsengine.com/documentation/_scenario_x_m_l_file.html">here</a> for more info.
+
+You will need to download the latest scenario/verification zip <a href="https://github.com/BioGearsEngine/Engine/releases/download/6.1.1-beta/BioGears_6.1.1-beta-verification-all.zip">here</a> and put the verification directory at the root of your source tree.
+In the near future, we will link the verification data to this repository, so it will be downloaded automatically.
+
+To run the driver, change directory in your cmd/bash shell to the bin directory and execute the following :
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# First ensure the release directory (or debug if that is what you are running) is on your path
+PATH=%PATH%;./release # for windows
+PATH=$PATH:./release # for linux
+BioGearsScenarioDriver ../verification/Scenarios/Patient/BasicStandard.xml 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ### Java Based Testing Suite
 
 BioGears provides a test harnes, written in Java, that will :
@@ -74,7 +98,7 @@ BioGears provides a test harnes, written in Java, that will :
 
 To run the test driver change directory in your cmd/bash shell to the bin directory and execute the Scripts.cmake in the following way :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-cmake -DTYPE:STRING=<option> -P ../cmake/Scripts.cmake
+cmake -DTYPE:STRING=<option> -P ../cmake/Scripts.cmake 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Where <option> can be one of the following :
@@ -110,7 +134,13 @@ Execute the following script from the bin directory:
 cmake -DTYPE:STRING=genStates -P ../cmake/Scripts.cmake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Now you can generate the SDK by calling CPack as follows :
+Run the INSTALL target to copy the header files and libraries required to integrate BioGears into your application.
+Headers will be copied to the sdk/include directory
+Libraries will be copied to the sdk/lib directory
+And your bin directory is still your valid working directory.
+There is a CMake file in the sdk folder that will build an executable with a collection of howto
+files that demostraight how to use the BioGears API. Choose the examples to run in the BioGearsEngineHowTo.cpp file.
+There is also an example of using a Java based BioGears interface with an eclipse project you can explore as well.
 
 ## Programmatics
 

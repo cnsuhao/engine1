@@ -1,117 +1,122 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-PROJECT(BioGearsSDK)
-CMAKE_POLICY(SET CMP0015 NEW)
+cmake_minimum_required(VERSION 3.2)
 
-SET(env "" CACHE STRING "")
+project(BioGearsSDK)
 
-IF(env STREQUAL "")
-SET(env "msvc" CACHE STRING "")
-ENDIF()
+# Policy to address @foo@ variable expansion
+if(POLICY CMP0053)
+  cmake_policy(SET CMP0053 NEW)
+endif()
 
-IF(env STREQUAL "msvc")
-    SET(XSD_VER "xsd-4.0.0-i686-windows" CACHE TYPE INTERNAL FORCE)
-    SET(XERCES_VER "xerces-c-3.1.1" CACHE TYPE INTERNAL FORCE)
-ELSEIF(env STREQUAL "mingw")
-    SET(XSD_VER "xsd-4.0.0-i686-windows" CACHE TYPE INTERNAL FORCE)
-    SET(XERCES_VER "xerces-c-3.1.2" CACHE TYPE INTERNAL FORCE)
-ELSEIF(env STREQUAL "eclipsemingw")
-    SET(XSD_VER "xsd-4.0.0-i686-windows" CACHE TYPE INTERNAL FORCE)
-    SET(XERCES_VER "xerces-c-3.1.2" CACHE TYPE INTERNAL FORCE)
-ELSEIF(env STREQUAL "xcode")
-    SET(XSD_VER "xsd-4.0.0-i686-macosx" CACHE TYPE INTERNAL FORCE)
-    SET(XERCES_VER "xerces-c-3.1.2" CACHE TYPE INTERNAL FORCE)
-ELSEIF(env STREQUAL "unixMake")
-    SET(XSD_VER "xsd-4.0.0-x86_64-linux-gnu" CACHE TYPE INTERNAL FORCE)
-    SET(XERCES_VER "xerces-c-3.1.2" CACHE TYPE INTERNAL FORCE)
-ELSEIF(env STREQUAL "raspberryPi")
-    SET(XSD_VER "xsd-4.0.0-x86_64-linux-gnu" CACHE TYPE INTERNAL FORCE)
-    SET(XERCES_VER "xerces-c-3.1.2" CACHE TYPE INTERNAL FORCE)
-    SET(CMAKE_CXX_COMPILER "arm-linux-gnueabihf-g++")
-ELSE()
-    MESSAGE(FATAL_ERROR "env variable has not been specified.  Make sure when calling cmake a valid environment is specified via -Denv=")
-ENDIF()
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  message( STATUS "64 bits compiler detected" )    
+  set( EX_CONFIG "64" )
+  set(FIND_LIBRARY_USE_LIB64_PATHS ON)
+else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) 
+  message( STATUS "32 bits compiler detected" )
+  set( EX_CONFIG "" )
+  set(FIND_LIBRARY_USE_LIB64_PATHS OFF)
+endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-SET(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL FORCE )
+SET(CONFIGURATION)
+if(WIN32)
+  set(CONFIGURATION ${CMAKE_CFG_INTDIR})
+else()
+  set(CONFIGURATION ${CMAKE_BUILD_TYPE})
+endif()
+string(TOLOWER ${CONFIGURATION} CONFIGURATION)
 
-IF(MSVC)
-	SET(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1" CACHE TYPE INTERNAL FORCE)
-ENDIF()
+if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
 
-IF(MINGW)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")#turn on C++11
-ENDIF()
+set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL FORCE )
 
-IF(APPLE)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
-ENDIF()
+if(MSVC)
+  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1" CACHE TYPE INTERNAL FORCE)
+endif()
 
-IF(CMAKE_GENERATOR STREQUAL "Unix Makefiles")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-ENDIF()
+if(MINGW)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")#turn on C++11
+endif()
 
-SET(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
-SET(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
+if(APPLE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+endif()
 
-IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-    MESSAGE( "64 bits compiler detected" )
-    SET( EX_PLATFORM 64 )
-    SET( EX_CONFIG "64" )
-	SET(FIND_LIBRARY_USE_LIB64_PATHS ON)
-ELSE( CMAKE_SIZEOF_VOID_P EQUAL 8 ) 
-    MESSAGE( "32 bits compiler detected" )
-    SET( EX_PLATFORM 32 )
-    SET( EX_CONFIG "" )
-	SET(FIND_LIBRARY_USE_LIB64_PATHS OFF)
-ENDIF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+if(CMAKE_GENERATOR STREQUAL "Unix Makefiles")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+if(UNIX)
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
+endif()
 
-ADD_DEFINITIONS(-DXSD_CXX11)
+set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
+set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 
-IF(UNIX)
-    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
-ENDIF()
-
-FILE(GLOB SRC_FILES
-		"howto/cpp/*.h"
-		"howto/cpp/*.cpp"
-	)
-SOURCE_GROUP("" FILES ${SRC_FILES})
-SET(SOURCE ${SRC_FILES})
-ADD_EXECUTABLE(HowToDriver ${SOURCE})
+file(GLOB SRC_FILES
+  "howto/cpp/*.h"
+  "howto/cpp/*.cpp"
+)
+source_group("" FILES ${SRC_FILES})
+set(SOURCE ${SRC_FILES})
+add_executable(HowToDriver ${SOURCE})
 
 # Preprocessor Definitions and Include Paths
-SET(FLAGS)
-TARGET_INCLUDE_DIRECTORIES(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-TARGET_INCLUDE_DIRECTORIES(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/cdm)
-TARGET_INCLUDE_DIRECTORIES(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/log4cpp/include)
-TARGET_INCLUDE_DIRECTORIES(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/Eigen-3.3.1)
-SET_TARGET_PROPERTIES(HowToDriver PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
+set(FLAGS)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/cdm)
+set_target_properties(HowToDriver PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
 # Dependent Libraries
-IF(MSVC)
-FILE(GLOB D_LIB_FILES
-		"lib/Debug${EX_CONFIG}/*.lib"
-	)
-FILE(GLOB O_LIB_FILES
-		"lib/Release${EX_CONFIG}/*.lib"
-	)
-ELSEIF(UNIX)  
-FILE(GLOB D_LIB_FILES
-		"lib/*.so"
-	)
-FILE(GLOB O_LIB_FILES
-		"lib/*.so"
-	)
-ELSE()
-FILE(GLOB D_LIB_FILES
-	"lib/*.lib"
-	)
-FILE(GLOB O_LIB_FILES
-	"lib/*.lib"
-)
-ENDIF()
+if(MSVC)
+  file(GLOB D_LIB_FILES
+    "lib/debug${EX_CONFIG}/BioGearsEngine.lib"
+    "lib/debug${EX_CONFIG}/CommonDataModel.lib"
+    "lib/debug${EX_CONFIG}/DataModelBindings.lib"
+    "lib/debug${EX_CONFIG}/log4cpp.lib"
+    "lib/debug${EX_CONFIG}/xerces-c.lib"
+  )
+  file(GLOB O_LIB_FILES
+    "lib/release${EX_CONFIG}/BioGearsEngine.lib"
+    "lib/release${EX_CONFIG}/CommonDataModel.lib"
+    "lib/release${EX_CONFIG}/DataModelBindings.lib"
+    "lib/release${EX_CONFIG}/log4cpp.lib"
+    "lib/release${EX_CONFIG}/xerces-c.lib"
+  )
+else(UNIX)  
+  file(GLOB D_LIB_FILES
+    "lib/debug${EX_CONFIG}/BioGearsEngine.so"
+    "lib/debug${EX_CONFIG}/CommonDataModel.so"
+    "lib/debug${EX_CONFIG}/DataModelBindings.so"
+    "lib/debug${EX_CONFIG}/log4cpp.so"
+    "lib/debug${EX_CONFIG}/xerces-c.so"
+  )
+  file(GLOB O_LIB_FILES
+    "lib/release${EX_CONFIG}/BioGearsEngine.so"
+    "lib/release${EX_CONFIG}/CommonDataModel.so"
+    "lib/release${EX_CONFIG}/DataModelBindings.so"
+    "lib/release${EX_CONFIG}/log4cpp.so"
+    "lib/release${EX_CONFIG}/xerces-c.so"
+  )
+else()
+  file(GLOB D_LIB_FILES
+    "lib/debug/BioGearsEngine.lib"
+    "lib/debug/CommonDataModel.lib"
+    "lib/debug/DataModelBindings.lib"
+    "lib/debug/log4cpp.lib"
+    "lib/debug/xerces-c.lib"
+  )
+  file(GLOB O_LIB_FILES
+    "lib/release/BioGearsEngine.lib"
+    "lib/release/CommonDataModel.lib"
+    "lib/release/DataModelBindings.lib"
+    "lib/release/log4cpp.lib"
+    "lib/release/xerces-c.lib"
+  )
+endif()
 
-FOREACH(file ${D_LIB_FILES})
-	TARGET_LINK_LIBRARIES(HowToDriver debug ${file})
-ENDFOREACH()
-FOREACH(file ${O_LIB_FILES})
-	TARGET_LINK_LIBRARIES(HowToDriver optimized ${file})
-ENDFOREACH()
+foreach(file ${D_LIB_FILES})
+	target_link_libraries(HowToDriver debug ${file})
+endforeach()
+foreach(file ${O_LIB_FILES})
+	target_link_libraries(HowToDriver optimized ${file})
+endforeach()

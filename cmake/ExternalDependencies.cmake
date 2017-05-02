@@ -134,6 +134,11 @@ install(DIRECTORY ${xsd_INSTALL}/libxsd/xsd
 ## Hopefully this branch will be merged to main in 2017 ##
 
 message( STATUS "External project - XERCES" )
+if(WIN32)
+  set(xerces_TRANSCODER "windows")
+elseif()
+  set(xerces_TRANSCODER "icu")
+endif()
 
 set(xerces_VERSION "3.1.x" )
 set(xerces_DIR "${CMAKE_BINARY_DIR}/xerces/src/xerces")
@@ -145,6 +150,7 @@ ExternalProject_Add( xerces
   INSTALL_DIR "${xerces_INSTALL}"
   CMAKE_ARGS
         -DBUILD_SHARED_LIBS:BOOL=ON
+        -Dtranscoder:STRING=${xerces_TRANSCODER}
         -DCMAKE_INSTALL_PREFIX:STRING=${xerces_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${xerces_INSTALL}/include
 )

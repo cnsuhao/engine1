@@ -1,12 +1,5 @@
 project(BioGears)
 
-# Policy to address @foo@ variable expansion
-if(POLICY CMP0053)
-  cmake_policy(SET CMP0053 NEW)
-endif()
-
-
-
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 MACRO(install_headers SRC_DIR DEST)
   file(GLOB_RECURSE HEADER_LIST 

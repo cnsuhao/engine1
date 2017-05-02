@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.2)
 
 project(BioGears_SuperBuild)
 
+# Policy to address @foo@ variable expansion
+if(POLICY CMP0053)
+  cmake_policy(SET CMP0053 NEW)
+endif()
+
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   message( STATUS "64 bits compiler detected" )    
   set( EX_CONFIG "64" )
