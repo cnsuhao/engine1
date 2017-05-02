@@ -67,13 +67,15 @@ install(DIRECTORY ${log4cpp_INSTALL}/include
 # Install Bin
 if(WIN32)
   set(L4C_DLL ${log4cpp_INSTALL}/bin/log4cpp.dll)
-  install(FILES ${L4C_DLL}
-    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(FILES ${L4C_DLL}
-    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(FILES ${L4C_DLL}
-    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+elseif()
+  set(L4C_DLL ${log4cpp_INSTALL}/bin/log4cpp.so)
 endif()
+install(FILES ${L4C_DLL}
+    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+install(FILES ${L4C_DLL}
+    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+install(FILES ${L4C_DLL}
+    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
 # Install Libs
 if(WIN32)
   set(L4C_LIB ${log4cpp_INSTALL}/lib/log4cpp.lib)
@@ -138,9 +140,7 @@ install(DIRECTORY ${xsd_INSTALL}/libxsd/xsd
 
 message( STATUS "External project - XERCES" )
 if(WIN32)
-  set(xerces_TRANSCODER "windows")
-else()
-  set(xerces_TRANSCODER "icu")
+  set(xerces_TRANSCODER "-Dtranscoder:STRING=windows")
 endif()
 
 set(xerces_VERSION "3.1.x" )
@@ -153,7 +153,8 @@ ExternalProject_Add( xerces
   INSTALL_DIR "${xerces_INSTALL}"
   CMAKE_ARGS
         -DBUILD_SHARED_LIBS:BOOL=ON
-        -Dtranscoder:STRING=${xerces_TRANSCODER}
+        -Dnetwork:BOOL=OFF
+        ${xerces_TRANSCODER}
         -DCMAKE_INSTALL_PREFIX:STRING=${xerces_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${xerces_INSTALL}/include
 )
@@ -164,19 +165,23 @@ install(DIRECTORY ${xerces_INSTALL}/include
 # Install Bin          
 if(WIN32)
   set(X_DLL ${xerces_INSTALL}/bin/xerces-c.dll)
-  install(FILES ${X_DLL}
+else()
+  set(X_LIB ${xerces_INSTALL}/lib/libxerces-c.so
+            ${xerces_INSTALL}/lib/libxerces-c.so.3.1)
+endif()
+install(FILES ${X_DLL}
     DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
   install(FILES ${X_DLL}
     DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
   install(FILES ${X_DLL}
     DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-endif()
 
 # Install Libs
 if(WIN32)
   set(X_LIB ${xerces_INSTALL}/lib/xerces-c.lib)
 else()
-  set(X_LIB ${xerces_INSTALL}/lib/libxerces-c.so)
+  set(X_LIB ${xerces_INSTALL}/lib/libxerces-c.so
+            ${xerces_INSTALL}/lib/libxerces-c.so.3.1)
 endif()
 install(FILES ${X_LIB}
   DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
