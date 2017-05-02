@@ -25,7 +25,7 @@ find_program(XSD_EXECUTABLE
 if (XSD_INCLUDE_DIR AND XSD_EXECUTABLE)
   set(XSD_FOUND TRUE)
   mark_as_advanced(XSD_EXECUTABLE XSD_INCLUDE_DIR)
-elseif()
+else()
   message(FATAL_ERROR "Could NOT find XSD library")
 endif()
 

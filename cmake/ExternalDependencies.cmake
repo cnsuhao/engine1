@@ -70,6 +70,7 @@ if(WIN32)
 else()
   set(L4C_DLL ${log4cpp_INSTALL}/lib/liblog4cpp.so)
 endif()
+
 install(FILES ${L4C_DLL}
     DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
 install(FILES ${L4C_DLL}
@@ -164,19 +165,20 @@ ExternalProject_Add( xerces
 # Install Headers
 install(DIRECTORY ${xerces_INSTALL}/include
         DESTINATION ${INSTALL_INC})
-# Install Bin          
 if(WIN32)
   set(X_DLL ${xerces_INSTALL}/bin/xerces-c.dll)
+  set(X_DLL_output xerces-c.dll)
 else()
-  set(X_DLL ${xerces_INSTALL}/lib/libxerces-c.so
-            ${xerces_INSTALL}/lib/libxerces-c.so.3.1)
+  set(X_DLL ${xerces_INSTALL}/lib/libxerces-c.so.3.1)
+  set(X_DLL_output libxerces-c.so)
 endif()
+
 install(FILES ${X_DLL}
-    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(FILES ${X_DLL}
-    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(FILES ${X_DLL}
-    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  DESTINATION ${INSTALL_BIN}/release${EX_CONFIG} RENAME ${X_DLL_output})
+install(FILES ${X_DLL}
+  DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG} RENAME ${X_DLL_output})
+install(FILES ${X_DLL}
+  DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG} RENAME ${X_DLL_output})
 
 # Install Libs
 if(WIN32)
