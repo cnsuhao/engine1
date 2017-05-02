@@ -48,7 +48,7 @@ git clone https://gitlab.kitware.com/BioGears/engine
 cd ..
 mkdir builds
 cd builds
-# feel free to make subfolders here, like msvc2017x64 or something
+# Feel free to make subfolders here, like msvc2017x64 or something
 # Generate a make file/msvc solution for the external dependencies
 # Note you need to provide cmake the source directory at the end (relative or absolute)
 cmake -DCMAKE_BUILD_TYPE:String=Release -DSUPERBUILD:BOOL=ON ../src
@@ -58,7 +58,7 @@ make # if you are using visual studio, open the ExternalDependencies.sln and bui
 cmake -DCMAKE_BUILD_TYPE:String=Release -DSUPERBUILD:BOOL=OFF ../src
 # Build the makefile or solution
 make # if you are using visual studio, open the BioGears.sln and build the Release configuration
-# make sure to run the INSTALL target to set up the SDK if you want to use it
+# Make sure to run the INSTALL target to set up the SDK if you want to use it
 # You are ready to code and Run Tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -109,6 +109,8 @@ Where <option> can be one of the following :
   - With exception of the Characterize.config, this is a legacy testing configuration that will not work  
 - SystemValidation - Will run the ../test/config/ValidationSystems configuration plus create validation tables from comparing results to ../test/validation
 - PatientValidation - Will run the ../test/config/ValidationPatients configuration plus create validation tables from comparing results to ../test/validation
+
+<b>Results will be place in the bin/test_results directory </b>
 
 #### Configuration Files
 
