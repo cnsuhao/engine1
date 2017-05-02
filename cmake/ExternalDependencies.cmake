@@ -67,8 +67,8 @@ install(DIRECTORY ${log4cpp_INSTALL}/include
 # Install Bin
 if(WIN32)
   set(L4C_DLL ${log4cpp_INSTALL}/bin/log4cpp.dll)
-elseif()
-  set(L4C_DLL ${log4cpp_INSTALL}/bin/log4cpp.so)
+else()
+  set(L4C_DLL ${log4cpp_INSTALL}/lib/liblog4cpp.so)
 endif()
 install(FILES ${L4C_DLL}
     DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
@@ -168,7 +168,7 @@ install(DIRECTORY ${xerces_INSTALL}/include
 if(WIN32)
   set(X_DLL ${xerces_INSTALL}/bin/xerces-c.dll)
 else()
-  set(X_LIB ${xerces_INSTALL}/lib/libxerces-c.so
+  set(X_DLL ${xerces_INSTALL}/lib/libxerces-c.so
             ${xerces_INSTALL}/lib/libxerces-c.so.3.1)
 endif()
 install(FILES ${X_DLL}
