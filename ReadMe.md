@@ -124,7 +124,8 @@ If you are going to run the BioGearsSceanrioDriver through visual studio follow 
 - Click on 'Configuration Options->Debugging' on the left tree in the properties dialog
 - Put the directory to your bin directory as the 'Working Directory'
 - Enter the relative path to the associated directory containing the dlls for your selected configuration into the 'Envirionment' field.
-  - For example, this is what you would enter to run against the 64bit release dll's: PATH=PATH;./release64
+  - For example, this is what you would enter to run against the 64bit release dll's: PATH=PATH;./release
+  - and this is what you would enter to run against the 32bit release dll's : PATH=PATH;./release32
   
 <b> You will also want to do this for the UnitTestDriver if you want to run that through visual studio as well </b>
 
