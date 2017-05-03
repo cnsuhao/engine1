@@ -50,11 +50,13 @@ There are many ways to do this, here is a simple walk through to get you going w
 - You can then add the JAVA_HOME variable to a bash shell by typing
 `export JAVA_HOME=<the path listed by the updata-alternatives>
 - You can also add it to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), for all shells with the following
-`JAVA_HOME='/usr/java/jdk1.8.0_20'
-`export JAVA_HOME
-`PATH="$JAVA_HOME/bin:$PATH"
-`export PATH
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+JAVA_HOME='/usr/java/jdk1.8.0_20'
+export JAVA_HOME
+PATH="$JAVA_HOME/bin:$PATH"
+export PATH
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Building BioGears
 
