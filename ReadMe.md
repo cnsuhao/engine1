@@ -48,11 +48,11 @@ There are many ways to do this, here is a simple walk through to get you going w
  - If you don't have a Java SDK, I recommend using an installer like Synaptic
  - Search for 'jdk' by name and install the 'openjdk-8-jdk' 
 - You can then add the JAVA_HOME variable to a bash shell by typing
-    - `export JAVA_HOME=(the path listed by a call to updata-alternatives --list java)
+    - `export JAVA_HOME=(a path listed by a call to updata-alternatives --list java)
 - You can the following to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), to get the path in all shells
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-JAVA_HOME='/usr/java/jdk1.8.0_20'
+JAVA_HOME='(a path listed by a call to updata-alternatives --list java)'
 export JAVA_HOME
 PATH="$JAVA_HOME/bin:$PATH"
 export PATH
