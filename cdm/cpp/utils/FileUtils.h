@@ -28,7 +28,7 @@ specific language governing permissions and limitations under the License.
 
 #include <unistd.h>
 
-#if defined(__clang__)
+#if defined(__APPLE__ && __clang__)
 #include <sys/syslimits.h>
 #endif
 

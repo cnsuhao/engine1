@@ -9,11 +9,11 @@ endif()
 
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   message( STATUS "64 bits compiler detected" )    
-  set( EX_CONFIG "64" )
+  set( EX_CONFIG "" )
   set(FIND_LIBRARY_USE_LIB64_PATHS ON)
 else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) 
   message( STATUS "32 bits compiler detected" )
-  set( EX_CONFIG "" )
+  set( EX_CONFIG "32" )
   set(FIND_LIBRARY_USE_LIB64_PATHS OFF)
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
