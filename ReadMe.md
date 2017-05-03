@@ -59,7 +59,7 @@ cmake -DCMAKE_BUILD_TYPE:String=Release ../src
 # Build the install target or project 
 make install 
 # if you are using visual studio, open the ExternalDependencies.sln and select the Release configuration and the INSTALL project
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 When the build is complete, MSVC users can open the BioGears.sln in the build/SetupBioGears-build directory.
 Unix based systems can also change to this directory for building as well.
 
