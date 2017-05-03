@@ -35,9 +35,13 @@ Add a JAVA_HOME environment variable to point to the Java installation and add i
 
 ## Building BioGears
 
-BioGears builds out of source, meaning the code base is seperated from the build files.
+The BioGears build is directed by CMake to ensure it can be build on various platforms. 
+The code is build by a CMake 'superbuild', meaning as part of the build, CMake will download any
+dependent libraries and compile those before it builds BioGears. 
+The build is also out of source, meaning the code base is seperated from the build files.
 This means you will need two folders for BioGears, one for the source code and one for the build files.
 Generally, I create a single directory to house these two folders.
+Here is the quickest way to pull and build BioGears via a cmd/bash shell:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 mkdir BioGears
@@ -51,17 +55,13 @@ cd builds
 # Feel free to make subfolders here, like msvc2017x64 or something
 # Generate a make file/msvc solution for the external dependencies
 # Note you need to provide cmake the source directory at the end (relative or absolute)
-cmake -DCMAKE_BUILD_TYPE:String=Release -DSUPERBUILD:BOOL=ON ../src
-# Build the makefile or solution
-make # if you are using visual studio, open the ExternalDependencies.sln and build the Release configuration
-# MAKE SURE YOU BUILD THE INSTALL TARGET/PROJECT
-# With the dependencies built, run cmake again to generate the engine solution/makefile
-cmake -DCMAKE_BUILD_TYPE:String=Release -DSUPERBUILD:BOOL=OFF ../src
-# Build the makefile or solution
-make # if you are using visual studio, open the BioGears.sln and build the Release configuration
-# Make sure to run the INSTALL target to set up the SDK if you want to use it
-# You are ready to code and Run Tests
+cmake -DCMAKE_BUILD_TYPE:String=Release ../src
+# Build the install target or project 
+make install 
+# if you are using visual studio, open the ExternalDependencies.sln and select the Release configuration and the INSTALL project
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When the build is complete, MSVC users can open the BioGears.sln in the build/SetupBioGears-build directory.
+Unix based systems can also change to this directory for building as well.
 
 ## Running and Testing
 
