@@ -58,8 +58,8 @@ public class FileUtils
   public static boolean loadLibrary(String lib)
   {    
     String location = System.getProperty("user.dir")+"/release";//"relwithdebinfo"
-    if (System.getProperty("sun.arch.data.model").equals("64"))
-      location += "64";
+    if (System.getProperty("sun.arch.data.model").equals("32"))
+      location += "32";
 
     return loadLibrary(lib,location);
   }
