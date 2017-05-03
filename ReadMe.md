@@ -80,7 +80,7 @@ cd builds
 # Feel free to make subfolders here, like msvc2017x64 or something
 # Generate a make file/msvc solution for the external dependencies
 # Note you need to provide cmake the source directory at the end (relative or absolute)
-cmake -DCMAKE_BUILD_TYPE:String=Release ../src
+cmake -DCMAKE_BUILD_TYPE:STRING=Release ../src
 # Build the install target or project 
 make install 
 # if you are using visual studio, open the ExternalDependencies.sln and select the Release configuration and the INSTALL project
