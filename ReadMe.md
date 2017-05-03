@@ -23,15 +23,38 @@ you will still need to have the following tools installed (along with your choic
 
 ### CMake
 Go to the cmake website, `https://cmake.org/download`, and download the appropriate distribution.
-Ensure that cmake is on your PATH and available in your cmd/bash shell.
+Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 
 ### Java JDK
 
 The test suite and data generate tools used by BioGears is written in Java.
 While there is no dependency on Java when integrating BioGears with your application, it is currently required to build/develop BioGears.
-You can get the JDK <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">here.</a> 
+You can get the </a> 
 
-Add a JAVA_HOME environment variable to point to the Java installation and add it to the system PATH. 
+Add a JAVA_HOME environment variable to point to the Java installation and add it to the system PATH.<br>
+There are many ways to do this, here is a simple walk through to get you going with a JDK.
+
+#### Windows
+- Download the Windows x64 JDK <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">here.
+- Run the installer.
+- Goto your Control Panel->System and click Advanced system settings on the left. <br>
+- Click the 'Environment Variables' button and add JAVA_HOME as a new 'System variables'.<br>
+- Set the Value to something like: C:\Program Files\Java\jdk1.8.0_121<br>
+    - It's a good idea to add the JDK to the system PATH by adding this to the beginning: %JAVA_HOME%/bin;
+- Make sure to start a new cmd window.<br>
+
+#### Linux
+- You can find where java is by running `update-alternatives --list java <br>
+ - If you don't have a Java SDK, I recommend using an installer like Synaptic
+ - Search for 'jdk' by name and install the 'openjdk-8-jdk' 
+- You can then add the JAVA_HOME variable to a bash shell by typing
+`export JAVA_HOME=<the path listed by the updata-alternatives>
+- You can also add it to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), for all shells with the following
+`JAVA_HOME='/usr/java/jdk1.8.0_20'
+`export JAVA_HOME
+`PATH="$JAVA_HOME/bin:$PATH"
+`export PATH
+
 
 ## Building BioGears
 
@@ -89,6 +112,7 @@ PATH=%PATH%;./release # for windows
 PATH=$PATH:./release # for linux
 BioGearsScenarioDriver ../verification/Scenarios/Patient/BasicStandard.xml 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<b> .csv and .log files will be placed in the bin directory </b>
 
 If you are going to run the BioGearsSceanrioDriver through visual studio follow these steps
 - Right-click the BioGearsScenarioDriver project and select 'Set as Startup Project'
@@ -104,10 +128,11 @@ If you are going to run the BioGearsSceanrioDriver through visual studio follow 
 
 ### Java Based Testing Suite
 
-BioGears provides a test harnes, written in Java, that will :
-- Drive the BioGearsScenarioDrive
-- Compare the generated csv results to a baseline csv file and report any differences
-- Generate an plot image file for each data column of the csv file over the time of the scenario
+BioGears provides a test harnes, written in Java, that will process a ./test/config/*.config file by doing the following :
+- For each line in the config file :
+    - Run the BioGearsScenarioDriver or UnitTestDriver (depends on the line)
+    - Compare the generated csv results to a baseline csv file and report any differences
+    - Generate an plot image file for each data column of the csv file over the time of the scenario
 
 To run the test driver change directory in your cmd/bash shell to the bin directory and execute the Scripts.cmake in the following way :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
@@ -132,29 +157,28 @@ The configuration files, referenced above, provied the testing suite direction o
 
 ## Creating the Sofware Developmenet Kit (SDK)
 
-BioGears provides an SDK that contains all the files needed to integrate its libraries into your application.
+In the BioGears source code tree is an sdk folder.
+This folder provides examples of how to use BioGears.
+During the build and install, all the files needed to integrate its libraries into your application are placed into this folder.
+External applications only need to reference this directory for headers and libraries for their build.
 The SDK contains the following folders
-- bin - binaries and xml datafiles
 - include - headers files needed for code integration
 - lib - libraries needed for code integration
 - howto - a set of simple drivers (in both C++ and Java) showing how to use BioGears
 
-The SDK requires both the data generated from the genData script option, as well as patient state data generated from the genStates script option.
+Note, your application will still need to execute within the bin directory as it has the binaries and data files in it.
+
+There is a CMakeLists.txt in the sdk folder that you can also run to build and run any of the provided howto examples.
+You can edit the BioGearsEngineHowTo.cpp to run a particular example.
+When running the SDK, it requires both the data generated from the genData script option, as well as patient state data generated from the genStates script option.
 To generate these patient states, exeute the following option :
 
-Once you have build the code base, you must generate the data required by the BioGears engine.
 Execute the following script from the bin directory:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 cmake -DTYPE:STRING=genStates -P ../cmake/Scripts.cmake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Run the INSTALL target to copy the header files and libraries required to integrate BioGears into your application.
-Headers will be copied to the sdk/include directory
-Libraries will be copied to the sdk/lib directory
-And your bin directory is still your valid working directory.
-There is a CMake file in the sdk folder that will build an executable with a collection of howto
-files that demostraight how to use the BioGears API. Choose the examples to run in the BioGearsEngineHowTo.cpp file.
 There is also an example of using a Java based BioGears interface with an eclipse project you can explore as well.
 
 ## Programmatics
