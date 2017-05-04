@@ -45,7 +45,7 @@ endif()
 
 set (SUPERBUILD ON CACHE BOOL "Initial pull and build of all dependent libraries/executables")
 if(SUPERBUILD)
-  include(cmake/ExternalDependencies.cmake)
+  include(SuperBuild.cmake)
   return()
 else()
   include(BioGears.cmake)

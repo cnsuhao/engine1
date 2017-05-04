@@ -80,13 +80,18 @@ cd builds
 # Feel free to make subfolders here, like msvc2017x64 or something
 # Generate a make file/msvc solution for the external dependencies
 # Note you need to provide cmake the source directory at the end (relative or absolute)
-cmake -DCMAKE_BUILD_TYPE:STRING=Release ../src
-# Build the install target or project 
+# On Linux/OSX/MinGW
+cmake ../src
+# For MSVC
+cmake Visual Studio 15 2017 Win64 # Or use the CMake GUI
+# Build the install target/project
+# On Linux/OSX/MinGW 
 make install 
-# if you are using visual studio, open the ExternalDependencies.sln and select the Release configuration and the INSTALL project
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When the build is complete, MSVC users can open the BioGears.sln in the build/SetupBioGears-build directory.
-Unix based systems can also change to this directory for building as well.
+# For MSVC
+# Open the OuterBuild.sln and build the INSTALL project (It will build everything!)
+# When the build is complete, MSVC users can close the OuterBuild solution, and open the BioGears.sln located in the InnerBuild directory.
+# Unix based systems can also change to this directory for building as well, especially for building debug.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Running and Testing
 

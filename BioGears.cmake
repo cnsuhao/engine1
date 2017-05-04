@@ -44,19 +44,20 @@ if(UNIX)
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
 endif()
 
+message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 
 find_package(Dirent REQUIRED)
 find_package(Eigen3 3.3.3 REQUIRED)
-find_package(Log4cpp REQUIRED)
 find_package(XercesC 3.1.0 REQUIRED)
 find_package(XSD REQUIRED)
 
-ADD_SUBDIRECTORY(schema)
-ADD_SUBDIRECTORY(cdm)
-ADD_SUBDIRECTORY(engine)
-ADD_SUBDIRECTORY(test)
+add_subdirectory("${log4cpp_DIR}" "${log4cpp_DIR}-build")
+add_subdirectory(schema)
+add_subdirectory(cdm)
+add_subdirectory(engine)
+add_subdirectory(test)
 
 # TODO put a USE_JAVA option in (you would get no JNI, jar, and test suite, but maybe you just want the C++ SDK)
 # Java Compiling

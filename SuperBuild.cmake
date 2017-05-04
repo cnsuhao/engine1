@@ -1,5 +1,11 @@
 include(ExternalProject)
-project(ExternalDependencies)
+project(OuterBuild)
+
+# These dependent libs should only be build in release
+# There should not be a need to debug into xerces, but if 
+# you really want to, you can go into the xerces dir and build 
+# a debug version of the library
+set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE INTERNAL FORCE )
 ##################################
 ## EIGEN                        ##
 ## Used for general matrix math ##
@@ -49,47 +55,20 @@ ExternalProject_Add( log4cpp
   UPDATE_COMMAND 
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp.cmake ${log4cpp_DIR}/CMakeLists.txt
     COMMAND ${CONFIGURE}
-  INSTALL_DIR "${log4cpp_INSTALL}"
-  CMAKE_ARGS
-        -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-        -DCMAKE_INSTALL_PREFIX:STRING=${log4cpp_INSTALL}
-        -DINCLUDE_INSTALL_DIR:STRING=${log4cpp_INSTALL}/include
+# Build this in the Inner build
+# It will be easier to switch cofigurations in MSVC/XCode
+# INSTALL_DIR "${log4cpp_INSTALL}"
+# CMAKE_ARGS
+#       -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
+#       -DCMAKE_INSTALL_PREFIX:STRING=${log4cpp_INSTALL}
+#       -DINCLUDE_INSTALL_DIR:STRING=${log4cpp_INSTALL}/include
+# do nothing
+  CONFIGURE_COMMAND "" 
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ""
 )
 list(APPEND BioGears_DEPENDENCIES log4cpp)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/log4cpp/install)
-# You should only be building the release versions of these libs
-# This will copy those release versions to all supported configuration locations
-# If you need to debug into these libraries, you can, just know that the release
-# libs will be replaced with debug versions. 
-
-# Install Headers
-install(DIRECTORY ${log4cpp_INSTALL}/include
-        DESTINATION ${INSTALL_INC})
-# Install Bin
-if(WIN32)
-  set(L4C_DLL ${log4cpp_INSTALL}/bin/log4cpp.dll)
-else()
-  set(L4C_DLL ${log4cpp_INSTALL}/lib/liblog4cpp.so)
-endif()
-
-install(FILES ${L4C_DLL}
-    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-install(FILES ${L4C_DLL}
-    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-install(FILES ${L4C_DLL}
-    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-# Install Libs
-if(WIN32)
-  set(L4C_LIB ${log4cpp_INSTALL}/lib/log4cpp.lib)
-else()
-  set(L4C_LIB ${log4cpp_INSTALL}/lib/liblog4cpp.so)
-endif()
-install(FILES ${L4C_LIB}
-  DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
-install(FILES ${L4C_LIB}
-  DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
-install(FILES ${L4C_LIB}
-  DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
 
 message(STATUS "log4cpp is here : ${log4cpp_DIR}" )
 
@@ -138,8 +117,9 @@ install(DIRECTORY ${xsd_INSTALL}/libxsd/xsd
 ## XERCES                    ##
 ## XML Serialization support ##
 ###############################
-## NOTE : This is using a branch that supports CMake    ##
-## Hopefully this branch will be merged to main in 2017 ##
+# NOTE : This is using a branch that supports CMake    #
+# Hopefully this branch will be merged to main in 2017 #
+
 
 message( STATUS "External project - XERCES" )
 if(WIN32)
@@ -162,6 +142,7 @@ ExternalProject_Add( xerces
         ${xerces_TRANSCODER}
         -DCMAKE_INSTALL_PREFIX:STRING=${xerces_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${xerces_INSTALL}/include
+
 )
 list(APPEND BioGears_DEPENDENCIES xerces)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/xerces/install)
@@ -169,32 +150,38 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/xerces/install)
 install(DIRECTORY ${xerces_INSTALL}/include
         DESTINATION ${INSTALL_INC})
 # Install Binaries
+# This will copy the release versions to all supported configuration locations
+# If you need to debug into these libraries, you can, just know that the release
+# libs will be replaced with debug versions. 
 if(WIN32)
-  set(X_DLL ${xerces_INSTALL}/bin/xerces-c.dll)
-  set(X_DLL_output xerces-c.dll)
+  install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  # Install Libs
+  install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+    DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+    DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+    DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
 else()
-  set(X_DLL ${xerces_INSTALL}/lib/libxerces-c.so.3.1)
-  set(X_DLL_output libxerces-c.so)
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG} RENAME libxerces-c.so)
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG} RENAME libxerces-c.so)
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG} RENAME libxerces-c.so)    
+  # Install Libs
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+    DESTINATION ${INSTALL_LIB}/release${EX_CONFIG} RENAME libxerces-c.so)  
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+    DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG} RENAME libxerces-c.so)  
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+    DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG} RENAME libxerces-c.so)  
 endif()
-install(FILES ${X_DLL}
-  DESTINATION ${INSTALL_BIN}/release${EX_CONFIG} RENAME ${X_DLL_output})
-install(FILES ${X_DLL}
-  DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG} RENAME ${X_DLL_output})
-install(FILES ${X_DLL}
-  DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG} RENAME ${X_DLL_output})
-# Install Libs
-if(WIN32)
-  set(X_LIB ${xerces_INSTALL}/lib/xerces-c.lib)
-else()
-  set(X_LIB ${xerces_INSTALL}/lib/libxerces-c.so
-            ${xerces_INSTALL}/lib/libxerces-c.so.3.1)
-endif()
-install(FILES ${X_LIB}
-  DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
-install(FILES ${X_LIB}
-  DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
-install(FILES ${X_LIB}
-  DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
 
 message(STATUS "xerces is here : ${xerces_DIR}" )
 if(WIN32)
@@ -240,12 +227,13 @@ endif()
 string(REPLACE ";" "::" CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
 
 # Generate the BioGears project after dependencies have been built
-ExternalProject_Add( SetupBioGears
+ExternalProject_Add( InnerBuild
+    PREFIX InnerBuild
     DEPENDS Eigen ${BioGears_DEPENDENCIES}
     DOWNLOAD_COMMAND ""
     DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}
     SOURCE_DIR ${CMAKE_SOURCE_DIR}
-    BINARY_DIR ${CMAKE_BINARY_DIR}/SetupBioGears-build
+    BINARY_DIR ${CMAKE_BINARY_DIR}/InnerBuild
     CMAKE_GENERATOR ${CMAKE_GENERATOR}
     BUILD_AWAYS 1
     LIST_SEPARATOR ::
@@ -264,4 +252,6 @@ ExternalProject_Add( SetupBioGears
           -DBUILD_SHARED_LIBS:BOOL=${shared}
           -DBUILD_TESTING:BOOL=${BUILD_TESTING}
           -DMAKECOMMAND:STRING=${MAKECOMMAND}
+          -Dlog4cpp_DIR=${log4cpp_DIR}
+          -DLOG4CPP_INCLUDE_DIR=${log4cpp_DIR}/include
   )
