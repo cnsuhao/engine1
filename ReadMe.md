@@ -80,10 +80,8 @@ cd builds
 # Feel free to make subfolders here, like msvc2017x64 or something
 # Generate a make file/msvc solution for the external dependencies
 # Note you need to provide cmake the source directory at the end (relative or absolute)
-# On Linux/OSX/MinGW
+# Run CMake (it will use the system default compiler if you don't provide options or use the CMake GUI)
 cmake ../src
-# For MSVC
-cmake Visual Studio 15 2017 Win64 # Or use the CMake GUI
 # Build the install target/project
 # On Linux/OSX/MinGW 
 make install 
