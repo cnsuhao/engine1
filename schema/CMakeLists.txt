@@ -1,6 +1,6 @@
 # Files in the project 
 
-#include(${CMAKE_CURRENT_SOURCE_DIR}/GenerateCDMBindings.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/GenerateCDMBindings.cmake)
 
 file(GLOB BIND_FILES
     "cpp/bind/*.hxx"
