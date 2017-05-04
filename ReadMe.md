@@ -48,11 +48,12 @@ There are many ways to do this, here is a simple walk through to get you going w
  - If you don't have a Java SDK, I recommend using an installer like Synaptic
  - Search for 'jdk' by name and install the 'openjdk-8-jdk' 
 - You can then add the JAVA_HOME variable to a bash shell by typing
-    - `export JAVA_HOME=(a path listed by a call to updata-alternatives --list java)
-- You can the following to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), to get the path in all shells
+    - export JAVA_HOME=(a path listed by a call to updata-alternatives --list java)
+    - For example : export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+- You can also add it to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), to get the path in all shells
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-JAVA_HOME='(a path listed by a call to updata-alternatives --list java)'
+JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
 export JAVA_HOME
 PATH="$JAVA_HOME/bin:$PATH"
 export PATH
@@ -80,10 +81,8 @@ cd builds
 # Feel free to make subfolders here, like msvc2017x64 or something
 # Generate a make file/msvc solution for the external dependencies
 # Note you need to provide cmake the source directory at the end (relative or absolute)
-# On Linux/OSX/MinGW
+# Run CMake (it will use the system default compiler if you don't provide options or use the CMake GUI)
 cmake ../src
-# For MSVC
-cmake Visual Studio 15 2017 Win64 # Or use the CMake GUI
 # Build the install target/project
 # On Linux/OSX/MinGW 
 make install 
