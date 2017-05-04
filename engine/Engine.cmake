@@ -70,16 +70,32 @@ target_link_libraries(BioGearsEngine CommonDataModel)
 add_custom_command(TARGET BioGearsEngine POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:BioGearsEngine> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
+if(WIN32)# Copy dll files to the bin
+  install(TARGETS BioGearsEngine 
+          RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
+          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+  install(TARGETS BioGearsEngine 
+          RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
+          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+  install(TARGETS BioGearsEngine 
+          RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
+          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+else()# Copy so files to the bin
+  install(TARGETS BioGearsEngine 
+          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+  install(TARGETS BioGearsEngine 
+          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+  install(TARGETS BioGearsEngine 
+          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+endif()
+# Copy lib/so files to the sdk/lib
+install(TARGETS BioGearsEngine         
+        LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG}
+        ARCHIVE CONFIGURATIONS Release DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})
 install(TARGETS BioGearsEngine 
-        RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
-        LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG}
-        ARCHIVE CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
-install(TARGETS BioGearsEngine 
-        RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
-        LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG}
-        ARCHIVE CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
-install(TARGETS BioGearsEngine 
-        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
-        LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG}
-        ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BioGearsPhysiologyEngine.h DESTINATION ${INSTALL_INC}/include)
+        LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG}
+        ARCHIVE CONFIGURATIONS Debug DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})
+install(TARGETS BioGearsEngine  
+        LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG}
+        ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BioGearsPhysiologyEngine.h DESTINATION ${INSTALL_SDK_INC}/include)

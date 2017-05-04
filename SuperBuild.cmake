@@ -29,7 +29,7 @@ ExternalProject_Add( Eigen
 list(APPEND BioGears_DEPENDENCIES Eigen)
 # Install Headers
 install(DIRECTORY ${Eigen_INSTALL}/include
-        DESTINATION ${INSTALL_INC})
+        DESTINATION ${INSTALL_SDK_INC})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/eigen/install)
 message(STATUS "Eigen is here : ${Eigen_DIR}" )
 
@@ -111,7 +111,7 @@ message(STATUS "xsd is here : ${xsd_DIR}" )
 
 # Install Headers
 install(DIRECTORY ${xsd_INSTALL}/libxsd/xsd
-        DESTINATION ${INSTALL_INC}/include)
+        DESTINATION ${INSTALL_SDK_INC}/include)
 
 ###############################
 ## XERCES                    ##
@@ -148,7 +148,7 @@ list(APPEND BioGears_DEPENDENCIES xerces)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/xerces/install)
 # Install Headers
 install(DIRECTORY ${xerces_INSTALL}/include
-        DESTINATION ${INSTALL_INC})
+        DESTINATION ${INSTALL_SDK_INC})
 # Install Binaries
 # This will copy the release versions to all supported configuration locations
 # If you need to debug into these libraries, you can, just know that the release
@@ -162,25 +162,39 @@ if(WIN32)
     DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
   # Install Libs
   install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
-    DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+    DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
-    DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+    DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
-    DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
+    DESTINATION ${INSTALL_LIINSTALL_SDK_LIBB}/relwithdebinfo${EX_CONFIG})  
 else()
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG} RENAME libxerces-c.so)
+    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG} RENAME libxerces-c.so)
+    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG} RENAME libxerces-c.so)    
+    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})  
+
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
+    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
+    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
+    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})    
   # Install Libs
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_LIB}/release${EX_CONFIG} RENAME libxerces-c.so)  
+    DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})  
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG} RENAME libxerces-c.so)  
+    DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})  
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG} RENAME libxerces-c.so)  
+    DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG})  
+
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
+    DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})  
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
+    DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})  
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
+    DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG})  
 endif()
 
 message(STATUS "xerces is here : ${xerces_DIR}" )
@@ -209,7 +223,7 @@ if(WIN32)
   list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/dirent/install)
   # Install Headers
   install(DIRECTORY ${dirent_INSTALL}/include
-          DESTINATION ${INSTALL_INC})
+          DESTINATION ${INSTALL_SDK_INC})
 endif()
 
 # Support ccache
