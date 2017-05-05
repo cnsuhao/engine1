@@ -1,6 +1,16 @@
 # Scripts to assist developers
 # Mostly these are calling the test suite driver and validator classes in Java
 
+# TODO More Test Targets
+# Rebasing
+# mil.tatrc.physiology.utilities.testing.Rebase [from to (config|ALL)]
+#
+# Ploting
+# mil.tatrc.physiology.utilities.csv.plots.PlotDriver
+#
+# Reconfigure the config file (in memory) so we can test serialization
+# mil.tatrc.physiology.utilities.testing.Reconfiguration
+
 find_package(Java REQUIRED)
 include(UseJava)
 if(_JAVA_HOME)

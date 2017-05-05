@@ -94,13 +94,6 @@ make install
 
 ## Running and Testing
 
-Once you have build the code base, you must generate the data required by the BioGears engine.
-Execute the following script from the bin directory:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-cmake -DTYPE:STRING=genData -P ../cmake/Scripts.cmake
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 BioGears provides a few driver programs to execute the physiology libraries built.
 
 ### BioGears Scenario Driver
@@ -176,15 +169,8 @@ The SDK contains the following folders
 Note, your application will still need to execute within the bin directory as it has the binaries and data files in it.
 
 There is a CMakeLists.txt in the sdk folder that you can also run to build and run any of the provided howto examples.
-You can edit the BioGearsEngineHowTo.cpp to run a particular example.
-When running the SDK, it requires both the data generated from the genData script option, as well as patient state data generated from the genStates script option.
-To generate these patient states, exeute the following option :
+You can edit the BioGearsEngineHowTo.cpp to run a particular example, and even code in the HowToSandbox.cpp to run your own engine!
 
-Execute the following script from the bin directory:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-cmake -DTYPE:STRING=genStates -P ../cmake/Scripts.cmake
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There is also an example of using a Java based BioGears interface with an eclipse project you can explore as well.
 

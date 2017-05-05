@@ -102,12 +102,15 @@ foreach(ITEM ${BGE_XSD})
 endforeach()
 
 # Generating the Java bindings
+get_filename_component(_JAVA_BIN_DIR "${Java_JAVA_EXECUTABLE}" DIRECTORY)
 find_program(Java_XJC_EXECUTABLE
     NAMES xjc
-    HINTS ${_JAVA_HINTS}
-    PATHS ${_JAVA_PATHS}
-  )
-  message(STATUS "Java XJC : ${Java_XJC_EXECUTABLE}")
+    HINTS ${_JAVA_BIN_DIR}
+    )
+if(NOT Java_XJC_EXECUTABLE)
+  message(FATAL_ERROR "Error can not find xjc.")
+endif()
+message(STATUS "Java XJC : ${Java_XJC_EXECUTABLE}")
 
 file(REMOVE_RECURSE "${CMAKE_SOURCE_DIR}/schema/java")
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/schema/java")

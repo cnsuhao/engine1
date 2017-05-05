@@ -58,6 +58,7 @@ add_subdirectory(schema)
 add_subdirectory(cdm)
 add_subdirectory(engine)
 add_subdirectory(test)
+add_subdirectory(sdk)
 
 # TODO put a USE_JAVA option in (you would get no JNI, jar, and test suite, but maybe you just want the C++ SDK)
 # Java Compiling
@@ -92,15 +93,6 @@ install_jar(BioGearsJava ${INSTALL_BIN})
 
 # BioGears Testing
 enable_testing()
-add_test(NAME genData
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=GenData -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
-  WORKING_DIRECTORY ${INSTALL_BIN})
-add_test(NAME genStates
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=InitialPatientStates -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
-  WORKING_DIRECTORY ${INSTALL_BIN})
-add_test(NAME runDebug
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=DebugRun -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
-  WORKING_DIRECTORY ${INSTALL_BIN})
 add_test(NAME runCDMUnitTests
   COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=CDMUnitTests -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
@@ -122,13 +114,4 @@ add_test(NAME runDrugValidation
 add_test(NAME runLongVerification
   COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=LongVerificationScenarios -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
-
-# TODO More Test Targets
-# Rebasing
-# mil.tatrc.physiology.utilities.testing.Rebase [from to (config|ALL)]
-#
-# Ploting
-# mil.tatrc.physiology.utilities.csv.plots.PlotDriver
-#
-# Reconfigure the config file (in memory) so we can test serialization
-# mil.tatrc.physiology.utilities.testing.Reconfiguration
+# TODO Make Doc generation a test too!
