@@ -44,6 +44,11 @@ public class UnitConverter
         throw new RuntimeException("Could not find xerces library");    
       libs.add("log4cpp");
     }
+    else if (System.getProperty("os.name").toLowerCase().startsWith("mac"))
+    {
+      libs.add("libxerces-c.3.1");
+      libs.add("liblog4cpp");
+    }
     else
       libs.add("liblog4cpp");
     libs.add("DataModelBindings");
