@@ -5,13 +5,13 @@
 /bin/substances/
 
 /bin/compare_results/
+/bin/debug32/
 /bin/debug/
-/bin/debug64/
 /bin/graph_results/
+/bin/relwithdebinfo32/
 /bin/relwithdebinfo/
-/bin/relwithdebinfo64/
+/bin/release32/
 /bin/release/
-/bin/release64/
 /bin/stable/
 /bin/states/
 /bin/test_results/

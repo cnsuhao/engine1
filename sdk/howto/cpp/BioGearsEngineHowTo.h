@@ -42,6 +42,8 @@ void HowToConcurrentEngines();
 void HowToRunScenario();
 void HowToDynamicHemorrhage();
 
+void HowToSandbox();
+
 class SEDataRequest;
 
 /// This class is here to demonstrate executing the engine

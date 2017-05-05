@@ -269,3 +269,5 @@ ExternalProject_Add( InnerBuild
           -Dlog4cpp_DIR=${log4cpp_DIR}
           -DLOG4CPP_INCLUDE_DIR=${log4cpp_DIR}/include
   )
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genData -P ../cmake/Scripts.cmake WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)")
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genStates -P ../cmake/Scripts.cmake WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)")

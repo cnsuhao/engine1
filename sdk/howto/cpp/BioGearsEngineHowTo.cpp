@@ -20,6 +20,8 @@ int main()
 {
   // Uncomment a method to execute fuctionality!
 
+	HowToSandbox();
+
   //HowToEngineUse();
   //HowToCreateAPatient();
 

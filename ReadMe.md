@@ -48,11 +48,12 @@ There are many ways to do this, here is a simple walk through to get you going w
  - If you don't have a Java SDK, I recommend using an installer like Synaptic
  - Search for 'jdk' by name and install the 'openjdk-8-jdk' 
 - You can then add the JAVA_HOME variable to a bash shell by typing
-    - `export JAVA_HOME=(a path listed by a call to updata-alternatives --list java)
-- You can the following to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), to get the path in all shells
+    - export JAVA_HOME=(a path listed by a call to updata-alternatives --list java)
+    - For example : export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+- You can also add it to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), to get the path in all shells
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-JAVA_HOME='(a path listed by a call to updata-alternatives --list java)'
+JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
 export JAVA_HOME
 PATH="$JAVA_HOME/bin:$PATH"
 export PATH
@@ -80,10 +81,8 @@ cd builds
 # Feel free to make subfolders here, like msvc2017x64 or something
 # Generate a make file/msvc solution for the external dependencies
 # Note you need to provide cmake the source directory at the end (relative or absolute)
-# On Linux/OSX/MinGW
+# Run CMake (it will use the system default compiler if you don't provide options or use the CMake GUI)
 cmake ../src
-# For MSVC
-cmake Visual Studio 15 2017 Win64 # Or use the CMake GUI
 # Build the install target/project
 # On Linux/OSX/MinGW 
 make install 
@@ -94,13 +93,6 @@ make install
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Running and Testing
-
-Once you have build the code base, you must generate the data required by the BioGears engine.
-Execute the following script from the bin directory:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-cmake -DTYPE:STRING=genData -P ../cmake/Scripts.cmake
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 BioGears provides a few driver programs to execute the physiology libraries built.
 
@@ -177,15 +169,8 @@ The SDK contains the following folders
 Note, your application will still need to execute within the bin directory as it has the binaries and data files in it.
 
 There is a CMakeLists.txt in the sdk folder that you can also run to build and run any of the provided howto examples.
-You can edit the BioGearsEngineHowTo.cpp to run a particular example.
-When running the SDK, it requires both the data generated from the genData script option, as well as patient state data generated from the genStates script option.
-To generate these patient states, exeute the following option :
+You can edit the BioGearsEngineHowTo.cpp to run a particular example, and even code in the HowToSandbox.cpp to run your own engine!
 
-Execute the following script from the bin directory:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-cmake -DTYPE:STRING=genStates -P ../cmake/Scripts.cmake
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There is also an example of using a Java based BioGears interface with an eclipse project you can explore as well.
 
