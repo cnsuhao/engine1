@@ -10,11 +10,31 @@
 # I tried precompiled headers in MinGW but that did not really work as I expected..
 # Shoot me an email if you have any ideas (aaron.bray@kitware.com)
 
+# Look to see if the XSD has changed since our last build
+# and only rebuild if that is the case
+set(XSD_CHANGED FALSE)
+set(_XSD_TOUCH "${CMAKE_SOURCE_DIR}/schema/xsd_last_built")
+file(GLOB_RECURSE XSD_FILES "${CMAKE_SOURCE_DIR}/schema/xsd/*.xsd")
+
+foreach(f ${XSD_FILES})
+  message(STATUS "Looking at file ${f}")
+  if(${f} IS_NEWER_THAN ${_XSD_TOUCH})
+    set(XSD_CHANGED TRUE)
+    message(STATUS "This XSD has changed since last build ${f}")
+  endif()
+endforeach()
+
+if(NOT XSD_CHANGED)
+  message(STATUS "XSD has not changed since last build, not regenerating")
+  return()
+endif()
+# Touch the file so we don't generate next time
+execute_process(COMMAND ${CMAKE_COMMAND} -E touch ${_XSD_TOUCH})
+
 message(STATUS "Generating Schema Bindings" )
 message(STATUS "Using Code Synthesis XSD : ${XSD_EXECUTABLE}")
 set(bindings_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cpp/bind")
 file(GLOB_RECURSE OLD_BINDING_FILES "${bindings_DIR}/*")
-file(GLOB_RECURSE XSD_FILES "xsd/*")
 
 foreach(f ${OLD_BINDING_FILES})
   file(REMOVE $f)

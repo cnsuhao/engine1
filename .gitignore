@@ -25,8 +25,7 @@
 /engine/build/
 
 /schema/build/
-/schema/cpp_schema_built
-/schema/java_schema_built
+/schema/xsd_last_built
 /schema/java/mil/tatrc/physiology/datamodel/bind/
 /schema/cpp/bind/min/
 /schema/cpp/bind/*.hxx

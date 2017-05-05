@@ -1,8 +1,6 @@
 # Files in the project 
 
-#if(BUILD_BIND)
   include(${CMAKE_CURRENT_SOURCE_DIR}/GenerateCDMBindings.cmake)
-#endif()
 
 file(GLOB BIND_FILES
     "cpp/bind/*.hxx"
@@ -21,7 +19,7 @@ else(MSVC)
 endif(MSVC)
 
 if(NOT SOURCE)
-  list(APPEND SOURCE "Error_No_Bindings_Created") 
+  list(APPEND SOURCE "Error_No_Bindings_Created")
 endif()
 
 # The DLL we are building
