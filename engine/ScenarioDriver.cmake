@@ -7,9 +7,9 @@ add_executable(BioGearsScenarioDriver cpp/BioGearsScenarioDriver.cpp
 set_target_properties(BioGearsScenarioDriver PROPERTIES COMPILE_FLAGS -pthread LINK_FLAGS -pthread)
 
 # Preprocessor Definitions and Include Paths
+target_include_directories(BioGearsScenarioDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
 target_include_directories(BioGearsScenarioDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 target_include_directories(BioGearsScenarioDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
-target_include_directories(BioGearsScenarioDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../schema/cpp)
 target_include_directories(BioGearsScenarioDriver PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_include_directories(BioGearsScenarioDriver PRIVATE ${LOG4CPP_INCLUDE_DIR})
 target_include_directories(BioGearsScenarioDriver PRIVATE ${XercesC_INCLUDE_DIR})

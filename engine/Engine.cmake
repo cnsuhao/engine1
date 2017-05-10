@@ -49,9 +49,9 @@ if(MSVC)
   set(ENG_FLAGS "${ENG_FLAGS} -Zm120")
 endif(MSVC)
 
+target_include_directories(BioGearsEngine PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
 target_include_directories(BioGearsEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 target_include_directories(BioGearsEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
-target_include_directories(BioGearsEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../schema/cpp)
 target_include_directories(BioGearsEngine PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_include_directories(BioGearsEngine PRIVATE ${LOG4CPP_INCLUDE_DIR})
 target_include_directories(BioGearsEngine PRIVATE ${XercesC_INCLUDE_DIR})
@@ -90,12 +90,12 @@ else()# Copy so files to the bin
 endif()
 # Copy lib/so files to the sdk/lib
 install(TARGETS BioGearsEngine         
-        LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG}
-        ARCHIVE CONFIGURATIONS Release DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})
+        LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG}
+        ARCHIVE CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
 install(TARGETS BioGearsEngine 
-        LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG}
-        ARCHIVE CONFIGURATIONS Debug DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})
+        LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG}
+        ARCHIVE CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
 install(TARGETS BioGearsEngine  
-        LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG}
-        ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG})
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BioGearsPhysiologyEngine.h DESTINATION ${INSTALL_SDK_INC}/include)
+        LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG}
+        ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BioGearsPhysiologyEngine.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)

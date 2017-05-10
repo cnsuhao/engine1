@@ -10,7 +10,7 @@ MACRO(install_headers SRC_DIR DEST)
     #message(STATUS "Header at ${HEADER}")
     STRING(REPLACE ${SRC_DIR}/ "" REL_DIR ${HEADER})
     #message(STATUS "Relative Path ${REL_DIR}")  
-    set(FULL_LOC ${INSTALL_SDK_INC}/include/${DEST}/${REL_DIR})
+    set(FULL_LOC ${CMAKE_INSTALL_PREFIX}/include/${DEST}/${REL_DIR})
     #message(STATUS "File should goto ${FULL_LOC}")
     get_filename_component(DEST_DIR ${FULL_LOC} PATH) 
     #message(STATUS "Going to ${DEST_DIR}")
@@ -65,7 +65,7 @@ add_subdirectory(sdk)
 find_package(Java REQUIRED)
 include(UseJava)
 file(GLOB_RECURSE JAVA_FILES 
-  "${CMAKE_SOURCE_DIR}/schema/java/*.java"
+  "${CMAKE_BINARY_DIR}/schema/java/*.java"
   "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
   "${CMAKE_SOURCE_DIR}/engine/java/*.java"
   "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"
@@ -91,27 +91,34 @@ add_custom_command(TARGET BioGearsJava POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${INSTALL_BIN})
 install_jar(BioGearsJava ${INSTALL_BIN})
 
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
+set(DATA_ROOT ${CMAKE_SOURCE_DIR})
+configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_BINARY_DIR}/run.cmake @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/run.cmake DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_BINARY_DIR}/run.config @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/run.config DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+
 # BioGears Testing
 enable_testing()
 add_test(NAME runCDMUnitTests
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=CDMUnitTests -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
+  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=CDMUnitTests -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
 add_test(NAME runBGEUnitTests
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=BGEUnitTests -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
+  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=BGEUnitTests -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
 add_test(NAME runSystemValidation
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=SystemValidation -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
+  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=SystemValidation -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
 add_test(NAME runPatientValidation
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=PatientValidation -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
+  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=PatientValidation -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
 add_test(NAME runVerification
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=VerificationScenarios -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
+  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=VerificationScenarios -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
 add_test(NAME runDrugValidation
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=ValidationDrugs -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
+  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=ValidationDrugs -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
 add_test(NAME runLongVerification
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=LongVerificationScenarios -P ${CMAKE_SOURCE_DIR}/cmake/Scripts.cmake
+  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=LongVerificationScenarios -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
 # TODO Make Doc generation a test too!

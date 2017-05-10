@@ -29,10 +29,10 @@ public class ScenarioTestDriver implements TestDriver.Executor
     String outputFile = job.computedDirectory+job.name;
     String log;
     String results;
-    String xml = FileUtils.readFile("../verification/Scenarios/"+job.name);
+    String xml = FileUtils.readFile(job.baselineDirectory+job.name);
     if(xml==null)
     {
-      Log.error("Could not read file : ../verification/Scenarios/"+job.name);
+      Log.error("Could not read file : "+job.baselineDirectory+"/"+job.name);
       return false;
     }
     if(job.patientFile==null)

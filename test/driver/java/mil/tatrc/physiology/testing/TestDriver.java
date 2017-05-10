@@ -8,7 +8,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
-**************************************************************************************/
+ **************************************************************************************/
 package mil.tatrc.physiology.testing;
 
 import java.io.BufferedReader;
@@ -19,6 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+import mil.tatrc.physiology.biogears.RunConfiguration;
 import mil.tatrc.physiology.datamodel.CDMSerializer;
 import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
 import mil.tatrc.physiology.datamodel.bind.TestReportData;
@@ -38,7 +39,7 @@ public class TestDriver
   {        
     UnitConverter.initialize(System.getProperty("user.dir"));
   }
-  
+
   public interface Executor
   {
     boolean ExecuteTest(TestJob job);
@@ -47,14 +48,11 @@ public class TestDriver
   public static void main(String[] args)
   {
     TestDriver me = new TestDriver();
+    RunConfiguration cfg = new RunConfiguration();
+    
     if(args.length == 0)
     {
       Log.error("No configFile specified");
-      return;
-    }
-    if(!(new File(args[0])).exists())
-    {
-      Log.error("ConfigFile "+args[0]+" not found");
       return;
     }
     if(args.length == 4)
@@ -63,12 +61,13 @@ public class TestDriver
       me.environment = args[2];
       me.architecture = args[3];
     }
-    File configFile = new File(args[0]);
+    File configFile = new File(cfg.getDataDirectory()+"/test/config/"+args[0]);
     if(!configFile.exists())
     {
       System.err.println("Config file "+configFile.getName()+" does not exist");
+      return;
     }
-    me.processConfigFile(configFile);
+    me.processConfigFile(configFile, cfg.getDataDirectory()+"/verification/");
 
     int     availableThreads = Runtime.getRuntime().availableProcessors();
     boolean isPlotting;
@@ -90,59 +89,58 @@ public class TestDriver
 
     do
     {
-      
-        activeThreads = 0;
-        isPlotting = false;
+      activeThreads = 0;
+      isPlotting = false;
+      for(TestJob job : me.jobs)
+      {
+        if(job.state == JobState.Executing)
+          activeThreads++;
+        if(job.state == JobState.Comparing)
+        {
+          activeThreads++;
+          isPlotting = true;
+        }
+      }
+      if(!isPlotting && activeThreads != engineThreads)
+      {// Look for a job to compare first    
+        for(TestJob job : me.jobs)
+        {                      
+          if(job.state == JobState.Executed)
+          {
+            if(job.PlottableResults && !job.skipPlot)
+            {
+              CompareThread cThread = me.new CompareThread();
+              job.state = JobState.Comparing;
+              cThread.job = job;
+              activeThreads++;
+              cThread.start();              
+              break;
+            }
+            else
+            {
+              job.state = JobState.Complete;
+            }            
+          }
+        }
+      }
+      if(activeThreads != engineThreads)
+      {
         for(TestJob job : me.jobs)
         {
-          if(job.state == JobState.Executing)
-            activeThreads++;
-          if(job.state == JobState.Comparing)
+          if(job.state==JobState.Provisioned)
           {
+            ExecuteThread eThread = me.new ExecuteThread();
+            eThread.job = job;
+            job.state = JobState.Executing;
+            eThread.start();
             activeThreads++;
-            isPlotting = true;
           }
+          if(activeThreads == engineThreads)
+            break;            
         }
-        if(!isPlotting && activeThreads != engineThreads)
-        {// Look for a job to compare first    
-          for(TestJob job : me.jobs)
-          {                      
-            if(job.state == JobState.Executed)
-            {
-              if(job.PlottableResults && !job.skipPlot)
-              {
-                CompareThread cThread = me.new CompareThread();
-                job.state = JobState.Comparing;
-                cThread.job = job;
-                activeThreads++;
-                cThread.start();              
-                break;
-              }
-              else
-              {
-                job.state = JobState.Complete;
-              }            
-            }
-          }
-        }
-        if(activeThreads != engineThreads)
-        {
-          for(TestJob job : me.jobs)
-          {
-            if(job.state==JobState.Provisioned)
-            {
-              ExecuteThread eThread = me.new ExecuteThread();
-              eThread.job = job;
-              job.state = JobState.Executing;
-              eThread.start();
-              activeThreads++;
-            }
-            if(activeThreads == engineThreads)
-              break;            
-          }
-        }      
-        if(activeThreads==0)
-          break;
+      }      
+      if(activeThreads==0)
+        break;
 
       try
       {Thread.sleep(100);}
@@ -153,14 +151,14 @@ public class TestDriver
 
     me.createReport();
   }
-
+  
   public String environment = "";
   public String architecture = "";
   public String commitHash = "";
 
   protected String testName;
   protected String reportName;
-  
+
   protected int    numThreads=0;
   protected double percentDifference=2.0;
 
@@ -176,7 +174,7 @@ public class TestDriver
   protected Map<String,List<String>> groups = new LinkedHashMap<String,List<String>>();
 
   protected enum JobState {Provisioned, Executing, Executed, Comparing, Complete}
-  
+
   public class TestJob extends LogListener
   {
     public TestJob(){ listen(false);  }
@@ -198,7 +196,7 @@ public class TestDriver
     public String       computedDirectory = null;
     public List<String> reportFiles = new ArrayList<String>();
     public String       resultsFiles = null;
-    
+
     public TestJob clone()
     {
       TestJob copy = new TestJob();
@@ -229,8 +227,10 @@ public class TestDriver
     public void handleFatal(String msg) { Log.fatal("["+name+"] "+msg,""); }
   }
 
-  public void processConfigFile(File configFile)
+  public void processConfigFile(File configFile, String baselineDir)
   {    
+    
+    
     this.testName = configFile.getName();
     this.testName = this.testName.substring(0,this.testName.lastIndexOf('.'));
     Log.setFileName("./test_results/"+this.testName+".log");
@@ -241,7 +241,7 @@ public class TestDriver
     this.percentDifference = 2.0;
 
     this.reportName = "TestDriver Report";
-    
+
     this.executors.clear();
     this.jobs.clear();
 
@@ -275,7 +275,7 @@ public class TestDriver
 
         if(key.equalsIgnoreCase("ReportName"))
         { this.reportName = value; continue; }
-  
+
         if(key.equalsIgnoreCase("PercentDifference"))
         { this.percentDifference = Double.parseDouble(value); continue; }
         if(key.equalsIgnoreCase("Threads"))
@@ -393,7 +393,7 @@ public class TestDriver
             key = directive.substring(0, directive.indexOf('='));
             value = directive.substring(directive.indexOf("=") + 1);
             if(key.equalsIgnoreCase("Baseline"))
-            {job.baselineDirectory = value; continue;}              
+            {job.baselineDirectory = baselineDir+value; continue;}              
             else if(key.equalsIgnoreCase("Computed"))
             {job.computedDirectory = value; continue;}
             if(key.equalsIgnoreCase("Results"))
@@ -421,12 +421,12 @@ public class TestDriver
           }
         }
       }
-      
+
       if(this.patientFiles!=null)
       {
         // Need to copy all the jobs and speficy a particular patient file
         List<String> patientFileNames;
-        
+
         if(patientFiles.equalsIgnoreCase("all"))
           patientFileNames = FileUtils.findFiles("./patients", ".xml", true);        
         else
@@ -441,11 +441,11 @@ public class TestDriver
             patientFileNames.add(patientFile);
           }
         }
-        
+
         List<TestJob> oldJobs = new ArrayList<TestJob>(jobs);
         jobs.clear();
         TestJob copy;
-        
+
         for(String pFileName : patientFileNames)
         {
           String[] split = pFileName.split("[/\\\\]");
@@ -466,7 +466,7 @@ public class TestDriver
         }
 
       }
-      
+
       // Let's clean out everything we are about to run
       for(TestJob job : jobs)
       {
@@ -483,12 +483,12 @@ public class TestDriver
       Log.error("Ouch",e);
     }
   }
-  
+
   protected void DeriveScenarioResultNames(TestJob job, String baseName)
   {
     job.baselineFiles.clear();
     job.computedFiles.clear();
-    
+
     String[] dirs = baseName.substring(0, baseName.indexOf(".xml")).split("[/\\\\]");
     String baseline = job.baselineDirectory;
     for(int i=0; i<dirs.length-1; i++)
@@ -634,10 +634,10 @@ public class TestDriver
               }
               if(job.executor.getClass().getName().indexOf("Scenario")!=-1)
                 driver.isScenario = true;
-              
+
               driver.generateCompareJobs(job.baselineFiles.get(i), job.computedFiles.get(i), failures);
               driver.execute();
-              */
+               */
             }
           }
           else
@@ -723,7 +723,7 @@ public class TestDriver
     hint = hint.replaceAll(".txt", "");
 
     File file;
-    
+
     if(executeJobs)
     {
       file = new File(hint+".log");
@@ -747,7 +747,7 @@ public class TestDriver
       file = new File(hint+"Results.txt");
       FileUtils.delete(file);
     }
-    
+
     if(plotResults)
     {
       file = new File(hint+"/");

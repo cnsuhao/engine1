@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Install location")
+
 project(BioGears_SuperBuild)
 
 # Policy to address @foo@ variable expansion
@@ -31,10 +33,9 @@ else()
   set(CONFIGURATION ${CMAKE_BUILD_TYPE})
 endif()
 string(TOLOWER ${CONFIGURATION} CONFIGURATION)
-
-set(INSTALL_BIN ${CMAKE_SOURCE_DIR}/bin)
-set(INSTALL_SDK_INC ${CMAKE_SOURCE_DIR}/sdk)
-set(INSTALL_SDK_LIB ${CMAKE_SOURCE_DIR}/sdk/lib)
+message(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
+set(INSTALL_BIN ${CMAKE_INSTALL_PREFIX}/bin)
+set(INSTALL_LIB ${CMAKE_INSTALL_PREFIX}/lib)
 file(MAKE_DIRECTORY "${INSTALL_BIN}/debug${EX_CONFIG}")
 file(MAKE_DIRECTORY "${INSTALL_BIN}/release${EX_CONFIG}")
 file(MAKE_DIRECTORY "${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}")

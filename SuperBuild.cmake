@@ -1,11 +1,15 @@
 include(ExternalProject)
 project(OuterBuild)
 
-# These dependent libs should only be build in release
+
+if(MSVC OR XCode)
+# For multi configuration IDE environments,
+# these dependent libs only need to be built in release
 # There should not be a need to debug into xerces, but if 
 # you really want to, you can go into the xerces dir and build 
 # a debug version of the library
-set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE INTERNAL FORCE )
+  set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE INTERNAL FORCE )
+endif()
 ##################################
 ## EIGEN                        ##
 ## Used for general matrix math ##
@@ -29,7 +33,7 @@ ExternalProject_Add( Eigen
 list(APPEND BioGears_DEPENDENCIES Eigen)
 # Install Headers
 install(DIRECTORY ${Eigen_INSTALL}/include
-        DESTINATION ${INSTALL_SDK_INC})
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/eigen/install)
 message(STATUS "Eigen is here : ${Eigen_DIR}" )
 
@@ -111,7 +115,7 @@ message(STATUS "xsd is here : ${xsd_DIR}" )
 
 # Install Headers
 install(DIRECTORY ${xsd_INSTALL}/libxsd/xsd
-        DESTINATION ${INSTALL_SDK_INC}/include)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 
 ###############################
 ## XERCES                    ##
@@ -148,53 +152,64 @@ list(APPEND BioGears_DEPENDENCIES xerces)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/xerces/install)
 # Install Headers
 install(DIRECTORY ${xerces_INSTALL}/include
-        DESTINATION ${INSTALL_SDK_INC})
-# Install Binaries
-# This will copy the release versions to all supported configuration locations
-# If you need to debug into these libraries, you can, just know that the release
-# libs will be replaced with debug versions. 
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+ 
 if(WIN32)
-  install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
-    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
-    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
-    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-  # Install Libs
-  install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
-    DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
-    DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
-    DESTINATION ${INSTALL_LIINSTALL_SDK_LIBB}/relwithdebinfo${EX_CONFIG})  
+  if(MSVC) # Only builds release, so push this one dll the 3 configuration directories
+    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+      DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+      DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+      DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+      DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})  
+    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+      DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+      DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
+  else()
+    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+      CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(FILES ${xerces_INSTALL}/bin/xerces-cd.dll
+      CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+      CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+    install(FILES ${xerces_INSTALL}/lib/xerces-cd.lib
+      CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
+  endif()
 else()
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})  
-
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+    
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
-    DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
-    DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
-    DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})    
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})    
   # Install Libs
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})  
+    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})  
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})  
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})  
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
-    DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG})  
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
 
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
-    DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})  
+    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})  
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
-    DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})  
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})  
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
-    DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG})  
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
 endif()
 
 message(STATUS "xerces is here : ${xerces_DIR}" )
@@ -223,7 +238,7 @@ if(WIN32)
   list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/dirent/install)
   # Install Headers
   install(DIRECTORY ${dirent_INSTALL}/include
-          DESTINATION ${INSTALL_SDK_INC})
+          DESTINATION ${CMAKE_INSTALL_PREFIX})
 endif()
 
 # Support ccache
@@ -254,6 +269,7 @@ ExternalProject_Add( InnerBuild
     CMAKE_ARGS
           -DSUPERBUILD:BOOL=OFF
           -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
+          -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
           -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
           -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
           -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
@@ -266,8 +282,9 @@ ExternalProject_Add( InnerBuild
           -DBUILD_SHARED_LIBS:BOOL=${shared}
           -DBUILD_TESTING:BOOL=${BUILD_TESTING}
           -DMAKECOMMAND:STRING=${MAKECOMMAND}
+          # Let InnerBuild build this
           -Dlog4cpp_DIR=${log4cpp_DIR}
           -DLOG4CPP_INCLUDE_DIR=${log4cpp_DIR}/include
   )
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genData -P ../cmake/Scripts.cmake WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)")
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genStates -P ../cmake/Scripts.cmake WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)")
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genData -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)")
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genStates -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)")

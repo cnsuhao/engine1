@@ -13,7 +13,7 @@
 # Look to see if the XSD has changed since our last build
 # and only rebuild if that is the case
 set(XSD_CHANGED FALSE)
-set(_XSD_TOUCH "${CMAKE_SOURCE_DIR}/schema/xsd_last_built")
+set(_XSD_TOUCH "${CMAKE_BINARY_DIR}/schema/xsd_last_built")
 file(GLOB_RECURSE XSD_FILES "${CMAKE_SOURCE_DIR}/schema/xsd/*.xsd")
 
 foreach(f ${XSD_FILES})
@@ -33,7 +33,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E touch ${_XSD_TOUCH})
 
 message(STATUS "Generating Schema Bindings" )
 message(STATUS "Using Code Synthesis XSD : ${XSD_EXECUTABLE}")
-set(bindings_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cpp/bind")
+set(bindings_DIR "${CMAKE_BINARY_DIR}/schema/cpp/bind")
 file(GLOB_RECURSE OLD_BINDING_FILES "${bindings_DIR}/*")
 
 foreach(f ${OLD_BINDING_FILES})
@@ -132,11 +132,11 @@ if(NOT Java_XJC_EXECUTABLE)
 endif()
 message(STATUS "Java XJC : ${Java_XJC_EXECUTABLE}")
 
-file(REMOVE_RECURSE "${CMAKE_SOURCE_DIR}/schema/java")
-file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/schema/java")
-file(REMOVE_RECURSE "${CMAKE_SOURCE_DIR}/schema/build")
-file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/schema/build")
+file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/schema/java")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/schema/java")
+file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/schema/build")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/schema/build")
 
-execute_process(COMMAND ${Java_XJC_EXECUTABLE} -d ${CMAKE_SOURCE_DIR}/schema/java -p mil.tatrc.physiology.datamodel.bind ${CMAKE_SOURCE_DIR}/schema/xsd/BioGearsDataModel.xsd)
+execute_process(COMMAND ${Java_XJC_EXECUTABLE} -d ${CMAKE_BINARY_DIR}/schema/java -p mil.tatrc.physiology.datamodel.bind ${CMAKE_SOURCE_DIR}/schema/xsd/BioGearsDataModel.xsd)
 
 message(STATUS "bindings are here : ${bindings_DIR}" )

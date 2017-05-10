@@ -22,6 +22,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import mil.tatrc.physiology.biogears.RunConfiguration;
 import mil.tatrc.physiology.datamodel.CDMSerializer;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
 import mil.tatrc.physiology.datamodel.bind.*;
@@ -38,28 +39,16 @@ import mil.tatrc.physiology.utilities.Log;
 
 public class DataSetReader
 {
-  private static final String DEFAULT_DIRECTORY = "../data/";
-  private static final String DEFAULT_FILE = "BioGears.xlsx";
   private static  FormulaEvaluator evaluator;
+  private static  RunConfiguration cfg;
 
   public static void main(String[] args)
   {
-    if(args.length<2)
-    {
-      loadData();
-    }
-    else
-    {
-      loadData(args[0], args[1]);
-    }
+    cfg = new RunConfiguration();
+    loadData(cfg.getDataDirectory()+"/data/BioGears.xlsx");
   }
 
-  public static void loadData()
-  {
-    loadData(DEFAULT_DIRECTORY, DEFAULT_FILE);
-  }
-
-  public static void loadData(String directoryName, String fileName)
+  public static void loadData(String xlsFile)
   {
     try
     {
@@ -83,20 +72,18 @@ public class DataSetReader
     }
     try
     {   
-      File xls = new File(directoryName+"/"+fileName);
+      File xls = new File(xlsFile);
       if(!xls.exists())
       {
-        Log.error("Could not find xls file "+directoryName+"/"+fileName);
+        Log.error("Could not find xls file "+xlsFile);
         return;
       }
-      FileInputStream xlFile = new FileInputStream(directoryName+"/"+fileName);    
+      Log.info("Generating data from "+xlsFile);
+      FileInputStream xlFile = new FileInputStream(xlsFile);    
       XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile);
       evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();
       
-      String contentVersion = "6.2.0";
-      //Properties props = new Properties();
-      //props.load(new FileInputStream("../src/build.properties"));
-      //contentVersion = props.getProperty("biogears.version");
+      String contentVersion = "6.2.0";      
 
       List<SEPatient> patients = readPatients(xlWBook.getSheet("Patients"));
       for(SEPatient p : patients)
@@ -151,7 +138,7 @@ public class DataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XSSF : "+directoryName+"/"+fileName,ex);
+      Log.error("Error reading XSSF : "+xlsFile,ex);
       return;
     }
   }

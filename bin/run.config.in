@@ -1,0 +1,13 @@
+# This file informs executable classes/binaries, avaliable via the Scripts.cmake file,
+# the root directory containing the folder structure and data needed to propertly execute
+
+data_root=@DATA_ROOT@
+# This should house the following folder structure with appropriate data
+# data_root
+# |- data
+# |- docs
+# |- jar
+# |- test
+#     |- config
+#     |- validation
+# |- verification

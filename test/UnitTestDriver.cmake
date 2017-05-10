@@ -4,7 +4,7 @@ source_group("" FILES driver/cpp/main.cpp)
 add_executable(UnitTestDriver driver/cpp/main.cpp)
 
 set_target_properties(UnitTestDriver PROPERTIES COMPILE_FLAGS -pthread LINK_FLAGS -pthread)
-target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../schema/cpp)
+target_include_directories(UnitTestDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
 target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)

@@ -20,7 +20,7 @@ public class SystemValidation extends ValdiationTool
   public SystemValidation()
   {
     DEST_DIRECTORY = "./test_results/tables/";
-    DEFAULT_DIRECTORY = "../test/validation/";
+    DEFAULT_DIRECTORY = cfg.getDataDirectory()+"/test/validation/";
     DEFAULT_FILE = "SystemValidationData.xlsx";
     TABLE_TYPE = "System";
   }

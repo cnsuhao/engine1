@@ -8,7 +8,7 @@ source_group("" FILES ${BIOGEARS_TEST_FILES})
 # The DLL we are building
 add_library(BioGearsEngineUnitTests SHARED ${SOURCE})
 # Preprocessor Definitions and Include Paths
-target_include_directories(BioGearsEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../schema/cpp)
+target_include_directories(BioGearsEngineUnitTests PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
 target_include_directories(BioGearsEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(BioGearsEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(BioGearsEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)

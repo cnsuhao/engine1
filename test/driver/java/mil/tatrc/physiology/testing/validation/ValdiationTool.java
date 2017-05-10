@@ -22,6 +22,7 @@ import java.lang.reflect.*;
 import java.net.InetAddress;
 import java.util.*;
 
+import mil.tatrc.physiology.biogears.RunConfiguration;
 import mil.tatrc.physiology.datamodel.CDMSerializer;
 import mil.tatrc.physiology.datamodel.bind.PatientAssessmentData;
 import mil.tatrc.physiology.datamodel.bind.PatientData;
@@ -51,6 +52,12 @@ public abstract class ValdiationTool
   protected String DEFAULT_FILE;
   protected String TABLE_TYPE;
   protected String HEADER_PREPEND="";
+  protected RunConfiguration cfg;
+  
+  public ValdiationTool()
+  {
+    cfg = new RunConfiguration();
+  }
   
   //Keywords success +/- 10% ,warning +/- 30%, danger+/-10%,fail
   protected static final String success = "<span class=\"success\">";
@@ -132,7 +139,7 @@ public abstract class ValdiationTool
         return;
       }
       // Read in props file
-      File file = new File("../test/config/ValidationTables.config");
+      File file = new File(cfg.getDataDirectory()+"/test/config/ValidationTables.config");
       FileInputStream fileInput = new FileInputStream(file);
       Properties config = new Properties();
       config.load(fileInput);
@@ -147,6 +154,11 @@ public abstract class ValdiationTool
       
       File vdir = new File("./test_results/scenarios/Validation/");
       String[] vFiles = vdir.list();
+      if(vFiles==null || vFiles.length==0)
+      {
+        Log.error("No validation files were found, run the validation scenarios please");
+        return;
+      }
       
       // Now read in the spreadsheet      
       FileInputStream xlFile = new FileInputStream(directoryName+"/"+fileName);   
