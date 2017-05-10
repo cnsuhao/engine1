@@ -74,7 +74,7 @@ mkdir BioGears
 cd BioGears
 mkdir src
 cd src
-git clone https://gitlab.kitware.com/BioGears/engine
+git clone https://gitlab.kitware.com/bioGears/biogears
 cd ..
 mkdir builds
 cd builds
@@ -82,19 +82,21 @@ cd builds
 # Generate a make file/msvc solution for the external dependencies
 # Note you need to provide cmake the source directory at the end (relative or absolute)
 # Run CMake (it will use the system default compiler if you don't provide options or use the CMake GUI)
-cmake ../src
+cmake -DCMAKE_BUILD_TYPE:STRING=Release ../src
 # Build the install target/project
 # On Linux/OSX/MinGW 
 make install 
 # For MSVC
 # Open the OuterBuild.sln and build the INSTALL project (It will build everything!)
 # When the build is complete, MSVC users can close the OuterBuild solution, and open the BioGears.sln located in the InnerBuild directory.
-# Unix based systems can also change to this directory for building as well, especially for building debug.
+# Unix based systems can also change to this directory for building as well to build specific BioGears components
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Running and Testing
 
 BioGears provides a few driver programs to execute the physiology libraries built.
+
+<b> !! NOTE : The 'bin' directory being refered to below is the bin directory in your <build directory>/install/bin NOT the src/bin directory !! </b>
 
 ### BioGears Scenario Driver
 
@@ -104,7 +106,7 @@ See <a href="https://biogearsengine.com/documentation/_scenario_x_m_l_file.html"
 You will need to download the latest scenario/verification zip <a href="https://github.com/BioGearsEngine/Engine/releases/download/6.1.1-beta/BioGears_6.1.1-beta-verification-all.zip">here</a> and put the verification directory at the root of your source tree.
 In the near future, we will link the verification data to this repository, so it will be downloaded automatically.
 
-To run the driver, change directory in your cmd/bash shell to the bin directory and execute the following :
+To run the driver, change directory in your cmd/bash shell to the build/install/bin directory and execute the following :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # First ensure the release directory (or debug if that is what you are running) is on your path
 PATH=%PATH%;./release # for windows
@@ -128,15 +130,15 @@ If you are going to run the BioGearsSceanrioDriver through visual studio follow 
 
 ### Java Based Testing Suite
 
-BioGears provides a test harnes, written in Java, that will process a ./test/config/*.config file by doing the following :
+BioGears provides a test harnes, written in Java, that will process a ./test/config/*.config file in the source tree by doing the following :
 - For each line in the config file :
     - Run the BioGearsScenarioDriver or UnitTestDriver (depends on the line)
     - Compare the generated csv results to a baseline csv file and report any differences
     - Generate an plot image file for each data column of the csv file over the time of the scenario
 
-To run the test driver change directory in your cmd/bash shell to the bin directory and execute the Scripts.cmake in the following way :
+To run the test driver change directory in your cmd/bash shell to the build/install/bin directory and execute the run.cmake in the following way :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-cmake -DTYPE:STRING=<option> -P ../cmake/Scripts.cmake 
+cmake -DTYPE:STRING=<option> -P run.cmake 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Where <option> can be one of the following :
@@ -148,7 +150,7 @@ Where <option> can be one of the following :
 - SystemValidation - Will run the ../test/config/ValidationSystems configuration plus create validation tables from comparing results to ../test/validation
 - PatientValidation - Will run the ../test/config/ValidationPatients configuration plus create validation tables from comparing results to ../test/validation
 
-<b>Results will be place in the bin/test_results directory </b>
+<b>Results will be place in the build/install/bin/test_results directory </b>
 
 #### Configuration Files
 
@@ -159,14 +161,10 @@ The configuration files, referenced above, provied the testing suite direction o
 
 In the BioGears source code tree is an sdk folder.
 This folder provides examples of how to use BioGears.
-During the build and install, all the files needed to integrate its libraries into your application are placed into this folder.
+During the build and install, all the header and library files needed to integrate BioGears into your application are placed into the build/install folder
 External applications only need to reference this directory for headers and libraries for their build.
-The SDK contains the following folders
-- include - headers files needed for code integration
-- lib - libraries needed for code integration
-- howto - a set of simple drivers (in both C++ and Java) showing how to use BioGears
 
-Note, your application will still need to execute within the bin directory as it has the binaries and data files in it.
+Note, your application will still need to execute within the build/install/bin directory as it has the binaries and data files in it.
 
 There is a CMakeLists.txt in the sdk folder that you can also run to build and run any of the provided howto examples.
 You can edit the BioGearsEngineHowTo.cpp to run a particular example, and even code in the HowToSandbox.cpp to run your own engine!
