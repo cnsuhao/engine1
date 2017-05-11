@@ -56,17 +56,13 @@ ExternalProject_Add( log4cpp
   PREFIX log4cpp
   URL "https://sourceforge.net/projects/log4cpp/files/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.2.tar.gz"
   URL_HASH MD5=c70eac7334e2f3cbeac307dc78532be4
-  UPDATE_COMMAND 
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp.cmake ${log4cpp_DIR}/CMakeLists.txt
-    COMMAND ${CONFIGURE}
+  UPDATE_COMMAND # This is a patch to replace the autotools configuration
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp/CMakeLists.txt ${log4cpp_DIR}/CMakeLists.txt
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp/Configure.cmake ${log4cpp_DIR}/Configure.cmake
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp/config-cmake.h.in ${log4cpp_DIR}/include/config-cmake.h.in
 # Build this in the Inner build
 # It will be easier to switch cofigurations in MSVC/XCode
-# INSTALL_DIR "${log4cpp_INSTALL}"
-# CMAKE_ARGS
-#       -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-#       -DCMAKE_INSTALL_PREFIX:STRING=${log4cpp_INSTALL}
-#       -DINCLUDE_INSTALL_DIR:STRING=${log4cpp_INSTALL}/include
-# do nothing
+# So do nothing
   CONFIGURE_COMMAND "" 
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
