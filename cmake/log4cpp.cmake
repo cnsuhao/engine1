@@ -76,10 +76,6 @@ else (WIN32)
     add_definitions ( -pthread -DNDEBUG -DLOG4CPP_HAVE_SSTREAM )
   endif (APPLE)
 endif (WIN32)
-# Replace Configure
-# determine what system supports (equivalent of autotools' "./configure")
-INCLUDE(Configure.cmake)
-CONFIGURE_FILE(include/config-cmake.h.in include/log4cpp/config.h)
 
 add_custom_command(TARGET log4cpp POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
