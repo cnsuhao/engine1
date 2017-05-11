@@ -1,6 +1,9 @@
 # Files in the project 
 
-  include(${CMAKE_CURRENT_SOURCE_DIR}/GenerateCDMBindings.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/GenerateCDMBindings.cmake)
+if(REBIND)
+  return()
+endif()
 
 file(GLOB BIND_FILES
     "${CMAKE_BINARY_DIR}/schema/cpp/bind/*.hxx"

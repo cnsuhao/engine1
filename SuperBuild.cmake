@@ -57,7 +57,8 @@ ExternalProject_Add( log4cpp
   URL "https://sourceforge.net/projects/log4cpp/files/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.2.tar.gz"
   URL_HASH MD5=c70eac7334e2f3cbeac307dc78532be4
   UPDATE_COMMAND 
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp.cmake ${log4cpp_DIR}/CMakeLists.txt
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp-patches/CMakeLists.txt ${log4cpp_DIR}/CMakeLists.txt
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp-patches/config.guess ${log4cpp_DIR}/config/config.guess
     COMMAND ${CONFIGURE}
 # Build this in the Inner build
 # It will be easier to switch cofigurations in MSVC/XCode
@@ -278,6 +279,13 @@ else()
     -DCMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=${CMAKE_CXX_COMPILER_LAUNCHER} )
   set( CMAKE_C_COMPILER_LAUNCHER_FLAG
     -DCMAKE_C_COMPILER_LAUNCHER:FILEPATH=${CMAKE_C_COMPILER_LAUNCHER} )
+endif()
+
+if(REBIND)
+  set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+  find_package(XSD REQUIRED)
+  add_subdirectory(schema)
+  return()
 endif()
 
 # ExternalProject_Add doesn't like to work with lists: it keeps only the first element

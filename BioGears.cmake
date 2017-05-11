@@ -1,23 +1,6 @@
 project(BioGears)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-MACRO(install_headers SRC_DIR DEST)
-  file(GLOB_RECURSE HEADER_LIST 
-    ${SRC_DIR}/*.h 
-    ${SRC_DIR}/*.hxx
-    ${SRC_DIR}/*.inl)
-  foreach(HEADER ${HEADER_LIST})
-    #message(STATUS "Header at ${HEADER}")
-    STRING(REPLACE ${SRC_DIR}/ "" REL_DIR ${HEADER})
-    #message(STATUS "Relative Path ${REL_DIR}")  
-    set(FULL_LOC ${CMAKE_INSTALL_PREFIX}/include/${DEST}/${REL_DIR})
-    #message(STATUS "File should goto ${FULL_LOC}")
-    get_filename_component(DEST_DIR ${FULL_LOC} PATH) 
-    #message(STATUS "Going to ${DEST_DIR}")
-    install(FILES ${HEADER} DESTINATION ${DEST_DIR})
-  endforeach()    
-
-ENDMACRO(install_headers)
 
 # Policy to address @foo@ variable expansion
 set(BioGears_VERSION_MAJOR 6)

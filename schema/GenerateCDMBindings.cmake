@@ -24,7 +24,7 @@ foreach(f ${XSD_FILES})
   endif()
 endforeach()
 
-if(NOT XSD_CHANGED)
+if(NOT XSD_CHANGED AND NOT REBIND)
   message(STATUS "XSD has not changed since last build, not regenerating")
   return()
 endif()
@@ -70,7 +70,7 @@ execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree
                                            --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
                                            ${EXPORT_SYMBOL}
                                            ${CMAKE_CURRENT_SOURCE_DIR}/xsd/BioGearsDataModel.xsd
-                WORKING_DIRECTORY "${bindings_DIR}/")
+                WORKING_DIRECTORY "${bindings_DIR}")
 execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
                                            --std c++11 
                                            --generate-xml-schema
@@ -82,7 +82,7 @@ execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree
                                            --generate-default-ctor 
                                            ${EXPORT_SYMBOL}
                                            ${bindings_DIR}/data-model-schema.xsd
-                WORKING_DIRECTORY "${bindings_DIR}/")
+                WORKING_DIRECTORY "${bindings_DIR}")
 #Generate cxx/hxx file for each xsd file (faster to build)
 file(GLOB CDM_XSD "${CMAKE_CURRENT_SOURCE_DIR}/xsd/cdm/*.xsd")
 foreach(ITEM ${CDM_XSD})
