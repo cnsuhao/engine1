@@ -1,6 +1,6 @@
 include(ExternalProject)
+include(CMakeDetermineSystem)
 project(OuterBuild)
-
 
 if(MSVC OR XCode)
 # For multi configuration IDE environments,
@@ -94,17 +94,15 @@ elseif(APPLE)
   set(xsd_URL "http://www.codesynthesis.com/download/xsd/4.0/macosx/i686/xsd-4.0.0-i686-macosx.tar.bz2")
   set(xsd_HASH "bb96454da6acafb93180368220d555e2b9747023")
 elseif(UNIX)
-  # Figure out what architecture we are on
-  exec_program(uname ARGS -m OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_ARCH)
-  message(STATUS "I am on a ${CMAKE_HOST_SYSTEM_ARCH} UNIX system")
-  if(("${CMAKE_HOST_SYSTEM_ARCH}" STREQUAL "x86_64") OR
-     ("${CMAKE_HOST_SYSTEM_ARCH}" STREQUAL "i686") OR
-     ("${CMAKE_HOST_SYSTEM_ARCH}" STREQUAL "i386"))
+  message(STATUS "I am on a ${CMAKE_HOST_SYSTEM_PROCESSOR} UNIX system")
+  if(("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "x86_64") OR
+     ("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "i686") OR
+     ("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "i386"))
     set(xsd_URL "http://www.codesynthesis.com/download/xsd/4.0/linux-gnu/x86_64/xsd-4.0.0-x86_64-linux-gnu.tar.bz2")
     set(xsd_HASH "5eeb2eeca0d893949e3677bb374e7b96f19770d6")
-  elseif("${CMAKE_HOST_SYSTEM_ARCH}" EQUALS "aarch64")
+  elseif("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "aarch64")
     message(STATUS "Thanks Matt!")
-    set(xsd_URL "https://github.com/matthewpang/xsd-4.0.0-aarch64-linux-gnu/blob/master/xsd-4.0.0-aarch64-linux-gnu.tar.gz")
+    set(xsd_URL "https://github.com/matthewpang/xsd-4.0.0-aarch64-linux-gnu/raw/master/xsd-4.0.0-aarch64-linux-gnu.tar.gz")
     set(xsd_HASH "01279dffc0d125098b5519240f251416")
   else()
     message(FATAL_ERROR "Unsupported system architecture")
