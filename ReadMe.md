@@ -16,7 +16,14 @@ The BioGears engine high-level objectives include:
     physiology for medical education
 
 
-## Setup Build Environment
+## Build Environment
+
+BioGears utilizes C++11, here is a list of popular compilers and their initial version to implement all of C++11 :
+- GCC 4.8.1 and later
+- Clang 3.3 and later
+- MSVC 2015 and later
+
+If you have any questions\comments, don't hesitate to email aaron.bray@kitware.com
 
 While BioGears automatically pulls many libraries it needs to compile, 
 you will still need to have the following tools installed (along with your choice of C++ compiler) :
