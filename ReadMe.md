@@ -79,10 +79,7 @@ Here is the quickest way to pull and build BioGears via a cmd/bash shell:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 mkdir BioGears
 cd BioGears
-mkdir src
-cd src
-git clone https://gitlab.kitware.com/bioGears/biogears
-cd ..
+git clone https://gitlab.kitware.com/bioGears/biogears src
 mkdir builds
 cd builds
 # Feel free to make subfolders here, like msvc2017x64 or something
