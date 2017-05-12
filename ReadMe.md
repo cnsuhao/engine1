@@ -34,7 +34,7 @@ Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 
 Note on Linux systems, make sure to have curl before you build/install cmake for it to behave properly when downloading 3rd party libraries.
 ~~~~~~~~~~~~~~~~~~~~~~~~
-sudo-apt-get install curl
+sudo apt-get install curl
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Java JDK
