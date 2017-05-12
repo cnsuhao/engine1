@@ -30,7 +30,7 @@ if(MSVC)
     lib/release${EX_CONFIG}/log4cpp.lib
     lib/release${EX_CONFIG}/xerces-c.lib
   )
-else(UNIX)  
+elseif(UNIX)  
   set(D_LIB_FILES
     "lib/debug${EX_CONFIG}/BioGearsEngine.so"
     "lib/debug${EX_CONFIG}/CommonDataModel.so"
