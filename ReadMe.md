@@ -32,11 +32,15 @@ you will still need to have the following tools installed (along with your choic
 Go to the cmake website, `https://cmake.org/download`, and download the appropriate distribution.
 Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 
+Note on Linux systems, make sure to have curl before you build/install cmake for it to behave properly when downloading 3rd party libraries.
+~~~~~~~~~~~~~~~~~~~~~~~~
+sudo-apt-get install curl
+~~~~~~~~~~~~~~~~~~~~~~~~
+
 ### Java JDK
 
 The test suite and data generate tools used by BioGears is written in Java.
 While there is no dependency on Java when integrating BioGears with your application, it is currently required to build/develop BioGears.
-You can get the </a> 
 
 Add a JAVA_HOME environment variable to point to the Java installation and add it to the system PATH.<br>
 There are many ways to do this, here is a simple walk through to get you going with a JDK.
