@@ -68,7 +68,7 @@ export PATH
 
 ## Building BioGears
 
-The BioGears build is directed by CMake to ensure it can be build on various platforms. 
+The BioGears build is directed by CMake to ensure it can be built on various platforms. 
 The code is build by a CMake 'superbuild', meaning as part of the build, CMake will download any
 dependent libraries and compile those before it builds BioGears. 
 The build is also out of source, meaning the code base is seperated from the build files.
@@ -119,7 +119,7 @@ BioGearsScenarioDriver ../verification/Scenarios/Patient/BasicStandard.xml
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <b> .csv and .log files will be placed in the bin directory </b>
 
-If you are going to run the BioGearsSceanrioDriver through visual studio follow these steps
+If you are going to run the BioGearsSceanrioDriver through visual studio follow these steps :
 - Right-click the BioGearsScenarioDriver project and select 'Set as Startup Project'
 - Right-click the Project and select settings
 - Make sure you are on the appropriate configuration in the Configuration drop down. The one you intend to run
@@ -130,7 +130,7 @@ If you are going to run the BioGearsSceanrioDriver through visual studio follow 
   - For example, this is what you would enter to run against the 64bit release dll's: PATH=PATH;./release
   - and this is what you would enter to run against the 32bit release dll's : PATH=PATH;./release32
   
-<b> You will also want to do this for the UnitTestDriver if you want to run that through visual studio as well </b>
+<b> You will also want to do this for the UnitTestDriver if you want to run that through visual studio as well. </b>
 
 ### Java Based Testing Suite
 
@@ -142,10 +142,10 @@ BioGears provides a test harnes, written in Java, that will process a ./test/con
 
 To run the test driver change directory in your cmd/bash shell to the build/install/bin directory and execute the run.cmake in the following way :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-cmake -DTYPE:STRING=<option> -P run.cmake 
+cmake -DTYPE:STRING=[option] -P run.cmake 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Where <option> can be one of the following :
+Where [option] can be one of the following :
 - genData - Generate xml files from data in the ../data/BioGears.xlxs file (Patients, Substances, etc.)
 - genStates - Generate BioGears state file for every patient at the point where the patient completed stabilization (Simulation time 0s)
 - Any of the testing configurations found in ../test/config without the suffix
