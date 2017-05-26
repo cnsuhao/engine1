@@ -1,12 +1,12 @@
-project(BioGears)
+project(Engine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # Policy to address @foo@ variable expansion
-set(BioGears_VERSION_MAJOR 6)
-set(BioGears_VERSION_MINOR 2)
-set(BioGears_VERSION_PATCH 0)
-set(BioGears_VERSION "${BioGears_VERSION_MAJOR}.${BioGears_VERSION_MINOR}.${BioGears_VERSION_PATCH}")
+set(_VERSION_MAJOR 6)
+set(_VERSION_MINOR 2)
+set(_VERSION_PATCH 0)
+set(_VERSION "${_VERSION_MAJOR}.${_VERSION_MINOR}.${_VERSION_PATCH}")
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release RelWithDebInfo CACHE TYPE INTERNAL FORCE )
 if(MSVC)  

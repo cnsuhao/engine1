@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Install location")
 
-project(BioGears_SuperBuild)
+project(SuperBuild)
 
 # Policy to address @foo@ variable expansion
 if(POLICY CMP0053)
@@ -66,5 +66,5 @@ if(SUPERBUILD)
   include(SuperBuild.cmake)
   return()
 else()
-  include(BioGears.cmake)
+  include(Engine.cmake)
 endif()

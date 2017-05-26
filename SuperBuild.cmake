@@ -30,7 +30,7 @@ ExternalProject_Add( Eigen
         -DCMAKE_INSTALL_PREFIX:STRING=${Eigen_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${Eigen_INSTALL}/include
 )
-list(APPEND BioGears_DEPENDENCIES Eigen)
+list(APPEND engine_DEPENDENCIES Eigen)
 # Install Headers
 install(DIRECTORY ${Eigen_INSTALL}/include
         DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -72,7 +72,7 @@ ExternalProject_Add( log4cpp
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
 )
-list(APPEND BioGears_DEPENDENCIES log4cpp)
+list(APPEND engine_DEPENDENCIES log4cpp)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/log4cpp/install)
 
 message(STATUS "log4cpp is here : ${log4cpp_DIR}" )
@@ -121,7 +121,7 @@ ExternalProject_Add( xsd
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${xsd_DIR}/libxsd ${xsd_INSTALL}/libxsd
 
 )
-list(APPEND BioGears_DEPENDENCIES xsd)
+list(APPEND engine_DEPENDENCIES xsd)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/xsd/install)
 message(STATUS "xsd is here : ${xsd_DIR}" )
 
@@ -160,7 +160,7 @@ ExternalProject_Add( xerces
         -DINCLUDE_INSTALL_DIR:STRING=${xerces_INSTALL}/include
 
 )
-list(APPEND BioGears_DEPENDENCIES xerces)
+list(APPEND engine_DEPENDENCIES xerces)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/xerces/install)
 # Install Headers
 install(DIRECTORY ${xerces_INSTALL}/include
@@ -168,30 +168,30 @@ install(DIRECTORY ${xerces_INSTALL}/include
  
 if(WIN32)
   if(MSVC) # Only builds release, so push this one dll the 3 configuration directories
-    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+    install(FILES ${xerces_INSTALL}/bin/xerces-c_3_1.dll
       DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+    install(FILES ${xerces_INSTALL}/bin/xerces-c_3_1.dll
       DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+    install(FILES ${xerces_INSTALL}/bin/xerces-c_3_1.dll
       DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+    install(FILES ${xerces_INSTALL}/lib/xerces-c_3.lib
       DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})  
-    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+    install(FILES ${xerces_INSTALL}/lib/xerces-c_3.lib
       DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+    install(FILES ${xerces_INSTALL}/lib/xerces-c_3.lib
       DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
   else()
-    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+    install(FILES ${xerces_INSTALL}/bin/xerces-c_3_1.dll
       CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/bin/xerces-cd.dll
+    install(FILES ${xerces_INSTALL}/bin/xerces-c_3_1.dll
       CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/bin/xerces-c.dll
+    install(FILES ${xerces_INSTALL}/bin/xerces-c_3_1.dll
       CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+    install(FILES ${xerces_INSTALL}/lib/xerces-c_3.lib
       CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/lib/xerces-cd.lib
+    install(FILES ${xerces_INSTALL}/lib/xerces-c_3.lib
       CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/lib/xerces-c.lib
+    install(FILES ${xerces_INSTALL}/lib/xerces-c_3.lib
       CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
   endif()
 elseif(APPLE)
@@ -274,7 +274,7 @@ if(WIN32)
           -DINCLUDE_INSTALL_DIR:STRING=${dirent_INSTALL}/include
   )
   message(STATUS "dirent is here : ${dirent_DIR}" )
-  list(APPEND BioGears_DEPENDENCIES dirent)
+  list(APPEND engine_DEPENDENCIES dirent)
   list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/dirent/install)
   # Install Headers
   install(DIRECTORY ${dirent_INSTALL}/include
@@ -302,10 +302,10 @@ endif()
 # ExternalProject_Add doesn't like to work with lists: it keeps only the first element
 string(REPLACE ";" "::" CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
 
-# Generate the BioGears project after dependencies have been built
+# Generate the engine project after dependencies have been built
 ExternalProject_Add( InnerBuild
     PREFIX InnerBuild
-    DEPENDS Eigen ${BioGears_DEPENDENCIES}
+    DEPENDS Eigen ${engine_DEPENDENCIES}
     DOWNLOAD_COMMAND ""
     DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}
     SOURCE_DIR ${CMAKE_SOURCE_DIR}

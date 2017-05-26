@@ -40,7 +40,7 @@ public class UnitConverter
     List<String>libs = new ArrayList<String>();
     if(System.getProperty("os.name").toLowerCase().startsWith("win"))
     {
-      if(!FileUtils.loadLibrary("xerces-c"))      // This is for building code synthesis with xcode
+      if(!FileUtils.loadLibrary("xerces-c_3_1"))      // This is for building code synthesis with xcode
         throw new RuntimeException("Could not find xerces library");    
       libs.add("log4cpp");
     }
