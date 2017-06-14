@@ -22,7 +22,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import mil.tatrc.physiology.biogears.RunConfiguration;
 import mil.tatrc.physiology.datamodel.CDMSerializer;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
 import mil.tatrc.physiology.datamodel.bind.*;
@@ -36,6 +35,7 @@ import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 import mil.tatrc.physiology.datamodel.substance.*;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
+import mil.tatrc.physiology.utilities.RunConfiguration;
 
 public class DataSetReader
 {

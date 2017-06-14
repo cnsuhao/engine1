@@ -1,10 +1,17 @@
-package mil.tatrc.physiology.biogears;
+package mil.tatrc.physiology.utilities;
 
 import java.io.*;
 import java.util.Properties;
 
 import org.jfree.util.Log;
 
+/**
+ * Simple file to load up a config file and
+ * provide access to the variables it contains
+ * Pretty much a simple I/O wrapped properties file
+ * @author aaron.bray
+ *
+ */
 public class RunConfiguration 
 {
   protected String dataDirectory;

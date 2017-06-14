@@ -15,9 +15,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -84,11 +81,11 @@ public class ActionEventPlotter implements Plotter
     //fill PlotJob with needed data if it doesn't exist
     PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
-    {job.dataPath = "../verification/Scenarios/"+job.verificationDirectory+"/Current Baseline/";}
+    {job.dataPath = job.verificationDirectory+"/Current Baseline/";}
     if(job.logPath == null || job.logPath.isEmpty())
-    {job.logPath = "../verification/Scenarios/"+job.verificationDirectory+"/Current Baseline/";}
+    {job.logPath = job.verificationDirectory+"/Current Baseline/";}
     if(job.scenarioPath == null || job.scenarioPath.isEmpty())
-    {job.scenarioPath = "../verification/Scenarios/"+job.verificationDirectory+"/";}
+    {job.scenarioPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
     {job.dataFile = job.name + "Results.zip";}
     if(job.logFile == null || job.logFile.isEmpty())

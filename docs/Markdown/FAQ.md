@@ -1,27 +1,7 @@
 %BioGears FAQ {#FAQ}
 ============
 
-@insert MainPageFAQ.md
+@insert ./docs/markdown/MainPageFAQ.md
 
-@insert ExtraFAQ.md
-
-
- 
-
-
-
- 
-
-
-
-
-
-
-
- 
-
-
-
-
-
+@insert ./docs/markdown/ExtraFAQ.md
 

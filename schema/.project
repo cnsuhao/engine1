@@ -20,6 +20,11 @@
 			<type>2</type>
 			<locationURI>BINDINGS</locationURI>
 		</link>
+		<link>
+			<name>java</name>
+			<type>2</type>
+			<location>C:/Programming/physiology/build/x64/InnerBuild/schema/java</location>
+		</link>
 	</linkedResources>
 	<variableList>
 		<variable>

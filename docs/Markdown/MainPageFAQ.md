@@ -89,21 +89,7 @@ These documents cover the design, implementation, assumptions, limitations, and 
  @refitem CircuitMethodology "Circuits"
  @refitem SubstanceTransportMethodology "Substance Transport"
 @endsecreflist 
-    
-## How do I run %BioGears?    
 
-The @ref Toolkit is intended for users (e.g., researchers, educators, or curious
-individuals) who wish to execute %BioGears and view the physiological
-effects of the patient. The Toolkit will create and plot a time-based,
-comma delimited file of calculated physiological outputs.
-
-You can download the Toolkit here.<br>
-
-The Toolkit unzips about 15&nbsp;MB of files.
-We recommend having at least 1&nbsp;GB of available disk space.
-- The result files generated from the command line executable and GUI average 20&nbsp;MB.
-- Graphed results file from the GUI or graphing script can generate file sets of several hundred MB.
-	
 ## How do I code with %BioGears?
 
 %BioGears has developed a modular architecture to reduce costs for applications that need a physiology engine as well as want to develop or extend a physiology model.

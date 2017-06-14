@@ -19,7 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import mil.tatrc.physiology.biogears.RunConfiguration;
 import mil.tatrc.physiology.datamodel.CDMSerializer;
 import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
 import mil.tatrc.physiology.datamodel.bind.TestReportData;
@@ -28,6 +27,7 @@ import mil.tatrc.physiology.datamodel.scenario.SEScenarioAutoSerialization;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
+import mil.tatrc.physiology.utilities.RunConfiguration;
 import mil.tatrc.physiology.utilities.UnitConverter;
 import mil.tatrc.physiology.testing.csv.CSVComparison;
 import mil.tatrc.physiology.utilities.csv.plots.CSVComparePlotter;

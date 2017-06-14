@@ -23,6 +23,7 @@ endif()
 #set(Java_JAVA_EXECUTABLE "/the_jdk_I_want/bin/java)
 
 set(JAVA_CLASSPATH BioGears.jar
+        @DATA_ROOT@/jar/javassist-3.16.1-GA.jar
         @DATA_ROOT@/jar/jcommon-1.0.16.jar
         @DATA_ROOT@/jar/jdom-2.0.2.jar
         @DATA_ROOT@/jar/jfreechart-1.0.13.jar
@@ -51,6 +52,25 @@ elseif(TYPE STREQUAL "genData")
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.biogears.dataset.DataSetReader)
 elseif(TYPE STREQUAL "genStates")
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver InitialPatientStates.config)
+elseif(TYPE STREQUAL "doxygen")
+  file(MAKE_DIRECTORY  "./docs/html")
+  file(MAKE_DIRECTORY  "./docs/markdown")
+  file(GLOB_RECURSE DOCS "./docs/html*.*" "./docs/markdown/*.*")
+  if(DOCS)
+    file(REMOVE ${DOCS})
+  endif()
+  file(COPY C:/Programming/physiology/src/docs/Doxygen/bootstrap DESTINATION ./docs/html)
+  file(COPY C:/Programming/physiology/src/docs/Doxygen/font-awesome-4.3.0 DESTINATION ./docs/html)
+  file(COPY C:/Programming/physiology/src/docs/Images DESTINATION ./docs/html)
+  # These are run above
+  #execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.validation.SystemValidation)
+  #execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.validation.PatientValidation)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.DoxygenPreprocessor @DATA_ROOT@/docs/Markdown ./docs/markdown)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.DoxygenPreprocessor @DATA_ROOT@/src/docs/Methodology ./docs/markdown)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.XSDToDoxygen ./xsd/BioGearsDataModel.xsd ./docs/markdown/xsd.ixx)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.CDM2MD ./docs/markdown)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.utilities.csv.plots.PlotDriver PlotRun.config)
+
 else()
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ${TYPE}.config)
 endif()

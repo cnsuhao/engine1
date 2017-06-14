@@ -27,6 +27,7 @@ import java.util.Set;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
+import mil.tatrc.physiology.utilities.RunConfiguration;
 import mil.tatrc.physiology.utilities.csv.CSVContents;
 import mil.tatrc.physiology.utilities.csv.plots.Plotter;
 
@@ -36,6 +37,7 @@ public class PlotDriver
   public static void main(String[] args) 
   {    
     PlotDriver me = new PlotDriver();
+    RunConfiguration cfg = new RunConfiguration();
     
     //invalid input
     if(args.length == 0)
@@ -51,13 +53,14 @@ public class PlotDriver
         Log.error("Value "+args[0]+" doesn't seem to be a valid config file");
         return;
       }
-      if(!(new File(args[0])).exists())
+      File configFile = new File(cfg.getDataDirectory()+"/test/config/"+args[0]);      
+      if(!configFile.exists())
       {
-      Log.error("ConfigFile "+args[0]+" not found");
-      return;
+        Log.error("ConfigFile "+configFile.getAbsolutePath()+" not found");
+        return;
       }
       
-      me.processConfigFile(args[0]);
+      me.processConfigFile(configFile.getAbsolutePath(),cfg.getDataDirectory());
     }
     //Plotting from two results files (compare-type plotting)
     else
@@ -99,30 +102,30 @@ public class PlotDriver
     public PlotJob(){ listen(false);  }
     public String         name;
     public List<String>   headers = new ArrayList<String>();
-    public Plotter         plotter = null;
-    public String          titleOverride;
+    public Plotter        plotter = null;
+    public String         titleOverride;
     public boolean        ignore = false;
     public boolean        showGridLines = true;
     public boolean        logAxis = false;
     public boolean        forceZeroYAxisBound = false;
     public boolean        removeAllLegends = false;
-    public int             resultsSkipNum = 0;
+    public int            resultsSkipNum = 0;
     public Color          bgColor = Color.white;
     public String         dataFile = null;
     public String         dataPath;
     public String         logFile = null;
     public String         logPath;
     public String         scenarioPath;
-    public String          scenarioFile = null;
-    public String         verificationDirectory = "Patient";
-    public String          X1Label = null;
-    public String          Y1Label = null;
-    public String          experimentalData = null;
-    public String          outputDir = "../verification/Plots/";
+    public String         scenarioFile = null;
+    public String         verificationDirectory;
+    public String         X1Label = null;
+    public String         Y1Label = null;
+    public String         experimentalData = null;
+    public String         outputDir = "../verification/Plots/";
     public Integer        imageWidth = null;
     public Integer        imageHeight = null;
     public Integer        fontSize = 22;
-    public String          outputFilename = null;
+    public String         outputFilename = null;
 
     public boolean        skipAllActions = false;
     public boolean        skipAllEvents = false;
@@ -132,8 +135,8 @@ public class PlotDriver
     public List<String>   actionOmissions = new ArrayList<String>();
 
     public boolean        isComparePlot = false;
-    public String          computedDataPath = null;  //only used when comparing AND not preloading
-    public String          computedDataFile = null;
+    public String         computedDataPath = null;  //only used when comparing AND not preloading
+    public String         computedDataFile = null;
     
     public List<String>   Y1headers = new ArrayList<String>();
     public List<String>   Y2headers = new ArrayList<String>();
@@ -147,10 +150,10 @@ public class PlotDriver
     public Double         Y2LowerBound;
     public Double         Y1UpperBound;
     public Double         Y2UpperBound;
-    public String          X2Label = null;
-    public String          Y2Label = null;
+    public String         X2Label = null;
+    public String         Y2Label = null;
     
-    public String          PFTFile = null;
+    public String         PFTFile = null;
 
     
     //Null all allocated data so it can be cleaned up
@@ -166,7 +169,7 @@ public class PlotDriver
   }
 
   //Reading from config file for validation ("pretty graphs")
-  public void processConfigFile(String configFile)
+  public void processConfigFile(String configFile, String dataDir)
   {
     this.name = configFile.substring(0, configFile.lastIndexOf('.'));
     Log.setFileName(this.name+".log");
@@ -228,6 +231,7 @@ public class PlotDriver
         }
         
         PlotJob job = new PlotJob();
+        job.verificationDirectory=dataDir+"/verification/Scenarios/Patient";
         //job2groups.put(job, currentGroup);
         if (key.charAt(0) == '-')
         {
@@ -335,7 +339,7 @@ public class PlotDriver
               continue;
             } 
             else if(key.equalsIgnoreCase("VerificationDir"))
-            {job.verificationDirectory = value; continue;}
+            {job.verificationDirectory = dataDir+"/verification/Scenarios/"+value; continue;}
             else if(key.equalsIgnoreCase("Title"))
             {job.titleOverride = value; continue;}    
             else if(key.equalsIgnoreCase("OutputFilename"))
@@ -371,11 +375,11 @@ public class PlotDriver
             else if(key.equalsIgnoreCase("Y2Label"))
             {job.Y2Label = value; continue;}
             else if(key.equalsIgnoreCase("ExperimentalData"))
-            {job.experimentalData = value; continue;}
+            {job.experimentalData = dataDir+"/"+value; continue;}
             else if(key.equalsIgnoreCase("DataFileOverride"))
             {job.dataFile = value; continue;}
             else if(key.equalsIgnoreCase("DataPathOverride"))
-            {job.dataPath = value; continue;}
+            {job.dataPath = dataDir+"/"+value; continue;}
             else if(key.equalsIgnoreCase("PFTFile"))
             {job.PFTFile = value; continue;}
             else if(key.equalsIgnoreCase("OutputOverride"))

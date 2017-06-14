@@ -80,6 +80,9 @@ configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_BINARY_DIR}/run.cmak
 install(FILES ${CMAKE_BINARY_DIR}/run.cmake DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_BINARY_DIR}/run.config @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/run.config DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+# For documentation
+configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_BINARY_DIR}/full.doxy @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/full.doxy DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy)
 
 # BioGears Testing
 enable_testing()

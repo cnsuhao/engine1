@@ -12,7 +12,7 @@ community involvement in establishing end product expectations.
 
 - - -
 
-@insert MainPageFAQ.md
+@insert ./docs/markdown/MainPageFAQ.md
 
 ## Have more questions?
 

@@ -22,7 +22,6 @@ import java.lang.reflect.*;
 import java.net.InetAddress;
 import java.util.*;
 
-import mil.tatrc.physiology.biogears.RunConfiguration;
 import mil.tatrc.physiology.datamodel.CDMSerializer;
 import mil.tatrc.physiology.datamodel.bind.PatientAssessmentData;
 import mil.tatrc.physiology.datamodel.bind.PatientData;
@@ -34,6 +33,7 @@ import mil.tatrc.physiology.utilities.WaveformUtils;
 import mil.tatrc.physiology.utilities.csv.CSVContents;
 import mil.tatrc.physiology.utilities.DoubleUtils;
 import mil.tatrc.physiology.utilities.Log;
+import mil.tatrc.physiology.utilities.RunConfiguration;
 import mil.tatrc.physiology.utilities.StringUtils;
 import mil.tatrc.physiology.utilities.UnitConverter;
 

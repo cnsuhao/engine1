@@ -11,9 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.doxygen;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -25,7 +23,6 @@ import mil.tatrc.physiology.datamodel.patient.actions.SEConsciousRespirationComm
 import mil.tatrc.physiology.datamodel.patient.actions.SEPatientAction;
 import mil.tatrc.physiology.datamodel.patient.assessments.SEPatientAssessment;
 import mil.tatrc.physiology.datamodel.patient.conditions.SEPatientCondition;
-import mil.tatrc.physiology.datamodel.patient.nutrition.SENutrition;
 import mil.tatrc.physiology.datamodel.properties.SEFunction;
 import mil.tatrc.physiology.datamodel.properties.SEScalar;
 import mil.tatrc.physiology.datamodel.system.environment.actions.SEEnvironmentAction;
@@ -50,8 +47,10 @@ public class CDM2MD
   {
     try
     {
-      String destDir = "./markdown";
-      FileUtils.delete(destDir);
+      String destDir = "./docs/markdown";
+      if(args.length>0)
+    	  destDir = args[0];
+      //FileUtils.delete(destDir);//Caller should delete old contents
       FileUtils.createDirectory(destDir);
 
       PrintWriter writer=new PrintWriter(destDir+"/CDMTable.md", "UTF-8");
@@ -176,7 +175,7 @@ public class CDM2MD
       for(Object o : c.getEnumConstants())
       {
         Method m;
-        Enum<?> e = (Enum<?>)o;
+        //Enum<?> e = (Enum<?>)o;
         try
         {
           BagMethod bag = new BagMethod();

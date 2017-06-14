@@ -32,7 +32,6 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -43,7 +42,6 @@ import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
 import mil.tatrc.physiology.utilities.csv.CSVContents;
-import mil.tatrc.physiology.utilities.csv.ConvexHullMaker;
 import mil.tatrc.physiology.utilities.csv.plots.PlotDriver.PlotJob;
 
 public class MultiPlotter implements Plotter
@@ -62,7 +60,7 @@ public class MultiPlotter implements Plotter
     //fill PlotJob with needed data if it doesn't exist
     PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
-    {job.dataPath = "../verification/Scenarios/"+job.verificationDirectory+"/Current Baseline/";}
+    {job.dataPath = job.verificationDirectory+"/Current Baseline/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
     {job.dataFile = job.name + "Results.zip";}
     

@@ -273,7 +273,7 @@ Validation - Resting Physiologic State
 <br><center>
 *Table 2. The %Energy system properties consist of core and skin temperature, as well as metabolic production rates. The properties show good agreement with the validation values.*
 </center>
-@insert ..\..\bin\validation\EnergyValidationTable.md
+@insert ./test_results/tables/EnergyValidationTable.md
 
 The resting system properties for the energy system are temperatures and metabolic production rates. From Table 2, it is shown that the temperatures meet the validation criteria extremely well for resting conditions. The production rates show reasonable agreement with the validation data. Gas consumption and production yield the largest disparity. This is due to accurate resting physiology being achieved for the displayed consumption and production rates. Additional refinement of the gas consumption and production rates can occur, but the change would propagate through the other systems. In order to preserve accurate resting physiology all other systems would need to be adjusted for this change. This is currently planned for a future release. The remaining metabolic production rates show good agreement with the validation data.
 
