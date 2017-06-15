@@ -165,14 +165,17 @@ public class PlotDriver
       compareData = null;
       Y1headers = null;
       Y2headers = null;
+      plotter = null;
     }
   }
 
   //Reading from config file for validation ("pretty graphs")
   public void processConfigFile(String configFile, String dataDir)
   {
-    this.name = configFile.substring(0, configFile.lastIndexOf('.'));
-    Log.setFileName(this.name+".log");
+  	String[] path = configFile.split("[\\\\/]");
+  	this.name = path[path.length-1];
+    this.name = this.name.substring(0, this.name.lastIndexOf('.'));
+    Log.setFileName("./test_results/"+this.name+".log");
     
     String key;
     String value;
