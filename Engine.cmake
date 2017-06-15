@@ -82,7 +82,7 @@ configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_BINARY_DIR}/run.con
 install(FILES ${CMAKE_BINARY_DIR}/run.config DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 # For documentation
 configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_BINARY_DIR}/full.doxy @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/full.doxy DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy)
+install(FILES ${CMAKE_BINARY_DIR}/full.doxy DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/docs)
 
 # BioGears Testing
 enable_testing()
