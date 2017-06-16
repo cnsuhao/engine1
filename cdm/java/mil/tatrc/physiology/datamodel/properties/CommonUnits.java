@@ -815,7 +815,7 @@ public class CommonUnits
   public enum LengthUnit 
   {
     m("m"),cm("cm"),in("in"),
-    km("km"),mm("mm"),um("um");
+    km("km"),mm("mm"),um("um"),ft("ft");
     private String unit;
     private LengthUnit(String unit)
     {

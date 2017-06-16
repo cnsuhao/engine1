@@ -11,8 +11,11 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.FunctionVolumeVsTimeData;
+import org.jfree.util.Log;
+
+import com.kitware.physiology.cdm.Properties.DoubleArrayData;
+import com.kitware.physiology.cdm.Properties.FunctionVolumeVsTimeData;
+
 import mil.tatrc.physiology.datamodel.exceptions.InvalidUnitException;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumeUnit;
@@ -28,13 +31,21 @@ public class SEFunctionVolumeVsTime extends SEFunction
     super();
   }
     
-  public FunctionVolumeVsTimeData unload()
+  public static void load(FunctionVolumeVsTimeData src, SEFunctionVolumeVsTime dst)
   {
-    if(!isValid())
+    SEFunction.load(src.getFunctionVolumeVsTime(),dst);
+  }
+  public static FunctionVolumeVsTimeData unload(SEFunctionVolumeVsTime src)
+  {
+    if(!src.isValid())
       return null;
-    FunctionVolumeVsTimeData to = CDMSerializer.objFactory.createFunctionVolumeVsTimeData();
-    unload(to);
-    return to;
+    FunctionVolumeVsTimeData.Builder dst = FunctionVolumeVsTimeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEFunctionVolumeVsTime src, FunctionVolumeVsTimeData.Builder dst)
+  {
+    SEFunction.unload(src,dst.getFunctionVolumeVsTimeBuilder());
   }
 
   public boolean isValidDependentUnit(String unit)

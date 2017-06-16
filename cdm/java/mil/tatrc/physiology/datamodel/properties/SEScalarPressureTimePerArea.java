@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarPressureTimePerAreaData;
+import com.kitware.physiology.cdm.Properties.ScalarPressureTimePerAreaData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.PressureTimePerAreaUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarPressureTimePerArea extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarPressureTimePerAreaData src, SEScalarPressureTimePerArea dst)
+  {
+    SEScalar.load(src.getScalarPressureTimePerArea(),dst);
+  }
+  public static ScalarPressureTimePerAreaData unload(SEScalarPressureTimePerArea src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarPressureTimePerAreaData.Builder dst = ScalarPressureTimePerAreaData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarPressureTimePerArea src, ScalarPressureTimePerAreaData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarPressureTimePerAreaBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarPressureTimePerArea extends SEScalar
   public double getValue(PressureTimePerAreaUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarPressureTimePerAreaData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarPressureTimePerAreaData to = CDMSerializer.objFactory.createScalarPressureTimePerAreaData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

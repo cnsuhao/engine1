@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarTimeData;
+import com.kitware.physiology.cdm.Properties.ScalarTimeData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarTime extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarTimeData src, SEScalarTime dst)
+  {
+    SEScalar.load(src.getScalarTime(),dst);
+  }
+  public static ScalarTimeData unload(SEScalarTime src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarTimeData.Builder dst = ScalarTimeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarTime src, ScalarTimeData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarTimeBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarTime extends SEScalar
   public double getValue(TimeUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarTimeData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarTimeData to = CDMSerializer.objFactory.createScalarTimeData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)
