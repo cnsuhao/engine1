@@ -15,8 +15,9 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.bind.EnumAnesthesiaMachineEvent;
-import mil.tatrc.physiology.datamodel.bind.EnumPatientEvent;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.physiology.cdm.Patient.PatientData;
+
 import mil.tatrc.physiology.datamodel.compartment.SECompartment;
 import mil.tatrc.physiology.datamodel.patient.SEPatient;
 import mil.tatrc.physiology.datamodel.patient.actions.SEConsciousRespirationCommand;
@@ -64,7 +65,7 @@ public class CDM2MD
 
       // PATIENT
       WriteDoxyTable(SEPatient.class, "Patient", writer, skipProperties);    
-      WriteDoxyTable(EnumPatientEvent.class, "Patient", writer, skipProperties);  
+      WriteDoxyTable(PatientData.eEvent.class, "Patient", writer, skipProperties);  
       Set<Class<? extends SEPatientAction>> pActions = FindObjects.findClassSubTypes("mil.tatrc.physiology.datamodel.patient.actions", SEPatientAction.class);
       for(Class<?> c : pActions)
         WriteDoxyTable(c, "PatientActions", writer, skipProperties);
@@ -94,7 +95,7 @@ public class CDM2MD
       
       // ANESTHESIA MACHINE
 
-      WriteDoxyTable(EnumAnesthesiaMachineEvent.class, "Anesthesia", writer, skipProperties);  
+      WriteDoxyTable(AnesthesiaMachineData.eEvent.class, "Anesthesia", writer, skipProperties);  
       Set<Class<? extends Object>> anes = FindObjects.findAllClasses("mil.tatrc.physiology.datamodel.system.equipment.anesthesia");
       for(Class<?> c : anes)
         WriteDoxyTable(c, "Anesthesia", writer, skipProperties);

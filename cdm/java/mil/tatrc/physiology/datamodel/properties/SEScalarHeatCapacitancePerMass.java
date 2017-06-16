@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarHeatCapacitancePerMassData;
+import com.kitware.physiology.cdm.Properties.ScalarHeatCapacitancePerMassData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.HeatCapacitancePerMass;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarHeatCapacitancePerMass extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarHeatCapacitancePerMassData src, SEScalarHeatCapacitancePerMass dst)
+  {
+    SEScalar.load(src.getScalarHeatCapacitancePerMass(),dst);
+  }
+  public static ScalarHeatCapacitancePerMassData unload(SEScalarHeatCapacitancePerMass src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarHeatCapacitancePerMassData.Builder dst = ScalarHeatCapacitancePerMassData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarHeatCapacitancePerMass src, ScalarHeatCapacitancePerMassData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarHeatCapacitancePerMassBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarHeatCapacitancePerMass extends SEScalar
   public double getValue(HeatCapacitancePerMass unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarHeatCapacitancePerMassData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarHeatCapacitancePerMassData to = CDMSerializer.objFactory.createScalarHeatCapacitancePerMassData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

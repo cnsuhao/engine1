@@ -11,12 +11,16 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.properties;
 
+import java.math.BigDecimal;
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
+import com.kitware.physiology.cdm.Properties.ArrayData;
+import com.kitware.physiology.cdm.Properties.DoubleArrayData;
+import com.kitware.physiology.cdm.Properties.DoubleArrayData.Builder;
+import com.kitware.physiology.cdm.Properties.ScalarData;
+import com.kitware.physiology.cdm.Properties.ScalarTemperatureData;
+
 import mil.tatrc.physiology.datamodel.SEEqualOptions;
-import mil.tatrc.physiology.datamodel.bind.ArrayData;
-import mil.tatrc.physiology.datamodel.bind.EnumErrorType;
 import mil.tatrc.physiology.datamodel.exceptions.InvalidUnitException;
 import mil.tatrc.physiology.utilities.DoubleUtils;
 import mil.tatrc.physiology.utilities.Log;
@@ -66,47 +70,29 @@ public class SEArray extends SEProperty
     return true;
   }
 
-  public boolean loadData(Object data) throws ClassCastException
+  public static void load(ArrayData src, SEArray dest)
   {
-    if (data instanceof ArrayData)
-      return load((ArrayData) data);
-    else if (data instanceof SEArray)
-      return set((SEArray)data);
-    return false;
+    if (src == null)
+      return;
+    dest.setDoubleData(src.getValue().getValueList(),src.getUnit());
   }
-
-  public boolean load(ArrayData data)
+  public static ArrayData unload(SEArray src)
   {
-    if (data == null)
-      return false;
-    return this.setDoubleData(data.getValue().getDoubleList(),data.getUnit());
-  }
-
-  public Object unloadData()
-  {
-    return unload();
-  }
-
-  public ArrayData unload()
-  {
-    if (!this.isValid())
+    if(!src.isValid())
       return null;
-    
-    ArrayData to = CDMSerializer.objFactory.createArrayData();
-    unload(to);
-    
-    return to;
+    ArrayData.Builder dst = ArrayData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-
-  protected void unload(ArrayData to)
+  protected static void unload(SEArray src, ArrayData.Builder dst)
   {
-    if(this.unit != null && !this.unit.equals(""))
-      to.setUnit(this.unit);
-    to.setValue(CDMSerializer.objFactory.createDoubleArray());
-    if(this.dData!=null)
-      toList(to.getValue().getDoubleList(),this.dData,this.precision);
+    if(src.unit != null && !src.unit.equals(""))
+      dst.setUnit(src.unit);
+    dst.setValue(DoubleArrayData.newBuilder());
+    if(src.dData!=null)
+      toData(dst.getValueBuilder(),src.dData,src.precision);
     else
-      to.getValue().getDoubleList().addAll(this.dList);
+      dst.getValueBuilder().addAllValue(src.dList);
   }
   
   public  int hashCode()
@@ -907,6 +893,16 @@ public class SEArray extends SEProperty
     }
   }
   
+  public static void toData(DoubleArrayData.Builder dep, double[] dAry) 
+  {
+    dep.clear();
+    if(dAry!=null)
+    {
+      for(double d : dAry)
+        dep.addValue(d);
+    }
+  }
+  
   /**
    * List will be cleared internally
    * @param to
@@ -923,6 +919,20 @@ public class SEArray extends SEProperty
       if(precision>0)
         d = DoubleUtils.truncate(d,precision);
       to.add(d);
+    }
+  }
+  
+  public static void toData(DoubleArrayData.Builder dep, double[] dAry, int precision) 
+  {
+    dep.clear();
+    if(dAry!=null)
+    {
+      for(double d : dAry)
+      {
+        if(precision>0)
+          d = DoubleUtils.truncate(d,precision);
+        dep.addValue(d);
+      }
     }
   }
   

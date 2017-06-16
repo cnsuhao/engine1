@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.GastrointestinalSystemData;
+import com.kitware.physiology.cdm.Physiology.GastrointestinalSystemData;
+
 import mil.tatrc.physiology.datamodel.patient.nutrition.SENutrition;
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
@@ -37,29 +37,27 @@ public class SEGastrointestinalSystem extends SEPhysiologySystem implements SESy
       stomachContents.reset();
   }
 
-  public boolean load(GastrointestinalSystemData in)
+  public static void load(GastrointestinalSystemData src, SEGastrointestinalSystem dst)
   {    
-    if (in.getChymeAbsorbtionRate() != null)
-      getChymeAbsorbtionRate().load(in.getChymeAbsorbtionRate());
-    if (in.getStomachContents() != null)
-      getStomachContents().load(in.getStomachContents());
-
-    return true;
+    if (src.hasChymeAbsorbtionRate())
+      SEScalarVolumePerTime.load(src.getChymeAbsorbtionRate(),dst.getChymeAbsorbtionRate());
+    if (src.hasStomachContents())
+      SENutrition.load(src.getStomachContents(),dst.getStomachContents());
   }
 
-  public GastrointestinalSystemData unload()
+  public static GastrointestinalSystemData unload(SEGastrointestinalSystem src)
   {
-    GastrointestinalSystemData data = CDMSerializer.objFactory.createGastrointestinalSystemData();
-    unload(data);
-    return data;
+    GastrointestinalSystemData.Builder dst = GastrointestinalSystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
 
-  protected void unload(GastrointestinalSystemData data)
+  protected static void unload(SEGastrointestinalSystem src, GastrointestinalSystemData.Builder dst)
   {    
-    if (getChymeAbsorbtionRate() != null)
-      data.setChymeAbsorbtionRate(chymeAbsorbtionRate.unload());
-    if (getStomachContents() != null)
-      data.setStomachContents(stomachContents.unload());
+    if (src.hasChymeAbsorbtionRate())
+      dst.setChymeAbsorbtionRate(SEScalarVolumePerTime.unload(src.getChymeAbsorbtionRate()));
+    if (src.hasStomachContents())
+      dst.setStomachContents(SENutrition.unload(src.getStomachContents()));
   }
 
   public boolean hasChymeAbsorbtionRate()

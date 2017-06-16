@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.InspiratoryValveObstructionData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.InspiratoryValveObstructionData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEInspiratoryValveObstruction extends SEAnesthesiaMachineAction
@@ -38,25 +37,23 @@ public class SEInspiratoryValveObstruction extends SEAnesthesiaMachineAction
     return hasSeverity();
   }
   
-  public boolean load(InspiratoryValveObstructionData in)
+  public static void load(InspiratoryValveObstructionData src, SEInspiratoryValveObstruction dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
-  
-  public InspiratoryValveObstructionData unload()
+  public static InspiratoryValveObstructionData unload(SEInspiratoryValveObstruction src)
   {
-    InspiratoryValveObstructionData data = CDMSerializer.objFactory.createInspiratoryValveObstructionData();
-    unload(data);
-    return data;
+    InspiratoryValveObstructionData.Builder dst = InspiratoryValveObstructionData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(InspiratoryValveObstructionData data)
+  protected static void unload(SEInspiratoryValveObstruction src, InspiratoryValveObstructionData.Builder dst)
   {
-    super.unload(data);
-    if (hasSeverity())
-      data.setSeverity(severity.unload());
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   /*

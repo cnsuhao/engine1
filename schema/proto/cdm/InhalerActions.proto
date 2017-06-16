@@ -1,0 +1,30 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Inhaler.proto";
+import "cdm/Actions.proto";
+
+message AnyInhalerActionData
+{
+  oneof Action
+  {
+    InhalerConfigurationData Configuration = 1;
+  }
+}
+
+message InhalerActionData
+{
+  ActionData                 Action        = 1;
+}
+
+/** @brief The configuration of the inhaler to use. */
+message InhalerConfigurationData
+{
+  InhalerActionData          InhalerAction = 1;
+  oneof Option
+  {
+    InhalerData              Inhaler       = 2;/**<< @brief An inhaler object with properties to set in the system inhaler. */
+    string                   InhalerFile   = 3;/**<< @brief File containing an inhaler objet with properties to set in the system inhaler. */
+  }
+}

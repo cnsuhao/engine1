@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.VentilatorPressureLossData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.VentilatorPressureLossData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEVentilatorPressureLoss extends SEAnesthesiaMachineAction
@@ -38,25 +37,23 @@ public class SEVentilatorPressureLoss extends SEAnesthesiaMachineAction
     return hasSeverity();
   }
   
-  public boolean load(VentilatorPressureLossData in)
+  public static void load(VentilatorPressureLossData src, SEVentilatorPressureLoss dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
-  
-  public VentilatorPressureLossData unload()
+  public static VentilatorPressureLossData unload(SEVentilatorPressureLoss src)
   {
-    VentilatorPressureLossData data = CDMSerializer.objFactory.createVentilatorPressureLossData();
-    unload(data);
-    return data;
+    VentilatorPressureLossData.Builder dst = VentilatorPressureLossData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(VentilatorPressureLossData data)
+  protected static void unload(SEVentilatorPressureLoss src, VentilatorPressureLossData.Builder dst)
   {
-    super.unload(data);
-    if (hasSeverity())
-      data.setSeverity(severity.unload());
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   /*

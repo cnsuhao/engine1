@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.ForcedExhaleData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
@@ -60,32 +60,29 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
     return hasExpiratoryReserveVolumeFraction() && hasPeriod();
   }
   
-  public boolean load(ForcedExhaleData in)
+  public static void load(ForcedExhaleData src, SEForcedExhale dst)
   {
-    super.load(in);
-    
-    getExpiratoryReserveVolumeFraction().load(in.getExpiratoryReserveVolumeFraction());
-    getPeriod().load(in.getPeriod());
-    
-    return isValid();
+    //SEConsciousRespirationCommand.load(src.getConsciousRespirationCommand(), dst);
+    if(src.hasExpiratoryReserveVolumeFraction())
+      SEScalar0To1.load(src.getExpiratoryReserveVolumeFraction(),dst.getExpiratoryReserveVolumeFraction());
+    if(src.hasPeriod())
+      SEScalarTime.load(src.getPeriod(),dst.getPeriod());
   }
   
-  public ForcedExhaleData unload()
+  public static ForcedExhaleData unload(SEForcedExhale src)
   {
-    ForcedExhaleData data = CDMSerializer.objFactory.createForcedExhaleData();
-    unload(data);
-    
-    return data;
+    ForcedExhaleData.Builder dst = ForcedExhaleData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ForcedExhaleData data)
+  protected static void unload(SEForcedExhale src, ForcedExhaleData.Builder dst)
   {
-    super.unload(data);
-    
-    if (hasExpiratoryReserveVolumeFraction())
-      data.setExpiratoryReserveVolumeFraction(expiratoryReserveVolumeFraction.unload());
-    if (hasPeriod())
-      data.setPeriod(period.unload());
+    //SEConsciousRespirationCommand.unload(src,dst.getConsciousRespirationCommand());
+    if (src.hasExpiratoryReserveVolumeFraction())
+      dst.setExpiratoryReserveVolumeFraction(SEScalar0To1.unload(src.expiratoryReserveVolumeFraction));
+    if (src.hasPeriod())
+      dst.setPeriod(SEScalarTime.unload(src.period));
   }
   
   public boolean hasExpiratoryReserveVolumeFraction()

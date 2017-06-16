@@ -12,15 +12,14 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ChestOcclusiveDressingData;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.EnumSide;
+import com.kitware.physiology.cdm.PatientActions.ChestOcclusiveDressingData;
+import com.kitware.physiology.cdm.Properties.eSide;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
 public class SEChestOcclusiveDressing extends SEPatientAction
 {
-  protected EnumSide side;
-  protected EnumOnOff state;
+  protected eSide side;
+  protected eSwitch state;
   
   public SEChestOcclusiveDressing()
   {
@@ -49,35 +48,34 @@ public class SEChestOcclusiveDressing extends SEPatientAction
     return hasSide() && hasState();
   }
   
-  public boolean load(ChestOcclusiveDressingData in)
+  public static void load(ChestOcclusiveDressingData src, SEChestOcclusiveDressing dst)
   {
-    super.load(in);
-    state = in.getState();
-    side = in.getSide();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    dst.state = src.getState();
+    dst.side = src.getSide();
   }
   
-  public ChestOcclusiveDressingData unload()
+  public static ChestOcclusiveDressingData unload(SEChestOcclusiveDressing src)
   {
-    ChestOcclusiveDressingData data = CDMSerializer.objFactory.createChestOcclusiveDressingData();
-    unload(data);
-    return data;
+    ChestOcclusiveDressingData.Builder dst = ChestOcclusiveDressingData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ChestOcclusiveDressingData data)
+  protected static void unload(SEChestOcclusiveDressing src, ChestOcclusiveDressingData.Builder dst)
   {
-    super.unload(data);
-    if (hasState())
-      data.setState(state);
-    if (hasSide())
-      data.setSide(side);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasState())
+      dst.setState(src.state);
+    if (src.hasSide())
+      dst.setSide(src.side);
   }
   
-  public EnumSide getSide()
+  public eSide getSide()
   {
     return side;
   }
-  public void setSide(EnumSide leftOrRight)
+  public void setSide(eSide leftOrRight)
   {
     side = leftOrRight;
   }
@@ -86,11 +84,11 @@ public class SEChestOcclusiveDressing extends SEPatientAction
     return side == null ? false : true;
   }
   
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff onOrOff)
+  public void setState(eSwitch onOrOff)
   {
     state = onOrOff;
   }

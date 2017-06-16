@@ -11,9 +11,12 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.patient.assessments;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ComprehensiveMetabolicPanelData;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.PatientAssessments.ComprehensiveMetabolicPanelData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
+import mil.tatrc.physiology.utilities.FileUtils;
 
 public class SEComprehensiveMetabolicPanel extends SEPatientAssessment
 {
@@ -84,78 +87,88 @@ public class SEComprehensiveMetabolicPanel extends SEPatientAssessment
       this.totalProtein.invalidate();
   }
   
-  public boolean load(ComprehensiveMetabolicPanelData in)
+  public void readFile(String fileName) throws ParseException
   {
-    super.load(in);
-    if(in.getAlbumin()!=null)
-      this.getAlbumin().load(in.getAlbumin());
-    if(in.getALP()!=null)
-      this.getALP().load(in.getALP());
-    if(in.getALT()!=null)
-      this.getALT().load(in.getALT());
-    if(in.getAST()!=null)
-      this.getAST().load(in.getAST());
-    if(in.getBUN()!=null)
-      this.getBUN().load(in.getBUN());
-    if(in.getCalcium()!=null)
-      this.getCalcium().load(in.getCalcium());
-    if(in.getChloride()!=null)
-      this.getChloride().load(in.getChloride());
-    if(in.getCO2()!=null)
-      this.getCO2().load(in.getCO2());
-    if(in.getCreatinine()!=null)
-      this.getCreatinine().load(in.getCreatinine());
-    if(in.getGlucose()!=null)
-      this.getGlucose().load(in.getGlucose());
-    if(in.getPotassium()!=null)
-      this.getPotassium().load(in.getPotassium());
-    if(in.getSodium()!=null)
-      this.getSodium().load(in.getSodium());
-    if(in.getTotalBilirubin()!=null)
-      this.getTotalBilirubin().load(in.getTotalBilirubin());
-    if(in.getTotalProtein()!=null)
-      this.getTotalProtein().load(in.getTotalProtein());
-    return true;
+    ComprehensiveMetabolicPanelData.Builder builder = ComprehensiveMetabolicPanelData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    SEComprehensiveMetabolicPanel.load(builder.build(), this);
+  }
+  public void writeFile(String fileName)
+  {
+    FileUtils.writeFile(fileName, SEComprehensiveMetabolicPanel.unload(this).toString());
   }
   
-  public ComprehensiveMetabolicPanelData unload()
+  public static void load(ComprehensiveMetabolicPanelData src, SEComprehensiveMetabolicPanel dst)
   {
-    ComprehensiveMetabolicPanelData data = CDMSerializer.objFactory.createComprehensiveMetabolicPanelData();
-    unload(data);
-    return data;
+    SEPatientAssessment.load(src.getPatientAssessment(), dst);
+    if(src.hasAlbumin())
+      SEScalarMassPerVolume.load(src.getAlbumin(),dst.getAlbumin());
+    if(src.hasALP())
+      SEScalarMassPerVolume.load(src.getALP(),dst.getALP());
+    if(src.hasALT())
+      SEScalarMassPerVolume.load(src.getALT(),dst.getALT());
+    if(src.hasAST())
+      SEScalarMassPerVolume.load(src.getAST(),dst.getAST());
+    if(src.hasBUN())
+      SEScalarMassPerVolume.load(src.getBUN(),dst.getBUN());
+    if(src.hasCalcium())
+      SEScalarMassPerVolume.load(src.getCalcium(),dst.getCalcium());
+    if(src.hasChloride())
+      SEScalarAmountPerVolume.load(src.getChloride(),dst.getChloride());
+    if(src.hasCO2())
+      SEScalarAmountPerVolume.load(src.getCO2(),dst.getCO2());
+    if(src.hasCreatinine())
+      SEScalarMassPerVolume.load(src.getCreatinine(),dst.getCreatinine());
+    if(src.hasGlucose())
+      SEScalarMassPerVolume.load(src.getGlucose(),dst.getGlucose());
+    if(src.hasPotassium())
+      SEScalarAmountPerVolume.load(src.getPotassium(),dst.getPotassium());
+    if(src.hasSodium())
+      SEScalarAmountPerVolume.load(src.getSodium(),dst.getSodium());
+    if(src.hasTotalBilirubin())
+      SEScalarMassPerVolume.load(src.getTotalBilirubin(),dst.getTotalBilirubin());
+    if(src.hasTotalProtein())
+      SEScalarMassPerVolume.load(src.getTotalProtein(),dst.getTotalProtein());
   }
   
-  protected void unload(ComprehensiveMetabolicPanelData data)
+  public static ComprehensiveMetabolicPanelData unload(SEComprehensiveMetabolicPanel src)
   {
-    super.unload(data);
-    if (albumin != null)
-      data.setAlbumin(albumin.unload());
-    if (ALP != null)
-      data.setALP(ALP.unload());
-    if (ALT != null)
-      data.setALT(ALT.unload());
-    if (AST != null)
-      data.setAST(AST.unload());
-    if (BUN != null)
-      data.setBUN(BUN.unload());
-    if (calcium != null)
-      data.setCalcium(calcium.unload());
-    if (chloride != null)
-      data.setChloride(chloride.unload());
-    if (CO2 != null)
-      data.setCO2(CO2.unload());
-    if (creatinine != null)
-      data.setCreatinine(creatinine.unload());
-    if (glucose != null)
-      data.setGlucose(glucose.unload());
-    if (potassium != null)
-      data.setPotassium(potassium.unload());
-    if (sodium != null)
-      data.setSodium(sodium.unload());
-    if (totalBilirubin != null)
-      data.setTotalBilirubin(totalBilirubin.unload());
-    if (totalProtein != null)
-      data.setTotalProtein(totalProtein.unload());
+    ComprehensiveMetabolicPanelData.Builder dst = ComprehensiveMetabolicPanelData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  
+  protected static void unload(SEComprehensiveMetabolicPanel src, ComprehensiveMetabolicPanelData.Builder dst)
+  {
+    SEPatientAssessment.unload(src, dst.getPatientAssessmentBuilder());
+    if (src.hasAlbumin())
+      dst.setAlbumin(SEScalarMassPerVolume.unload(src.getAlbumin()));
+    if (src.hasALP())
+      dst.setALP(SEScalarMassPerVolume.unload(src.getALP()));
+    if (src.hasALT())
+      dst.setALT(SEScalarMassPerVolume.unload(src.getALT()));
+    if (src.hasAST())
+      dst.setAST(SEScalarMassPerVolume.unload(src.getAST()));
+    if (src.hasBUN())
+      dst.setBUN(SEScalarMassPerVolume.unload(src.getBUN()));
+    if (src.hasCalcium())
+      dst.setCalcium(SEScalarMassPerVolume.unload(src.getCalcium()));
+    if (src.hasChloride())
+      dst.setChloride(SEScalarAmountPerVolume.unload(src.getChloride()));
+    if (src.hasCO2())
+      dst.setCO2(SEScalarAmountPerVolume.unload(src.getCO2()));
+    if (src.hasCreatinine())
+      dst.setCreatinine(SEScalarMassPerVolume.unload(src.getCreatinine()));
+    if (src.hasGlucose())
+      dst.setGlucose(SEScalarMassPerVolume.unload(src.getGlucose()));
+    if (src.hasPotassium())
+      dst.setPotassium(SEScalarAmountPerVolume.unload(src.getPotassium()));
+    if (src.hasSodium())
+      dst.setSodium(SEScalarAmountPerVolume.unload(src.getSodium()));
+    if (src.hasTotalBilirubin())
+      dst.setTotalBilirubin(SEScalarMassPerVolume.unload(src.getTotalBilirubin()));
+    if (src.hasTotalProtein())
+      dst.setTotalProtein(SEScalarMassPerVolume.unload(src.getTotalProtein()));
   }
   
   public boolean hasAlbumin()

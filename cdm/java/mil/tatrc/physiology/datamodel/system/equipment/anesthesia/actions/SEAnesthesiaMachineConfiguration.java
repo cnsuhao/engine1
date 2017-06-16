@@ -11,16 +11,17 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.AnesthesiaMachineConfigurationData;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.AnesthesiaMachineConfigurationData;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
+import mil.tatrc.physiology.datamodel.system.environment.SEEnvironmentalConditions;
 import mil.tatrc.physiology.datamodel.system.equipment.anesthesia.SEAnesthesiaMachine;
 
 public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
 {
-  protected SEAnesthesiaMachine configuration;
-  protected String              configurationFile;
+  protected SEAnesthesiaMachine anesthesiaMachine;
+  protected String              anesthesiaMachineFile;
   
   public SEAnesthesiaMachineConfiguration()
   {
@@ -38,113 +39,86 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
     if(this==other)
       return;
     super.copy(other);
-    this.configuration.copy(other.configuration);
-    this.configurationFile=other.configurationFile;
+    this.anesthesiaMachine.copy(other.anesthesiaMachine);
+    this.anesthesiaMachineFile=other.anesthesiaMachineFile;
   }
   
   public void reset()
   {
     super.reset();
     
-    if (this.configuration != null)
-      this.configuration.reset();
-    if (this.configurationFile != null)
-      this.configurationFile="";
+    if (this.anesthesiaMachine != null)
+      this.anesthesiaMachine.reset();
+    if (this.anesthesiaMachineFile != null)
+      this.anesthesiaMachineFile="";
   }
   
   public boolean isValid()
   {
-    return hasConfiguration() || hasConfigurationFile();
+    return hasAnesthesiaMachine() || hasAnesthesiaMachineFile();
   }
   
-  public boolean load(AnesthesiaMachineConfigurationData in, SESubstanceManager subMgr)
+  public static void load(AnesthesiaMachineConfigurationData src, SEAnesthesiaMachineConfiguration dst, SESubstanceManager subMgr)
   {
-    super.load(in);
-    if(in.getConfiguration()!=null)
-      getConfiguration().load(in.getConfiguration(),subMgr);
-    else if(in.getConfigurationFile()!=null)
-      this.configurationFile=in.getConfigurationFile();
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    switch(src.getOptionCase())
+    {
+    case ANESTHESIAMACHINEFILE:
+      dst.anesthesiaMachineFile = src.getAnesthesiaMachineFile();
+      break;
+    case ANESTHESIAMACHINE:
+      SEAnesthesiaMachine.load(src.getAnesthesiaMachine(),dst.getAnesthesiaMachine(),subMgr);
+      break;
+    }
+  }
+  public static AnesthesiaMachineConfigurationData unload(SEAnesthesiaMachineConfiguration src)
+  {
+    AnesthesiaMachineConfigurationData.Builder dst = AnesthesiaMachineConfigurationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEAnesthesiaMachineConfiguration src, AnesthesiaMachineConfigurationData.Builder dst)
+  {
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if(src.hasAnesthesiaMachine())
+      dst.setAnesthesiaMachine(SEAnesthesiaMachine.unload(src.anesthesiaMachine));
+    else if(src.hasAnesthesiaMachineFile())
+      dst.setAnesthesiaMachineFile(src.anesthesiaMachineFile);
   }
   
-  public AnesthesiaMachineConfigurationData unload()
+  public boolean hasAnesthesiaMachine()
   {
-    AnesthesiaMachineConfigurationData data = CDMSerializer.objFactory.createAnesthesiaMachineConfigurationData();
-    unload(data);
-    return data;
+    return this.anesthesiaMachine!=null;
+  }
+  public SEAnesthesiaMachine getAnesthesiaMachine()
+  {
+    if(this.anesthesiaMachine==null)
+      this.anesthesiaMachine=new SEAnesthesiaMachine();
+    return this.anesthesiaMachine;
   }
   
-  protected void unload(AnesthesiaMachineConfigurationData data)
+  public boolean hasAnesthesiaMachineFile()
   {
-    super.unload(data);
-    if(this.hasConfiguration())
-      data.setConfiguration(this.configuration.unload());
-    else if(this.hasConfigurationFile())
-      data.setConfigurationFile(this.configurationFile);
+    return this.anesthesiaMachineFile!=null&&!this.anesthesiaMachineFile.isEmpty();
   }
-  
-  public boolean hasConfiguration()
+  public String getAnesthesiaMachineFile()
   {
-    return this.configuration!=null;
+    return this.anesthesiaMachineFile;
   }
-  public SEAnesthesiaMachine getConfiguration()
+  public void setAnesthesiaMachineFile(String s)
   {
-    if(this.configuration==null)
-      this.configuration=new SEAnesthesiaMachine();
-    return this.configuration;
-  }
-  
-  public boolean hasConfigurationFile()
-  {
-    return this.configurationFile!=null&&!this.configurationFile.isEmpty();
-  }
-  public String getConfigurationFile()
-  {
-    return this.configurationFile;
-  }
-  public void setConfigurationFile(String s)
-  {
-    this.configurationFile = s;
+    this.anesthesiaMachineFile = s;
   }
   
   public String toString()
   {
     String str = "Anesthesia Machine Configuration";
-    if(hasConfiguration())
+    if(hasAnesthesiaMachine())
     {
-      str += "\n\tConnection: "; str += this.configuration.hasConnection()?this.configuration.getConnection():"Not Supplied";
-      str += "\n\tInlet Flow: "; str += this.configuration.hasInletFlow()?this.configuration.getInletFlow():"Not Supplied";
-      str += "\n\tInspiratory/Expiratory Ratio: "; str += this.configuration.hasInspiratoryExpiratoryRatio()?this.configuration.getInspiratoryExpiratoryRatio():"Not Supplied";
-      str += "\n\tOxygen Fraction: "; str += this.configuration.hasOxygenFraction()?this.configuration.getOxygenFraction():"Not Supplied";    
-      str += "\n\tOxygen Source: "; str += this.configuration.hasOxygenSource()?this.configuration.getOxygenSource():"Not Supplied";
-      str += "\n\tPositive End Expired Pressure: "; str += this.configuration.hasPositiveEndExpiredPressure()?this.configuration.getPositiveEndExpiredPressure():"Not Supplied";
-      str += "\n\tPrimary Gas: "; str += this.configuration.hasPrimaryGas()?this.configuration.getPrimaryGas():"Not Supplied";
-      str += "\n\tReliefValvePressure: "; str += this.configuration.hasReliefValvePressure()?this.configuration.getReliefValvePressure():"Not Supplied";
-      str += "\n\tRespiratory Rate: "; str += this.configuration.hasRespiratoryRate()?this.configuration.getRespiratoryRate():"Not Supplied";
-      str += "\n\tVentilator Pressure: "; str += this.configuration.hasVentilatorPressure()?this.configuration.getVentilatorPressure():"Not Supplied";
-      if(this.configuration.hasLeftChamber())
-      {
-        str += "\n\tLeftChamberState: "; str += this.configuration.getLeftChamber().hasState()?this.configuration.getLeftChamber().getState():"Not Supplied";
-        str += "\n\tLeftChamberSubstance: "; str += this.configuration.getLeftChamber().hasSubstance()?this.configuration.getLeftChamber().getSubstance().getName():"Not Supplied";    
-        str += "\n\tLeftChamberSubstanceAmount: "; str += this.configuration.getLeftChamber().hasSubstanceFraction()?this.configuration.getLeftChamber().getSubstanceFraction():"Not Supplied";           
-      }
-      if(this.configuration.hasRightChamber())
-      {
-        str += "\n\tRightChamberState: "; str += this.configuration.getRightChamber().hasState()?this.configuration.getRightChamber().getState():"Not Supplied";
-        str += "\n\tRightChamberSubstance: "; str += this.configuration.getRightChamber().hasSubstance()?this.configuration.getRightChamber().getSubstance().getName():"Not Supplied";    
-        str += "\n\tRightChamberSubstanceAmount: "; str += this.configuration.getRightChamber().hasSubstanceFraction()?this.configuration.getRightChamber().getSubstanceFraction():"Not Supplied";   
-      }
-      if(this.configuration.hasOxygenBottleOne())
-      {
-        str += "\n\tOxygenBottleOneVolume: "; str += this.configuration.getOxygenBottleOne().hasVolume()?this.configuration.getOxygenBottleOne().getVolume():"Not Supplied";
-      }
-      if(this.configuration.hasOxygenBottleTwo())
-      {
-        str += "\n\tOxygenBottleTwoVolume: "; str += this.configuration.getOxygenBottleTwo().hasVolume()?this.configuration.getOxygenBottleTwo().getVolume():"Not Supplied";
-      }
+      str += anesthesiaMachine.toString();
     }
-    if(this.hasConfigurationFile())
-      str +="\n\tFile: "+this.configurationFile;
+    if(this.hasAnesthesiaMachineFile())
+      str +="\n\tAnesthesia Machine File: "+this.anesthesiaMachineFile;
     return str;
   }
 }

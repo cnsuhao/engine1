@@ -15,15 +15,14 @@ package mil.tatrc.physiology.datamodel.system.equipment.anesthesia;
 import java.util.HashMap;
 import java.util.Map;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.AnesthesiaMachineData;
-import mil.tatrc.physiology.datamodel.bind.EnumAnesthesiaMachineConnection;
-import mil.tatrc.physiology.datamodel.bind.EnumAnesthesiaMachineEvent;
-import mil.tatrc.physiology.datamodel.bind.EnumAnesthesiaMachineOxygenSource;
-import mil.tatrc.physiology.datamodel.bind.EnumAnesthesiaMachinePrimaryGas;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eConnection;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eEvent;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eOxygenSource;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.ePrimaryGas;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar;
-import mil.tatrc.physiology.datamodel.properties.SEScalarFraction;
+import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.properties.SEScalarFrequency;
 import mil.tatrc.physiology.datamodel.properties.SEScalarPressure;
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolumePerTime;
@@ -32,14 +31,14 @@ import mil.tatrc.physiology.datamodel.system.SESystem;
 
 public class SEAnesthesiaMachine implements SESystem
 {
-  protected EnumAnesthesiaMachineConnection    connection;
-  protected SEScalarVolumePerTime              inletFlow;
-  protected SEScalar                           inspiratoryExpiratoryRatio;
-  protected SEScalarFraction                   oxygenFraction;
-  protected EnumAnesthesiaMachineOxygenSource  oxygenSource;
+  protected eConnection                       connection;
+  protected SEScalarVolumePerTime             inletFlow;
+  protected SEScalar                          inspiratoryExpiratoryRatio;
+  protected SEScalar0To1                      oxygenFraction;
+  protected eOxygenSource                     oxygenSource;
   protected SEScalarPressure                  positiveEndExpiredPressure;
-  protected EnumAnesthesiaMachinePrimaryGas    primaryGas;
-  protected SEScalarFrequency                  respiratoryRate;
+  protected ePrimaryGas                       primaryGas;
+  protected SEScalarFrequency                 respiratoryRate;
   protected SEScalarPressure                  reliefValvePressure;
 
   protected SEScalarPressure                  ventilatorPressure;
@@ -51,7 +50,7 @@ public class SEAnesthesiaMachine implements SESystem
   protected SEAnesthesiaMachineOxygenBottle   oxygenBottleTwo;
 
 
-  protected Map<EnumAnesthesiaMachineEvent,Boolean> events = new HashMap<EnumAnesthesiaMachineEvent,Boolean>();
+  protected Map<eEvent,Boolean> events = new HashMap<eEvent,Boolean>();
 
   public SEAnesthesiaMachine()
   {
@@ -139,96 +138,93 @@ public class SEAnesthesiaMachine implements SESystem
     events.putAll(from.events);
   }
 
-  public boolean load(AnesthesiaMachineData in, SESubstanceManager subMgr)
+  public static void load(AnesthesiaMachineData src, SEAnesthesiaMachine dst, SESubstanceManager subMgr)
   {
-    reset();
-    if (in.getConnection() != null)
-      setConnection(in.getConnection());
-    if (in.getInletFlow() != null)
-      getInletFlow().load(in.getInletFlow());
-    if (in.getInspiratoryExpiratoryRatio() != null)
-      getInspiratoryExpiratoryRatio().load(in.getInspiratoryExpiratoryRatio());
-    if (in.getOxygenFraction() != null)
-      getOxygenFraction().load(in.getOxygenFraction());
-    if (in.getOxygenSource() != null)
-      setOxygenSource(in.getOxygenSource());
-    if (in.getPositiveEndExpiredPressure() != null)
-      getPositiveEndExpiredPressure().load(in.getPositiveEndExpiredPressure());
-    if (in.getPrimaryGas() != null)
-      setPrimaryGas(in.getPrimaryGas());
-    if (in.getRespiratoryRate() != null)
-      getRespiratoryRate().load(in.getRespiratoryRate());
-    if (in.getReliefValvePressure() != null)
-      getReliefValvePressure().load(in.getReliefValvePressure());
-    if (in.getVentilatorPressure() != null)
-      getVentilatorPressure().load(in.getVentilatorPressure());
-    if (in.getLeftChamber() != null)
-      getLeftChamber().load(in.getLeftChamber(),subMgr);
-    if (in.getRightChamber() != null)
-      getRightChamber().load(in.getRightChamber(),subMgr);
-    if (in.getOxygenBottleOne() != null)
-      getOxygenBottleOne().load(in.getOxygenBottleOne());
-    if (in.getOxygenBottleTwo() != null)
-      getOxygenBottleTwo().load(in.getOxygenBottleTwo());
-
-    return true;
+    dst.reset();
+    if (src.getConnection()!=eConnection.UNRECOGNIZED)
+      dst.setConnection(src.getConnection());
+    if (src.hasInletFlow())
+      SEScalarVolumePerTime.load(src.getInletFlow(), dst.getInletFlow());
+    if (src.hasInspiratoryExpiratoryRatio())
+      SEScalar.load(src.getInspiratoryExpiratoryRatio(), dst.getInspiratoryExpiratoryRatio());
+    if (src.hasOxygenFraction())
+      SEScalar0To1.load(src.getOxygenFraction(), dst.getOxygenFraction());
+    if (src.getOxygenSource()!=eOxygenSource.UNRECOGNIZED)
+      dst.setOxygenSource(src.getOxygenSource());
+    if (src.hasPositiveEndExpiredPressure())
+      SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
+    if (src.getPrimaryGas()!=ePrimaryGas.UNRECOGNIZED)
+      dst.setPrimaryGas(src.getPrimaryGas());
+    if (src.hasRespiratoryRate())
+      SEScalarFrequency.load(src.getRespiratoryRate(), dst.getRespiratoryRate());
+    if (src.hasReliefValvePressure())
+      SEScalarPressure.load(src.getReliefValvePressure(), dst.getReliefValvePressure());
+    if (src.hasVentilatorPressure())
+      SEScalarPressure.load(src.getVentilatorPressure(), dst.getVentilatorPressure());
+    if (src.hasLeftChamber())
+      SEAnesthesiaMachineChamber.load(src.getLeftChamber(), dst.getLeftChamber(),subMgr);
+    if (src.hasRightChamber())
+      SEAnesthesiaMachineChamber.load(src.getRightChamber(), dst.getRightChamber(),subMgr);
+    if (src.hasOxygenBottleOne())
+      SEAnesthesiaMachineOxygenBottle.load(src.getOxygenBottleOne(), dst.getOxygenBottleOne());
+    if (src.hasOxygenBottleTwo())
+      SEAnesthesiaMachineOxygenBottle.load(src.getOxygenBottleTwo(), dst.getOxygenBottleTwo());
+  }
+  public static AnesthesiaMachineData unload(SEAnesthesiaMachine src)
+  {
+    AnesthesiaMachineData.Builder dst = AnesthesiaMachineData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEAnesthesiaMachine src, AnesthesiaMachineData.Builder dst)
+  {
+    if (src.hasConnection())
+      dst.setConnection(src.connection);
+    if (src.hasInletFlow())
+      dst.setInletFlow(SEScalarVolumePerTime.unload(src.inletFlow));
+    if (src.hasInspiratoryExpiratoryRatio())
+      dst.setInspiratoryExpiratoryRatio(SEScalar.unload(src.inspiratoryExpiratoryRatio));
+    if (src.hasOxygenFraction())
+      dst.setOxygenFraction(SEScalar0To1.unload(src.oxygenFraction));
+    if (src.hasOxygenSource())
+      dst.setOxygenSource(src.oxygenSource);
+    if (src.hasPositiveEndExpiredPressure())
+      dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.positiveEndExpiredPressure));
+    if (src.hasPrimaryGas())
+      dst.setPrimaryGas(src.primaryGas);
+    if (src.hasRespiratoryRate())
+      dst.setRespiratoryRate(SEScalarFrequency.unload(src.respiratoryRate));
+    if (src.hasReliefValvePressure())
+      dst.setReliefValvePressure(SEScalarPressure.unload(src.reliefValvePressure));
+    if (src.hasVentilatorPressure())
+      dst.setVentilatorPressure(SEScalarPressure.unload(src.ventilatorPressure));
+    
+    if (src.hasLeftChamber())
+      dst.setLeftChamber(SEAnesthesiaMachineChamber.unload(src.leftChamber));
+    if (src.hasRightChamber())
+      dst.setRightChamber(SEAnesthesiaMachineChamber.unload(src.rightChamber));
+    if (src.hasOxygenBottleOne())
+      dst.setOxygenBottleOne(SEAnesthesiaMachineOxygenBottle.unload(src.oxygenBottleOne));
+    if (src.hasOxygenBottleTwo())
+      dst.setOxygenBottleTwo(SEAnesthesiaMachineOxygenBottle.unload(src.oxygenBottleTwo));
   }
 
-  public AnesthesiaMachineData unload()
-  {
-    AnesthesiaMachineData data = CDMSerializer.objFactory.createAnesthesiaMachineData();
-    unload(data);
-    return data;
-  }
-
-  protected void unload(AnesthesiaMachineData data)
-  {
-    if (hasConnection())
-      data.setConnection(connection);
-    if (inletFlow != null)
-      data.setInletFlow(inletFlow.unload());
-    if (inspiratoryExpiratoryRatio != null)
-      data.setInspiratoryExpiratoryRatio(inspiratoryExpiratoryRatio.unload());
-    if (oxygenFraction != null)
-      data.setOxygenFraction(oxygenFraction.unload());
-    if (hasOxygenSource())
-      data.setOxygenSource(oxygenSource);
-    if (positiveEndExpiredPressure != null)
-      data.setPositiveEndExpiredPressure(positiveEndExpiredPressure.unload());
-    if (hasPrimaryGas())
-      data.setPrimaryGas(primaryGas);
-    if (respiratoryRate != null)
-      data.setRespiratoryRate(respiratoryRate.unload());
-    if (reliefValvePressure != null)
-      data.setReliefValvePressure(reliefValvePressure.unload());
-    if (hasLeftChamber())
-      data.setLeftChamber(leftChamber.unload());
-    if (hasRightChamber())
-      data.setRightChamber(rightChamber.unload());
-    if (ventilatorPressure != null)
-      data.setVentilatorPressure(ventilatorPressure.unload());
-    if (hasOxygenBottleOne())
-      data.setOxygenBottleOne(oxygenBottleOne.unload());
-    if (hasOxygenBottleTwo())
-      data.setOxygenBottleTwo(oxygenBottleTwo.unload());
-  }
-
-  public void setEvent(EnumAnesthesiaMachineEvent type, boolean active)
+  public void setEvent(eEvent type, boolean active)
   {
     this.events.put(type, active);
   }
-  public boolean isEventActive(EnumAnesthesiaMachineEvent type)
+  public boolean isEventActive(eEvent type)
   {
     if(!this.events.containsKey(type))
       return false;
     return this.events.get(type);
   }
   
-  public EnumAnesthesiaMachineConnection getConnection()
+  public eConnection getConnection()
   {
     return connection;
   }
-  public void setConnection(EnumAnesthesiaMachineConnection c)
+  public void setConnection(eConnection c)
   {
     this.connection = c;
   }
@@ -268,10 +264,10 @@ public class SEAnesthesiaMachine implements SESystem
   /*
    * Oxygen Fraction
    */
-  public SEScalarFraction getOxygenFraction()
+  public SEScalar0To1 getOxygenFraction()
   {
     if (oxygenFraction == null)
-      oxygenFraction = new SEScalarFraction();
+      oxygenFraction = new SEScalar0To1();
     return oxygenFraction;
   }
   public boolean hasOxygenFraction()
@@ -282,11 +278,11 @@ public class SEAnesthesiaMachine implements SESystem
   /*
    * Oxygen Source
    */
-  public EnumAnesthesiaMachineOxygenSource getOxygenSource()
+  public eOxygenSource getOxygenSource()
   {
     return oxygenSource;
   }
-  public void setOxygenSource(EnumAnesthesiaMachineOxygenSource oxygenSource)
+  public void setOxygenSource(eOxygenSource oxygenSource)
   {
     this.oxygenSource = oxygenSource;
   }
@@ -312,11 +308,11 @@ public class SEAnesthesiaMachine implements SESystem
   /*
    * Anesthesia Machine Primary Gas
    */
-  public EnumAnesthesiaMachinePrimaryGas getPrimaryGas()
+  public ePrimaryGas getPrimaryGas()
   {
     return primaryGas;
   }
-  public void setPrimaryGas(EnumAnesthesiaMachinePrimaryGas primaryGas)
+  public void setPrimaryGas(ePrimaryGas primaryGas)
   {
     this.primaryGas = primaryGas;
   }

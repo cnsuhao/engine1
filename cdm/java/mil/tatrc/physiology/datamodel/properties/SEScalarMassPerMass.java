@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarMassPerMassData;
+import com.kitware.physiology.cdm.Properties.ScalarMassPerMassData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.MassPerMassUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarMassPerMass extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarMassPerMassData src, SEScalarMassPerMass dst)
+  {
+    SEScalar.load(src.getScalarMassPerMass(),dst);
+  }
+  public static ScalarMassPerMassData unload(SEScalarMassPerMass src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarMassPerMassData.Builder dst = ScalarMassPerMassData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarMassPerMass src, ScalarMassPerMassData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarMassPerMassBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarMassPerMass extends SEScalar
   public double getValue(MassPerMassUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarMassPerMassData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarMassPerMassData to = CDMSerializer.objFactory.createScalarMassPerMassData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

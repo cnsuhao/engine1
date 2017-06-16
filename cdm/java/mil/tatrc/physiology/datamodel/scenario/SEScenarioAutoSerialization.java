@@ -13,27 +13,23 @@ specific language governing permissions and limitations under the License.
 package mil.tatrc.physiology.datamodel.scenario;
 
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Scenario.ScenarioData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
 public class SEScenarioAutoSerialization 
 {
   protected SEScalarTime period;
-  protected EnumOnOff    periodTimeStamps;
-  protected EnumOnOff    afterActions;
-  protected EnumOnOff    reloadState;
+  protected eSwitch      periodTimeStamps;
+  protected eSwitch      afterActions;
+  protected eSwitch      reloadState;
   protected String       directory;
   protected String       filename;
   
   public SEScenarioAutoSerialization()
   {
-    this.period = null;
-    this.periodTimeStamps = null;
-    this.afterActions = null;
-    this.reloadState = null;
-    this.directory = null;
-    this.filename = null;
+    reset();
   }
   
   public void reset() 
@@ -46,40 +42,39 @@ public class SEScenarioAutoSerialization
     this.filename = null;
   }
   
-  public boolean load(ScenarioAutoSerializationData in)
+  public static void load(ScenarioData.AutoSerializationData src, SEScenarioAutoSerialization dst)
   {
-    reset();
-    
-    getPeriod().load(in.getPeriod());
-    setPeriodTimeStamps(in.getPeriodTimeStamps());
-    setAfterActions(in.getAfterActions());
-    setReloadState(in.getReloadState());
-    setDirectory(in.getDirectory());
-    setFileName(in.getFileName());
-    
-    return isValid();
+    dst.reset();
+
+    dst.setDirectory(src.getDirectory());
+    dst.setFilename(src.getFilename());
+    dst.setAfterActions(src.getAfterActions());
+    if(src.hasPeriod())
+      SEScalarTime.load(src.getPeriod(), dst.getPeriod());
+    dst.setPeriodTimeStamps(src.getPeriodTimeStamps());
+    dst.setReloadState(src.getReloadState());
   }
   
-  public ScenarioAutoSerializationData unload()
+  public static ScenarioData.AutoSerializationData unload(SEScenarioAutoSerialization src)
   {
-    ScenarioAutoSerializationData data = CDMSerializer.objFactory.createScenarioAutoSerializationData();
-    unload(data);
-    return data;
+    ScenarioData.AutoSerializationData.Builder dst = ScenarioData.AutoSerializationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }  
-  protected void unload(ScenarioAutoSerializationData data)
+  protected static void unload(SEScenarioAutoSerialization src, ScenarioData.AutoSerializationData.Builder dst)
   {
-    if (hasPeriod())
-      data.setPeriod(period.unload());
-    if (hasPeriodTimeStamps())
-      data.setPeriodTimeStamps(periodTimeStamps);
-    if (hasAfterActions())
-      data.setAfterActions(afterActions);
-    if (hasReloadState())
-      data.setReloadState(reloadState);
-    if (hasDirectory())
-      data.setDirectory(directory);
-    if (hasFileName())
-      data.setFileName(filename);
+    if (src.hasDirectory())
+      dst.setDirectory(src.directory);
+    if (src.hasFilename())
+      dst.setFilename(src.filename);
+    if (src.hasAfterActions())
+      dst.setAfterActions(src.afterActions);    
+    if (src.hasPeriod())
+      dst.setPeriod(SEScalarTime.unload(src.period));
+    if (src.hasPeriodTimeStamps())
+      dst.setPeriodTimeStamps(src.periodTimeStamps);
+    if (src.hasReloadState())
+      dst.setReloadState(src.reloadState);    
   }
   
   public boolean isValid()
@@ -96,7 +91,7 @@ public class SEScenarioAutoSerialization
       return false;
     if (!hasDirectory())
       return false;
-    if (!hasFileName())
+    if (!hasFilename())
       return false;
     return true;
   }
@@ -112,11 +107,11 @@ public class SEScenarioAutoSerialization
     return period;
   }
   
-  public EnumOnOff getPeriodTimeStamps()
+  public eSwitch getPeriodTimeStamps()
   {
     return periodTimeStamps;
   }
-  public void setPeriodTimeStamps(EnumOnOff v)
+  public void setPeriodTimeStamps(eSwitch v)
   {
     this.periodTimeStamps = v;
   }
@@ -129,11 +124,11 @@ public class SEScenarioAutoSerialization
     periodTimeStamps = null;
   }
   
-  public EnumOnOff getAfterActions()
+  public eSwitch getAfterActions()
   {
     return afterActions;
   }
-  public void setAfterActions(EnumOnOff v)
+  public void setAfterActions(eSwitch v)
   {
     this.afterActions = v;
   }
@@ -146,11 +141,11 @@ public class SEScenarioAutoSerialization
     afterActions = null;
   }
   
-  public EnumOnOff getReloadState()
+  public eSwitch getReloadState()
   {
     return reloadState;
   }
-  public void setReloadState(EnumOnOff v)
+  public void setReloadState(eSwitch v)
   {
     this.reloadState = v;
   }
@@ -180,19 +175,19 @@ public class SEScenarioAutoSerialization
     directory = "";
   }
  
-  public String getFileName()
+  public String getFilename()
   {
     return filename;
   }
-  public void setFileName(String name)
+  public void setFilename(String name)
   {
     this.filename = name;
   }
-  public boolean hasFileName()
+  public boolean hasFilename()
   {
     return (filename==null || filename.isEmpty()) ? false : true;
   }
-  public void invalidateFileName()
+  public void invalidateFilename()
   {
     filename = "";
   }

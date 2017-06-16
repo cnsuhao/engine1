@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "properties/SEScalar.h"
-#include "bind/ScalarData.hxx"
+#include "bind/cdm/Properties.pb.h"
 #include "utils/GeneralMath.h"
 
 unsigned long long int SEScalar::NaN = 

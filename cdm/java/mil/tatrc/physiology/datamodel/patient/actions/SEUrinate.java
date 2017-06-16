@@ -12,8 +12,7 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.UrinateData;
+import com.kitware.physiology.cdm.PatientActions.UrinateData;
 
 public class SEUrinate extends SEPatientAction
 {
@@ -39,22 +38,21 @@ public class SEUrinate extends SEPatientAction
     return true;
   }
   
-  public boolean load(UrinateData in)
+  public static void load(UrinateData src, SEUrinate dst)
   {
-    super.load(in);
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
   }
   
-  public UrinateData unload() 
+  public static UrinateData unload(SEUrinate src) 
   {
-    UrinateData data = CDMSerializer.objFactory.createUrinateData();
-    unload(data);
-    return data;
+    UrinateData.Builder dst = UrinateData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(UrinateData data)
+  protected static void unload(SEUrinate src, UrinateData.Builder dst)
   {
-    super.unload(data);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
   }
   
   

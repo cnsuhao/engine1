@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.UseInhalerData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarMass;
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolume;
 
@@ -47,23 +47,21 @@ public class SEUseInhaler extends SEConsciousRespirationCommand
     return true;
   }
   
-  public boolean load(UseInhalerData in)
+  public static void load(UseInhalerData src, SEUseInhaler dst)
   {
-    super.load(in);    
-    return isValid();
+    //SEConsciousRespirationCommand.load(src.getConsciousRespirationCommand(), dst);
   }
   
-  public UseInhalerData unload()
+  public static UseInhalerData unload(SEUseInhaler src)
   {
-    UseInhalerData data = CDMSerializer.objFactory.createUseInhalerData();
-    unload(data);
-    
-    return data;
+    UseInhalerData.Builder dst = UseInhalerData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(UseInhalerData data)
+  protected static void unload(SEUseInhaler src, UseInhalerData.Builder dst)
   {
-    super.unload(data);
+    //SEConsciousRespirationCommand.unload(src, dst.getConsciousRespirationCommand());
   }
   
   public String toString()

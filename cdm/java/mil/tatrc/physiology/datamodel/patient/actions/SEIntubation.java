@@ -12,12 +12,12 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.PatientActions.IntubationData;
+import com.kitware.physiology.cdm.PatientActions.IntubationData.eType;
 
 public  class SEIntubation extends SEPatientAction
 {
-  protected EnumIntubationType type;
+  protected eType type;
   
   public SEIntubation()
   {
@@ -43,32 +43,31 @@ public  class SEIntubation extends SEPatientAction
     return hasType();
   }
   
-  public boolean load(IntubationData in)
+  public static void load(IntubationData src, SEIntubation dst)
   {
-    super.load(in);
-    this.type = in.getType();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    dst.type = src.getType();
   }
   
-  public IntubationData unload()
+  public static IntubationData unload(SEIntubation src)
   {
-    IntubationData data = CDMSerializer.objFactory.createIntubationData();
-    unload(data);
-    return data;
+    IntubationData.Builder dst = IntubationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(IntubationData data)
+  protected static void unload(SEIntubation src, IntubationData.Builder dst)
   {
-    super.unload(data);
-    if (hasType())
-      data.setType(type);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasType())
+      dst.setType(src.type);
   }
   
-  public EnumIntubationType getType()
+  public eType getType()
   {
     return type;
   }
-  public void setType(EnumIntubationType t)
+  public void setType(eType t)
   {
     type = t;
   }

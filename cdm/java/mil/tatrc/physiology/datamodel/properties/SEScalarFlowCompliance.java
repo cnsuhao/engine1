@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarFlowComplianceData;
+import com.kitware.physiology.cdm.Properties.ScalarFlowComplianceData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.FlowComplianceUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarFlowCompliance extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarFlowComplianceData src, SEScalarFlowCompliance dst)
+  {
+    SEScalar.load(src.getScalarFlowCompliance(),dst);
+  }
+  public static ScalarFlowComplianceData unload(SEScalarFlowCompliance src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarFlowComplianceData.Builder dst = ScalarFlowComplianceData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarFlowCompliance src, ScalarFlowComplianceData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarFlowComplianceBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -79,17 +96,6 @@ public class SEScalarFlowCompliance extends SEScalar
     return this.getValue(unit.toString());
   }
   
-  
-
-  public ScalarFlowComplianceData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarFlowComplianceData to = CDMSerializer.objFactory.createScalarFlowComplianceData();
-    unload(to);
-    return to;
-  }
 
   public boolean validUnit(String unit)
   {

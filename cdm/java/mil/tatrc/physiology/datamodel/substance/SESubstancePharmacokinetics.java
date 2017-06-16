@@ -12,14 +12,11 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.substance;
 
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
-import mil.tatrc.physiology.datamodel.properties.*;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
 
 public class SESubstancePharmacokinetics
 {
@@ -49,42 +46,41 @@ public class SESubstancePharmacokinetics
     return false;
   }
   
-  public boolean load(SubstancePharmacokineticsData data)
+  public static void load(SubstanceData.PharmacokineticsData src, SESubstancePharmacokinetics dst)
   {
-    this.reset();
-  
-    if(data.getPhysicochemicals()!=null)
-      getPhysicochemicals().load(data.getPhysicochemicals());
+    dst.reset();
+    if(src.hasPhysicochemicals())
+      SESubstancePhysicochemicals.load(src.getPhysicochemicals(), dst.getPhysicochemicals());
     
-    if(data.getTissueKinetics()!=null)
+    if(src.getTissueKineticsList()!=null)
     {      
-      for(SubstanceTissuePharmacokineticsData kData : data.getTissueKinetics())
+      for(SubstanceData.TissuePharmacokineticsData kData : src.getTissueKineticsList())
       {
-        this.getTissueKinetics(kData.getName()).load(kData);
+        SESubstanceTissuePharmacokinetics.load(kData,dst.getTissueKinetics(kData.getName()));
       }
     }
-  
-    return true;
   }
   
-  public SubstancePharmacokineticsData unload()
+  public static SubstanceData.PharmacokineticsData unload(SESubstancePharmacokinetics src)
   {
-    if(!isValid())
+    if(!src.isValid())
       return null;
-    SubstancePharmacokineticsData to = CDMSerializer.objFactory.createSubstancePharmacokineticsData();
-    unload(to);
-    return to;
+    SubstanceData.PharmacokineticsData.Builder dst = SubstanceData.PharmacokineticsData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(SubstancePharmacokineticsData to)
+  protected static void unload(SESubstancePharmacokinetics src, SubstanceData.PharmacokineticsData.Builder dst)
   {
-    if(hasPhysicochemicals())
-      to.setPhysicochemicals(this.physicochemicals.unload());
+    if(src.hasPhysicochemicals())
+      dst.setPhysicochemicals(SESubstancePhysicochemicals.unload(src.physicochemicals));
     
-    if(hasTissueKinetics())
+    if(src.hasTissueKinetics())
     {
-      for(SESubstanceTissuePharmacokinetics fx : this.getTissueKinetics())
-        to.getTissueKinetics().add(fx.unload());
+      for(SESubstanceTissuePharmacokinetics fx : src.getTissueKinetics())
+      {
+        dst.addTissueKinetics(SESubstanceTissuePharmacokinetics.unload(fx));
+      }
     }
   }
   

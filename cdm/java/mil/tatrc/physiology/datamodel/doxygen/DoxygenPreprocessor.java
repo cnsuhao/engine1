@@ -15,9 +15,6 @@ import java.io.*;
 
 import mil.tatrc.physiology.utilities.Log;
 
-/**
- * 
- */
 public class DoxygenPreprocessor
 {
   public static void main(String[] args)

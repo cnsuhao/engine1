@@ -1,0 +1,30 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Environment.proto";
+import "cdm/Conditions.proto";
+
+message AnyEnvironmentConditionData
+{
+  oneof Condition
+  {
+    InitialEnvironmentConfigurationData InitialEnvironmentConfiguration = 1;
+  }
+}
+
+message EnvironmentConditionData
+{
+  ConditionData                         Condition                       = 1;
+}
+
+/** @brief The configuration of the environment to use during stabilization. */
+message InitialEnvironmentConfigurationData
+{
+  EnvironmentConditionData              EnvironmentCondition            = 1;
+  oneof Option
+  {
+    EnvironmentData.ConditionsData      Conditions                      = 2;/**<< @brief An environment conditions object with properties to set in the system environmental conditions. */
+    string                              ConditionsFile                  = 3;/**<< @brief File containing an environment conditions objet with properties to set in the environmental conditions. */
+  }
+}

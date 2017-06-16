@@ -13,13 +13,12 @@ specific language governing permissions and limitations under the License.
 package mil.tatrc.physiology.datamodel.substance;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.SubstanceCompoundData;
+import com.google.protobuf.TextFormat.ParseException;
+
 import mil.tatrc.physiology.utilities.Log;
 
 public class SESubstanceManager 
@@ -152,64 +151,41 @@ public class SESubstanceManager
 	public void loadSubstanceDirectory()
 	{
 		clear();
-		Object bind;
-		Object cdm;
 		File dir = new File("./substances").getAbsoluteFile();
+		List<String> compoundFiles = new ArrayList<String>();
 
-		List<SubstanceCompoundData> compoundData = new ArrayList<SubstanceCompoundData>();
+
 		for(File sFile : dir.listFiles())
 		{
-			if(sFile.getName().endsWith(".xml"))
+			if(sFile.getName().endsWith(".pba"))
 			{
 				//Log.info("Processing file "+sFile.getName());
-				bind = CDMSerializer.readFile(sFile.getAbsoluteFile());
-				if(bind instanceof SubstanceCompoundData)
+				try
 				{
-					compoundData.add((SubstanceCompoundData)bind);
-					continue;
-				}        
-				cdm = bind2CDM(bind);
-				if(cdm instanceof SESubstance)
-					addSubstance((SESubstance)cdm);
-				else
-					Log.error("Unable to load file "+sFile.getName());        
-			}
-		}
-		for(SubstanceCompoundData cData : compoundData)
-		{
-			SESubstanceCompound c = new SESubstanceCompound();
-			c.load(cData,this);
-			addCompound(c);
-		}
-	}
-
-	protected Object bind2CDM(Object bind)
-	{
-		String cClassName="";
-		try
-		{
-			String bClassName = bind.getClass().getName();
-			bClassName=bClassName.replace("bind", "substance");
-			int s = bClassName.lastIndexOf(".");
-			int e = bClassName.indexOf("Data", s);
-			cClassName = bClassName.substring(0, s+1) + "SE" + bClassName.substring(s+1,e);
-			Class<?>  c = Class.forName(cClassName);
-			Object o = c.newInstance();
-			for(Method m : c.getMethods())
-			{
-				if(m.getName().equals("load"))
-				{
-					m.invoke(o, bind);
-					return o;
+					SESubstance s = new SESubstance();
+					s.readFile(sFile.getAbsolutePath());
+					addSubstance(s);
 				}
+				catch(ParseException ex)
+				{
+					compoundFiles.add(sFile.getAbsolutePath());
+				}      
 			}
-			Log.error("Class not found for "+cClassName);
 		}
-		catch(Exception ex)
+
+		for(String f : compoundFiles)
 		{
-			Log.error("Class not found for "+cClassName,ex);
+			try
+			{
+				SESubstanceCompound c = new SESubstanceCompound();
+				c.readFile(f,this);
+				addCompound(c);
+			}
+			catch(ParseException ex)
+			{
+				Log.error("Unsupport file contents in "+f);
+			}
 		}
-		return null;
 	}
 
 	public static void main(String[] args)

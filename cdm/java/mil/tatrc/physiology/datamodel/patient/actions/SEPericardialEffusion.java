@@ -12,17 +12,17 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.PericardialEffusionData;
+import com.kitware.physiology.cdm.PatientActions.PericardialEffusionData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolumePerTime;
 
 public class SEPericardialEffusion extends SEPatientAction
 {
-  protected SEScalarVolumePerTime EffusionRate;
+  protected SEScalarVolumePerTime effusionRate;
   
   public SEPericardialEffusion()
   {
-    EffusionRate=null;
+    effusionRate=null;
   }
   
   public void copy(SEPericardialEffusion other)
@@ -30,17 +30,17 @@ public class SEPericardialEffusion extends SEPatientAction
     if(this==other)
       return;
     super.copy(other);
-    if (other.EffusionRate != null)
+    if (other.effusionRate != null)
       getEffusionRate().set(other.getEffusionRate());
-    else if (EffusionRate != null)
-      EffusionRate.invalidate();
+    else if (effusionRate != null)
+      effusionRate.invalidate();
   }
   
   public void reset()
   {
     super.reset();
-    if (EffusionRate != null)
-      EffusionRate.invalidate();
+    if (effusionRate != null)
+      effusionRate.invalidate();
   }
   
   public boolean isValid()
@@ -48,41 +48,41 @@ public class SEPericardialEffusion extends SEPatientAction
     return hasEffusionRate();
   }
   
-  public boolean load(PericardialEffusionData in)
+  public static void load(PericardialEffusionData src, SEPericardialEffusion dst)
   {
-    super.load(in);
-    getEffusionRate().load(in.getEffusionRate());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasEffusionRate())
+      SEScalarVolumePerTime.load(src.getEffusionRate(),dst.getEffusionRate());
   }
   
-  public PericardialEffusionData unload() 
+  public static PericardialEffusionData unload(SEPericardialEffusion src) 
   {
-    PericardialEffusionData data = CDMSerializer.objFactory.createPericardialEffusionData();
-    unload(data);
-    return data;
+    PericardialEffusionData.Builder dst = PericardialEffusionData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(PericardialEffusionData data)
+  protected static void unload(SEPericardialEffusion src, PericardialEffusionData.Builder dst)
   {
-    super.unload(data);
-    if (EffusionRate != null)
-      data.setEffusionRate(EffusionRate.unload());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasEffusionRate())
+      dst.setEffusionRate(SEScalarVolumePerTime.unload(src.effusionRate));
   }
   
   public boolean hasEffusionRate()
   {
-    return EffusionRate == null ? false : EffusionRate.isValid();
+    return effusionRate == null ? false : effusionRate.isValid();
   }
   public SEScalarVolumePerTime getEffusionRate()
   {
-    if (EffusionRate == null)
-      EffusionRate = new SEScalarVolumePerTime();
-    return EffusionRate;
+    if (effusionRate == null)
+      effusionRate = new SEScalarVolumePerTime();
+    return effusionRate;
   }
   
   public String toString() 
   {
-    if (EffusionRate != null)
+    if (effusionRate != null)
       return "Pericardial Effusion" 
           + "\n\tEffusion Rate: " + getEffusionRate(); 
     else

@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.RespiratorySystemData;
+import com.kitware.physiology.cdm.Physiology.RespiratorySystemData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
@@ -21,8 +21,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
 {
   protected SEScalarPressure        alveolarArterialGradient;
   protected SEScalarPressure        carricoIndex;
-  protected SEScalarFraction         endTidalCarbonDioxideFraction;
-  protected SEScalarPressure         endTidalCarbonDioxidePressure;
+  protected SEScalar0To1            endTidalCarbonDioxideFraction;
+  protected SEScalarPressure        endTidalCarbonDioxidePressure;
   protected SEScalarVolumePerTime   expiratoryFlow;
   protected SEScalar                inspiratoryExpiratoryRatio;
   protected SEScalarVolumePerTime   inspiratoryFlow;
@@ -35,7 +35,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarVolume          tidalVolume;
   protected SEScalarVolumePerTime   totalAlveolarVentilation;
   protected SEScalarVolumePerTime   totalDeadSpaceVentilation;
-  protected SEScalarVolume           totalLungVolume;
+  protected SEScalarVolume          totalLungVolume;
   protected SEScalarVolumePerTime   totalPulmonaryVentilation;
   protected SEScalarPressure        transpulmonaryPressure;
   
@@ -105,95 +105,95 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       transpulmonaryPressure.invalidate();
   }
   
-  public boolean load(RespiratorySystemData in)
+  public static void load(RespiratorySystemData src, SERespiratorySystem dst)
   {
-    if (in.getAlveolarArterialGradient() != null)
-      getAlveolarArterialGradient().load(in.getAlveolarArterialGradient());
-    if (in.getCarricoIndex() != null)
-      getCarricoIndex().load(in.getCarricoIndex());
-    if (in.getEndTidalCarbonDioxideFraction() != null)
-      getEndTidalCarbonDioxideFraction().load(in.getEndTidalCarbonDioxideFraction());
-    if (in.getEndTidalCarbonDioxidePressure() != null)
-      getEndTidalCarbonDioxidePressure().load(in.getEndTidalCarbonDioxidePressure());
-    if (in.getExpiratoryFlow() != null)
-      getExpiratoryFlow().load(in.getExpiratoryFlow());
-    if (in.getInspiratoryExpiratoryRatio() != null)
-      getInspiratoryExpiratoryRatio().load(in.getInspiratoryExpiratoryRatio()); 
-    if (in.getInspiratoryFlow() != null)
-      getInspiratoryFlow().load(in.getInspiratoryFlow()); 
-    if (in.getPulmonaryCompliance() != null)
-      getPulmonaryCompliance().load(in.getPulmonaryCompliance()); 
-    if (in.getRespirationDriverPressure() != null)
-      getRespirationDriverPressure().load(in.getRespirationDriverPressure());
-    if (in.getRespirationMusclePressure() != null)
-      getRespirationMusclePressure().load(in.getRespirationMusclePressure());
-    if (in.getRespirationRate() != null)
-      getRespirationRate().load(in.getRespirationRate());
-    if (in.getSpecificVentilation() != null)
-      getSpecificVentilation().load(in.getSpecificVentilation());
-    if (in.getTidalVolume() != null)
-      getTidalVolume().load(in.getTidalVolume()); 
-    if (in.getTotalAlveolarVentilation() != null)
-      getTotalAlveolarVentilation().load(in.getTotalAlveolarVentilation());
-    if (in.getTotalDeadSpaceVentilation() != null)
-      getTotalDeadSpaceVentilation().load(in.getTotalDeadSpaceVentilation());
-    if (in.getTotalLungVolume() != null)
-      getTotalLungVolume().load(in.getTotalLungVolume());
-    if (in.getTotalPulmonaryVentilation() != null)
-      getTotalPulmonaryVentilation().load(in.getTotalPulmonaryVentilation()); 
-    if (in.getTranspulmonaryPressure() != null)
-      getTranspulmonaryPressure().load(in.getTranspulmonaryPressure());    
-
-    return true;
+    if (src.hasAlveolarArterialGradient())
+      SEScalarPressure.load(src.getAlveolarArterialGradient(),dst.getAlveolarArterialGradient());
+    if (src.hasCarricoIndex())
+      SEScalarPressure.load(src.getCarricoIndex(),dst.getCarricoIndex());
+    if (src.hasEndTidalCarbonDioxideFraction())
+      SEScalar0To1.load(src.getEndTidalCarbonDioxideFraction(),dst.getEndTidalCarbonDioxideFraction());
+    if (src.hasEndTidalCarbonDioxidePressure())
+      SEScalarPressure.load(src.getEndTidalCarbonDioxidePressure(),dst.getEndTidalCarbonDioxidePressure());
+    if (src.hasExpiratoryFlow())
+      SEScalarVolumePerTime.load(src.getExpiratoryFlow(),dst.getExpiratoryFlow());
+    if (src.hasInspiratoryExpiratoryRatio())
+      SEScalar.load(src.getInspiratoryExpiratoryRatio(),dst.getInspiratoryExpiratoryRatio()); 
+    if (src.hasInspiratoryFlow())
+      SEScalarVolumePerTime.load(src.getInspiratoryFlow(),dst.getInspiratoryFlow()); 
+    if (src.hasPulmonaryCompliance())
+      SEScalarFlowCompliance.load(src.getPulmonaryCompliance(),dst.getPulmonaryCompliance()); 
+    if (src.hasPulmonaryResistance())
+      SEScalarFlowResistance.load(src.getPulmonaryResistance(),dst.getPulmonaryResistance()); 
+    if (src.hasRespirationDriverPressure())
+      SEScalarPressure.load(src.getRespirationDriverPressure(),dst.getRespirationDriverPressure());
+    if (src.hasRespirationMusclePressure())
+      SEScalarPressure.load(src.getRespirationMusclePressure(),dst.getRespirationMusclePressure());
+    if (src.hasRespirationRate())
+      SEScalarFrequency.load(src.getRespirationRate(),dst.getRespirationRate());
+    if (src.hasSpecificVentilation())
+      SEScalar.load(src.getSpecificVentilation(),dst.getSpecificVentilation());
+    if (src.hasTidalVolume())
+      SEScalarVolume.load(src.getTidalVolume(),dst.getTidalVolume()); 
+    if (src.hasTotalAlveolarVentilation())
+      SEScalarVolumePerTime.load(src.getTotalAlveolarVentilation(),dst.getTotalAlveolarVentilation());
+    if (src.hasTotalDeadSpaceVentilation())
+      SEScalarVolumePerTime.load(src.getTotalDeadSpaceVentilation(),dst.getTotalDeadSpaceVentilation());
+    if (src.hasTotalLungVolume())
+      SEScalarVolume.load(src.getTotalLungVolume(),dst.getTotalLungVolume());
+    if (src.hasTotalPulmonaryVentilation())
+      SEScalarVolumePerTime.load(src.getTotalPulmonaryVentilation(),dst.getTotalPulmonaryVentilation()); 
+    if (src.hasTranspulmonaryPressure())
+      SEScalarPressure.load(src.getTranspulmonaryPressure(),dst.getTranspulmonaryPressure());    
   }
   
-  public RespiratorySystemData unload()
+  public static RespiratorySystemData unload(SERespiratorySystem src)
   {
-    RespiratorySystemData data = CDMSerializer.objFactory.createRespiratorySystemData();
-    unload(data);
-    return data;
+    RespiratorySystemData.Builder dst = RespiratorySystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(RespiratorySystemData data)
+  protected static void unload(SERespiratorySystem src, RespiratorySystemData.Builder dst)
   {
-    if (alveolarArterialGradient != null)
-      data.setAlveolarArterialGradient(alveolarArterialGradient.unload());    
-    if (carricoIndex != null)
-      data.setCarricoIndex(carricoIndex.unload());    
-    if (endTidalCarbonDioxideFraction != null)
-      data.setEndTidalCarbonDioxideFraction(endTidalCarbonDioxideFraction.unload());    
-    if (endTidalCarbonDioxidePressure != null)
-      data.setEndTidalCarbonDioxidePressure(endTidalCarbonDioxidePressure.unload());    
-    if (expiratoryFlow != null)
-      data.setExpiratoryFlow(expiratoryFlow.unload());    
-    if (inspiratoryExpiratoryRatio != null)
-      data.setInspiratoryExpiratoryRatio(inspiratoryExpiratoryRatio.unload());    
-    if (inspiratoryFlow != null)
-      data.setInspiratoryFlow(inspiratoryFlow.unload());    
-    if (pulmonaryCompliance != null)
-      data.setPulmonaryCompliance(pulmonaryCompliance.unload());
-    if (pulmonaryResistance != null)
-      data.setPulmonaryResistance(pulmonaryResistance.unload());  
-    if (respirationDriverPressure != null)
-      data.setRespirationDriverPressure(respirationDriverPressure.unload());
-    if (respirationMusclePressure != null)
-      data.setRespirationMusclePressure(respirationMusclePressure.unload());
-    if (respirationRate != null)
-      data.setRespirationRate(respirationRate.unload());
-    if (specificVentilation != null)
-      data.setSpecificVentilation(specificVentilation.unload());    
-    if (tidalVolume != null)
-      data.setTidalVolume(tidalVolume.unload());
-    if (totalAlveolarVentilation != null)
-      data.setTotalAlveolarVentilation(totalAlveolarVentilation.unload());
-    if (totalDeadSpaceVentilation != null)
-      data.setTotalDeadSpaceVentilation(totalDeadSpaceVentilation.unload());
-    if (totalLungVolume != null)
-      data.setTotalLungVolume(totalLungVolume.unload());    
-    if (totalPulmonaryVentilation != null)
-      data.setTotalPulmonaryVentilation(totalPulmonaryVentilation.unload());
-    if (transpulmonaryPressure != null)
-      data.setTranspulmonaryPressure(transpulmonaryPressure.unload());
+    if (src.hasAlveolarArterialGradient())
+      dst.setAlveolarArterialGradient(SEScalarPressure.unload(src.getAlveolarArterialGradient()));    
+    if (src.hasCarricoIndex())
+      dst.setCarricoIndex(SEScalarPressure.unload(src.getCarricoIndex()));    
+    if (src.hasEndTidalCarbonDioxideFraction())
+      dst.setEndTidalCarbonDioxideFraction(SEScalar0To1.unload(src.getEndTidalCarbonDioxideFraction()));    
+    if (src.hasEndTidalCarbonDioxidePressure())
+      dst.setEndTidalCarbonDioxidePressure(SEScalarPressure.unload(src.getEndTidalCarbonDioxidePressure()));    
+    if (src.hasExpiratoryFlow())
+      dst.setExpiratoryFlow(SEScalarVolumePerTime.unload(src.getExpiratoryFlow()));    
+    if (src.hasInspiratoryExpiratoryRatio())
+      dst.setInspiratoryExpiratoryRatio(SEScalar.unload(src.getInspiratoryExpiratoryRatio()));    
+    if (src.hasInspiratoryFlow())
+      dst.setInspiratoryFlow(SEScalarVolumePerTime.unload(src.getInspiratoryFlow()));    
+    if (src.hasPulmonaryCompliance())
+      dst.setPulmonaryCompliance(SEScalarFlowCompliance.unload(src.getPulmonaryCompliance()));
+    if (src.hasPulmonaryResistance())
+      dst.setPulmonaryResistance(SEScalarFlowResistance.unload(src.getPulmonaryResistance()));  
+    if (src.hasRespirationDriverPressure())
+      dst.setRespirationDriverPressure(SEScalarPressure.unload(src.getRespirationDriverPressure()));
+    if (src.hasRespirationMusclePressure())
+      dst.setRespirationMusclePressure(SEScalarPressure.unload(src.getRespirationMusclePressure()));
+    if (src.hasRespirationRate())
+      dst.setRespirationRate(SEScalarFrequency.unload(src.getRespirationRate()));
+    if (src.hasSpecificVentilation())
+      dst.setSpecificVentilation(SEScalar.unload(src.getSpecificVentilation()));    
+    if (src.hasTidalVolume())
+      dst.setTidalVolume(SEScalarVolume.unload(src.getTidalVolume()));
+    if (src.hasTotalAlveolarVentilation())
+      dst.setTotalAlveolarVentilation(SEScalarVolumePerTime.unload(src.getTotalAlveolarVentilation()));
+    if (src.hasTotalDeadSpaceVentilation())
+      dst.setTotalDeadSpaceVentilation(SEScalarVolumePerTime.unload(src.getTotalDeadSpaceVentilation()));
+    if (src.hasTotalLungVolume())
+      dst.setTotalLungVolume(SEScalarVolume.unload(src.getTotalLungVolume()));    
+    if (src.hasTotalPulmonaryVentilation())
+      dst.setTotalPulmonaryVentilation(SEScalarVolumePerTime.unload(src.getTotalPulmonaryVentilation()));
+    if (src.hasTranspulmonaryPressure())
+      dst.setTranspulmonaryPressure(SEScalarPressure.unload(src.getTranspulmonaryPressure()));
   }
   
   public boolean hasAlveolarArterialGradient()
@@ -225,10 +225,10 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   {
     return endTidalCarbonDioxideFraction == null ? false : endTidalCarbonDioxideFraction.isValid();
   }
-  public SEScalarFraction getEndTidalCarbonDioxideFraction()
+  public SEScalar0To1 getEndTidalCarbonDioxideFraction()
   {
     if (endTidalCarbonDioxideFraction == null)
-      endTidalCarbonDioxideFraction = new SEScalarFraction();
+      endTidalCarbonDioxideFraction = new SEScalar0To1();
     return endTidalCarbonDioxideFraction;
   }
   

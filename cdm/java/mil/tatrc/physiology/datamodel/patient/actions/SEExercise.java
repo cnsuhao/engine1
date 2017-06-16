@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ExerciseData;
+import com.kitware.physiology.cdm.PatientActions.ExerciseData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar;
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
@@ -49,25 +49,25 @@ public class SEExercise extends SEPatientAction
     return hasIntensity();
   }
   
-  public boolean load(ExerciseData in)
+  public static void load(ExerciseData src, SEExercise dst)
   {
-    super.load(in);
-    getIntensity().load(in.getIntensity());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasIntensity())
+      SEScalar0To1.load(src.getIntensity(),dst.getIntensity());
   }
   
-  public ExerciseData unload() 
+  public static ExerciseData unload(SEExercise src) 
   {
-    ExerciseData data = CDMSerializer.objFactory.createExerciseData();
-    unload(data);
-    return data;
+    ExerciseData.Builder dst = ExerciseData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ExerciseData data)
+  protected static void unload(SEExercise src, ExerciseData.Builder dst)
   {
-    super.unload(data);
-    if (intensity != null)
-      data.setIntensity(intensity.unload());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasIntensity())
+      dst.setIntensity(SEScalar0To1.unload(src.intensity));
   }
   
   public boolean hasIntensity()

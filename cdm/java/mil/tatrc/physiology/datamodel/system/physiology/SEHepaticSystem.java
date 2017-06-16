@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.HepaticSystemData;
+import com.kitware.physiology.cdm.Physiology.HepaticSystemData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
@@ -29,19 +29,17 @@ public class SEHepaticSystem extends SEPhysiologySystem implements SESystem
     
   }
 
-  public boolean load(HepaticSystemData in)
+  public static void load(HepaticSystemData src, SEHepaticSystem dst)
   {        
-    return true;
+    
   }
-
-  public HepaticSystemData unload()
+  public static HepaticSystemData unload(SEHepaticSystem src)
   {
-    HepaticSystemData data = CDMSerializer.objFactory.createHepaticSystemData();
-    unload(data);
-    return data;
+    HepaticSystemData.Builder dst = HepaticSystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-
-  protected void unload(HepaticSystemData data)
+  protected static void unload(SEHepaticSystem src, HepaticSystemData.Builder dst)
   {    
     
   }

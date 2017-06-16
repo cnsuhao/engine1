@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.VaporizerFailureData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.VaporizerFailureData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEVaporizerFailure extends SEAnesthesiaMachineAction
@@ -38,25 +37,23 @@ public class SEVaporizerFailure extends SEAnesthesiaMachineAction
     return hasSeverity();
   }
   
-  public boolean load(VaporizerFailureData in)
+  public static void load(VaporizerFailureData src, SEVaporizerFailure dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
-  
-  public VaporizerFailureData unload()
+  public static VaporizerFailureData unload(SEVaporizerFailure src)
   {
-    VaporizerFailureData data = CDMSerializer.objFactory.createVaporizerFailureData();
-    unload(data);
-    return data;
+    VaporizerFailureData.Builder dst = VaporizerFailureData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(VaporizerFailureData data)
+  protected static void unload(SEVaporizerFailure src, VaporizerFailureData.Builder dst)
   {
-    super.unload(data);
-    if (hasSeverity())
-      data.setSeverity(severity.unload());
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   /*

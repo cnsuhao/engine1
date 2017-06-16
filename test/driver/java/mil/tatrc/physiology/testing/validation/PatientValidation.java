@@ -53,7 +53,7 @@ public class PatientValidation extends ValdiationTool
       writer.println("### "+patient.getName());
       writer.println("|Property Name                     |Value     ");
       writer.println("|---                               |---       ");
-      writer.println("|Sex                               |"+patient.getSex().value());
+      writer.println("|Sex                               |"+patient.getSex());
       writer.println("|Age                               |"+patient.getAge());
       writer.println("|Weight                            |"+patient.getWeight());
       writer.println("|Height                            |"+patient.getHeight());

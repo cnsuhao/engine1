@@ -12,7 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.substance.quantity;
 
-import mil.tatrc.physiology.datamodel.bind.SubstanceQuantityData;
+import com.kitware.physiology.cdm.SubstanceQuantity.SubstanceQuantityData;
+
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
 
 public abstract class SESubstanceQuantity 
@@ -27,14 +28,14 @@ public abstract class SESubstanceQuantity
   {
     
   }
-  public boolean load(SubstanceQuantityData in)
+  public static void load(SubstanceQuantityData src, SESubstanceQuantity dst)
   {
-    reset();
-    return true;
+    dst.reset();
   }
-  protected void unload(SubstanceQuantityData data)
+  protected static void unload(SESubstanceQuantity src, SubstanceQuantityData.Builder dst)
   {
-    
+    if(src.substance!=null)
+      dst.setSubstance(src.getSubstance().getName());
   }
   
   public SESubstance getSubstance()

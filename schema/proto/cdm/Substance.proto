@@ -1,0 +1,193 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+import "cdm/Physiology.proto";
+
+
+message SubstanceData
+{
+  /** @brief Generic type. */
+  enum eState
+  {
+    Solid     = 0;
+    Liquid    = 1;
+    Gas       = 2;
+    Molecular = 3;
+  }
+  
+  /** @brief Ionic state. */
+  enum eIonicState
+  {
+  
+    Acid      = 0;
+    Base      = 1;
+    Neutral   = 2;
+    WeakBase  = 3;
+  }
+  
+  /** @brief Binding protien type. */
+  enum eBindingProtein
+  {
+    AAG         = 0;
+    Albumin     = 1;
+    Lipoprotein = 2;
+  }
+  
+  /**************************************************************************************************
+  The following object types encapsulate data for a particular methodology.
+  There may be data fields (ex. FractionUnboundInPlasma) duplicated between objects.
+  It is up to the implementing code to resolve differences or not.
+  Also, these structures are set up to ensure data is preset (minOccurs="1")
+  that the methodology needs. Eventually we may want to make everything optional
+  and enforce required data to be part of the methodology engine. Or make this 
+  substance definition part of the methodology schema. For now, I am just 
+  going to enforce these requirements in the data model as well with an isValid method (like actions)
+  **************************************************************************************************/
+  
+  /** @brief  Data for if a substance was to be aerosolizized. */
+  message AerosolizationData
+  {
+    ScalarNegative1To1Data              BronchioleModifier             = 1; /**<< @brief Factor to characterize the localized bronchiole effects -1 is full constriction, 1 is full dilation. */
+    Scalar0To1Data                      InflammationCoefficient        = 2; /**<< @brief Factor to characterize the inflamation of respiratory tract tissue caused by this substance. */
+    HistogramFractionVsLengthData       ParticulateSizeDistribution    = 3; /**<< @brief Histogram of Particle Fraction Vs. Size */
+  }
+  
+  /** */
+  message PhysicochemicalData
+  {
+    ScalarData                          AcidDissociationConstant       = 1; /**<< @brief A quantitative measure of the strength of an acid in solution .*/
+    eBindingProtein                     BindingProtein                 = 2; /**<< @brief @copybrief Substance_enumSubstanceBindingProtein. */
+    ScalarData                          BloodPlasmaRatio               = 3; /**<< @brief The ratio of the substance in the blood versus the plasma. */
+    Scalar0To1Data                      FractionUnboundInPlasma        = 4; /**<< @brief Fraction of the substance in the plasma that is unbound. */
+    eIonicState                         IonicState                     = 5; /**<< @brief @copybrief Substance_enumSubstanceIonicState */
+    ScalarData                          LogP                           = 6; /**<< @brief The octanol-water partition coefficient. */
+    ScalarData                          OralAbsorptionRateConstant     = 7; /**<< @brief Rate at which an orally administered drug leaves the GI tract. */
+  }
+  
+  /** @brief  */
+  message TissuePharmacokineticsData
+  {
+    string                              Name                           = 1; /**<< @brief The tissue compartment/area/organ name impacted. */
+    ScalarData                          PartitionCoefficient           = 2; /**<< @brief Represents the ability of a substance to diffuse across a membrane. Calculated using the physiochemical properties of a substance. */
+  }
+  
+  /** @brief Data associated with movement of drugs within the body. */
+  message PharmacokineticsData
+  {
+    PhysicochemicalData                 Physicochemicals               = 1; /**<<@copybrief SubstanceData_PhysicochemicalData */
+    repeated TissuePharmacokineticsData TissueKinetics                 = 2; /**<<@copybrief SubstanceData_TissuePharmacokineticsData */
+  }
+  
+  /** @brief  */
+  message PharmacodynamicsData
+  {
+    Scalar0To1Data                      Bronchodilation                = 1; /**<< @brief */
+    Scalar0To1Data                      DiastolicPressureModifier      = 2; /**<< @brief */
+    ScalarMassPerVolumeData             EC50                           = 3; /**<< @brief */
+    ScalarData                          EMaxShapeParameter             = 4; /**<< @brief This used to create a sigmoid shape response. i.e. the steepness parameter in the EMax equation. */
+    Scalar0To1Data                      HeartRateModifier              = 5; /**<< @brief A modifier representing the effect of the drug on the heart rate. */
+    Scalar0To1Data                      NeuromuscularBlock             = 6; /**<< @brief */
+    PupillaryResponseData               PupillaryResponse              = 7; /**<< @brief */
+    Scalar0To1Data                      RespirationRateModifier        = 8; /**<< @brief */
+    Scalar0To1Data                      Sedation                       = 9; /**<< @brief */
+    Scalar0To1Data                      SystolicPressureModifier       = 10;/**<< @brief */
+    Scalar0To1Data                      TidalVolumeModifier            = 11;/**<< @brief */
+    Scalar0To1Data                      TubularPermeabilityModifier    = 12;/**<< @brief */
+  }
+  
+  /** @brief  */
+  message SystemicClearanceData
+  {
+    Scalar0To1Data                      FractionExcretedInFeces        = 1; /**<< @brief Fraction of the administered dose excreted in the feces. */
+    Scalar0To1Data                      FractionExcretedInUrine        = 2; /**<< @brief Fraction of the administered dose excreted in the urine. */
+    Scalar0To1Data                      FractionMetabolizedInGut       = 3; /**<< @brief Fraction of the administered dose metabolized in the gut. */
+    Scalar0To1Data                      FractionUnboundInPlasma        = 4; /**<< @brief Fraction of the substance in the plasma that is unbound. */
+    ScalarVolumePerTimeMassData         IntrinsicClearance             = 5; /**<< @brief The intrinsic ability of hepatic enzymes to metabolize the substance. */
+    ScalarVolumePerTimeMassData         RenalClearance                 = 6; /**<< @brief Amount of substances to clear from the kidneys. */
+    ScalarVolumePerTimeMassData         SystemicClearance              = 7; /**<< @brief Amount of substance cleared by all organs. */
+  }
+  
+  /** @brief  */
+  message RenalRegulationData
+  {
+    eCharge                             ChargeInBlood                  = 1; /**<< @brief */
+    Scalar0To1Data                      FractionUnboundInPlasma        = 2; /**<< @brief Fraction of the substance in the plasma that is unbound. */
+    ScalarData                          ReabsorptionRatio              = 3; /**<< @brief */
+    ScalarMassPerTimeData               TransportMaximum               = 4; /**<< @brief */
+  }
+  
+  /** @brief  */
+  message RenalClearanceData
+  {
+    oneof Dynamics
+    {
+      ScalarVolumePerTimeMassData       Clearance                      = 1; /**<< @brief */
+      RenalRegulationData               Regulation                     = 2; /**<< @brief */
+    }
+    ScalarMassPerTimeData               FiltrationRate                 = 3; /**<< @brief */
+    ScalarMassPerTimeData               ReabsorptionRate               = 4; /**<< @brief */
+    ScalarMassPerTimeData               ExcretionRate                  = 5; /**<< @brief */
+    ScalarData                          GlomerularFilterability        = 6; /**<< @brief */
+  }
+  
+  /** @brief  */
+  message ClearanceData
+  {
+    SystemicClearanceData               SystemicClearance              = 1; /**<< @brief */
+    RenalClearanceData                  RenalClearance                 = 2; /**<< @brief */
+  }
+  
+  /** Start of the substance properties. */
+  
+  string                                Name                           = 1; /**<< @brief The unique name of the substance. */
+  ScalarMassPerVolumeData               Density                        = 2; /**<< @brief Mass density of a substance */                   
+  ScalarMassPerAmountData               MolarMass                      = 3; /**<< @brief Molar mass of the substance. */
+  eState                                State                          = 4; /**<< @brief @copybrief Substance_enumSubstanceState. */
+  /** Diffusion */
+  ScalarMassPerAreaTimeData             MaximumDiffusionFlux           = 5; /**<< @brief Maximum mass flux of a substance when diffusing across a membrane. */
+  ScalarData                            MichaelisCoefficient           = 6; /**<< @brief The concentration gradient at which the flux is half of the MaxDiffusionFlux. */             
+  /** Aerosol */
+  AerosolizationData                    Aerosolization                 = 7; /**<< @brief Data for if this substance was to be arosolized. */
+  /** Liquid */
+  ScalarMassPerVolumeData               BloodConcentration             = 8; /**<< @brief Concentration of this substance that is in the blood. */
+  ScalarMassData                        MassInBody                     = 9; /**<< @brief Total Amount of mass of this substance that is in the body. */
+  ScalarMassData                        MassInBlood                    = 10;/**<< @brief Amount of mass of this substance that is in the blood. */
+  ScalarMassData                        MassInTissue                   = 11;/**<< @brief Amount of mass of this substance that is in the tissue. */
+  ScalarMassPerVolumeData               Plasma_concentration           = 12;/**<< @brief Calculated concentration of a substance in the plasma. */
+  ScalarMassData                        SystemicMassCleared            = 13;/**<< @brief The total amount of mass that has been systemicly cleared*/          
+  ScalarMassPerVolumeData               TissueConcentration            = 14;/**<< @brief Concentration of this substance that is in the tissue. */
+  /** Gas */
+  ScalarVolumePerTimeData               AlveolarTransfer               = 15;/**<< @brief Calculated rate of transfer that occurs during gas exchange. */
+  ScalarVolumePerTimePressureData       DiffusingCapacity              = 16;/**<< @brief Calculated value representing the ability of a gas to cross the respiratory membrane. */
+  Scalar0To1Data                        EndTidalFraction               = 17;/**<< @brief The fraction of gas in the trachea that consists of the substance at the end of each respiratory cycle. */
+  ScalarPressureData                    EndTidalPressure               = 18;/**<< @brief The pressure of gas in the trachea that consists of the substance at the end of each respiratory cycle. */
+  ScalarData                            RelativeDiffusionCoefficient   = 19;/**<< @brief Represents the ability of the substance to diffuse across a membrane. A proportionality of the solubility and the square root of the molecular weight as defined relative to oxygen.*/
+  ScalarInversePressureData             SolubilityCoefficient          = 20;/**<< @brief Represents the ability of a substance to dissolve in a solution. */
+  /** More complex Objects */
+  ClearanceData                         Clearance                      = 21;/**<< @brief @copybrief Substance_SubstanceClearanceData */
+  PharmacokineticsData                  Pharmacokinetics               = 22;/**<< @brief @copybrief Substance_SubstancePharmacokineticsData */
+  PharmacodynamicsData                  Pharmacodynamics               = 23;/**<< @brief @copybrief Substance_SubstancePharmacodynamicsData */
+  
+  /** @brief A fractional amount associated with a substance. */
+  message FractionAmountData
+  {
+    string                              Name                           = 1; /**<< @brief Name of a substance*/
+    Scalar0To1Data                      Amount                         = 2; /**<< @brief The fractional amount of the substance. */
+  }
+  
+  /** @brief A concentration amount associated with a substance. */
+  message ConcentrationData
+  {
+    string                              Name                           = 1; /**<< @brief Name of a substance*/
+    ScalarMassPerVolumeData             Concentration                  = 2; /**<< @brief The concentration of the substance. */
+  }
+  
+  /** @brief A compound made up of several substances. */
+  message CompoundData
+  {
+    string                              Name                           = 1; /**<< @brief The unique name of the compound.*/
+    repeated ConcentrationData          Component                      = 2; /**<< @brief The concentration of the component in the compound. */
+  }
+}

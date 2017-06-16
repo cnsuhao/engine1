@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarTemperatureData;
+import com.kitware.physiology.cdm.Properties.ScalarTemperatureData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TemperatureUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarTemperature extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarTemperatureData src, SEScalarTemperature dst)
+  {
+    SEScalar.load(src.getScalarTemperature(),dst);
+  }
+  public static ScalarTemperatureData unload(SEScalarTemperature src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarTemperatureData.Builder dst = ScalarTemperatureData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarTemperature src, ScalarTemperatureData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarTemperatureBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarTemperature extends SEScalar
   public double getValue(TemperatureUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarTemperatureData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarTemperatureData to = CDMSerializer.objFactory.createScalarTemperatureData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

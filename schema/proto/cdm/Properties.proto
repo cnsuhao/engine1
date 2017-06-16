@@ -1,0 +1,452 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+enum eSide
+{
+  Left  = 0;
+  Right = 1;
+}
+
+enum eGate
+{
+  Open  = 0;
+  Closed = 1;
+}
+
+enum eSwitch
+{
+  Off = 0;
+  On  = 1;
+}
+
+enum eCharge
+{
+  Negative = 0;
+  Neutral     = 1;
+  Positive = 2;
+}
+
+message RunningAverageData
+{
+  double Sum         = 1;
+  uint32 NumSamples  = 2;
+}
+
+/** @brief A unitless scalar. */
+message ScalarData 
+{
+  double Value     = 1;
+  string Unit      = 2;
+  bool   ReadOnly  = 3;
+}
+
+/** Various Scalar Types */
+
+/** @brief A unitless scalar greater or equal to 0 and less that or equal to 1. */
+message Scalar0To1Data 
+{
+  ScalarData Scalar0To1 = 1;
+}
+
+/** @brief A unitless scalar greater or equal to -1 and less that or equal to 1. */
+message ScalarNegative1To1Data 
+{
+  ScalarData ScalarNegative1To1 = 1;
+}
+
+/** @brief A scalar for holding amount quanties (ex. ct, mol) */
+message ScalarAmountData 
+{
+  ScalarData ScalarAmount = 1;
+}
+
+/** @brief A scalar for holding amount per mass quanties (ex. mol/g) */
+message ScalarAmountPerMassData 
+{
+  ScalarData ScalarAmountPerMass = 1;
+}
+
+/** @brief A scalar for holding amount per time quanties (ex. mol/min) */
+message ScalarAmountPerTimeData 
+{
+  ScalarData ScalarAmountPerTime = 1;
+}
+
+/** @brief A scalar for holding amount per volume quanties (ex. mol/L) */
+message ScalarAmountPerVolumeData 
+{
+  ScalarData ScalarAmountPerVolume = 1;
+}
+
+/** @brief A scalar for holding area quanties (ex. m^2) */
+message ScalarAreaData 
+{
+  ScalarData ScalarArea = 1;
+}
+
+/** @brief A scalar for holding area per time quanties (ex. m^2/s) */
+message ScalarAreaPerTimePressureData 
+{
+  ScalarData ScalarAreaPerTimePressure = 1;
+}
+
+/** @brief A scalar for holding electric capacitance quanties (ex. F) */
+message ScalarElectricCapacitanceData 
+{
+  ScalarData ScalarElectricCapacitance = 1;
+}
+
+/** @brief A scalar for holding electric charge quanties (ex. C) */
+message ScalarElectricChargeData 
+{
+  ScalarData ScalarElectricCharge = 1;
+}
+
+/** @brief A scalar for holding electric current quanties (ex. A) */
+message ScalarElectricCurrentData 
+{
+  ScalarData ScalarElectricCurrent = 1;
+}
+
+/** @brief A scalar for holding electric potential quanties (ex. V) */
+message ScalarElectricPotentialData 
+{
+  ScalarData ScalarElectricPotential = 1;
+}
+
+/** @brief A scalar for holding electric inductance quanties (ex. H) */
+message ScalarElectricInductanceData 
+{
+  ScalarData ScalarElectricInductance = 1;
+}
+
+/** @brief A scalar for holding electric resistance quanties (ex. ohm) */
+message ScalarElectricResistanceData 
+{
+  ScalarData ScalarElectricResistance = 1;
+}
+
+/** @brief A scalar for holding energy quanties (ex. J) */
+message ScalarEnergyData 
+{
+  ScalarData ScalarEnergy = 1;
+}
+
+/** @brief A scalar for holding energy per amount quanties (ex. J/mol) */
+message ScalarEnergyPerAmountData 
+{
+  ScalarData ScalarEnergyPerAmount = 1;
+}
+
+/** @brief A scalar for holding energy per mass quanties (ex. J/kg) */
+message ScalarEnergyPerMassData 
+{
+  ScalarData ScalarEnergyPerMass = 1;
+}
+
+/** @brief A scalar for holding flow resistance quanties (ex. Pa s/m^3) */
+message ScalarFlowResistanceData 
+{
+  ScalarData ScalarFlowResistance = 1;
+}
+
+/** @brief A scalar for holding flow compliance quanties (ex. L/cmH2O) */
+message ScalarFlowComplianceData 
+{
+  ScalarData ScalarFlowCompliance = 1;
+}
+
+/** @brief A scalar for holding flow elastance quanties (ex. cmH2O/L) */
+message ScalarFlowElastanceData 
+{
+  ScalarData ScalarFlowElastance = 1;
+}
+
+/** @brief A scalar for holding flow inertance quanties (ex. mmHg s^2/mL) */
+message ScalarFlowInertanceData 
+{
+  ScalarData ScalarFlowInertance = 1;
+}
+
+/** @brief A scalar for holding force quanties (ex.  kg m/s^2) */
+message ScalarForceData 
+{
+  ScalarData ScalarForce = 1;
+}
+
+/** @brief A scalar for holding frequency quanties (ex. 1/s) */
+message ScalarFrequencyData 
+{
+  ScalarData ScalarFrequency = 1;
+}
+
+/** @brief A scalar for holding heat capacitance quanties (ex. J/K) */
+message ScalarHeatCapacitanceData 
+{
+  ScalarData ScalarHeatCapacitance = 1;
+}
+
+/** @brief A scalar for holding heat capacitance per amount quanties (ex. J/K mol) */
+message ScalarHeatCapacitancePerAmountData 
+{
+  ScalarData ScalarHeatCapacitancePerAmount = 1;
+}
+
+/** @brief A scalar for holding heat capacitance per mass quanties (ex. J/K kg) */
+message ScalarHeatCapacitancePerMassData 
+{
+  ScalarData ScalarHeatCapacitancePerMass = 1;
+}
+
+/** @brief A scalar for holding heat conductance quanties (ex. W/K) */
+message ScalarHeatConductanceData 
+{
+  ScalarData ScalarHeatConductance = 1;
+}
+
+/** @brief A scalar for holding heat conductance per area quanties (ex. W/m^2 K) */
+message ScalarHeatConductancePerAreaData 
+{
+  ScalarData ScalarHeatConductancePerArea = 1;
+}
+
+/** @brief A scalar for holding heat inductance quanties (ex. K s/W) */
+message ScalarHeatInductanceData 
+{
+  ScalarData ScalarHeatInductance = 1;
+}
+
+/** @brief A scalar for holding heat resistance quanties (ex. K/W) */
+message ScalarHeatResistanceData 
+{
+  ScalarData ScalarHeatResistance = 1;
+}
+
+/** @brief A scalar for holding heat resistance area quanties (ex. rsi) */
+message ScalarHeatResistanceAreaData 
+{
+  ScalarData ScalarHeatResistanceArea = 1;
+}
+
+/** @brief A scalar for holding inverse pressure quanties (ex. 1/Pa) */
+message ScalarInversePressureData 
+{
+  ScalarData ScalarInversePressure = 1;
+}
+
+/** @brief A scalar for holding inverse volume quanties (ex. 1/L) */
+message ScalarInverseVolumeData 
+{
+  ScalarData ScalarInverseVolume = 1;
+}
+
+/** @brief A scalar for holding length quanties (ex. ft) */
+message ScalarLengthData 
+{
+  ScalarData ScalarLength = 1;
+}
+
+/** @brief A scalar for holding length per time quanties (ex. ft/s^2) */
+message ScalarLengthPerTimeData 
+{
+  ScalarData ScalarLengthPerTime = 1;
+}
+
+/** @brief A scalar for holding length per time per pressure quanties (ex. m/s mmHg) */
+message ScalarLengthPerTimePressureData 
+{
+  ScalarData ScalarLengthPerTimePressure = 1;
+}
+
+/** @brief A scalar for holding mass quanties (ex. g) */
+message ScalarMassData 
+{
+  ScalarData ScalarMass = 1;
+}
+
+/** @brief A scalar for holding mass per amount quanties (ex. g/mol) */
+message ScalarMassPerAmountData 
+{
+  ScalarData ScalarMassPerAmount = 1;
+}
+
+/** @brief A scalar for holding mass per time quanties (ex. ug/s) */
+message ScalarMassPerAreaTimeData 
+{
+  ScalarData ScalarMassPerAreaTime = 1;
+}
+
+/** @brief A scalar for holding mass per mass quanties (ex. ug/kg) */
+message ScalarMassPerMassData 
+{
+  ScalarData ScalarMassPerMass = 1;
+}
+
+/** @brief A scalar for holding mass per time quanties (ex. ug/s) */
+message ScalarMassPerTimeData 
+{
+  ScalarData ScalarMassPerTime = 1;
+}
+
+/** @brief  A scalar for holding mass per volume quanties (ex. ug/mL) */
+message ScalarMassPerVolumeData 
+{
+  ScalarData ScalarMassPerVolume = 1;
+}
+
+/** @brief A scalar for holding osmolality quanties (ex. Osm/kg) */
+message ScalarOsmolalityData 
+{
+  ScalarData ScalarOsmolality = 1;
+}
+
+/** @brief A scalar for holding osmolarity quanties (ex. Osm/L) */
+message ScalarOsmolarityData 
+{
+  ScalarData ScalarOsmolarity = 1;
+}
+
+/** A scalar for holding power quanties (ex. W) */
+message ScalarPowerData 
+{
+  ScalarData ScalarPower = 1;
+}
+
+/** @brief A scalar for holding Radiative Heat Transfer Powers such as Stefan Boltzman quanties (ex. W / m^2 K^4) */
+message ScalarPowerPerAreaTemperatureToTheFourthData 
+{
+  ScalarData ScalarPowerPerAreaTemperatureToTheFourth = 1;
+}
+
+/** @brief A scalar for holding pressure quanties (ex. mmHg) */
+message ScalarPressureData 
+{
+  ScalarData ScalarPressure = 1;
+}
+
+/** @brief A scalar for holding pressure per volume quanties (ex. mmHg/mL) */
+message ScalarPressurePerVolumeData 
+{
+  ScalarData ScalarPressurePerVolume = 1;
+}
+
+/** @brief A scalar for holding pressure time area per volume quanties (ex. dyn s /cm^5 m^2) */
+message ScalarPressureTimePerVolumeAreaData 
+{
+  ScalarData ScalarPressureTimePerVolumeArea = 1;
+}
+
+/** @brief A scalar for holding pressure time per area quanties (ex. mmHg s/m2) */
+message ScalarPressureTimePerAreaData 
+{
+  ScalarData ScalarPressureTimePerArea = 1;
+}
+
+/** @brief A scalar for holding time quanties (ex. s) */
+message ScalarTimeData 
+{
+  ScalarData ScalarTime = 1;
+}
+
+/** @brief A scalar for holding temperature quanties (ex. degC) */
+message ScalarTemperatureData 
+{
+  ScalarData ScalarTemperature = 1;
+}
+
+/** @brief A scalar for holding volume quanties (ex. mL) */
+message ScalarVolumeData 
+{
+  ScalarData ScalarVolume = 1;
+}
+
+/** @brief A scalar for holding volume per time quanties (ex. mL/s) */
+message ScalarVolumePerTimeData 
+{
+  ScalarData ScalarVolumePerTime = 1;
+}
+
+/** @brief A scalar for holding volume per pressure quanties (ex. mL/cmH2O) */
+message ScalarVolumePerPressureData 
+{
+  ScalarData ScalarVolumePerPressure = 1;
+}
+
+/** @brief A scalar for holding volume per time per area quanties (ex. mL/s cm2 g) */
+message ScalarVolumePerTimeAreaData 
+{
+  ScalarData ScalarVolumePerTimeArea = 1;
+}
+
+/** @brief A scalar for holding volume per time per mass quanties (ex. mL/s g) */
+message ScalarVolumePerTimeMassData 
+{
+  ScalarData ScalarVolumePerTimeMass = 1;
+}
+
+/** @brief A scalar for holding volume per time per pressure quanties (ex. "mL/s mmHg) */
+message ScalarVolumePerTimePressureData 
+{
+  ScalarData ScalarVolumePerTimePressure = 1;
+}
+
+/** @brief A scalar for holding volume per time per pressure per are quanties (ex. "mL/s mmHg cm2) */
+message ScalarVolumePerTimePressureAreaData 
+{
+  ScalarData ScalarVolumePerTimePressureArea = 1;
+}
+
+message DoubleArrayData
+{
+  repeated double Value = 1 [packed=true];
+}
+message IntegerArrayData
+{
+  repeated int32 Value = 1 [packed=true];
+}
+
+message ArrayData
+{
+  DoubleArrayData Value = 1;
+  string          Unit  = 2;
+}
+
+message ArrayTimeData
+{
+  ArrayData       ArrayTime = 1;
+}
+
+message FunctionData
+{
+  DoubleArrayData Dependent   = 1;
+  DoubleArrayData Independent = 2;
+  string DependentUnit        = 3;
+  string IndependentUnit      = 4;
+}
+
+/** @brief Volumes as a function of time */
+message FunctionVolumeVsTimeData
+{
+  FunctionData FunctionVolumeVsTime = 1;
+}
+
+/** @brief Electric potential as a function of time */
+message FunctionElectricPotentialVsTimeData
+{
+  FunctionData FunctionElectricPotentialVsTime = 1;
+}
+
+/** @brief Two arrays paired where the independent list is 1 + the length of the dependent list, for bins */
+message HistogramData
+{
+  FunctionData Histogram = 1;
+}
+
+/** @brief Two arrays paired where the length list is 1 + the length of the fraction list, for bins*/
+message HistogramFractionVsLengthData
+{
+  HistogramData HistogramFractionVsLength = 1;
+}
+
+

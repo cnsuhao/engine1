@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarAreaData;
+import com.kitware.physiology.cdm.Properties.ScalarAreaData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.AreaUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarArea extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarAreaData src, SEScalarArea dst)
+  {
+    SEScalar.load(src.getScalarArea(),dst);
+  }
+  public static ScalarAreaData unload(SEScalarArea src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarAreaData.Builder dst = ScalarAreaData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarArea src, ScalarAreaData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarAreaBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarArea extends SEScalar
   public double getValue(AreaUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarAreaData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarAreaData to = CDMSerializer.objFactory.createScalarAreaData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

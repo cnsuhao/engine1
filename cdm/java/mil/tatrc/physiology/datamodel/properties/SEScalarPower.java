@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarPowerData;
+import com.kitware.physiology.cdm.Properties.ScalarPowerData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.PowerUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarPower extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarPowerData src, SEScalarPower dst)
+  {
+    SEScalar.load(src.getScalarPower(),dst);
+  }
+  public static ScalarPowerData unload(SEScalarPower src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarPowerData.Builder dst = ScalarPowerData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarPower src, ScalarPowerData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarPowerBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarPower extends SEScalar
   public double getValue(PowerUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarPowerData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarPowerData to = CDMSerializer.objFactory.createScalarPowerData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

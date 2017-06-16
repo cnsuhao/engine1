@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.InspiratoryValveLeakData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.InspiratoryValveLeakData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEInspiratoryValveLeak extends SEAnesthesiaMachineAction
@@ -38,25 +37,23 @@ public class SEInspiratoryValveLeak extends SEAnesthesiaMachineAction
     return hasSeverity();
   }
   
-  public boolean load(InspiratoryValveLeakData in)
+  public static void load(InspiratoryValveLeakData src, SEInspiratoryValveLeak dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
-  
-  public InspiratoryValveLeakData unload()
+  public static InspiratoryValveLeakData unload(SEInspiratoryValveLeak src)
   {
-    InspiratoryValveLeakData data = CDMSerializer.objFactory.createInspiratoryValveLeakData();
-    unload(data);
-    return data;
+    InspiratoryValveLeakData.Builder dst = InspiratoryValveLeakData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(InspiratoryValveLeakData data)
+  protected static void unload(SEInspiratoryValveLeak src, InspiratoryValveLeakData.Builder dst)
   {
-    super.unload(data);
-    if (hasSeverity())
-      data.setSeverity(severity.unload());
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   /*

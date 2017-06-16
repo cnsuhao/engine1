@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.bind.*;
-
 public abstract class SEConsciousRespirationCommand
 {
   protected String comment;
@@ -36,20 +34,17 @@ public abstract class SEConsciousRespirationCommand
   {
     comment = "";
   }
-  
-  public boolean load(ConsciousRespirationCommandData in)
+  /*
+  public static void load(ConsciousRespirationCommandData in)
   {
     comment = in.getComment();
-    
-    return true;
   }
-  
   protected void unload(ConsciousRespirationCommandData data)
   {
     if (hasComment())
       data.setComment(comment);
   }
-  
+  */
   public boolean hasComment()
   {
     return comment != null && !comment.isEmpty();

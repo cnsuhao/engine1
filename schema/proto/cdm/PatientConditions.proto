@@ -1,0 +1,91 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+import "cdm/PatientNutrition.proto";
+import "cdm/Conditions.proto";
+
+message AnyPatientConditionData
+{
+  oneof Condition
+  {
+    ChronicAnemiaData                         ChronicAnemia                         = 1;
+    ChronicObstructivePulmonaryDiseaseData    ChronicObstructivePulmonaryDisease    = 2;
+    ChronicPericardialEffusionData            ChronicPericardialEffusion            = 3;
+    ChronicRenalStenosisData                  ChronicRenalStenosis                  = 4;
+    ChronicVentricularSystolicDysfunctionData ChronicVentricularSystolicDysfunction = 5;
+    ConsumeMealData                           ConsumeMeal                           = 6;
+    ImpairedAlveolarExchangeData              ImpairedAlveolarExchange              = 7;
+    LobarPneumoniaData                        LobarPneumonia                        = 8;
+  }
+}
+
+message PatientConditionData
+{
+  ConditionData                               Condition                             = 1;
+}
+
+/** @brief Condition characterized by reduced red blood cells, which leads to reduced oxygen carrying capacity. Implemented by reducing the amount of hemoglobin in the blood. */
+message ChronicAnemiaData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  Scalar0To1Data                              ReductionFactor                       = 2;/**<< @brief The fraction to reduce the amount of hemoglobin by. */
+}
+
+/** @brief Impairment of the ventricular contraction, reducing the ability of the heart to pump blood. */
+message ChronicVentricularSystolicDysfunctionData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+}
+
+/** @brief Chronic Obstructive Pulmonary Disease (COPD) is an obstructive lung disease characterized by chronically reduced airflow into the lungs. Unlike asthma, the reduction in airflow does not generally improve with medication. When tissue damage occurs primarily in the airways, the condition is called chronic bronchitis. When tissue destruction is focused in the alveoli, the condition is called emphysema. COPD is a manifestation of both conditions, although one condition may dominate. */
+message ChronicObstructivePulmonaryDiseaseData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  Scalar0To1Data                              BronchitisSeverity                    = 2;/**<< @brief */
+  Scalar0To1Data                              EmphysemaSeverity                     = 3;/**<< @brief */
+}
+
+/** @brief Pericardial effusion ("fluid around the heart") is an abnormal accumulation of fluid in the pericardial cavity. Because of the limited amount of space in the pericardial cavity, fluid accumulation leads to an increased intrapericardial pressure which can negatively affect heart function. A pericardial effusion with enough pressure to adversely affect heart function is called cardiac tamponade. Pericardial effusion usually results from a disturbed equilibrium between the production andre-absorption of pericardial fluid, or from a structural abnormality that allows fluid to enter the pericardial cavity. Normal levels of pericardial fluid are from 15 to 50 mL. */
+message ChronicPericardialEffusionData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  ScalarVolumeData                            AccumulatedVolume                     = 2;/**<< @brief The amount of fluid in the pericardial cavity. */
+}
+
+/** @brief Narrowing of the renal artery. */
+message ChronicRenalStenosisData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  Scalar0To1Data                              LeftKidneySeverity                    = 2;/**<< @brief Fraction of the Left kidney artery stenosed.*/
+  Scalar0To1Data                              RightKidneySeverity                   = 3;/**<< @brief Fraction of the Right kidney artery stenosed.*/
+}
+
+/** @brief Consume nutrients into the body along with a time elapsed since this meal. */
+message ConsumeMealData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  oneof Option
+  {
+    MealData                                  Meal                                  = 2;/**<< @brief A meal object with properties to initialize the system with. */
+    string                                    MealFile                              = 3;/**<< @brief File containing a meal objet with properties to initialize the system with. */
+  }
+}
+
+/** @brief Generic way to specify the effectivness of alveolar exchange. */
+message ImpairedAlveolarExchangeData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  ScalarAreaData                              ImpairedSurfaceArea                   = 2;/**<< @brief Surface Area of the impaired alveoli. */
+  Scalar0To1Data                              ImpairedFraction                      = 3;/**<< @brief Surface Area Fraction of the impaired alveoli. */
+}
+
+/** @brief Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lungs. As fluid fills portions of the lung it becomes more difficult to breath and the gas diffusion surface area in the alveoli is reduced. */
+message LobarPneumoniaData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  Scalar0To1Data                              Severity                              = 2;/**<< @brief */
+  Scalar0To1Data                              LeftLungAffected                      = 3;/**<< @brief Fraction of the Left Lung Affected*/
+  Scalar0To1Data                              RightLungAffected                     = 4;/**<< @brief Fraction of the Left Lung Affected */
+}

@@ -12,17 +12,16 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.EnumPneumothoraxType;
-import mil.tatrc.physiology.datamodel.bind.EnumSide;
-import mil.tatrc.physiology.datamodel.bind.TensionPneumothoraxData;
+import com.kitware.physiology.cdm.PatientActions.TensionPneumothoraxData;
+import com.kitware.physiology.cdm.Properties.eGate;
+import com.kitware.physiology.cdm.Properties.eSide;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SETensionPneumothorax extends SEPatientAction
 {
-  protected EnumPneumothoraxType type;
-  protected EnumSide side;
+  protected eGate type;
+  protected eSide side;
   protected SEScalar0To1 severity;
   
   public SETensionPneumothorax()
@@ -59,38 +58,38 @@ public class SETensionPneumothorax extends SEPatientAction
     return hasType() && hasSide() && hasSeverity();
   }
   
-  public boolean load(TensionPneumothoraxData in)
+  public static void load(TensionPneumothoraxData src, SETensionPneumothorax dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    type = in.getType();
-    side = in.getSide();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
+    dst.type = src.getType();
+    dst.side = src.getSide();
   }
   
-  public TensionPneumothoraxData unload()
+  public static TensionPneumothoraxData unload(SETensionPneumothorax src)
   {
-    TensionPneumothoraxData data = CDMSerializer.objFactory.createTensionPneumothoraxData();
-    unload(data);
-    return data;
+    TensionPneumothoraxData.Builder dst = TensionPneumothoraxData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(TensionPneumothoraxData data)
+  protected static void unload(SETensionPneumothorax src, TensionPneumothoraxData.Builder dst)
   {
-    super.unload(data);
-    if (severity != null)
-      data.setSeverity(severity.unload());
-    if (hasType())
-      data.setType(type);
-    if (hasSide())
-      data.setSide(side);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
+    if (src.hasType())
+      dst.setType(src.type);
+    if (src.hasSide())
+      dst.setSide(src.side);
   }
   
-  public EnumPneumothoraxType getType()
+  public eGate getType()
   {
     return type;
   }
-  public void setType(EnumPneumothoraxType type)
+  public void setType(eGate type)
   {
     this.type = type;
   }
@@ -99,11 +98,11 @@ public class SETensionPneumothorax extends SEPatientAction
     return type == null ? false : true;
   }
   
-  public EnumSide getSide()
+  public eSide getSide()
   {
     return side;
   }
-  public void setSide(EnumSide side)
+  public void setSide(eSide side)
   {
     this.side = side;
   }

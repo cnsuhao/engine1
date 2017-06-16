@@ -11,9 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.biogears.engine;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
+import mil.tatrc.physiology.datamodel.datarequests.SEDataRequestManager;
 import mil.tatrc.physiology.datamodel.scenario.SEScenario;
-import mil.tatrc.physiology.datamodel.scenario.datarequests.SEDataRequestManager;
 import mil.tatrc.physiology.datamodel.utilities.SEEventHandler;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
@@ -30,23 +29,23 @@ public class BioGearsScenarioExec extends BioGears
   public void runScenario(String logFile, SEScenario scenario, String resultsFile, CDMUpdatedCallback callback)
   {    
     if(callback != null)
-      callback.drMgr = scenario.getDataRequests();    
-    runScenarioXML(logFile,CDMSerializer.serialize(scenario.unload()),resultsFile,callback);
+      callback.drMgr = scenario.getDataRequestManager();    
+    runScenario(logFile,SEScenario.unload(scenario).toString(),resultsFile,callback);
   }
   
-  public void runScenarioXML(String logFile, String scenarioXML, String resultsFile)
+  public void runScenario(String logFile, String scenario, String resultsFile)
   {
-    runScenarioXML(logFile, scenarioXML, resultsFile, null);
+    runScenario(logFile, scenario, resultsFile, null);
   }
   
-  protected void runScenarioXML(String logFile, String scenarioXML, String resultsFile, CDMUpdatedCallback callback)
+  protected void runScenario(String logFile, String scenario, String resultsFile, CDMUpdatedCallback callback)
   {    
     double callbackFreq_s = 0;
     if(callback!=null)
     { 
       LogListener l = this.listener;
       SEEventHandler eh = this.eventHandler;
-      reset();// Only create our CDM objects if we have a callback to fill data out (also save off listner and event handler)
+      reset();// Only create our CDM objects if we have a callback to fill data out (also save off listener and event handler)
       this.listener = l;
       this.eventHandler = eh;
       this.cdmCallback = callback;
@@ -54,7 +53,7 @@ public class BioGearsScenarioExec extends BioGears
       this.requestData(callback.drMgr);
     }
     this.nativeObj = nativeAllocate(logFile);
-    nativeExecuteScenario(this.nativeObj, scenarioXML, resultsFile, callbackFreq_s);
+    nativeExecuteScenario(this.nativeObj, scenario, resultsFile, callbackFreq_s);
     nativeDelete(this.nativeObj);
     this.nativeObj=0;
     this.cdmCallback = null;

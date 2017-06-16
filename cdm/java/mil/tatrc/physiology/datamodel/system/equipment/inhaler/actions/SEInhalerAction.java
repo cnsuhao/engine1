@@ -12,9 +12,13 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.inhaler.actions;
 
-import mil.tatrc.physiology.datamodel.bind.AnesthesiaMachineActionData;
-import mil.tatrc.physiology.datamodel.bind.InhalerActionData;
-import mil.tatrc.physiology.datamodel.scenario.actions.SEAction;
+import org.jfree.util.Log;
+
+import com.kitware.physiology.cdm.InhalerActions.AnyInhalerActionData;
+import com.kitware.physiology.cdm.InhalerActions.InhalerActionData;
+
+import mil.tatrc.physiology.datamodel.actions.SEAction;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 
 public abstract class SEInhalerAction extends SEAction
 {
@@ -35,15 +39,43 @@ public abstract class SEInhalerAction extends SEAction
     super.reset();
   }
   
-  public boolean load(InhalerActionData in)
+  public static void load(InhalerActionData src, SEInhalerAction dst) 
   {
-    super.load(in);
-    return true;
+    SEAction.load(src.getAction(), dst);
+  }
+  protected static void unload(SEInhalerAction src, InhalerActionData.Builder dst)
+  {
+    SEAction.unload(src, dst.getActionBuilder());
   }
   
-  protected void unload(InhalerActionData data)
+  public static SEInhalerAction ANY2CDM(AnyInhalerActionData c, SESubstanceManager subMgr) 
   {
-    super.unload(data);
+    switch(c.getActionCase())
+    {
+    case CONFIGURATION:
+    {
+      SEInhalerConfiguration dst = new SEInhalerConfiguration();
+      SEInhalerConfiguration.load(c.getConfiguration(), dst, subMgr);
+      return dst;
+    }
+    case ACTION_NOT_SET:
+      Log.warn("AnyInhalerActionData was empty...was that intended?");
+      return null;
+    }
+    Log.error("Unsupported Inhaler Action type "+c.getActionCase());
+    return null;
+  }
+  public static AnyInhalerActionData CDM2ANY(SEInhalerAction c)
+  {
+    AnyInhalerActionData.Builder dst = AnyInhalerActionData.newBuilder();
+    
+    if(c instanceof SEInhalerConfiguration)
+    {
+      dst.setConfiguration(SEInhalerConfiguration.unload((SEInhalerConfiguration)c));
+      return dst.build();
+    }
+    Log.error("Unsupported Inhaler Action type "+c);
+    return dst.build();
   }
   
   public abstract String toString();

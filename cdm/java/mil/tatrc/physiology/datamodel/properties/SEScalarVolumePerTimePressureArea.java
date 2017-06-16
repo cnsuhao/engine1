@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarVolumePerTimePressureAreaData;
+import com.kitware.physiology.cdm.Properties.ScalarVolumePerTimePressureAreaData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumePerTimePressureAreaUnit;
 
 /**
@@ -52,6 +52,23 @@ public class SEScalarVolumePerTimePressureArea extends SEScalar
     this();
     this.setValue(value,unit);
   }
+
+  public static void load(ScalarVolumePerTimePressureAreaData src, SEScalarVolumePerTimePressureArea dst)
+  {
+    SEScalar.load(src.getScalarVolumePerTimePressureArea(),dst);
+  }
+  public static ScalarVolumePerTimePressureAreaData unload(SEScalarVolumePerTimePressureArea src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarVolumePerTimePressureAreaData.Builder dst = ScalarVolumePerTimePressureAreaData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarVolumePerTimePressureArea src, ScalarVolumePerTimePressureAreaData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarVolumePerTimePressureAreaBuilder());
+  }
   
   /**
    * @param value
@@ -77,18 +94,6 @@ public class SEScalarVolumePerTimePressureArea extends SEScalar
   public double getValue(VolumePerTimePressureAreaUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarVolumePerTimePressureAreaData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarVolumePerTimePressureAreaData to = CDMSerializer.objFactory.createScalarVolumePerTimePressureAreaData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

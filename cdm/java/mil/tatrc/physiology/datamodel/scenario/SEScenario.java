@@ -12,22 +12,21 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.scenario;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.Scenario.AnyActionData;
+import com.kitware.physiology.cdm.Scenario.ScenarioData;
+import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
+
+import mil.tatrc.physiology.datamodel.actions.SEAction;
+import mil.tatrc.physiology.datamodel.actions.SEAdvanceTime;
+import mil.tatrc.physiology.datamodel.datarequests.*;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
-import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
-import mil.tatrc.physiology.datamodel.scenario.actions.SEAction;
-import mil.tatrc.physiology.datamodel.scenario.actions.SEAdvanceTime;
-import mil.tatrc.physiology.datamodel.scenario.datarequests.*;
-import mil.tatrc.physiology.datamodel.substance.SESubstance;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
@@ -39,30 +38,43 @@ public class SEScenario
   {
     SESubstanceManager mgr = new SESubstanceManager();
     mgr.loadSubstanceDirectory();
+    
+    {
+    SEScenario s = new SEScenario(mgr);
+    s.setName("Test");
+    s.setDescription("Description");
+    s.getInitialParameters().setPatientFile("StandardMale.pba");
+    SEDataRequest dr = new SEDataRequest();
+    dr.setCategory(eCategory.Physiology);
+    dr.setName("Weight");
+    dr.setUnit("kg");
+    dr.setPrecision(1);
+    s.getDataRequestManager().getRequestedData().add(dr);
+    SEAdvanceTime adv = new SEAdvanceTime();
+    adv.getTime().setValue(320,TimeUnit.s);
+    s.getActions().add(adv);
+    System.out.println(SEScenario.unload(s).toString());
+    }
+    
     boolean onlyCheckSchema=true;
     
     String searchDir;
     if(args.length==0)
-      searchDir="../verification/Scenarios";
+      searchDir="./verification/Scenarios";
     else
       searchDir=args[0];
-    List<String> files=FileUtils.findFiles(searchDir, ".xml", true);
+    List<String> files=FileUtils.findFiles(searchDir, ".pba", true);
     for(String file : files)
     {
       Log.info("Testing scenario file "+file);
-      Object obj = CDMSerializer.readFile(file);
-      if(obj==null)
-        Log.error("Unable to read file "+file);
-      if(!(obj instanceof ScenarioData))
-        continue;
-      ScenarioData sce1Data = (ScenarioData) obj;
-
       SEScenario sce1 = new SEScenario(mgr);
-      sce1.load(sce1Data);
-
+      try{
+        sce1.readFile(file);
+      }catch(ParseException ex){Log.error("Unable to read file "+file,ex);}
+      
       // Let's make sure we don't have the same data request more than once
       Set<Integer> hashes = new HashSet<Integer>();
-      for(SEDataRequest dr : sce1.getDataRequests().getRequestedData())
+      for(SEDataRequest dr : sce1.getDataRequestManager().getRequestedData())
       {
         int hash = dr.hashCode();        
         if(!hashes.contains(hash))
@@ -73,21 +85,20 @@ public class SEScenario
       
       if(!onlyCheckSchema)
       {
-        ScenarioData sce2Data = sce1.unload();
+        ScenarioData sce1Data = SEScenario.unload(sce1);
         SEScenario sce2 = new SEScenario(mgr);
-        sce2.load(sce2Data);
-
-        CDMSerializer.serialize(sce2.unload());
+        SEScenario.load(sce1Data, sce2);
+        ScenarioData sce2Data = SEScenario.unload(sce2);
 
         int numActions;
 
-        numActions = sce1Data.getAction().size();
-        if(numActions != sce2Data.getAction().size())
+        numActions = sce1Data.getAnyActionList().size();
+        if(numActions != sce2Data.getAnyActionList().size())
           Log.error("We have a xsd actions problem with : "+file);      
         for(int i=0; i<numActions; i++)
         {
-          ActionData action1 = sce1Data.getAction().get(i);
-          ActionData action2 = sce2Data.getAction().get(i);
+          AnyActionData action1 = sce1Data.getAnyAction(i);
+          AnyActionData action2 = sce2Data.getAnyAction(i);
 
           //Log.info("Comparing "+action1.getClass().getSimpleName());
           if(!SimpleEquals.Equals(action1, action2))
@@ -123,110 +134,94 @@ public class SEScenario
   protected String                        description;
   protected SEScenarioInitialParameters   params;
   protected SEScenarioAutoSerialization   autoSerialize;
-  protected String                        engineState;
-  protected SEDataRequestManager          dataRequests;
-  protected List<SEAction>                actions;
+  protected String                        engineStateFile;
+  protected SEDataRequestManager          drMgr = new SEDataRequestManager();
+  protected List<SEAction>                actions = new ArrayList<SEAction>();
   
-  protected SESubstanceManager substances;
+  protected SESubstanceManager            subMgr;
   
-  public SEScenario(SESubstanceManager substances)
+  public SEScenario(SESubstanceManager subMgr)
   {
-    this.substances = substances; 
-    
-    this.name = "";
-    this.description = "";
-    this.params = null;    
-    this.autoSerialize = null;
-    this.engineState = null;
-    this.dataRequests = new SEDataRequestManager();
-    this.actions = new ArrayList<SEAction>();
+    this.subMgr = subMgr; 
+    reset();
   }
   
   public void reset() 
   {
-    this.name = "";
-    this.description = "";
-    this.params = null;
+    this.name          = "";
+    this.description   = "";
+    this.params        = null;
     this.autoSerialize = null;
-    this.engineState = null;
+    this.engineStateFile   = null;
     this.actions.clear();    
-    this.dataRequests.reset();
+    this.drMgr.reset();
   }
   
-  public boolean load(ScenarioData in)
+  public void readFile(String fileName) throws ParseException
   {
-    reset();
+    ScenarioData.Builder builder = ScenarioData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    SEScenario.load(builder.build(), this);
+  }
+  public void writeFile(String fileName)
+  {
+    FileUtils.writeFile(fileName, SEScenario.unload(this).toString());
+  }
+  
+  public static void load(ScenarioData src, SEScenario dst)
+  {
+    dst.reset();
     
-    this.name = in.getName();
-    this.description = in.getDescription();
-    if(in.getInitialParameters()!=null)
-      getInitialParameters().load(in.getInitialParameters(), this.substances);
-    if(in.getAutoSerialization()!=null)
-      getAutoSerialization().load(in.getAutoSerialization());
-    if(in.getDataRequests()!=null)
-      this.dataRequests.load(in.getDataRequests(), this.substances);
-    else if(in.getEngineStateFile() != null)
-      this.engineState = in.getEngineStateFile();
-      
-    try
+    dst.name = src.getName();
+    dst.description = src.getDescription();
+    
+    switch(src.getStartTypeCase())
     {
-      double scenarioTime_s = 0;
-      SEAdvanceTime advTime = new SEAdvanceTime();
-      
-      for (ActionData actionData : in.getAction())
-      {    
-        SEAction a = SEAction.bind2CDM(actionData,this.substances);
-        if(a==null)
-        {
-          Log.error("Unable to load action "+actionData.getClass().getName());
-          return false;
-        }
-        else
-        {
-          this.actions.add(a);
-          a.getScenarioTime().setValue(scenarioTime_s,TimeUnit.s);
-          
-          if(actionData instanceof AdvanceTimeData)
-          {
-            advTime.load((AdvanceTimeData)actionData);            
-            scenarioTime_s += advTime.getTime().getValue(TimeUnit.s);
-          }          
-        }
-      }
+    case ENGINESTATEFILE:
+      dst.engineStateFile = src.getEngineStateFile();
+      break;
+    case INITIALPARAMETERS:
+      SEScenarioInitialParameters.load(src.getInitialParameters(),dst.getInitialParameters(),dst.subMgr);
     }
-    catch (Exception e)
-    {
-      Log.fatal("Unsupported Action type found in scenario file", e);
-    }
-    return isValid();
+    
+    if(src.hasAutoSerialization())
+      SEScenarioAutoSerialization.load(src.getAutoSerialization(), dst.getAutoSerialization());
+    
+    if(src.hasDataRequestManager())
+      SEDataRequestManager.load(src.getDataRequestManager(), dst.getDataRequestManager());
+   
+    for(AnyActionData aData : src.getAnyActionList())
+      dst.actions.add(SEAction.ANY2CDM(aData,dst.subMgr)); 
   }
   
-  public ScenarioData unload()
+  public static ScenarioData unload(SEScenario src)
   {
-    ScenarioData data = CDMSerializer.objFactory.createScenarioData();
-    unload(data);
-    return data;
+    ScenarioData.Builder dst = ScenarioData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ScenarioData data)
+  protected static void unload(SEScenario src, ScenarioData.Builder dst)
   {
-    if(!isValid())
-    {
-      Log.error("Scenario Invalid, cannot unload to a valid jaxb object");
-      return;
-    }
-    data.setName(this.name);
-    data.setDescription(this.description);
-    if(hasInitialParameters())
-      data.setInitialParameters(params.unload());
-    if(hasAutoSerialization())
-      data.setAutoSerialization(autoSerialize.unload());
-    else if(hasEngineState())
-      data.setEngineStateFile(this.engineState);
-    if(!this.dataRequests.getRequestedData().isEmpty())
-      data.setDataRequests(this.dataRequests.unload());
-    for(SEAction a : this.actions)
-      data.getAction().add(a.unload());
+    if(src.hasName())
+      dst.setName(src.name);
+    
+    if(src.hasDescription())
+      dst.setDescription(src.description);
+    
+    if(src.hasInitialParameters())
+      dst.setInitialParameters(SEScenarioInitialParameters.unload(src.params));
+    else if(src.hasEngineState())
+      dst.setEngineStateFile(src.engineStateFile);
+    
+    if(src.hasAutoSerialization())
+      dst.setAutoSerialization(SEScenarioAutoSerialization.unload(src.autoSerialize));
+    
+    if(!src.drMgr.getRequestedData().isEmpty())
+      dst.setDataRequestManager(SEDataRequestManager.unload(src.drMgr));
+    
+    for(SEAction a : src.actions)
+      dst.addAnyAction(SEAction.CDM2ANY(a));
   }
   
   public boolean isValid()
@@ -276,17 +271,17 @@ public class SEScenario
   {
     if(hasInitialParameters())
       return false;
-    return this.engineState != null && !this.engineState.isEmpty();
+    return this.engineStateFile != null && !this.engineStateFile.isEmpty();
   }
   public void setEngineState(String stateFile)
   {
     invalidateInitialParameters();
-    this.engineState = stateFile;
+    this.engineStateFile = stateFile;
   }
-  public String getEngineState(){ return this.engineState; }
+  public String getEngineState(){ return this.engineStateFile; }
   public void invalidateEngineState()
   {
-    this.engineState = null;
+    this.engineStateFile = null;
   }
   
   public boolean hasInitialParameters()
@@ -324,13 +319,13 @@ public class SEScenario
     return actions;
   }
 
-  public SEDataRequestManager getDataRequests() 
+  public SEDataRequestManager getDataRequestManager() 
   {
-    return this.dataRequests;
+    return this.drMgr;
   }
   
   public SESubstanceManager getSubstanceManager()
   {
-    return this.substances;
+    return this.subMgr;
   }
 }

@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.HemorrhageData;
+import com.kitware.physiology.cdm.PatientActions.HemorrhageData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolumePerTime;
 
 public class SEHemorrhage extends SEPatientAction
@@ -52,28 +52,28 @@ public class SEHemorrhage extends SEPatientAction
     return hasRate() && hasCompartment();
   }
   
-  public boolean load(HemorrhageData in)
+  public static void load(HemorrhageData src, SEHemorrhage dst)
   {
-    super.load(in);
-    getRate().load(in.getRate());
-    compartment = in.getCompartment();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    dst.compartment = src.getCompartment();
+    if(src.hasRate())
+      SEScalarVolumePerTime.load(src.getRate(),dst.getRate());
   }
   
-  public HemorrhageData unload()
+  public static HemorrhageData unload(SEHemorrhage src)
   {
-    HemorrhageData data = CDMSerializer.objFactory.createHemorrhageData();
-    unload(data);
-    return data;
+    HemorrhageData.Builder dst = HemorrhageData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(HemorrhageData data)
+  protected static void unload(SEHemorrhage src, HemorrhageData.Builder dst)
   {
-    super.unload(data);
-    if (rate != null)
-      data.setRate(rate.unload());
-    if (hasCompartment())
-      data.setCompartment(compartment);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasCompartment())
+      dst.setCompartment(src.compartment);
+    if (src.hasRate())
+      dst.setRate(SEScalarVolumePerTime.unload(src.rate));
   }
   
   public String getCompartment()

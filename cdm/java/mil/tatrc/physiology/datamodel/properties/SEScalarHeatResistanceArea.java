@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarHeatResistanceAreaData;
+import com.kitware.physiology.cdm.Properties.ScalarHeatResistanceAreaData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.HeatResistanceAreaUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarHeatResistanceArea extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarHeatResistanceAreaData src, SEScalarHeatResistanceArea dst)
+  {
+    SEScalar.load(src.getScalarHeatResistanceArea(),dst);
+  }
+  public static ScalarHeatResistanceAreaData unload(SEScalarHeatResistanceArea src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarHeatResistanceAreaData.Builder dst = ScalarHeatResistanceAreaData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarHeatResistanceArea src, ScalarHeatResistanceAreaData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarHeatResistanceAreaBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -79,18 +96,6 @@ public class SEScalarHeatResistanceArea extends SEScalar
     return this.getValue(unit.toString());
   }
   
-  
-
-  public ScalarHeatResistanceAreaData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarHeatResistanceAreaData to = CDMSerializer.objFactory.createScalarHeatResistanceAreaData();
-    unload(to);
-    return to;
-  }
-
   public boolean validUnit(String unit)
   {
     if(HeatResistanceAreaUnit.validUnit(unit))

@@ -12,17 +12,17 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ChestCompressionForceData;
+import com.kitware.physiology.cdm.PatientActions.ChestCompressionForceData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarForce;
 
-public class SEChestCompressionForce extends SEChestCompression
+public class SEChestCompressionForce extends SEPatientAction
 {
-  protected SEScalarForce Force;
+  protected SEScalarForce force;
   
   public SEChestCompressionForce()
   {
-    Force = null;
+    force = null;
   }
   
   public SEChestCompressionForce(SEChestCompressionForce other)
@@ -33,17 +33,17 @@ public class SEChestCompressionForce extends SEChestCompression
   
   public void copy(SEChestCompressionForce other)
   {
-    if (other.Force != null)
-      getForce().set(other.Force);
-    else if (Force != null)
-      Force.invalidate();
+    if (other.force != null)
+      getForce().set(other.force);
+    else if (force != null)
+      force.invalidate();
   }
   
   public void reset()
   {
     super.reset();
-    if (Force != null)
-      Force.invalidate();
+    if (force != null)
+      force.invalidate();
   }
   
   public boolean isValid()
@@ -51,41 +51,41 @@ public class SEChestCompressionForce extends SEChestCompression
     return hasForce();
   }
   
-  public boolean load(ChestCompressionForceData in)
+  public static void load(ChestCompressionForceData src, SEChestCompressionForce dst)
   {
-    super.load(in);
-    getForce().load(in.getForce());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasForce())
+      SEScalarForce.load(src.getForce(),dst.getForce());
   }
   
-  public ChestCompressionForceData unload()
+  public static ChestCompressionForceData unload(SEChestCompressionForce src)
   {
-    ChestCompressionForceData data = CDMSerializer.objFactory.createChestCompressionForceData();
-    unload(data);
-    return data;
+    ChestCompressionForceData.Builder dst = ChestCompressionForceData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ChestCompressionForceData data)
+  protected static void unload(SEChestCompressionForce src, ChestCompressionForceData.Builder dst)
   {
-    super.unload(data);
-    if (Force != null)
-      data.setForce(Force.unload());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasForce())
+      dst.setForce(SEScalarForce.unload(src.force));
   }
   
   public boolean hasForce()
   {
-    return Force == null ? false : Force.isValid();
+    return force == null ? false : force.isValid();
   }
   public SEScalarForce getForce()
   {
-    if (Force == null)
-      Force = new SEScalarForce();
-    return Force;
+    if (force == null)
+      force = new SEScalarForce();
+    return force;
   }
   
   public String toString()
   {
-    if (Force != null)
+    if (force != null)
       return "Chest Compression" 
           + "\n\tForce: " + getForce();
     else

@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarFlowInertanceData;
+import com.kitware.physiology.cdm.Properties.ScalarFlowInertanceData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.FlowInertanceUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarFlowInertance extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarFlowInertanceData src, SEScalarFlowInertance dst)
+  {
+    SEScalar.load(src.getScalarFlowInertance(),dst);
+  }
+  public static ScalarFlowInertanceData unload(SEScalarFlowInertance src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarFlowInertanceData.Builder dst = ScalarFlowInertanceData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarFlowInertance src, ScalarFlowInertanceData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarFlowInertanceBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarFlowInertance extends SEScalar
   public double getValue(FlowInertanceUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarFlowInertanceData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarFlowInertanceData to = CDMSerializer.objFactory.createScalarFlowInertanceData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

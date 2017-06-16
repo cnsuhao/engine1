@@ -12,13 +12,13 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.SubstanceInfusionData;
+import com.kitware.physiology.cdm.PatientActions.SubstanceInfusionData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarMassPerVolume;
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolumePerTime;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
 
-public class SESubstanceInfusion extends SESubstanceAdministration
+public class SESubstanceInfusion extends SEPatientAction
 {
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolumePerTime rate;
@@ -63,29 +63,30 @@ public class SESubstanceInfusion extends SESubstanceAdministration
     return hasRate() && hasConcentration() && hasSubstance();
   }
   
-  public boolean load(SubstanceInfusionData in)
+  public static void load(SubstanceInfusionData src, SESubstanceInfusion dst)
   {
-    super.load(in);
-    getRate().load(in.getRate());
-    getConcentration().load(in.getConcentration());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasRate())
+      SEScalarVolumePerTime.load(src.getRate(),dst.getRate());
+    if(src.hasConcentration())
+      SEScalarMassPerVolume.load(src.getConcentration(),dst.getConcentration());
   }
   
-  public SubstanceInfusionData unload()
+  public static SubstanceInfusionData unload(SESubstanceInfusion src)
   {
-    SubstanceInfusionData data = CDMSerializer.objFactory.createSubstanceInfusionData();
-    unload(data);
-    return data;
+    SubstanceInfusionData.Builder dst = SubstanceInfusionData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(SubstanceInfusionData data)
+  protected static void unload(SESubstanceInfusion src, SubstanceInfusionData.Builder dst)
   {
-    super.unload(data);
-    if (rate != null)
-      data.setRate(rate.unload());
-    if (concentration != null)
-      data.setConcentration(concentration.unload());
-    data.setSubstance(substance.getName());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasRate())
+      dst.setRate(SEScalarVolumePerTime.unload(src.rate));
+    if (src.hasConcentration())
+      dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration));
+    dst.setSubstance(src.substance.getName());
   }
   
   public boolean hasConcentration()

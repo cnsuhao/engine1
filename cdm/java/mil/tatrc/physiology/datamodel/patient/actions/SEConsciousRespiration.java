@@ -15,14 +15,15 @@ package mil.tatrc.physiology.datamodel.patient.actions;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
-import mil.tatrc.physiology.datamodel.substance.SESubstanceFraction;
+import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData;
+import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.AnyCommandData;
+
+import mil.tatrc.physiology.datamodel.substance.SESubstanceFractionAmount;
 
 public class SEConsciousRespiration extends SEPatientAction
 {
   protected List<SEConsciousRespirationCommand> commands;
-  protected Boolean              appendToPrevious;
+  protected Boolean                             appendToPrevious;
   
   public SEConsciousRespiration()
   {
@@ -63,73 +64,82 @@ public class SEConsciousRespiration extends SEPatientAction
     return true;
   }
   
-  public boolean load(ConsciousRespirationData in)
+  public static void load(ConsciousRespirationData src, SEConsciousRespiration dst)
   {
-    super.load(in);
-    this.appendToPrevious = in.isAppendToPrevious();
-    commands.clear();
-      for (ConsciousRespirationCommandData data : in.getCommand())
-      {
-        if (data instanceof BreathHoldData)
-        {
-          SEConsciousRespirationCommand command = new SEBreathHold();
-          ((SEBreathHold)command).load((BreathHoldData)data);
-          commands.add(command);
-        }
-        else if (data instanceof ForcedExhaleData)
-        {
-          SEConsciousRespirationCommand command = new SEForcedExhale();
-          ((SEForcedExhale)command).load((ForcedExhaleData)data);
-          commands.add(command);
-        }
-        else if (data instanceof ForcedInhaleData)
-        {
-          SEConsciousRespirationCommand command = new SEForcedInhale();
-          ((SEForcedInhale)command).load((ForcedInhaleData)data);
-          commands.add(command);
-        }
-        else if (data instanceof UseInhalerData)
-        {
-          SEConsciousRespirationCommand command = new SEUseInhaler();
-          ((SEUseInhaler)command).load((UseInhalerData)data);
-          commands.add(command);
-        }
-      }
-      
-    return isValid();
-  }
-  
-  public ConsciousRespirationData unload()
-  {
-    ConsciousRespirationData data = CDMSerializer.objFactory.createConsciousRespirationData();
-    unload(data);
-    
-    return data;
-  }
-  
-  protected void unload(ConsciousRespirationData data)
-  {
-    super.unload(data);
-    if(appendToPrevious!=null)
-      data.setAppendToPrevious(appendToPrevious);
-    for (SEConsciousRespirationCommand command : commands)
+    SEPatientAction.load(src.getPatientAction(), dst);
+    dst.appendToPrevious = src.getAppendToPrevious();
+    dst.commands.clear();
+    for (AnyCommandData cmd : src.getCommandList())
     {
+      switch(cmd.getCommandCase())
+      {
+        case BREATHHOLD:
+        {
+          SEBreathHold command = new SEBreathHold();
+          SEBreathHold.load(cmd.getBreathHold(),command);
+          dst.commands.add(command);
+          break;
+        }
+        case FORCEDEXHALE:
+        {
+          SEForcedExhale command = new SEForcedExhale();
+          SEForcedExhale.load(cmd.getForcedExhale(),command);
+          dst.commands.add(command);
+          break;
+        }
+        case FORCEDINHALE:
+        {
+          SEForcedInhale command = new SEForcedInhale();
+          SEForcedInhale.load(cmd.getForcedInhale(),command);
+          dst.commands.add(command);
+          break;
+        }
+        case USEINHALER:
+        {
+          SEUseInhaler command = new SEUseInhaler();
+          SEUseInhaler.load(cmd.getUseInhaler(),command);
+          dst.commands.add(command);
+          break;
+        }
+      }    
+    }
+  }
+  
+  public static ConsciousRespirationData unload(SEConsciousRespiration src)
+  {
+    ConsciousRespirationData.Builder dst = ConsciousRespirationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  
+  protected static void unload(SEConsciousRespiration src, ConsciousRespirationData.Builder dst)
+  {
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if(src.appendToPrevious!=null)
+      dst.setAppendToPrevious(src.appendToPrevious);
+    for (SEConsciousRespirationCommand command : src.commands)
+    {
+      AnyCommandData.Builder cmd = dst.addCommandBuilder();
       if (command instanceof SEBreathHold)
       {
-        data.getCommand().add(((SEBreathHold)command).unload());
+        cmd.setBreathHold(SEBreathHold.unload((SEBreathHold)command));
+        continue;
       }
-      else if (command instanceof SEForcedExhale)
-        {
-        data.getCommand().add(((SEForcedExhale)command).unload());
-        }
-        else if (command instanceof SEForcedInhale)
-        {
-          data.getCommand().add(((SEForcedInhale)command).unload());
-        }
-        else if (command instanceof SEUseInhaler)
-        {
-          data.getCommand().add(((SEUseInhaler)command).unload());
-        }
+      if (command instanceof SEForcedExhale)
+      {
+        cmd.setForcedExhale(SEForcedExhale.unload((SEForcedExhale)command));
+        continue;
+      }
+      if (command instanceof SEForcedInhale)
+      {
+        cmd.setForcedInhale(SEForcedInhale.unload((SEForcedInhale)command));
+        continue;
+      }
+      if (command instanceof SEUseInhaler)
+      {
+        cmd.setUseInhaler(SEUseInhaler.unload((SEUseInhaler)command));
+        continue;
+      }
     }
   }
     

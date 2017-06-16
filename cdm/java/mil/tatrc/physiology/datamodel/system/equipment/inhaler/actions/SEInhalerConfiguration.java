@@ -12,16 +12,15 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.inhaler.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.InhalerConfigurationData;
-import mil.tatrc.physiology.datamodel.substance.SESubstance;
+import com.kitware.physiology.cdm.InhalerActions.InhalerConfigurationData;
+
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.datamodel.system.equipment.inhaler.SEInhaler;
 
 public class SEInhalerConfiguration extends SEInhalerAction
 {
-  protected SEInhaler configuration;
-  protected String    configurationFile;
+  protected SEInhaler inhaler;
+  protected String    inhalerFile;
   
   public SEInhalerConfiguration()
   {
@@ -38,89 +37,86 @@ public class SEInhalerConfiguration extends SEInhalerAction
     if(this==other)
       return;
     super.copy(other);
-    this.configuration.copy(other.configuration);
-    this.configurationFile=other.configurationFile;
+    this.inhaler.copy(other.inhaler);
+    this.inhalerFile=other.inhalerFile;
   }
   
   public void reset()
   {
     super.reset();
     
-    if (this.configuration != null)
-      this.configuration.reset();
-    if (this.configurationFile != null)
-      this.configurationFile="";
+    if (this.inhaler != null)
+      this.inhaler.reset();
+    if (this.inhalerFile != null)
+      this.inhalerFile="";
   }
   
   public boolean isValid()
   {
-    return hasConfiguration() || hasConfigurationFile();
+    return hasInhaler() || hasInhalerFile();
   }
   
-  public boolean load(InhalerConfigurationData in, SESubstanceManager subMgr)
+  public static void load(InhalerConfigurationData src, SEInhalerConfiguration dst, SESubstanceManager subMgr)
   {
-    super.load(in);
-    if(in.getConfiguration()!=null)
-      getConfiguration().load(in.getConfiguration(),subMgr);
-    else if(in.getConfigurationFile()!=null)
-      this.configurationFile=in.getConfigurationFile();
-    return isValid();
+    dst.reset();
+    switch(src.getOptionCase())
+    {
+    case INHALERFILE:
+      dst.inhalerFile = src.getInhalerFile();
+      break;
+    case INHALER:
+      SEInhaler.load(src.getInhaler(),dst.getInhaler(),subMgr);
+      break;
+    }
+  }
+  public static InhalerConfigurationData unload(SEInhalerConfiguration src)
+  {
+    InhalerConfigurationData.Builder dst = InhalerConfigurationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEInhalerConfiguration src, InhalerConfigurationData.Builder dst)
+  {
+    if(src.hasInhaler())
+      dst.setInhaler(SEInhaler.unload(src.inhaler));
+    else if(src.hasInhalerFile())
+      dst.setInhalerFile(src.inhalerFile);
   }
   
-  public InhalerConfigurationData unload()
+  public boolean hasInhaler()
   {
-    InhalerConfigurationData data = CDMSerializer.objFactory.createInhalerConfigurationData();
-    unload(data);
-    return data;
+    return this.inhaler!=null;
+  }
+  public SEInhaler getInhaler()
+  {
+    if(this.inhaler==null)
+      this.inhaler=new SEInhaler();
+    return this.inhaler;
   }
   
-  protected void unload(InhalerConfigurationData data)
+  public boolean hasInhalerFile()
   {
-    super.unload(data);
-    if(this.hasConfiguration())
-      data.setConfiguration(this.configuration.unload());
-    else if(this.hasConfigurationFile())
-      data.setConfigurationFile(this.configurationFile);
+    return this.inhalerFile!=null&&!this.inhalerFile.isEmpty();
   }
-  
-  public boolean hasConfiguration()
+  public String getInhalerFile()
   {
-    return this.configuration!=null;
+    return this.inhalerFile;
   }
-  public SEInhaler getConfiguration()
+  public void setInhalerFile(String s)
   {
-    if(this.configuration==null)
-      this.configuration=new SEInhaler();
-    return this.configuration;
-  }
-  
-  public boolean hasConfigurationFile()
-  {
-    return this.configurationFile!=null&&!this.configurationFile.isEmpty();
-  }
-  public String getConfigurationFile()
-  {
-    return this.configurationFile;
-  }
-  public void setConfigurationFile(String s)
-  {
-    this.configurationFile = s;
+    this.inhalerFile = s;
   }
   
   public String toString()
   {
     String str = "Inhaler Configuration";
-    if(hasConfiguration())
+    if(hasInhaler())
     {
-      str += "\n\tState: "; str += this.configuration.hasState()?this.configuration.getState():"Not Supplied";
-      str += "\n\tMetered Dose: "; str += this.configuration.hasMeteredDose()?this.configuration.getMeteredDose():"Not Supplied";
-      str += "\n\tNozzle Loss: "; str += this.configuration.hasNozzleLoss()?this.configuration.getNozzleLoss():"Not Supplied";
-      str += "\n\tSpacer Volume: "; str += this.configuration.hasSpacerVolume()?this.configuration.getSpacerVolume():"Not Supplied";    
-      str += "\n\tSubstance: "; str += this.configuration.hasSubstance()?this.configuration.getSubstance().getName():"Not Supplied";
+      str += inhaler.toString();
     }
     
-    if(this.hasConfigurationFile())
-      str +="\n\tFile: "+this.configurationFile;
+    if(this.hasInhalerFile())
+      str +="\n\tInhaler File: "+this.inhalerFile;
     
     return str;
   }

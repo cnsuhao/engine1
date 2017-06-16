@@ -11,8 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.HistogramFractionVsLengthData;
+import com.kitware.physiology.cdm.Properties.HistogramData;
+import com.kitware.physiology.cdm.Properties.HistogramFractionVsLengthData;
+
 import mil.tatrc.physiology.datamodel.exceptions.InvalidUnitException;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.LengthUnit;
 
@@ -27,13 +28,21 @@ public class SEHistogramFractionVsLength extends SEHistogram
     super();
   }
     
-  public HistogramFractionVsLengthData unload()
+  public static void load(HistogramFractionVsLengthData src, SEHistogramFractionVsLength dest)
   {
-    if(!isValid())
+   SEHistogram.load(src.getHistogramFractionVsLength(), dest);
+  }
+  public static HistogramFractionVsLengthData unload(SEHistogramFractionVsLength src)
+  {
+    if(!src.isValid())
       return null;
-    HistogramFractionVsLengthData to = CDMSerializer.objFactory.createHistogramFractionVsLengthData();
-    unload(to);
-    return to;
+    HistogramFractionVsLengthData.Builder dst = HistogramFractionVsLengthData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEHistogramFractionVsLength src, HistogramFractionVsLengthData.Builder dst)
+  {
+    SEHistogram.unload(src,dst.getHistogramFractionVsLengthBuilder());
   }
 
   public boolean isValidDependentUnit(String unit)

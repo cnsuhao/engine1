@@ -8,64 +8,60 @@ Unless required by applicable law or agreed to in writing, software distributed 
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
-**************************************************************************************/
+ **************************************************************************************/
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.OxygenTankPressureLossData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.OxygenTankPressureLossData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
 public class SEOxygenTankPressureLoss extends SEAnesthesiaMachineAction
 {
-  protected EnumOnOff state;
-  
+  protected eSwitch state;
+
   public SEOxygenTankPressureLoss()
   {
-    state = EnumOnOff.ON;
+    state = eSwitch.On;
   }
-  
+
   public void reset()
   {
     super.reset();
-    state = EnumOnOff.ON;
+    state = eSwitch.On;
   }
-  
+
   public boolean isValid()
   {
     return hasState();
   }
-  
-  public boolean load(OxygenTankPressureLossData in)
+
+  public static void load(OxygenTankPressureLossData src, SEOxygenTankPressureLoss dst)
   {
-    super.load(in);
-    if (in.getState() != null)
-      setState(in.getState());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if (src.getState()!=eSwitch.UNRECOGNIZED)
+      dst.setState(src.getState());
   }
-  
-  public OxygenTankPressureLossData unload()
+  public static OxygenTankPressureLossData unload(SEOxygenTankPressureLoss src)
   {
-    OxygenTankPressureLossData data = CDMSerializer.objFactory.createOxygenTankPressureLossData();
-    unload(data);
-    return data;
+    OxygenTankPressureLossData.Builder dst = OxygenTankPressureLossData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(OxygenTankPressureLossData data)
+  protected static void unload(SEOxygenTankPressureLoss src, OxygenTankPressureLossData.Builder dst)
   {
-    super.unload(data);
-    if (hasState())
-      data.setState(state);
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if (src.hasState())
+      dst.setState(src.state);
   }
-  
+
   /*
    * State
    */
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff state)
+  public void setState(eSwitch state)
   {
     this.state = state;
   }
@@ -77,7 +73,7 @@ public class SEOxygenTankPressureLoss extends SEAnesthesiaMachineAction
   {
     state = null;
   }
-  
+
   public String toString()
   {
     return "Oxygen Tank Pressure Loss"

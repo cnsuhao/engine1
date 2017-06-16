@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.NervousSystemData;
+import com.kitware.physiology.cdm.Physiology.NervousSystemData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
@@ -60,57 +60,55 @@ public class SENervousSystem extends SEPhysiologySystem implements SESystem
       chemoreceptorHeartElastanceScale.invalidate();
   }
 
-  public boolean load(NervousSystemData in)
+  public static void load(NervousSystemData src, SENervousSystem dst)
   {    
-    if (in.getBaroreceptorHeartRateScale() != null)
-      getBaroreceptorHeartRateScale().load(in.getBaroreceptorHeartRateScale());
-    if (in.getBaroreceptorHeartElastanceScale() != null)
-      getBaroreceptorHeartElastanceScale().load(in.getBaroreceptorHeartElastanceScale());
-    if (in.getBaroreceptorResistanceScale() != null)
-      getBaroreceptorResistanceScale().load(in.getBaroreceptorResistanceScale());
-    if (in.getBaroreceptorComplianceScale() != null)
-      getBaroreceptorComplianceScale().load(in.getBaroreceptorComplianceScale());
+    if (src.hasBaroreceptorHeartRateScale())
+      SEScalar.load(src.getBaroreceptorHeartRateScale(),dst.getBaroreceptorHeartRateScale());
+    if (src.hasBaroreceptorHeartElastanceScale())
+      SEScalar.load(src.getBaroreceptorHeartElastanceScale(),dst.getBaroreceptorHeartElastanceScale());
+    if (src.hasBaroreceptorResistanceScale())
+      SEScalar.load(src.getBaroreceptorResistanceScale(),dst.getBaroreceptorResistanceScale());
+    if (src.hasBaroreceptorComplianceScale())
+      SEScalar.load(src.getBaroreceptorComplianceScale(),dst.getBaroreceptorComplianceScale());
     
-    if (in.getChemoreceptorHeartRateScale() != null)
-      getChemoreceptorHeartRateScale().load(in.getChemoreceptorHeartRateScale());
-    if (in.getChemoreceptorHeartElastanceScale() != null)
-      getChemoreceptorHeartElastanceScale().load(in.getChemoreceptorHeartElastanceScale());
+    if (src.hasChemoreceptorHeartRateScale())
+      SEScalar.load(src.getChemoreceptorHeartRateScale(),dst.getChemoreceptorHeartRateScale());
+    if (src.hasChemoreceptorHeartElastanceScale())
+      SEScalar.load(src.getChemoreceptorHeartElastanceScale(),dst.getChemoreceptorHeartElastanceScale());
 
-    if(in.getLeftEyePupillaryResponse()!=null)
-      this.getLeftEyePupillaryResponse().load(in.getLeftEyePupillaryResponse());
-    if(in.getRightEyePupillaryResponse()!=null)
-      this.getRightEyePupillaryResponse().load(in.getRightEyePupillaryResponse());
-
-    return true;
+    if(src.hasLeftEyePupillaryResponse())
+      SEPupillaryResponse.load(src.getLeftEyePupillaryResponse(),dst.getLeftEyePupillaryResponse());
+    if(src.hasRightEyePupillaryResponse())
+      SEPupillaryResponse.load(src.getRightEyePupillaryResponse(),dst.getRightEyePupillaryResponse());
   }
 
-  public NervousSystemData unload()
+  public static NervousSystemData unload(SENervousSystem src)
   {
-    NervousSystemData data = CDMSerializer.objFactory.createNervousSystemData();
-    unload(data);
-    return data;
+    NervousSystemData.Builder dst = NervousSystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
 
-  protected void unload(NervousSystemData data)
+  protected static void unload(SENervousSystem src, NervousSystemData.Builder dst)
   {    
-    if (getBaroreceptorHeartRateScale() != null)
-      data.setBaroreceptorHeartRateScale(baroreceptorHeartRateScale.unload());
-    if (getBaroreceptorHeartElastanceScale() != null)
-      data.setBaroreceptorHeartElastanceScale(baroreceptorHeartElastanceScale.unload());
-    if (getBaroreceptorResistanceScale() != null)
-      data.setBaroreceptorResistanceScale(baroreceptorResistanceScale.unload());
-    if (getBaroreceptorComplianceScale() != null)
-      data.setBaroreceptorComplianceScale(baroreceptorComplianceScale.unload());
+    if (src.hasBaroreceptorHeartRateScale())
+      dst.setBaroreceptorHeartRateScale(SEScalar.unload(src.getBaroreceptorHeartRateScale()));
+    if (src.hasBaroreceptorHeartElastanceScale())
+      dst.setBaroreceptorHeartElastanceScale(SEScalar.unload(src.getBaroreceptorHeartElastanceScale()));
+    if (src.hasBaroreceptorResistanceScale())
+      dst.setBaroreceptorResistanceScale(SEScalar.unload(src.getBaroreceptorResistanceScale()));
+    if (src.hasBaroreceptorComplianceScale())
+      dst.setBaroreceptorComplianceScale(SEScalar.unload(src.getBaroreceptorComplianceScale()));
     
-    if (getChemoreceptorHeartRateScale() != null)
-      data.setChemoreceptorHeartRateScale(chemoreceptorHeartRateScale.unload());
-    if (getChemoreceptorHeartElastanceScale() != null)
-      data.setChemoreceptorHeartElastanceScale(chemoreceptorHeartElastanceScale.unload());
+    if (src.hasChemoreceptorHeartRateScale())
+      dst.setChemoreceptorHeartRateScale(SEScalar.unload(src.getChemoreceptorHeartRateScale()));
+    if (src.hasChemoreceptorHeartElastanceScale())
+      dst.setChemoreceptorHeartElastanceScale(SEScalar.unload(src.getChemoreceptorHeartElastanceScale()));
 
-    if(hasLeftEyePupillaryResponse())
-      data.setLeftEyePupillaryResponse(this.leftPupillaryResponse.unload());
-    if(hasRightEyePupillaryResponse())
-      data.setRightEyePupillaryResponse(this.rightPupillaryResponse.unload());
+    if(src.hasLeftEyePupillaryResponse())
+      dst.setLeftEyePupillaryResponse(SEPupillaryResponse.unload(src.leftPupillaryResponse));
+    if(src.hasRightEyePupillaryResponse())
+      dst.setRightEyePupillaryResponse(SEPupillaryResponse.unload(src.rightPupillaryResponse));
   }
 
   public boolean hasBaroreceptorHeartRateScale()

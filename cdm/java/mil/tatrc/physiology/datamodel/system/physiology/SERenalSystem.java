@@ -12,15 +12,15 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.RenalSystemData;
+import com.kitware.physiology.cdm.Physiology.RenalSystemData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
 public class SERenalSystem extends SEPhysiologySystem implements SESystem
 {
   protected SEScalarVolumePerTime glomerularFiltrationRate;
-  protected SEScalarFraction filtrationFraction;
+  protected SEScalar0To1 filtrationFraction;
   protected SEScalarFlowResistance leftAfferentArterioleResistance;
   protected SEScalarPressure leftBowmansCapsulesHydrostaticPressure;
   protected SEScalarPressure leftBowmansCapsulesOsmoticPressure;
@@ -31,7 +31,7 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   protected SEScalarVolumePerTime leftGlomerularFiltrationRate;
   protected SEScalarArea leftGlomerularFiltrationSurfaceArea;
   protected SEScalarVolumePerTimePressureArea leftGlomerularFluidPermeability;
-  protected SEScalarFraction leftFiltrationFraction;
+  protected SEScalar0To1 leftFiltrationFraction;
   protected SEScalarPressure leftNetFiltrationPressure;
   protected SEScalarPressure leftNetReabsorptionPressure;
   protected SEScalarPressure leftPeritubularCapillariesHydrostaticPressure;
@@ -55,7 +55,7 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   protected SEScalarVolumePerTime rightGlomerularFiltrationRate;
   protected SEScalarArea rightGlomerularFiltrationSurfaceArea;
   protected SEScalarVolumePerTimePressureArea rightGlomerularFluidPermeability;
-  protected SEScalarFraction rightFiltrationFraction;
+  protected SEScalar0To1 rightFiltrationFraction;
   protected SEScalarPressure rightNetFiltrationPressure;
   protected SEScalarPressure rightNetReabsorptionPressure;
   protected SEScalarPressure rightPeritubularCapillariesHydrostaticPressure;
@@ -244,237 +244,235 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
       urineUreaNitrogenConcentration.invalidate();
   }
 
-  public boolean load(RenalSystemData in)
+  public static void load(RenalSystemData src, SERenalSystem dst)
   {
-    if (in.getGlomerularFiltrationRate() != null)
-      getGlomerularFiltrationRate().load(in.getGlomerularFiltrationRate());
-    if (in.getFiltrationFraction() != null)
-      getFiltrationFraction().load(in.getFiltrationFraction());
-    if (in.getLeftAfferentArterioleResistance() != null)
-      getLeftAfferentArterioleResistance().load(in.getLeftAfferentArterioleResistance());
-    if (in.getLeftBowmansCapsulesHydrostaticPressure() != null)
-      getLeftBowmansCapsulesHydrostaticPressure().load(in.getLeftBowmansCapsulesHydrostaticPressure());
-    if (in.getLeftBowmansCapsulesOsmoticPressure() != null)
-      getLeftBowmansCapsulesOsmoticPressure().load(in.getLeftBowmansCapsulesOsmoticPressure());
-    if (in.getLeftEfferentArterioleResistance() != null)
-      getLeftEfferentArterioleResistance().load(in.getLeftEfferentArterioleResistance());
-    if (in.getLeftGlomerularCapillariesHydrostaticPressure() != null)
-      getLeftGlomerularCapillariesHydrostaticPressure().load(in.getLeftGlomerularCapillariesHydrostaticPressure());
-    if (in.getLeftGlomerularCapillariesOsmoticPressure() != null)
-      getLeftGlomerularCapillariesOsmoticPressure().load(in.getLeftGlomerularCapillariesOsmoticPressure());
-    if (in.getLeftGlomerularFiltrationCoefficient() != null)
-      getLeftGlomerularFiltrationCoefficient().load(in.getLeftGlomerularFiltrationCoefficient());
-    if (in.getLeftGlomerularFiltrationRate() != null)
-      getLeftGlomerularFiltrationRate().load(in.getLeftGlomerularFiltrationRate());
-    if (in.getLeftGlomerularFiltrationSurfaceArea() != null)
-      getLeftGlomerularFiltrationSurfaceArea().load(in.getLeftGlomerularFiltrationSurfaceArea());
-    if (in.getLeftGlomerularFluidPermeability() != null)
-      getLeftGlomerularFluidPermeability().load(in.getLeftGlomerularFluidPermeability());
-    if (in.getLeftFiltrationFraction() != null)
-      getLeftFiltrationFraction().load(in.getLeftFiltrationFraction());
-    if (in.getLeftNetFiltrationPressure() != null)
-      getLeftNetFiltrationPressure().load(in.getLeftNetFiltrationPressure());
-    if (in.getLeftNetReabsorptionPressure() != null)
-      getLeftNetReabsorptionPressure().load(in.getLeftNetReabsorptionPressure());
-    if (in.getLeftPeritubularCapillariesHydrostaticPressure() != null)
-      getLeftPeritubularCapillariesHydrostaticPressure().load(in.getLeftPeritubularCapillariesHydrostaticPressure());
-    if (in.getLeftPeritubularCapillariesOsmoticPressure() != null)
-      getLeftPeritubularCapillariesOsmoticPressure().load(in.getLeftPeritubularCapillariesOsmoticPressure());
-    if (in.getLeftReabsorptionFiltrationCoefficient() != null)
-      getLeftReabsorptionFiltrationCoefficient().load(in.getLeftReabsorptionFiltrationCoefficient());
-    if (in.getLeftReabsorptionRate() != null)
-      getLeftReabsorptionRate().load(in.getLeftReabsorptionRate());
-    if (in.getLeftTubularOsmoticPressure() != null)
-      getLeftTubularOsmoticPressure().load(in.getLeftTubularOsmoticPressure());
-    if (in.getLeftTubularHydrostaticPressure() != null)
-      getLeftTubularHydrostaticPressure().load(in.getLeftTubularHydrostaticPressure());
-    if (in.getLeftTubularReabsorptionFiltrationSurfaceArea() != null)
-      getLeftTubularReabsorptionFiltrationSurfaceArea().load(in.getLeftTubularReabsorptionFiltrationSurfaceArea());
-    if (in.getLeftTubularReabsorptionFluidPermeability() != null)
-      getLeftTubularReabsorptionFluidPermeability().load(in.getLeftTubularReabsorptionFluidPermeability());
-    if (in.getRenalBloodFlow() != null)
-      getRenalBloodFlow().load(in.getRenalBloodFlow());
-    if (in.getRenalPlasmaFlow() != null)
-      getRenalPlasmaFlow().load(in.getRenalPlasmaFlow());
-    if (in.getRenalVascularResistance() != null)
-      getRenalVascularResistance().load(in.getRenalVascularResistance());
-    if (in.getRightAfferentArterioleResistance() != null)
-      getRightAfferentArterioleResistance().load(in.getRightAfferentArterioleResistance());
-    if (in.getRightBowmansCapsulesHydrostaticPressure() != null)
-      getRightBowmansCapsulesHydrostaticPressure().load(in.getRightBowmansCapsulesHydrostaticPressure());
-    if (in.getRightBowmansCapsulesOsmoticPressure() != null)
-      getRightBowmansCapsulesOsmoticPressure().load(in.getRightBowmansCapsulesOsmoticPressure());
-    if (in.getRightEfferentArterioleResistance() != null)
-      getRightEfferentArterioleResistance().load(in.getRightEfferentArterioleResistance());
-    if (in.getRightGlomerularCapillariesHydrostaticPressure() != null)
-      getRightGlomerularCapillariesHydrostaticPressure().load(in.getRightGlomerularCapillariesHydrostaticPressure());
-    if (in.getRightGlomerularCapillariesOsmoticPressure() != null)
-      getRightGlomerularCapillariesOsmoticPressure().load(in.getRightGlomerularCapillariesOsmoticPressure());
-    if (in.getRightGlomerularFiltrationCoefficient() != null)
-      getRightGlomerularFiltrationCoefficient().load(in.getRightGlomerularFiltrationCoefficient());
-    if (in.getRightGlomerularFiltrationRate() != null)
-      getRightGlomerularFiltrationRate().load(in.getRightGlomerularFiltrationRate());
-    if (in.getRightGlomerularFiltrationSurfaceArea() != null)
-      getRightGlomerularFiltrationSurfaceArea().load(in.getRightGlomerularFiltrationSurfaceArea());
-    if (in.getRightGlomerularFluidPermeability() != null)
-      getRightGlomerularFluidPermeability().load(in.getRightGlomerularFluidPermeability());
-    if (in.getRightFiltrationFraction() != null)
-      getRightFiltrationFraction().load(in.getRightFiltrationFraction());
-    if (in.getRightNetFiltrationPressure() != null)
-      getRightNetFiltrationPressure().load(in.getRightNetFiltrationPressure());
-    if (in.getRightNetReabsorptionPressure() != null)
-      getRightNetReabsorptionPressure().load(in.getRightNetReabsorptionPressure());
-    if (in.getRightPeritubularCapillariesHydrostaticPressure() != null)
-      getRightPeritubularCapillariesHydrostaticPressure().load(in.getRightPeritubularCapillariesHydrostaticPressure());
-    if (in.getRightPeritubularCapillariesOsmoticPressure() != null)
-      getRightPeritubularCapillariesOsmoticPressure().load(in.getRightPeritubularCapillariesOsmoticPressure());
-    if (in.getRightReabsorptionFiltrationCoefficient() != null)
-      getRightReabsorptionFiltrationCoefficient().load(in.getRightReabsorptionFiltrationCoefficient());
-    if (in.getRightReabsorptionRate() != null)
-      getRightReabsorptionRate().load(in.getRightReabsorptionRate());
-    if (in.getRightTubularOsmoticPressure() != null)
-      getRightTubularOsmoticPressure().load(in.getRightTubularOsmoticPressure());
-    if (in.getRightTubularHydrostaticPressure() != null)
-      getRightTubularHydrostaticPressure().load(in.getRightTubularHydrostaticPressure());
-    if (in.getRightTubularReabsorptionFiltrationSurfaceArea() != null)
-      getRightTubularReabsorptionFiltrationSurfaceArea().load(in.getRightTubularReabsorptionFiltrationSurfaceArea());
-    if (in.getRightTubularReabsorptionFluidPermeability() != null)
-      getRightTubularReabsorptionFluidPermeability().load(in.getRightTubularReabsorptionFluidPermeability());
-    if (in.getUrinationRate() != null)
-      getUrinationRate().load(in.getUrinationRate());
-    if (in.getUrineOsmolality() != null)
-      getUrineOsmolality().load(in.getUrineOsmolality());
-    if (in.getUrineOsmolarity() != null)
-      getUrineOsmolarity().load(in.getUrineOsmolarity());
-    if (in.getUrineProductionRate() != null)
-      getUrineProductionRate().load(in.getUrineProductionRate());
-    if (in.getUrineSpecificGravity() != null)
-      getUrineSpecificGravity().load(in.getUrineSpecificGravity());
-    if (in.getUrineVolume() != null)
-      getUrineVolume().load(in.getUrineVolume());
-    if (in.getUrineUreaNitrogenConcentration() != null)
-      getUrineUreaNitrogenConcentration().load(in.getUrineUreaNitrogenConcentration());
-
-    return true;
+    if (src.hasGlomerularFiltrationRate())
+      SEScalarVolumePerTime.load(src.getGlomerularFiltrationRate(),dst.getGlomerularFiltrationRate());
+    if (src.hasFiltrationFraction())
+      SEScalar0To1.load(src.getFiltrationFraction(),dst.getFiltrationFraction());
+    if (src.hasLeftAfferentArterioleResistance())
+      SEScalarFlowResistance.load(src.getLeftAfferentArterioleResistance(),dst.getLeftAfferentArterioleResistance());
+    if (src.hasLeftBowmansCapsulesHydrostaticPressure())
+      SEScalarPressure.load(src.getLeftBowmansCapsulesHydrostaticPressure(),dst.getLeftBowmansCapsulesHydrostaticPressure());
+    if (src.hasLeftBowmansCapsulesOsmoticPressure())
+      SEScalarPressure.load(src.getLeftBowmansCapsulesOsmoticPressure(),dst.getLeftBowmansCapsulesOsmoticPressure());
+    if (src.hasLeftEfferentArterioleResistance())
+      SEScalarFlowResistance.load(src.getLeftEfferentArterioleResistance(),dst.getLeftEfferentArterioleResistance());
+    if (src.hasLeftGlomerularCapillariesHydrostaticPressure())
+      SEScalarPressure.load(src.getLeftGlomerularCapillariesHydrostaticPressure(),dst.getLeftGlomerularCapillariesHydrostaticPressure());
+    if (src.hasLeftGlomerularCapillariesOsmoticPressure())
+      SEScalarPressure.load(src.getLeftGlomerularCapillariesOsmoticPressure(),dst.getLeftGlomerularCapillariesOsmoticPressure());
+    if (src.hasLeftGlomerularFiltrationCoefficient())
+      SEScalarVolumePerTimePressure.load(src.getLeftGlomerularFiltrationCoefficient(),dst.getLeftGlomerularFiltrationCoefficient());
+    if (src.hasLeftGlomerularFiltrationRate())
+      SEScalarVolumePerTime.load(src.getLeftGlomerularFiltrationRate(),dst.getLeftGlomerularFiltrationRate());
+    if (src.hasLeftGlomerularFiltrationSurfaceArea())
+      SEScalarArea.load(src.getLeftGlomerularFiltrationSurfaceArea(),dst.getLeftGlomerularFiltrationSurfaceArea());
+    if (src.hasLeftGlomerularFluidPermeability())
+      SEScalarVolumePerTimePressureArea.load(src.getLeftGlomerularFluidPermeability(),dst.getLeftGlomerularFluidPermeability());
+    if (src.hasLeftFiltrationFraction())
+      SEScalar0To1.load(src.getLeftFiltrationFraction(),dst.getLeftFiltrationFraction());
+    if (src.hasLeftNetFiltrationPressure())
+      SEScalarPressure.load(src.getLeftNetFiltrationPressure(),dst.getLeftNetFiltrationPressure());
+    if (src.hasLeftNetReabsorptionPressure())
+      SEScalarPressure.load(src.getLeftNetReabsorptionPressure(),dst.getLeftNetReabsorptionPressure());
+    if (src.hasLeftPeritubularCapillariesHydrostaticPressure())
+      SEScalarPressure.load(src.getLeftPeritubularCapillariesHydrostaticPressure(),dst.getLeftPeritubularCapillariesHydrostaticPressure());
+    if (src.hasLeftPeritubularCapillariesOsmoticPressure())
+      SEScalarPressure.load(src.getLeftPeritubularCapillariesOsmoticPressure(),dst.getLeftPeritubularCapillariesOsmoticPressure());
+    if (src.hasLeftReabsorptionFiltrationCoefficient())
+      SEScalarVolumePerTimePressure.load(src.getLeftReabsorptionFiltrationCoefficient(),dst.getLeftReabsorptionFiltrationCoefficient());
+    if (src.hasLeftReabsorptionRate())
+      SEScalarVolumePerTime.load(src.getLeftReabsorptionRate(),dst.getLeftReabsorptionRate());
+    if (src.hasLeftTubularOsmoticPressure())
+      SEScalarPressure.load(src.getLeftTubularOsmoticPressure(),dst.getLeftTubularOsmoticPressure());
+    if (src.hasLeftTubularHydrostaticPressure())
+      SEScalarPressure.load(src.getLeftTubularHydrostaticPressure(),dst.getLeftTubularHydrostaticPressure());
+    if (src.hasLeftTubularReabsorptionFiltrationSurfaceArea())
+      SEScalarArea.load(src.getLeftTubularReabsorptionFiltrationSurfaceArea(),dst.getLeftTubularReabsorptionFiltrationSurfaceArea());
+    if (src.hasLeftTubularReabsorptionFluidPermeability())
+      SEScalarVolumePerTimePressureArea.load(src.getLeftTubularReabsorptionFluidPermeability(),dst.getLeftTubularReabsorptionFluidPermeability());
+    if (src.hasRenalBloodFlow())
+      SEScalarVolumePerTime.load(src.getRenalBloodFlow(),dst.getRenalBloodFlow());
+    if (src.hasRenalPlasmaFlow())
+      SEScalarVolumePerTime.load(src.getRenalPlasmaFlow(),dst.getRenalPlasmaFlow());
+    if (src.hasRenalVascularResistance())
+      SEScalarFlowResistance.load(src.getRenalVascularResistance(),dst.getRenalVascularResistance());
+    if (src.hasRightAfferentArterioleResistance())
+      SEScalarFlowResistance.load(src.getRightAfferentArterioleResistance(),dst.getRightAfferentArterioleResistance());
+    if (src.hasRightBowmansCapsulesHydrostaticPressure())
+      SEScalarPressure.load(src.getRightBowmansCapsulesHydrostaticPressure(),dst.getRightBowmansCapsulesHydrostaticPressure());
+    if (src.hasRightBowmansCapsulesOsmoticPressure())
+      SEScalarPressure.load(src.getRightBowmansCapsulesOsmoticPressure(),dst.getRightBowmansCapsulesOsmoticPressure());
+    if (src.hasRightEfferentArterioleResistance())
+      SEScalarFlowResistance.load(src.getRightEfferentArterioleResistance(),dst.getRightEfferentArterioleResistance());
+    if (src.hasRightGlomerularCapillariesHydrostaticPressure())
+      SEScalarPressure.load(src.getRightGlomerularCapillariesHydrostaticPressure(),dst.getRightGlomerularCapillariesHydrostaticPressure());
+    if (src.hasRightGlomerularCapillariesOsmoticPressure())
+      SEScalarPressure.load(src.getRightGlomerularCapillariesOsmoticPressure(),dst.getRightGlomerularCapillariesOsmoticPressure());
+    if (src.hasRightGlomerularFiltrationCoefficient())
+      SEScalarVolumePerTimePressure.load(src.getRightGlomerularFiltrationCoefficient(),dst.getRightGlomerularFiltrationCoefficient());
+    if (src.hasRightGlomerularFiltrationRate())
+      SEScalarVolumePerTime.load(src.getRightGlomerularFiltrationRate(),dst.getRightGlomerularFiltrationRate());
+    if (src.hasRightGlomerularFiltrationSurfaceArea())
+      SEScalarArea.load(src.getRightGlomerularFiltrationSurfaceArea(),dst.getRightGlomerularFiltrationSurfaceArea());
+    if (src.hasRightGlomerularFluidPermeability())
+      SEScalarVolumePerTimePressureArea.load(src.getRightGlomerularFluidPermeability(),dst.getRightGlomerularFluidPermeability());
+    if (src.hasRightFiltrationFraction())
+      SEScalar0To1.load(src.getRightFiltrationFraction(),dst.getRightFiltrationFraction());
+    if (src.hasRightNetFiltrationPressure())
+      SEScalarPressure.load(src.getRightNetFiltrationPressure(),dst.getRightNetFiltrationPressure());
+    if (src.hasRightNetReabsorptionPressure())
+      SEScalarPressure.load(src.getRightNetReabsorptionPressure(),dst.getRightNetReabsorptionPressure());
+    if (src.hasRightPeritubularCapillariesHydrostaticPressure())
+      SEScalarPressure.load(src.getRightPeritubularCapillariesHydrostaticPressure(),dst.getRightPeritubularCapillariesHydrostaticPressure());
+    if (src.hasRightPeritubularCapillariesOsmoticPressure())
+      SEScalarPressure.load(src.getRightPeritubularCapillariesOsmoticPressure(),dst.getRightPeritubularCapillariesOsmoticPressure());
+    if (src.hasRightReabsorptionFiltrationCoefficient())
+      SEScalarVolumePerTimePressure.load(src.getRightReabsorptionFiltrationCoefficient(),dst.getRightReabsorptionFiltrationCoefficient());
+    if (src.hasRightReabsorptionRate())
+      SEScalarVolumePerTime.load(src.getRightReabsorptionRate(),dst.getRightReabsorptionRate());
+    if (src.hasRightTubularOsmoticPressure())
+      SEScalarPressure.load(src.getRightTubularOsmoticPressure(),dst.getRightTubularOsmoticPressure());
+    if (src.hasRightTubularHydrostaticPressure())
+      SEScalarPressure.load(src.getRightTubularHydrostaticPressure(),dst.getRightTubularHydrostaticPressure());
+    if (src.hasRightTubularReabsorptionFiltrationSurfaceArea())
+      SEScalarArea.load(src.getRightTubularReabsorptionFiltrationSurfaceArea(),dst.getRightTubularReabsorptionFiltrationSurfaceArea());
+    if (src.hasRightTubularReabsorptionFluidPermeability())
+      SEScalarVolumePerTimePressureArea.load(src.getRightTubularReabsorptionFluidPermeability(),dst.getRightTubularReabsorptionFluidPermeability());
+    if (src.hasUrinationRate())
+      SEScalarVolumePerTime.load(src.getUrinationRate(),dst.getUrinationRate());
+    if (src.hasUrineOsmolality())
+      SEScalarOsmolality.load(src.getUrineOsmolality(),dst.getUrineOsmolality());
+    if (src.hasUrineOsmolarity())
+      SEScalarOsmolarity.load(src.getUrineOsmolarity(),dst.getUrineOsmolarity());
+    if (src.hasUrineProductionRate())
+      SEScalarVolumePerTime.load(src.getUrineProductionRate(),dst.getUrineProductionRate());
+    if (src.hasUrineSpecificGravity())
+      SEScalar.load(src.getUrineSpecificGravity(),dst.getUrineSpecificGravity());
+    if (src.hasUrineVolume())
+      SEScalarVolume.load(src.getUrineVolume(),dst.getUrineVolume());
+    if (src.hasUrineUreaNitrogenConcentration())
+      SEScalarMassPerVolume.load(src.getUrineUreaNitrogenConcentration(),dst.getUrineUreaNitrogenConcentration());
   }
 
-  public RenalSystemData unload()
+  public static RenalSystemData unload(SERenalSystem src)
   {
-    RenalSystemData data = CDMSerializer.objFactory.createRenalSystemData();
-    unload(data);
-    return data;
+    RenalSystemData.Builder dst = RenalSystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
 
-  protected void unload(RenalSystemData data)
+  protected static void unload(SERenalSystem src, RenalSystemData.Builder dst)
   {
-    if (getGlomerularFiltrationRate() != null)
-      data.setGlomerularFiltrationRate(glomerularFiltrationRate.unload());
-    if (getFiltrationFraction() != null)
-      data.setFiltrationFraction(filtrationFraction.unload());
-    if (getLeftAfferentArterioleResistance() != null)
-      data.setLeftAfferentArterioleResistance(leftAfferentArterioleResistance.unload());
-    if (getLeftBowmansCapsulesHydrostaticPressure() != null)
-      data.setLeftBowmansCapsulesHydrostaticPressure(leftBowmansCapsulesHydrostaticPressure.unload());
-    if (getLeftBowmansCapsulesOsmoticPressure() != null)
-      data.setLeftBowmansCapsulesOsmoticPressure(leftBowmansCapsulesOsmoticPressure.unload());
-    if (getLeftBowmansCapsulesHydrostaticPressure() != null)
-      data.setLeftEfferentArterioleResistance(leftEfferentArterioleResistance.unload());
-    if (getLeftEfferentArterioleResistance() != null)
-      data.setLeftGlomerularCapillariesHydrostaticPressure(leftGlomerularCapillariesHydrostaticPressure.unload());
-    if (getLeftGlomerularCapillariesOsmoticPressure() != null)
-      data.setLeftGlomerularCapillariesOsmoticPressure(leftGlomerularCapillariesOsmoticPressure.unload());
-    if (getLeftGlomerularFiltrationCoefficient() != null)
-      data.setLeftGlomerularFiltrationCoefficient(leftGlomerularFiltrationCoefficient.unload());
-    if (getLeftGlomerularFiltrationRate() != null)
-      data.setLeftGlomerularFiltrationRate(leftGlomerularFiltrationRate.unload());
-    if (getLeftGlomerularFiltrationSurfaceArea() != null)
-      data.setLeftGlomerularFiltrationSurfaceArea(leftGlomerularFiltrationSurfaceArea.unload());
-    if (getLeftGlomerularFluidPermeability() != null)
-      data.setLeftGlomerularFluidPermeability(leftGlomerularFluidPermeability.unload());
-    if (getLeftFiltrationFraction() != null)
-      data.setLeftFiltrationFraction(leftFiltrationFraction.unload());
-    if (getLeftNetFiltrationPressure() != null)
-      data.setLeftNetFiltrationPressure(leftNetFiltrationPressure.unload());
-    if (getLeftNetReabsorptionPressure() != null)
-      data.setLeftNetReabsorptionPressure(leftNetReabsorptionPressure.unload());
-    if (getLeftPeritubularCapillariesHydrostaticPressure() != null)
-      data.setLeftPeritubularCapillariesHydrostaticPressure(leftPeritubularCapillariesHydrostaticPressure.unload());
-    if (getLeftPeritubularCapillariesOsmoticPressure() != null)
-      data.setLeftPeritubularCapillariesOsmoticPressure(leftPeritubularCapillariesOsmoticPressure.unload());
-    if (getLeftReabsorptionFiltrationCoefficient() != null)
-      data.setLeftReabsorptionFiltrationCoefficient(leftReabsorptionFiltrationCoefficient.unload());
-    if (getLeftReabsorptionRate() != null)
-      data.setLeftReabsorptionRate(leftReabsorptionRate.unload());
-    if (getLeftTubularOsmoticPressure() != null)
-      data.setLeftTubularOsmoticPressure(leftTubularOsmoticPressure.unload());
-    if (getLeftTubularHydrostaticPressure() != null)
-      data.setLeftTubularHydrostaticPressure(leftTubularHydrostaticPressure.unload());
-    if (getLeftTubularReabsorptionFiltrationSurfaceArea() != null)
-      data.setLeftTubularReabsorptionFiltrationSurfaceArea(leftTubularReabsorptionFiltrationSurfaceArea.unload());
-    if (getLeftTubularReabsorptionFluidPermeability() != null)
-      data.setLeftTubularReabsorptionFluidPermeability(leftTubularReabsorptionFluidPermeability.unload());
-    if (getRenalBloodFlow() != null)
-      data.setRenalBloodFlow(renalBloodFlow.unload());
-    if (getRenalPlasmaFlow() != null)
-      data.setRenalPlasmaFlow(renalPlasmaFlow.unload());
-    if (getRenalVascularResistance() != null)
-      data.setRenalVascularResistance(renalVascularResistance.unload());
-    if (getRightAfferentArterioleResistance() != null)
-      data.setRightAfferentArterioleResistance(rightAfferentArterioleResistance.unload());
-    if (getRightBowmansCapsulesHydrostaticPressure() != null)
-      data.setRightBowmansCapsulesHydrostaticPressure(rightBowmansCapsulesHydrostaticPressure.unload());
-    if (getRightBowmansCapsulesOsmoticPressure() != null)
-      data.setRightEfferentArterioleResistance(rightEfferentArterioleResistance.unload());
-    if (getRightEfferentArterioleResistance() != null)
-      data.setRightBowmansCapsulesHydrostaticPressure(rightBowmansCapsulesHydrostaticPressure.unload());
-    if (getRightGlomerularCapillariesHydrostaticPressure() != null)
-      data.setRightGlomerularCapillariesHydrostaticPressure(rightGlomerularCapillariesHydrostaticPressure.unload());
-    if (getRightGlomerularCapillariesOsmoticPressure() != null)
-      data.setRightGlomerularCapillariesOsmoticPressure(rightGlomerularCapillariesOsmoticPressure.unload());
-    if (getRightGlomerularFiltrationCoefficient() != null)
-      data.setRightGlomerularFiltrationCoefficient(rightGlomerularFiltrationCoefficient.unload());
-    if (getRightGlomerularFiltrationRate() != null)
-      data.setRightGlomerularFiltrationRate(rightGlomerularFiltrationRate.unload());
-    if (getRightGlomerularFiltrationSurfaceArea() != null)
-      data.setRightGlomerularFiltrationSurfaceArea(rightGlomerularFiltrationSurfaceArea.unload());
-    if (getRightGlomerularFluidPermeability() != null)
-      data.setRightGlomerularFluidPermeability(rightGlomerularFluidPermeability.unload());
-    if (getRightFiltrationFraction() != null)
-      data.setRightFiltrationFraction(rightFiltrationFraction.unload());
-    if (getRightNetFiltrationPressure() != null)
-      data.setRightNetFiltrationPressure(rightNetFiltrationPressure.unload());
-    if (getRightNetReabsorptionPressure() != null)
-      data.setRightNetReabsorptionPressure(rightNetReabsorptionPressure.unload());
-    if (getRightPeritubularCapillariesHydrostaticPressure() != null)
-      data.setRightPeritubularCapillariesHydrostaticPressure(rightPeritubularCapillariesHydrostaticPressure.unload());
-    if (getRightPeritubularCapillariesOsmoticPressure() != null)
-      data.setRightPeritubularCapillariesOsmoticPressure(rightPeritubularCapillariesOsmoticPressure.unload());
-    if (getRightReabsorptionFiltrationCoefficient() != null)
-      data.setRightReabsorptionFiltrationCoefficient(rightReabsorptionFiltrationCoefficient.unload());
-    if (getRightReabsorptionRate() != null)
-      data.setRightReabsorptionRate(rightReabsorptionRate.unload());
-    if (getRightTubularOsmoticPressure() != null)
-      data.setRightTubularOsmoticPressure(rightTubularOsmoticPressure.unload());
-    if (getRightTubularHydrostaticPressure() != null)
-      data.setRightTubularHydrostaticPressure(rightTubularHydrostaticPressure.unload());
-    if (getRightTubularReabsorptionFiltrationSurfaceArea() != null)
-      data.setRightTubularReabsorptionFiltrationSurfaceArea(rightTubularReabsorptionFiltrationSurfaceArea.unload());
-    if (getRightTubularReabsorptionFluidPermeability() != null)
-      data.setRightTubularReabsorptionFluidPermeability(rightTubularReabsorptionFluidPermeability.unload());
-    if (getUrinationRate() != null)
-      data.setUrinationRate(urinationRate.unload());
-    if (getUrineOsmolality() != null)
-      data.setUrineOsmolality(urineOsmolality.unload());
-    if (getUrineOsmolarity() != null)
-      data.setUrineOsmolarity(urineOsmolarity.unload());
-    if (getUrineProductionRate() != null)
-      data.setUrineProductionRate(urineProductionRate.unload());
-    if (getUrineSpecificGravity() != null)
-      data.setUrineSpecificGravity(urineSpecificGravity.unload());
-    if (getUrineVolume() != null)
-      data.setUrineVolume(urineVolume.unload());
-    if (getUrineUreaNitrogenConcentration() != null)
-      data.setUrineUreaNitrogenConcentration(urineUreaNitrogenConcentration.unload());
+    if (src.hasGlomerularFiltrationRate())
+      dst.setGlomerularFiltrationRate(SEScalarVolumePerTime.unload(src.getGlomerularFiltrationRate()));
+    if (src.hasFiltrationFraction())
+      dst.setFiltrationFraction(SEScalar0To1.unload(src.getFiltrationFraction()));
+    if (src.hasLeftAfferentArterioleResistance())
+      dst.setLeftAfferentArterioleResistance(SEScalarFlowResistance.unload(src.getLeftAfferentArterioleResistance()));
+    if (src.hasLeftBowmansCapsulesHydrostaticPressure())
+      dst.setLeftBowmansCapsulesHydrostaticPressure(SEScalarPressure.unload(src.getLeftBowmansCapsulesHydrostaticPressure()));
+    if (src.hasLeftBowmansCapsulesOsmoticPressure())
+      dst.setLeftBowmansCapsulesOsmoticPressure(SEScalarPressure.unload(src.getLeftBowmansCapsulesOsmoticPressure()));
+    if (src.hasLeftBowmansCapsulesHydrostaticPressure())
+      dst.setLeftEfferentArterioleResistance(SEScalarFlowResistance.unload(src.getLeftEfferentArterioleResistance()));
+    if (src.hasLeftEfferentArterioleResistance())
+      dst.setLeftGlomerularCapillariesHydrostaticPressure(SEScalarPressure.unload(src.getLeftGlomerularCapillariesHydrostaticPressure()));
+    if (src.hasLeftGlomerularCapillariesOsmoticPressure())
+      dst.setLeftGlomerularCapillariesOsmoticPressure(SEScalarPressure.unload(src.getLeftGlomerularCapillariesOsmoticPressure()));
+    if (src.hasLeftGlomerularFiltrationCoefficient())
+      dst.setLeftGlomerularFiltrationCoefficient(SEScalarVolumePerTimePressure.unload(src.getLeftGlomerularFiltrationCoefficient()));
+    if (src.hasLeftGlomerularFiltrationRate())
+      dst.setLeftGlomerularFiltrationRate(SEScalarVolumePerTime.unload(src.getLeftGlomerularFiltrationRate()));
+    if (src.hasLeftGlomerularFiltrationSurfaceArea())
+      dst.setLeftGlomerularFiltrationSurfaceArea(SEScalarArea.unload(src.getLeftGlomerularFiltrationSurfaceArea()));
+    if (src.hasLeftGlomerularFluidPermeability())
+      dst.setLeftGlomerularFluidPermeability(SEScalarVolumePerTimePressureArea.unload(src.getLeftGlomerularFluidPermeability()));
+    if (src.hasLeftFiltrationFraction())
+      dst.setLeftFiltrationFraction(SEScalar0To1.unload(src.getLeftFiltrationFraction()));
+    if (src.hasLeftNetFiltrationPressure())
+      dst.setLeftNetFiltrationPressure(SEScalarPressure.unload(src.getLeftNetFiltrationPressure()));
+    if (src.hasLeftNetReabsorptionPressure())
+      dst.setLeftNetReabsorptionPressure(SEScalarPressure.unload(src.getLeftNetReabsorptionPressure()));
+    if (src.hasLeftPeritubularCapillariesHydrostaticPressure())
+      dst.setLeftPeritubularCapillariesHydrostaticPressure(SEScalarPressure.unload(src.getLeftPeritubularCapillariesHydrostaticPressure()));
+    if (src.hasLeftPeritubularCapillariesOsmoticPressure())
+      dst.setLeftPeritubularCapillariesOsmoticPressure(SEScalarPressure.unload(src.getLeftPeritubularCapillariesOsmoticPressure()));
+    if (src.hasLeftReabsorptionFiltrationCoefficient())
+      dst.setLeftReabsorptionFiltrationCoefficient(SEScalarVolumePerTimePressure.unload(src.getLeftReabsorptionFiltrationCoefficient()));
+    if (src.hasLeftReabsorptionRate())
+      dst.setLeftReabsorptionRate(SEScalarVolumePerTime.unload(src.getLeftReabsorptionRate()));
+    if (src.hasLeftTubularOsmoticPressure())
+      dst.setLeftTubularOsmoticPressure(SEScalarPressure.unload(src.getLeftTubularOsmoticPressure()));
+    if (src.hasLeftTubularHydrostaticPressure())
+      dst.setLeftTubularHydrostaticPressure(SEScalarPressure.unload(src.getLeftTubularHydrostaticPressure()));
+    if (src.hasLeftTubularReabsorptionFiltrationSurfaceArea())
+      dst.setLeftTubularReabsorptionFiltrationSurfaceArea(SEScalarArea.unload(src.getLeftTubularReabsorptionFiltrationSurfaceArea()));
+    if (src.hasLeftTubularReabsorptionFluidPermeability())
+      dst.setLeftTubularReabsorptionFluidPermeability(SEScalarVolumePerTimePressureArea.unload(src.getLeftTubularReabsorptionFluidPermeability()));
+    if (src.hasRenalBloodFlow())
+      dst.setRenalBloodFlow(SEScalarVolumePerTime.unload(src.getRenalBloodFlow()));
+    if (src.hasRenalPlasmaFlow())
+      dst.setRenalPlasmaFlow(SEScalarVolumePerTime.unload(src.getRenalPlasmaFlow()));
+    if (src.hasRenalVascularResistance())
+      dst.setRenalVascularResistance(SEScalarFlowResistance.unload(src.getRenalVascularResistance()));
+    if (src.hasRightAfferentArterioleResistance())
+      dst.setRightAfferentArterioleResistance(SEScalarFlowResistance.unload(src.getRightAfferentArterioleResistance()));
+    if (src.hasRightBowmansCapsulesHydrostaticPressure())
+      dst.setRightBowmansCapsulesHydrostaticPressure(SEScalarPressure.unload(src.getRightBowmansCapsulesHydrostaticPressure()));
+    if (src.hasRightBowmansCapsulesOsmoticPressure())
+      dst.setRightEfferentArterioleResistance(SEScalarFlowResistance.unload(src.getRightEfferentArterioleResistance()));
+    if (src.hasRightEfferentArterioleResistance())
+      dst.setRightBowmansCapsulesHydrostaticPressure(SEScalarPressure.unload(src.getRightBowmansCapsulesHydrostaticPressure()));
+    if (src.hasRightGlomerularCapillariesHydrostaticPressure())
+      dst.setRightGlomerularCapillariesHydrostaticPressure(SEScalarPressure.unload(src.getRightGlomerularCapillariesHydrostaticPressure()));
+    if (src.hasRightGlomerularCapillariesOsmoticPressure())
+      dst.setRightGlomerularCapillariesOsmoticPressure(SEScalarPressure.unload(src.getRightGlomerularCapillariesOsmoticPressure()));
+    if (src.hasRightGlomerularFiltrationCoefficient())
+      dst.setRightGlomerularFiltrationCoefficient(SEScalarVolumePerTimePressure.unload(src.getRightGlomerularFiltrationCoefficient()));
+    if (src.hasRightGlomerularFiltrationRate())
+      dst.setRightGlomerularFiltrationRate(SEScalarVolumePerTime.unload(src.getRightGlomerularFiltrationRate()));
+    if (src.hasRightGlomerularFiltrationSurfaceArea())
+      dst.setRightGlomerularFiltrationSurfaceArea(SEScalarArea.unload(src.getRightGlomerularFiltrationSurfaceArea()));
+    if (src.hasRightGlomerularFluidPermeability())
+      dst.setRightGlomerularFluidPermeability(SEScalarVolumePerTimePressureArea.unload(src.getRightGlomerularFluidPermeability()));
+    if (src.hasRightFiltrationFraction())
+      dst.setRightFiltrationFraction(SEScalar0To1.unload(src.getRightFiltrationFraction()));
+    if (src.hasRightNetFiltrationPressure())
+      dst.setRightNetFiltrationPressure(SEScalarPressure.unload(src.getRightNetFiltrationPressure()));
+    if (src.hasRightNetReabsorptionPressure())
+      dst.setRightNetReabsorptionPressure(SEScalarPressure.unload(src.getRightNetReabsorptionPressure()));
+    if (src.hasRightPeritubularCapillariesHydrostaticPressure())
+      dst.setRightPeritubularCapillariesHydrostaticPressure(SEScalarPressure.unload(src.getRightPeritubularCapillariesHydrostaticPressure()));
+    if (src.hasRightPeritubularCapillariesOsmoticPressure())
+      dst.setRightPeritubularCapillariesOsmoticPressure(SEScalarPressure.unload(src.getRightPeritubularCapillariesOsmoticPressure()));
+    if (src.hasRightReabsorptionFiltrationCoefficient())
+      dst.setRightReabsorptionFiltrationCoefficient(SEScalarVolumePerTimePressure.unload(src.getRightReabsorptionFiltrationCoefficient()));
+    if (src.hasRightReabsorptionRate())
+      dst.setRightReabsorptionRate(SEScalarVolumePerTime.unload(src.getRightReabsorptionRate()));
+    if (src.hasRightTubularOsmoticPressure())
+      dst.setRightTubularOsmoticPressure(SEScalarPressure.unload(src.getRightTubularOsmoticPressure()));
+    if (src.hasRightTubularHydrostaticPressure())
+      dst.setRightTubularHydrostaticPressure(SEScalarPressure.unload(src.getRightTubularHydrostaticPressure()));
+    if (src.hasRightTubularReabsorptionFiltrationSurfaceArea())
+      dst.setRightTubularReabsorptionFiltrationSurfaceArea(SEScalarArea.unload(src.getRightTubularReabsorptionFiltrationSurfaceArea()));
+    if (src.hasRightTubularReabsorptionFluidPermeability())
+      dst.setRightTubularReabsorptionFluidPermeability(SEScalarVolumePerTimePressureArea.unload(src.getRightTubularReabsorptionFluidPermeability()));
+    if (src.hasUrinationRate())
+      dst.setUrinationRate(SEScalarVolumePerTime.unload(src.getUrinationRate()));
+    if (src.hasUrineOsmolality())
+      dst.setUrineOsmolality(SEScalarOsmolality.unload(src.getUrineOsmolality()));
+    if (src.hasUrineOsmolarity())
+      dst.setUrineOsmolarity(SEScalarOsmolarity.unload(src.getUrineOsmolarity()));
+    if (src.hasUrineProductionRate())
+      dst.setUrineProductionRate(SEScalarVolumePerTime.unload(src.getUrineProductionRate()));
+    if (src.hasUrineSpecificGravity())
+      dst.setUrineSpecificGravity(SEScalar.unload(src.getUrineSpecificGravity()));
+    if (src.hasUrineVolume())
+      dst.setUrineVolume(SEScalarVolume.unload(src.getUrineVolume()));
+    if (src.hasUrineUreaNitrogenConcentration())
+      dst.setUrineUreaNitrogenConcentration(SEScalarMassPerVolume.unload(src.getUrineUreaNitrogenConcentration()));
   }
 
   public boolean hasGlomerularFiltrationRate()
@@ -492,10 +490,10 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   {
     return filtrationFraction == null ? false : filtrationFraction.isValid();
   }
-  public SEScalarFraction getFiltrationFraction()
+  public SEScalar0To1 getFiltrationFraction()
   {
     if (filtrationFraction == null)
-      filtrationFraction = new SEScalarFraction();
+      filtrationFraction = new SEScalar0To1();
     return filtrationFraction;
   }
   
@@ -613,10 +611,10 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   {
     return leftFiltrationFraction == null ? false : leftFiltrationFraction.isValid();
   }
-  public SEScalarFraction getLeftFiltrationFraction()
+  public SEScalar0To1 getLeftFiltrationFraction()
   {
     if (leftFiltrationFraction == null)
-      leftFiltrationFraction = new SEScalarFraction();
+      leftFiltrationFraction = new SEScalar0To1();
     return leftFiltrationFraction;
   }
 
@@ -877,10 +875,10 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   {
     return rightFiltrationFraction == null ? false : rightFiltrationFraction.isValid();
   }
-  public SEScalarFraction getRightFiltrationFraction()
+  public SEScalar0To1 getRightFiltrationFraction()
   {
     if (rightFiltrationFraction == null)
-      rightFiltrationFraction = new SEScalarFraction();
+      rightFiltrationFraction = new SEScalar0To1();
     return rightFiltrationFraction;
   }
 

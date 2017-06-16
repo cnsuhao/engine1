@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.BloodChemistrySystemData;
+import com.kitware.physiology.cdm.Physiology.BloodChemistrySystemData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
@@ -23,20 +23,20 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   protected SEScalar                       bloodPH;
   protected SEScalarHeatCapacitancePerMass bloodSpecificHeat;
   protected SEScalarMassPerVolume          bloodUreaNitrogenConcentration;
-  protected SEScalarFraction               carbonDioxideSaturation;
-  protected SEScalarFraction               carbonMonoxideSaturation;
-  protected SEScalarFraction               hematocrit;
+  protected SEScalar0To1                   carbonDioxideSaturation;
+  protected SEScalar0To1                   carbonMonoxideSaturation;
+  protected SEScalar0To1                   hematocrit;
   protected SEScalarMass                   hemoglobinContent;
-  protected SEScalarFraction               oxygenSaturation;
+  protected SEScalar0To1                   oxygenSaturation;
   protected SEScalarVolume                 plasmaVolume;
   protected SEScalarAmountPerVolume        phosphate;
-  protected SEScalarFraction               pulseOximetry;
+  protected SEScalar0To1                   pulseOximetry;
   protected SEScalarAmountPerVolume        redBloodCellCount;
-  protected SEScalarFraction               shuntFraction;
+  protected SEScalar0To1                   shuntFraction;
   protected SEScalarAmountPerVolume        strongIonDifference;
   protected SEScalarMassPerVolume          totalProteinConcentration;
-  protected SEScalarFraction               volumeFractionNeutralLipidInPlasma;
-  protected SEScalarFraction               volumeFractionNeutralPhospholipidInPlasma;
+  protected SEScalar0To1                   volumeFractionNeutralLipidInPlasma;
+  protected SEScalar0To1                   volumeFractionNeutralPhospholipidInPlasma;
   protected SEScalarAmountPerVolume        whiteBloodCellCount;
 
   protected SEScalarPressure               arterialCarbonDioxidePressure;
@@ -139,131 +139,129 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       venousCarbonDioxidePressure.invalidate();
   }
 
-  public boolean load(BloodChemistrySystemData in)
+  public static void load(BloodChemistrySystemData src, SEBloodChemistrySystem dst)
   {
-    if (in.getBloodDensity() != null)
-      getBloodDensity().load(in.getBloodDensity());
-    if (in.getBloodPH() != null)
-      getBloodPH().load(in.getBloodPH());
-    if (in.getBloodSpecificHeat() != null)
-      getBloodSpecificHeat().load(in.getBloodSpecificHeat());
-    if (in.getBloodUreaNitrogenConcentration() != null)
-      getBloodUreaNitrogenConcentration().load(in.getBloodUreaNitrogenConcentration());
-    if (in.getCarbonDioxideSaturation() != null)
-      getCarbonDioxideSaturation().load(in.getCarbonDioxideSaturation());
-    if (in.getCarbonMonoxideSaturation() != null)
-      getCarbonMonoxideSaturation().load(in.getCarbonMonoxideSaturation());
-    if (in.getHematocrit() != null)
-      getHematocrit().load(in.getHematocrit());
-    if (in.getHemoglobinContent() != null)
-      getHemoglobinContent().load(in.getHemoglobinContent());
-    if (in.getOxygenSaturation() != null)
-      getOxygenSaturation().load(in.getOxygenSaturation());
-    if (in.getPhosphate() != null)
-      getPhosphate().load(in.getPhosphate());  
-    if (in.getPlasmaVolume() != null)
-      getPlasmaVolume().load(in.getPlasmaVolume());  
-    if (in.getPulseOximetry() != null)
-      getPulseOximetry().load(in.getPulseOximetry());  
-    if (in.getRedBloodCellCount() != null)
-      getRedBloodCellCount().load(in.getRedBloodCellCount());
-    if (in.getShuntFraction() != null)
-      getShuntFraction().load(in.getShuntFraction());
-    if (in.getStrongIonDifference() != null)
-      getStrongIonDifference().load(in.getStrongIonDifference());
-    if (in.getTotalProteinConcentration() != null)
-      getTotalProteinConcentration().load(in.getTotalProteinConcentration());
-    if (in.getVolumeFractionNeutralLipidInPlasma() != null)
-      getVolumeFractionNeutralLipidInPlasma().load(in.getVolumeFractionNeutralLipidInPlasma());
-    if (in.getVolumeFractionNeutralPhospholipidInPlasma() != null)
-      getVolumeFractionNeutralPhospholipidInPlasma().load(in.getVolumeFractionNeutralPhospholipidInPlasma());
-    if (in.getWhiteBloodCellCount() != null)
-      getWhiteBloodCellCount().load(in.getWhiteBloodCellCount());
+    if (src.hasBloodDensity())
+      SEScalarMassPerVolume.load(src.getBloodDensity(),dst.getBloodDensity());
+    if (src.hasBloodPH())
+      SEScalar.load(src.getBloodPH(),dst.getBloodPH());
+    if (src.hasBloodSpecificHeat())
+      SEScalarHeatCapacitancePerMass.load(src.getBloodSpecificHeat(),dst.getBloodSpecificHeat());
+    if (src.hasBloodUreaNitrogenConcentration())
+      SEScalarMassPerVolume.load(src.getBloodUreaNitrogenConcentration(),dst.getBloodUreaNitrogenConcentration());
+    if (src.hasCarbonDioxideSaturation())
+      SEScalar0To1.load(src.getCarbonDioxideSaturation(),dst.getCarbonDioxideSaturation());
+    if (src.hasCarbonMonoxideSaturation())
+      SEScalar0To1.load(src.getCarbonMonoxideSaturation(),dst.getCarbonMonoxideSaturation());
+    if (src.hasHematocrit())
+      SEScalar0To1.load(src.getHematocrit(),dst.getHematocrit());
+    if (src.hasHemoglobinContent())
+      SEScalarMass.load(src.getHemoglobinContent(),dst.getHemoglobinContent());
+    if (src.hasOxygenSaturation())
+      SEScalar0To1.load(src.getOxygenSaturation(),dst.getOxygenSaturation());
+    if (src.hasPhosphate())
+      SEScalarAmountPerVolume.load(src.getPhosphate(),dst.getPhosphate());  
+    if (src.hasPlasmaVolume())
+      SEScalarVolume.load(src.getPlasmaVolume(),dst.getPlasmaVolume());  
+    if (src.hasPulseOximetry())
+      SEScalar0To1.load(src.getPulseOximetry(),dst.getPulseOximetry());  
+    if (src.hasRedBloodCellCount())
+      SEScalarAmountPerVolume.load(src.getRedBloodCellCount(),dst.getRedBloodCellCount());
+    if (src.hasShuntFraction())
+      SEScalar0To1.load(src.getShuntFraction(),dst.getShuntFraction());
+    if (src.hasStrongIonDifference())
+      SEScalarAmountPerVolume.load(src.getStrongIonDifference(),dst.getStrongIonDifference());
+    if (src.hasTotalProteinConcentration())
+      SEScalarMassPerVolume.load(src.getTotalProteinConcentration(),dst.getTotalProteinConcentration());
+    if (src.hasVolumeFractionNeutralLipidInPlasma())
+      SEScalar0To1.load(src.getVolumeFractionNeutralLipidInPlasma(),dst.getVolumeFractionNeutralLipidInPlasma());
+    if (src.hasVolumeFractionNeutralPhospholipidInPlasma())
+      SEScalar0To1.load(src.getVolumeFractionNeutralPhospholipidInPlasma(),dst.getVolumeFractionNeutralPhospholipidInPlasma());
+    if (src.hasWhiteBloodCellCount())
+      SEScalarAmountPerVolume.load(src.getWhiteBloodCellCount(),dst.getWhiteBloodCellCount());
 
-    if (in.getArterialCarbonDioxidePressure() != null)
-      getArterialCarbonDioxidePressure().load(in.getArterialCarbonDioxidePressure());
-    if (in.getArterialOxygenPressure() != null)
-      getArterialOxygenPressure().load(in.getArterialOxygenPressure());
-    if (in.getPulmonaryArterialCarbonDioxidePressure() != null)
-      getPulmonaryArterialCarbonDioxidePressure().load(in.getPulmonaryArterialCarbonDioxidePressure());
-    if (in.getPulmonaryArterialOxygenPressure() != null)
-      getPulmonaryArterialOxygenPressure().load(in.getPulmonaryArterialOxygenPressure());   
-    if (in.getPulmonaryVenousCarbonDioxidePressure() != null)
-      getPulmonaryVenousCarbonDioxidePressure().load(in.getPulmonaryVenousCarbonDioxidePressure());  
-    if (in.getPulmonaryVenousOxygenPressure() != null)
-      getPulmonaryVenousOxygenPressure().load(in.getPulmonaryVenousOxygenPressure());
-    if (in.getVenousOxygenPressure() != null)
-      getVenousOxygenPressure().load(in.getVenousOxygenPressure());
-    if (in.getVenousCarbonDioxidePressure() != null)
-      getVenousCarbonDioxidePressure().load(in.getVenousCarbonDioxidePressure());
-
-    return true;
+    if (src.hasArterialCarbonDioxidePressure())
+      SEScalarPressure.load(src.getArterialCarbonDioxidePressure(),dst.getArterialCarbonDioxidePressure());
+    if (src.hasArterialOxygenPressure())
+      SEScalarPressure.load(src.getArterialOxygenPressure(),dst.getArterialOxygenPressure());
+    if (src.hasPulmonaryArterialCarbonDioxidePressure())
+      SEScalarPressure.load(src.getPulmonaryArterialCarbonDioxidePressure(),dst.getPulmonaryArterialCarbonDioxidePressure());
+    if (src.hasPulmonaryArterialOxygenPressure())
+      SEScalarPressure.load(src.getPulmonaryArterialOxygenPressure(),dst.getPulmonaryArterialOxygenPressure());   
+    if (src.hasPulmonaryVenousCarbonDioxidePressure())
+      SEScalarPressure.load(src.getPulmonaryVenousCarbonDioxidePressure(),dst.getPulmonaryVenousCarbonDioxidePressure());  
+    if (src.hasPulmonaryVenousOxygenPressure())
+      SEScalarPressure.load(src.getPulmonaryVenousOxygenPressure(),dst.getPulmonaryVenousOxygenPressure());
+    if (src.hasVenousOxygenPressure())
+      SEScalarPressure.load(src.getVenousOxygenPressure(),dst.getVenousOxygenPressure());
+    if (src.hasVenousCarbonDioxidePressure())
+      SEScalarPressure.load(src.getVenousCarbonDioxidePressure(),dst.getVenousCarbonDioxidePressure());
   }
 
-  public BloodChemistrySystemData unload()
+  public static BloodChemistrySystemData unload(SEBloodChemistrySystem src)
   {
-    BloodChemistrySystemData data = CDMSerializer.objFactory.createBloodChemistrySystemData();
-    unload(data);
-    return data;
+    BloodChemistrySystemData.Builder dst = BloodChemistrySystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
 
-  protected void unload(BloodChemistrySystemData data)
+  protected static void unload(SEBloodChemistrySystem src, BloodChemistrySystemData.Builder dst)
   {
-    if (bloodDensity != null)
-      data.setBloodDensity(bloodDensity.unload());
-    if (bloodPH != null)
-      data.setBloodPH(bloodPH.unload());
-    if (bloodSpecificHeat != null)
-      data.setBloodSpecificHeat(bloodSpecificHeat.unload());
-    if (bloodUreaNitrogenConcentration != null)
-      data.setBloodUreaNitrogenConcentration(bloodUreaNitrogenConcentration.unload());
-    if (carbonDioxideSaturation != null)
-      data.setCarbonDioxideSaturation(carbonDioxideSaturation.unload());
-    if (carbonMonoxideSaturation != null)
-      data.setCarbonMonoxideSaturation(carbonMonoxideSaturation.unload());
-    if (hematocrit != null)
-      data.setHematocrit(hematocrit.unload());
-    if (hemoglobinContent != null)
-      data.setHemoglobinContent(hemoglobinContent.unload());
-    if (oxygenSaturation != null)
-      data.setOxygenSaturation(oxygenSaturation.unload());
-    if (phosphate != null)
-      data.setPhosphate(phosphate.unload());
-    if (plasmaVolume != null)
-      data.setPlasmaVolume(plasmaVolume.unload());
-    if (pulseOximetry != null)
-      data.setPulseOximetry(pulseOximetry.unload());
-    if (redBloodCellCount != null)
-      data.setRedBloodCellCount(redBloodCellCount.unload());
-    if (shuntFraction != null)
-      data.setShuntFraction(shuntFraction.unload());
-    if (strongIonDifference != null)
-      data.setStrongIonDifference(strongIonDifference.unload());
-    if (totalProteinConcentration != null)
-      data.setTotalProteinConcentration(totalProteinConcentration.unload());
-    if (volumeFractionNeutralLipidInPlasma != null)
-      data.setVolumeFractionNeutralLipidInPlasma(volumeFractionNeutralLipidInPlasma.unload());
-    if (volumeFractionNeutralPhospholipidInPlasma != null)
-      data.setVolumeFractionNeutralPhospholipidInPlasma(volumeFractionNeutralPhospholipidInPlasma.unload());
-    if (whiteBloodCellCount != null)
-      data.setWhiteBloodCellCount(whiteBloodCellCount.unload());
+    if (src.hasBloodDensity())
+      dst.setBloodDensity(SEScalarMassPerVolume.unload(src.getBloodDensity()));
+    if (src.hasBloodPH())
+      dst.setBloodPH(SEScalar.unload(src.getBloodPH()));
+    if (src.hasBloodSpecificHeat())
+      dst.setBloodSpecificHeat(SEScalarHeatCapacitancePerMass.unload(src.getBloodSpecificHeat()));
+    if (src.hasBloodUreaNitrogenConcentration())
+      dst.setBloodUreaNitrogenConcentration(SEScalarMassPerVolume.unload(src.getBloodUreaNitrogenConcentration()));
+    if (src.hasCarbonDioxideSaturation())
+      dst.setCarbonDioxideSaturation(SEScalar0To1.unload(src.getCarbonDioxideSaturation()));
+    if (src.hasCarbonMonoxideSaturation())
+      dst.setCarbonMonoxideSaturation(SEScalar0To1.unload(src.getCarbonMonoxideSaturation()));
+    if (src.hasHematocrit())
+      dst.setHematocrit(SEScalar0To1.unload(src.getHematocrit()));
+    if (src.hasHemoglobinContent())
+      dst.setHemoglobinContent(SEScalarMass.unload(src.getHemoglobinContent()));
+    if (src.hasOxygenSaturation())
+      dst.setOxygenSaturation(SEScalar0To1.unload(src.getOxygenSaturation()));
+    if (src.hasPhosphate())
+      dst.setPhosphate(SEScalarAmountPerVolume.unload(src.getPhosphate()));
+    if (src.hasPlasmaVolume())
+      dst.setPlasmaVolume(SEScalarVolume.unload(src.getPlasmaVolume()));
+    if (src.hasPulseOximetry())
+      dst.setPulseOximetry(SEScalar0To1.unload(src.getPulseOximetry()));
+    if (src.hasRedBloodCellCount())
+      dst.setRedBloodCellCount(SEScalarAmountPerVolume.unload(src.getRedBloodCellCount()));
+    if (src.hasShuntFraction())
+      dst.setShuntFraction(SEScalar0To1.unload(src.getShuntFraction()));
+    if (src.hasStrongIonDifference())
+      dst.setStrongIonDifference(SEScalarAmountPerVolume.unload(src.getStrongIonDifference()));
+    if (src.hasTotalProteinConcentration())
+      dst.setTotalProteinConcentration(SEScalarMassPerVolume.unload(src.getTotalProteinConcentration()));
+    if (src.hasVolumeFractionNeutralLipidInPlasma())
+      dst.setVolumeFractionNeutralLipidInPlasma(SEScalar0To1.unload(src.getVolumeFractionNeutralLipidInPlasma()));
+    if (src.hasVolumeFractionNeutralPhospholipidInPlasma())
+      dst.setVolumeFractionNeutralPhospholipidInPlasma(SEScalar0To1.unload(src.getVolumeFractionNeutralPhospholipidInPlasma()));
+    if (src.hasWhiteBloodCellCount())
+      dst.setWhiteBloodCellCount(SEScalarAmountPerVolume.unload(src.getWhiteBloodCellCount()));
 
-    if (arterialCarbonDioxidePressure != null)
-      data.setArterialCarbonDioxidePressure(arterialCarbonDioxidePressure.unload());
-    if (arterialOxygenPressure != null)
-      data.setArterialOxygenPressure(arterialOxygenPressure.unload());
-    if (pulmonaryArterialOxygenPressure != null)
-      data.setPulmonaryArterialOxygenPressure(pulmonaryArterialOxygenPressure.unload());
-    if (pulmonaryArterialCarbonDioxidePressure != null)
-      data.setPulmonaryArterialCarbonDioxidePressure(pulmonaryArterialCarbonDioxidePressure.unload());
-    if (pulmonaryVenousOxygenPressure != null)
-      data.setPulmonaryVenousOxygenPressure(pulmonaryVenousOxygenPressure.unload());
-    if (pulmonaryVenousCarbonDioxidePressure != null)
-      data.setPulmonaryVenousCarbonDioxidePressure(pulmonaryVenousCarbonDioxidePressure.unload());
-    if (venousOxygenPressure != null)
-      data.setVenousOxygenPressure(venousOxygenPressure.unload());
-    if (venousCarbonDioxidePressure != null)
-      data.setVenousCarbonDioxidePressure(venousCarbonDioxidePressure.unload());
+    if (src.hasArterialCarbonDioxidePressure())
+      dst.setArterialCarbonDioxidePressure(SEScalarPressure.unload(src.getArterialCarbonDioxidePressure()));
+    if (src.hasArterialOxygenPressure())
+      dst.setArterialOxygenPressure(SEScalarPressure.unload(src.getArterialOxygenPressure()));
+    if (src.hasPulmonaryArterialOxygenPressure())
+      dst.setPulmonaryArterialOxygenPressure(SEScalarPressure.unload(src.getPulmonaryArterialOxygenPressure()));
+    if (src.hasPulmonaryArterialCarbonDioxidePressure())
+      dst.setPulmonaryArterialCarbonDioxidePressure(SEScalarPressure.unload(src.getPulmonaryArterialCarbonDioxidePressure()));
+    if (src.hasPulmonaryVenousOxygenPressure())
+      dst.setPulmonaryVenousOxygenPressure(SEScalarPressure.unload(src.getPulmonaryVenousOxygenPressure()));
+    if (src.hasPulmonaryVenousCarbonDioxidePressure())
+      dst.setPulmonaryVenousCarbonDioxidePressure(SEScalarPressure.unload(src.getPulmonaryVenousCarbonDioxidePressure()));
+    if (src.hasVenousOxygenPressure())
+      dst.setVenousOxygenPressure(SEScalarPressure.unload(src.getVenousOxygenPressure()));
+    if (src.hasVenousCarbonDioxidePressure())
+      dst.setVenousCarbonDioxidePressure(SEScalarPressure.unload(src.getVenousCarbonDioxidePressure()));
   }
 
   public boolean hasBloodDensity()
@@ -313,10 +311,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     return carbonDioxideSaturation == null ? false : carbonDioxideSaturation.isValid();
   }
-  public SEScalarFraction getCarbonDioxideSaturation()
+  public SEScalar0To1 getCarbonDioxideSaturation()
   {
     if (carbonDioxideSaturation == null)
-      carbonDioxideSaturation = new SEScalarFraction();
+      carbonDioxideSaturation = new SEScalar0To1();
     return carbonDioxideSaturation;
   }
   
@@ -324,10 +322,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     return carbonMonoxideSaturation == null ? false : carbonMonoxideSaturation.isValid();
   }
-  public SEScalarFraction getCarbonMonoxideSaturation()
+  public SEScalar0To1 getCarbonMonoxideSaturation()
   {
     if (carbonMonoxideSaturation == null)
-      carbonMonoxideSaturation = new SEScalarFraction();
+      carbonMonoxideSaturation = new SEScalar0To1();
     return carbonMonoxideSaturation;
   }
 
@@ -335,10 +333,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     return hematocrit == null ? false : hematocrit.isValid();
   }
-  public SEScalarFraction getHematocrit()
+  public SEScalar0To1 getHematocrit()
   {
     if (hematocrit == null)
-      hematocrit = new SEScalarFraction();
+      hematocrit = new SEScalar0To1();
     return hematocrit;  }
 
   public boolean hasHemoglobinContent()
@@ -355,10 +353,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     return oxygenSaturation == null ? false : oxygenSaturation.isValid();
   }
-  public SEScalarFraction getOxygenSaturation()
+  public SEScalar0To1 getOxygenSaturation()
   {
     if (oxygenSaturation == null)
-      oxygenSaturation = new SEScalarFraction();
+      oxygenSaturation = new SEScalar0To1();
     return oxygenSaturation;  }
 
   public boolean hasPhosphate()
@@ -387,10 +385,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     return pulseOximetry == null ? false : pulseOximetry.isValid();
   }
-  public SEScalarFraction getPulseOximetry()
+  public SEScalar0To1 getPulseOximetry()
   {
     if (pulseOximetry == null)
-      pulseOximetry = new SEScalarFraction();
+      pulseOximetry = new SEScalar0To1();
     return pulseOximetry;
   }
 
@@ -408,10 +406,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     return shuntFraction == null ? false : shuntFraction.isValid();
   }
-  public SEScalarFraction getShuntFraction()
+  public SEScalar0To1 getShuntFraction()
   {
     if (shuntFraction == null)
-      shuntFraction = new SEScalarFraction();
+      shuntFraction = new SEScalar0To1();
     return shuntFraction;  }
   
   public boolean hasStrongIonDifference()
@@ -440,10 +438,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     return volumeFractionNeutralLipidInPlasma == null ? false : volumeFractionNeutralLipidInPlasma.isValid();
   }
-  public SEScalarFraction getVolumeFractionNeutralLipidInPlasma()
+  public SEScalar0To1 getVolumeFractionNeutralLipidInPlasma()
   {
     if (volumeFractionNeutralLipidInPlasma == null)
-      volumeFractionNeutralLipidInPlasma = new SEScalarFraction();
+      volumeFractionNeutralLipidInPlasma = new SEScalar0To1();
     return volumeFractionNeutralLipidInPlasma;
   }
 
@@ -451,10 +449,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     return volumeFractionNeutralPhospholipidInPlasma == null ? false : volumeFractionNeutralPhospholipidInPlasma.isValid();
   }
-  public SEScalarFraction getVolumeFractionNeutralPhospholipidInPlasma()
+  public SEScalar0To1 getVolumeFractionNeutralPhospholipidInPlasma()
   {
     if (volumeFractionNeutralPhospholipidInPlasma == null)
-      volumeFractionNeutralPhospholipidInPlasma = new SEScalarFraction();
+      volumeFractionNeutralPhospholipidInPlasma = new SEScalar0To1();
     return volumeFractionNeutralPhospholipidInPlasma;
   }
 

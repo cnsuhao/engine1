@@ -1,4 +1,5 @@
 /**************************************************************************************
+Copyright 2017 Kitware, Inc.
 Copyright 2015 Applied Research Associates, Inc.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the License
@@ -22,13 +23,18 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
+import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
+import com.kitware.physiology.cdm.Properties.eCharge;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+
 import mil.tatrc.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
-import mil.tatrc.physiology.datamodel.bind.*;
 import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineDynamicStabilization;
-import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineStabilization;
+import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineDynamicStabilizationCriteria;
 import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineTimedStabilization;
 import mil.tatrc.physiology.datamodel.system.environment.SEEnvironmentalConditions;
+import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveform;
+import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveformInterpolator;
 import mil.tatrc.physiology.datamodel.patient.*;
 import mil.tatrc.physiology.datamodel.patient.nutrition.SENutrition;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
@@ -57,12 +63,14 @@ public class DataSetReader
       FileUtils.delete(new File("./patients/"));
       FileUtils.delete(new File("./environments/"));
       FileUtils.delete(new File("./nutrition/"));
+      FileUtils.delete(new File("./ecg/"));
       FileUtils.delete(new File("./config/"));
       // Ok, let's make them again
       FileUtils.createDirectory("./substances/");
       FileUtils.createDirectory("./patients/");
       FileUtils.createDirectory("./environments/");
       FileUtils.createDirectory("./nutrition/");
+      FileUtils.createDirectory("./ecg/");
       FileUtils.createDirectory("./config/");
     }
     catch(Exception ex)
@@ -88,52 +96,120 @@ public class DataSetReader
       List<SEPatient> patients = readPatients(xlWBook.getSheet("Patients"));
       for(SEPatient p : patients)
       {
-        Log.info("Writing patient : "+p.getName());
-        ObjectData obj = p.unload();
-        obj.setContentVersion(contentVersion);
-        CDMSerializer.writeFile("./patients/"+p.getName()+".xml", obj);
+        String fileName = "./patients/"+p.getName()+".pba";
+        Log.info("Writing : "+fileName);
+        p.writeFile(fileName);
+        SEPatient check = new SEPatient();
+        check.readFile(fileName);
+        Log.info("Checking : "+fileName);
+        
+        if(!SEPatient.unload(p).toString().equals(SEPatient.unload(check).toString()))
+          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for patients");
       }
+      
       Map<String,SESubstance> substances=readSubstances(xlWBook.getSheet("Substances"));
       for(SESubstance s : substances.values())  
       {
-        Log.info("Writing substance : "+s.getName());
-        ObjectData obj = s.unload();
-        obj.setContentVersion(contentVersion);
-        CDMSerializer.writeFile("./substances/"+s.getName()+".xml", obj);
+        String fileName = "./substances/"+s.getName()+".pba";
+        Log.info("Writing : "+fileName);
+        s.writeFile(fileName);
+        SESubstance check = new SESubstance();
+        check.readFile(fileName);
+        Log.info("Checking : "+fileName);
+        
+        if(!SESubstance.unload(s).toString().equals(SESubstance.unload(check).toString()))
+          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for substances");
       }
+      
+      SESubstanceManager subMgr = new SESubstanceManager();
+      subMgr.loadSubstanceDirectory();// We need a substance manager to check compounds
       List<SESubstanceCompound> compounds = readCompounds(xlWBook.getSheet("Compounds"), substances);
       for(SESubstanceCompound c : compounds)
       {
-        Log.info("Writing compound : "+c.getName());
-        ObjectData obj = c.unload();
-        obj.setContentVersion(contentVersion);
-        CDMSerializer.writeFile("./substances/"+c.getName()+".xml", obj);      
+        String fileName = "./substances/"+c.getName()+".pba";
+        Log.info("Writing : "+fileName);
+        c.writeFile(fileName);  
+        SESubstanceCompound check = new SESubstanceCompound();
+        check.readFile(fileName,subMgr);
+        Log.info("Checking : "+fileName);        
+        if(!SESubstanceCompound.unload(c).toString().equals(SESubstanceCompound.unload(check).toString()))
+          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for substance compounds");
       }
+      // Make sure we can read it back in
+      subMgr.loadSubstanceDirectory();
+      
       Map<String,SEEnvironmentalConditions> environments = readEnvironments(xlWBook.getSheet("Environment"), substances);
       for(String name : environments.keySet())
       {
-        Log.info("Writing environment : "+name);
-        environments.get(name).trim();//Removes zero amount ambient substances
-        ObjectData obj = environments.get(name).unload();
-        obj.setContentVersion(contentVersion);
-        CDMSerializer.writeFile("./environments/"+name+".xml", obj);
+        String fileName = "./environments/"+name+".pba";
+        Log.info("Writing : "+fileName);
+        SEEnvironmentalConditions e = environments.get(name);
+        e.writeFile(fileName);  
+        SEEnvironmentalConditions check = new SEEnvironmentalConditions();
+        check.readFile(fileName,subMgr);
+        Log.info("Checking : "+fileName);        
+        if(!SEEnvironmentalConditions.unload(e).toString().equals(SEEnvironmentalConditions.unload(check).toString()))
+          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for environmental conditions");
       }
+      
       Map<String,SENutrition> meals = readNutrition(xlWBook.getSheet("Nutrition"));
       for(String name : meals.keySet())
       {
-        Log.info("Writing nutrition : "+name);
-        ObjectData obj = meals.get(name).unload();
-        obj.setContentVersion(contentVersion);
-        CDMSerializer.writeFile("./nutrition/"+name+".xml", obj);
+        SENutrition n = meals.get(name);
+        String fileName = "./nutrition/"+name+".pba";
+        Log.info("Writing : "+fileName);
+        n.writeFile(fileName);
+        SENutrition check = new SENutrition();
+        check.readFile(fileName);
+        Log.info("Checking : "+fileName);
+        
+        if(!SENutrition.unload(n).toString().equals(SENutrition.unload(check).toString()))
+          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for nutrition");
       }
-      Map<String,PhysiologyEngineStabilization> stabilization = readStabilization(xlWBook.getSheet("Stabilization"));
-      for(String name : stabilization.keySet())
+      
+      PhysiologyEngineTimedStabilization timed = new PhysiologyEngineTimedStabilization();
+      PhysiologyEngineDynamicStabilization dynamic = new PhysiologyEngineDynamicStabilization();
+      if(readStabilization(xlWBook.getSheet("Stabilization"),timed,dynamic))
       {
-        Log.info("Writing stabilization : "+name);
-        ObjectData obj = stabilization.get(name).unload();
-        obj.setContentVersion(contentVersion);
-        CDMSerializer.writeFile("./config/"+name+".xml", obj);
+        String fileName = "./config/TimedStabilization.pba";
+        Log.info("Writing : "+fileName);
+        timed.writeFile(fileName);
+        PhysiologyEngineTimedStabilization checkTimed = new PhysiologyEngineTimedStabilization();
+        checkTimed.readFile(fileName);
+        Log.info("Checking : "+fileName);
+        
+        if(!PhysiologyEngineTimedStabilization.unload(timed).toString().equals(PhysiologyEngineTimedStabilization.unload(checkTimed).toString()))
+          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for timed stabilization");
+        
+        fileName = "./config/DynamicStabilization.pba";
+        Log.info("Writing : "+fileName);
+        dynamic.writeFile(fileName);
+        PhysiologyEngineDynamicStabilization checkDynamic = new PhysiologyEngineDynamicStabilization();
+        checkDynamic.readFile(fileName);
+        Log.info("Checking : "+fileName);
+        
+        if(!PhysiologyEngineDynamicStabilization.unload(dynamic).toString().equals(PhysiologyEngineDynamicStabilization.unload(checkDynamic).toString()))
+          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for dynamic stabilization");
       }
+      
+      Map<String,SEElectroCardioGramWaveformInterpolator> ecg = readECG(xlWBook.getSheet("ECG"));
+      if(ecg!=null)
+      {
+        for(String name : ecg.keySet())
+        {
+          SEElectroCardioGramWaveformInterpolator i = ecg.get(name);
+          String fileName = "./ecg/"+name+".pba";
+          Log.info("Writing : "+fileName);
+          i.writeFile(fileName);
+          SEElectroCardioGramWaveformInterpolator check = new SEElectroCardioGramWaveformInterpolator();
+          check.readFile(fileName);
+          Log.info("Checking : "+fileName);
+
+          if(!SEElectroCardioGramWaveformInterpolator.unload(i).toString().equals(SEElectroCardioGramWaveformInterpolator.unload(check).toString()))
+            throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for ECG Interpolator");
+        }
+      }
+      
       xlWBook.close();
     }
     catch(Exception ex)
@@ -222,7 +298,7 @@ public class DataSetReader
     }
     if(property.equals("Sex"))
     {
-      patient.setSex(EnumSex.fromValue(value));
+      patient.setSex(PatientData.eSex.valueOf(value));
       return true;
     }
     if(property.equals("Age"))
@@ -491,7 +567,7 @@ public class DataSetReader
     }
     if(property.equals("State"))
     {
-      substance.setState(EnumSubstanceState.fromValue(value));
+      substance.setState(SubstanceData.eState.valueOf(value));
       return true;
     }
     if(property.equals("Density"))
@@ -646,7 +722,7 @@ public class DataSetReader
     }
     if(property.equals("ChargeInBlood"))
     {
-      substance.getClearance().setChargeInBlood(EnumCharge.fromValue(value));
+      substance.getClearance().setChargeInBlood(eCharge.valueOf(value));
       return true;
     }
     if(property.equals("ReabsorptionRatio"))
@@ -693,7 +769,7 @@ public class DataSetReader
     }
     if(property.equals("BindingProtein"))
     {
-      substance.getPK().getPhysicochemicals().setBindingProtein(EnumSubstanceBindingProtein.fromValue(value));
+      substance.getPK().getPhysicochemicals().setBindingProtein(SubstanceData.eBindingProtein.valueOf(value));
       return true;
     }
     if(property.equals("BloodPlasmaRatio"))
@@ -703,7 +779,7 @@ public class DataSetReader
     }
     if(property.equals("IonicState"))
     {
-      substance.getPK().getPhysicochemicals().setIonicState(EnumSubstanceIonicState.fromValue(value));
+      substance.getPK().getPhysicochemicals().setIonicState(SubstanceData.eIonicState.valueOf(value));
       return true;
     }
     if(property.equals("LogP"))
@@ -895,7 +971,7 @@ public class DataSetReader
   {
     public AmbientSubstance(AmbientType t){type=t;}
     public AmbientType type;
-    public SESubstanceFraction subFrac;
+    public SESubstanceFractionAmount subFrac;
     public SESubstanceConcentration subConc;
   }
   protected static Map<String,SEEnvironmentalConditions> readEnvironments(XSSFSheet xlSheet, Map<String,SESubstance> substances)
@@ -1001,7 +1077,7 @@ public class DataSetReader
 
     if(property.equals("SurroundingType"))
     {
-      env.setSurroundingType(EnumSurroundingType.fromValue(value));
+//      env.setSurroundingType(EnumSurroundingType.fromValue(value));
       return true;
     }
     if(property.equals("AirDensity"))
@@ -1053,7 +1129,7 @@ public class DataSetReader
     // Substance Fraction
     if(property.equals("FractionAmount"))
     {
-      as.subFrac.getFractionAmount().setValue(Double.parseDouble(value),unit);
+      as.subFrac.getAmount().setValue(Double.parseDouble(value),unit);
       return true;
     }
     if(property.equals("Concentration"))
@@ -1193,7 +1269,7 @@ public class DataSetReader
     throw new RuntimeException("Not a valid environment property " + property);
   }
 
-  protected static Map<String,PhysiologyEngineStabilization> readStabilization(XSSFSheet xlSheet)
+  protected static boolean readStabilization(XSSFSheet xlSheet, PhysiologyEngineTimedStabilization timed, PhysiologyEngineDynamicStabilization dynamic)
   {
     int split;
     // Fields are expected data we must have
@@ -1205,13 +1281,9 @@ public class DataSetReader
     fields.add("MaxAllowedStabilizationTime");
     fields.add("TimedStabilizationLength");
     String property,value,unit,cellValue;
-    PhysiologyEngineTimedStabilization timed = new PhysiologyEngineTimedStabilization();
-    PhysiologyEngineDynamicStabilization dynamic = new PhysiologyEngineDynamicStabilization();
-    Map<String,PhysiologyEngineStabilization> map = new HashMap<String,PhysiologyEngineStabilization>();
-    map.put("TimedStabilization",timed);
-    map.put("DynamicStabilization",dynamic);
+   
     SEScalarTime time=null;
-    PhysiologyEngineDynamicStabilization.Criteria criteria=null;
+    PhysiologyEngineDynamicStabilizationCriteria criteria=null;
     try
     {
       int rows = xlSheet.getPhysicalNumberOfRows();     
@@ -1237,8 +1309,8 @@ public class DataSetReader
           }
           else
           {
-            criteria=dynamic.createCondition(property);
-            time=timed.createCondition(property);
+            criteria=dynamic.createConditionCriteria(property);
+            time=timed.createConditionStabilizationTime(property);
           }
           continue;
         }         
@@ -1252,7 +1324,7 @@ public class DataSetReader
           split = cellValue.indexOf(" ");           
           value = cellValue.substring(0,split);
           unit  = cellValue.substring(split+1);        
-          criteria.convergenceTime.setValue(Double.parseDouble(value),unit);
+          criteria.getConvergenceTime().setValue(Double.parseDouble(value),unit);
         }
         else if(property.equals("MinimumReactionTime"))
         {
@@ -1260,7 +1332,7 @@ public class DataSetReader
           split = cellValue.indexOf(" ");           
           value = cellValue.substring(0,split);
           unit  = cellValue.substring(split+1);        
-          criteria.minimumReactionTime.setValue(Double.parseDouble(value),unit);
+          criteria.getMinimumReactionTime().setValue(Double.parseDouble(value),unit);
         }
         else if(property.equals("MaxAllowedStabilizationTime"))
         {
@@ -1268,7 +1340,7 @@ public class DataSetReader
           split = cellValue.indexOf(" ");           
           value = cellValue.substring(0,split);
           unit  = cellValue.substring(split+1);        
-          criteria.maximumAllowedStabilizationTime.setValue(Double.parseDouble(value),unit);
+          criteria.getMaximumAllowedStabilizationTime().setValue(Double.parseDouble(value),unit);
         }
         else if(property.equals("TimedStabilizationLength"))
         {
@@ -1278,6 +1350,75 @@ public class DataSetReader
           unit  = cellValue.substring(split+1);        
           time.setValue(Double.parseDouble(value),unit);
         }
+      }
+    }
+    catch(Exception ex)
+    {
+      Log.error("Error reading XLS",ex);
+      return false;
+    }   
+    return true;
+  }
+  
+  protected static Map<String,SEElectroCardioGramWaveformInterpolator> readECG(XSSFSheet xlSheet)
+  {
+    int split;
+    // Fields are expected data we must have
+    Set<String> fields = new HashSet<String>();
+    fields.add("Description");
+    fields.add("Lead");
+    fields.add("Rhythm");
+    fields.add("ElectricPotential");
+    fields.add("Time");
+    String property,value,unit,cellValue;
+    int lead=3;
+    eHeartRhythm rhythm=eHeartRhythm.NormalSinus;
+       
+    SEElectroCardioGramWaveformInterpolator ecg=null;
+    Map<String,SEElectroCardioGramWaveformInterpolator> map = new HashMap<String,SEElectroCardioGramWaveformInterpolator>();
+    try
+    {
+      int rows = xlSheet.getPhysicalNumberOfRows();     
+      for (int r = 0; r < rows; r++) 
+      {
+        XSSFRow row = xlSheet.getRow(r);
+        if (row == null) 
+          continue;
+        property = row.getCell(0).getStringCellValue();
+        if(property==null||property.isEmpty())
+          continue;
+        if(!fields.contains(property))
+        {
+          ecg = new SEElectroCardioGramWaveformInterpolator();
+          map.put(property, ecg);
+          continue;
+        }         
+        else if(property.equals("Lead"))
+        {          
+          lead = (int)(row.getCell(1).getNumericCellValue());
+        }
+        else if(property.equals("Rhythm"))
+        {
+          rhythm = eHeartRhythm.valueOf((row.getCell(1).getStringCellValue()));
+        }
+        else if(property.equals("ElectricPotential"))
+        {
+          cellValue = row.getCell(1).getStringCellValue();
+          split = cellValue.indexOf(" ");           
+          value = cellValue.substring(0,split);
+          unit  = cellValue.substring(split+1);        
+          SEElectroCardioGramWaveform waveform = ecg.getWaveform(lead, rhythm);
+          waveform.getData().setElectricPotential(value, unit);
+        }
+        else if(property.equals("Time"))
+        {
+          cellValue = row.getCell(1).getStringCellValue();
+          split = cellValue.indexOf(" ");           
+          value = cellValue.substring(0,split);
+          unit  = cellValue.substring(split+1);        
+          SEElectroCardioGramWaveform waveform = ecg.getWaveform(lead, rhythm);
+          waveform.getData().setTime(value, unit);          
+        }        
       }
     }
     catch(Exception ex)

@@ -13,13 +13,17 @@ package mil.tatrc.physiology.biogears.engine;
 
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.bind.EnumAnesthesiaMachineEvent;
-import mil.tatrc.physiology.datamodel.bind.EnumPatientEvent;
-import mil.tatrc.physiology.datamodel.bind.EnumSex;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
+
+import mil.tatrc.physiology.datamodel.conditions.SECondition;
+import mil.tatrc.physiology.datamodel.datarequests.SEDataRequest;
+import mil.tatrc.physiology.datamodel.datarequests.SEDataRequestManager;
 import mil.tatrc.physiology.datamodel.patient.SEPatient;
 import mil.tatrc.physiology.datamodel.patient.actions.SEHemorrhage;
 import mil.tatrc.physiology.datamodel.patient.assessments.SECompleteBloodCount;
-import mil.tatrc.physiology.datamodel.patient.conditions.ChronicAnemia;
+import mil.tatrc.physiology.datamodel.patient.conditions.SEChronicAnemia;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.FrequencyUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.LengthUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.MassUnit;
@@ -28,9 +32,6 @@ import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumePerTimeUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumeUnit;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
-import mil.tatrc.physiology.datamodel.scenario.conditions.SECondition;
-import mil.tatrc.physiology.datamodel.scenario.datarequests.SEDataRequestManager;
-import mil.tatrc.physiology.datamodel.scenario.datarequests.SEPhysiologyDataRequest;
 import mil.tatrc.physiology.datamodel.utilities.SEEventHandler;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
@@ -71,13 +72,13 @@ public class HowTo_EngineUse
  
  protected static class MyEventHandler implements SEEventHandler
  {
-  public void handlePatientEvent(EnumPatientEvent type, boolean active, SEScalarTime time)
+  public void handlePatientEvent(PatientData.eEvent type, boolean active, SEScalarTime time)
   {
-    if(type == EnumPatientEvent.START_OF_CARDIAC_CYCLE && active)
+    if(type == PatientData.eEvent.StartOfCardiacCycle && active)
       Log.info("Patient started a new heart beat at time "+time);    
   }
 
-  public void handleAnesthesiaMachineEvent(EnumAnesthesiaMachineEvent type, boolean active, SEScalarTime time)
+  public void handleAnesthesiaMachineEvent(AnesthesiaMachineData.eEvent type, boolean active, SEScalarTime time)
   {
     
   } 
@@ -113,19 +114,23 @@ public class HowTo_EngineUse
    // at the end of AdvanceTime calls (which are blocking)
    // No other data values will have data in Java classes
    SEDataRequestManager dataRequests = new SEDataRequestManager();
-   SEPhysiologyDataRequest hr = new SEPhysiologyDataRequest();
+   SEDataRequest hr = new SEDataRequest();
+   hr.setCategory(eCategory.Physiology);
    hr.setName("HeartRate");
    hr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(hr);
-   SEPhysiologyDataRequest rr = new SEPhysiologyDataRequest();
+   SEDataRequest rr = new SEDataRequest();
+   hr.setCategory(eCategory.Physiology);
    rr.setName("RespirationRate");
    rr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(rr);
-   SEPhysiologyDataRequest tlv = new SEPhysiologyDataRequest();    
+   SEDataRequest tlv = new SEDataRequest(); 
+   hr.setCategory(eCategory.Physiology);   
    tlv.setName("TotalLungVolume");
    tlv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(tlv);
-   SEPhysiologyDataRequest bv = new SEPhysiologyDataRequest();    
+   SEDataRequest bv = new SEDataRequest();  
+   hr.setCategory(eCategory.Physiology);  
    bv.setName("BloodVolume");
    bv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(bv);
@@ -142,7 +147,7 @@ public class HowTo_EngineUse
       // But you can get more complicated, consult our Patient Variability Documentation for more details
       SEPatient patient = new SEPatient();
       patient.setName("Standard");
-      patient.setSex(EnumSex.MALE);
+      patient.setSex(PatientData.eSex.Male);
       patient.getAge().setValue(44,TimeUnit.yr);
       patient.getWeight().setValue(170,MassUnit.lb);
       patient.getHeight().setValue(71,LengthUnit.in);
@@ -156,7 +161,7 @@ public class HowTo_EngineUse
       // Note that while you can have multiple conditions on a patient
       // It is more than likely not tested and the engine may or may not converge
       List<SECondition> conditions = new ArrayList<SECondition>();
-      ChronicAnemia anemia = new ChronicAnemia();// One of these days I will prefix these with SE...
+      SEChronicAnemia anemia = new SEChronicAnemia();// One of these days I will prefix these with SE...
       anemia.getReductionFactor().setValue(0.3);
       conditions.add(anemia);
       
@@ -210,7 +215,7 @@ public class HowTo_EngineUse
    Log.info("White Blood Count "+cbc.getWhiteBloodCellCount());
    
    // You can check if the patient is in a specific state/event
-   if(bge.patient.isEventActive(EnumPatientEvent.CARDIAC_ARREST))
+   if(bge.patient.isEventActive(PatientData.eEvent.CardiacArrest))
      Log.info("CODE BLUE!");
    
    time.setValue(1, TimeUnit.s);

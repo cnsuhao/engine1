@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarInversePressureData;
+import com.kitware.physiology.cdm.Properties.ScalarInversePressureData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.InversePressureUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarInversePressure extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarInversePressureData src, SEScalarInversePressure dst)
+  {
+    SEScalar.load(src.getScalarInversePressure(),dst);
+  }
+  public static ScalarInversePressureData unload(SEScalarInversePressure src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarInversePressureData.Builder dst = ScalarInversePressureData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarInversePressure src, ScalarInversePressureData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarInversePressureBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarInversePressure extends SEScalar
   public double getValue(InversePressureUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarInversePressureData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarInversePressureData to = CDMSerializer.objFactory.createScalarInversePressureData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

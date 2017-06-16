@@ -19,13 +19,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.*;
-import java.net.InetAddress;
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.PatientAssessmentData;
-import mil.tatrc.physiology.datamodel.bind.PatientData;
-import mil.tatrc.physiology.datamodel.bind.ScalarData;
 import mil.tatrc.physiology.datamodel.patient.SEPatient;
 import mil.tatrc.physiology.datamodel.patient.assessments.SEPatientAssessment;
 import mil.tatrc.physiology.datamodel.properties.SEScalar;
@@ -39,6 +34,9 @@ import mil.tatrc.physiology.utilities.UnitConverter;
 
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.usermodel.*;
+
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.Properties.ScalarData;
 
 public abstract class ValdiationTool
 {
@@ -202,25 +200,15 @@ public abstract class ValdiationTool
             {
               if(vFile.indexOf(sheetName)>-1 && vFile.indexOf('@')>-1)
               {
-                Object aData = CDMSerializer.readFile("./test_results/scenarios/Validation/"+vFile);
-                if(aData instanceof PatientAssessmentData)
+                try
                 {
-                  String aClassName = "SE"+aData.getClass().getSimpleName();
-                  aClassName = aClassName.substring(0, aClassName.indexOf("Data"));
-                  try
-                  {
-                    Class<?> aClass = Class.forName("mil.tatrc.physiology.datamodel.patient.assessments."+aClassName);
-                    SEPatientAssessment a = (SEPatientAssessment)aClass.newInstance();
-                    aClass.getMethod("load", aData.getClass()).invoke(a, aData);
-                    assessments.put(vFile, a);
-                  }
-                  catch(Exception ex)
-                  {
-                    Log.error("Unable to load assesment xml "+vFile,ex);
-                  }
+                  SEPatientAssessment ass = SEPatientAssessment.readAssessment("./test_results/scenarios/Validation/"+vFile);
+                  assessments.put(vFile,ass);
                 }
-                else
+                catch(ParseException ex)
+                {
                   Log.error(vFile+" is named like a patient assessment, but its not?");
+                }
               }
             }
           }
@@ -239,7 +227,7 @@ public abstract class ValdiationTool
             // Patient Name is encoded in the naming convention (or else it needs to be)
             String patientName = resultsName.substring(resultsName.lastIndexOf("-")+1,resultsName.indexOf("Results"));            
             patient = new SEPatient();
-            patient.load((PatientData)CDMSerializer.readFile("./stable/"+patientName+".xml"));
+            patient.readFile("./stable/"+patientName+".xml");
           }
 
           allRows.clear();

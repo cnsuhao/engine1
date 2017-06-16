@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarAmountPerVolumeData;
+import com.kitware.physiology.cdm.Properties.ScalarAmountPerVolumeData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.AmountPerVolumeUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarAmountPerVolume extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarAmountPerVolumeData src, SEScalarAmountPerVolume dst)
+  {
+    SEScalar.load(src.getScalarAmountPerVolume(),dst);
+  }
+  public static ScalarAmountPerVolumeData unload(SEScalarAmountPerVolume src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarAmountPerVolumeData.Builder dst = ScalarAmountPerVolumeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarAmountPerVolume src, ScalarAmountPerVolumeData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarAmountPerVolumeBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -79,18 +96,6 @@ public class SEScalarAmountPerVolume extends SEScalar
     return this.getValue(unit.toString());
   }
   
-  
-
-  public ScalarAmountPerVolumeData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarAmountPerVolumeData to = CDMSerializer.objFactory.createScalarAmountPerVolumeData();
-    unload(to);
-    return to;
-  }
-
   public boolean validUnit(String unit)
   {
     if(AmountPerVolumeUnit.validUnit(unit))

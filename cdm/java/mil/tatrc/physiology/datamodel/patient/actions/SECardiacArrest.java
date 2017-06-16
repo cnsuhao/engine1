@@ -12,13 +12,12 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.CardiacArrestData;
+import com.kitware.physiology.cdm.PatientActions.CardiacArrestData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
 public class SECardiacArrest extends SEPatientAction
 {
-  protected EnumOnOff state;
+  protected eSwitch state;
   
   public SECardiacArrest()
   {
@@ -44,40 +43,39 @@ public class SECardiacArrest extends SEPatientAction
     return hasState();
   }
   
-  public boolean load(CardiacArrestData in)
+  public static void load(CardiacArrestData src, SECardiacArrest dst)
   {
-    super.load(in);
-    this.state = in.getState();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    dst.state = src.getState();
   }
   
-  public CardiacArrestData unload()
+  public static CardiacArrestData unload(SECardiacArrest src)
   {
-    CardiacArrestData data = CDMSerializer.objFactory.createCardiacArrestData();
-    unload(data);
-    return data;
+    CardiacArrestData.Builder dst = CardiacArrestData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(CardiacArrestData data)
+  protected static void unload(SECardiacArrest src, CardiacArrestData.Builder dst)
   {
-    super.unload(data);
-    if (hasState())
-      data.setState(state);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasState())
+      dst.setState(src.state);
   }
   
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
   
-  public void setState(EnumOnOff onOrOff)
+  public void setState(eSwitch onOrOff)
   {
     state = onOrOff;
   }
   
   public boolean hasState()
   {
-    return state == null ? false : true;
+    return state==null||state==eSwitch.UNRECOGNIZED ? false : true;
   }
   
   public String toString()

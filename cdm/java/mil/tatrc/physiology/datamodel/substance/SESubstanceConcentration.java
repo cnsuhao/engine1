@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.substance;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 
 public class SESubstanceConcentration
@@ -34,26 +34,23 @@ public class SESubstanceConcentration
       this.concentration.invalidate();
   }
   
-  public boolean load(SubstanceConcentrationData data)
+  public static void load(SubstanceData.ConcentrationData src, SESubstanceConcentration dst)
   {
-    this.reset();
-    if(data.getConcentration()!=null)
-      this.getConcentration().load(data.getConcentration());
-    return true;
+    dst.reset();
+    if(src.hasConcentration())
+      SEScalarMassPerVolume.load(src.getConcentration(), dst.getConcentration());
   }
-  
-  public SubstanceConcentrationData unload()
+  public static SubstanceData.ConcentrationData unload(SESubstanceConcentration src)
   {
-    SubstanceConcentrationData to = CDMSerializer.objFactory.createSubstanceConcentrationData();
-    unload(to);
-    return to;
+    SubstanceData.ConcentrationData.Builder dst = SubstanceData.ConcentrationData.newBuilder();
+    SESubstanceConcentration.unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(SubstanceConcentrationData to)
+  protected static void unload(SESubstanceConcentration src, SubstanceData.ConcentrationData.Builder dst)
   {
-    if(hasConcentration())
-      to.setConcentration(this.concentration.unload());    
-    to.setName(this.substance.getName());
+    dst.setName(src.substance.getName());
+    if(src.hasConcentration())
+      dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration)); 
   }
   
   public SEScalarMassPerVolume getConcentration() 

@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarMassPerTimeData;
+import com.kitware.physiology.cdm.Properties.ScalarMassPerTimeData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.MassPerTimeUnit;
 
 /**
@@ -52,6 +52,23 @@ public class SEScalarMassPerTime extends SEScalar
     this();
     this.setValue(value,unit);
   }
+ 
+  public static void load(ScalarMassPerTimeData src, SEScalarMassPerTime dst)
+  {
+    SEScalar.load(src.getScalarMassPerTime(),dst);
+  }
+  public static ScalarMassPerTimeData unload(SEScalarMassPerTime src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarMassPerTimeData.Builder dst = ScalarMassPerTimeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarMassPerTime src, ScalarMassPerTimeData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarMassPerTimeBuilder());
+  }
   
   /**
    * @param value
@@ -77,18 +94,6 @@ public class SEScalarMassPerTime extends SEScalar
   public double getValue(MassPerTimeUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarMassPerTimeData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarMassPerTimeData to = CDMSerializer.objFactory.createScalarMassPerTimeData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

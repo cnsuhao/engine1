@@ -1,5 +1,6 @@
 project(Engine)
 
+set(BUILD_SHARED_LIBS ON)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # Policy to address @foo@ variable expansion
@@ -10,7 +11,10 @@ set(_VERSION "${_VERSION_MAJOR}.${_VERSION_MINOR}.${_VERSION_PATCH}")
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release RelWithDebInfo CACHE TYPE INTERNAL FORCE )
 if(MSVC)  
-  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1" CACHE TYPE INTERNAL FORCE)
+# use MT to link the runtime library statically so that MSVCR*.DLL is not required at runtime
+  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob2 /Oi /Od /RTC1" CACHE TYPE INTERNAL FORCE)
+  set(CMAKE_CXX_FLAGS_RELEASE "/MT" CACHE TYPE INTERNAL FORCE)
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MTd" CACHE TYPE INTERNAL FORCE)
 endif()
 
 if(MINGW)
@@ -33,9 +37,15 @@ set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 
 find_package(Dirent REQUIRED)
 find_package(Eigen3 3.3.3 REQUIRED)
-find_package(XercesC 3.1.0 REQUIRED)
-find_package(XSD REQUIRED)
-
+find_package(ProtoBuf REQUIRED)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+if(MSVC)
+  set(protobuf_BUILD_TESTS OFF CACHE TYPE INTERNAL FORCE)
+  set(protobuf_BUILD_EXAMPLES OFF CACHE TYPE INTERNAL FORCE)
+  add_subdirectory("${protobuf_DIR}/cmake" "${protobuf_DIR}-build")
+  set_target_properties(libprotobuf-lite libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+  set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc js_embed PROPERTIES FOLDER protobufs)
+endif()
 add_subdirectory("${log4cpp_DIR}" "${log4cpp_DIR}-build")
 add_subdirectory(schema)
 add_subdirectory(cdm)
@@ -43,12 +53,16 @@ add_subdirectory(engine)
 add_subdirectory(test)
 add_subdirectory(sdk)
 
+
 # TODO put a USE_JAVA option in (you would get no JNI, jar, and test suite, but maybe you just want the C++ SDK)
 # Java Compiling
 find_package(Java REQUIRED)
 include(UseJava)
+# Protobuf needs to auto generate some things needed to be used with Java
+
 file(GLOB_RECURSE JAVA_FILES 
   "${CMAKE_BINARY_DIR}/schema/java/*.java"
+  "${CMAKE_BINARY_DIR}/protobuf/src/protobuf/java/core/java/*.java"
   "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
   "${CMAKE_SOURCE_DIR}/engine/java/*.java"
   "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"

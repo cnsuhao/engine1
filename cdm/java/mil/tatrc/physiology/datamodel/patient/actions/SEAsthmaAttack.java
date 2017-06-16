@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.AsthmaAttackData;
+import com.kitware.physiology.cdm.PatientActions.AsthmaAttackData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEAsthmaAttack extends SEPatientAction
@@ -48,25 +48,25 @@ public class SEAsthmaAttack extends SEPatientAction
     return hasSeverity();
   }
   
-  public boolean load(AsthmaAttackData in)
+  public static void load(AsthmaAttackData src, SEAsthmaAttack dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
   
-  public AsthmaAttackData unload()
+  public static AsthmaAttackData unload(SEAsthmaAttack src)
   {
-    AsthmaAttackData data = CDMSerializer.objFactory.createAsthmaAttackData();
-    unload(data);
-    return data;
+    AsthmaAttackData.Builder dst = AsthmaAttackData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(AsthmaAttackData data)
+  protected static void unload(SEAsthmaAttack src, AsthmaAttackData.Builder dst)
   {
-    super.unload(data);
-    if (severity != null)
-      data.setSeverity(severity.unload());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   public boolean hasSeverity()

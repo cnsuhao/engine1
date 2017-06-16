@@ -14,14 +14,15 @@ package mil.tatrc.physiology.biogears.engine;
 import java.io.File;
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.bind.EnumAnesthesiaMachineEvent;
-import mil.tatrc.physiology.datamodel.bind.EnumPatientEvent;
+import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+
 import mil.tatrc.physiology.datamodel.compartment.*;
+import mil.tatrc.physiology.datamodel.datarequests.*;
 import mil.tatrc.physiology.datamodel.patient.SEPatient;
 import mil.tatrc.physiology.datamodel.patient.nutrition.SENutrition;
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
-import mil.tatrc.physiology.datamodel.scenario.datarequests.*;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
@@ -209,13 +210,13 @@ public class BioGears
     {
       case 0:
         if(eventHandler!=null)
-          eventHandler.handlePatientEvent(EnumPatientEvent.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
-        this.patient.setEvent(EnumPatientEvent.values()[event],active);
+          eventHandler.handlePatientEvent(PatientData.eEvent.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
+        this.patient.setEvent(PatientData.eEvent.values()[event],active);
         break;
       case 1:
         if(eventHandler!=null)
-          eventHandler.handleAnesthesiaMachineEvent(EnumAnesthesiaMachineEvent.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
-        this.anesthesiaMachine.setEvent(EnumAnesthesiaMachineEvent.values()[event],active);
+          eventHandler.handleAnesthesiaMachineEvent(AnesthesiaMachineData.eEvent.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
+        this.anesthesiaMachine.setEvent(AnesthesiaMachineData.eEvent.values()[event],active);
         break;
       default:
           Log.error("Unsupported event type "+type);
@@ -296,191 +297,207 @@ public class BioGears
     
     for(SEDataRequest dr : drMgr.getRequestedData())
     {
-      if(dr instanceof SEPhysiologyDataRequest)
+      switch(dr.getCategory())
       {
-        SEScalar scalar = null;
-        for (SESystem sys : systems)
+        case Physiology:
         {
-          scalar = SEScalar.getScalar(sys,dr.getName());
-          if (scalar != null)
+          SEScalar scalar = null;
+          for (SESystem sys : systems)
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
-            break;
-          }
-          // Check to see if the request is for a child class
-          // I could do this more generically with reflection...
-          // I know there should be a dash
-
-          if (sys instanceof SEGastrointestinalSystem && dr.getName().startsWith("StomachContents"))
-          {
-            String scalarNameWithoutStomach = dr.getName().substring(dr.getName().indexOf('-')+1);
-            SENutrition nutrition = ((SEGastrointestinalSystem)sys).getStomachContents();
-
-            scalar = SEScalar.getScalar(nutrition, scalarNameWithoutStomach);
+            scalar = SEScalar.getScalar(sys,dr.getName());
             if (scalar != null)
             {
               dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
               break;
             }
-          }
-          
-          if (sys instanceof SEDrugSystem && dr.getName().startsWith("PupillaryResponse"))
-          {
-            String propertyName = dr.getName().substring(dr.getName().indexOf('-')+1);
-            SEPupillaryResponse pupillaryResponse = ((SEDrugSystem)sys).getPupillaryResponse();
-
-            scalar = SEScalar.getScalar(pupillaryResponse, propertyName);
-            if (scalar != null)
+            // Check to see if the request is for a child class
+            // I could do this more generically with reflection...
+            // I know there should be a dash
+  
+            if (sys instanceof SEGastrointestinalSystem && dr.getName().startsWith("StomachContents"))
             {
-              dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
-              break;
+              String scalarNameWithoutStomach = dr.getName().substring(dr.getName().indexOf('-')+1);
+              SENutrition nutrition = ((SEGastrointestinalSystem)sys).getStomachContents();
+  
+              scalar = SEScalar.getScalar(nutrition, scalarNameWithoutStomach);
+              if (scalar != null)
+              {
+                dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+                break;
+              }
+            }
+  
+            if (sys instanceof SEDrugSystem && dr.getName().startsWith("PupillaryResponse"))
+            {
+              String propertyName = dr.getName().substring(dr.getName().indexOf('-')+1);
+              SEPupillaryResponse pupillaryResponse = ((SEDrugSystem)sys).getPupillaryResponse();
+  
+              scalar = SEScalar.getScalar(pupillaryResponse, propertyName);
+              if (scalar != null)
+              {
+                dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+                break;
+              }
+            }
+  
+            if (sys instanceof SENervousSystem && (dr.getName().startsWith("LeftEyePupillaryResponse") || dr.getName().startsWith("RightEyePupillaryResponse")))
+            {
+              String propertyName = dr.getName().substring(dr.getName().indexOf('-')+1);
+  
+  
+              SEPupillaryResponse pupillaryResponse=null;
+              if(dr.getName().startsWith("Left"))
+                pupillaryResponse = ((SENervousSystem)sys).getLeftEyePupillaryResponse();
+              else if(dr.getName().startsWith("Right"))
+                pupillaryResponse = ((SENervousSystem)sys).getRightEyePupillaryResponse();
+  
+              scalar = SEScalar.getScalar(pupillaryResponse, propertyName);
+              if (scalar != null)
+              {
+                dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+                break;
+              }
             }
           }
-          
-          if (sys instanceof SENervousSystem && (dr.getName().startsWith("LeftEyePupillaryResponse") || dr.getName().startsWith("RightEyePupillaryResponse")))
+          if(scalar!=null)
+            continue;
+          Log.error("Unable to find system property " + dr.getName());
+          return false;
+        }
+        case GasCompartment:
+        {
+          SEGasCompartment cmpt = compartments.GetGasCompartment(dr.getCompartmentName());        
+          if(dr.hasSubstanceName())
           {
-            String propertyName = dr.getName().substring(dr.getName().indexOf('-')+1);
-            
-            
-            SEPupillaryResponse pupillaryResponse=null;
-            if(dr.getName().startsWith("Left"))
-              pupillaryResponse = ((SENervousSystem)sys).getLeftEyePupillaryResponse();
-            else if(dr.getName().startsWith("Right"))
-              pupillaryResponse = ((SENervousSystem)sys).getRightEyePupillaryResponse();
-            
-            scalar = SEScalar.getScalar(pupillaryResponse, propertyName);
-            if (scalar != null)
-            {
-              dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
-              break;
-            }
-          }
-        }
-        if(scalar!=null)
-          continue;
-        Log.error("Unable to find system property " + dr.getName());
-        return false;
-      }
-      else if(dr instanceof SEGasCompartmentDataRequest)
-      {
-        SEGasCompartmentDataRequest cdr = (SEGasCompartmentDataRequest)dr;
-        SEGasCompartment cmpt = compartments.GetGasCompartment(cdr.getCompartment());        
-        if(cdr.hasSubstance())
-        {
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(cdr.getSubstance()), dr.getName())));
-          continue;
-        }
-        else
-        {
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
-          continue;
-        }
-      }
-      else if(dr instanceof SELiquidCompartmentDataRequest)
-      {
-        SELiquidCompartmentDataRequest cdr = (SELiquidCompartmentDataRequest)dr;
-        SELiquidCompartment cmpt = compartments.GetLiquidCompartment(cdr.getCompartment());        
-        if(cdr.hasSubstance())
-        {
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(cdr.getSubstance()), dr.getName())));
-          continue;
-        }
-        else
-        {
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
-          continue;
-        }
-      }
-      else if(dr instanceof SEThermalCompartmentDataRequest)
-      {
-        SEThermalCompartmentDataRequest cdr = (SEThermalCompartmentDataRequest)dr;
-        SEThermalCompartment cmpt = compartments.GetThermalCompartment(cdr.getCompartment());        
-        dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
-        continue;
-      }      
-      else if(dr instanceof SETissueCompartmentDataRequest)
-      {
-        SETissueCompartmentDataRequest cdr = (SETissueCompartmentDataRequest)dr;
-        SETissueCompartment cmpt = compartments.GetTissueCompartment(cdr.getCompartment()); 
-        dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
-        continue;
-      }
-      else if(dr instanceof SEPatientDataRequest)
-      {
-        String name = dr.getName();
-        if(dr.getName().startsWith("Patient"))
-          name = dr.getName().substring(7);
-        SEScalar scalar = SEScalar.getScalar(this.patient, name);
-        if (scalar != null)
-        {
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
-          continue;
-        }
-        Log.error("Unable to find patient property " + dr.getName());
-        return false;
-      }
-      else if(dr instanceof SESubstanceDataRequest)
-      {
-        SESubstanceDataRequest sdr = (SESubstanceDataRequest)dr;
-        SESubstance sub = this.substanceManager.getSubstance(sdr.getSubstance().getName());
-        if(sdr.hasCompartment())
-        {
-          if(sdr.getName().equals("PartitionCoefficient"))
-          {
-            SESubstanceTissuePharmacokinetics subTk = sub.getPK().getTissueKinetics(sdr.getCompartment());
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,subTk.getPartitionCoefficient()));
+            SESubstance sub = this.substanceManager.getSubstance(dr.getSubstanceName());
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getName())));
             continue;
           }
           else
           {
-            Log.error("Do not have a property " + dr.getName() +" associated with compartments on a substance");
-            return false;
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
+            continue;
           }
         }
-        else
+        case LiquidCompartment:
         {
-          SEScalar scalar = SEScalar.getScalar(sub, dr.getName());
+          SELiquidCompartment cmpt = compartments.GetLiquidCompartment(dr.getCompartmentName());        
+          if(dr.hasSubstanceName())
+          {
+            SESubstance sub = this.substanceManager.getSubstance(dr.getSubstanceName());
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getName())));
+            continue;
+          }
+          else
+          {
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
+            continue;
+          }
+        }
+        case ThermalCompartment:
+        {
+          SEThermalCompartment cmpt = compartments.GetThermalCompartment(dr.getCompartmentName());        
+          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
+          continue;
+        }      
+        case TissueCompartment:
+        {
+          SETissueCompartment cmpt = compartments.GetTissueCompartment(dr.getCompartmentName()); 
+          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
+          continue;
+        }
+        case Patient:
+        {
+          String name = dr.getName();
+          if(dr.getName().startsWith("Patient"))
+            name = dr.getName().substring(7);
+          SEScalar scalar = SEScalar.getScalar(this.patient, name);
           if (scalar != null)
           {
             dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
             continue;
           }
+          Log.error("Unable to find patient property " + dr.getName());
+          return false;
         }
-        Log.error("Unable to find substance property " + dr.getName());
-        return false;
-      }
-      else if(dr instanceof SEEnvironmentDataRequest)
-      {
-        SEScalar scalar = SEScalar.getScalar(environment, dr.getName());
-        if (scalar != null)
+        case Substance:
         {
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
-          continue;
+          SESubstance sub = this.substanceManager.getSubstance(dr.getSubstanceName());
+          if(dr.hasCompartmentName())
+          {
+            if(dr.getName().equals("PartitionCoefficient"))
+            {
+              SESubstanceTissuePharmacokinetics subTk = sub.getPK().getTissueKinetics(dr.getCompartmentName());
+              dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,subTk.getPartitionCoefficient()));
+              continue;
+            }
+            else
+            {
+              Log.error("Do not have a property " + dr.getName() +" associated with compartments on a substance");
+              return false;
+            }
+          }
+          else
+          {
+            SEScalar scalar = SEScalar.getScalar(sub, dr.getName());
+            if (scalar != null)
+            {
+              dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+              continue;
+            }
+          }
+          Log.error("Unable to find substance property " + dr.getName());
+          return false;
         }
-        Log.error("Unable to find environment property " + dr.getName());
-        return false;
-      }    
-      else if(dr instanceof SEEquipmentDataRequest)
-      {
-        SEScalar scalar = null;
-        for(SESystem equip : equipment)
+        case Environment:
         {
-          scalar = SEScalar.getScalar(equip, dr.getName());
+          SEScalar scalar = SEScalar.getScalar(environment, dr.getName());
           if (scalar != null)
           {
             dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
-            break;
+            continue;
           }
+          Log.error("Unable to find environment property " + dr.getName());
+          return false;
+        }    
+        case AnesthesiaMachine:
+        {
+          SEScalar scalar = SEScalar.getScalar(anesthesiaMachine, dr.getName());
+          if (scalar != null)
+          {
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));          
+            continue;
+          }
+          Log.error("Unable to find anesthesia machine property " + dr.getName());
+          return false;
+        }   
+        case ECG:
+        {
+          SEScalar scalar = SEScalar.getScalar(ecg, dr.getName());
+          if (scalar != null)
+          {
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));          
+            continue;
+          }
+          Log.error("Unable to find ecg property " + dr.getName());
+          return false;
+        }   
+        case Inhaler:
+        {
+          SEScalar scalar = SEScalar.getScalar(inhaler, dr.getName());
+          if (scalar != null)
+          {
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));          
+            continue;
+          }
+          Log.error("Unable to find inhaler property " + dr.getName());
+          return false;
+        }   
+        default:
+        {
+          Log.error("Unsupported data request type");
+          return false;
         }
-        if(scalar!=null)
-          continue;
-        Log.error("Unable to find equipment property " + dr.getName());
-        return false;
-      }       
-      else
-      {
-        Log.error("Unsupported data request type");
-        return false;
       }
     }
     

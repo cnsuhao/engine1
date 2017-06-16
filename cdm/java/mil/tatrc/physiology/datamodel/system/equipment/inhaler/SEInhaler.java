@@ -12,9 +12,9 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.inhaler;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.InhalerData;
+import com.kitware.physiology.cdm.Inhaler.InhalerData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
@@ -22,11 +22,11 @@ import mil.tatrc.physiology.datamodel.system.SESystem;
 
 public class SEInhaler implements SESystem
 {
-  protected EnumOnOff state;
-  protected SEScalarMass meteredDose;
-  protected SEScalarFraction nozzleLoss;
+  protected eSwitch        state;
+  protected SEScalarMass   meteredDose;
+  protected SEScalar0To1   nozzleLoss;
   protected SEScalarVolume spacerVolume;
-  protected SESubstance substance;
+  protected SESubstance    substance;
 
   public SEInhaler()
   {
@@ -65,48 +65,44 @@ public class SEInhaler implements SESystem
     substance = from.substance;
   }
 
-  public boolean load(InhalerData in, SESubstanceManager subMgr)
+  public static void load(InhalerData src, SEInhaler dst, SESubstanceManager subMgr)
   {
-    if (in.getState() != null)
-      setState(in.getState());
-    if (in.getMeteredDose() != null)
-      getMeteredDose().load(in.getMeteredDose());
-    if (in.getNozzleLoss() != null)
-      getNozzleLoss().load(in.getNozzleLoss());
-    if (in.getSpacerVolume() != null)
-      getSpacerVolume().load(in.getSpacerVolume());
-    if (in.getSubstance() != null)
-      setSubstance(subMgr.getSubstance(in.getSubstance()));
-
-    return true;
+    if (src.getState()!=eSwitch.UNRECOGNIZED)
+      dst.setState(src.getState());
+    if (src.hasMeteredDose())
+      SEScalarMass.load(src.getMeteredDose(),dst.getMeteredDose());
+    if (src.hasNozzleLoss())
+      SEScalar0To1.load(src.getNozzleLoss(),dst.getNozzleLoss());
+    if (src.hasSpacerVolume())
+      SEScalarVolume.load(src.getSpacerVolume(),dst.getSpacerVolume());
+    if (src.getSubstance() != null)
+      dst.setSubstance(subMgr.getSubstance(src.getSubstance()));
+  }
+  public static InhalerData unload(SEInhaler src)
+  {
+    InhalerData.Builder dst = InhalerData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEInhaler src, InhalerData.Builder dst)
+  {
+    if (src.hasState())
+      dst.setState(src.state);
+    if (src.hasMeteredDose())
+      dst.setMeteredDose(SEScalarMass.unload(src.meteredDose));
+    if (src.hasNozzleLoss())
+      dst.setNozzleLoss(SEScalar0To1.unload(src.nozzleLoss));
+    if (src.hasSpacerVolume())
+      dst.setSpacerVolume(SEScalarVolume.unload(src.spacerVolume));
+    if (src.hasSubstance())
+      dst.setSubstance(src.substance.getName());
   }
 
-  public InhalerData unload()
-  {
-    InhalerData data = CDMSerializer.objFactory.createInhalerData();
-    unload(data);
-    return data;
-  }
-
-  protected void unload(InhalerData data)
-  {
-    if (hasState())
-      data.setState(state);
-    if (getMeteredDose() != null)
-      data.setMeteredDose(meteredDose.unload());
-    if (getNozzleLoss() != null)
-      data.setNozzleLoss(nozzleLoss.unload());
-    if (getSpacerVolume() != null)
-      data.setSpacerVolume(spacerVolume.unload());
-    if (hasSubstance())
-      data.setSubstance(substance.getName());
-  }
-
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff state)
+  public void setState(eSwitch state)
   {
     this.state = state;
   }
@@ -130,10 +126,10 @@ public class SEInhaler implements SESystem
   {
     return nozzleLoss == null ? false : nozzleLoss.isValid();
   }
-  public SEScalarFraction getNozzleLoss()
+  public SEScalar0To1 getNozzleLoss()
   {
     if (nozzleLoss == null)
-      nozzleLoss = new SEScalarFraction();
+      nozzleLoss = new SEScalar0To1();
     return nozzleLoss;
   }
 
@@ -159,5 +155,15 @@ public class SEInhaler implements SESystem
   public boolean hasSubstance() 
   {
     return substance == null ? false : true;
+  }
+  
+  public String toString()
+  {
+    String str = "Inhaler:";
+    str += "\n\tMetered Dose: "; str += this.hasMeteredDose()?this.getMeteredDose():"Not Supplied";
+    str += "\n\tNozzle Loss: "; str += this.hasNozzleLoss()?this.getNozzleLoss():"Not Supplied";
+    str += "\n\tSpacer Volume: "; str += this.hasSpacerVolume()?this.getSpacerVolume():"Not Supplied";    
+    str += "\n\tSubstance: "; str += this.hasSubstance()?this.getSubstance().getName():"Not Supplied";
+    return str;
   }
 }

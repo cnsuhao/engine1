@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.substance;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 
 public class SESubstanceTissuePharmacokinetics 
@@ -33,28 +33,27 @@ public class SESubstanceTissuePharmacokinetics
       this.partitionCoefficient.invalidate();  
   }
   
-  public boolean load(SubstanceTissuePharmacokineticsData data)
+  public static void load(SubstanceData.TissuePharmacokineticsData src, SESubstanceTissuePharmacokinetics dst)
   {
-    if(data.getName()!=null)
-      this.setName(data.getName());
-    if(data.getPartitionCoefficient()!=null)
-      this.getPartitionCoefficient().load(data.getPartitionCoefficient());    
-    return true;
+    if(src.getName()!=null)
+      dst.setName(src.getName());
+    if(src.hasPartitionCoefficient())
+      SEScalar.load(src.getPartitionCoefficient(),dst.getPartitionCoefficient());    
   }
   
-  public SubstanceTissuePharmacokineticsData unload()
+  public static SubstanceData.TissuePharmacokineticsData unload(SESubstanceTissuePharmacokinetics src)
   {
-    SubstanceTissuePharmacokineticsData to = CDMSerializer.objFactory.createSubstanceTissuePharmacokineticsData();
-    unload(to);
-    return to;
+    SubstanceData.TissuePharmacokineticsData.Builder dst = SubstanceData.TissuePharmacokineticsData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(SubstanceTissuePharmacokineticsData to)
+  protected static void unload(SESubstanceTissuePharmacokinetics src, SubstanceData.TissuePharmacokineticsData.Builder dst)
   {
-    if(hasName())
-      to.setName(this.name);    
-    if(hasPartitionCoefficient())
-      to.setPartitionCoefficient(this.partitionCoefficient.unload());    
+    if(src.hasName())
+      dst.setName(src.name);    
+    if(src.hasPartitionCoefficient())
+      dst.setPartitionCoefficient(SEScalar.unload(src.partitionCoefficient));    
   }
   
   public String  getName() { return this.name;}

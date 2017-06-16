@@ -11,13 +11,16 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.patient.assessments;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.CompleteBloodCountData;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.PatientAssessments.CompleteBloodCountData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
+import mil.tatrc.physiology.utilities.FileUtils;
 
 public class SECompleteBloodCount extends SEPatientAssessment
 {
-  protected SEScalarFraction        hematocrit;
+  protected SEScalar0To1            hematocrit;
   protected SEScalarMassPerVolume   hemoglobin;
   protected SEScalarAmountPerVolume plateletCount;
   protected SEScalarMassPerAmount   meanCorpuscularHemoglobin;
@@ -60,64 +63,74 @@ public class SECompleteBloodCount extends SEPatientAssessment
       this.whiteBloodCellCount.invalidate();
   }
   
-  public boolean load(CompleteBloodCountData in)
+  public void readFile(String fileName) throws ParseException
   {
-    super.load(in);
-    if(in.getHematocrit()!=null)
-      this.getHematocrit().load(in.getHematocrit());
-    if(in.getHemoglobin()!=null)
-      this.getHemoglobin().load(in.getHemoglobin());
-    if(in.getPlateletCount()!=null)
-      this.getPlateletCount().load(in.getPlateletCount());
-    if(in.getMeanCorpuscularHemoglobin()!=null)
-      this.getMeanCorpuscularHemoglobin().load(in.getMeanCorpuscularHemoglobin());
-    if(in.getMeanCorpuscularHemoglobinConcentration()!=null)
-      this.getMeanCorpuscularHemoglobinConcentration().load(in.getMeanCorpuscularHemoglobinConcentration());
-    if(in.getMeanCorpuscularVolume()!=null)
-      this.getMeanCorpuscularVolume().load(in.getMeanCorpuscularVolume());
-    if(in.getRedBloodCellCount()!=null)
-      this.getRedBloodCellCount().load(in.getRedBloodCellCount());
-    if(in.getWhiteBloodCellCount()!=null)
-      this.getWhiteBloodCellCount().load(in.getWhiteBloodCellCount());
-    return true;
+    CompleteBloodCountData.Builder builder = CompleteBloodCountData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    SECompleteBloodCount.load(builder.build(), this);
+  }
+  public void writeFile(String fileName)
+  {
+    FileUtils.writeFile(fileName, SECompleteBloodCount.unload(this).toString());
   }
   
-  public CompleteBloodCountData unload()
+  public static void load(CompleteBloodCountData src, SECompleteBloodCount dst)
   {
-    CompleteBloodCountData data = CDMSerializer.objFactory.createCompleteBloodCountData();
-    unload(data);
-    return data;
+    SEPatientAssessment.load(src.getPatientAssessment(), dst);
+    if(src.hasHematocrit())
+      SEScalar0To1.load(src.getHematocrit(),dst.getHematocrit());
+    if(src.hasHemoglobin())
+      SEScalarMassPerVolume.load(src.getHemoglobin(),dst.getHemoglobin());
+    if(src.hasPlateletCount())
+      SEScalarAmountPerVolume.load(src.getPlateletCount(),dst.getPlateletCount());
+    if(src.hasMeanCorpuscularHemoglobin())
+      SEScalarMassPerAmount.load(src.getMeanCorpuscularHemoglobin(),dst.getMeanCorpuscularHemoglobin());
+    if(src.hasMeanCorpuscularHemoglobinConcentration())
+      SEScalarMassPerVolume.load(src.getMeanCorpuscularHemoglobinConcentration(),dst.getMeanCorpuscularHemoglobinConcentration());
+    if(src.hasMeanCorpuscularVolume())
+      SEScalarVolume.load(src.getMeanCorpuscularVolume(),dst.getMeanCorpuscularVolume());
+    if(src.hasRedBloodCellCount())
+      SEScalarAmountPerVolume.load(src.getRedBloodCellCount(),dst.getRedBloodCellCount());
+    if(src.hasWhiteBloodCellCount())
+      SEScalarAmountPerVolume.load(src.getWhiteBloodCellCount(),dst.getWhiteBloodCellCount());
   }
   
-  protected void unload(CompleteBloodCountData data)
+  public static CompleteBloodCountData unload(SECompleteBloodCount src)
   {
-    super.unload(data);
-    if (hematocrit != null)
-      data.setHematocrit(hematocrit.unload());
-    if (hemoglobin != null)
-      data.setHemoglobin(hemoglobin.unload());
-    if (plateletCount != null)
-      data.setPlateletCount(plateletCount.unload());
-    if (meanCorpuscularHemoglobin != null)
-      data.setMeanCorpuscularHemoglobin(meanCorpuscularHemoglobin.unload());
-    if (meanCorpuscularHemoglobinConcentration != null)
-      data.setMeanCorpuscularHemoglobinConcentration(meanCorpuscularHemoglobinConcentration.unload());
-    if (meanCorpuscularVolume != null)
-      data.setMeanCorpuscularVolume(meanCorpuscularVolume.unload());
-    if (redBloodCellCount != null)
-      data.setRedBloodCellCount(redBloodCellCount.unload());
-    if (whiteBloodCellCount != null)
-      data.setWhiteBloodCellCount(whiteBloodCellCount.unload());
+    CompleteBloodCountData.Builder dst = CompleteBloodCountData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  
+  protected static void unload(SECompleteBloodCount src, CompleteBloodCountData.Builder dst)
+  {
+    SEPatientAssessment.unload(src, dst.getPatientAssessmentBuilder());
+    if (src.hasHematocrit())
+      dst.setHematocrit(SEScalar0To1.unload(src.getHematocrit()));
+    if (src.hasHemoglobin())
+      dst.setHemoglobin(SEScalarMassPerVolume.unload(src.getHemoglobin()));
+    if (src.hasPlateletCount())
+      dst.setPlateletCount(SEScalarAmountPerVolume.unload(src.getPlateletCount()));
+    if (src.hasMeanCorpuscularHemoglobin())
+      dst.setMeanCorpuscularHemoglobin(SEScalarMassPerAmount.unload(src.getMeanCorpuscularHemoglobin()));
+    if (src.hasMeanCorpuscularHemoglobinConcentration())
+      dst.setMeanCorpuscularHemoglobinConcentration(SEScalarMassPerVolume.unload(src.getMeanCorpuscularHemoglobinConcentration()));
+    if (src.hasMeanCorpuscularVolume())
+      dst.setMeanCorpuscularVolume(SEScalarVolume.unload(src.getMeanCorpuscularVolume()));
+    if (src.hasRedBloodCellCount())
+      dst.setRedBloodCellCount(SEScalarAmountPerVolume.unload(src.getRedBloodCellCount()));
+    if (src.hasWhiteBloodCellCount())
+      dst.setWhiteBloodCellCount(SEScalarAmountPerVolume.unload(src.getWhiteBloodCellCount()));
   }
   
   public boolean hasHematocrit()
   {
     return hematocrit == null ? false : hematocrit.isValid();
   }
-  public SEScalarFraction getHematocrit()
+  public SEScalar0To1 getHematocrit()
   {
     if (hematocrit == null)
-      hematocrit = new SEScalarFraction();
+      hematocrit = new SEScalar0To1();
     return hematocrit;
   }
   

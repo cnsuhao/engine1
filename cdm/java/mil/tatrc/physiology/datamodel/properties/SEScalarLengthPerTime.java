@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarLengthPerTimeData;
+import com.kitware.physiology.cdm.Properties.ScalarLengthPerTimeData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.LengthPerTimeUnit;
 
 /**
@@ -52,6 +52,23 @@ public class SEScalarLengthPerTime extends SEScalar
     this();
     this.setValue(value,unit);
   }
+
+  public static void load(ScalarLengthPerTimeData src, SEScalarLengthPerTime dst)
+  {
+    SEScalar.load(src.getScalarLengthPerTime(),dst);
+  }
+  public static ScalarLengthPerTimeData unload(SEScalarLengthPerTime src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarLengthPerTimeData.Builder dst = ScalarLengthPerTimeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarLengthPerTime src, ScalarLengthPerTimeData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarLengthPerTimeBuilder());
+  }
   
   /**
    * @param value
@@ -77,18 +94,6 @@ public class SEScalarLengthPerTime extends SEScalar
   public double getValue(LengthPerTimeUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarLengthPerTimeData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarLengthPerTimeData to = CDMSerializer.objFactory.createScalarLengthPerTimeData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

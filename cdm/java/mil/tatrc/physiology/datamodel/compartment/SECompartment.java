@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.compartment;
 
-import mil.tatrc.physiology.datamodel.bind.CompartmentData;
+import com.kitware.physiology.cdm.Compartment.CompartmentData;
 
 public abstract class SECompartment
 {
@@ -28,13 +28,11 @@ public abstract class SECompartment
     
   }
   
-  public boolean load(CompartmentData in)
+  public static void load(CompartmentData src, SECompartment dst)
   {
-    reset();
-    return true;
+    dst.reset();
   }
-  
-  protected void unload(CompartmentData data)
+  protected static void unload(SECompartment src, CompartmentData dst)
   {
     
   }

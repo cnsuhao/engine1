@@ -15,14 +15,14 @@ package mil.tatrc.physiology.datamodel.substance;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.utilities.StringUtils;
 
 public class SESubstanceAerosolization
 {
-  protected SEScalarNeg1To1              bronchioleModifier;
+  protected SEScalarNegative1To1         bronchioleModifier;
   protected SEScalar0To1                 inflammationCoefficient;
   protected SEHistogramFractionVsLength  particulateSizeDistribution;
   
@@ -48,44 +48,39 @@ public class SESubstanceAerosolization
     return true;
   }
   
-  public boolean load(SubstanceAerosolizationData data)
+  public static void load(SubstanceData.AerosolizationData src, SESubstanceAerosolization dst)
   {
-    this.reset();
+    dst.reset();
 
-    if(data.getBronchioleModifier()!=null)
-      this.getBronchioleModifier().load(data.getBronchioleModifier());
-    if(data.getInflammationCoefficient()!=null)
-      this.getInflammationCoefficient().load(data.getInflammationCoefficient());
-    if(data.getParticulateSizeDistribution()!=null)
-      this.getParticulateSizeDistribution().load(data.getParticulateSizeDistribution());
-    
-    
-    return true;
+    if(src.hasBronchioleModifier())
+      SEScalarNegative1To1.load(src.getBronchioleModifier(),dst.getBronchioleModifier());
+    if(src.hasInflammationCoefficient())
+      SEScalar0To1.load(src.getInflammationCoefficient(),dst.getInflammationCoefficient());
+    if(src.hasParticulateSizeDistribution())
+      SEHistogramFractionVsLength.load(src.getParticulateSizeDistribution(),dst.getParticulateSizeDistribution());
   }
-  
-  public SubstanceAerosolizationData unload()
+  public static SubstanceData.AerosolizationData unload(SESubstanceAerosolization src)
   {
-    if(!isValid())
+    if(!src.isValid())
       return null;
-    SubstanceAerosolizationData to = CDMSerializer.objFactory.createSubstanceAerosolizationData();
-    unload(to);
-    return to;
+    SubstanceData.AerosolizationData.Builder dst = SubstanceData.AerosolizationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(SubstanceAerosolizationData to)
+  protected static void unload(SESubstanceAerosolization src, SubstanceData.AerosolizationData.Builder dst)
   {
-    if(hasBronchioleModifier())
-      to.setBronchioleModifier(this.bronchioleModifier.unload());
-    if(hasInflammationCoefficient())
-      to.setInflammationCoefficient(this.inflammationCoefficient.unload());
-    if(hasParticulateSizeDistribution())
-      to.setParticulateSizeDistribution(this.particulateSizeDistribution.unload());
+    if(src.hasBronchioleModifier())
+      dst.setBronchioleModifier(SEScalarNegative1To1.unload(src.getBronchioleModifier()));
+    if(src.hasInflammationCoefficient())
+      dst.setInflammationCoefficient(SEScalar0To1.unload(src.getInflammationCoefficient()));
+    if(src.hasParticulateSizeDistribution())
+      dst.setParticulateSizeDistribution(SEHistogramFractionVsLength.unload(src.getParticulateSizeDistribution()));
   }
   
-  public SEScalarNeg1To1 getBronchioleModifier() 
+  public SEScalarNegative1To1 getBronchioleModifier() 
   { 
     if(this.bronchioleModifier==null)
-      this.bronchioleModifier=new SEScalarNeg1To1();
+      this.bronchioleModifier=new SEScalarNegative1To1();
     return this.bronchioleModifier;
   }
   public boolean hasBronchioleModifier() {return this.bronchioleModifier==null?false:this.bronchioleModifier.isValid();}

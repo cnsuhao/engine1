@@ -14,14 +14,20 @@ package mil.tatrc.physiology.datamodel.substance;
 
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstanceData.eState;
+
+import mil.tatrc.physiology.datamodel.patient.SEPatient;
 import mil.tatrc.physiology.datamodel.properties.*;
+import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.StringUtils;
 
 public class SESubstance
 {
-  protected EnumSubstanceState               state;
+  protected eState                           state;
   protected String                           name;
   protected SEScalarMassPerVolume            density;
   protected SEScalarMassPerAmount            molarMass;
@@ -40,7 +46,7 @@ public class SESubstance
   // Gas related-ish
   protected SEScalarVolumePerTime            alveolarTransfer;
   protected SEScalarVolumePerTimePressure    diffusingCapacity;
-  protected SEScalarFraction                 endTidalFraction;
+  protected SEScalar0To1                     endTidalFraction;
   protected SEScalarPressure                 endTidalPressure;
   protected SEScalar                         relativeDiffusionCoefficient;
   protected SEScalarInversePressure          solubilityCoefficient;
@@ -106,131 +112,139 @@ public class SESubstance
       this.pd.reset();    
   }
   
-  public boolean load(SubstanceData data)
+  public void readFile(String fileName) throws ParseException
   {
-    this.reset();
-    if(data.getName()!=null)
-      this.setName(data.getName());
-    if(data.getState()!=null)
-      this.setState(data.getState());
-    if(data.getDensity()!=null)
-      this.getDensity().load(data.getDensity());    
-    if(data.getMolarMass()!=null)
-      this.getMolarMass().load(data.getMolarMass());
+    SubstanceData.Builder builder = SubstanceData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    SESubstance.load(builder.build(), this);
+  }
+  public void writeFile(String fileName)
+  {
+    FileUtils.writeFile(fileName, SESubstance.unload(this).toString());
+  }
+  
+  public static void load(SubstanceData src, SESubstance dst)
+  {
+    dst.reset();
+    if(src.getName()!=null)
+      dst.setName(src.getName());
+    if(src.getState()!=null)
+      dst.setState(src.getState());
+    if(src.hasDensity())
+      SEScalarMassPerVolume.load(src.getDensity(), dst.getDensity());    
+    if(src.hasMolarMass())
+      SEScalarMassPerAmount.load(src.getMolarMass(),dst.getMolarMass());
     
-    if(data.getMaximumDiffusionFlux()!=null)
-      this.getMaximumDiffusionFlux().load(data.getMaximumDiffusionFlux());
-    if(data.getMichaelisCoefficient()!=null)
-      this.getMichaelisCoefficient().load(data.getMolarMass());
+    if(src.hasMaximumDiffusionFlux())
+      SEScalarMassPerAreaTime.load(src.getMaximumDiffusionFlux(),dst.getMaximumDiffusionFlux());
+    if(src.hasMichaelisCoefficient())
+      SEScalar.load(src.getMichaelisCoefficient(),dst.getMichaelisCoefficient());
         
-    if(data.getAerosolization()!=null)
-      this.getAerosolization().load(data.getAerosolization());
-    if(data.getBloodConcentration()!=null)
-      this.getBloodConcentration().load(data.getBloodConcentration());
-    if(data.getMassInBody()!=null)
-      this.getMassInBody().load(data.getMassInBody());
-    if(data.getMassInBlood()!=null)
-      this.getMassInBlood().load(data.getMassInBlood());
-    if(data.getMassInTissue()!=null)
-      this.getMassInTissue().load(data.getMassInTissue());
-    if(data.getPlasmaConcentration()!=null)
-      this.getPlasmaConcentration().load(data.getPlasmaConcentration());
-    if(data.getSystemicMassCleared()!=null)
-      this.getSystemicMassCleared().load(data.getSystemicMassCleared());
-    if(data.getTissueConcentration()!=null)
-      this.getTissueConcentration().load(data.getTissueConcentration());
+    if(src.hasAerosolization())
+      SESubstanceAerosolization.load(src.getAerosolization(),dst.getAerosolization());
+    if(src.hasBloodConcentration())
+      SEScalarMassPerVolume.load(src.getBloodConcentration(),dst.getBloodConcentration());
+    if(src.hasMassInBody())
+      SEScalarMass.load(src.getMassInBody(),dst.getMassInBody());
+    if(src.hasMassInBlood())
+      SEScalarMass.load(src.getMassInBlood(),dst.getMassInBlood());
+    if(src.hasMassInTissue())
+      SEScalarMass.load(src.getMassInTissue(),dst.getMassInTissue());
+    if(src.hasPlasmaConcentration())
+      SEScalarMassPerVolume.load(src.getPlasmaConcentration(),dst.getPlasmaConcentration());
+    if(src.hasSystemicMassCleared())
+      SEScalarMass.load(src.getSystemicMassCleared(),dst.getSystemicMassCleared());
+    if(src.hasTissueConcentration())
+      SEScalarMassPerVolume.load(src.getTissueConcentration(),dst.getTissueConcentration());
     
-    if(data.getAlveolarTransfer()!=null)
-      this.getAlveolarTransfer().load(data.getAlveolarTransfer());
-    if(data.getDiffusingCapacity()!=null)
-      this.getDiffusingCapacity().load(data.getDiffusingCapacity());
-    if(data.getEndTidalFraction()!=null)
-      this.getEndTidalFraction().load(data.getEndTidalFraction());
-    if(data.getEndTidalPressure()!=null)
-      this.getEndTidalPressure().load(data.getEndTidalPressure());
-    if(data.getRelativeDiffusionCoefficient()!=null)
-      this.getRelativeDiffusionCoefficient().load(data.getRelativeDiffusionCoefficient());
-    if(data.getSolubilityCoefficient()!=null)
-      this.getSolubilityCoefficient().load(data.getSolubilityCoefficient());
+    if(src.hasAlveolarTransfer())
+      SEScalarVolumePerTime.load(src.getAlveolarTransfer(),dst.getAlveolarTransfer());
+    if(src.hasDiffusingCapacity())
+      SEScalarVolumePerTimePressure.load(src.getDiffusingCapacity(),dst.getDiffusingCapacity());
+    if(src.hasEndTidalFraction())
+      SEScalar0To1.load(src.getEndTidalFraction(),dst.getEndTidalFraction());
+    if(src.hasEndTidalPressure())
+      SEScalarPressure.load(src.getEndTidalPressure(),dst.getEndTidalPressure());
+    if(src.hasRelativeDiffusionCoefficient())
+      SEScalar.load(src.getRelativeDiffusionCoefficient(),dst.getRelativeDiffusionCoefficient());
+    if(src.hasSolubilityCoefficient())
+      SEScalarInversePressure.load(src.getSolubilityCoefficient(),dst.getSolubilityCoefficient());
 
-    if(data.getClearance()!=null)
-      this.getClearance().load(data.getClearance());
-    if(data.getPharmacokinetics()!=null)
-      this.getPK().load(data.getPharmacokinetics());
-    if(data.getPharmacodynamics()!=null)
-      this.getPD().load(data.getPharmacodynamics());
-          
-    return true;
+    if(src.hasClearance())
+      SESubstanceClearance.load(src.getClearance(),dst.getClearance());
+    if(src.hasPharmacokinetics())
+      SESubstancePharmacokinetics.load(src.getPharmacokinetics(),dst.getPK());
+    if(src.hasPharmacodynamics())
+      SESubstancePharmacodynamics.load(src.getPharmacodynamics(),dst.getPD());
   }
   
-  public SubstanceData unload()
+  public static SubstanceData unload(SESubstance src)
   {
-    SubstanceData to = CDMSerializer.objFactory.createSubstanceData();
-    unload(to);
-    return to;
+    SubstanceData.Builder to = SubstanceData.newBuilder();
+    unload(src,to);
+    return to.build();
   }
-  
-  protected void unload(SubstanceData to)
+  protected static void unload(SESubstance src, SubstanceData.Builder dst)
   {
-    if(hasName())
-      to.setName(this.name);
-    if(hasState())
-      to.setState(this.state);
-    if(hasDensity())
-      to.setDensity(this.density.unload());    
-    if(hasMolarMass())
-      to.setMolarMass(this.molarMass.unload());
+    if(src.hasName())
+      dst.setName(src.name);
+    if(src.hasState())
+      dst.setState(src.state);
+    if(src.hasDensity())
+      dst.setDensity(SEScalarMassPerVolume.unload(src.density));    
+    if(src.hasMolarMass())
+      dst.setMolarMass(SEScalarMassPerAmount.unload(src.molarMass));
     
-    if(hasMaximumDiffusionFlux())
-      to.setMaximumDiffusionFlux(this.maximumDiffusionFlux.unload());
-    if(hasMichaelisCoefficient())
-      to.setMichaelisCoefficient(this.michaelisCoefficient.unload());
+    if(src.hasMaximumDiffusionFlux())
+      dst.setMaximumDiffusionFlux(SEScalarMassPerAreaTime.unload(src.maximumDiffusionFlux));
+    if(src.hasMichaelisCoefficient())
+      dst.setMichaelisCoefficient(SEScalar.unload(src.michaelisCoefficient));
          
-    if(hasAerosolization())
-      to.setAerosolization(this.aerosolization.unload());
-    if(hasBloodConcentration())
-      to.setBloodConcentration(this.bloodConcentration.unload());
-    if(hasMassInBody())
-      to.setMassInBody(this.massInBody.unload());
-    if(hasMassInBlood())
-      to.setMassInBlood(this.massInBlood.unload());
-    if(hasMassInTissue())
-      to.setMassInTissue(this.massInTissue.unload());
-    if(hasPlasmaConcentration())
-      to.setPlasmaConcentration(this.plasmaConcentration.unload());
-    if(hasSystemicMassCleared())
-      to.setSystemicMassCleared(this.systemicMassCleared.unload());
-    if(hasTissueConcentration())
-      to.setTissueConcentration(this.tissueConcentration.unload());
+    if(src.hasAerosolization())
+      dst.setAerosolization(SESubstanceAerosolization.unload(src.aerosolization));
+    if(src.hasBloodConcentration())
+      dst.setBloodConcentration(SEScalarMassPerVolume.unload(src.bloodConcentration));
+    if(src.hasMassInBody())
+      dst.setMassInBody(SEScalarMass.unload(src.massInBody));
+    if(src.hasMassInBlood())
+      dst.setMassInBlood(SEScalarMass.unload(src.massInBlood));
+    if(src.hasMassInTissue())
+      dst.setMassInTissue(SEScalarMass.unload(src.massInTissue));
+    if(src.hasPlasmaConcentration())
+      dst.setPlasmaConcentration(SEScalarMassPerVolume.unload(src.plasmaConcentration));
+    if(src.hasSystemicMassCleared())
+      dst.setSystemicMassCleared(SEScalarMass.unload(src.systemicMassCleared));
+    if(src.hasTissueConcentration())
+      dst.setTissueConcentration(SEScalarMassPerVolume.unload(src.tissueConcentration));
      
-    if(hasAlveolarTransfer())
-      to.setAlveolarTransfer(this.alveolarTransfer.unload());
-    if(hasDiffusingCapacity())
-      to.setDiffusingCapacity(this.diffusingCapacity.unload());
-    if(hasEndTidalFraction())
-      to.setEndTidalFraction(this.endTidalFraction.unload());
-    if(hasEndTidalPressure())
-      to.setEndTidalPressure(this.endTidalPressure.unload());
-    if(hasRelativeDiffusionCoefficient())
-      to.setRelativeDiffusionCoefficient(this.relativeDiffusionCoefficient.unload());
-    if(hasSolubilityCoefficient())
-      to.setSolubilityCoefficient(this.solubilityCoefficient.unload());
+    if(src.hasAlveolarTransfer())
+      dst.setAlveolarTransfer(SEScalarVolumePerTime.unload(src.alveolarTransfer));
+    if(src.hasDiffusingCapacity())
+      dst.setDiffusingCapacity(SEScalarVolumePerTimePressure.unload(src.diffusingCapacity));
+    if(src.hasEndTidalFraction())
+      dst.setEndTidalFraction(SEScalar0To1.unload(src.endTidalFraction));
+    if(src.hasEndTidalPressure())
+      dst.setEndTidalPressure(SEScalarPressure.unload(src.endTidalPressure));
+    if(src.hasRelativeDiffusionCoefficient())
+      dst.setRelativeDiffusionCoefficient(SEScalar.unload(src.relativeDiffusionCoefficient));
+    if(src.hasSolubilityCoefficient())
+      dst.setSolubilityCoefficient(SEScalarInversePressure.unload(src.solubilityCoefficient));
     
-    if(hasClearance())
-      to.setClearance(this.clearance.unload());
-    if(hasPK())
-      to.setPharmacokinetics(this.pk.unload());
-    if(hasPD())
-      to.setPharmacodynamics(this.pd.unload());        
+    if(src.hasClearance())
+      dst.setClearance(SESubstanceClearance.unload(src.clearance));
+    if(src.hasPK())
+      dst.setPharmacokinetics(SESubstancePharmacokinetics.unload(src.pk));
+    if(src.hasPD())
+      dst.setPharmacodynamics(SESubstancePharmacodynamics.unload(src.pd));        
   }
   
   public String  getName() { return this.name;}
   public void    setName(String name){this.name=name;}
   public boolean hasName(){return StringUtils.exists(this.name);}
   
-  public EnumSubstanceState  getState() { return this.state;}
-  public void                setState(EnumSubstanceState state){this.state=state;}
-  public boolean             hasState(){return this.state==null?false:true;}
+  public eState  getState() { return this.state;}
+  public void    setState(eState state){this.state=state;}
+  public boolean hasState(){return this.state==null?false:true;}
   
   public SEScalarMassPerVolume getDensity() 
   { 
@@ -358,10 +372,10 @@ public class SESubstance
   }
   public boolean hasDiffusingCapacity() {return this.diffusingCapacity==null?false:this.diffusingCapacity.isValid();}
   
-  public SEScalarFraction getEndTidalFraction() 
+  public SEScalar0To1 getEndTidalFraction() 
   { 
     if(this.endTidalFraction==null)
-      this.endTidalFraction=new SEScalarFraction();
+      this.endTidalFraction=new SEScalar0To1();
     return this.endTidalFraction;
   }
   public boolean hasEndTidalFraction() {return this.endTidalFraction==null?false:this.endTidalFraction.isValid();}
@@ -413,7 +427,7 @@ public class SESubstance
       this.pk = new SESubstancePharmacokinetics();
     return this.pk;
   }
-  public boolean hasPK() { return this.pk!=null; }
+  public boolean hasPK() { return this.pk!=null?this.pk.isValid():false; }
   public void removePK() { this.pk = null; }
   
   public SESubstancePharmacodynamics getPD()
@@ -422,7 +436,7 @@ public class SESubstance
       this.pd = new SESubstancePharmacodynamics();
     return this.pd;
   }
-  public boolean hasPD() { return this.pd!=null; }
+  public boolean hasPD() { return this.pd!=null?this.pd.isValid():false; }
   public void removePD() { this.pd = null; }
   
   

@@ -12,8 +12,9 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.Physiology.CardiovascularSystemData;
+import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
@@ -27,16 +28,16 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   protected SEScalarVolumePerTime             cerebralBloodFlow;
   protected SEScalarPressure                  cerebralPerfusionPressure;
   protected SEScalarPressure                  diastolicArterialPressure;
-  protected SEScalarFraction                  heartEjectionFraction;
+  protected SEScalar0To1                      heartEjectionFraction;
   protected SEScalarFrequency                 heartRate;
-  protected EnumHeartRhythm                   heartRhythm;
+  protected eHeartRhythm                      heartRhythm;
   protected SEScalarVolume                    heartStrokeVolume;
   protected SEScalarPressure                  intracranialPressure;
   protected SEScalarPressure                  meanArterialPressure;
   protected SEScalarPressure                  meanArterialCarbonDioxidePartialPressure;
   protected SEScalarPressure                  meanArterialCarbonDioxidePartialPressureDelta;
   protected SEScalarPressure                  meanCentralVenousPressure;
-  protected SEScalarVolumePerTime              meanSkinFlow;
+  protected SEScalarVolumePerTime             meanSkinFlow;
   protected SEScalarPressure                  pulmonaryArterialPressure;
   protected SEScalarPressure                  pulmonaryCapillariesWedgePressure;
   protected SEScalarPressure                  pulmonaryDiastolicArterialPressure;
@@ -142,141 +143,139 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       meanSkinFlow.invalidate();
   }
 
-  public boolean load(CardiovascularSystemData in)
+  public static void load(CardiovascularSystemData src, SECardiovascularSystem dst)
   {
-    if (in.getArterialPressure() != null)
-      getArterialPressure().load(in.getArterialPressure());
-    if (in.getMeanArterialPressure() != null)
-      getMeanArterialPressure().load(in.getMeanArterialPressure());
-    if (in.getBloodVolume() != null)
-      getBloodVolume().load(in.getBloodVolume());
-    if (in.getCardiacIndex() != null)
-      getCardiacIndex().load(in.getCardiacIndex());
-    if (in.getCardiacOutput() != null)
-      getCardiacOutput().load(in.getCardiacOutput());
-    if (in.getCentralVenousPressure() != null)
-      getCentralVenousPressure().load(in.getCentralVenousPressure());
-    if (in.getCerebralBloodFlow() != null)
-      getCerebralBloodFlow().load(in.getCerebralBloodFlow());
-    if (in.getCerebralPerfusionPressure() != null)
-      getCerebralPerfusionPressure().load(in.getCerebralPerfusionPressure());
-    if (in.getMeanCentralVenousPressure() != null)
-      getMeanCentralVenousPressure().load(in.getMeanCentralVenousPressure());
-    if (in.getDiastolicArterialPressure() != null)
-      getDiastolicArterialPressure().load(in.getDiastolicArterialPressure());  
-    if (in.getHeartEjectionFraction() != null)
-      getHeartEjectionFraction().load(in.getHeartEjectionFraction());
-    if (in.getHeartRate() != null)
-      getHeartRate().load(in.getHeartRate());    
-    if(in.getHeartRhythm()!=null)
-      this.setHeartRhythm(in.getHeartRhythm());
-    if (in.getHeartStrokeVolume() != null)
-      getHeartStrokeVolume().load(in.getHeartStrokeVolume());
-    if (in.getIntracranialPressure() != null)
-      getIntracranialPressure().load(in.getIntracranialPressure());
-    if (in.getPulmonaryArterialPressure() != null)
-      getPulmonaryArterialPressure().load(in.getPulmonaryArterialPressure());
-    if (in.getPulmonaryCapillariesWedgePressure() != null)
-      getPulmonaryCapillariesWedgePressure().load(in.getPulmonaryCapillariesWedgePressure());
-    if (in.getPulmonaryDiastolicArterialPressure() != null)
-      getPulmonaryDiastolicArterialPressure().load(in.getPulmonaryDiastolicArterialPressure());
-    if (in.getPulmonaryMeanArterialPressure() != null)
-      getPulmonaryMeanArterialPressure().load(in.getPulmonaryMeanArterialPressure());
-    if (in.getPulmonaryMeanCapillaryFlow() != null)
-      getPulmonaryMeanCapillaryFlow().load(in.getPulmonaryMeanCapillaryFlow());
-    if (in.getPulmonaryMeanShuntFlow() != null)
-      getPulmonaryMeanShuntFlow().load(in.getPulmonaryMeanShuntFlow());
-    if (in.getPulmonarySystolicArterialPressure() != null)
-      getPulmonarySystolicArterialPressure().load(in.getPulmonarySystolicArterialPressure());
-    if (in.getPulmonaryVascularResistance() != null)
-      getPulmonaryVascularResistance().load(in.getPulmonaryVascularResistance());
-    if (in.getPulmonaryVascularResistanceIndex() != null)
-      getPulmonaryVascularResistanceIndex().load(in.getPulmonaryVascularResistanceIndex());
-    if (in.getPulsePressure() != null)
-      getPulsePressure().load(in.getPulsePressure());
-    if (in.getSystemicVascularResistance() != null)
-      getSystemicVascularResistance().load(in.getSystemicVascularResistance());
-    if (in.getSystolicArterialPressure() != null)
-      getSystolicArterialPressure().load(in.getSystolicArterialPressure());
-    if (in.getMeanArterialCarbonDioxidePartialPressure() != null)
-      getMeanArterialCarbonDioxidePartialPressure().load(in.getMeanArterialCarbonDioxidePartialPressure());
-    if (in.getMeanArterialCarbonDioxidePartialPressureDelta() != null)
-      getMeanArterialCarbonDioxidePartialPressureDelta().load(in.getMeanArterialCarbonDioxidePartialPressureDelta());
-    if (in.getMeanSkinFlow() != null)
-      getMeanSkinFlow().load(in.getMeanSkinFlow());
-
-    return true;
+    if (src.hasArterialPressure())
+      SEScalarPressure.load(src.getArterialPressure(),dst.getArterialPressure());
+    if (src.hasMeanArterialPressure())
+      SEScalarPressure.load(src.getMeanArterialPressure(),dst.getMeanArterialPressure());
+    if (src.hasBloodVolume())
+      SEScalarVolume.load(src.getBloodVolume(),dst.getBloodVolume());
+    if (src.hasCardiacIndex())
+      SEScalarVolumePerTimeArea.load(src.getCardiacIndex(),dst.getCardiacIndex());
+    if (src.hasCardiacOutput())
+      SEScalarVolumePerTime.load(src.getCardiacOutput(),dst.getCardiacOutput());
+    if (src.hasCentralVenousPressure())
+      SEScalarPressure.load(src.getCentralVenousPressure(),dst.getCentralVenousPressure());
+    if (src.hasCerebralBloodFlow())
+      SEScalarVolumePerTime.load(src.getCerebralBloodFlow(),dst.getCerebralBloodFlow());
+    if (src.hasCerebralPerfusionPressure())
+      SEScalarPressure.load(src.getCerebralPerfusionPressure(),dst.getCerebralPerfusionPressure());
+    if (src.hasMeanCentralVenousPressure())
+      SEScalarPressure.load(src.getMeanCentralVenousPressure(),dst.getMeanCentralVenousPressure());
+    if (src.hasDiastolicArterialPressure())
+      SEScalarPressure.load(src.getDiastolicArterialPressure(),dst.getDiastolicArterialPressure());  
+    if (src.hasHeartEjectionFraction())
+      SEScalar0To1.load(src.getHeartEjectionFraction(),dst.getHeartEjectionFraction());
+    if (src.hasHeartRate())
+      SEScalarFrequency.load(src.getHeartRate(),dst.getHeartRate());    
+    if(src.getHeartRhythm()!=eHeartRhythm.UNRECOGNIZED)
+      dst.setHeartRhythm(src.getHeartRhythm());
+    if (src.hasHeartStrokeVolume())
+      SEScalarVolume.load(src.getHeartStrokeVolume(),dst.getHeartStrokeVolume());
+    if (src.hasIntracranialPressure())
+      SEScalarPressure.load(src.getIntracranialPressure(),dst.getIntracranialPressure());
+    if (src.hasPulmonaryArterialPressure())
+      SEScalarPressure.load(src.getPulmonaryArterialPressure(),dst.getPulmonaryArterialPressure());
+    if (src.hasPulmonaryCapillariesWedgePressure())
+      SEScalarPressure.load(src.getPulmonaryCapillariesWedgePressure(),dst.getPulmonaryCapillariesWedgePressure());
+    if (src.hasPulmonaryDiastolicArterialPressure())
+      SEScalarPressure.load(src.getPulmonaryDiastolicArterialPressure(),dst.getPulmonaryDiastolicArterialPressure());
+    if (src.hasPulmonaryMeanArterialPressure())
+      SEScalarPressure.load(src.getPulmonaryMeanArterialPressure(),dst.getPulmonaryMeanArterialPressure());
+    if (src.hasPulmonaryMeanCapillaryFlow())
+      SEScalarVolumePerTime.load(src.getPulmonaryMeanCapillaryFlow(),dst.getPulmonaryMeanCapillaryFlow());
+    if (src.hasPulmonaryMeanShuntFlow())
+      SEScalarVolumePerTime.load(src.getPulmonaryMeanShuntFlow(),dst.getPulmonaryMeanShuntFlow());
+    if (src.hasPulmonarySystolicArterialPressure())
+      SEScalarPressure.load(src.getPulmonarySystolicArterialPressure(),dst.getPulmonarySystolicArterialPressure());
+    if (src.hasPulmonaryVascularResistance())
+      SEScalarFlowResistance.load(src.getPulmonaryVascularResistance(),dst.getPulmonaryVascularResistance());
+    if (src.hasPulmonaryVascularResistanceIndex())
+      SEScalarPressureTimePerVolumeArea.load(src.getPulmonaryVascularResistanceIndex(),dst.getPulmonaryVascularResistanceIndex());
+    if (src.hasPulsePressure())
+      SEScalarPressure.load(src.getPulsePressure(),dst.getPulsePressure());
+    if (src.hasSystemicVascularResistance())
+      SEScalarFlowResistance.load(src.getSystemicVascularResistance(),dst.getSystemicVascularResistance());
+    if (src.hasSystolicArterialPressure())
+      SEScalarPressure.load(src.getSystolicArterialPressure(),dst.getSystolicArterialPressure());
+    if (src.hasMeanArterialCarbonDioxidePartialPressure())
+      SEScalarPressure.load(src.getMeanArterialCarbonDioxidePartialPressure(),dst.getMeanArterialCarbonDioxidePartialPressure());
+    if (src.hasMeanArterialCarbonDioxidePartialPressureDelta())
+      SEScalarPressure.load(src.getMeanArterialCarbonDioxidePartialPressureDelta(),dst.getMeanArterialCarbonDioxidePartialPressureDelta());
+    if (src.hasMeanSkinFlow())
+      SEScalarVolumePerTime.load(src.getMeanSkinFlow(),dst.getMeanSkinFlow());
   }
 
-  public CardiovascularSystemData unload()
+  public static CardiovascularSystemData unload(SECardiovascularSystem src)
   {
-    CardiovascularSystemData data = CDMSerializer.objFactory.createCardiovascularSystemData();
-    unload(data);
-    return data;
+    CardiovascularSystemData.Builder dst = CardiovascularSystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
 
-  protected void unload(CardiovascularSystemData data)
+  protected static void unload(SECardiovascularSystem src, CardiovascularSystemData.Builder dst)
   {
-    if (arterialPressure != null)
-      data.setArterialPressure(arterialPressure.unload()); 
-    if (meanArterialPressure != null)
-      data.setMeanArterialPressure(meanArterialPressure.unload()); 
-    if (bloodVolume != null)
-      data.setBloodVolume(bloodVolume.unload()); 
-    if (cardiacIndex != null)
-      data.setCardiacIndex(cardiacIndex.unload()); 
-    if (cardiacOutput != null)
-      data.setCardiacOutput(cardiacOutput.unload()); 
-    if (centralVenousPressure != null)
-      data.setCentralVenousPressure(centralVenousPressure.unload()); 
-    if (cerebralBloodFlow != null)
-      data.setCerebralBloodFlow(cerebralBloodFlow.unload()); 
-    if (cerebralPerfusionPressure != null)
-      data.setCerebralPerfusionPressure(cerebralPerfusionPressure.unload()); 
-    if (meanCentralVenousPressure != null)
-      data.setMeanCentralVenousPressure(meanCentralVenousPressure.unload()); 
-    if (diastolicArterialPressure != null)
-      data.setDiastolicArterialPressure(diastolicArterialPressure.unload()); 
-    if (heartEjectionFraction != null)
-      data.setHeartEjectionFraction(heartEjectionFraction.unload()); 
-    if (heartRate != null)
-      data.setHeartRate(heartRate.unload()); 
-    if(hasHeartRhythm())
-      data.setHeartRhythm(this.heartRhythm);
-    if (heartStrokeVolume != null)
-      data.setHeartStrokeVolume(heartStrokeVolume.unload());
-    if (intracranialPressure != null)
-      data.setIntracranialPressure(intracranialPressure.unload());
-    if (pulmonaryArterialPressure != null)
-      data.setPulmonaryArterialPressure(pulmonaryArterialPressure.unload());
-    if (pulmonaryCapillariesWedgePressure != null)
-      data.setPulmonaryCapillariesWedgePressure(pulmonaryCapillariesWedgePressure.unload()); 
-    if (pulmonaryDiastolicArterialPressure != null)
-      data.setPulmonaryDiastolicArterialPressure(pulmonaryDiastolicArterialPressure.unload()); 
-    if (pulmonaryMeanArterialPressure != null)
-      data.setPulmonaryMeanArterialPressure(pulmonaryMeanArterialPressure.unload()); 
-    if (pulmonaryMeanCapillaryFlow != null)
-      data.setPulmonaryMeanCapillaryFlow(pulmonaryMeanCapillaryFlow.unload()); 
-    if (pulmonaryMeanShuntFlow != null)
-      data.setPulmonaryMeanShuntFlow(pulmonaryMeanShuntFlow.unload()); 
-    if (pulmonarySystolicArterialPressure != null)
-      data.setPulmonarySystolicArterialPressure(pulmonarySystolicArterialPressure.unload()); 
-    if (pulmonaryVascularResistance != null)
-      data.setPulmonaryVascularResistance(pulmonaryVascularResistance.unload()); 
-    if (pulmonaryVascularResistanceIndex != null)
-      data.setPulmonaryVascularResistanceIndex(pulmonaryVascularResistanceIndex.unload()); 
-    if (pulsePressure != null)
-      data.setPulsePressure(pulsePressure.unload());
-    if (systemicVascularResistance != null)
-      data.setSystemicVascularResistance(systemicVascularResistance.unload());    
-    if (systolicArterialPressure != null)
-      data.setSystolicArterialPressure(systolicArterialPressure.unload());
-    if (getMeanArterialCarbonDioxidePartialPressure() != null)
-      data.setMeanArterialCarbonDioxidePartialPressure(meanArterialCarbonDioxidePartialPressure.unload());
-    if (getMeanArterialCarbonDioxidePartialPressureDelta() != null)
-      data.setMeanArterialCarbonDioxidePartialPressureDelta(meanArterialCarbonDioxidePartialPressureDelta.unload());
-    if (getMeanSkinFlow() != null)
-      data.setMeanSkinFlow(meanSkinFlow.unload());
+    if (src.hasArterialPressure())
+      dst.setArterialPressure(SEScalarPressure.unload(src.getArterialPressure())); 
+    if (src.hasMeanArterialPressure())
+      dst.setMeanArterialPressure(SEScalarPressure.unload(src.getMeanArterialPressure())); 
+    if (src.hasBloodVolume())
+      dst.setBloodVolume(SEScalarVolume.unload(src.getBloodVolume())); 
+    if (src.hasCardiacIndex())
+      dst.setCardiacIndex(SEScalarVolumePerTimeArea.unload(src.getCardiacIndex())); 
+    if (src.hasCardiacOutput())
+      dst.setCardiacOutput(SEScalarVolumePerTime.unload(src.getCardiacOutput())); 
+    if (src.hasCentralVenousPressure())
+      dst.setCentralVenousPressure(SEScalarPressure.unload(src.getCentralVenousPressure())); 
+    if (src.hasCerebralBloodFlow())
+      dst.setCerebralBloodFlow(SEScalarVolumePerTime.unload(src.getCerebralBloodFlow())); 
+    if (src.hasCerebralPerfusionPressure())
+      dst.setCerebralPerfusionPressure(SEScalarPressure.unload(src.getCerebralPerfusionPressure())); 
+    if (src.hasMeanCentralVenousPressure())
+      dst.setMeanCentralVenousPressure(SEScalarPressure.unload(src.getMeanCentralVenousPressure())); 
+    if (src.hasDiastolicArterialPressure())
+      dst.setDiastolicArterialPressure(SEScalarPressure.unload(src.getDiastolicArterialPressure())); 
+    if (src.hasHeartEjectionFraction())
+      dst.setHeartEjectionFraction(SEScalar0To1.unload(src.getHeartEjectionFraction())); 
+    if (src.hasHeartRate())
+      dst.setHeartRate(SEScalarFrequency.unload(src.getHeartRate())); 
+    if(src.hasHeartRhythm())
+      dst.setHeartRhythm(src.heartRhythm);
+    if (src.hasHeartStrokeVolume())
+      dst.setHeartStrokeVolume(SEScalarVolume.unload(src.getHeartStrokeVolume()));
+    if (src.hasIntracranialPressure())
+      dst.setIntracranialPressure(SEScalarPressure.unload(src.getIntracranialPressure()));
+    if (src.hasPulmonaryArterialPressure())
+      dst.setPulmonaryArterialPressure(SEScalarPressure.unload(src.getPulmonaryArterialPressure()));
+    if (src.hasPulmonaryCapillariesWedgePressure())
+      dst.setPulmonaryCapillariesWedgePressure(SEScalarPressure.unload(src.getPulmonaryCapillariesWedgePressure())); 
+    if (src.hasPulmonaryDiastolicArterialPressure())
+      dst.setPulmonaryDiastolicArterialPressure(SEScalarPressure.unload(src.getPulmonaryDiastolicArterialPressure())); 
+    if (src.hasPulmonaryMeanArterialPressure())
+      dst.setPulmonaryMeanArterialPressure(SEScalarPressure.unload(src.getPulmonaryMeanArterialPressure())); 
+    if (src.hasPulmonaryMeanCapillaryFlow())
+      dst.setPulmonaryMeanCapillaryFlow(SEScalarVolumePerTime.unload(src.getPulmonaryMeanCapillaryFlow())); 
+    if (src.hasPulmonaryMeanShuntFlow())
+      dst.setPulmonaryMeanShuntFlow(SEScalarVolumePerTime.unload(src.getPulmonaryMeanShuntFlow())); 
+    if (src.hasPulmonarySystolicArterialPressure())
+      dst.setPulmonarySystolicArterialPressure(SEScalarPressure.unload(src.getPulmonarySystolicArterialPressure())); 
+    if (src.hasPulmonaryVascularResistance())
+      dst.setPulmonaryVascularResistance(SEScalarFlowResistance.unload(src.getPulmonaryVascularResistance())); 
+    if (src.hasPulmonaryVascularResistanceIndex())
+      dst.setPulmonaryVascularResistanceIndex(SEScalarPressureTimePerVolumeArea.unload(src.getPulmonaryVascularResistanceIndex())); 
+    if (src.hasPulsePressure())
+      dst.setPulsePressure(SEScalarPressure.unload(src.getPulsePressure()));
+    if (src.hasSystemicVascularResistance())
+      dst.setSystemicVascularResistance(SEScalarFlowResistance.unload(src.getSystemicVascularResistance()));    
+    if (src.hasSystolicArterialPressure())
+      dst.setSystolicArterialPressure(SEScalarPressure.unload(src.getSystolicArterialPressure()));
+    if (src.hasMeanArterialCarbonDioxidePartialPressure())
+      dst.setMeanArterialCarbonDioxidePartialPressure(SEScalarPressure.unload(src.getMeanArterialCarbonDioxidePartialPressure()));
+    if (src.hasMeanArterialCarbonDioxidePartialPressureDelta())
+      dst.setMeanArterialCarbonDioxidePartialPressureDelta(SEScalarPressure.unload(src.getMeanArterialCarbonDioxidePartialPressureDelta()));
+    if (src.hasMeanSkinFlow())
+      dst.setMeanSkinFlow(SEScalarVolumePerTime.unload(src.getMeanSkinFlow()));
   }
 
   /*
@@ -417,10 +416,10 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   {
     return heartEjectionFraction == null ? false : heartEjectionFraction.isValid();
   }
-  public SEScalarFraction getHeartEjectionFraction()
+  public SEScalar0To1 getHeartEjectionFraction()
   {
     if (heartEjectionFraction == null)
-      heartEjectionFraction = new SEScalarFraction();
+      heartEjectionFraction = new SEScalar0To1();
     return heartEjectionFraction;
   }
 
@@ -441,9 +440,9 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   /*
    * Heart Rhythm
    */
-  public EnumHeartRhythm      getHeartRhythm() { return this.heartRhythm;}
-  public void            setHeartRhythm(EnumHeartRhythm heartRhythm){this.heartRhythm=heartRhythm;}
-  public boolean              hasHeartRhythm(){return this.heartRhythm==null?false:true;}
+  public eHeartRhythm    getHeartRhythm() { return this.heartRhythm;}
+  public void            setHeartRhythm(eHeartRhythm heartRhythm){this.heartRhythm=heartRhythm;}
+  public boolean         hasHeartRhythm(){return this.heartRhythm==null?false:true;}
 
   /*
    * Heart Stroke Volume

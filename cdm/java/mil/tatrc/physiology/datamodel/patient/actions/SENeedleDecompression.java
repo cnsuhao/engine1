@@ -12,15 +12,14 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.EnumSide;
-import mil.tatrc.physiology.datamodel.bind.NeedleDecompressionData;
+import com.kitware.physiology.cdm.PatientActions.NeedleDecompressionData;
+import com.kitware.physiology.cdm.Properties.eSide;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
 public class SENeedleDecompression extends SEPatientAction
 {
-  protected EnumOnOff state;
-  protected EnumSide side;
+  protected eSwitch state;
+  protected eSide side;
   
   public SENeedleDecompression()
   {
@@ -49,35 +48,34 @@ public class SENeedleDecompression extends SEPatientAction
     return hasSide() && hasState();
   }
   
-  public boolean load(NeedleDecompressionData in)
+  public static void load(NeedleDecompressionData src, SENeedleDecompression dst)
   {
-    super.load(in);
-    this.state = in.getState();
-    this.side = in.getSide();
-    return true;
+    SEPatientAction.load(src.getPatientAction(), dst);
+    dst.state = src.getState();
+    dst.side = src.getSide();
   }
   
-  public NeedleDecompressionData unload()
+  public static NeedleDecompressionData unload(SENeedleDecompression src)
   {
-    NeedleDecompressionData data = CDMSerializer.objFactory.createNeedleDecompressionData();
-    unload(data);
-    return data;
+    NeedleDecompressionData.Builder dst = NeedleDecompressionData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(NeedleDecompressionData data)
+  protected static void unload(SENeedleDecompression src, NeedleDecompressionData.Builder dst)
   {
-    super.unload(data);
-    if (hasState())
-      data.setState(state);
-    if (hasSide())
-      data.setSide(side);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasState())
+      dst.setState(src.state);
+    if (src.hasSide())
+      dst.setSide(src.side);
   }
   
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff onOrOff)
+  public void setState(eSwitch onOrOff)
   {
     state = onOrOff;
   }
@@ -86,12 +84,12 @@ public class SENeedleDecompression extends SEPatientAction
     return state == null ? false : true;
   }
   
-  public EnumSide getSide()
+  public eSide getSide()
   {
     return side;
   }
   
-  public void setSide(EnumSide rightOrLeft)
+  public void setSide(eSide rightOrLeft)
   {
     side = rightOrLeft;
   }

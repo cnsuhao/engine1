@@ -8,59 +8,57 @@ Unless required by applicable law or agreed to in writing, software distributed 
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
-**************************************************************************************/
+ **************************************************************************************/
 
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EndocrineSystemData;
+import com.kitware.physiology.cdm.Physiology.EndocrineSystemData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
 public class SEEndocrineSystem extends SEPhysiologySystem implements SESystem
 {
-    protected SEScalarAmountPerTime insulinSynthesisRate;
-  
+  protected SEScalarAmountPerTime insulinSynthesisRate;
+
   public SEEndocrineSystem()
   {
     insulinSynthesisRate = null;
   }
-  
+
   public void reset()
   {    
-        if (insulinSynthesisRate != null)
-          insulinSynthesisRate.invalidate();
+    if (insulinSynthesisRate != null)
+      insulinSynthesisRate.invalidate();
   }
-  
-  public boolean load(EndocrineSystemData in)
+
+  public static void load(EndocrineSystemData src, SEEndocrineSystem dst)
   {    
-        if (in.getInsulinSynthesisRate() != null)
-          getInsulinSynthesisRate().load(in.getInsulinSynthesisRate());
-    
-    return true;
+    if (src.hasInsulinSynthesisRate())
+      SEScalarAmountPerTime.load(src.getInsulinSynthesisRate(),dst.getInsulinSynthesisRate());
   }
-  
-  public EndocrineSystemData unload()
+
+  public static EndocrineSystemData unload(SEEndocrineSystem src)
   {
-    EndocrineSystemData data = CDMSerializer.objFactory.createEndocrineSystemData();
-    unload(data);
-    return data;
+    EndocrineSystemData.Builder dst = EndocrineSystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(EndocrineSystemData data)
+
+  protected static void unload(SEEndocrineSystem src, EndocrineSystemData.Builder dst)
   {    
-        if (getInsulinSynthesisRate() != null)
-            data.setInsulinSynthesisRate(insulinSynthesisRate.unload());
+    if (src.hasInsulinSynthesisRate())
+      dst.setInsulinSynthesisRate(SEScalarAmountPerTime.unload(src.getInsulinSynthesisRate()));
   }
-  
-    public boolean hasInsulinSynthesisRate()
-    {
-        return insulinSynthesisRate == null ? false : insulinSynthesisRate.isValid();
-    }
-    public SEScalarAmountPerTime getInsulinSynthesisRate()
-    {
-        if (insulinSynthesisRate == null)
-          insulinSynthesisRate = new SEScalarAmountPerTime();
-        return insulinSynthesisRate;
-    }
+
+  public boolean hasInsulinSynthesisRate()
+  {
+    return insulinSynthesisRate == null ? false : insulinSynthesisRate.isValid();
+  }
+  public SEScalarAmountPerTime getInsulinSynthesisRate()
+  {
+    if (insulinSynthesisRate == null)
+      insulinSynthesisRate = new SEScalarAmountPerTime();
+    return insulinSynthesisRate;
+  }
 }

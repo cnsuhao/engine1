@@ -16,9 +16,12 @@ package mil.tatrc.physiology.datamodel.compartment;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.GasCompartmentData;
+import com.kitware.physiology.cdm.Compartment.GasCompartmentData;
+import com.kitware.physiology.cdm.SubstanceQuantity.GasSubstanceQuantityData;
+
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
+import mil.tatrc.physiology.datamodel.substance.quantity.SEGasSubstanceQuantity;
 import mil.tatrc.physiology.datamodel.substance.quantity.SEGasSubstanceQuantity;
 
 public class SEGasCompartment extends SEFluidCompartment
@@ -37,35 +40,27 @@ public class SEGasCompartment extends SEFluidCompartment
       sq.reset();
   }
   
-  public boolean load(GasCompartmentData in)
+  public static void load(GasCompartmentData src, SEGasCompartment dst, SESubstanceManager subMgr)
   {
-    super.load(in);
+    SEFluidCompartment.load(src.getFluidCompartment(), dst);
   
-    //SESubstance* substance;
-    //SECompartmentSubstanceQuantity* subQ;
-    //for(int i = 0; i < in.getSubstanceQuantity().size(); i++)
-    //{
-    // TODO Look up the substance somehow, pass in.get managers in.get load?
-    //std::cout<<in.get.SubstanceQuantity()[i].Name()<<std::endl;
-    //substance = new SESubstance();//SubstanceManagerSubstance(in.get.SubstanceQuantity[i].name());
-    //subQ = new SECompartmentSubstanceQuantity(*substance);
-    //m_SubstanceQuantities.push_back(subQ);
-    //}
-    return true;
+    for(GasSubstanceQuantityData subQData : src.getSubstanceQuantityList())
+    {
+      SEGasSubstanceQuantity subQ = dst.getSubstanceQuantity(subMgr.getSubstance(subQData.getSubstanceQuantity().getSubstance()));
+      SEGasSubstanceQuantity.load(subQData, subQ);
+    }
   }
-  
-  public GasCompartmentData unload()
+  public static GasCompartmentData unload(SEGasCompartment src)
   {
-    GasCompartmentData to = CDMSerializer.objFactory.createGasCompartmentData();
-    unload(to);
-    return to;    
+    GasCompartmentData.Builder dst = GasCompartmentData.newBuilder();
+    unload(src,dst);
+    return dst.build();    
   }
-  
-  protected void unload(GasCompartmentData data)
+  protected static void unload(SEGasCompartment src, GasCompartmentData.Builder dst)
   {
-    super.unload(data);
-    
-    // TODO SUb Q
+    SEFluidCompartment.unload(src,dst.getFluidCompartmentBuilder());
+    for(SEGasSubstanceQuantity subQ : src.getSubstanceQuantities())
+      dst.addSubstanceQuantity(SEGasSubstanceQuantity.unload(subQ));
   }
   
   public boolean hasSubstanceQuantities()

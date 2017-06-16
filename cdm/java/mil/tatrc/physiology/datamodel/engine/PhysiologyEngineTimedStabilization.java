@@ -13,15 +13,20 @@ package mil.tatrc.physiology.datamodel.engine;
 
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineTimedStabilizationData;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineTimedConditionStabilizationData;
-import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.EngineConfiguration.PhysiologyEngineDynamicStabilizationData;
+import com.kitware.physiology.cdm.EngineConfiguration.PhysiologyEngineTimedStabilizationData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
-public class PhysiologyEngineTimedStabilization extends PhysiologyEngineStabilization
+import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
+import mil.tatrc.physiology.utilities.FileUtils;
+
+public class PhysiologyEngineTimedStabilization
 {
-  protected SEScalarTime restingStabilizationTime;
-  protected SEScalarTime feedbackStabilizationTime;
+  protected eSwitch                  trackingStabilization;
+  protected SEScalarTime             restingStabilizationTime;
+  protected SEScalarTime             feedbackStabilizationTime;
   protected Map<String,SEScalarTime> conditionStabilizationTimes;
   
   public PhysiologyEngineTimedStabilization()
@@ -32,48 +37,72 @@ public class PhysiologyEngineTimedStabilization extends PhysiologyEngineStabiliz
   
   public void reset()
   {
-    super.reset();
+    reset();
+    this.trackingStabilization=eSwitch.Off;
     this.restingStabilizationTime=null;
     this.feedbackStabilizationTime=null;
-    if(this.conditionStabilizationTimes!=null)
-      this.conditionStabilizationTimes.clear();
+    this.conditionStabilizationTimes.clear();
   }
   
-  public boolean load(PhysiologyEngineTimedStabilizationData in) 
+  public void readFile(String fileName) throws ParseException
   {
-    super.load(in);
-    getRestingStabilizationTime().load(in.getRestingStabilizationTime());
-    if(in.getFeedbackStabilizationTime()!=null)
-      getFeedbackStabilizationTime().load(in.getFeedbackStabilizationTime());
-    for(PhysiologyEngineTimedConditionStabilizationData c : in.getConditionStabilization())
+    PhysiologyEngineTimedStabilizationData.Builder builder = PhysiologyEngineTimedStabilizationData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    PhysiologyEngineTimedStabilization.load(builder.build(), this);
+  }
+  public void writeFile(String fileName)
+  {
+    FileUtils.writeFile(fileName, PhysiologyEngineTimedStabilization.unload(this).toString());
+  }
+  
+  public static void load(PhysiologyEngineTimedStabilizationData src, PhysiologyEngineTimedStabilization dst) 
+  {
+    if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED)
+      dst.trackingStabilization=src.getTrackingStabilization();
+    if(src.hasRestingStabilizationTime())
+      SEScalarTime.load(src.getRestingStabilizationTime(),dst.getRestingStabilizationTime());
+    if(src.hasFeedbackStabilizationTime())
+      SEScalarTime.load(src.getFeedbackStabilizationTime(),dst.getFeedbackStabilizationTime());
+    for(PhysiologyEngineTimedStabilizationData.ConditionTimingData c : src.getConditionStabilizationList())
     {
-      SEScalarTime stabilizationTime = this.createCondition(c.getName());
-      stabilizationTime.load(c.getTime());     
+      SEScalarTime.load(c.getStabilizationTime(),dst.createConditionStabilizationTime(c.getName()));     
     }
-    return true;
   }
   
-  public PhysiologyEngineTimedStabilizationData unload()
+  public static PhysiologyEngineTimedStabilizationData unload(PhysiologyEngineTimedStabilization src)
   {
-    PhysiologyEngineTimedStabilizationData to = CDMSerializer.objFactory.createPhysiologyEngineTimedStabilizationData();
-    unload(to);
-    return to;
+    PhysiologyEngineTimedStabilizationData.Builder dst = PhysiologyEngineTimedStabilizationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(PhysiologyEngineTimedStabilizationData data)
+  protected static void unload(PhysiologyEngineTimedStabilization src, PhysiologyEngineTimedStabilizationData.Builder dst)
   {
-    super.unload(data);
-    if(this.hasRestingStabilizationTime())
-      data.setRestingStabilizationTime(getRestingStabilizationTime().unload());
-    if(this.hasFeedbackStabilizationTime())
-      data.setFeedbackStabilizationTime(getFeedbackStabilizationTime().unload());
-    for(String name : this.conditionStabilizationTimes.keySet())
+    if(src.hasTrackingStabilization())
+      dst.setTrackingStabilization(src.trackingStabilization);
+    if(src.hasRestingStabilizationTime())
+      dst.setRestingStabilizationTime(SEScalarTime.unload(src.restingStabilizationTime));
+    if(src.hasFeedbackStabilizationTime())
+      dst.setFeedbackStabilizationTime(SEScalarTime.unload(src.feedbackStabilizationTime));
+    for(String name : src.conditionStabilizationTimes.keySet())
     {
-      PhysiologyEngineTimedConditionStabilizationData c = CDMSerializer.objFactory.createPhysiologyEngineTimedConditionStabilizationData();
+      PhysiologyEngineTimedStabilizationData.ConditionTimingData.Builder c = dst.addConditionStabilizationBuilder();
       c.setName(name);
-      c.setTime(this.conditionStabilizationTimes.get(name).unload());
-      data.getConditionStabilization().add(c);
+      c.setStabilizationTime(SEScalarTime.unload(src.conditionStabilizationTimes.get(name)));
     }
+  }
+  
+  public boolean hasTrackingStabilization()
+  {
+    return this.trackingStabilization!=null;
+  }
+  public eSwitch isTrackingStabilization()
+  {
+    return this.trackingStabilization;
+  }
+  public void TrackStabilization(eSwitch b)
+  {
+    this.trackingStabilization=b;
   }
   
   public boolean hasRestingStabilizationTime()
@@ -98,17 +127,17 @@ public class PhysiologyEngineTimedStabilization extends PhysiologyEngineStabiliz
     return feedbackStabilizationTime;
   }
   
-  public SEScalarTime createCondition(String type)
+  public SEScalarTime createConditionStabilizationTime(String type)
   {
     SEScalarTime stabilizationTime = new SEScalarTime();
     this.conditionStabilizationTimes.put(type, stabilizationTime);
     return stabilizationTime;
   }
-  public boolean hasCondition(String type)
+  public boolean hasConditionStabilizationTime(String type)
   {
     return this.conditionStabilizationTimes.containsKey(type);
   }
-  public SEScalarTime getCondition(String type)
+  public SEScalarTime getConditionStabilizationTime(String type)
   {
     return this.conditionStabilizationTimes.get(type);
   }

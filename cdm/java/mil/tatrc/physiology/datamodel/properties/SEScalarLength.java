@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarLengthData;
+import com.kitware.physiology.cdm.Properties.ScalarLengthData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.LengthUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarLength extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarLengthData src, SEScalarLength dst)
+  {
+    SEScalar.load(src.getScalarLength(),dst);
+  }
+  public static ScalarLengthData unload(SEScalarLength src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarLengthData.Builder dst = ScalarLengthData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarLength src, ScalarLengthData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarLengthBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -79,18 +96,6 @@ public class SEScalarLength extends SEScalar
     return this.getValue(unit.toString());
   }
   
-  
-
-  public ScalarLengthData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarLengthData to = CDMSerializer.objFactory.createScalarLengthData();
-    unload(to);
-    return to;
-  }
-
   public boolean validUnit(String unit)
   {
     if(LengthUnit.validUnit(unit))

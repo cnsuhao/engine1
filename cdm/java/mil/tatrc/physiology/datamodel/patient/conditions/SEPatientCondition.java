@@ -12,8 +12,13 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.conditions;
 
-import mil.tatrc.physiology.datamodel.bind.PatientConditionData;
-import mil.tatrc.physiology.datamodel.scenario.conditions.SECondition;
+import org.jfree.util.Log;
+
+import com.kitware.physiology.cdm.PatientConditions.AnyPatientConditionData;
+import com.kitware.physiology.cdm.PatientConditions.PatientConditionData;
+
+import mil.tatrc.physiology.datamodel.conditions.SECondition;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 
 public abstract class SEPatientCondition extends SECondition
 {
@@ -32,16 +37,121 @@ public abstract class SEPatientCondition extends SECondition
     super.reset();
   }
   
-  public boolean load(PatientConditionData in)
+  public static void load(PatientConditionData src, SEPatientCondition dst)
   {
-    super.load(in);
-    return true;
+    SECondition.load(src.getCondition(), dst);
   }
   
-  protected void unload(PatientConditionData data)
+  protected static void unload(SEPatientCondition src, PatientConditionData.Builder dst)
   {
-    super.unload(data);
+    SECondition.unload(src,dst.getConditionBuilder());
   }
   
   public abstract String toString();
+
+  public static SEPatientCondition ANY2CDM(AnyPatientConditionData c, SESubstanceManager subMgr) 
+  {
+    switch(c.getConditionCase())
+    {
+    case CHRONICANEMIA:
+    {
+      SEChronicAnemia newC = new SEChronicAnemia();
+      SEChronicAnemia.load(c.getChronicAnemia(), newC);
+      return newC;
+    }
+    case CHRONICOBSTRUCTIVEPULMONARYDISEASE:
+    {
+      SEChronicObstructivePulmonaryDisease newC = new SEChronicObstructivePulmonaryDisease();
+      SEChronicObstructivePulmonaryDisease.load(c.getChronicObstructivePulmonaryDisease(), newC);
+      return newC;
+    }
+    case CHRONICPERICARDIALEFFUSION:
+    {
+      SEChronicPericardialEffusion newC = new SEChronicPericardialEffusion();
+      SEChronicPericardialEffusion.load(c.getChronicPericardialEffusion(), newC);
+      return newC;
+    }
+    case CHRONICRENALSTENOSIS:
+    {
+      SEChronicRenalStenosis newC = new SEChronicRenalStenosis();
+      SEChronicRenalStenosis.load(c.getChronicRenalStenosis(), newC);
+      return newC;
+    }
+    case CHRONICVENTRICULARSYSTOLICDYSFUNCTION:
+    {
+      SEChronicVentricularSystolicDysfunction newC = new SEChronicVentricularSystolicDysfunction();
+      SEChronicVentricularSystolicDysfunction.load(c.getChronicVentricularSystolicDysfunction(), newC);
+      return newC;
+    }
+    case CONSUMEMEAL:
+    {
+      SEConsumeMeal newC = new SEConsumeMeal();
+      SEConsumeMeal.load(c.getConsumeMeal(), newC);
+      return newC;      
+    }
+    case IMPAIREDALVEOLAREXCHANGE:
+    {
+      SEImpairedAlveolarExchange newC = new SEImpairedAlveolarExchange();
+      SEImpairedAlveolarExchange.load(c.getImpairedAlveolarExchange(), newC);
+      return newC;      
+    }
+    case LOBARPNEUMONIA:
+    {
+      SELobarPneumonia newC = new SELobarPneumonia();
+      SELobarPneumonia.load(c.getLobarPneumonia(), newC);
+      return newC;
+    }
+    case CONDITION_NOT_SET:
+      Log.warn("AnyPatientConditionData was empty...was that intended?");
+      return null;
+    }
+    Log.error("Unsupported Patient condition type "+c.getConditionCase());
+    return null;
+  }
+  public static AnyPatientConditionData CDM2ANY(SEPatientCondition c)
+  {
+    AnyPatientConditionData.Builder dst = AnyPatientConditionData.newBuilder();
+    if(c instanceof SEChronicAnemia)
+    {
+      dst.setChronicAnemia(SEChronicAnemia.unload((SEChronicAnemia)c));    
+      return dst.build();
+    }
+    if(c instanceof SEChronicObstructivePulmonaryDisease)
+    {
+      dst.setChronicObstructivePulmonaryDisease(SEChronicObstructivePulmonaryDisease.unload((SEChronicObstructivePulmonaryDisease)c));    
+      return dst.build();
+    }
+    if(c instanceof SEChronicPericardialEffusion)
+    {
+      dst.setChronicPericardialEffusion(SEChronicPericardialEffusion.unload((SEChronicPericardialEffusion)c));    
+      return dst.build();
+    }
+    if(c instanceof SEChronicRenalStenosis)
+    {
+      dst.setChronicRenalStenosis(SEChronicRenalStenosis.unload((SEChronicRenalStenosis)c));    
+      return dst.build();
+    }
+    if(c instanceof SEChronicVentricularSystolicDysfunction)
+    {
+      dst.setChronicVentricularSystolicDysfunction(SEChronicVentricularSystolicDysfunction.unload((SEChronicVentricularSystolicDysfunction)c));    
+      return dst.build();
+    }
+    if(c instanceof SEConsumeMeal)
+    {
+      dst.setConsumeMeal(SEConsumeMeal.unload((SEConsumeMeal)c));    
+      return dst.build();
+    }
+    if(c instanceof SEImpairedAlveolarExchange)
+    {
+      dst.setImpairedAlveolarExchange(SEImpairedAlveolarExchange.unload((SEImpairedAlveolarExchange)c));    
+      return dst.build();
+    }
+    if(c instanceof SELobarPneumonia)
+    {
+      dst.setLobarPneumonia(SELobarPneumonia.unload((SELobarPneumonia)c));    
+      return dst.build();
+    }
+    Log.error("Unsupported Patient condition type "+c);
+    return dst.build();
+  }
 }

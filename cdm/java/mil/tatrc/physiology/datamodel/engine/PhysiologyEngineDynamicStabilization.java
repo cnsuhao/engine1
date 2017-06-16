@@ -13,129 +13,103 @@ package mil.tatrc.physiology.datamodel.engine;
 
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineDynamicStabilizationCriteriaData;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineDynamicStabilizationCriteriaPropertyData;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineDynamicStabilizationData;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineDynamicConditionStabilizationData;
-import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.EngineConfiguration.PhysiologyEngineDynamicStabilizationData;
+import com.kitware.physiology.cdm.PatientNutrition.NutritionData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
-public class PhysiologyEngineDynamicStabilization extends PhysiologyEngineStabilization
+import mil.tatrc.physiology.datamodel.patient.nutrition.SENutrition;
+import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
+import mil.tatrc.physiology.utilities.FileUtils;
+
+public class PhysiologyEngineDynamicStabilization
 {
-  public class Criteria
-  {
-    public SEScalarTime convergenceTime=new SEScalarTime();
-    public SEScalarTime minimumReactionTime=new SEScalarTime();
-    public SEScalarTime maximumAllowedStabilizationTime=new SEScalarTime();
-    
-    public List<PropertyConvergence> properties=new ArrayList<PropertyConvergence>();
-    
-    public void load(PhysiologyEngineDynamicStabilizationCriteriaData in)
-    {
-      convergenceTime.load(in.getConvergenceTime());
-      minimumReactionTime.load(in.getMinimumReactionTime());
-      maximumAllowedStabilizationTime.load(in.getMaximumAllowedStabilizationTime());      
-      for(PhysiologyEngineDynamicStabilizationCriteriaPropertyData pcData : in.getPropertyConvergence())
-      {
-        PropertyConvergence pc = new PropertyConvergence();
-        pc.name = pcData.getName();
-        pc.percentDifference = pcData.getPercentDifference();
-      }
-    }
-    public PhysiologyEngineDynamicStabilizationCriteriaData unload()
-    {
-      PhysiologyEngineDynamicStabilizationCriteriaData to = new PhysiologyEngineDynamicStabilizationCriteriaData();
-      to.setConvergenceTime(this.convergenceTime.unload());
-      to.setMinimumReactionTime(this.minimumReactionTime.unload());
-      to.setMaximumAllowedStabilizationTime(this.maximumAllowedStabilizationTime.unload());
-      for(PropertyConvergence pc : this.properties)
-      {
-        PhysiologyEngineDynamicStabilizationCriteriaPropertyData pcData = CDMSerializer.objFactory.createPhysiologyEngineDynamicStabilizationCriteriaPropertyData();
-        pcData.setName(pc.name);
-        pcData.setPercentDifference(pc.percentDifference);
-        to.getPropertyConvergence().add(pcData);
-      }
-      return to;
-    }
-    public void createProperty(double percentDifference, String property)
-    {
-      PropertyConvergence pc = new PropertyConvergence();
-      pc.name=property;
-      pc.percentDifference=percentDifference;
-      this.properties.add(pc);
-    }
-  }
-  public class PropertyConvergence
-  {
-    public String name;
-    public double percentDifference;
-  }
-  
-  
-  protected Criteria restingStabilizationCriteria;
-  protected Criteria feedbackStabilizationCriteria;
-  protected Map<String,Criteria> conditionStabilizationCriteria;
+  protected eSwitch                                                  trackingStabilization;
+  protected PhysiologyEngineDynamicStabilizationCriteria             restingStabilizationCriteria;
+  protected PhysiologyEngineDynamicStabilizationCriteria             feedbackStabilizationCriteria;
+  protected Map<String,PhysiologyEngineDynamicStabilizationCriteria> conditionStabilizationCriteria;
   
   public PhysiologyEngineDynamicStabilization()
   {
-    super();
-    this.conditionStabilizationCriteria=new HashMap<String,Criteria>();
+    this.conditionStabilizationCriteria=new HashMap<String,PhysiologyEngineDynamicStabilizationCriteria>();
   }
   
   public void reset()
   {
-    super.reset();
+    this.trackingStabilization=eSwitch.Off;
     this.restingStabilizationCriteria=null;
     this.feedbackStabilizationCriteria=null;
-    if(this.conditionStabilizationCriteria!=null)
-      this.conditionStabilizationCriteria.clear();
+    this.conditionStabilizationCriteria.clear();
   }
   
-  public boolean load(PhysiologyEngineDynamicStabilizationData in) 
+  public void readFile(String fileName) throws ParseException
   {
-    super.load(in);
-    getRestingStabilizationCriteria().load(in.getRestingStabilizationCriteria());
-    if(in.getFeedbackStabilizationCriteria()!=null)
-      getFeedbackStabilizationCriteria().load(in.getFeedbackStabilizationCriteria());
-    for(PhysiologyEngineDynamicConditionStabilizationData cData : in.getConditionStabilization())
+    PhysiologyEngineDynamicStabilizationData.Builder builder = PhysiologyEngineDynamicStabilizationData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    PhysiologyEngineDynamicStabilization.load(builder.build(), this);
+  }
+  public void writeFile(String fileName)
+  {
+    FileUtils.writeFile(fileName, PhysiologyEngineDynamicStabilization.unload(this).toString());
+  }
+  
+  public static void load(PhysiologyEngineDynamicStabilizationData src, PhysiologyEngineDynamicStabilization dst) 
+  {
+    if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED)
+      dst.trackingStabilization=src.getTrackingStabilization();
+    if(src.hasRestingStabilizationCriteria())
+      PhysiologyEngineDynamicStabilizationCriteria.load(src.getRestingStabilizationCriteria(),dst.getRestingStabilizationCriteria());
+    if(src.hasFeedbackStabilizationCriteria())
+      PhysiologyEngineDynamicStabilizationCriteria.load(src.getFeedbackStabilizationCriteria(),dst.getFeedbackStabilizationCriteria());
+    for(PhysiologyEngineDynamicStabilizationData.ConditionCriteriaData cData : src.getConditionStabilizationCriteriaList())
     {
-      Criteria c = createCondition(cData.getName());
-      c.load(cData.getCriteria());
+      PhysiologyEngineDynamicStabilizationCriteria.load(cData.getCriteria(), dst.createConditionCriteria(cData.getName()));
     }
-    return true;
   }
-  
-  public PhysiologyEngineDynamicStabilizationData unload()
+  public static PhysiologyEngineDynamicStabilizationData unload(PhysiologyEngineDynamicStabilization src)
   {
-    PhysiologyEngineDynamicStabilizationData to = CDMSerializer.objFactory.createPhysiologyEngineDynamicStabilizationData();
-    unload(to);
-    return to;
+    PhysiologyEngineDynamicStabilizationData.Builder dst = PhysiologyEngineDynamicStabilizationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(PhysiologyEngineDynamicStabilizationData data)
+  protected static void unload(PhysiologyEngineDynamicStabilization src, PhysiologyEngineDynamicStabilizationData.Builder dst)
   {
-    super.unload(data);
-    if(this.hasRestingStabilizationCriteria())
-      data.setRestingStabilizationCriteria(getRestingStabilizationCriteria().unload());
-    if(this.hasFeedbackStabilizationCriteria())
-      data.setFeedbackStabilizationCriteria(getFeedbackStabilizationCriteria().unload());
-    for(String name : this.conditionStabilizationCriteria.keySet())
+    if(src.hasTrackingStabilization())
+      dst.setTrackingStabilization(src.trackingStabilization);
+    if(src.hasRestingStabilizationCriteria())
+      dst.setRestingStabilizationCriteria(PhysiologyEngineDynamicStabilizationCriteria.unload(src.restingStabilizationCriteria));
+    if(src.hasFeedbackStabilizationCriteria())
+      dst.setFeedbackStabilizationCriteria(PhysiologyEngineDynamicStabilizationCriteria.unload(src.feedbackStabilizationCriteria));
+    for(String name : src.conditionStabilizationCriteria.keySet())
     {
-      PhysiologyEngineDynamicConditionStabilizationData c = CDMSerializer.objFactory.createPhysiologyEngineDynamicConditionStabilizationData();
+      PhysiologyEngineDynamicStabilizationData.ConditionCriteriaData.Builder c = dst.addConditionStabilizationCriteriaBuilder();
       c.setName(name);
-      c.setCriteria(this.conditionStabilizationCriteria.get(name).unload());
-      data.getConditionStabilization().add(c);
+      c.setCriteria(PhysiologyEngineDynamicStabilizationCriteria.unload(src.conditionStabilizationCriteria.get(name)));
     }
+  }
+  
+  public boolean hasTrackingStabilization()
+  {
+    return this.trackingStabilization!=null;
+  }
+  public eSwitch isTrackingStabilization()
+  {
+    return this.trackingStabilization;
+  }
+  public void TrackStabilization(eSwitch b)
+  {
+    this.trackingStabilization=b;
   }
   
   public boolean hasRestingStabilizationCriteria()
   {
     return restingStabilizationCriteria != null;
   }
-  public Criteria getRestingStabilizationCriteria()
+  public PhysiologyEngineDynamicStabilizationCriteria getRestingStabilizationCriteria()
   {
     if (restingStabilizationCriteria == null)
-      restingStabilizationCriteria = new Criteria();
+      restingStabilizationCriteria = new PhysiologyEngineDynamicStabilizationCriteria();
     return restingStabilizationCriteria;
   }
   
@@ -143,24 +117,24 @@ public class PhysiologyEngineDynamicStabilization extends PhysiologyEngineStabil
   {
     return feedbackStabilizationCriteria != null;
   }
-  public Criteria getFeedbackStabilizationCriteria()
+  public PhysiologyEngineDynamicStabilizationCriteria getFeedbackStabilizationCriteria()
   {
     if (feedbackStabilizationCriteria == null)
-      feedbackStabilizationCriteria = new Criteria();
+      feedbackStabilizationCriteria = new PhysiologyEngineDynamicStabilizationCriteria();
     return feedbackStabilizationCriteria;
   }
   
-  public Criteria createCondition(String type)
+  public PhysiologyEngineDynamicStabilizationCriteria createConditionCriteria(String type)
   {
-    Criteria c = new Criteria();
+    PhysiologyEngineDynamicStabilizationCriteria c = new PhysiologyEngineDynamicStabilizationCriteria();
     this.conditionStabilizationCriteria.put(type, c);
     return c;
   }
-  public boolean hasCondition(String type)
+  public boolean hasConditionCriteria(String type)
   {
     return this.conditionStabilizationCriteria.containsKey(type);
   }
-  public Criteria getCondition(String type)
+  public PhysiologyEngineDynamicStabilizationCriteria getConditionCriteria(String type)
   {
     return this.conditionStabilizationCriteria.get(type);
   }

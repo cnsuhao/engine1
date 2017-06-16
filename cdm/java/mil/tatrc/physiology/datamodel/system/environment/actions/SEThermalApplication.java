@@ -12,14 +12,14 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.environment.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ThermalApplicationData;
+import com.kitware.physiology.cdm.EnvironmentActions.ThermalApplicationData;
+
 import mil.tatrc.physiology.datamodel.system.environment.*;
 
 public class SEThermalApplication extends SEEnvironmentAction
 {
-  protected SEActiveHeating      activeHeating;
-  protected SEActiveCooling      activeCooling;
+  protected SEActiveConditioning activeHeating;
+  protected SEActiveConditioning activeCooling;
   protected SEAppliedTemperature appliedTemperature;
   protected Boolean              appendToPrevious;
   
@@ -68,38 +68,35 @@ public class SEThermalApplication extends SEEnvironmentAction
     return hasActiveCooling() || hasActiveHeating() || hasAppliedTemperature();
   }
 
-  
-  public boolean load(ThermalApplicationData in)
+  public static void load(ThermalApplicationData src, SEThermalApplication dst)
   {
-    super.load(in);
-    this.appendToPrevious = in.isAppendToPrevious();
-    if(in.getActiveHeating()!=null)
-      getActiveHeating().load(in.getActiveHeating());
-    if(in.getActiveCooling()!=null)
-      getActiveCooling().load(in.getActiveCooling());
-    if(in.getAppliedTemperature()!=null)
-      getAppliedTemperature().load(in.getAppliedTemperature());
-    return isValid();
+    SEEnvironmentAction.load(src.getEnvironmentAction(), dst);
+    if(src.getAppendToPrevious())
+      dst.appendToPrevious = src.getAppendToPrevious();
+    if(src.hasActiveHeating())
+      SEActiveConditioning.load(src.getActiveHeating(),dst.getActiveHeating());
+    if(src.hasActiveCooling())
+      SEActiveConditioning.load(src.getActiveCooling(),dst.getActiveCooling());
+    if(src.hasAppliedTemperature())
+      SEAppliedTemperature.load(src.getAppliedTemperature(),dst.getAppliedTemperature());
   }
-  
-  public ThermalApplicationData unload()
+  public static ThermalApplicationData unload(SEThermalApplication src)
   {
-    ThermalApplicationData data = CDMSerializer.objFactory.createThermalApplicationData();
-    unload(data);
-    return data;
+    ThermalApplicationData.Builder dst = ThermalApplicationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(ThermalApplicationData data)
+  protected static void unload(SEThermalApplication src, ThermalApplicationData.Builder dst)
   {
-    super.unload(data);
-    if(appendToPrevious!=null)
-      data.setAppendToPrevious(appendToPrevious);
-    if (hasActiveHeating())
-      data.setActiveHeating(getActiveHeating().unload());
-    if (hasActiveCooling())
-      data.setActiveCooling(getActiveCooling().unload());
-    if (hasAppliedTemperature())
-      data.setAppliedTemperature(getAppliedTemperature().unload());
+    SEEnvironmentAction.unload(src, dst.getEnvironmentActionBuilder());
+    if(src.appendToPrevious!=null)
+      dst.setAppendToPrevious(src.appendToPrevious);
+    if (src.hasActiveHeating())
+      dst.setActiveHeating(SEActiveConditioning.unload(src.activeHeating));
+    if (src.hasActiveCooling())
+      dst.setActiveCooling(SEActiveConditioning.unload(src.activeCooling));
+    if (src.hasAppliedTemperature())
+      dst.setAppliedTemperature(SEAppliedTemperature.unload(src.appliedTemperature));
   }
   
   public boolean hasAppendToPrevious() { return this.appendToPrevious!=null;}
@@ -109,10 +106,10 @@ public class SEThermalApplication extends SEEnvironmentAction
   {
     return activeHeating != null;
   }
-  public SEActiveHeating getActiveHeating()
+  public SEActiveConditioning getActiveHeating()
   {
     if (activeHeating == null)
-      activeHeating = new SEActiveHeating();
+      activeHeating = new SEActiveConditioning();
     return activeHeating;
   }
   
@@ -120,10 +117,10 @@ public class SEThermalApplication extends SEEnvironmentAction
   {
     return activeCooling != null;
   }
-  public SEActiveCooling getActiveCooling()
+  public SEActiveConditioning getActiveCooling()
   {
     if (activeCooling == null)
-      activeCooling = new SEActiveCooling();
+      activeCooling = new SEActiveConditioning();
     return activeCooling;
   }
   

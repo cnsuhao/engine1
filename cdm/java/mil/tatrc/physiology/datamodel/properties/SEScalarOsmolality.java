@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarOsmolalityData;
+import com.kitware.physiology.cdm.Properties.ScalarOsmolalityData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.OsmolalityUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarOsmolality extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarOsmolalityData src, SEScalarOsmolality dst)
+  {
+    SEScalar.load(src.getScalarOsmolality(),dst);
+  }
+  public static ScalarOsmolalityData unload(SEScalarOsmolality src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarOsmolalityData.Builder dst = ScalarOsmolalityData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarOsmolality src, ScalarOsmolalityData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarOsmolalityBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarOsmolality extends SEScalar
   public double getValue(OsmolalityUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarOsmolalityData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarOsmolalityData to = CDMSerializer.objFactory.createScalarOsmolalityData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarElectricPotentialData;
+import com.kitware.physiology.cdm.Properties.ScalarElectricPotentialData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.ElectricPotentialUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarElectricPotential extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarElectricPotentialData src, SEScalarElectricPotential dst)
+  {
+    SEScalar.load(src.getScalarElectricPotential(),dst);
+  }
+  public static ScalarElectricPotentialData unload(SEScalarElectricPotential src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarElectricPotentialData.Builder dst = ScalarElectricPotentialData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarElectricPotential src, ScalarElectricPotentialData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarElectricPotentialBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarElectricPotential extends SEScalar
   public double getValue(ElectricPotentialUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarElectricPotentialData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarElectricPotentialData to = CDMSerializer.objFactory.createScalarElectricPotentialData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

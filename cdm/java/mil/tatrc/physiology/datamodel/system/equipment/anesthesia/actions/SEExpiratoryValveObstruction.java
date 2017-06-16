@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.ExpiratoryValveObstructionData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.ExpiratoryValveObstructionData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEExpiratoryValveObstruction extends SEAnesthesiaMachineAction
@@ -38,25 +37,23 @@ public class SEExpiratoryValveObstruction extends SEAnesthesiaMachineAction
     return hasSeverity();
   }
   
-  public boolean load(ExpiratoryValveObstructionData in)
+  public static void load(ExpiratoryValveObstructionData src, SEExpiratoryValveObstruction dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
-  
-  public ExpiratoryValveObstructionData unload()
+  public static ExpiratoryValveObstructionData unload(SEExpiratoryValveObstruction src)
   {
-    ExpiratoryValveObstructionData data = CDMSerializer.objFactory.createExpiratoryValveObstructionData();
-    unload(data);
-    return data;
+    ExpiratoryValveObstructionData.Builder dst = ExpiratoryValveObstructionData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(ExpiratoryValveObstructionData data)
+  protected static void unload(SEExpiratoryValveObstruction src, ExpiratoryValveObstructionData.Builder dst)
   {
-    super.unload(data);
-    if (hasSeverity())
-      data.setSeverity(severity.unload());
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   /*

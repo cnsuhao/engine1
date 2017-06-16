@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.biogears.engine;
 
-import mil.tatrc.physiology.datamodel.scenario.datarequests.SEDataRequestManager;
+import mil.tatrc.physiology.datamodel.datarequests.SEDataRequestManager;
 
 public abstract class CDMUpdatedCallback
 {

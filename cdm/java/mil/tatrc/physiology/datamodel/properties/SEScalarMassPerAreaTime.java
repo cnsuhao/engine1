@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarMassPerAreaTimeData;
+import com.kitware.physiology.cdm.Properties.ScalarMassPerAreaTimeData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.MassPerAreaTimeUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarMassPerAreaTime extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarMassPerAreaTimeData src, SEScalarMassPerAreaTime dst)
+  {
+    SEScalar.load(src.getScalarMassPerAreaTime(),dst);
+  }
+  public static ScalarMassPerAreaTimeData unload(SEScalarMassPerAreaTime src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarMassPerAreaTimeData.Builder dst = ScalarMassPerAreaTimeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarMassPerAreaTime src, ScalarMassPerAreaTimeData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarMassPerAreaTimeBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarMassPerAreaTime extends SEScalar
   public double getValue(MassPerAreaTimeUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarMassPerAreaTimeData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarMassPerAreaTimeData to = CDMSerializer.objFactory.createScalarMassPerAreaTimeData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

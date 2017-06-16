@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarFrequencyData;
+import com.kitware.physiology.cdm.Properties.ScalarFrequencyData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.FrequencyUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarFrequency extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarFrequencyData src, SEScalarFrequency dst)
+  {
+    SEScalar.load(src.getScalarFrequency(),dst);
+  }
+  public static ScalarFrequencyData unload(SEScalarFrequency src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarFrequencyData.Builder dst = ScalarFrequencyData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarFrequency src, ScalarFrequencyData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarFrequencyBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarFrequency extends SEScalar
   public double getValue(FrequencyUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarFrequencyData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarFrequencyData to = CDMSerializer.objFactory.createScalarFrequencyData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

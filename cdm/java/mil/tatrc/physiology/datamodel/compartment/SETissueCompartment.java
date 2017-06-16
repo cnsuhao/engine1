@@ -25,10 +25,10 @@ package mil.tatrc.physiology.datamodel.compartment;
 
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.TissueCompartmentData;
+import com.kitware.physiology.cdm.Compartment.TissueCompartmentData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar;
-import mil.tatrc.physiology.datamodel.properties.SEScalarFraction;
+import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.properties.SEScalarMass;
 import mil.tatrc.physiology.datamodel.properties.SEScalarMassPerMass;
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolume;
@@ -37,8 +37,8 @@ public class SETissueCompartment extends SECompartment
 {
   protected SEScalarMassPerMass acidicPhospohlipidConcentration;  
   protected SEScalarVolume      matrixVolume;
-  protected SEScalarFraction    neutralLipidsVolumeFraction;
-  protected SEScalarFraction    neutralPhospholipidsVolumeFraction;  
+  protected SEScalar0To1        neutralLipidsVolumeFraction;
+  protected SEScalar0To1        neutralPhospholipidsVolumeFraction;  
   protected SEScalar            tissueToPlasmaAlbuminRatio;
   protected SEScalar            tissueToPlasmaAlphaAcidGlycoproteinRatio;
   protected SEScalar            tissueToPlasmaLipoproteinRatio;
@@ -77,55 +77,51 @@ public class SETissueCompartment extends SECompartment
       totalMass.invalidate();
   }
   
-  public boolean load(TissueCompartmentData in)
+  public static void load(TissueCompartmentData src, SETissueCompartment dst)
   {
-    super.load(in);
-    if(in.getAcidicPhospohlipidConcentration()!=null)
-      getAcidicPhospohlipidConcentration().load(in.getAcidicPhospohlipidConcentration());
-    if(in.getMatrixVolume()!=null)
-      getMatrixVolume().load(in.getMatrixVolume());
-    if(in.getNeutralLipidsVolumeFraction()!=null)
-      getNeutralLipidsVolumeFraction().load(in.getNeutralLipidsVolumeFraction());
-    if(in.getNeutralPhospholipidsVolumeFraction()!=null)
-      getNeutralPhospholipidsVolumeFraction().load(in.getNeutralPhospholipidsVolumeFraction());
-    if(in.getTissueToPlasmaAlbuminRatio()!=null)
-      getTissueToPlasmaAlbuminRatio().load(in.getTissueToPlasmaAlbuminRatio());
-    if(in.getTissueToPlasmaAlphaAcidGlycoproteinRatio()!=null)
-      getTissueToPlasmaAlphaAcidGlycoproteinRatio().load(in.getTissueToPlasmaAlphaAcidGlycoproteinRatio());
-    if(in.getTissueToPlasmaLipoproteinRatio()!=null)
-      getTissueToPlasmaLipoproteinRatio().load(in.getTissueToPlasmaLipoproteinRatio());
-    if(in.getTotalMass()!=null)
-      getTotalMass().load(in.getTotalMass());
-      
-    return true;
+    SECompartment.load(src.getCompartment(), dst);
+    if(src.hasAcidicPhospohlipidConcentration())
+      SEScalarMassPerMass.load(src.getAcidicPhospohlipidConcentration(),dst.getAcidicPhospohlipidConcentration());
+    if(src.hasMatrixVolume())
+      SEScalarVolume.load(src.getMatrixVolume(),dst.getMatrixVolume());
+    if(src.hasNeutralLipidsVolumeFraction())
+      SEScalar0To1.load(src.getNeutralLipidsVolumeFraction(),dst.getNeutralLipidsVolumeFraction());
+    if(src.hasNeutralPhospholipidsVolumeFraction())
+      SEScalar0To1.load(src.getNeutralPhospholipidsVolumeFraction(),dst.getNeutralPhospholipidsVolumeFraction());
+    if(src.hasTissueToPlasmaAlbuminRatio())
+      SEScalar.load(src.getTissueToPlasmaAlbuminRatio(),dst.getTissueToPlasmaAlbuminRatio());
+    if(src.hasTissueToPlasmaAlphaAcidGlycoproteinRatio())
+      SEScalar.load(src.getTissueToPlasmaAlphaAcidGlycoproteinRatio(),dst.getTissueToPlasmaAlphaAcidGlycoproteinRatio());
+    if(src.hasTissueToPlasmaLipoproteinRatio())
+      SEScalar.load(src.getTissueToPlasmaLipoproteinRatio(),dst.getTissueToPlasmaLipoproteinRatio());
+    if(src.hasTotalMass())
+      SEScalarMass.load(src.getTotalMass(),dst.getTotalMass());
   }
-  
-  public TissueCompartmentData unload()
+  public static TissueCompartmentData unload(SETissueCompartment src)
   {
-    TissueCompartmentData to = CDMSerializer.objFactory.createTissueCompartmentData();
-    unload(to);
-    return to;    
+    TissueCompartmentData.Builder dst = TissueCompartmentData.newBuilder();
+    unload(src,dst);
+    return dst.build();    
   }
-  
-  protected void unload(TissueCompartmentData data)
+  protected static void unload(SETissueCompartment src, TissueCompartmentData.Builder dst)
   {
-    super.unload(data);
-    if(hasAcidicPhospohlipidConcentration())
-      data.setAcidicPhospohlipidConcentration(this.acidicPhospohlipidConcentration.unload());
-    if(hasMatrixVolume())
-      data.setMatrixVolume(this.matrixVolume.unload());
-    if(hasNeutralLipidsVolumeFraction())
-      data.setNeutralLipidsVolumeFraction(this.neutralLipidsVolumeFraction.unload());
-    if(hasNeutralPhospholipidsVolumeFraction())
-      data.setNeutralPhospholipidsVolumeFraction(this.neutralPhospholipidsVolumeFraction.unload());
-    if(hasTissueToPlasmaAlbuminRatio())
-      data.setTissueToPlasmaAlbuminRatio(this.tissueToPlasmaAlbuminRatio.unload());
-    if(hasTissueToPlasmaAlphaAcidGlycoproteinRatio())
-      data.setTissueToPlasmaAlphaAcidGlycoproteinRatio(this.tissueToPlasmaAlphaAcidGlycoproteinRatio.unload());
-    if(hasTissueToPlasmaLipoproteinRatio())
-      data.setTissueToPlasmaLipoproteinRatio(this.tissueToPlasmaLipoproteinRatio.unload());
-    if(hasTotalMass())
-      data.setTotalMass(this.totalMass.unload());
+    SECompartment.unload(src, dst.getCompartment());
+    if(src.hasAcidicPhospohlipidConcentration())
+      dst.setAcidicPhospohlipidConcentration(SEScalarMassPerMass.unload(src.acidicPhospohlipidConcentration));
+    if(src.hasMatrixVolume())
+      dst.setMatrixVolume(SEScalarVolume.unload(src.matrixVolume));
+    if(src.hasNeutralLipidsVolumeFraction())
+      dst.setNeutralLipidsVolumeFraction(SEScalar0To1.unload(src.neutralLipidsVolumeFraction));
+    if(src.hasNeutralPhospholipidsVolumeFraction())
+      dst.setNeutralPhospholipidsVolumeFraction(SEScalar0To1.unload(src.neutralPhospholipidsVolumeFraction));
+    if(src.hasTissueToPlasmaAlbuminRatio())
+      dst.setTissueToPlasmaAlbuminRatio(SEScalar.unload(src.tissueToPlasmaAlbuminRatio));
+    if(src.hasTissueToPlasmaAlphaAcidGlycoproteinRatio())
+      dst.setTissueToPlasmaAlphaAcidGlycoproteinRatio(SEScalar.unload(src.tissueToPlasmaAlphaAcidGlycoproteinRatio));
+    if(src.hasTissueToPlasmaLipoproteinRatio())
+      dst.setTissueToPlasmaLipoproteinRatio(SEScalar.unload(src.tissueToPlasmaLipoproteinRatio));
+    if(src.hasTotalMass())
+      dst.setTotalMass(SEScalarMass.unload(src.totalMass));
   }
 
   public SEScalarMassPerMass getAcidicPhospohlipidConcentration() 
@@ -150,10 +146,10 @@ public class SETissueCompartment extends SECompartment
     return matrixVolume == null ? false : matrixVolume.isValid();
   }
   
-  public SEScalarFraction getNeutralLipidsVolumeFraction() 
+  public SEScalar0To1 getNeutralLipidsVolumeFraction() 
   {
     if (neutralLipidsVolumeFraction == null)
-      neutralLipidsVolumeFraction = new SEScalarFraction();
+      neutralLipidsVolumeFraction = new SEScalar0To1();
     return neutralLipidsVolumeFraction;
   }
   public boolean hasNeutralLipidsVolumeFraction()
@@ -161,10 +157,10 @@ public class SETissueCompartment extends SECompartment
     return neutralLipidsVolumeFraction == null ? false : neutralLipidsVolumeFraction.isValid();
   }
   
-  public SEScalarFraction getNeutralPhospholipidsVolumeFraction() 
+  public SEScalar0To1 getNeutralPhospholipidsVolumeFraction() 
   {
     if (neutralPhospholipidsVolumeFraction == null)
-      neutralPhospholipidsVolumeFraction = new SEScalarFraction();
+      neutralPhospholipidsVolumeFraction = new SEScalar0To1();
     return neutralPhospholipidsVolumeFraction;
   }
   public boolean hasNeutralPhospholipidsVolumeFraction()

@@ -15,15 +15,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ActionListData;
-import mil.tatrc.physiology.datamodel.bind.BioGearsStateData;
-import mil.tatrc.physiology.datamodel.bind.CompleteBloodCountData;
-import mil.tatrc.physiology.datamodel.bind.ComprehensiveMetabolicPanelData;
-import mil.tatrc.physiology.datamodel.bind.ConditionListData;
-import mil.tatrc.physiology.datamodel.bind.EnumPatientAssessment;
-import mil.tatrc.physiology.datamodel.bind.PulmonaryFunctionTestData;
-import mil.tatrc.physiology.datamodel.bind.UrinalysisData;
+import mil.tatrc.physiology.datamodel.actions.SEAction;
+import mil.tatrc.physiology.datamodel.conditions.SECondition;
+import mil.tatrc.physiology.datamodel.datarequests.SEDataRequestManager;
 import mil.tatrc.physiology.datamodel.patient.SEPatient;
 import mil.tatrc.physiology.datamodel.patient.assessments.SECompleteBloodCount;
 import mil.tatrc.physiology.datamodel.patient.assessments.SEComprehensiveMetabolicPanel;
@@ -32,9 +26,6 @@ import mil.tatrc.physiology.datamodel.patient.assessments.SEPulmonaryFunctionTes
 import mil.tatrc.physiology.datamodel.patient.assessments.SEUrinalysis;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
-import mil.tatrc.physiology.datamodel.scenario.actions.SEAction;
-import mil.tatrc.physiology.datamodel.scenario.conditions.SECondition;
-import mil.tatrc.physiology.datamodel.scenario.datarequests.SEDataRequestManager;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 

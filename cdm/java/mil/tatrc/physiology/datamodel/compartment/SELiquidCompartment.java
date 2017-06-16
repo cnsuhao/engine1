@@ -16,73 +16,68 @@ package mil.tatrc.physiology.datamodel.compartment;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.LiquidCompartmentData;
+import com.kitware.physiology.cdm.Compartment.LiquidCompartmentData;
+import com.kitware.physiology.cdm.SubstanceQuantity.LiquidSubstanceQuantityData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar;
+import mil.tatrc.physiology.datamodel.properties.SEScalarTemperature;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.datamodel.substance.quantity.SELiquidSubstanceQuantity;
 
 public class SELiquidCompartment extends SEFluidCompartment
 {
-  protected SEScalar pH;
+  protected SEScalar                        pH;
   protected List<SELiquidSubstanceQuantity> substanceQuantities;
   
   public SELiquidCompartment()
   {
-    super();
     this.substanceQuantities=new ArrayList<SELiquidSubstanceQuantity>();
   }
   
   public void reset()
   {
     super.reset();
-    this.pH=null;
+    pH=null;
     for (SELiquidSubstanceQuantity sq : this.substanceQuantities)
       sq.reset();
   }
   
-  public boolean load(LiquidCompartmentData in)
+  public static void load(LiquidCompartmentData src, SELiquidCompartment dst, SESubstanceManager subMgr)
   {
-    super.load(in);
-    if(in.getPH()!=null)
-      getPH().load(in.getPH());
-    //SESubstance* substance;
-    //SECompartmentSubstanceQuantity* subQ;
-    //for(int i = 0; i < in.getSubstanceQuantity().size(); i++)
-    //{
-    // TODO Look up the substance somehow, pass in.get managers in.get load?
-    //std::cout<<in.get.SubstanceQuantity()[i].Name()<<std::endl;
-    //substance = new SESubstance();//SubstanceManagerSubstance(in.get.SubstanceQuantity[i].name());
-    //subQ = new SECompartmentSubstanceQuantity(*substance);
-    //m_SubstanceQuantities.push_back(subQ);
-    //}
-    return true;
+    SEFluidCompartment.load(src.getFluidCompartment(), dst);
+    if(src.hasPH())
+      SEScalar.load(src.getPH(), dst.getPH());
+    for(LiquidSubstanceQuantityData subQData : src.getSubstanceQuantityList())
+    {
+      SELiquidSubstanceQuantity subQ = dst.getSubstanceQuantity(subMgr.getSubstance(subQData.getSubstanceQuantity().getSubstance()));
+      SELiquidSubstanceQuantity.load(subQData, subQ);
+    }
+  }
+  public static LiquidCompartmentData unload(SELiquidCompartment src)
+  {
+    LiquidCompartmentData.Builder dst = LiquidCompartmentData.newBuilder();
+    unload(src,dst);
+    return dst.build();    
+  }
+  protected static void unload(SELiquidCompartment src, LiquidCompartmentData.Builder dst)
+  {
+    SEFluidCompartment.unload(src,dst.getFluidCompartmentBuilder());
+    if(src.hasPH())
+      dst.setPH(SEScalar.unload(src.getPH()));
+    for(SELiquidSubstanceQuantity subQ : src.getSubstanceQuantities())
+      dst.addSubstanceQuantity(SELiquidSubstanceQuantity.unload(subQ));
   }
   
-  public LiquidCompartmentData unload()
+  public boolean hasPH()
   {
-    LiquidCompartmentData to = CDMSerializer.objFactory.createLiquidCompartmentData();
-    unload(to);
-    return to;    
+    return pH == null ? false : pH.isValid();
   }
-  
-  protected void unload(LiquidCompartmentData data)
-  {
-    super.unload(data);
-    if(this.hasPH())
-      data.setPH(this.pH.unload());
-    // TODO SUb Q
-  }
-  
-  public SEScalar getPH() 
+  public SEScalar getPH()
   {
     if (pH == null)
       pH = new SEScalar();
     return pH;
-  }
-  public boolean hasPH()
-  {
-    return pH == null ? false : pH.isValid();
   }
   
   public boolean hasSubstanceQuantities()

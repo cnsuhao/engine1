@@ -10,9 +10,12 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.properties;
+import org.jfree.util.Log;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.FunctionElectricPotentialVsTimeData;
+import com.kitware.physiology.cdm.Properties.DoubleArrayData;
+import com.kitware.physiology.cdm.Properties.FunctionData;
+import com.kitware.physiology.cdm.Properties.FunctionElectricPotentialVsTimeData;
+
 import mil.tatrc.physiology.datamodel.exceptions.InvalidUnitException;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.ElectricPotentialUnit;
@@ -28,13 +31,21 @@ public class SEFunctionElectricPotentialVsTime extends SEFunction
     super();
   }
     
-  public FunctionElectricPotentialVsTimeData unload()
+  public static void load(FunctionElectricPotentialVsTimeData src, SEFunctionElectricPotentialVsTime dst)
   {
-    if(!isValid())
+    SEFunction.load(src.getFunctionElectricPotentialVsTime(), dst);
+  }
+  public static FunctionElectricPotentialVsTimeData unload(SEFunctionElectricPotentialVsTime src)
+  {
+    if(!src.isValid())
       return null;
-    FunctionElectricPotentialVsTimeData to = CDMSerializer.objFactory.createFunctionElectricPotentialVsTimeData();
-    unload(to);
-    return to;
+    FunctionElectricPotentialVsTimeData.Builder dst = FunctionElectricPotentialVsTimeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEFunctionElectricPotentialVsTime src, FunctionElectricPotentialVsTimeData.Builder dst)
+  {
+    SEFunction.unload(src,dst.getFunctionElectricPotentialVsTimeBuilder());
   }
 
   public boolean isValidDependentUnit(String unit)

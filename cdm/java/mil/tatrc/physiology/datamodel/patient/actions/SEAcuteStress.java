@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.AcuteStressData;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
+import com.kitware.physiology.cdm.PatientActions.AcuteStressData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEAcuteStress extends SEPatientAction
@@ -49,25 +48,25 @@ public class SEAcuteStress extends SEPatientAction
     return hasSeverity();
   }
   
-  public boolean load(AcuteStressData in) 
+  public static void load(AcuteStressData src, SEAcuteStress dst) 
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
   
-  public AcuteStressData unload()
+  public static AcuteStressData unload(SEAcuteStress src)
   {
-    AcuteStressData data = CDMSerializer.objFactory.createAcuteStressData();
-    unload(data);
-    return data;
+    AcuteStressData.Builder dst = AcuteStressData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(AcuteStressData data)
+  protected static void unload(SEAcuteStress src, AcuteStressData.Builder dst)
   {
-    super.unload(data);
-    if (severity != null)
-      data.setSeverity(severity.unload());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   public boolean hasSeverity()

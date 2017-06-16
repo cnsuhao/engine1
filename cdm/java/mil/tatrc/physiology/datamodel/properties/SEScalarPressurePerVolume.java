@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarPressurePerVolumeData;
+import com.kitware.physiology.cdm.Properties.ScalarPressurePerVolumeData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.PressurePerVolumeUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarPressurePerVolume extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarPressurePerVolumeData src, SEScalarPressurePerVolume dst)
+  {
+    SEScalar.load(src.getScalarPressurePerVolume(),dst);
+  }
+  public static ScalarPressurePerVolumeData unload(SEScalarPressurePerVolume src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarPressurePerVolumeData.Builder dst = ScalarPressurePerVolumeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarPressurePerVolume src, ScalarPressurePerVolumeData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarPressurePerVolumeBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarPressurePerVolume extends SEScalar
   public double getValue(PressurePerVolumeUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarPressurePerVolumeData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarPressurePerVolumeData to = CDMSerializer.objFactory.createScalarPressurePerVolumeData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

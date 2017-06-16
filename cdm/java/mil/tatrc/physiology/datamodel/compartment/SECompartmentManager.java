@@ -14,7 +14,7 @@ package mil.tatrc.physiology.datamodel.compartment;
 import java.util.HashMap;
 import java.util.Map;
 
-import mil.tatrc.physiology.datamodel.bind.EnumCompartmentType;
+import com.kitware.physiology.cdm.Compartment.eCompartmentType;
 
 public class SECompartmentManager
 {
@@ -36,17 +36,17 @@ public class SECompartmentManager
     tissue.clear();
   }
   
-  public SECompartment GetCompartment(String name, EnumCompartmentType type)
+  public SECompartment GetCompartment(String name, eCompartmentType type)
   {
     switch(type)
     {
-      case GAS:
+      case Gas:
         return GetGasCompartment(name);
-      case LIQUID:
+      case Liquid:
         return GetLiquidCompartment(name);
-      case THERMAL:
+      case Thermal:
         return GetThermalCompartment(name);
-      case TISSUE:
+      case Tissue:
         return GetTissueCompartment(name);     
     }
     return null;

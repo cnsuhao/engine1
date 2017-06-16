@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ConsumeNutrientsData;
+import com.kitware.physiology.cdm.PatientActions.ConsumeNutrientsData;
+
 import mil.tatrc.physiology.datamodel.patient.nutrition.SENutrition;
 
 public class SEConsumeNutrients extends SEPatientAction
@@ -53,30 +53,33 @@ public class SEConsumeNutrients extends SEPatientAction
     return hasNutrition() || hasNutritionFile();
   }
   
-  public boolean load(ConsumeNutrientsData in)
+  public static void load(ConsumeNutrientsData src, SEConsumeNutrients dst)
   {
-    super.load(in);
-    if(in.getNutrition()!=null)
-      this.nutrition.load(in.getNutrition());
-    else if(in.getNutritionFile()!=null)
-      this.nutritionFile=in.getNutritionFile();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    switch(src.getOptionCase())
+    {
+    case NUTRITION:
+      SENutrition.load(src.getNutrition(), dst.getNutrition());
+      break;
+    case NUTRITIONFILE:
+      dst.setNutritionFile(src.getNutritionFile());
+    }
   }
   
-  public ConsumeNutrientsData unload()
+  public static ConsumeNutrientsData unload(SEConsumeNutrients src)
   {
-    ConsumeNutrientsData data = CDMSerializer.objFactory.createConsumeNutrientsData();
-    unload(data);
-    return data;
+    ConsumeNutrientsData.Builder dst = ConsumeNutrientsData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ConsumeNutrientsData data)
+  protected static void unload(SEConsumeNutrients src, ConsumeNutrientsData.Builder dst)
   {
-    super.unload(data);
-    if(this.hasNutrition())
-      data.setNutrition(this.nutrition.unload());
-    else if(this.hasNutritionFile())
-      data.setNutritionFile(this.nutritionFile);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if(src.hasNutrition())
+      dst.setNutrition(SENutrition.unload(src.nutrition));
+    else if(src.hasNutritionFile())
+      dst.setNutritionFile(src.nutritionFile);
   }
   
   public boolean hasNutrition()

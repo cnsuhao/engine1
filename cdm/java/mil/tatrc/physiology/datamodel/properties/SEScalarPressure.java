@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarPressureData;
+import com.kitware.physiology.cdm.Properties.ScalarPressureData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.PressureUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarPressure extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarPressureData src, SEScalarPressure dst)
+  {
+    SEScalar.load(src.getScalarPressure(),dst);
+  }
+  public static ScalarPressureData unload(SEScalarPressure src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarPressureData.Builder dst = ScalarPressureData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarPressure src, ScalarPressureData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarPressureBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarPressure extends SEScalar
   public double getValue(PressureUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarPressureData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarPressureData to = CDMSerializer.objFactory.createScalarPressureData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

@@ -295,9 +295,9 @@ public class TestDriver
           String[] values = value.split(",");
           this.autoSerialization.setDirectory(values[0]);
           this.autoSerialization.getPeriod().setValue(Double.parseDouble(values[1]),TimeUnit.s);
-          this.autoSerialization.setPeriodTimeStamps(EnumOnOff.fromValue(values[2]));    
-          this.autoSerialization.setAfterActions(EnumOnOff.fromValue(values[3]));    
-          this.autoSerialization.setReloadState(EnumOnOff.fromValue(values[4]));
+          this.autoSerialization.setPeriodTimeStamps(eSwitch.valueOf(values[2]));    
+          this.autoSerialization.setAfterActions(eSwitch.valueOf(values[3]));    
+          this.autoSerialization.setReloadState(eSwitch.valueOf(values[4]));
           continue; 
         }
         if(key.equalsIgnoreCase("ExecuteTests"))

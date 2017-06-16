@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarFlowResistanceData;
+import com.kitware.physiology.cdm.Properties.ScalarFlowResistanceData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.FlowResistanceUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarFlowResistance extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarFlowResistanceData src, SEScalarFlowResistance dst)
+  {
+    SEScalar.load(src.getScalarFlowResistance(),dst);
+  }
+  public static ScalarFlowResistanceData unload(SEScalarFlowResistance src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarFlowResistanceData.Builder dst = ScalarFlowResistanceData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarFlowResistance src, ScalarFlowResistanceData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarFlowResistanceBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarFlowResistance extends SEScalar
   public double getValue(FlowResistanceUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarFlowResistanceData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarFlowResistanceData to = CDMSerializer.objFactory.createScalarFlowResistanceData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

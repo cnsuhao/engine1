@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.patient.nutrition;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.MealData;
+import com.kitware.physiology.cdm.PatientNutrition.MealData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
 public class SEMeal extends SENutrition
@@ -39,26 +39,27 @@ public class SEMeal extends SENutrition
       this.getElapsedTime().set(from.getElapsedTime());
   }
   
-  public boolean load(MealData in)
+  public static void load(MealData src, SEMeal dst)
   {
-    super.load(in);
-    if (in.getElapsedTime() != null)
-      getElapsedTime().load(in.getElapsedTime());
-    return true;
+    dst.reset();
+    if(src.hasNutrition())
+      SENutrition.load(src.getNutrition(),dst);
+    if (src.hasElapsedTime())
+      SEScalarTime.load(src.getElapsedTime(),dst.getElapsedTime());
   }
   
-  public MealData unload()
+  public static MealData unload(SEMeal src)
   {
-    MealData data = CDMSerializer.objFactory.createMealData();
-    unload(data);
-    return data;
+    MealData.Builder dst = MealData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(MealData data)
+  protected static void unload(SEMeal src, MealData.Builder dst)
   {
-    super.unload(data);
-    if (elapsedTime != null)
-      data.setElapsedTime(elapsedTime.unload());
+    SENutrition.unload(src,dst.getNutritionBuilder());
+    if (src.hasElapsedTime())
+      dst.setElapsedTime(SEScalarTime.unload(src.elapsedTime));
   }    
   
   public SEScalarTime getElapsedTime()

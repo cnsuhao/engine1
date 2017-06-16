@@ -12,23 +12,22 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.OxygenWallPortPressureLossData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.OxygenWallPortPressureLossData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
 public class SEOxygenWallPortPressureLoss extends SEAnesthesiaMachineAction
 {
-  protected EnumOnOff state;
+  protected eSwitch state;
   
   public SEOxygenWallPortPressureLoss()
   {
-    state = EnumOnOff.ON;
+    state = eSwitch.On;
   }
   
   public void reset()
   {
     super.reset();
-    state = EnumOnOff.ON;
+    state = eSwitch.On;
   }
   
   public boolean isValid()
@@ -36,36 +35,33 @@ public class SEOxygenWallPortPressureLoss extends SEAnesthesiaMachineAction
     return hasState();
   }
   
-  public boolean load(OxygenWallPortPressureLossData in)
+  public static void load(OxygenWallPortPressureLossData src, SEOxygenWallPortPressureLoss dst)
   {
-    super.load(in);
-    if (in.getState() != null)
-      setState(in.getState());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if (src.getState()!=eSwitch.UNRECOGNIZED)
+      dst.setState(src.getState());
   }
-  
-  public OxygenWallPortPressureLossData unload()
+  public static OxygenWallPortPressureLossData unload(SEOxygenWallPortPressureLoss src)
   {
-    OxygenWallPortPressureLossData data = CDMSerializer.objFactory.createOxygenWallPortPressureLossData();
-    unload(data);
-    return data;
+    OxygenWallPortPressureLossData.Builder dst = OxygenWallPortPressureLossData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(OxygenWallPortPressureLossData data)
+  protected static void unload(SEOxygenWallPortPressureLoss src, OxygenWallPortPressureLossData.Builder dst)
   {
-    super.unload(data);
-    if (hasState())
-      data.setState(state);
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if (src.hasState())
+      dst.setState(src.state);
   }
   
   /*
    * State
    */
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff state)
+  public void setState(eSwitch state)
   {
     this.state = state;
   }

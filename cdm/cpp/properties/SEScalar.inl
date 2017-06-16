@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "bind/ScalarData.hxx"
+#include "bind/cdm/Properties.pb.h"
 #include "utils/GeneralMath.h"
 
 template<typename Unit>

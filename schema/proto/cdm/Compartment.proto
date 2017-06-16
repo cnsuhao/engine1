@@ -1,0 +1,147 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+import "cdm/SubstanceQuantity.proto";
+
+enum eCompartmentType
+{
+  Electrical                                                                      = 0;
+  Gas                                                                             = 1;
+  Liquid                                                                          = 2;
+  Thermal                                                                         = 3;
+  Tissue                                                                          = 4;
+}
+
+message CompartmentData
+{
+  string                                 Name                                     = 1;
+  repeated string                        Node                                     = 2;
+  repeated string                        Child                                    = 3;
+}
+message CompartmentLinkData
+{
+  string                                 Name                                     = 1;
+  string                                 Path                                     = 2;
+  string                                 SourceCompartment                        = 3;
+  string                                 TargetCompartment                        = 4;
+}
+message CompartmentGraphData
+{
+  string                                 Name                                     = 1;
+  repeated string                        Compartment                              = 2;
+  repeated string                        Link                                     = 3;
+}
+
+message FluidCompartmentData
+{
+  CompartmentData                        Compartment                              = 1;
+  ScalarVolumePerTimeData                InFlow                                   = 2;
+  ScalarVolumePerTimeData                OutFlow                                  = 3;
+  ScalarPressureData                     Pressure                                 = 4;
+  ScalarVolumeData                       Volume                                   = 5;
+}
+message FluidCompartmentLinkData
+{
+  CompartmentLinkData                    Link                                     = 1;
+  ScalarVolumePerTimeData                Flow                                     = 2;
+}
+message FluidCompartmentGraphData
+{
+  CompartmentGraphData                   Graph                                    = 1;
+}
+
+message GasCompartmentData
+{
+  FluidCompartmentData                   FluidCompartment                         = 1;
+  repeated GasSubstanceQuantityData      SubstanceQuantity                        = 2;
+  
+}
+message GasCompartmentLinkData
+{
+  FluidCompartmentLinkData               FluidLink                                = 1;
+}
+message GasCompartmentGraphData
+{
+  FluidCompartmentGraphData              FluidGraph                               = 1;
+}
+
+message LiquidCompartmentData
+{
+  FluidCompartmentData                   FluidCompartment                         = 1;
+  ScalarData                             pH                                       = 2;
+  repeated LiquidSubstanceQuantityData   SubstanceQuantity                        = 3;
+  
+}
+message LiquidCompartmentLinkData
+{
+  FluidCompartmentLinkData               FluidLink                                = 1;
+}
+message LiquidCompartmentGraphData
+{
+  FluidCompartmentGraphData              FluidGraph                               = 1;
+}
+
+message TissueCompartmentData
+{
+  CompartmentData                        Compartment                              = 1;
+  ScalarMassPerMassData                  AcidicPhospohlipidConcentration          = 2;
+  ScalarVolumeData                       MatrixVolume                             = 3;
+  Scalar0To1Data                         NeutralLipidsVolumeFraction              = 4;
+  Scalar0To1Data                         NeutralPhospholipidsVolumeFraction       = 5;
+  ScalarData                             TissueToPlasmaAlbuminRatio               = 6;
+  ScalarData                             TissueToPlasmaAlphaAcidGlycoproteinRatio = 7;
+  ScalarData                             TissueToPlasmaLipoproteinRatio           = 8;
+  ScalarMassData                         TotalMass                                = 9;
+}
+
+message ThermalCompartmentData
+{
+  CompartmentData                        Compartment                              = 1;
+  ScalarPowerData                        HeatTransferRateIn                       = 2;
+  ScalarPowerData                        HeatTransferRateOut                      = 3;
+  ScalarTemperatureData                  Temperature                              = 4;
+  ScalarEnergyData                       Heat                                     = 5;
+}
+message ThermalCompartmentLinkData
+{
+  CompartmentLinkData                    Link                                     = 1;
+  ScalarPowerData                        HeatTransferRate                         = 2;
+}
+
+message ElectricalCompartmentData
+{
+  CompartmentData                        Compartment                              = 1;
+  ScalarElectricCurrentData              CurrentIn                                = 2;
+  ScalarElectricCurrentData              CurrentOut                               = 3;
+  ScalarElectricPotentialData            Voltage                                  = 4;
+  ScalarElectricChargeData               Charge                                   = 5;
+}
+message ElectricalCompartmentLinkData
+{
+  CompartmentLinkData                    Link                                     = 1;
+  ScalarElectricCurrentData              Current                                  = 2;
+}
+
+message CompartmentManagerData
+{
+  repeated ElectricalCompartmentData     ElectricalCompartment                    = 1;
+  repeated ElectricalCompartmentLinkData ElectricalLink                           = 2;
+
+  repeated LiquidCompartmentData         LiquidCompartment                        = 3;
+  repeated LiquidCompartmentLinkData     LiquidLink                               = 4;
+  repeated string                        LiquidSubstance                          = 5;
+  repeated LiquidCompartmentGraphData    LiquidGraph                              = 6; 
+
+  repeated GasCompartmentData            GasCompartment                           = 7;
+  repeated GasCompartmentLinkData        GasLink                                  = 8;
+  repeated string                        GasSubstance                             = 9;
+  repeated GasCompartmentGraphData       GasGraph                                 = 10;
+
+  repeated ThermalCompartmentData        ThermalCompartment                       = 11;
+  repeated ThermalCompartmentLinkData    ThermalLink                              = 12;
+
+  repeated TissueCompartmentData         TissueCompartment                        = 13;
+  repeated string                        TissueSubstance                          = 14;
+}

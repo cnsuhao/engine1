@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.environment;
 
+import com.kitware.physiology.cdm.Environment.EnvironmentData;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnvironmentData;
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.datamodel.system.SESystem;
@@ -22,18 +21,18 @@ import mil.tatrc.physiology.datamodel.system.SESystem;
 public class SEEnvironment implements SESystem
 {
 
-  protected SEScalarPower                    convectiveHeatLoss;
+  protected SEScalarPower                   convectiveHeatLoss;
   protected SEScalarHeatConductancePerArea  convectiveHeatTranferCoefficient;
-  protected SEScalarPower                    evaporativeHeatLoss;
+  protected SEScalarPower                   evaporativeHeatLoss;
   protected SEScalarHeatConductancePerArea  evaporativeHeatTranferCoefficient;
-  protected SEScalarPower                    radiativeHeatLoss;
+  protected SEScalarPower                   radiativeHeatLoss;
   protected SEScalarHeatConductancePerArea  radiativeHeatTranferCoefficient;
-  protected SEScalarPower                    respirationHeatLoss;
-  protected SEScalarPower                    skinHeatLoss;
+  protected SEScalarPower                   respirationHeatLoss;
+  protected SEScalarPower                   skinHeatLoss;
   
   protected SEEnvironmentalConditions       conditions;
-  protected SEActiveHeating                 activeHeating;
-  protected SEActiveCooling                 activeCooling;
+  protected SEActiveConditioning            activeHeating;
+  protected SEActiveConditioning            activeCooling;
   protected SEAppliedTemperature            appliedTemperature;
   
   public SEEnvironment()
@@ -81,71 +80,68 @@ public class SEEnvironment implements SESystem
       appliedTemperature.reset();
   }
   
-  public boolean load(EnvironmentData in, SESubstanceManager substances)
+  public static void load(EnvironmentData src, SEEnvironment dst, SESubstanceManager subMgr)
   {    
-    reset();
-    if (in.getConvectiveHeatLoss() != null)
-      getConvectiveHeatLoss().load(in.getConvectiveHeatLoss());
-    if (in.getConvectiveHeatTranferCoefficient() != null)
-      getConvectiveHeatTranferCoefficient().load(in.getConvectiveHeatTranferCoefficient());
-    if (in.getEvaporativeHeatLoss() != null)
-      getEvaporativeHeatLoss().load(in.getEvaporativeHeatLoss());
-    if (in.getEvaporativeHeatTranferCoefficient() != null)
-      getEvaporativeHeatTranferCoefficient().load(in.getEvaporativeHeatTranferCoefficient());
-    if (in.getRadiativeHeatLoss() != null)
-      getRadiativeHeatLoss().load(in.getRadiativeHeatLoss());
-    if (in.getRadiativeHeatTranferCoefficient() != null)
-      getRadiativeHeatTranferCoefficient().load(in.getRadiativeHeatTranferCoefficient());
-    if (in.getRespirationHeatLoss() != null)
-      getRespirationHeatLoss().load(in.getRespirationHeatLoss());
-    if (in.getSkinHeatLoss() != null)
-      getSkinHeatLoss().load(in.getSkinHeatLoss());  
+    dst.reset();
+    if (src.hasConvectiveHeatLoss())
+      SEScalarPower.load(src.getConvectiveHeatLoss(),dst.getConvectiveHeatLoss());
+    if (src.hasConvectiveHeatTranferCoefficient())
+      SEScalarHeatConductancePerArea.load(src.getConvectiveHeatTranferCoefficient(),dst.getConvectiveHeatTranferCoefficient());
+    if (src.hasEvaporativeHeatLoss())
+      SEScalarPower.load(src.getEvaporativeHeatLoss(),dst.getEvaporativeHeatLoss());
+    if (src.hasEvaporativeHeatTranferCoefficient())
+      SEScalarHeatConductancePerArea.load(src.getEvaporativeHeatTranferCoefficient(),dst.getEvaporativeHeatTranferCoefficient());
+    if (src.hasRadiativeHeatLoss())
+      SEScalarPower.load(src.getRadiativeHeatLoss(),dst.getRadiativeHeatLoss());
+    if (src.hasRadiativeHeatTranferCoefficient())
+      SEScalarHeatConductancePerArea.load(src.getRadiativeHeatTranferCoefficient(),dst.getRadiativeHeatTranferCoefficient());
+    if (src.hasRespirationHeatLoss())
+      SEScalarPower.load(src.getRespirationHeatLoss(),dst.getRespirationHeatLoss());
+    if (src.hasSkinHeatLoss())
+      SEScalarPower.load(src.getSkinHeatLoss(),dst.getSkinHeatLoss());  
     
-    if (in.getConditions() != null)
-      getConditions().load(in.getConditions(),substances); 
-    if(in.getActiveHeating()!=null)
-      getActiveHeating().load(in.getActiveHeating());
-    if(in.getActiveCooling()!=null)
-      getActiveCooling().load(in.getActiveCooling());
-    if(in.getAppliedTemperature()!=null)
-      getAppliedTemperature().load(in.getAppliedTemperature());
-    return true;
+    if (src.hasConditions())
+      SEEnvironmentalConditions.load(src.getConditions(),dst.getConditions(),subMgr); 
+    if (src.hasActiveHeating())
+      SEActiveConditioning.load(src.getActiveHeating(),dst.getActiveHeating());
+    if (src.hasActiveCooling())
+      SEActiveConditioning.load(src.getActiveCooling(),dst.getActiveCooling());
+    if (src.hasAppliedTemperature())
+      SEAppliedTemperature.load(src.getAppliedTemperature(),dst.getAppliedTemperature());
   }
-  
-  public EnvironmentData unload()
+  public static EnvironmentData unload(SEEnvironment src)
   {
-    EnvironmentData data = CDMSerializer.objFactory.createEnvironmentData();
-    unload(data);
-    return data;
+    EnvironmentData.Builder dst = EnvironmentData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(EnvironmentData data)
+  protected static void unload(SEEnvironment src, EnvironmentData.Builder dst)
   {    
-    if (convectiveHeatLoss != null)
-        data.setConvectiveHeatLoss(convectiveHeatLoss.unload());
-    if (convectiveHeatTranferCoefficient != null)
-        data.setConvectiveHeatTranferCoefficient(convectiveHeatTranferCoefficient.unload());
-    if (evaporativeHeatLoss != null)
-        data.setEvaporativeHeatLoss(evaporativeHeatLoss.unload());
-    if (evaporativeHeatTranferCoefficient != null)
-      data.setEvaporativeHeatTranferCoefficient(evaporativeHeatTranferCoefficient.unload());
-    if (radiativeHeatLoss != null)
-        data.setRadiativeHeatLoss(radiativeHeatLoss.unload());
-    if (radiativeHeatTranferCoefficient != null)
-        data.setRadiativeHeatTranferCoefficient(radiativeHeatTranferCoefficient.unload());
-    if (respirationHeatLoss != null)
-        data.setRespirationHeatLoss(respirationHeatLoss.unload());
-    if (skinHeatLoss != null)
-        data.setSkinHeatLoss(skinHeatLoss.unload());
+    if (src.hasConvectiveHeatLoss())
+        dst.setConvectiveHeatLoss(SEScalarPower.unload(src.convectiveHeatLoss));
+    if (src.hasConvectiveHeatTranferCoefficient())
+      dst.setConvectiveHeatTranferCoefficient(SEScalarHeatConductancePerArea.unload(src.convectiveHeatTranferCoefficient));
+    if (src.hasEvaporativeHeatLoss())
+      dst.setEvaporativeHeatLoss(SEScalarPower.unload(src.evaporativeHeatLoss));
+    if (src.hasEvaporativeHeatTranferCoefficient())
+      dst.setEvaporativeHeatTranferCoefficient(SEScalarHeatConductancePerArea.unload(src.evaporativeHeatTranferCoefficient));
+    if (src.hasRadiativeHeatLoss())
+      dst.setRadiativeHeatLoss(SEScalarPower.unload(src.radiativeHeatLoss));
+    if (src.hasRadiativeHeatTranferCoefficient())
+      dst.setRadiativeHeatTranferCoefficient(SEScalarHeatConductancePerArea.unload(src.radiativeHeatTranferCoefficient));
+    if (src.hasRespirationHeatLoss())
+      dst.setRespirationHeatLoss(SEScalarPower.unload(src.respirationHeatLoss));
+    if (src.hasSkinHeatLoss())
+      dst.setSkinHeatLoss(SEScalarPower.unload(src.skinHeatLoss));
     
-    if (conditions != null)
-      data.setConditions(conditions.unload());
-    if (hasActiveHeating())
-      data.setActiveHeating(getActiveHeating().unload());
-    if (hasActiveCooling())
-      data.setActiveCooling(getActiveCooling().unload());
-    if (hasAppliedTemperature())
-      data.setAppliedTemperature(getAppliedTemperature().unload());
+    if (src.hasConditions())
+      dst.setConditions(SEEnvironmentalConditions.unload(src.conditions));
+    if (src.hasActiveHeating())
+      dst.setActiveHeating(SEActiveConditioning.unload(src.activeHeating));
+    if (src.hasActiveCooling())
+      dst.setActiveCooling(SEActiveConditioning.unload(src.activeCooling));
+    if (src.hasAppliedTemperature())
+      dst.setAppliedTemperature(SEAppliedTemperature.unload(src.appliedTemperature));
   }
 
   public SEScalarPower getConvectiveHeatLoss()
@@ -251,10 +247,10 @@ public class SEEnvironment implements SESystem
   {
     return activeHeating != null;
   }
-  public SEActiveHeating getActiveHeating()
+  public SEActiveConditioning getActiveHeating()
   {
     if (activeHeating == null)
-      activeHeating = new SEActiveHeating();
+      activeHeating = new SEActiveConditioning();
     return activeHeating;
   }
   
@@ -262,10 +258,10 @@ public class SEEnvironment implements SESystem
   {
     return activeCooling != null;
   }
-  public SEActiveCooling getActiveCooling()
+  public SEActiveConditioning getActiveCooling()
   {
     if (activeCooling == null)
-      activeCooling = new SEActiveCooling();
+      activeCooling = new SEActiveConditioning();
     return activeCooling;
   }
   

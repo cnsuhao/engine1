@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarHeatConductancePerAreaData;
+import com.kitware.physiology.cdm.Properties.ScalarHeatConductancePerAreaData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.HeatConductancePerAreaUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarHeatConductancePerArea extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarHeatConductancePerAreaData src, SEScalarHeatConductancePerArea dst)
+  {
+    SEScalar.load(src.getScalarHeatConductancePerArea(),dst);
+  }
+  public static ScalarHeatConductancePerAreaData unload(SEScalarHeatConductancePerArea src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarHeatConductancePerAreaData.Builder dst = ScalarHeatConductancePerAreaData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarHeatConductancePerArea src, ScalarHeatConductancePerAreaData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarHeatConductancePerAreaBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarHeatConductancePerArea extends SEScalar
   public double getValue(HeatConductancePerAreaUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarHeatConductancePerAreaData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarHeatConductancePerAreaData to = CDMSerializer.objFactory.createScalarHeatConductancePerAreaData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

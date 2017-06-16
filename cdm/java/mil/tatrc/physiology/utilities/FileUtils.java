@@ -193,6 +193,13 @@ public class FileUtils
     }
   }
   
+  public static String readFile(String fileName)
+  {
+    FileReader reader = null;
+    File f = new File(fileName);
+    return readFile(f);
+  }
+  
   /**
    * Reads from a file into a String.
    *
@@ -201,12 +208,11 @@ public class FileUtils
    *
    * @return String containing file contents, or null if there was an error
    */
-  public static String readFile(String fileName)
+  public static String readFile(File f)
   {
     FileReader reader = null;
     try
     {
-      File f = new File(fileName);
       reader = new FileReader(f);
       char[] buffer = new char[(int) f.length()];
       reader.read(buffer);
@@ -214,7 +220,7 @@ public class FileUtils
     }
     catch (Exception e)
     {
-      Log.error("Could not read XML file " + fileName,e);
+      Log.error("Could not read XML file " + f.getAbsolutePath(),e);
       return null;
     }
     finally

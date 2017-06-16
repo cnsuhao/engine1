@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarVolumePerTimeMassData;
+import com.kitware.physiology.cdm.Properties.ScalarVolumePerTimeMassData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumePerTimeMassUnit;
 
 /**
@@ -52,6 +52,23 @@ public class SEScalarVolumePerTimeMass extends SEScalar
     this();
     this.setValue(value,unit);
   }
+
+  public static void load(ScalarVolumePerTimeMassData src, SEScalarVolumePerTimeMass dst)
+  {
+    SEScalar.load(src.getScalarVolumePerTimeMass(),dst);
+  }
+  public static ScalarVolumePerTimeMassData unload(SEScalarVolumePerTimeMass src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarVolumePerTimeMassData.Builder dst = ScalarVolumePerTimeMassData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarVolumePerTimeMass src, ScalarVolumePerTimeMassData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarVolumePerTimeMassBuilder());
+  }
   
   /**
    * @param value
@@ -77,18 +94,6 @@ public class SEScalarVolumePerTimeMass extends SEScalar
   public double getValue(VolumePerTimeMassUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarVolumePerTimeMassData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarVolumePerTimeMassData to = CDMSerializer.objFactory.createScalarVolumePerTimeMassData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

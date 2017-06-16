@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarVolumeData;
+import com.kitware.physiology.cdm.Properties.ScalarVolumeData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumeUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarVolume extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarVolumeData src, SEScalarVolume dst)
+  {
+    SEScalar.load(src.getScalarVolume(),dst);
+  }
+  public static ScalarVolumeData unload(SEScalarVolume src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarVolumeData.Builder dst = ScalarVolumeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarVolume src, ScalarVolumeData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarVolumeBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarVolume extends SEScalar
   public double getValue(VolumeUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarVolumeData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarVolumeData to = CDMSerializer.objFactory.createScalarVolumeData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

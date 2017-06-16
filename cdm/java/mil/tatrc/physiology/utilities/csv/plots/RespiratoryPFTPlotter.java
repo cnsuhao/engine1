@@ -44,15 +44,15 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.PulmonaryFunctionTestData;
-import mil.tatrc.physiology.datamodel.bind.ScenarioData;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
+
+import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.patient.assessments.SEPulmonaryFunctionTest;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumeUnit;
 import mil.tatrc.physiology.datamodel.properties.SEFunctionVolumeVsTime;
 import mil.tatrc.physiology.datamodel.scenario.SEScenario;
-import mil.tatrc.physiology.datamodel.scenario.actions.SEAction;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.utilities.DoubleUtils;
 import mil.tatrc.physiology.utilities.FileUtils;
@@ -100,18 +100,15 @@ public class RespiratoryPFTPlotter implements Plotter
     
     if (!job.skipAllActions)
     {
-      //Get all actions from scenario file
-      Object obj = CDMSerializer.readFile(job.scenarioPath + job.scenarioFile);
-      if (obj instanceof ScenarioData)
+      try
       {
         this.scenario = new SEScenario(subMgr);
-        this.scenario.load((ScenarioData) obj);
+        this.scenario.readFile(job.scenarioPath + job.scenarioFile);
         actions = scenario.getActions();
       } 
-      else
+      catch(ParseException ex)
       {
-        Log.error("Could not analyze scenario file " + job.scenarioPath
-            + job.scenarioFile);
+        Log.error("Could not analyze scenario file " + job.scenarioPath + job.scenarioFile);
       }
     }
     
@@ -123,11 +120,10 @@ public class RespiratoryPFTPlotter implements Plotter
         double PFTtime_s = action.getScenarioTime().getValue();
         
         //extract data from file
-        Object obj = CDMSerializer.readFile(job.verificationDirectory+"/Current Baseline/"+job.PFTFile);
-        if (obj instanceof PulmonaryFunctionTestData)
+        try
         {
           this.pft = new SEPulmonaryFunctionTest();
-          this.pft.load((PulmonaryFunctionTestData) obj);
+          this.pft.readFile(job.verificationDirectory+"/Current Baseline/"+job.PFTFile);
           
           SEFunctionVolumeVsTime points = this.pft.getLungVolumePlot();
                    
@@ -145,9 +141,9 @@ public class RespiratoryPFTPlotter implements Plotter
           PFTData.put("Time", timeValues);
           PFTData.put("Volume", volumeValues);
         }
-        else
+        catch(ParseException ex)
         {
-          Log.error("Couldn't read PFT file.");
+          Log.error("Couldn't read PFT file.",ex);
         }
       }
     }

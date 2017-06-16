@@ -12,13 +12,12 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumPatientAssessment;
-import mil.tatrc.physiology.datamodel.bind.PatientAssessmentRequestData;
+import com.kitware.physiology.cdm.PatientActions.PatientAssessmentRequestData;
+import com.kitware.physiology.cdm.PatientActions.PatientAssessmentRequestData.eAssessmentType;
 
 public class SEPatientAssessmentRequest extends SEPatientAction
 {
-  protected EnumPatientAssessment type;
+  protected eAssessmentType type;
   
   public SEPatientAssessmentRequest()
   {
@@ -44,32 +43,31 @@ public class SEPatientAssessmentRequest extends SEPatientAction
     return hasType();
   }
   
-  public boolean load(PatientAssessmentRequestData in)
+  public static void load(PatientAssessmentRequestData src, SEPatientAssessmentRequest dst)
   {
-    super.load(in);
-    type = in.getType();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    dst.type = src.getType();
   }
   
-  public PatientAssessmentRequestData unload()
+  public static PatientAssessmentRequestData unload(SEPatientAssessmentRequest src)
   {
-    PatientAssessmentRequestData data = CDMSerializer.objFactory.createPatientAssessmentRequestData();
-    unload(data);
-    return data;
+    PatientAssessmentRequestData.Builder dst = PatientAssessmentRequestData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(PatientAssessmentRequestData data)
+  protected static void unload(SEPatientAssessmentRequest src, PatientAssessmentRequestData.Builder dst)
   {
-    super.unload(data);
-    if (hasType())
-      data.setType(type);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasType())
+      dst.setType(src.type);
   }
   
-  public EnumPatientAssessment getType()
+  public eAssessmentType getType()
   {
     return type;
   }
-  public void setType(EnumPatientAssessment type)
+  public void setType(eAssessmentType type)
   {
     this.type = type;
   }
@@ -82,7 +80,7 @@ public class SEPatientAssessmentRequest extends SEPatientAction
   {
     if (type != null)
       return "Patient Type"
-          + "\n\tType: " + getType().value();
+          + "\n\tType: " + getType();
     else
       return "Type not specified properly";
   }

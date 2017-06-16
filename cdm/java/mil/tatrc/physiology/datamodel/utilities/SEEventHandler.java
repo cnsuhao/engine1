@@ -11,12 +11,13 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.utilities;
 
-import mil.tatrc.physiology.datamodel.bind.EnumAnesthesiaMachineEvent;
-import mil.tatrc.physiology.datamodel.bind.EnumPatientEvent;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.physiology.cdm.Patient.PatientData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
 public interface SEEventHandler
 {
-  public void handlePatientEvent(EnumPatientEvent type, boolean active, SEScalarTime time);
-  public void handleAnesthesiaMachineEvent(EnumAnesthesiaMachineEvent type, boolean active, SEScalarTime time);
+  public void handlePatientEvent(PatientData.eEvent type, boolean active, SEScalarTime time);
+  public void handleAnesthesiaMachineEvent(AnesthesiaMachineData.eEvent type, boolean active, SEScalarTime time);
 }

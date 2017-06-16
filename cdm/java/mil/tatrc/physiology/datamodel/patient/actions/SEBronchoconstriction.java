@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.BronchoconstrictionData;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
+import com.kitware.physiology.cdm.PatientActions.BronchoconstrictionData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEBronchoconstriction extends SEPatientAction
@@ -49,25 +48,25 @@ public class SEBronchoconstriction extends SEPatientAction
     return hasSeverity();
   }
   
-  public boolean load(BronchoconstrictionData in)
+  public static void load(BronchoconstrictionData src, SEBronchoconstriction dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
   
-  public BronchoconstrictionData unload()
+  public static BronchoconstrictionData unload(SEBronchoconstriction src)
   {
-    BronchoconstrictionData data = CDMSerializer.objFactory.createBronchoconstrictionData();
-    unload(data);
-    return data;
+    BronchoconstrictionData.Builder dst = BronchoconstrictionData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(BronchoconstrictionData data)
+  protected static void unload(SEBronchoconstriction src, BronchoconstrictionData.Builder dst)
   {
-    super.unload(data);
-    if (severity != null)
-      data.setSeverity(severity.unload());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   public boolean hasSeverity()

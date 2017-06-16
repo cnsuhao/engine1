@@ -11,12 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.engine;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ElectroCardioGramWaveformInterpolatorData;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineConfigurationData;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineDynamicStabilizationData;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineStabilizationData;
-import mil.tatrc.physiology.datamodel.bind.PhysiologyEngineTimedStabilizationData;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.EngineConfiguration.PhysiologyEngineConfigurationData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveformInterpolator;
 import mil.tatrc.physiology.utilities.Log;
@@ -24,8 +21,9 @@ import mil.tatrc.physiology.utilities.Log;
 public class PhysiologyEngineConfiguration
 {
   protected SEElectroCardioGramWaveformInterpolator  ecgInterpolator;
-  protected PhysiologyEngineStabilization stabilizationCriteria;
-  protected SEScalarTime                  timeStep;
+  protected PhysiologyEngineTimedStabilization       timedStabilization;
+  protected PhysiologyEngineDynamicStabilization     dynamicStabilization;
+  protected SEScalarTime                             timeStep;
   
   public PhysiologyEngineConfiguration()
   {
@@ -36,8 +34,10 @@ public class PhysiologyEngineConfiguration
   {
     if(ecgInterpolator!=null)
       this.ecgInterpolator.reset();
-    if(stabilizationCriteria!=null)
-      this.stabilizationCriteria.reset();
+    if(timedStabilization!=null)
+      this.timedStabilization.reset();
+    if(dynamicStabilization!=null)
+      this.dynamicStabilization.reset();
     if(timeStep!=null)
       this.timeStep.invalidate();
   }
@@ -45,55 +45,64 @@ public class PhysiologyEngineConfiguration
   public void clear()
   {
     this.ecgInterpolator=null;
-    this.stabilizationCriteria=null;   
+    this.timedStabilization=null;   
+    this.dynamicStabilization=null;
     this.timeStep=null;
   }
   
-  public boolean load(PhysiologyEngineConfigurationData in)
+  public static void load(PhysiologyEngineConfigurationData src, PhysiologyEngineConfiguration dst)
   {
-    clear();
-    
-    if(in.getElectroCardioGramInterpolatorFile()!=null)
-      getECGInterpolator().load((ElectroCardioGramWaveformInterpolatorData) CDMSerializer.readFile(in.getElectroCardioGramInterpolatorFile()));
-    else if(in.getElectroCardioGramInterpolator()!=null)
-      getECGInterpolator().load(in.getElectroCardioGramInterpolator());
-
-    PhysiologyEngineStabilizationData stabs=null;
-    if(in.getStabilizationCriteria()!=null)
-      stabs = in.getStabilizationCriteria();
-    else if(in.getStabilizationCriteriaFile()!=null)
-      stabs = (PhysiologyEngineStabilizationData)CDMSerializer.readFile(in.getStabilizationCriteriaFile());
-    if(stabs != null)
+    dst.clear();
+    switch(src.getElectroCardioGramInterpolatorCase())
     {
-      if(stabs instanceof PhysiologyEngineTimedStabilizationData)
-        stabilizationCriteria = new PhysiologyEngineTimedStabilization();
-      else if(stabs instanceof PhysiologyEngineDynamicStabilizationData)
-        stabilizationCriteria = new PhysiologyEngineDynamicStabilization();
-      else
-        Log.fatal("Unsupported stabilization critera : " + stabs.getClass().getName());
-      stabilizationCriteria.load(stabs);
+    case INTERPOLATOR:
+      SEElectroCardioGramWaveformInterpolator.load(src.getInterpolator(), dst.getECGInterpolator());
+      break;
+    case INTERPOLATORFILENAME:
+      try
+      {dst.getECGInterpolator().readFile(src.getInterpolatorFileName());}
+      catch(ParseException ex){Log.error("Unable to load ECG File : "+src.getInterpolatorFileName());}
+      break;
     }
     
-    if(in.getTimeStep()!=null)
-      getTimeStep().load(in.getTimeStep());
-    return true;
+    switch(src.getStabilizationCriteriaCase())
+    {
+    case TIMEDSTABILIZATION:
+      PhysiologyEngineTimedStabilization.load(src.getTimedStabilization(), dst.getTimedStabilization());
+      break;
+    case DYNAMICSTABILIZATION:
+      PhysiologyEngineDynamicStabilization.load(src.getDynamicStabilization(), dst.getDynamicStabilization());
+      break;
+    case STABILIZATIONFILENAME:
+      try
+      {dst.getTimedStabilization().readFile(src.getStabilizationFileName());}
+      catch(ParseException ex){}
+      try
+      {dst.getDynamicStabilization().readFile(src.getStabilizationFileName());}
+      catch(ParseException ex){}
+      break;
+    }
+     
+    if(src.hasTimeStep())
+      SEScalarTime.load(src.getTimeStep(),dst.getTimeStep());
   }
   
-  public PhysiologyEngineConfigurationData unload()
+  public static PhysiologyEngineConfigurationData unload(PhysiologyEngineConfiguration src)
   {
-    PhysiologyEngineConfigurationData data = CDMSerializer.objFactory.createPhysiologyEngineConfigurationData();
-    unload(data);
-    return data;
+    PhysiologyEngineConfigurationData.Builder dst = PhysiologyEngineConfigurationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(PhysiologyEngineConfigurationData data)
+  protected static void unload(PhysiologyEngineConfiguration src, PhysiologyEngineConfigurationData.Builder dst)
   {
-    if(hasECGInterpolator())
-      data.setElectroCardioGramInterpolator(this.ecgInterpolator.unload());
-    if(hasStabilizationCriteria())
-      data.setStabilizationCriteria(this.stabilizationCriteria.unload());
-    if(hasTimeStep())
-      data.setTimeStep(this.timeStep.unload());
+    if(src.hasECGInterpolator())
+      dst.setInterpolator(SEElectroCardioGramWaveformInterpolator.unload(src.ecgInterpolator));
+    if(src.hasTimedStabilization())
+      dst.setTimedStabilization(PhysiologyEngineTimedStabilization.unload(src.timedStabilization));
+    if(src.hasDynamicStabilization())
+      dst.setDynamicStabilization(PhysiologyEngineDynamicStabilization.unload(src.dynamicStabilization));
+    if(src.hasTimeStep())
+      dst.setTimeStep(SEScalarTime.unload(src.timeStep));
   }
   
   public boolean hasECGInterpolator()
@@ -107,13 +116,34 @@ public class PhysiologyEngineConfiguration
     return ecgInterpolator;
   }
   
-  public boolean hasStabilizationCriteria()
+  public boolean hasDynamicStabilization()
   {
-    return stabilizationCriteria!=null;
+    return dynamicStabilization!=null;
   }
-  public PhysiologyEngineStabilization getStabilizationCriteria()
+  public PhysiologyEngineDynamicStabilization getDynamicStabilization()
   {
-    return stabilizationCriteria;
+    if(this.dynamicStabilization==null)
+    {
+      this.dynamicStabilization = new PhysiologyEngineDynamicStabilization();
+      if(this.timedStabilization!=null)
+        this.timedStabilization=null;
+    }
+    return dynamicStabilization;
+  }
+  
+  public boolean hasTimedStabilization()
+  {
+    return timedStabilization!=null;
+  }
+  public PhysiologyEngineTimedStabilization getTimedStabilization()
+  {
+    if(this.timedStabilization==null)
+    {
+      this.timedStabilization = new PhysiologyEngineTimedStabilization();
+      if(this.dynamicStabilization!=null)
+        this.dynamicStabilization=null;
+    }
+    return timedStabilization;
   }
 
   public boolean hasTimeStep()

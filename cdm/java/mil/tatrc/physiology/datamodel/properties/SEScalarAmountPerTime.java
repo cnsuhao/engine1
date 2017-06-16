@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarAmountPerTimeData;
+import com.kitware.physiology.cdm.Properties.ScalarAmountPerTimeData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.AmountPerTimeUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarAmountPerTime extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarAmountPerTimeData src, SEScalarAmountPerTime dst)
+  {
+    SEScalar.load(src.getScalarAmountPerTime(),dst);
+  }
+  public static ScalarAmountPerTimeData unload(SEScalarAmountPerTime src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarAmountPerTimeData.Builder dst = ScalarAmountPerTimeData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarAmountPerTime src, ScalarAmountPerTimeData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarAmountPerTimeBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -79,17 +96,6 @@ public class SEScalarAmountPerTime extends SEScalar
     return this.getValue(unit.toString());
   }
   
-  
-
-  public ScalarAmountPerTimeData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarAmountPerTimeData to = CDMSerializer.objFactory.createScalarAmountPerTimeData();
-    unload(to);
-    return to;
-  }
 
   public boolean validUnit(String unit)
   {

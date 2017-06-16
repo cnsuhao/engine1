@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ApneaData;
+import com.kitware.physiology.cdm.PatientActions.ApneaData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEApnea extends SEPatientAction
@@ -48,25 +48,25 @@ public class SEApnea extends SEPatientAction
     return hasSeverity();
   }
   
-  public boolean load(ApneaData in) 
+  public static void load(ApneaData src, SEApnea dst) 
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
   
-  public ApneaData unload()
+  public static ApneaData unload(SEApnea src)
   {
-    ApneaData data = CDMSerializer.objFactory.createApneaData();
-    unload(data);
-    return data;
+    ApneaData.Builder dst = ApneaData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ApneaData data)
+  protected static void unload(SEApnea src, ApneaData.Builder dst)
   {
-    super.unload(data);
-    if (severity != null)
-      data.setSeverity(severity.unload());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   public boolean hasSeverity()

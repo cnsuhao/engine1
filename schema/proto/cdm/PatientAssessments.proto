@@ -1,0 +1,137 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+
+/** @brief Base Patient Assessment type */
+message PatientAssessmentData
+{
+}
+
+/** @brief A group of tests that measure how well the lungs take in and release air, and how well they move gases from the atmosphere into the body's circulation. */
+message PulmonaryFunctionTestData
+{
+  PatientAssessmentData     PatientAssessment                      = 1;
+  ScalarVolumeData          ExpiratoryReserveVolume                = 2; /**<< @brief Difference between the amount of air in the lungs after a normal exhale and the amount after an exhale with force. */
+  ScalarVolumeData          ForcedVitalCapacity                    = 3; /**<< @brief The amount of air which can be forcibly exhaled from the lungs after taking the deepest possible breath. */
+  ScalarVolumeData          ForcedExpiratoryVolume                 = 4; /**<< @brief The amount of air which can be exhaled with force in one breath. */
+  ScalarVolumePerTimeData   ForcedExpiratoryFlow                   = 5; /**<< @brief Measures air flow halfway through an exhale. */
+  ScalarVolumeData          FunctionalResidualCapacity             = 6; /**<< @brief The volume of air in the lungs at the end of a normal exhaled breath. */
+  ScalarVolumeData          InspiratoryCapacity                    = 7; /**<< @brief The difference between the maximum lung capacity and the volume at the end of a normal tidal volume exhalation. */
+  ScalarVolumeData          InspiratoryReserveVolume               = 8; /**<< @brief The difference between the maximum lung volume and the volume at the end of a normal inhalation. */
+  ScalarVolumeData          MaximumVoluntaryVentilation            = 9; /**<< @brief The amount of air that can be breathed in and out during 1 minute. */
+  ScalarVolumePerTimeData   PeakExpiratoryFlow                     = 10;/**<< @brief Air flow during forced exhale of the deepest possible breath. */
+  ScalarVolumeData          ResidualVolume                         = 11;/**<< @brief The amount of air in the lungs after the patient has exhaled completely. */                 
+  ScalarVolumeData          SlowVitalCapacity                      = 12;/**<< @brief The amount of air that can be exhaled slowly after the deepest possible inhalation. */
+  ScalarVolumeData          TotalLungCapacity                      = 13;/**<< @brief The volume of air in the lungs after the deepest possible inhalation. */
+  ScalarVolumeData          VitalCapacity                          = 14;/**<< @brief The volume of air that can be exhaled from the lungs after the deepest possible inhalation. */
+  FunctionVolumeVsTimeData  LungVolumePlot                         = 15;/**<< @brief The lung volume as a function of time from the pulmonary function test. */
+}
+
+/** @brief A blood test used to evaluate overall health and detect a wide range of disorders.
+    @details References<br>
+    http://www.nlm.nih.gov/medlineplus/ency/article/003642.htm <br>
+    http://www.mayoclinic.org/tests-procedures/complete-blood-count/basics/results/prc-20014088*/
+message CompleteBloodCountData
+{
+  PatientAssessmentData     PatientAssessment                      = 1;
+  Scalar0To1Data            Hematocrit                             = 2; /**<< @brief Volume percentage of red blood cells in the blood.*/                
+  ScalarMassPerVolumeData   Hemoglobin                             = 3; /**<< @brief The concentration of hemoglobin in the blood.*/
+  ScalarAmountPerVolumeData PlateletCount                          = 4; /**<< @brief Number of platelets per volume of blood.*/
+  ScalarMassPerAmountData   MeanCorpuscularHemoglobin              = 5; /**<< @brief (MCH) Hemoglobin amount per red blood cell.*/
+  ScalarMassPerVolumeData   MeanCorpuscularHemoglobinConcentration = 6; /**<< @brief (MCHC) The amount of hemoglobin relative to the size of the cell (hemoglobin concentration) per red blood cell.*/
+  ScalarVolumeData          MeanCorpuscularVolume                  = 7; /**<< @brief (MCV) Average red blood cell size.*/
+  ScalarAmountPerVolumeData RedBloodCellCount                      = 8; /**<< @brief  Number of red blood cells per volume of blood.*/
+  ScalarAmountPerVolumeData WhiteBloodCellCount                    = 9; /**<< @brief Number of white blood cells per volume of blood.*/
+}
+
+/** @brief A comprehensive metabolic panel is a group of 14 blood tests which provide a clinician with an overall picture of the body's chemical balance and metabolism.
+    @details Reference https://www.nlm.nih.gov/medlineplus/ency/article/003468.htm */
+message ComprehensiveMetabolicPanelData
+{
+  PatientAssessmentData     PatientAssessment                      = 1;
+  ScalarMassPerVolumeData   Albumin                                = 2; /**<< @brief Albumin is a protein made by the liver. A serum albumin test measures the amount of this protein in the clear liquid portion of the blood.*/
+  ScalarMassPerVolumeData   ALP                                    = 3; /**<< @brief Alkaline phosphatase (ALP) is a protein found in all body tissues. Tissues with higher amounts of ALP include the liver, bile ducts, and bone.*/
+  ScalarMassPerVolumeData   ALT                                    = 4; /**<< @brief Alanine transaminase (ALT) is an enzyme found in the highest amounts in the liver. Injury to the liver results in release of the substance into the blood.*/
+  ScalarMassPerVolumeData   AST                                    = 5; /**<< @brief AST (aspartate aminotransferase) is an enzyme found in high amounts in liver, heart, and muscle cells. It is also found in lesser amounts in other tissues.*/
+  ScalarMassPerVolumeData   BUN                                    = 6; /**<< @brief BUN stands for blood urea nitrogen. Urea nitrogen is what forms when protein breaks down. */
+  ScalarMassPerVolumeData   Calcium                                = 7; /**<< @brief  About half of the calcium in the blood is attached to proteins, mainly albumin. For this reason, the calcium blood test can be misleading, and sometimes needs tests to confirm the result. */
+  ScalarAmountPerVolumeData Chloride                               = 8; /**<< @brief Chloride is a type of electrolyte. It works with other electrolytes such as potassium, sodium, and carbon dioxide (CO2). These substances help keep the proper balance of body fluids and maintain the body's acid-base balance.*/
+  ScalarAmountPerVolumeData CO2                                    = 9; /**<< @brief Most of the CO2 is in the form of a substance called bicarbonate (HCO3-). Therefore, the CO2 blood test is really a measure of your blood bicarbonate level.*/
+  ScalarMassPerVolumeData   Creatinine                             = 10;/**<< @brief Measures the level of creatinine in the blood. This test is done to see how well your kidneys work.*/
+  ScalarMassPerVolumeData   Glucose                                = 11;/**<< @brief Measures the amount of a sugar called glucose in a sample of your blood. */
+  ScalarAmountPerVolumeData Potassium                              = 12;/**<< @brief Measures the amount of potassium in the fluid portion (serum) of the blood. Potassium (K+) helps nerves and muscles communicate. It also helps move nutrients into cells and waste products out of cells. */
+  ScalarAmountPerVolumeData Sodium                                 = 13;/**<< @brief Measures the amount of sodium in the blood. */
+  ScalarMassPerVolumeData   TotalBilirubin                         = 14;/**<< @brief Bilirubin is a yellowish pigment found in bile, a fluid made by the liver. A small amount of older red blood cells are replaced by new blood cells every day. Bilirubin is left after these older blood cells are removed. The liver helps break down bilirubin so that it can be removed from the body in the stool. */
+  ScalarMassPerVolumeData   TotalProtein                           = 15;/**<< @brief Measures the total amount of two classes of proteins found in the fluid portion of your blood. These are albumin and globulin. */
+}
+
+/** @brief Urinalysis is the physical, chemical, and microscopic examination of urine. It involves a number of tests to detect and measure various compounds that pass through the urine.
+    @details References<br>
+    https://labtestsonline.org/understanding/analytes/urinalysis/ui-exams/start/1/ */
+message UrinalysisData
+{
+  enum ePresenceIndicator
+  {
+    Positive        = 0;
+    Negative        = 1;
+  }
+
+  enum eClarityIndicator
+  {
+    Translucent     = 0;
+    SlightlyCloudy  = 1;
+    Cloudy          = 2;
+    Turbid          = 3;
+  }
+
+  enum eUrineColor
+  {
+    PaleYellow      = 0;
+    Yellow          = 1;
+    DarkYellow      = 2;
+  }
+
+  enum eMicroscopicObservationType
+  {
+    LowPowerField   = 0;
+    HighPowerField  = 1;
+  }
+
+  enum eMicroscopicObservationAmount
+  {
+    Few             = 0;
+    Moderate        = 1;
+    Many            = 2;
+  }
+  
+  message UrinalysisMicroscopicData
+  {
+    eMicroscopicObservationType      ObservationType    = 1;/**<< @brief Microscope power used in observation */
+    ScalarAmountData                 RedBloodCells      = 2;/**<< @brief Number of red blood cells viewed. */
+    ScalarAmountData                 WhiteBloodCells    = 3;/**<< @brief Number of white blood cells viewed. */
+    eMicroscopicObservationAmount    EpithelialCells    = 4;/**<< @brief Amount of epithelial cells viewed. */
+    ScalarAmountData                 Casts              = 5;/**<< @brief Casts are cylindrical particles sometimes found in urine that are formed from coagulated protein secreted by kidney cells. .  */
+    eMicroscopicObservationAmount    Crystals           = 6;/**<< @brief Amount of crystals viewed. */
+    eMicroscopicObservationAmount    Bacteria           = 7;/**<< @brief Amount of bacteria viewed. */
+    eMicroscopicObservationAmount    Trichomonads       = 8;/**<< @brief Trichomonads are parasites that may be found in the urine of women or men (rarely).*/
+    eMicroscopicObservationAmount    Yeast              = 9;/**<< @brief Amount of yeasts viewed. */                         
+  }
+
+  PatientAssessmentData              PatientAssessment  = 1;
+  eUrineColor                        Color              = 2; /**<< @brief Color of the urine. */
+  eClarityIndicator                  Appearance         = 3; /**<< @brief Clarity of the urine. */
+  ePresenceIndicator                 Glucose            = 4; /**<< @brief Glucose is normally not present in urine. When glucose is present, the condition is called glucosuria. */
+  ePresenceIndicator                 Ketone             = 5; /**<< @brief  Ketones are not normally found in the urine. They are intermediate products of fat metabolism. They can form when a person does process enough carbohydrates. */
+  ScalarData                         Bilirubin          = 6; /**<< @brief Bilirubin is not present in the urine of normal, healthy individuals. Bilirubin is a waste product that is produced by the liver from the hemoglobin of RBCs that are removed from circulation. */
+  ScalarData                         SpecificGravity    = 7; /**<< @brief A measure of urine concentration that can be determined using a chemical test. */
+  ePresenceIndicator                 Blood              = 8; /**<< @brief This test is used to detect hemoglobin in the urine (hemoglobinuria). Hemoglobin is an oxygen-transporting protein found inside red blood cells (RBCs). Its presence in the urine indicates blood in the urine (known as hematuria).*/
+  ScalarData                         pH                 = 9; /**<< @brief As with specific gravity, there are typical but not "abnormal" pH values. The kidneys play an important role in maintaining the acid-base balance of the body.  */
+  ePresenceIndicator                 Protein            = 10;/**<< @brief The protein test pad measures the amount of albumin in the urine. Normally, there will not be detectable quantities. */
+  ScalarMassPerVolumeData            Urobilinogen       = 11;/**<< @brief Urobilinogen is normally present in urine in low concentrations. It is formed in the intestine from bilirubin, and a portion of it is absorbed back into the bloodstream. */
+  ePresenceIndicator                 Nitrite            = 12;/**<< @brief This test detects nitrite and is based upon the fact that many bacteria can convert nitrate to nitrite in the urine. */
+  ePresenceIndicator                 LeukocyteEsterase  = 13;/**<< @brief Leukocyte esterase is an enzyme present in most white blood cells (WBCs). Normally, a few white blood cells (see microscopic examination) are present in urine and this test is negative. When the number of WBCs in urine increases significantly, this screening test will become positive.*/
+  
+  UrinalysisMicroscopicData          Microscopic        = 14;
+}

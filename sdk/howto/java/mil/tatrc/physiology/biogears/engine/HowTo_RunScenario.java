@@ -11,12 +11,14 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.biogears.engine;
 
+import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
+
+import mil.tatrc.physiology.datamodel.actions.SEAdvanceTime;
+import mil.tatrc.physiology.datamodel.datarequests.SEDataRequest;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.FrequencyUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumeUnit;
 import mil.tatrc.physiology.datamodel.scenario.SEScenario;
-import mil.tatrc.physiology.datamodel.scenario.actions.SEAdvanceTime;
-import mil.tatrc.physiology.datamodel.scenario.datarequests.SEPhysiologyDataRequest;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
@@ -98,7 +100,7 @@ public class HowTo_RunScenario
     // the name and location of a results file
     // an optional callback that will be called so you can get the latest data values and do some custom logic
     String xml = FileUtils.readFile("../verification/Scenarios/Basic/Basic1.xml");
-    bge.runScenarioXML("./Scenarios/Basic/Basic1.log", xml,"./Scenarios/Basic/Basic1Results.txt", null);// No Callback, just write out the file
+    bge.runScenario("./Scenarios/Basic/Basic1.log", xml,"./Scenarios/Basic/Basic1Results.txt", null);// No Callback, just write out the file
     
     // You could create and provide an SEScenario object as well
     SEScenario sce = new SEScenario(bge.substanceManager);
@@ -107,18 +109,21 @@ public class HowTo_RunScenario
     sce.getInitialParameters().setPatientFile("Standard.xml");
     // When filling out a data request, units are optional
     // The units will be set to whatever units the engine uses.
-    SEPhysiologyDataRequest hr = new SEPhysiologyDataRequest();
+    SEDataRequest hr = new SEDataRequest();
+    hr.setCategory(eCategory.Physiology);
     hr.setName("HeartRate");
     hr.setUnit(FrequencyUnit.Per_min.toString());
-    sce.getDataRequests().getRequestedData().add(hr);
-    SEPhysiologyDataRequest rr = new SEPhysiologyDataRequest();
+    sce.getDataRequestManager().getRequestedData().add(hr);
+    SEDataRequest rr = new SEDataRequest();
+    hr.setCategory(eCategory.Physiology);
     rr.setName("RespirationRate");
     rr.setUnit(FrequencyUnit.Per_min.toString());
-    sce.getDataRequests().getRequestedData().add(rr);
-    SEPhysiologyDataRequest tlv = new SEPhysiologyDataRequest();    
+    sce.getDataRequestManager().getRequestedData().add(rr);
+    SEDataRequest tlv = new SEDataRequest();   
+    hr.setCategory(eCategory.Physiology); 
     tlv.setName("TotalLungVolume");
     tlv.setUnit(VolumeUnit.mL.toString());
-    sce.getDataRequests().getRequestedData().add(tlv);
+    sce.getDataRequestManager().getRequestedData().add(tlv);
     // Let's just run for 2 minutes
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);

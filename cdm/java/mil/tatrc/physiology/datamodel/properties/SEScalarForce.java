@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarForceData;
+import com.kitware.physiology.cdm.Properties.ScalarForceData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.ForceUnit;
 
 /**
@@ -53,6 +53,23 @@ public class SEScalarForce extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarForceData src, SEScalarForce dst)
+  {
+    SEScalar.load(src.getScalarForce(),dst);
+  }
+  public static ScalarForceData unload(SEScalarForce src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarForceData.Builder dst = ScalarForceData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarForce src, ScalarForceData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarForceBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +94,6 @@ public class SEScalarForce extends SEScalar
   public double getValue(ForceUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarForceData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarForceData to = CDMSerializer.objFactory.createScalarForceData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

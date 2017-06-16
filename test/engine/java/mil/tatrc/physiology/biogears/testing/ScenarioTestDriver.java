@@ -126,7 +126,7 @@ public class ScenarioTestDriver implements TestDriver.Executor
     }
     BioGearsScenarioExec bge = new BioGearsScenarioExec();
     bge.setListener(job);      
-    bge.runScenarioXML(log, xml, results);
+    bge.runScenario(log, xml, results);
     Log.info("Completed running "+job.name);
     bge=null;
     return true;

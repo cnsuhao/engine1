@@ -51,10 +51,10 @@ import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.ShapeUtilities;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScenarioData;
+import com.google.protobuf.TextFormat.ParseException;
+
+import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.scenario.SEScenario;
-import mil.tatrc.physiology.datamodel.scenario.actions.SEAction;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.utilities.DoubleUtils;
 import mil.tatrc.physiology.utilities.FileUtils;
@@ -102,17 +102,15 @@ public class ActionEventPlotter implements Plotter
     if (!job.skipAllActions)
     {
       //Get all actions from scenario file
-      Object obj = CDMSerializer.readFile(job.scenarioPath + job.scenarioFile);
-      if (obj instanceof ScenarioData)
+      try
       {
         this.scenario = new SEScenario(subMgr);
-        this.scenario.load((ScenarioData) obj);
+        this.scenario.readFile(job.scenarioPath + job.scenarioFile);
         actions = scenario.getActions();
       } 
-      else
+      catch(ParseException ex)
       {
-        Log.error("Could not analyze scenario file " + job.scenarioPath
-            + job.scenarioFile);
+        Log.error("Could not analyze scenario file " + job.scenarioPath + job.scenarioFile);
       }
     }
     
