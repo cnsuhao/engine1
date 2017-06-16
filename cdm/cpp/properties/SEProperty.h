@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-CDM_BIND_DECL(PropertyData)
-
 class DLL_DECL SEProperty
 {
 protected:
@@ -28,9 +26,4 @@ public:
   virtual void Invalidate()=0;
   virtual bool IsValid() const=0;
 
-  virtual bool Load(const CDM::PropertyData& in);
-
-protected:
-  virtual void Unload(CDM::PropertyData& data) const;
-  
 };

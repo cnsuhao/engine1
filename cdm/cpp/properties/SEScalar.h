@@ -13,8 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
-
-CDM_BIND_DECL(ScalarData)
+#include "bind/cdm/Properties.pb.h"
 
 #define ZERO_APPROX 1e-10
 
@@ -47,10 +46,11 @@ public:
   */
   virtual void Invalidate();
 
-  virtual void Load(const CDM::ScalarData& in);
-  virtual CDM::ScalarData* Unload() const;
+  static void Load(const cdm::ScalarData& src, SEScalar& dst);
+  static cdm::ScalarData* Unload(const SEScalar& src);
 protected:
-  virtual void Unload(CDM::ScalarData& s) const;
+  static void Serialize(const cdm::ScalarData& src, SEScalar& dst);
+  static void Serialize(const SEScalar& src, cdm::ScalarData& dst);
 
 public:
   /**
@@ -146,10 +146,9 @@ public:
   virtual void Invalidate();
   virtual bool IsValid() const;
 
-  virtual void Load(const CDM::ScalarData& in);
-  virtual CDM::ScalarData* Unload() const;
 protected:
-  virtual void Unload(CDM::ScalarData& s) const;
+  static void Serialize(const cdm::ScalarData& src, SEScalarQuantity<Unit>& dst);
+  static void Serialize(const SEScalarQuantity<Unit>& src, cdm::ScalarData& dst);
 
   // We need to support the SEUnitScalar interface,  but make these protected
   // If you want access in a generic unit way, us an SEGenericScalar wrapper

@@ -16,15 +16,6 @@ specific language governing permissions and limitations under the License.
 const AmountUnit AmountUnit::mol("mol");
 const AmountUnit AmountUnit::pmol("pmol");
 
-CDM::ScalarAmountData* SEScalarAmount::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::ScalarAmountData* data(new CDM::ScalarAmountData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool AmountUnit::IsValidUnit(const std::string& unit)
 {
   if (mol.GetString().compare(unit) == 0)
@@ -42,4 +33,26 @@ const AmountUnit& AmountUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Amount unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarAmount::Load(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
+{
+  SEScalarAmount::Serialize(src, dst);
+}
+void SEScalarAmount::Serialize(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
+{
+  SEScalarQuantity<AmountUnit>::Serialize(src.scalaramount(), dst);
+}
+
+cdm::ScalarAmountData* SEScalarAmount::Unload(const SEScalarAmount& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarAmountData* dst = new cdm::ScalarAmountData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarAmount::Serialize(const SEScalarAmount& src, cdm::ScalarAmountData& dst)
+{
+  SEScalarQuantity<AmountUnit>::Serialize(src, *dst.mutable_scalaramount());
 }

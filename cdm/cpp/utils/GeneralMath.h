@@ -15,7 +15,6 @@ class SESubstance;
 class SESubstanceManager;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
-#include "circuit/SECircuitNode.h"
 
 class DLL_DECL GeneralMath
 {

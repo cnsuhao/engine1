@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "bind/cdm/Properties.pb.h"
 #include "utils/GeneralMath.h"
 
 template<typename Unit>
@@ -51,34 +50,25 @@ bool SEScalarQuantity<Unit>::IsValid() const
 }
 
 template<typename Unit>
-void SEScalarQuantity<Unit>::Load(const CDM::ScalarData& in)
+void SEScalarQuantity<Unit>::Serialize(const cdm::ScalarData& src, SEScalarQuantity<Unit>& dst)
 {
-  this->Clear();
-  SEProperty::Load(in);
-  if (in.unit().present())
-    this->SetValue(in.value(), Unit::GetCompoundUnit(in.unit().get()));
+  dst.Clear();
+  if (!src.unit().empty())
+    dst.SetValue(src.value(), Unit::GetCompoundUnit(src.unit()));
   else
     throw CommonDataModelException("ScalarQuantity attempted to load a ScalarData with no unit, must have a unit.");  
-  m_readOnly = in.readOnly();
+  dst.m_readOnly = src.readonly();
 }
 
 template<typename Unit>
-CDM::ScalarData* SEScalarQuantity<Unit>::Unload() const
+void SEScalarQuantity<Unit>::Serialize(const SEScalarQuantity<Unit>& src, cdm::ScalarData& dst)
 {
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarData* data(new CDM::ScalarData());
-  this->Unload(*data);
-  return data;
-}
-
-template<typename Unit>
-void SEScalarQuantity<Unit>::Unload(CDM::ScalarData& data) const
-{
-  SEProperty::Unload(data);
-  data.value(m_value);
-  data.unit(m_unit->GetString());
-  data.readOnly(m_readOnly);
+  dst.set_value(src.m_value);
+  if(src.m_unit!=nullptr)
+    dst.set_unit(src.m_unit->GetString()); 
+  else
+    throw CommonDataModelException("ScalarQuantity attempted to unload a ScalarData with no unit, must have a unit.");
+  dst.set_readonly(src.m_readOnly);
 }
 
 template<typename Unit>

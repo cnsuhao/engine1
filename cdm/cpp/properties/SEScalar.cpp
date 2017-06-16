@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "properties/SEScalar.h"
-#include "bind/cdm/Properties.pb.h"
 #include "utils/GeneralMath.h"
 
 unsigned long long int SEScalar::NaN = 
@@ -51,34 +50,34 @@ void SEScalar::Clear()
   Invalidate();
 }
 
-void SEScalar::Load(const CDM::ScalarData& in)
+void SEScalar::Load(const cdm::ScalarData& src, SEScalar& dst)
 {
-  Clear();
-  SEProperty::Load(in);
-  SetValue(in.value());
-  if (in.unit().present())
+  SEScalar::Serialize(src, dst);
+}
+void SEScalar::Serialize(const cdm::ScalarData& src, SEScalar& dst)
+{
+  dst.Clear();
+  dst.SetValue(src.value());
+  if (!src.unit().empty())
   {
-    std::string u = in.unit().get();
-    if (u != "unitless")
+    if (src.unit() != "unitless")
       throw CommonDataModelException("CDM::Scalar API is intended to be unitless, You are trying to load a ScalarData with a unit defined");
   }
-  m_readOnly = in.readOnly();
+  dst.m_readOnly = src.readonly();
 }
 
-CDM::ScalarData* SEScalar::Unload() const
+cdm::ScalarData* SEScalar::Unload(const SEScalar& src)
 {
-  if(!IsValid())
+  if(!src.IsValid())
     return nullptr;
-  CDM::ScalarData* data(new CDM::ScalarData());
-  Unload(*data);
-  return data;
+  cdm::ScalarData* dst =new cdm::ScalarData();
+  Serialize(src,*dst);
+  return dst;
 }
-
-void SEScalar::Unload(CDM::ScalarData& data) const
+void SEScalar::Serialize(const SEScalar& src, cdm::ScalarData& dst)
 {
-  SEProperty::Unload(data);
-  data.value(m_value);
-  data.readOnly(m_readOnly);
+  dst.set_value(src.m_value);
+  dst.set_readonly(src.m_readOnly);
 }
 
 bool SEScalar::Set(const SEScalar& s)
