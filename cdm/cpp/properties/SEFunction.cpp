@@ -12,9 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "properties/SEFunction.h"
-#include "bind/FunctionData.hxx"
-#include "bind/DoubleArray.hxx"
-#include "bind/DoubleList.hxx"
 #include "properties/SEScalar.h"//Utils
 
 static std::stringstream err;
@@ -49,35 +46,44 @@ void SEFunction::Invalidate()
   Clear();
 }
 
-bool SEFunction::Load(const CDM::FunctionData& in)
+void SEFunction::Load(const cdm::FunctionData& src, SEFunction& dst)
 {
-  Clear();  
-  for(unsigned int i=0; i<in.Dependent().DoubleList().size(); i++)
-    m_Dependent.push_back(in.Dependent().DoubleList()[i]);
-  for (unsigned int i = 0; i<in.Independent().DoubleList().size(); i++)
-    m_Independent.push_back(in.Independent().DoubleList()[i]);
-  return IsValid();
-}
+  SEFunction::Serialize(src, dst);
 
-CDM::FunctionData*  SEFunction::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::FunctionData* data(new CDM::FunctionData());
-  Unload(*data);
-  return data;
-}
-
-void SEFunction::Unload(CDM::FunctionData& data) const
-{
-  data.Dependent(std::unique_ptr<CDM::DoubleArray>(new CDM::DoubleArray()));
-  data.Dependent().DoubleList(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  data.Independent(std::unique_ptr<CDM::DoubleArray>(new CDM::DoubleArray()));
-  data.Independent().DoubleList(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  for(unsigned int i=0; i<m_Dependent.size(); i++)
+  if (!src.dependentunit().empty())
   {
-    data.Dependent().DoubleList().push_back(m_Dependent[i]);
-    data.Independent().DoubleList().push_back(m_Independent[i]);
+    if (src.dependentunit() != "unitless")
+      throw CommonDataModelException("CDM::Function API is intended to be unitless, You are trying to load a dependent axis with a unit defined");
+  }
+  if (!src.independentunit().empty())
+  {
+    if (src.independentunit() != "unitless")
+      throw CommonDataModelException("CDM::Function API is intended to be unitless, You are trying to load an independent axis with a unit defined");
+  }
+}
+void SEFunction::Serialize(const cdm::FunctionData& src, SEFunction& dst)
+{
+  dst.Clear();
+  for (size_t i = 0; i<src.dependent().value_size(); i++)
+    dst.m_Dependent.push_back(src.dependent().value(i));
+  for (size_t i = 0; i<src.independent().value_size(); i++)
+    dst.m_Independent.push_back(src.independent().value(i));
+}
+
+cdm::FunctionData* SEFunction::Unload(const SEFunction& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::FunctionData* dst = new cdm::FunctionData();
+  SEFunction::Serialize(src, *dst);
+  return dst;
+}
+void SEFunction::Serialize(const SEFunction& src, cdm::FunctionData& dst)
+{
+  for (unsigned int i = 0; i<src.m_Dependent.size(); i++)
+  {
+    dst.mutable_dependent()->add_value(src.m_Dependent[i]);
+    dst.mutable_independent()->add_value(src.m_Independent[i]);
   }
 }
 

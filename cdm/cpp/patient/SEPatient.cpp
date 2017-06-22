@@ -12,46 +12,30 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 
-#include "Serializer.h"
-
 #include "patient/SEPatient.h"
-#include "bind/PatientData.hxx"
-#include "bind/ActivePatientEventData.hxx"
 #include "patient/SENutrition.h"
 #include "utils/SEEventHandler.h"
 #include "properties/SEScalarTime.h"
-#include "bind/ScalarTimeData.hxx"
 #include "properties/SEScalarMass.h"
-#include "bind/ScalarMassData.hxx"
 #include "properties/SEScalarLength.h"
-#include "bind/ScalarLengthData.hxx"
-#include "properties/SEScalarFraction.h"
-#include "bind/ScalarFractionData.hxx"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
-#include "bind/ScalarPressureData.hxx"
 #include "properties/SEScalarPressurePerVolume.h"
-#include "bind/ScalarPressurePerVolumeData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarFrequency.h"
-#include "bind/ScalarFrequencyData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/ScalarMassPerVolumeData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 #include "properties/SEScalarArea.h"
-#include "bind/ScalarAreaData.hxx"
 #include "properties/SEScalarPower.h"
-#include "bind/ScalarPowerData.hxx"
 #include "properties/SEScalarFlowElastance.h"
-#include "bind/ScalarFlowElastanceData.hxx"
+#include <google/protobuf/text_format.h>
 
 SEPatient::SEPatient(Logger* logger) : Loggable(logger)
 {
   m_EventHandler = nullptr;
 
   m_Name="";
-  m_Sex = (CDM::enumSex::value)-1;
+  m_Sex = (cdm::PatientData::eSex)-1;
   m_Age=nullptr;
   m_Weight=nullptr;
   m_Height=nullptr;
@@ -88,19 +72,16 @@ SEPatient::~SEPatient()
 
 bool SEPatient::LoadFile(const std::string& patientFile)
 {
-  CDM::PatientData* pData;
-  std::unique_ptr<CDM::ObjectData> data;
+  cdm::PatientData src;
+  std::ifstream file_stream(patientFile, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  SEPatient::Load(src, *this);
+  return true;
 
-  data=Serializer::ReadFile(patientFile,GetLogger());
-  pData = dynamic_cast<CDM::PatientData*>(data.get());
-  if(pData==nullptr)
-  {
-    std::stringstream ss;
-    ss<<"Patient file could not be read : "<<patientFile<<std::endl;
-    Error(ss);
-    return false;
-  }
-  return Load(*pData);
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
 }
 
 void SEPatient::Clear()
@@ -109,7 +90,7 @@ void SEPatient::Clear()
   m_EventState.clear();
   m_EventDuration_s.clear();
   m_Name="";
-  m_Sex = (CDM::enumSex::value)-1;
+  m_Sex = (cdm::PatientData::eSex)-1;
   SAFE_DELETE(m_Age);
   SAFE_DELETE(m_Weight);
   SAFE_DELETE(m_Height);
@@ -198,166 +179,173 @@ const SEScalar* SEPatient::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEPatient::Load(const CDM::PatientData& in)
+void SEPatient::Load(const cdm::PatientData& src, SEPatient& dst)
 {
-  Clear();
+  SEPatient::Serialize(src, dst);
+}
+void SEPatient::Serialize(const cdm::PatientData& src, SEPatient& dst)
+{
+  dst.Clear();
+  dst.SetName(src.name());
+  dst.SetSex(src.sex());
+  if (src.has_age())
+    SEScalarTime::Load(src.age(), dst.GetAge());
+  if (src.has_weight())
+    SEScalarMass::Load(src.weight(), dst.GetWeight());
+  if (src.has_height())
+    SEScalarLength::Load(src.height(), dst.GetHeight());
+  if (src.has_bodydensity())
+    SEScalarMassPerVolume::Load(src.bodydensity(), dst.GetBodyDensity());
+  if (src.has_bodyfatfraction())
+    SEScalar0To1::Load(src.bodyfatfraction(), dst.GetBodyFatFraction());
+  if (src.has_leanbodymass())
+    SEScalarMass::Load(src.leanbodymass(), dst.GetLeanBodyMass());
 
-  m_Name=in.Name();
-  if(in.Sex().present())
-    m_Sex=in.Sex().get();
-  if(in.Age().present())
-    GetAge().Load(in.Age().get());
-  if(in.Weight().present())
-    GetWeight().Load(in.Weight().get());
-  if(in.Height().present())
-    GetHeight().Load(in.Height().get());
+  if (src.has_alveolisurfacearea())
+    SEScalarArea::Load(src.alveolisurfacearea(), dst.GetAlveoliSurfaceArea());
+  if (src.has_rightlungratio())
+    SEScalar0To1::Load(src.rightlungratio(), dst.GetRightLungRatio());
+  if (src.has_skinsurfacearea())
+    SEScalarArea::Load(src.skinsurfacearea(), dst.GetSkinSurfaceArea());
 
-  if (in.AlveoliSurfaceArea().present())
-    GetAlveoliSurfaceArea().Load(in.AlveoliSurfaceArea().get());
-  if (in.BasalMetabolicRate().present())
-    GetBasalMetabolicRate().Load(in.BasalMetabolicRate().get());
-  if (in.BloodVolumeBaseline().present())
-    GetBloodVolumeBaseline().Load(in.BloodVolumeBaseline().get());
-  if (in.BodyDensity().present())
-    GetBodyDensity().Load(in.BodyDensity().get());
-  if (in.BodyFatFraction().present())
-    GetBodyFatFraction().Load(in.BodyFatFraction().get());
-  if(in.DiastolicArterialPressureBaseline().present())
-    GetDiastolicArterialPressureBaseline().Load(in.DiastolicArterialPressureBaseline().get());
-  if (in.ExpiratoryReserveVolume().present())
-    GetExpiratoryReserveVolume().Load(in.ExpiratoryReserveVolume().get());
-  if(in.FunctionalResidualCapacity().present())
-    GetFunctionalResidualCapacity().Load(in.FunctionalResidualCapacity().get());  
-  if (in.HeartRateBaseline().present())
-    GetHeartRateBaseline().Load(in.HeartRateBaseline().get());
-  if(in.HeartRateMaximum().present())
-    GetHeartRateMaximum().Load(in.HeartRateMaximum().get());
-  if(in.HeartRateMinimum().present())
-    GetHeartRateMinimum().Load(in.HeartRateMinimum().get());
-  if (in.InspiratoryCapacity().present())
-    GetInspiratoryCapacity().Load(in.InspiratoryCapacity().get());
-  if (in.InspiratoryReserveVolume().present())
-    GetInspiratoryReserveVolume().Load(in.InspiratoryReserveVolume().get());
-  if (in.LeanBodyMass().present())
-    GetLeanBodyMass().Load(in.LeanBodyMass().get());
-  if(in.MeanArterialPressureBaseline().present())
-    GetMeanArterialPressureBaseline().Load(in.MeanArterialPressureBaseline().get());
-  if (in.ResidualVolume().present())
-    GetResidualVolume().Load(in.ResidualVolume().get());
-  if (in.RespirationRateBaseline().present())
-    GetRespirationRateBaseline().Load(in.RespirationRateBaseline().get());  
-  if(in.RightLungRatio().present())
-    GetRightLungRatio().Load(in.RightLungRatio().get());
-  if (in.SkinSurfaceArea().present())
-    GetSkinSurfaceArea().Load(in.SkinSurfaceArea().get());
-  if (in.SystolicArterialPressureBaseline().present())
-    GetSystolicArterialPressureBaseline().Load(in.SystolicArterialPressureBaseline().get());
-  if (in.TidalVolumeBaseline().present())
-    GetTidalVolumeBaseline().Load(in.TidalVolumeBaseline().get());
-  if(in.TotalLungCapacity().present())
-    GetTotalLungCapacity().Load(in.TotalLungCapacity().get());
-  if (in.VitalCapacity().present())
-    GetVitalCapacity().Load(in.VitalCapacity().get());
+  if (src.has_basalmetabolicrate())
+    SEScalarPower::Load(src.basalmetabolicrate(), dst.GetBasalMetabolicRate());
+  if (src.has_bloodvolumebaseline())
+    SEScalarVolume::Load(src.bloodvolumebaseline(), dst.GetBloodVolumeBaseline());
+  if (src.has_diastolicarterialpressurebaseline())
+    SEScalarPressure::Load(src.diastolicarterialpressurebaseline(), dst.GetDiastolicArterialPressureBaseline());
+  if (src.has_heartratebaseline())
+    SEScalarFrequency::Load(src.heartratebaseline(), dst.GetHeartRateBaseline());
+  if (src.has_meanarterialpressurebaseline())
+    SEScalarPressure::Load(src.meanarterialpressurebaseline(), dst.GetMeanArterialPressureBaseline());
+  if (src.has_respirationratebaseline())
+    SEScalarFrequency::Load(src.respirationratebaseline(), dst.GetRespirationRateBaseline());
+  if (src.has_systolicarterialpressurebaseline())
+    SEScalarPressure::Load(src.systolicarterialpressurebaseline(), dst.GetSystolicArterialPressureBaseline());
+  if (src.has_tidalvolumebaseline())
+    SEScalarVolume::Load(src.tidalvolumebaseline(), dst.GetTidalVolumeBaseline());
+
+  if (src.has_heartratemaximum())
+    SEScalarFrequency::Load(src.heartratemaximum(), dst.GetHeartRateMaximum());
+  if (src.has_heartrateminimum())
+    SEScalarFrequency::Load(src.heartrateminimum(), dst.GetHeartRateMinimum());
+  if (src.has_expiratoryreservevolume())
+    SEScalarVolume::Load(src.expiratoryreservevolume(), dst.GetExpiratoryReserveVolume());
+  if (src.has_functionalresidualcapacity())
+    SEScalarVolume::Load(src.functionalresidualcapacity(), dst.GetFunctionalResidualCapacity());
+  if (src.has_inspiratorycapacity())
+    SEScalarVolume::Load(src.inspiratorycapacity(), dst.GetInspiratoryCapacity());
+  if (src.has_inspiratoryreservevolume())
+    SEScalarVolume::Load(src.inspiratoryreservevolume(), dst.GetInspiratoryReserveVolume());
+  if (src.has_residualvolume())
+    SEScalarVolume::Load(src.residualvolume(), dst.GetResidualVolume());
+  if (src.has_totallungcapacity())
+    SEScalarVolume::Load(src.totallungcapacity(), dst.GetTotalLungCapacity());
+  if (src.has_vitalcapacity())
+    SEScalarVolume::Load(src.vitalcapacity(), dst.GetVitalCapacity());
 
   SEScalarTime time;
-  for (auto e : in.ActiveEvent())
+  for (int i = 0; i < src.activeevent_size(); i++)
   {
-    time.Load(e.Duration());
-    m_EventState[e.Event()] = true;   
-    m_EventDuration_s[e.Event()] = time.GetValue(TimeUnit::s);
+    const cdm::PatientData::ActiveEventData& e = src.activeevent(i);
+    if(e.has_duration())
+      SEScalarTime::Load(e.duration(),time);
+    {
+      dst.m_ss << "Active Patient event " << e.event() << " does not have time associated with it";
+      dst.Warning(dst.m_ss);
+      time.SetValue(0, TimeUnit::s);
+    }
+    dst.m_EventState[e.event()] = true;
+    dst.m_EventDuration_s[e.event()] = time.GetValue(TimeUnit::s);
   }
-
-  return true;
 }
 
-CDM::PatientData*  SEPatient::Unload() const
+cdm::PatientData* SEPatient::Unload(const SEPatient& src)
 {
-  CDM::PatientData* data = new CDM::PatientData();
-  Unload(*data);
-  return data;
+  cdm::PatientData* dst = new cdm::PatientData();
+  SEPatient::Serialize(src, *dst);
+  return dst;
 }
-
-void SEPatient::Unload(CDM::PatientData& data) const
+void SEPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
 {
-  if(HasName())
-    data.Name(m_Name);
-  if(HasSex())
-    data.Sex(m_Sex);
-  if(m_Age!=nullptr)
-    data.Age(std::unique_ptr<CDM::ScalarTimeData>(m_Age->Unload())); 
-  if(m_Weight!=nullptr)
-    data.Weight(std::unique_ptr<CDM::ScalarMassData>(m_Weight->Unload())); 
-  if(m_Height!=nullptr)
-    data.Height(std::unique_ptr<CDM::ScalarLengthData>(m_Height->Unload())); 
+  if (src.HasName())
+    dst.set_name(src.m_Name);
+  if (src.HasSex())
+    dst.set_sex(src.m_Sex);
+  if (src.HasAge())
+    dst.set_allocated_age(SEScalarTime::Unload(*src.m_Age));
+  if (src.HasWeight())
+    dst.set_allocated_weight(SEScalarMass::Unload(*src.m_Weight));
+  if (src.HasHeight())
+    dst.set_allocated_height(SEScalarLength::Unload(*src.m_Height));
+  if (src.HasBodyDensity())
+    dst.set_allocated_bodydensity(SEScalarMassPerVolume::Unload(*src.m_BodyDensity));
+  if (src.HasBodyFatFraction())
+    dst.set_allocated_bodyfatfraction(SEScalar0To1::Unload(*src.m_BodyFatFraction));
+  if (src.HasLeanBodyMass())
+    dst.set_allocated_leanbodymass(SEScalarMass::Unload(*src.m_LeanBodyMass));
 
-  if (m_AlveoliSurfaceArea != nullptr)
-    data.AlveoliSurfaceArea(std::unique_ptr<CDM::ScalarAreaData>(m_AlveoliSurfaceArea->Unload()));
-  if (m_BasalMetabolicRate != nullptr)
-    data.BasalMetabolicRate(std::unique_ptr<CDM::ScalarPowerData>(m_BasalMetabolicRate->Unload()));
-  if (m_BloodVolumeBaseline != nullptr)
-    data.BloodVolumeBaseline(std::unique_ptr<CDM::ScalarVolumeData>(m_BloodVolumeBaseline->Unload()));
-  if (m_BodyDensity != nullptr)
-    data.BodyDensity(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_BodyDensity->Unload()));
-  if (m_BodyFatFraction != nullptr)
-    data.BodyFatFraction(std::unique_ptr<CDM::ScalarFractionData>(m_BodyFatFraction->Unload()));
-  if (m_DiastolicArterialPressureBaseline != nullptr)
-    data.DiastolicArterialPressureBaseline(std::unique_ptr<CDM::ScalarPressureData>(m_DiastolicArterialPressureBaseline->Unload()));
-  if(m_ExpiratoryReserveVolume!=nullptr)
-    data.ExpiratoryReserveVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_ExpiratoryReserveVolume->Unload())); 
-  if(m_FunctionalResidualCapacity!=nullptr)
-    data.FunctionalResidualCapacity(std::unique_ptr<CDM::ScalarVolumeData>(m_FunctionalResidualCapacity->Unload())); 
-  if (m_HeartRateBaseline != nullptr)
-    data.HeartRateBaseline(std::unique_ptr<CDM::ScalarFrequencyData>(m_HeartRateBaseline->Unload()));
-  if(m_HeartRateMaximum!=nullptr)
-    data.HeartRateMaximum(std::unique_ptr<CDM::ScalarFrequencyData>(m_HeartRateMaximum->Unload())); 
-  if(m_HeartRateMinimum!=nullptr)
-    data.HeartRateMinimum(std::unique_ptr<CDM::ScalarFrequencyData>(m_HeartRateMinimum->Unload())); 
-  if (m_InspiratoryCapacity != nullptr)
-    data.InspiratoryCapacity(std::unique_ptr<CDM::ScalarVolumeData>(m_InspiratoryCapacity->Unload()));
-  if (m_InspiratoryReserveVolume != nullptr)
-    data.InspiratoryReserveVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_InspiratoryReserveVolume->Unload()));
-  if (m_LeanBodyMass != nullptr)
-    data.LeanBodyMass(std::unique_ptr<CDM::ScalarMassData>(m_LeanBodyMass->Unload()));
-  if(m_MeanArterialPressureBaseline!=nullptr)
-    data.MeanArterialPressureBaseline(std::unique_ptr<CDM::ScalarPressureData>(m_MeanArterialPressureBaseline->Unload())); 
-  if (m_ResidualVolume != nullptr)
-    data.ResidualVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_ResidualVolume->Unload()));
-  if (m_RespirationRateBaseline != nullptr)
-    data.RespirationRateBaseline(std::unique_ptr<CDM::ScalarFrequencyData>(m_RespirationRateBaseline->Unload()));   
-  if(m_RightLungRatio!=nullptr)
-    data.RightLungRatio(std::unique_ptr<CDM::ScalarFractionData>(m_RightLungRatio->Unload()));
-  if (m_SkinSurfaceArea != nullptr)
-    data.SkinSurfaceArea(std::unique_ptr<CDM::ScalarAreaData>(m_SkinSurfaceArea->Unload()));
-  if (m_SystolicArterialPressureBaseline != nullptr)
-    data.SystolicArterialPressureBaseline(std::unique_ptr<CDM::ScalarPressureData>(m_SystolicArterialPressureBaseline->Unload()));
-  if (m_TidalVolumeBaseline != nullptr)
-    data.TidalVolumeBaseline(std::unique_ptr<CDM::ScalarVolumeData>(m_TidalVolumeBaseline->Unload()));
-  if (m_TotalLungCapacity != nullptr)
-    data.TotalLungCapacity(std::unique_ptr<CDM::ScalarVolumeData>(m_TotalLungCapacity->Unload())); 
-  if (m_VitalCapacity != nullptr)
-    data.VitalCapacity(std::unique_ptr<CDM::ScalarVolumeData>(m_VitalCapacity->Unload()));
+  if (src.HasAlveoliSurfaceArea())
+    dst.set_allocated_alveolisurfacearea(SEScalarArea::Unload(*src.m_AlveoliSurfaceArea));
+  if (src.HasRightLungRatio())
+    dst.set_allocated_rightlungratio(SEScalar0To1::Unload(*src.m_RightLungRatio));
+  if (src.HasSkinSurfaceArea())
+    dst.set_allocated_skinsurfacearea(SEScalarArea::Unload(*src.m_SkinSurfaceArea));
+
+  if (src.HasBasalMetabolicRate())
+    dst.set_allocated_basalmetabolicrate(SEScalarPower::Unload(*src.m_BasalMetabolicRate));
+  if (src.HasDiastolicArterialPressureBaseline())
+    dst.set_allocated_diastolicarterialpressurebaseline(SEScalarPressure::Unload(*src.m_DiastolicArterialPressureBaseline));
+  if (src.HasHeartRateBaseline())
+    dst.set_allocated_heartratebaseline(SEScalarFrequency::Unload(*src.m_HeartRateBaseline));
+  if (src.HasMeanArterialPressureBaseline())
+    dst.set_allocated_meanarterialpressurebaseline(SEScalarPressure::Unload(*src.m_MeanArterialPressureBaseline));
+  if (src.HasRespirationRateBaseline())
+    dst.set_allocated_respirationratebaseline(SEScalarFrequency::Unload(*src.m_RespirationRateBaseline));
+  if (src.HasSystolicArterialPressureBaseline())
+    dst.set_allocated_systolicarterialpressurebaseline(SEScalarPressure::Unload(*src.m_SystolicArterialPressureBaseline));
+  if (src.HasTidalVolumeBaseline())
+    dst.set_allocated_tidalvolumebaseline(SEScalarVolume::Unload(*src.m_TidalVolumeBaseline));
+
+  if (src.HasHeartRateMaximum())
+    dst.set_allocated_heartratemaximum(SEScalarFrequency::Unload(*src.m_HeartRateMaximum));
+  if (src.HasHeartRateMinimum())
+    dst.set_allocated_heartrateminimum(SEScalarFrequency::Unload(*src.m_HeartRateMinimum));
+  if (src.HasExpiratoryReserveVolume())
+    dst.set_allocated_expiratoryreservevolume(SEScalarVolume::Unload(*src.m_ExpiratoryReserveVolume));
+  if (src.HasFunctionalResidualCapacity())
+    dst.set_allocated_functionalresidualcapacity(SEScalarVolume::Unload(*src.m_FunctionalResidualCapacity));
+  if (src.HasInspiratoryCapacity())
+    dst.set_allocated_inspiratorycapacity(SEScalarVolume::Unload(*src.m_InspiratoryCapacity));
+  if (src.HasInspiratoryReserveVolume())
+    dst.set_allocated_inspiratoryreservevolume(SEScalarVolume::Unload(*src.m_InspiratoryReserveVolume));
+  if (src.HasTotalLungCapacity())
+    dst.set_allocated_totallungcapacity(SEScalarVolume::Unload(*src.m_TotalLungCapacity));
+  if (src.HasBloodVolumeBaseline())
+    dst.set_allocated_bloodvolumebaseline(SEScalarVolume::Unload(*src.m_BloodVolumeBaseline));
+  if (src.HasVitalCapacity())
+    dst.set_allocated_vitalcapacity(SEScalarVolume::Unload(*src.m_VitalCapacity));
 
   SEScalarTime time;
-  for (auto itr : m_EventState)
+  for (auto itr : src.m_EventState)
   {
     if (!itr.second)
       continue;
 
-    auto it2 = m_EventDuration_s.find(itr.first);
-    if(it2 == m_EventDuration_s.end())// This should not happen... 
+    auto it2 = src.m_EventDuration_s.find(itr.first);
+    if (it2 == src.m_EventDuration_s.end())// This should not happen... 
       time.SetValue(0, TimeUnit::s);
     else
       time.SetValue(it2->second, TimeUnit::s);
 
-    CDM::ActivePatientEventData* eData = new CDM::ActivePatientEventData();
-    eData->Event(itr.first);
-    eData->Duration(std::unique_ptr<CDM::ScalarTimeData>(time.Unload()));
-    data.ActiveEvent().push_back(std::unique_ptr<CDM::ActivePatientEventData>(eData));
+    cdm::PatientData_ActiveEventData* eData = dst.add_activeevent();
+
+    eData->set_event(itr.first);
+    eData->set_allocated_duration(SEScalarTime::Unload(time));
   }
+}
 
-};
-
-void SEPatient::SetEvent(CDM::enumPatientEvent::value type, bool active, const SEScalarTime& time)
+void SEPatient::SetEvent(cdm::PatientData::eEvent type, bool active, const SEScalarTime& time)
 {
   bool b=false;// Default is off
   if(m_EventState.find(type)!=m_EventState.end())
@@ -372,254 +360,254 @@ void SEPatient::SetEvent(CDM::enumPatientEvent::value type, bool active, const S
     {
       switch(type)
       {
-      case CDM::enumPatientEvent::Antidiuresis:
+      case cdm::PatientData_eEvent_Antidiuresis:
         m_ss << " Patient has Antidiuresis";
         break;
-      case CDM::enumPatientEvent::Asystole:
+      case cdm::PatientData_eEvent_Asystole:
         m_ss << " Patient has Asystole";
         break;
-      case CDM::enumPatientEvent::Bradycardia:
+      case cdm::PatientData_eEvent_Bradycardia:
         m_ss << " Patient has Bradycardia";
         break;
-      case CDM::enumPatientEvent::Bradypnea:
+      case cdm::PatientData_eEvent_Bradypnea:
         m_ss << " Patient has Bradypnea";
         break;
-      case CDM::enumPatientEvent::BrainOxygenDeficit:
+      case cdm::PatientData_eEvent_BrainOxygenDeficit:
         m_ss << " Oxygen tension in the brain is dangerously low";
         break;
-      case CDM::enumPatientEvent::CardiacArrest:
+      case cdm::PatientData_eEvent_CardiacArrest:
         m_ss << " Patient has Cardiac Arrest";
         break;
-      case CDM::enumPatientEvent::CardiogenicShock:
+      case cdm::PatientData_eEvent_CardiogenicShock:
         m_ss << " Patient has Cardiogenic Shock";
         break;
-      case CDM::enumPatientEvent::CriticalBrainOxygenDeficit:
+      case cdm::PatientData_eEvent_CriticalBrainOxygenDeficit:
         m_ss << " Oxygen tension in the brain is critically low";
         break;
-      case CDM::enumPatientEvent::Dehydration:
+      case cdm::PatientData_eEvent_Dehydration:
         m_ss << " Patient has entered state of Dehydration";
         break;
-      case CDM::enumPatientEvent::Diuresis:
+      case cdm::PatientData_eEvent_Diuresis:
         m_ss << " Patient has entered Diuresis";
         break;
-      case CDM::enumPatientEvent::Fasciculation:
+      case cdm::PatientData_eEvent_Fasciculation:
         m_ss << "Patient has Fasciculation";
         break;
-      case CDM::enumPatientEvent::FunctionalIncontinence:
+      case cdm::PatientData_eEvent_FunctionalIncontinence:
         m_ss << " Patient has involuntarily emptied their bladder";
         break;
-      case CDM::enumPatientEvent::Hypercapnia:
+      case cdm::PatientData_eEvent_Hypercapnia:
         m_ss << " Patient has Hypercapnia";
         break;
-      case CDM::enumPatientEvent::Hyperglycemia:
+      case cdm::PatientData_eEvent_Hyperglycemia:
         m_ss << " Patient has Hyperglycemia";
         break;
-      case CDM::enumPatientEvent::Hyperthermia:
+      case cdm::PatientData_eEvent_Hyperthermia:
         m_ss << " Patient is Hyperthermic";
         break;
-      case CDM::enumPatientEvent::Hypoglycemia:
+      case cdm::PatientData_eEvent_Hypoglycemia:
         m_ss << " Patient has Hypoglycemia";
         break;
-      case CDM::enumPatientEvent::Hypothermia:
+      case cdm::PatientData_eEvent_Hypothermia:
         m_ss << " Patient is Hypothermic";
         break;
-      case CDM::enumPatientEvent::Hypoxia:
+      case cdm::PatientData_eEvent_Hypoxia:
         m_ss << " Patient has Hypoxia";
         break;
-      case CDM::enumPatientEvent::IntracranialHypertension:
+      case cdm::PatientData_eEvent_IntracranialHypertension:
         m_ss << " Patient has Intracranial Hypertension";
         break;
-      case CDM::enumPatientEvent::IntracranialHypotension:
+      case cdm::PatientData_eEvent_IntracranialHypotension:
         m_ss << " Patient has Intracranial Hypotension";
         break;
-      case CDM::enumPatientEvent::HypovolemicShock:
+      case cdm::PatientData_eEvent_HypovolemicShock:
         m_ss << " Patient is in Hypovolemic Shock";
         break;
-      case CDM::enumPatientEvent::IrreversibleState:
+      case cdm::PatientData_eEvent_IrreversibleState:
         m_ss<<" Patient has entered irreversible state";
         break;
-      case CDM::enumPatientEvent::Ketoacidosis:
+      case cdm::PatientData_eEvent_Ketoacidosis:
         m_ss << " Patient has Ketoacidosis";
         break;
-      case CDM::enumPatientEvent::LacticAcidosis:
+      case cdm::PatientData_eEvent_LacticAcidosis:
         m_ss << " Patient has LacticAcidosis";
         break;
-      case CDM::enumPatientEvent::MaximumPulmonaryVentilationRate:
+      case cdm::PatientData_eEvent_MaximumPulmonaryVentilationRate:
         m_ss << " Patient's Respiratory Driver has exceeded the maximum target pulmonary ventilation rate, setting value to the maximum allowable rate";
         break;
-      case CDM::enumPatientEvent::MetabolicAcidosis:
+      case cdm::PatientData_eEvent_MetabolicAcidosis:
         m_ss << " The patient is in a state of metabolic acidosis";
         break;
-      case CDM::enumPatientEvent::MetabolicAlkalosis:
+      case cdm::PatientData_eEvent_MetabolicAlkalosis:
         m_ss << " The patient is in a state of metabolic alkalosis";
         break;
-      case CDM::enumPatientEvent::MildAcuteRespiratoryDistress:
+      case cdm::PatientData_eEvent_MildAcuteRespiratoryDistress:
         m_ss << " The patient has Mild Acute Respiratory Distress";
         break;
-      case CDM::enumPatientEvent::ModerateAcuteRespiratoryDistress:
+      case cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress:
         m_ss << " The patient has Moderate Acute Respiratory Distress";
         break;
-      case CDM::enumPatientEvent::MyocardiumOxygenDeficit:
+      case cdm::PatientData_eEvent_MyocardiumOxygenDeficit:
         m_ss << " The patient's heart is not receiving enough oxygen";
         break;
-      case CDM::enumPatientEvent::Natriuresis:
+      case cdm::PatientData_eEvent_Natriuresis:
         m_ss << " Patient has Natriuresis";
         break;
-      case CDM::enumPatientEvent::NutritionDepleted:
+      case cdm::PatientData_eEvent_NutritionDepleted:
         m_ss << " Patient has depleted all nutrition in body";
         break;
-      case CDM::enumPatientEvent::PulselessRhythm:
+      case cdm::PatientData_eEvent_PulselessRhythm:
         m_ss << " Patient has a Pulseless Rhythm";
         break;
-      case CDM::enumPatientEvent::RenalHypoperfusion:
+      case cdm::PatientData_eEvent_RenalHypoperfusion:
         m_ss << " Patient has Renal Hypoperfusion";
         break;
-      case CDM::enumPatientEvent::SevereAcuteRespiratoryDistress:
+      case cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress:
         m_ss << " The patient has Severe Acute Respiratory Distress";
         break;
-      case CDM::enumPatientEvent::Tachycardia:
+      case cdm::PatientData_eEvent_Tachycardia:
         m_ss<<" Patient has Tachycardia";
         break;
-      case CDM::enumPatientEvent::Tachypnea:
+      case cdm::PatientData_eEvent_Tachypnea:
         m_ss << " Patient has Tachypnea";
         break;
-      case CDM::enumPatientEvent::Fatigue:
+      case cdm::PatientData_eEvent_Fatigue:
         m_ss << "Patient has fatigue";
         break;
-      case CDM::enumPatientEvent::StartOfCardiacCycle:
-      case CDM::enumPatientEvent::StartOfExhale:
-      case CDM::enumPatientEvent::StartOfInhale:
+      case cdm::PatientData_eEvent_StartOfCardiacCycle:
+      case cdm::PatientData_eEvent_StartOfExhale:
+      case cdm::PatientData_eEvent_StartOfInhale:
         m_ss.str("");// make m_ss empty and nothing will be logged, this event does not need to get logged each activation
         break;
       default:
-        m_ss<<" Patient has entered state : "<<type;// TODO CDM::enumPatientEvent::_xsd_enumPatientEvent_literals_[type];
+        m_ss<<" Patient has entered state : "<<type;// TODO cdm::PatientData_eEvent__xsd_enumPatientEvent_literals_[type];
       }
     }
     else
     {
       switch(type)
       {
-      case CDM::enumPatientEvent::Antidiuresis:
+      case cdm::PatientData_eEvent_Antidiuresis:
         m_ss << " Patient no longer is in Antidiuresis";
         break;
-      case CDM::enumPatientEvent::Asystole:
+      case cdm::PatientData_eEvent_Asystole:
         m_ss << " Patient no longer is in Asystole";
         break; 
-      case CDM::enumPatientEvent::Bradycardia:
+      case cdm::PatientData_eEvent_Bradycardia:
         m_ss << " Patient no longer has Bradycardia";
         break;
-      case CDM::enumPatientEvent::Bradypnea:
+      case cdm::PatientData_eEvent_Bradypnea:
         m_ss << " Patient no longer has Bradypnea";
         break;
-      case CDM::enumPatientEvent::BrainOxygenDeficit:
+      case cdm::PatientData_eEvent_BrainOxygenDeficit:
         m_ss << " Oxygen tension in the brain has increased above the danger threshold";
         break;
-      case CDM::enumPatientEvent::CardiacArrest:
+      case cdm::PatientData_eEvent_CardiacArrest:
         m_ss << " Patient no longer has Cardiac Arrest";
         break;
-      case CDM::enumPatientEvent::CardiogenicShock:
+      case cdm::PatientData_eEvent_CardiogenicShock:
         m_ss << " Patient no longer has Cardiogenic Shock";
         break;
-      case CDM::enumPatientEvent::CriticalBrainOxygenDeficit:
+      case cdm::PatientData_eEvent_CriticalBrainOxygenDeficit:
         m_ss << " Oxygen tension in the brain has increased above the critical threshold";
         break;
-      case CDM::enumPatientEvent::Dehydration:
+      case cdm::PatientData_eEvent_Dehydration:
         m_ss << " Patient no longer is in Dehydration state";
         break;
-      case CDM::enumPatientEvent::Diuresis:
+      case cdm::PatientData_eEvent_Diuresis:
         m_ss << " Patient no longer has Diuresis";
         break;
-      case CDM::enumPatientEvent::Fasciculation:
+      case cdm::PatientData_eEvent_Fasciculation:
         m_ss << "Patient no longer has fasciculations";
         break;
-      case CDM::enumPatientEvent::FunctionalIncontinence:
+      case cdm::PatientData_eEvent_FunctionalIncontinence:
         m_ss << " Patient has an empty bladder";
         break;
-      case CDM::enumPatientEvent::Hypercapnia:
+      case cdm::PatientData_eEvent_Hypercapnia:
         m_ss << " Patient no longer has Hypercapnia";
         break;
-      case CDM::enumPatientEvent::Hyperglycemia:
+      case cdm::PatientData_eEvent_Hyperglycemia:
         m_ss << " Patient no longer has Hyperglycemia";
         break;
-      case CDM::enumPatientEvent::Hyperthermia:
+      case cdm::PatientData_eEvent_Hyperthermia:
         m_ss << " Patient is no longer has Hyperthermic";
         break;
-      case CDM::enumPatientEvent::Hypoglycemia:
+      case cdm::PatientData_eEvent_Hypoglycemia:
         m_ss << " Patient no longer has Hypoglycemia";
         break;
-      case CDM::enumPatientEvent::Hypothermia:
+      case cdm::PatientData_eEvent_Hypothermia:
         m_ss << " Patient is no longer has Hypothermic";
         break;
-      case CDM::enumPatientEvent::Hypoxia:
+      case cdm::PatientData_eEvent_Hypoxia:
         m_ss << " Patient no longer has Hypoxia";
         break;
-      case CDM::enumPatientEvent::HypovolemicShock:
+      case cdm::PatientData_eEvent_HypovolemicShock:
         m_ss << " Patient is no longer in Hypovolemic Shock";
         break;
-      case CDM::enumPatientEvent::IntracranialHypertension:
+      case cdm::PatientData_eEvent_IntracranialHypertension:
         m_ss << " Patient no longer has Intracranial Hypertension";
         break;
-      case CDM::enumPatientEvent::IntracranialHypotension:
+      case cdm::PatientData_eEvent_IntracranialHypotension:
         m_ss << " Patient no longer has Intracranial Hypotension";
         break;
-      case CDM::enumPatientEvent::IrreversibleState:
+      case cdm::PatientData_eEvent_IrreversibleState:
         m_ss<<" Patient no longer is in irreversible state?!";
         break;
-      case CDM::enumPatientEvent::Ketoacidosis:
+      case cdm::PatientData_eEvent_Ketoacidosis:
         m_ss << " Patient no longer has Ketoacidosis";
         break;
-      case CDM::enumPatientEvent::LacticAcidosis:
+      case cdm::PatientData_eEvent_LacticAcidosis:
         m_ss << " Patient no longer has LacticAcidosis";
         break;
-      case CDM::enumPatientEvent::MaximumPulmonaryVentilationRate:
+      case cdm::PatientData_eEvent_MaximumPulmonaryVentilationRate:
         m_ss << " Patient's Respiratory Driver is no longer exceeding the maximum target pulmonary ventilation rate";
         break;
-      case CDM::enumPatientEvent::MetabolicAcidosis:
+      case cdm::PatientData_eEvent_MetabolicAcidosis:
         m_ss << " The patient is no longer in a state of metabolic acidosis";
         break;
-      case CDM::enumPatientEvent::MetabolicAlkalosis:
+      case cdm::PatientData_eEvent_MetabolicAlkalosis:
         m_ss << " The patient is no longer in a state of metabolic alkalosis";
         break;
-      case CDM::enumPatientEvent::MildAcuteRespiratoryDistress:
+      case cdm::PatientData_eEvent_MildAcuteRespiratoryDistress:
         m_ss << " Patient no longer has a Mild Acute Respiratory Distress";
         break;
-      case CDM::enumPatientEvent::ModerateAcuteRespiratoryDistress:
+      case cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress:
         m_ss << " Patient no longer has a Moderate Acute Respiratory Distress";
         break;
-      case CDM::enumPatientEvent::MyocardiumOxygenDeficit:
+      case cdm::PatientData_eEvent_MyocardiumOxygenDeficit:
         m_ss << " Patient no longer has a Myocardium Oxygen Deficit";
         break;
-      case CDM::enumPatientEvent::Natriuresis:
+      case cdm::PatientData_eEvent_Natriuresis:
         m_ss << " Patient no longer has Natriuresis";
         break;
-      case CDM::enumPatientEvent::NutritionDepleted:
+      case cdm::PatientData_eEvent_NutritionDepleted:
         m_ss << " Patient has nutrition in body";
         break;
-      case CDM::enumPatientEvent::PulselessRhythm:
+      case cdm::PatientData_eEvent_PulselessRhythm:
         m_ss << " Patient no longer has a Pulseless Rhythm";
         break;
-      case CDM::enumPatientEvent::RenalHypoperfusion:
+      case cdm::PatientData_eEvent_RenalHypoperfusion:
         m_ss << " Patient no longer has Renal Hypoperfusion";
         break;
-      case CDM::enumPatientEvent::SevereAcuteRespiratoryDistress:
+      case cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress:
         m_ss << " Patient no longer has a Severe Acute Respiratory Distress";
         break;
-      case CDM::enumPatientEvent::Tachycardia:
+      case cdm::PatientData_eEvent_Tachycardia:
         m_ss<<" Patient no longer has Tachycardia";
         break;
-      case CDM::enumPatientEvent::Tachypnea:
+      case cdm::PatientData_eEvent_Tachypnea:
         m_ss << " Patient no longer has Tachypnea";
         break;
-      case CDM::enumPatientEvent::Fatigue:
+      case cdm::PatientData_eEvent_Fatigue:
         m_ss << "Patient is no longer fatigued";
         break;
-      case CDM::enumPatientEvent::StartOfCardiacCycle:
-      case CDM::enumPatientEvent::StartOfExhale:
-      case CDM::enumPatientEvent::StartOfInhale:
+      case cdm::PatientData_eEvent_StartOfCardiacCycle:
+      case cdm::PatientData_eEvent_StartOfExhale:
+      case cdm::PatientData_eEvent_StartOfInhale:
         m_ss.str("");// make m_ss empty and nothing will be logged, this event does not need to get logged each activation
         break;
       default:
-        m_ss<<" Patient has exited state : "<<type;//TODO CDM::enumPatientEvent::_xsd_enumPatientEvent_literals_[type];
+        m_ss<<" Patient has exited state : "<<type;//TODO cdm::PatientData_eEvent__xsd_enumPatientEvent_literals_[type];
       }
     }
     if (!m_ss.str().empty())
@@ -631,7 +619,7 @@ void SEPatient::SetEvent(CDM::enumPatientEvent::value type, bool active, const S
     m_EventHandler->HandlePatientEvent(type,active,&time);
 }
 
-bool SEPatient::IsEventActive(CDM::enumPatientEvent::value type) const
+bool SEPatient::IsEventActive(cdm::PatientData::eEvent type) const
 {
   auto i = m_EventState.find(type);
   if(i==m_EventState.end())
@@ -639,7 +627,7 @@ bool SEPatient::IsEventActive(CDM::enumPatientEvent::value type) const
   return i->second;
 }
 
-double SEPatient::GetEventDuration(CDM::enumPatientEvent::value type, const TimeUnit& unit) const
+double SEPatient::GetEventDuration(cdm::PatientData::eEvent type, const TimeUnit& unit) const
 {
   auto i = m_EventDuration_s.find(type);
   if (i == m_EventDuration_s.end())
@@ -675,21 +663,21 @@ void SEPatient::InvalidateName()
   m_Name = "";
 }
 
-CDM::enumSex::value SEPatient::GetSex() const
+cdm::PatientData::eSex SEPatient::GetSex() const
 {
   return m_Sex;
 }
-void SEPatient::SetSex(CDM::enumSex::value sex)
+void SEPatient::SetSex(cdm::PatientData::eSex sex)
 {
   m_Sex = sex;
 }
 bool SEPatient::HasSex() const
 {
-  return m_Sex==((CDM::enumSex::value)-1)?false:true;
+  return m_Sex==((cdm::PatientData::eSex)-1)?false:true;
 }
 void SEPatient::InvalidateSex()
 {
-  m_Sex = (CDM::enumSex::value)-1;
+  m_Sex = (cdm::PatientData::eSex)-1;
 }
 
 bool SEPatient::HasAge() const
@@ -815,10 +803,10 @@ bool SEPatient::HasBodyFatFraction() const
 {
   return m_BodyFatFraction == nullptr ? false : m_BodyFatFraction->IsValid();
 }
-SEScalarFraction& SEPatient::GetBodyFatFraction()
+SEScalar0To1& SEPatient::GetBodyFatFraction()
 {
   if (m_BodyFatFraction == nullptr)
-    m_BodyFatFraction = new SEScalarFraction();
+    m_BodyFatFraction = new SEScalar0To1();
   return *m_BodyFatFraction;
 }
 double SEPatient::GetBodyFatFraction() const
@@ -1036,10 +1024,10 @@ bool SEPatient::HasRightLungRatio() const
 {
   return m_RightLungRatio==nullptr?false:m_RightLungRatio->IsValid();
 }
-SEScalarFraction& SEPatient::GetRightLungRatio()
+SEScalar0To1& SEPatient::GetRightLungRatio()
 {
   if(m_RightLungRatio==nullptr)
-    m_RightLungRatio=new SEScalarFraction();
+    m_RightLungRatio=new SEScalar0To1();
   return *m_RightLungRatio;
 }
 double SEPatient::GetRightLungRatio() const

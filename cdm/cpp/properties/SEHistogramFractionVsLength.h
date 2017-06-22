@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEHistogram.h"
-#include "bind/HistogramFractionVsLengthData.hxx"
 
 class DLL_DECL SEHistogramFractionVsLength : public SEHistogram
 {
@@ -25,10 +24,11 @@ public:
 
   virtual bool IsVaild() const;
 
-  virtual bool Load(const CDM::HistogramFractionVsLengthData& in);
-  virtual CDM::HistogramFractionVsLengthData* Unload() const;
+  static void Load(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst);
+  static cdm::HistogramFractionVsLengthData* Unload(const SEHistogramFractionVsLength& src);
 protected:
-  virtual void Unload(CDM::HistogramFractionVsLengthData& data) const;
+  static void Serialize(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst);
+  static void Serialize(const SEHistogramFractionVsLength& src, cdm::HistogramFractionVsLengthData& dst);
 public:
 
   virtual double                     GetFractionValue(unsigned int index) const;

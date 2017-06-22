@@ -20,15 +20,6 @@ AmountPerVolumeUnit AmountPerVolumeUnit::mmol_Per_mL("mmol/mL");
 AmountPerVolumeUnit AmountPerVolumeUnit::ct_Per_L("ct/L");
 AmountPerVolumeUnit AmountPerVolumeUnit::ct_Per_uL("ct/uL");
 
-CDM::ScalarAmountPerVolumeData* SEScalarAmountPerVolume::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarAmountPerVolumeData* data(new CDM::ScalarAmountPerVolumeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool AmountPerVolumeUnit::IsValidUnit(const std::string& unit)
 {
   if (mol_Per_L.GetString().compare(unit) == 0)
@@ -63,4 +54,26 @@ const AmountPerVolumeUnit& AmountPerVolumeUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid AmountPerVolume unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarAmountPerVolume::Load(const cdm::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
+{
+  SEScalarAmountPerVolume::Serialize(src, dst);
+}
+void SEScalarAmountPerVolume::Serialize(const cdm::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
+{
+  SEScalarQuantity<AmountPerVolumeUnit>::Serialize(src.scalaramountpervolume(), dst);
+}
+
+cdm::ScalarAmountPerVolumeData* SEScalarAmountPerVolume::Unload(const SEScalarAmountPerVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarAmountPerVolumeData* dst = new cdm::ScalarAmountPerVolumeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarAmountPerVolume::Serialize(const SEScalarAmountPerVolume& src, cdm::ScalarAmountPerVolumeData& dst)
+{
+  SEScalarQuantity<AmountPerVolumeUnit>::Serialize(src, *dst.mutable_scalaramountpervolume());
 }

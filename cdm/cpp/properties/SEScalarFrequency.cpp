@@ -17,15 +17,6 @@ const FrequencyUnit FrequencyUnit::Per_min("1/min");
 const FrequencyUnit FrequencyUnit::Per_s("1/s");
 const FrequencyUnit FrequencyUnit::Hz("Hz");
 
-CDM::ScalarFrequencyData* SEScalarFrequency::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarFrequencyData* data(new CDM::ScalarFrequencyData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool FrequencyUnit::IsValidUnit(const std::string& unit)
 {
   if (Per_min.GetString().compare(unit) == 0)
@@ -48,4 +39,26 @@ const FrequencyUnit& FrequencyUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Frequency unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarFrequency::Load(const cdm::ScalarFrequencyData& src, SEScalarFrequency& dst)
+{
+  SEScalarFrequency::Serialize(src, dst);
+}
+void SEScalarFrequency::Serialize(const cdm::ScalarFrequencyData& src, SEScalarFrequency& dst)
+{
+  SEScalarQuantity<FrequencyUnit>::Serialize(src.scalarfrequency(), dst);
+}
+
+cdm::ScalarFrequencyData* SEScalarFrequency::Unload(const SEScalarFrequency& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarFrequencyData* dst = new cdm::ScalarFrequencyData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarFrequency::Serialize(const SEScalarFrequency& src, cdm::ScalarFrequencyData& dst)
+{
+  SEScalarQuantity<FrequencyUnit>::Serialize(src, *dst.mutable_scalarfrequency());
 }

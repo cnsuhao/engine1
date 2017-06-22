@@ -20,15 +20,6 @@ AmountPerTimeUnit AmountPerTimeUnit::mmol_Per_min("mmol/min");
 AmountPerTimeUnit AmountPerTimeUnit::pmol_Per_min("pmol/min");
 AmountPerTimeUnit AmountPerTimeUnit::umol_Per_min("umol/min");
 
-CDM::ScalarAmountPerTimeData* SEScalarAmountPerTime::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarAmountPerTimeData* data(new CDM::ScalarAmountPerTimeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool AmountPerTimeUnit::IsValidUnit(const std::string& unit)
 {
   if (mol_Per_day.GetString().compare(unit) == 0)
@@ -63,4 +54,26 @@ const AmountPerTimeUnit& AmountPerTimeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid AmountPerTime unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarAmountPerTime::Load(const cdm::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
+{
+  SEScalarAmountPerTime::Serialize(src, dst);
+}
+void SEScalarAmountPerTime::Serialize(const cdm::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
+{
+  SEScalarQuantity<AmountPerTimeUnit>::Serialize(src.scalaramountpertime(), dst);
+}
+
+cdm::ScalarAmountPerTimeData* SEScalarAmountPerTime::Unload(const SEScalarAmountPerTime& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarAmountPerTimeData* dst = new cdm::ScalarAmountPerTimeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarAmountPerTime::Serialize(const SEScalarAmountPerTime& src, cdm::ScalarAmountPerTimeData& dst)
+{
+  SEScalarQuantity<AmountPerTimeUnit>::Serialize(src, *dst.mutable_scalaramountpertime());
 }

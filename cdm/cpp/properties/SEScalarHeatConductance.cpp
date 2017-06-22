@@ -18,15 +18,6 @@ const HeatConductanceUnit HeatConductanceUnit::W_Per_C("W/degC");
 const HeatConductanceUnit HeatConductanceUnit::kcal_Per_K_s("kcal/K s");
 const HeatConductanceUnit HeatConductanceUnit::kcal_Per_C_s("kcal/degC s");
 
-CDM::ScalarHeatConductanceData* SEScalarHeatConductance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarHeatConductanceData* data(new CDM::ScalarHeatConductanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool HeatConductanceUnit::IsValidUnit(const std::string& unit)
 {
   if (W_Per_K.GetString().compare(unit) == 0)
@@ -53,4 +44,26 @@ const HeatConductanceUnit& HeatConductanceUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid HeatConductance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarHeatConductance::Load(const cdm::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
+{
+  SEScalarHeatConductance::Serialize(src, dst);
+}
+void SEScalarHeatConductance::Serialize(const cdm::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
+{
+  SEScalarQuantity<HeatConductanceUnit>::Serialize(src.scalarheatconductance(), dst);
+}
+
+cdm::ScalarHeatConductanceData* SEScalarHeatConductance::Unload(const SEScalarHeatConductance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarHeatConductanceData* dst = new cdm::ScalarHeatConductanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarHeatConductance::Serialize(const SEScalarHeatConductance& src, cdm::ScalarHeatConductanceData& dst)
+{
+  SEScalarQuantity<HeatConductanceUnit>::Serialize(src, *dst.mutable_scalarheatconductance());
 }

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarAmountPerMassData.hxx"
 
 class DLL_DECL AmountPerMassUnit : public CCompoundUnit
 {
@@ -34,5 +33,9 @@ public:
   SEScalarAmountPerMass() {}
   virtual ~SEScalarAmountPerMass() {}
 
-  CDM::ScalarAmountPerMassData* Unload() const;
+  static void Load(const cdm::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst);
+  static cdm::ScalarAmountPerMassData* Unload(const SEScalarAmountPerMass& src);
+protected:
+  static void Serialize(const cdm::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst);
+  static void Serialize(const SEScalarAmountPerMass& src, cdm::ScalarAmountPerMassData& dst);
 };

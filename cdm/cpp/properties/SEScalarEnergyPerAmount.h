@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarEnergyPerAmountData.hxx"
 
 class DLL_DECL EnergyPerAmountUnit : public CCompoundUnit
 {
@@ -33,5 +32,9 @@ public:
   SEScalarEnergyPerAmount() {}
   virtual ~SEScalarEnergyPerAmount() {}
 
-  CDM::ScalarEnergyPerAmountData* Unload() const;
+  static void Load(const cdm::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst);
+  static cdm::ScalarEnergyPerAmountData* Unload(const SEScalarEnergyPerAmount& src);
+protected:
+  static void Serialize(const cdm::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst);
+  static void Serialize(const SEScalarEnergyPerAmount& src, cdm::ScalarEnergyPerAmountData& dst);
 };

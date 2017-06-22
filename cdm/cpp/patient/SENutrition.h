@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(NutritionData)
 class SEPatient;
+#include "bind/cdm/PatientNutrition.pb.h"
 
 class DLL_DECL SENutrition : public Loggable
 {
@@ -23,10 +23,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::NutritionData& in);
-  virtual CDM::NutritionData* Unload() const;
+ static void Load(const cdm::NutritionData& src, SENutrition& dst);
+  static cdm::NutritionData* Unload(const SENutrition& src);
 protected:
-  virtual void Unload(CDM::NutritionData& data) const;
+  static void Serialize(const cdm::NutritionData& src, SENutrition& dst);
+  static void Serialize(const SENutrition& src, cdm::NutritionData& dst);
 
 public:
   const SEScalar* GetScalar(const std::string& name);

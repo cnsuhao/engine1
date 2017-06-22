@@ -18,15 +18,6 @@ const InversePressureUnit InversePressureUnit::Inverse_mmHg("1/mmHg");
 const InversePressureUnit InversePressureUnit::Inverse_cmH2O("1/cmH2O");
 const InversePressureUnit InversePressureUnit::Inverse_atm("1/atm");
 
-CDM::ScalarInversePressureData* SEScalarInversePressure::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarInversePressureData* data(new CDM::ScalarInversePressureData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool InversePressureUnit::IsValidUnit(const std::string& unit)
 {
   if (Inverse_Pa.GetString().compare(unit) == 0)
@@ -53,4 +44,26 @@ const InversePressureUnit& InversePressureUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid InversePressure unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarInversePressure::Load(const cdm::ScalarInversePressureData& src, SEScalarInversePressure& dst)
+{
+  SEScalarInversePressure::Serialize(src, dst);
+}
+void SEScalarInversePressure::Serialize(const cdm::ScalarInversePressureData& src, SEScalarInversePressure& dst)
+{
+  SEScalarQuantity<InversePressureUnit>::Serialize(src.scalarinversepressure(), dst);
+}
+
+cdm::ScalarInversePressureData* SEScalarInversePressure::Unload(const SEScalarInversePressure& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarInversePressureData* dst = new cdm::ScalarInversePressureData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarInversePressure::Serialize(const SEScalarInversePressure& src, cdm::ScalarInversePressureData& dst)
+{
+  SEScalarQuantity<InversePressureUnit>::Serialize(src, *dst.mutable_scalarinversepressure());
 }

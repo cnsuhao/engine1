@@ -20,15 +20,6 @@ const LengthPerTimeUnit LengthPerTimeUnit::cm_Per_min("cm/min");
 const LengthPerTimeUnit LengthPerTimeUnit::ft_Per_s("ft/s");
 const LengthPerTimeUnit LengthPerTimeUnit::ft_Per_min("ft/min");
 
-CDM::ScalarLengthPerTimeData* SEScalarLengthPerTime::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarLengthPerTimeData* data(new CDM::ScalarLengthPerTimeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool LengthPerTimeUnit::IsValidUnit(const std::string& unit)
 {
   if (m_Per_s.GetString().compare(unit) == 0)
@@ -63,4 +54,26 @@ const LengthPerTimeUnit& LengthPerTimeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid LengthPerTime unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarLengthPerTime::Load(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
+{
+  SEScalarLengthPerTime::Serialize(src, dst);
+}
+void SEScalarLengthPerTime::Serialize(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
+{
+  SEScalarQuantity<LengthPerTimeUnit>::Serialize(src.scalarlengthpertime(), dst);
+}
+
+cdm::ScalarLengthPerTimeData* SEScalarLengthPerTime::Unload(const SEScalarLengthPerTime& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarLengthPerTimeData* dst = new cdm::ScalarLengthPerTimeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarLengthPerTime::Serialize(const SEScalarLengthPerTime& src, cdm::ScalarLengthPerTimeData& dst)
+{
+  SEScalarQuantity<LengthPerTimeUnit>::Serialize(src, *dst.mutable_scalarlengthpertime());
 }

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarHeatConductanceData.hxx"
 
 class DLL_DECL HeatConductanceUnit : public CCompoundUnit
 {
@@ -35,5 +34,9 @@ public:
   SEScalarHeatConductance() {}
   virtual ~SEScalarHeatConductance() {}
 
-  CDM::ScalarHeatConductanceData* Unload() const;
+  static void Load(const cdm::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst);
+  static cdm::ScalarHeatConductanceData* Unload(const SEScalarHeatConductance& src);
+protected:
+  static void Serialize(const cdm::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst);
+  static void Serialize(const SEScalarHeatConductance& src, cdm::ScalarHeatConductanceData& dst);
 };

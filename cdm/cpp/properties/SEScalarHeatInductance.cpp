@@ -15,15 +15,6 @@ specific language governing permissions and limitations under the License.
 
 const HeatInductanceUnit HeatInductanceUnit::K_s_Per_W("K s/W");
 
-CDM::ScalarHeatInductanceData* SEScalarHeatInductance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarHeatInductanceData* data(new CDM::ScalarHeatInductanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool HeatInductanceUnit::IsValidUnit(const std::string& unit)
 {
   if (K_s_Per_W.GetString().compare(unit) == 0)
@@ -38,4 +29,26 @@ const HeatInductanceUnit& HeatInductanceUnit::GetCompoundUnit(const std::string&
   std::stringstream err;
   err << unit << " is not a valid HeatInductance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarHeatInductance::Load(const cdm::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
+{
+  SEScalarHeatInductance::Serialize(src, dst);
+}
+void SEScalarHeatInductance::Serialize(const cdm::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
+{
+  SEScalarQuantity<HeatInductanceUnit>::Serialize(src.scalarheatinductance(), dst);
+}
+
+cdm::ScalarHeatInductanceData* SEScalarHeatInductance::Unload(const SEScalarHeatInductance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarHeatInductanceData* dst = new cdm::ScalarHeatInductanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarHeatInductance::Serialize(const SEScalarHeatInductance& src, cdm::ScalarHeatInductanceData& dst)
+{
+  SEScalarQuantity<HeatInductanceUnit>::Serialize(src, *dst.mutable_scalarheatinductance());
 }

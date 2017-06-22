@@ -18,15 +18,6 @@ const EnergyPerMassUnit EnergyPerMassUnit::kJ_Per_kg("kJ/kg");
 const EnergyPerMassUnit EnergyPerMassUnit::mJ_Per_kg("mJ/kg");
 const EnergyPerMassUnit EnergyPerMassUnit::kcal_Per_kg("kcal/kg");
 
-CDM::ScalarEnergyPerMassData* SEScalarEnergyPerMass::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarEnergyPerMassData* data(new CDM::ScalarEnergyPerMassData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool EnergyPerMassUnit::IsValidUnit(const std::string& unit)
 {
   if (J_Per_kg.GetString().compare(unit) == 0)
@@ -53,4 +44,26 @@ const EnergyPerMassUnit& EnergyPerMassUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid EnergyPerMass unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarEnergyPerMass::Load(const cdm::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst)
+{
+  SEScalarEnergyPerMass::Serialize(src, dst);
+}
+void SEScalarEnergyPerMass::Serialize(const cdm::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst)
+{
+  SEScalarQuantity<EnergyPerMassUnit>::Serialize(src.scalarenergypermass(), dst);
+}
+
+cdm::ScalarEnergyPerMassData* SEScalarEnergyPerMass::Unload(const SEScalarEnergyPerMass& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarEnergyPerMassData* dst = new cdm::ScalarEnergyPerMassData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarEnergyPerMass::Serialize(const SEScalarEnergyPerMass& src, cdm::ScalarEnergyPerMassData& dst)
+{
+  SEScalarQuantity<EnergyPerMassUnit>::Serialize(src, *dst.mutable_scalarenergypermass());
 }

@@ -15,15 +15,6 @@ specific language governing permissions and limitations under the License.
 
 const ElectricCapacitanceUnit ElectricCapacitanceUnit::F("F");
 
-CDM::ScalarElectricCapacitanceData* SEScalarElectricCapacitance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarElectricCapacitanceData* data(new CDM::ScalarElectricCapacitanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool ElectricCapacitanceUnit::IsValidUnit(const std::string& unit)
 {
   if (F.GetString().compare(unit) == 0)
@@ -38,4 +29,26 @@ const ElectricCapacitanceUnit& ElectricCapacitanceUnit::GetCompoundUnit(const st
   std::stringstream err;
   err << unit << " is not a valid ElectricCapacitance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarElectricCapacitance::Load(const cdm::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
+{
+  SEScalarElectricCapacitance::Serialize(src, dst);
+}
+void SEScalarElectricCapacitance::Serialize(const cdm::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
+{
+  SEScalarQuantity<ElectricCapacitanceUnit>::Serialize(src.scalarelectriccapacitance(), dst);
+}
+
+cdm::ScalarElectricCapacitanceData* SEScalarElectricCapacitance::Unload(const SEScalarElectricCapacitance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarElectricCapacitanceData* dst = new cdm::ScalarElectricCapacitanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarElectricCapacitance::Serialize(const SEScalarElectricCapacitance& src, cdm::ScalarElectricCapacitanceData& dst)
+{
+  SEScalarQuantity<ElectricCapacitanceUnit>::Serialize(src, *dst.mutable_scalarelectriccapacitance());
 }

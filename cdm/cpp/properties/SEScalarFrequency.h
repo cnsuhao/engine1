@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarFrequencyData.hxx"
 
 class DLL_DECL FrequencyUnit : public CCompoundUnit
 {
@@ -34,5 +33,9 @@ public:
   SEScalarFrequency() {}
   virtual ~SEScalarFrequency() {}
 
-  CDM::ScalarFrequencyData* Unload() const;
+  static void Load(const cdm::ScalarFrequencyData& src, SEScalarFrequency& dst);
+  static cdm::ScalarFrequencyData* Unload(const SEScalarFrequency& src);
+protected:
+  static void Serialize(const cdm::ScalarFrequencyData& src, SEScalarFrequency& dst);
+  static void Serialize(const SEScalarFrequency& src, cdm::ScalarFrequencyData& dst);
 };

@@ -14,9 +14,9 @@ package mil.tatrc.physiology.datamodel.datarequests;
 
 import java.io.Serializable;
 
+import com.kitware.physiology.cdm.Properties.DecimalFormatData;
 import com.kitware.physiology.cdm.Scenario.DataRequestData;
 import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
-import com.kitware.physiology.cdm.Scenario.DecimalFormatData;
 
 public class SEDataRequest implements Serializable
 {

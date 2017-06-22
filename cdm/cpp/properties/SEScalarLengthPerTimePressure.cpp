@@ -18,15 +18,6 @@ const LengthPerTimePressureUnit LengthPerTimePressureUnit::cm_Per_s_mmHg("cm/s m
 const LengthPerTimePressureUnit LengthPerTimePressureUnit::m_Per_min_mmHg("m/min mmHg");
 const LengthPerTimePressureUnit LengthPerTimePressureUnit::cm_Per_min_mmHg("cm/min mmHg");
 
-CDM::ScalarLengthPerTimePressureData* SEScalarLengthPerTimePressure::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarLengthPerTimePressureData* data(new CDM::ScalarLengthPerTimePressureData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool LengthPerTimePressureUnit::IsValidUnit(const std::string& unit)
 {
   if (m_Per_s_mmHg.GetString().compare(unit) == 0)
@@ -53,4 +44,26 @@ const LengthPerTimePressureUnit& LengthPerTimePressureUnit::GetCompoundUnit(cons
   std::stringstream err;
   err << unit << " is not a valid LengthPerTimePressure unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarLengthPerTimePressure::Load(const cdm::ScalarLengthPerTimePressureData& src, SEScalarLengthPerTimePressure& dst)
+{
+  SEScalarLengthPerTimePressure::Serialize(src, dst);
+}
+void SEScalarLengthPerTimePressure::Serialize(const cdm::ScalarLengthPerTimePressureData& src, SEScalarLengthPerTimePressure& dst)
+{
+  SEScalarQuantity<LengthPerTimePressureUnit>::Serialize(src.scalarlengthpertimepressure(), dst);
+}
+
+cdm::ScalarLengthPerTimePressureData* SEScalarLengthPerTimePressure::Unload(const SEScalarLengthPerTimePressure& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarLengthPerTimePressureData* dst = new cdm::ScalarLengthPerTimePressureData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarLengthPerTimePressure::Serialize(const SEScalarLengthPerTimePressure& src, cdm::ScalarLengthPerTimePressureData& dst)
+{
+  SEScalarQuantity<LengthPerTimePressureUnit>::Serialize(src, *dst.mutable_scalarlengthpertimepressure());
 }

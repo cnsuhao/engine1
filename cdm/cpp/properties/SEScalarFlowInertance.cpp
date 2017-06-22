@@ -19,15 +19,6 @@ const FlowInertanceUnit FlowInertanceUnit::cmH2O_s2_Per_mL("cmH2O s^2/mL");
 const FlowInertanceUnit FlowInertanceUnit::cmH2O_s2_Per_L("cmH2O s^2/L");
 const FlowInertanceUnit FlowInertanceUnit::Pa_s2_Per_m3("Pa s^2/m^3");
 
-CDM::ScalarFlowInertanceData* SEScalarFlowInertance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarFlowInertanceData* data(new CDM::ScalarFlowInertanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool FlowInertanceUnit::IsValidUnit(const std::string& unit)
 {
   if (mmHg_s2_Per_mL.GetString().compare(unit) == 0)
@@ -58,4 +49,26 @@ const FlowInertanceUnit& FlowInertanceUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid FlowInertance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarFlowInertance::Load(const cdm::ScalarFlowInertanceData& src, SEScalarFlowInertance& dst)
+{
+  SEScalarFlowInertance::Serialize(src, dst);
+}
+void SEScalarFlowInertance::Serialize(const cdm::ScalarFlowInertanceData& src, SEScalarFlowInertance& dst)
+{
+  SEScalarQuantity<FlowInertanceUnit>::Serialize(src.scalarflowinertance(), dst);
+}
+
+cdm::ScalarFlowInertanceData* SEScalarFlowInertance::Unload(const SEScalarFlowInertance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarFlowInertanceData* dst = new cdm::ScalarFlowInertanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarFlowInertance::Serialize(const SEScalarFlowInertance& src, cdm::ScalarFlowInertanceData& dst)
+{
+  SEScalarQuantity<FlowInertanceUnit>::Serialize(src, *dst.mutable_scalarflowinertance());
 }

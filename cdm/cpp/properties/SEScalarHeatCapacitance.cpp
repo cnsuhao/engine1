@@ -18,15 +18,6 @@ const HeatCapacitanceUnit HeatCapacitanceUnit::kJ_Per_K("kJ/K");
 const HeatCapacitanceUnit HeatCapacitanceUnit::kcal_Per_K("kcal/K");
 const HeatCapacitanceUnit HeatCapacitanceUnit::kcal_Per_C("kcal/degC");
 
-CDM::ScalarHeatCapacitanceData* SEScalarHeatCapacitance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarHeatCapacitanceData* data(new CDM::ScalarHeatCapacitanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool HeatCapacitanceUnit::IsValidUnit(const std::string& unit)
 {
   if (J_Per_K.GetString().compare(unit) == 0)
@@ -53,4 +44,26 @@ const HeatCapacitanceUnit& HeatCapacitanceUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid HeatCapacitance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarHeatCapacitance::Load(const cdm::ScalarHeatCapacitanceData& src, SEScalarHeatCapacitance& dst)
+{
+  SEScalarHeatCapacitance::Serialize(src, dst);
+}
+void SEScalarHeatCapacitance::Serialize(const cdm::ScalarHeatCapacitanceData& src, SEScalarHeatCapacitance& dst)
+{
+  SEScalarQuantity<HeatCapacitanceUnit>::Serialize(src.scalarheatcapacitance(), dst);
+}
+
+cdm::ScalarHeatCapacitanceData* SEScalarHeatCapacitance::Unload(const SEScalarHeatCapacitance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarHeatCapacitanceData* dst = new cdm::ScalarHeatCapacitanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarHeatCapacitance::Serialize(const SEScalarHeatCapacitance& src, cdm::ScalarHeatCapacitanceData& dst)
+{
+  SEScalarQuantity<HeatCapacitanceUnit>::Serialize(src, *dst.mutable_scalarheatcapacitance());
 }

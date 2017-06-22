@@ -19,15 +19,6 @@ const FlowResistanceUnit FlowResistanceUnit::mmHg_min_Per_mL("mmHg min/mL");
 const FlowResistanceUnit FlowResistanceUnit::mmHg_min_Per_L("mmHg min/L");
 const FlowResistanceUnit FlowResistanceUnit::Pa_s_Per_m3("Pa s/m^3");
 
-CDM::ScalarFlowResistanceData* SEScalarFlowResistance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarFlowResistanceData* data(new CDM::ScalarFlowResistanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool FlowResistanceUnit::IsValidUnit(const std::string& unit)
 {
   if (cmH2O_s_Per_L.GetString().compare(unit) == 0)
@@ -58,4 +49,26 @@ const FlowResistanceUnit& FlowResistanceUnit::GetCompoundUnit(const std::string&
   std::stringstream err;
   err << unit << " is not a valid FlowResistance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarFlowResistance::Load(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst)
+{
+  SEScalarFlowResistance::Serialize(src, dst);
+}
+void SEScalarFlowResistance::Serialize(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst)
+{
+  SEScalarQuantity<FlowResistanceUnit>::Serialize(src.scalarflowresistance(), dst);
+}
+
+cdm::ScalarFlowResistanceData* SEScalarFlowResistance::Unload(const SEScalarFlowResistance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarFlowResistanceData* dst = new cdm::ScalarFlowResistanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarFlowResistance::Serialize(const SEScalarFlowResistance& src, cdm::ScalarFlowResistanceData& dst)
+{
+  SEScalarQuantity<FlowResistanceUnit>::Serialize(src, *dst.mutable_scalarflowresistance());
 }

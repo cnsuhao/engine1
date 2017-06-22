@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 class SESubstanceManager;
-CDM_BIND_DECL(SystemData)
+#include "bind/cdm/Physiology.pb.h"
 
 class DLL_DECL SESystem : public Loggable
 {
@@ -37,11 +37,7 @@ public:
   *   @brief - Look for the Scalar property in the systems contained in the provided vector
   */
   static const SEScalar* GetScalar(const std::string& name, std::vector<SESystem*>* systems);
-  
-  virtual bool Load(const CDM::SystemData& in);
-  virtual CDM::SystemData* Unload() const = 0;
-protected:
-  virtual void Unload(CDM::SystemData& data) const;
 
+protected:
   std::stringstream m_ss;
 };

@@ -33,29 +33,30 @@ void SEFunctionVolumeVsTime::Clear()
   m_VolumeUnit = nullptr;
 }
 
-bool SEFunctionVolumeVsTime::Load(const CDM::FunctionVolumeVsTimeData& in)
+void SEFunctionVolumeVsTime::Load(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
 {
-  if (!SEFunction::Load(in))
-    return false;
-  m_TimeUnit = &TimeUnit::GetCompoundUnit(in.IndependentUnit().get());
-  m_VolumeUnit = &VolumeUnit::GetCompoundUnit(in.DependentUnit().get());
-  return IsValid();
+  SEFunctionVolumeVsTime::Serialize(src, dst);
+}
+void SEFunctionVolumeVsTime::Serialize(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
+{
+  SEFunction::Serialize(src.functionvolumevstime(), dst);
+  dst.m_TimeUnit = &TimeUnit::GetCompoundUnit(src.functionvolumevstime().independentunit());
+  dst.m_VolumeUnit = &VolumeUnit::GetCompoundUnit(src.functionvolumevstime().dependentunit());
 }
 
-CDM::FunctionVolumeVsTimeData*  SEFunctionVolumeVsTime::Unload() const
+cdm::FunctionVolumeVsTimeData* SEFunctionVolumeVsTime::Unload(const SEFunctionVolumeVsTime& src)
 {
-  if (!IsValid())
+  if (!src.IsValid())
     return nullptr;
-  CDM::FunctionVolumeVsTimeData* data(new CDM::FunctionVolumeVsTimeData());
-  Unload(*data);
-  return data;
+  cdm::FunctionVolumeVsTimeData* dst = new cdm::FunctionVolumeVsTimeData();
+  Serialize(src, *dst);
+  return dst;
 }
-
-void SEFunctionVolumeVsTime::Unload(CDM::FunctionVolumeVsTimeData& data) const
+void SEFunctionVolumeVsTime::Serialize(const SEFunctionVolumeVsTime& src, cdm::FunctionVolumeVsTimeData& dst)
 {
-  SEFunction::Unload(data);
-  data.IndependentUnit(m_TimeUnit->GetString());
-  data.DependentUnit(m_VolumeUnit->GetString());
+  SEFunction::Serialize(src, *dst.mutable_functionvolumevstime());
+  dst.mutable_functionvolumevstime()->set_independentunit(src.m_TimeUnit->GetString());
+  dst.mutable_functionvolumevstime()->set_dependentunit(src.m_VolumeUnit->GetString());
 }
 
 double SEFunctionVolumeVsTime::GetTimeValue(unsigned int index, const TimeUnit& unit)

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarOsmolarityData.hxx"
 
 class DLL_DECL OsmolarityUnit : public CCompoundUnit
 {
@@ -33,5 +32,9 @@ public:
   SEScalarOsmolarity() {}
   virtual ~SEScalarOsmolarity() {}
 
-  CDM::ScalarOsmolarityData* Unload() const;
+  static void Load(const cdm::ScalarOsmolarityData& src, SEScalarOsmolarity& dst);
+  static cdm::ScalarOsmolarityData* Unload(const SEScalarOsmolarity& src);
+protected:
+  static void Serialize(const cdm::ScalarOsmolarityData& src, SEScalarOsmolarity& dst);
+  static void Serialize(const SEScalarOsmolarity& src, cdm::ScalarOsmolarityData& dst);
 };

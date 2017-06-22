@@ -19,15 +19,6 @@ const VolumeUnit VolumeUnit::mL("mL");
 const VolumeUnit VolumeUnit::uL("uL");
 const VolumeUnit VolumeUnit::m3("m^3");
 
-CDM::ScalarVolumeData* SEScalarVolume::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::ScalarVolumeData* data(new CDM::ScalarVolumeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool VolumeUnit::IsValidUnit(const std::string& unit)
 {
   if (L.GetString().compare(unit) == 0)
@@ -58,4 +49,26 @@ const VolumeUnit& VolumeUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Volume unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarVolume::Load(const cdm::ScalarVolumeData& src, SEScalarVolume& dst)
+{
+  SEScalarVolume::Serialize(src, dst);
+}
+void SEScalarVolume::Serialize(const cdm::ScalarVolumeData& src, SEScalarVolume& dst)
+{
+  SEScalarQuantity<VolumeUnit>::Serialize(src.scalarvolume(), dst);
+}
+
+cdm::ScalarVolumeData* SEScalarVolume::Unload(const SEScalarVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarVolumeData* dst = new cdm::ScalarVolumeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarVolume::Serialize(const SEScalarVolume& src, cdm::ScalarVolumeData& dst)
+{
+  SEScalarQuantity<VolumeUnit>::Serialize(src, *dst.mutable_scalarvolume());
 }

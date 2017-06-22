@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarAreaData.hxx"
 
 class DLL_DECL AreaUnit : public CCompoundUnit
 {
@@ -33,5 +32,9 @@ public:
   SEScalarArea() {}
   virtual ~SEScalarArea() {}
 
-  CDM::ScalarAreaData* Unload() const;
+  static void Load(const cdm::ScalarAreaData& src, SEScalarArea& dst);
+  static cdm::ScalarAreaData* Unload(const SEScalarArea& src);
+protected:
+  static void Serialize(const cdm::ScalarAreaData& src, SEScalarArea& dst);
+  static void Serialize(const SEScalarArea& src, cdm::ScalarAreaData& dst);
 };

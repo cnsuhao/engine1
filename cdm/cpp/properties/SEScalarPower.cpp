@@ -20,15 +20,6 @@ const PowerUnit PowerUnit::kcal_Per_day("kcal/day");
 const PowerUnit PowerUnit::J_Per_s("J/s");
 const PowerUnit PowerUnit::BTU_Per_hr("BTU/hr");
 
-CDM::ScalarPowerData* SEScalarPower::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarPowerData* data(new CDM::ScalarPowerData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool PowerUnit::IsValidUnit(const std::string& unit)
 {
   if (W.GetString().compare(unit) == 0)
@@ -63,4 +54,26 @@ const PowerUnit& PowerUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Power unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarPower::Load(const cdm::ScalarPowerData& src, SEScalarPower& dst)
+{
+  SEScalarPower::Serialize(src, dst);
+}
+void SEScalarPower::Serialize(const cdm::ScalarPowerData& src, SEScalarPower& dst)
+{
+  SEScalarQuantity<PowerUnit>::Serialize(src.scalarpower(), dst);
+}
+
+cdm::ScalarPowerData* SEScalarPower::Unload(const SEScalarPower& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarPowerData* dst = new cdm::ScalarPowerData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarPower::Serialize(const SEScalarPower& src, cdm::ScalarPowerData& dst)
+{
+  SEScalarQuantity<PowerUnit>::Serialize(src, *dst.mutable_scalarpower());
 }

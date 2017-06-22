@@ -15,15 +15,6 @@ specific language governing permissions and limitations under the License.
 
 const PowerPerAreaTemperatureToTheFourthUnit PowerPerAreaTemperatureToTheFourthUnit::W_Per_m2_K4("W/ m^2 K^4");
 
-CDM::ScalarPowerPerAreaTemperatureToTheFourthData* SEScalarPowerPerAreaTemperatureToTheFourth::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarPowerPerAreaTemperatureToTheFourthData* data(new CDM::ScalarPowerPerAreaTemperatureToTheFourthData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool PowerPerAreaTemperatureToTheFourthUnit::IsValidUnit(const std::string& unit)
 {
   if (W_Per_m2_K4.GetString().compare(unit) == 0)
@@ -38,4 +29,26 @@ const PowerPerAreaTemperatureToTheFourthUnit& PowerPerAreaTemperatureToTheFourth
   std::stringstream err;
   err << unit << " is not a valid PowerPerAreaTemperatureToTheFourth unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarPowerPerAreaTemperatureToTheFourth::Load(const cdm::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst)
+{
+  SEScalarPowerPerAreaTemperatureToTheFourth::Serialize(src, dst);
+}
+void SEScalarPowerPerAreaTemperatureToTheFourth::Serialize(const cdm::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst)
+{
+  SEScalarQuantity<PowerPerAreaTemperatureToTheFourthUnit>::Serialize(src.scalarpowerperareatemperaturetothefourth(), dst);
+}
+
+cdm::ScalarPowerPerAreaTemperatureToTheFourthData* SEScalarPowerPerAreaTemperatureToTheFourth::Unload(const SEScalarPowerPerAreaTemperatureToTheFourth& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarPowerPerAreaTemperatureToTheFourthData* dst = new cdm::ScalarPowerPerAreaTemperatureToTheFourthData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarPowerPerAreaTemperatureToTheFourth::Serialize(const SEScalarPowerPerAreaTemperatureToTheFourth& src, cdm::ScalarPowerPerAreaTemperatureToTheFourthData& dst)
+{
+  SEScalarQuantity<PowerPerAreaTemperatureToTheFourthUnit>::Serialize(src, *dst.mutable_scalarpowerperareatemperaturetothefourth());
 }

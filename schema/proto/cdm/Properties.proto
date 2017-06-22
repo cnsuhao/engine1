@@ -27,6 +27,17 @@ enum eCharge
   Positive = 2;
 }
 
+message DecimalFormatData
+{
+  enum eType
+  {
+    FixedMantissa     = 0;
+    SignificantDigits = 1;
+  }
+  eType                            Type                      = 1;
+  uint32                           Precision                 = 2;
+}
+
 message RunningAverageData
 {
   double Sum         = 1;

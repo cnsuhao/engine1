@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarElectricChargeData.hxx"
 
 class DLL_DECL ElectricChargeUnit : public CCompoundUnit
 {
@@ -32,5 +31,9 @@ public:
   SEScalarElectricCharge() {}
   virtual ~SEScalarElectricCharge() {}
 
-  CDM::ScalarElectricChargeData* Unload() const;
+  static void Load(const cdm::ScalarElectricChargeData& src, SEScalarElectricCharge& dst);
+  static cdm::ScalarElectricChargeData* Unload(const SEScalarElectricCharge& src);
+protected:
+  static void Serialize(const cdm::ScalarElectricChargeData& src, SEScalarElectricCharge& dst);
+  static void Serialize(const SEScalarElectricCharge& src, cdm::ScalarElectricChargeData& dst);
 };

@@ -16,15 +16,6 @@ specific language governing permissions and limitations under the License.
 const OsmolarityUnit OsmolarityUnit::Osm_Per_L("Osm/L");
 const OsmolarityUnit OsmolarityUnit::mOsm_Per_L("mOsm/L");
 
-CDM::ScalarOsmolarityData* SEScalarOsmolarity::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarOsmolarityData* data(new CDM::ScalarOsmolarityData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool OsmolarityUnit::IsValidUnit(const std::string& unit)
 {
   if (Osm_Per_L.GetString().compare(unit) == 0)
@@ -43,4 +34,26 @@ const OsmolarityUnit& OsmolarityUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Osmolarity unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarOsmolarity::Load(const cdm::ScalarOsmolarityData& src, SEScalarOsmolarity& dst)
+{
+  SEScalarOsmolarity::Serialize(src, dst);
+}
+void SEScalarOsmolarity::Serialize(const cdm::ScalarOsmolarityData& src, SEScalarOsmolarity& dst)
+{
+  SEScalarQuantity<OsmolarityUnit>::Serialize(src.scalarosmolarity(), dst);
+}
+
+cdm::ScalarOsmolarityData* SEScalarOsmolarity::Unload(const SEScalarOsmolarity& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarOsmolarityData* dst = new cdm::ScalarOsmolarityData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarOsmolarity::Serialize(const SEScalarOsmolarity& src, cdm::ScalarOsmolarityData& dst)
+{
+  SEScalarQuantity<OsmolarityUnit>::Serialize(src, *dst.mutable_scalarosmolarity());
 }

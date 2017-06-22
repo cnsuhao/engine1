@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarLengthPerTimeData.hxx"
 
 class DLL_DECL LengthPerTimeUnit : public CCompoundUnit
 {
@@ -37,5 +36,9 @@ public:
   SEScalarLengthPerTime() {}
   virtual ~SEScalarLengthPerTime() {}
 
-  CDM::ScalarLengthPerTimeData* Unload() const;
+  static void Load(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst);
+  static cdm::ScalarLengthPerTimeData* Unload(const SEScalarLengthPerTime& src);
+protected:
+  static void Serialize(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst);
+  static void Serialize(const SEScalarLengthPerTime& src, cdm::ScalarLengthPerTimeData& dst);
 };

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarElectricInductanceData.hxx"
 
 class DLL_DECL ElectricInductanceUnit : public CCompoundUnit
 {
@@ -32,5 +31,9 @@ public:
   SEScalarElectricInductance() {}
   virtual ~SEScalarElectricInductance() {}
 
-  CDM::ScalarElectricInductanceData* Unload() const;
+  static void Load(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst);
+  static cdm::ScalarElectricInductanceData* Unload(const SEScalarElectricInductance& src);
+protected:
+  static void Serialize(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst);
+  static void Serialize(const SEScalarElectricInductance& src, cdm::ScalarElectricInductanceData& dst);
 };

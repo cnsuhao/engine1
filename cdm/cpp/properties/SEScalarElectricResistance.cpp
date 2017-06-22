@@ -15,15 +15,6 @@ specific language governing permissions and limitations under the License.
 
 const ElectricResistanceUnit ElectricResistanceUnit::Ohm("ohm");
 
-CDM::ScalarElectricResistanceData* SEScalarElectricResistance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarElectricResistanceData* data(new CDM::ScalarElectricResistanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool ElectricResistanceUnit::IsValidUnit(const std::string& unit)
 {
   if (Ohm.GetString().compare(unit) == 0)
@@ -38,4 +29,26 @@ const ElectricResistanceUnit& ElectricResistanceUnit::GetCompoundUnit(const std:
   std::stringstream err;
   err << unit << " is not a valid ElectricResistance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarElectricResistance::Load(const cdm::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst)
+{
+  SEScalarElectricResistance::Serialize(src, dst);
+}
+void SEScalarElectricResistance::Serialize(const cdm::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst)
+{
+  SEScalarQuantity<ElectricResistanceUnit>::Serialize(src.scalarelectricresistance(), dst);
+}
+
+cdm::ScalarElectricResistanceData* SEScalarElectricResistance::Unload(const SEScalarElectricResistance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarElectricResistanceData* dst = new cdm::ScalarElectricResistanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarElectricResistance::Serialize(const SEScalarElectricResistance& src, cdm::ScalarElectricResistanceData& dst)
+{
+  SEScalarQuantity<ElectricResistanceUnit>::Serialize(src, *dst.mutable_scalarelectricresistance());
 }

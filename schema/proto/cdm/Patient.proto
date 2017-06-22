@@ -65,8 +65,8 @@ message PatientData
   /** @brief An active patient event, and how long it has been active */
   message ActiveEventData
   {
-    eEvent Event                 = 1; /**<< @brief The active event. */
-    ScalarFrequencyData Duration = 2; /**<< @brief The duration since last activated. */
+    eEvent Event                                                 = 1; /**<< @brief The active event. */
+    ScalarTimeData         Duration                              = 2; /**<< @brief The duration since last activated. */
   }
   
   /** Physical Characteristics */

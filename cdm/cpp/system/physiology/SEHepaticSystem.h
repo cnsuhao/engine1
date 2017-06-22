@@ -12,9 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/HepaticSystemData.hxx"
-#include "bind/enumOnOff.hxx"
-#include "system/physiology/SEPupillaryResponse.h"
 
 class DLL_DECL SEHepaticSystem : public SESystem
 {
@@ -27,10 +24,11 @@ public:
   
   virtual const SEScalar* GetScalar(const std::string& name);
   
-  virtual bool Load(const CDM::HepaticSystemData& in);
-  virtual CDM::HepaticSystemData* Unload() const;
+  static void Load(const cdm::HepaticSystemData& src, SEHepaticSystem& dst);
+  static cdm::HepaticSystemData* Unload(const SEHepaticSystem& src);
 protected:
-  virtual void Unload(CDM::HepaticSystemData& data) const;
+  static void Serialize(const cdm::HepaticSystemData& src, SEHepaticSystem& dst);
+  static void Serialize(const SEHepaticSystem& src, cdm::HepaticSystemData& dst);
 public:
 
   

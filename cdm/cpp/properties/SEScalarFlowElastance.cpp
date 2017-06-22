@@ -17,15 +17,6 @@ const FlowElastanceUnit FlowElastanceUnit::cmH2O_Per_L("cmH2O/L");
 const FlowElastanceUnit FlowElastanceUnit::mmHg_Per_mL("mmHg/mL");
 const FlowElastanceUnit FlowElastanceUnit::Pa_Per_m3("Pa/m^3");
 
-CDM::ScalarFlowElastanceData* SEScalarFlowElastance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarFlowElastanceData* data(new CDM::ScalarFlowElastanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool FlowElastanceUnit::IsValidUnit(const std::string& unit)
 {
   if (cmH2O_Per_L.GetString().compare(unit) == 0)
@@ -48,4 +39,26 @@ const FlowElastanceUnit& FlowElastanceUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid FlowElastance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarFlowElastance::Load(const cdm::ScalarFlowElastanceData& src, SEScalarFlowElastance& dst)
+{
+  SEScalarFlowElastance::Serialize(src, dst);
+}
+void SEScalarFlowElastance::Serialize(const cdm::ScalarFlowElastanceData& src, SEScalarFlowElastance& dst)
+{
+  SEScalarQuantity<FlowElastanceUnit>::Serialize(src.scalarflowelastance(), dst);
+}
+
+cdm::ScalarFlowElastanceData* SEScalarFlowElastance::Unload(const SEScalarFlowElastance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarFlowElastanceData* dst = new cdm::ScalarFlowElastanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarFlowElastance::Serialize(const SEScalarFlowElastance& src, cdm::ScalarFlowElastanceData& dst)
+{
+  SEScalarQuantity<FlowElastanceUnit>::Serialize(src, *dst.mutable_scalarflowelastance());
 }

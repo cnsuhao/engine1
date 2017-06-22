@@ -13,9 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 class SEEventHandler;
 class SENutrition;
-CDM_BIND_DECL(PatientData)
-#include "bind/enumPatientEvent.hxx"
-#include "bind/enumSex.hxx"
+#include "bind/cdm/Patient.pb.h"
 
 class DLL_DECL SEPatient : public Loggable
 {
@@ -26,10 +24,12 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::PatientData& in);
-  virtual CDM::PatientData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::PatientData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
 
 public:
   bool LoadFile(const std::string& patientFile);
@@ -44,10 +44,10 @@ public:
   */
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual const std::map<CDM::enumPatientEvent::value, bool>& GetEventStates() const { return m_EventState; }
-  virtual void SetEvent(CDM::enumPatientEvent::value type, bool active, const SEScalarTime& time);
-  virtual bool IsEventActive(CDM::enumPatientEvent::value state) const;
-  virtual double GetEventDuration(CDM::enumPatientEvent::value type, const TimeUnit& unit) const;
+  virtual const std::map<cdm::PatientData::eEvent, bool>& GetEventStates() const { return m_EventState; }
+  virtual void SetEvent(cdm::PatientData::eEvent type, bool active, const SEScalarTime& time);
+  virtual bool IsEventActive(cdm::PatientData::eEvent state) const;
+  virtual double GetEventDuration(cdm::PatientData::eEvent type, const TimeUnit& unit) const;
   virtual void UpdateEvents(const SEScalarTime& timeStep);
   /** @name ForwardEvents
    *  @brief - Set a callback class to invoke when any event changes
@@ -63,8 +63,8 @@ public:
   virtual bool HasName() const;
   virtual void InvalidateName();
 
-  virtual CDM::enumSex::value GetSex() const;
-  virtual void SetSex(CDM::enumSex::value sex);
+  virtual cdm::PatientData::eSex GetSex() const;
+  virtual void SetSex(cdm::PatientData::eSex sex);
   virtual bool HasSex() const;
   virtual void InvalidateSex();
   
@@ -97,7 +97,7 @@ public:
   virtual double GetBodyDensity(const MassPerVolumeUnit& unit) const;
 
   virtual bool HasBodyFatFraction() const;
-  virtual SEScalarFraction& GetBodyFatFraction();
+  virtual SEScalar0To1& GetBodyFatFraction();
   virtual double GetBodyFatFraction() const;
 
   virtual bool HasDiastolicArterialPressureBaseline() const;
@@ -149,7 +149,7 @@ public:
   virtual double GetRespirationRateBaseline(const FrequencyUnit& unit) const;
   
   virtual bool HasRightLungRatio() const;
-  virtual SEScalarFraction& GetRightLungRatio();
+  virtual SEScalar0To1& GetRightLungRatio();
   virtual double GetRightLungRatio() const;
 
   virtual bool HasSkinSurfaceArea() const;
@@ -176,21 +176,21 @@ protected:
 
   std::stringstream          m_ss;
   mutable SEEventHandler*    m_EventHandler;
-  std::map<CDM::enumPatientEvent::value, bool>   m_EventState;  
-  std::map<CDM::enumPatientEvent::value, double> m_EventDuration_s;
+  std::map<cdm::PatientData::eEvent, bool>   m_EventState;
+  std::map<cdm::PatientData::eEvent, double> m_EventDuration_s;
 
   std::string                m_Name;
-  CDM::enumSex::value        m_Sex;
+  cdm::PatientData::eSex     m_Sex;
   SEScalarTime*              m_Age;
   SEScalarMass*              m_Weight;
   SEScalarLength*            m_Height;
   SEScalarMassPerVolume*     m_BodyDensity;
-  SEScalarFraction*           m_BodyFatFraction;
+  SEScalar0To1*              m_BodyFatFraction;
   SEScalarMass*              m_LeanBodyMass;
 
   SEScalarArea*              m_AlveoliSurfaceArea;
-  SEScalarFraction*          m_RightLungRatio;
-  SEScalarArea*               m_SkinSurfaceArea;
+  SEScalar0To1*              m_RightLungRatio;
+  SEScalarArea*              m_SkinSurfaceArea;
 
   SEScalarPower*             m_BasalMetabolicRate;
   SEScalarVolume*            m_BloodVolumeBaseline;
@@ -198,8 +198,8 @@ protected:
   SEScalarFrequency*         m_HeartRateBaseline;
   SEScalarPressure*          m_MeanArterialPressureBaseline;
   SEScalarFrequency*         m_RespirationRateBaseline;
-  SEScalarPressure*           m_SystolicArterialPressureBaseline;
-  SEScalarVolume*             m_TidalVolumeBaseline;
+  SEScalarPressure*          m_SystolicArterialPressureBaseline;
+  SEScalarVolume*            m_TidalVolumeBaseline;
 
   SEScalarFrequency*         m_HeartRateMaximum;
   SEScalarFrequency*         m_HeartRateMinimum;

@@ -16,15 +16,6 @@ specific language governing permissions and limitations under the License.
 const PressurePerVolumeUnit PressurePerVolumeUnit::mmHg_Per_mL("mmHg/mL");
 const PressurePerVolumeUnit PressurePerVolumeUnit::cmH2O_Per_mL("cmH2O/mL");
 
-CDM::ScalarPressurePerVolumeData* SEScalarPressurePerVolume::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarPressurePerVolumeData* data(new CDM::ScalarPressurePerVolumeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool PressurePerVolumeUnit::IsValidUnit(const std::string& unit)
 {
   if (mmHg_Per_mL.GetString().compare(unit) == 0)
@@ -43,4 +34,26 @@ const PressurePerVolumeUnit& PressurePerVolumeUnit::GetCompoundUnit(const std::s
   std::stringstream err;
   err << unit << " is not a valid PressurePerVolume unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarPressurePerVolume::Load(const cdm::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
+{
+  SEScalarPressurePerVolume::Serialize(src, dst);
+}
+void SEScalarPressurePerVolume::Serialize(const cdm::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
+{
+  SEScalarQuantity<PressurePerVolumeUnit>::Serialize(src.scalarpressurepervolume(), dst);
+}
+
+cdm::ScalarPressurePerVolumeData* SEScalarPressurePerVolume::Unload(const SEScalarPressurePerVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarPressurePerVolumeData* dst = new cdm::ScalarPressurePerVolumeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarPressurePerVolume::Serialize(const SEScalarPressurePerVolume& src, cdm::ScalarPressurePerVolumeData& dst)
+{
+  SEScalarQuantity<PressurePerVolumeUnit>::Serialize(src, *dst.mutable_scalarpressurepervolume());
 }

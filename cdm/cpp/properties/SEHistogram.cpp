@@ -12,10 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "properties/SEHistogram.h"
-#include "bind/HistogramData.hxx"
-#include "bind/DoubleArray.hxx"
-#include "bind/DoubleList.hxx"
-#include "properties/SEScalar.h"//Utils
 
 static std::stringstream err;
 
@@ -55,35 +51,45 @@ void SEHistogram::Invalidate()
   Clear();
 }
 
-bool SEHistogram::Load(const CDM::HistogramData& in)
+void SEHistogram::Load(const cdm::HistogramData& src, SEHistogram& dst)
 {
-  Clear();  
-  for(unsigned int i=0; i<in.Dependent().DoubleList().size(); i++)
-    m_Dependent.push_back(in.Dependent().DoubleList()[i]);
-  for (unsigned int i = 0; i<in.Independent().DoubleList().size(); i++)
-    m_Independent.push_back(in.Independent().DoubleList()[i]);
-  return IsValid();
+  SEHistogram::Serialize(src, dst);
+
+  if (!src.histogram().dependentunit().empty())
+  {
+    if (src.histogram().dependentunit() != "unitless")
+      throw CommonDataModelException("CDM::Histogram API is intended to be unitless, You are trying to load a dependent axis with a unit defined");
+  }
+  if (!src.histogram().independentunit().empty())
+  {
+    if (src.histogram().independentunit() != "unitless")
+      throw CommonDataModelException("CDM::Histogram API is intended to be unitless, You are trying to load an independent axis with a unit defined");
+  }
+}
+void SEHistogram::Serialize(const cdm::HistogramData& src, SEHistogram& dst)
+{
+  dst.Clear();
+  for (size_t i = 0; i<src.histogram().dependent().value_size(); i++)
+    dst.m_Dependent.push_back(src.histogram().dependent().value(i));
+  for (size_t i = 0; i<src.histogram().independent().value_size(); i++)
+    dst.m_Independent.push_back(src.histogram().independent().value(i));
 }
 
-CDM::HistogramData*  SEHistogram::Unload() const
+cdm::HistogramData* SEHistogram::Unload(const SEHistogram& src)
 {
-  if(!IsValid())
+  if (!src.IsValid())
     return nullptr;
-  CDM::HistogramData* data(new CDM::HistogramData());
-  Unload(*data);
-  return data;
+  cdm::HistogramData* dst = new cdm::HistogramData();
+  SEHistogram::Serialize(src, *dst);
+  return dst;
 }
-
-void SEHistogram::Unload(CDM::HistogramData& data) const
+void SEHistogram::Serialize(const SEHistogram& src, cdm::HistogramData& dst)
 {
-  data.Dependent(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  data.Dependent().DoubleList(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  data.Independent(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  data.Independent().DoubleList(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  for(unsigned int i=0; i<m_Dependent.size(); i++)
-    data.Dependent().DoubleList().push_back(m_Dependent[i]);
-  for (unsigned int i = 0; i<m_Independent.size(); i++)
-    data.Independent().DoubleList().push_back(m_Independent[i]);
+  for (unsigned int i = 0; i<src.m_Dependent.size(); i++)
+  {
+    dst.mutable_histogram()->mutable_dependent()->add_value(src.m_Dependent[i]);
+    dst.mutable_histogram()->mutable_independent()->add_value(src.m_Independent[i]);
+  }
 }
 
 unsigned int SEHistogram::NumberOfBins() const

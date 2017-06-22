@@ -12,16 +12,6 @@ import "cdm/EnvironmentConditions.proto";
 import "cdm/AnesthesiaMachineActions.proto";
 import "cdm/InhalerActions.proto";
 
-message DecimalFormatData
-{
-  enum eType
-  {
-    FixedMantissa     = 0;
-    SignificantDigits = 1;
-  }
-  eType                            Type                      = 1;
-  uint32                           Precision                 = 2;
-}
 message DataRequestData
 {
   enum eCategory

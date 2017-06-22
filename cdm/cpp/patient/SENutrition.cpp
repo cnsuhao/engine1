@@ -12,17 +12,11 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/SENutrition.h"
-#include "bind/NutritionData.hxx"
-#include "Serializer.h"
-#include "patient/SEPatient.h"
 #include "properties/SEScalarMass.h"
-#include "bind/ScalarMassData.hxx"
 #include "properties/SEScalarMassPerTime.h"
-#include "bind/ScalarMassPerTimeData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
+#include <google/protobuf/text_format.h>
 
 SENutrition::SENutrition(Logger* logger) : Loggable(logger)
 {
@@ -115,59 +109,59 @@ void SENutrition::Increment(const SENutrition& from)
     GetWater().Increment(*from.m_Water);
 }
 
-
-bool SENutrition::Load(const CDM::NutritionData& in)
+void SENutrition::Load(const cdm::NutritionData& src, SENutrition& dst)
 {
-  Clear();
-
-  if (in.Carbohydrate().present())
-    GetCarbohydrate().Load(in.Carbohydrate().get());
-  if (in.CarbohydrateDigestionRate().present())
-    GetCarbohydrateDigestionRate().Load(in.CarbohydrateDigestionRate().get());
-  if (in.Fat().present())
-    GetFat().Load(in.Fat().get());
-  if (in.FatDigestionRate().present())
-    GetFatDigestionRate().Load(in.FatDigestionRate().get());
-  if (in.Protein().present())
-    GetProtein().Load(in.Protein().get());
-  if (in.ProteinDigestionRate().present())
-    GetProteinDigestionRate().Load(in.ProteinDigestionRate().get());
-  if (in.Calcium ().present())
-    GetCalcium().Load(in.Calcium().get());
-  if (in.Sodium().present())
-    GetSodium().Load(in.Sodium().get());
-  if (in.Water().present())
-    GetWater().Load(in.Water().get());
-  return true;
+  SENutrition::Serialize(src, dst);
+}
+void SENutrition::Serialize(const cdm::NutritionData& src, SENutrition& dst)
+{
+  dst.Clear();
+  if (src.has_carbohydrate())
+    SEScalarMass::Load(src.carbohydrate(),dst.GetCarbohydrate());
+  if (src.has_carbohydratedigestionrate())
+    SEScalarMassPerTime::Load(src.carbohydratedigestionrate(),dst.GetCarbohydrateDigestionRate());
+  if (src.has_fat())
+    SEScalarMass::Load(src.fat(),dst.GetFat());
+  if (src.has_fatdigestionrate())
+    SEScalarMassPerTime::Load(src.fatdigestionrate(),dst.GetFatDigestionRate());
+  if (src.has_protein())
+    SEScalarMass::Load(src.protein(),dst.GetProtein());
+  if (src.has_proteindigestionrate())
+    SEScalarMassPerTime::Load(src.proteindigestionrate(),dst.GetProteinDigestionRate());
+  if (src.has_calcium())
+    SEScalarMass::Load(src.calcium(),dst.GetCalcium());
+  if (src.has_sodium())
+    SEScalarMass::Load(src.sodium(),dst.GetSodium());
+  if (src.has_water())
+    SEScalarVolume::Load(src.water(),dst.GetWater());
 }
 
-CDM::NutritionData*  SENutrition::Unload() const
+cdm::NutritionData* SENutrition::Unload(const SENutrition& src)
 {
-  CDM::NutritionData* data = new CDM::NutritionData();
-  Unload(*data);
-  return data;
+  cdm::NutritionData* dst = new cdm::NutritionData();
+  SENutrition::Serialize(src, *dst);
+  return dst;
 }
-
-void SENutrition::Unload(CDM::NutritionData& data) const
+void SENutrition::Serialize(const SENutrition& src, cdm::NutritionData& dst)
 {
-  if (m_Carbohydrate != nullptr)
-    data.Carbohydrate(std::unique_ptr<CDM::ScalarMassData>(m_Carbohydrate->Unload()));
-  if (m_CarbohydrateDigestionRate != nullptr)
-    data.CarbohydrateDigestionRate(std::unique_ptr<CDM::ScalarMassPerTimeData>(m_CarbohydrateDigestionRate->Unload()));
-  if (m_Fat != nullptr)
-    data.Fat(std::unique_ptr<CDM::ScalarMassData>(m_Fat->Unload()));
-  if (m_FatDigestionRate != nullptr)
-    data.FatDigestionRate(std::unique_ptr<CDM::ScalarMassPerTimeData>(m_FatDigestionRate->Unload()));
-  if (m_Protein != nullptr)
-    data.Protein(std::unique_ptr<CDM::ScalarMassData>(m_Protein->Unload()));
-  if (m_ProteinDigestionRate != nullptr)
-    data.ProteinDigestionRate(std::unique_ptr<CDM::ScalarMassPerTimeData>(m_ProteinDigestionRate->Unload()));
-  if (m_Calcium != nullptr)
-    data.Calcium(std::unique_ptr<CDM::ScalarMassData>(m_Calcium->Unload()));
-  if (m_Sodium != nullptr)
-    data.Sodium(std::unique_ptr<CDM::ScalarMassData>(m_Sodium->Unload()));
-  if (m_Water != nullptr)
-    data.Water(std::unique_ptr<CDM::ScalarVolumeData>(m_Water->Unload()));  
+  if (src.HasCarbohydrate())
+    dst.set_allocated_calcium(SEScalarMass::Unload(*src.m_Carbohydrate));
+  if (src.HasCarbohydrateDigestionRate())
+    dst.set_allocated_carbohydratedigestionrate(SEScalarMassPerTime::Unload(*src.m_CarbohydrateDigestionRate));
+  if (src.HasFat())
+    dst.set_allocated_fat(SEScalarMass::Unload(*src.m_Fat));
+  if (src.HasFatDigestionRate())
+    dst.set_allocated_fatdigestionrate(SEScalarMassPerTime::Unload(*src.m_FatDigestionRate));
+  if (src.HasProtein())
+    dst.set_allocated_protein(SEScalarMass::Unload(*src.m_Protein));
+  if (src.HasProteinDigestionRate())
+    dst.set_allocated_proteindigestionrate(SEScalarMassPerTime::Unload(*src.m_ProteinDigestionRate));
+  if (src.HasSodium())
+    dst.set_allocated_sodium(SEScalarMass::Unload(*src.m_Sodium));
+  if (src.HasCalcium())
+    dst.set_allocated_calcium(SEScalarMass::Unload(*src.m_Calcium));
+  if (src.HasWater())
+    dst.set_allocated_water(SEScalarVolume::Unload(*src.m_Water));
 }
 
 const SEScalar* SENutrition::GetScalar(const std::string& name)
@@ -195,26 +189,16 @@ const SEScalar* SENutrition::GetScalar(const std::string& name)
 
 bool SENutrition::LoadFile(const std::string& nutritionFile)
 {
-  CDM::NutritionData* pData;
-  std::unique_ptr<CDM::ObjectData> data;
+  cdm::NutritionData src;
+  std::ifstream file_stream(nutritionFile, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  SENutrition::Load(src,*this);
+  return true;
 
-  std::string nFile = nutritionFile;
-  if (nFile.find("/nutrition") == std::string::npos)
-  {
-    nFile = "./nutrition/";
-    nFile += nutritionFile;
-  }
-
-  data = Serializer::ReadFile(nFile,GetLogger());
-  pData = dynamic_cast<CDM::NutritionData*>(data.get());
-  if (pData == nullptr)
-  {
-    std::stringstream ss;
-    ss << "Nutrition file could not be read : " << nutritionFile << std::endl;
-    Error(ss);
-    return false;
-  }
-  return Load(*pData);
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(nutritionFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
 }
 
 bool SENutrition::HasCarbohydrate() const

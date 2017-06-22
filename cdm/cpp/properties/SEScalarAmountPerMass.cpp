@@ -16,15 +16,6 @@ specific language governing permissions and limitations under the License.
 AmountPerMassUnit AmountPerMassUnit::ct_Per_g("ct/g");
 AmountPerMassUnit AmountPerMassUnit::ct_Per_ug("ct/ug");
 
-CDM::ScalarAmountPerMassData* SEScalarAmountPerMass::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::ScalarAmountPerMassData* data(new CDM::ScalarAmountPerMassData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool AmountPerMassUnit::IsValidUnit(const std::string& unit)
 {
   if(ct_Per_g.GetString().compare(unit) == 0)
@@ -42,4 +33,26 @@ const AmountPerMassUnit& AmountPerMassUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid AmountPerMass unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarAmountPerMass::Load(const cdm::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
+{
+  SEScalarAmountPerMass::Serialize(src, dst);
+}
+void SEScalarAmountPerMass::Serialize(const cdm::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
+{
+  SEScalarQuantity<AmountPerMassUnit>::Serialize(src.scalaramountpermass(), dst);
+}
+
+cdm::ScalarAmountPerMassData* SEScalarAmountPerMass::Unload(const SEScalarAmountPerMass& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarAmountPerMassData* dst = new cdm::ScalarAmountPerMassData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarAmountPerMass::Serialize(const SEScalarAmountPerMass& src, cdm::ScalarAmountPerMassData& dst)
+{
+  SEScalarQuantity<AmountPerMassUnit>::Serialize(src, *dst.mutable_scalaramountpermass());
 }

@@ -16,15 +16,6 @@ specific language governing permissions and limitations under the License.
 const InverseVolumeUnit InverseVolumeUnit::Inverse_L("1/L");
 const InverseVolumeUnit InverseVolumeUnit::Inverse_mL("1/mL");
 
-CDM::ScalarInverseVolumeData* SEScalarInverseVolume::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarInverseVolumeData* data(new CDM::ScalarInverseVolumeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool InverseVolumeUnit::IsValidUnit(const std::string& unit)
 {
   if (Inverse_L.GetString().compare(unit) == 0)
@@ -43,4 +34,26 @@ const InverseVolumeUnit& InverseVolumeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid Volume unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarInverseVolume::Load(const cdm::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst)
+{
+  SEScalarInverseVolume::Serialize(src, dst);
+}
+void SEScalarInverseVolume::Serialize(const cdm::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst)
+{
+  SEScalarQuantity<InverseVolumeUnit>::Serialize(src.scalarinversevolume(), dst);
+}
+
+cdm::ScalarInverseVolumeData* SEScalarInverseVolume::Unload(const SEScalarInverseVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarInverseVolumeData* dst = new cdm::ScalarInverseVolumeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarInverseVolume::Serialize(const SEScalarInverseVolume& src, cdm::ScalarInverseVolumeData& dst)
+{
+  SEScalarQuantity<InverseVolumeUnit>::Serialize(src, *dst.mutable_scalarinversevolume());
 }

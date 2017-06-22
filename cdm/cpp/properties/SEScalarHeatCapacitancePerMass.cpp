@@ -18,15 +18,6 @@ const HeatCapacitancePerMassUnit HeatCapacitancePerMassUnit::kJ_Per_K_kg("kJ/K k
 const HeatCapacitancePerMassUnit HeatCapacitancePerMassUnit::kcal_Per_K_kg("kcal/K kg");
 const HeatCapacitancePerMassUnit HeatCapacitancePerMassUnit::kcal_Per_C_kg("kcal/degC kg");
 
-CDM::ScalarHeatCapacitancePerMassData* SEScalarHeatCapacitancePerMass::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarHeatCapacitancePerMassData* data(new CDM::ScalarHeatCapacitancePerMassData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool HeatCapacitancePerMassUnit::IsValidUnit(const std::string& unit)
 {
   if (J_Per_K_kg.GetString().compare(unit) == 0)
@@ -53,4 +44,26 @@ const HeatCapacitancePerMassUnit& HeatCapacitancePerMassUnit::GetCompoundUnit(co
   std::stringstream err;
   err << unit << " is not a valid HeatCapacitancePerMass unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarHeatCapacitancePerMass::Load(const cdm::ScalarHeatCapacitancePerMassData& src, SEScalarHeatCapacitancePerMass& dst)
+{
+  SEScalarHeatCapacitancePerMass::Serialize(src, dst);
+}
+void SEScalarHeatCapacitancePerMass::Serialize(const cdm::ScalarHeatCapacitancePerMassData& src, SEScalarHeatCapacitancePerMass& dst)
+{
+  SEScalarQuantity<HeatCapacitancePerMassUnit>::Serialize(src.scalarheatcapacitancepermass(), dst);
+}
+
+cdm::ScalarHeatCapacitancePerMassData* SEScalarHeatCapacitancePerMass::Unload(const SEScalarHeatCapacitancePerMass& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarHeatCapacitancePerMassData* dst = new cdm::ScalarHeatCapacitancePerMassData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarHeatCapacitancePerMass::Serialize(const SEScalarHeatCapacitancePerMass& src, cdm::ScalarHeatCapacitancePerMassData& dst)
+{
+  SEScalarQuantity<HeatCapacitancePerMassUnit>::Serialize(src, *dst.mutable_scalarheatcapacitancepermass());
 }

@@ -11,10 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
+#include "bind/cdm/Properties.pb.h"
 
-CDM_BIND_DECL(DecimalFormatData)
-
-enum class DecimalNotation{ Default, Fixed, Scientific };
 class DLL_DECL SEDecimalFormat
 {
 public:
@@ -24,23 +22,23 @@ public:
   virtual void Reset();
   virtual void Set(const SEDecimalFormat& f);
 
-  virtual bool Load(const CDM::DecimalFormatData& in);
-  virtual CDM::DecimalFormatData* Unload();
+  static void Load(const cdm::DecimalFormatData& src, SEDecimalFormat& dst);
+  static cdm::DecimalFormatData* Unload(const SEDecimalFormat& src);
 protected:
-  virtual void Unload(CDM::DecimalFormatData& to) const;
-
+  static void Serialize(const cdm::DecimalFormatData& src, SEDecimalFormat& dst);
+  static void Serialize(const SEDecimalFormat& src, cdm::DecimalFormatData& dst);
 public:
 
   void SetPrecision(std::streamsize p);
   std::streamsize GetPrecision();
 
-  void SetNotation(DecimalNotation n);
-  DecimalNotation GetNotation();
+  void SetNotation(cdm::DecimalFormatData::eType n);
+  cdm::DecimalFormatData::eType GetNotation();
 
   void SetStream(std::ofstream& s);
 
 protected:
-  std::streamsize m_Precision;
-  DecimalNotation m_Notation;
+  std::streamsize               m_Precision;
+  cdm::DecimalFormatData::eType m_Notation;
 
 };

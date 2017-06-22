@@ -22,16 +22,6 @@ const TimeUnit TimeUnit::day("day");
 const TimeUnit TimeUnit::yr("yr");
 #pragma pop_macro("Time")
 
-
-CDM::ScalarTimeData* SEScalarTime::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::ScalarTimeData* data(new CDM::ScalarTimeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool TimeUnit::IsValidUnit(const std::string& unit)
 {
   if (s.GetString().compare(unit) == 0)
@@ -62,4 +52,26 @@ const TimeUnit& TimeUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Amount unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarTime::Load(const cdm::ScalarTimeData& src, SEScalarTime& dst)
+{
+  SEScalarTime::Serialize(src, dst);
+}
+void SEScalarTime::Serialize(const cdm::ScalarTimeData& src, SEScalarTime& dst)
+{
+  SEScalarQuantity<TimeUnit>::Serialize(src.scalartime(), dst);
+}
+
+cdm::ScalarTimeData* SEScalarTime::Unload(const SEScalarTime& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarTimeData* dst = new cdm::ScalarTimeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarTime::Serialize(const SEScalarTime& src, cdm::ScalarTimeData& dst)
+{
+  SEScalarQuantity<TimeUnit>::Serialize(src, *dst.mutable_scalartime());
 }

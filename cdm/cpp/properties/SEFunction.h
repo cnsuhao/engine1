@@ -13,8 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
-
-CDM_BIND_DECL(FunctionData)
+#include "bind/cdm/Properties.pb.h"
 
 class DLL_DECL SEFunction : public SEProperty
 {
@@ -25,10 +24,11 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::FunctionData& in);
-  virtual CDM::FunctionData* Unload() const;
+  static void Load(const cdm::FunctionData& src, SEFunction& dst);
+  static cdm::FunctionData* Unload(const SEFunction& src);
 protected:
-  virtual void Unload(CDM::FunctionData& data) const;
+  static void Serialize(const cdm::FunctionData& src, SEFunction& dst);
+  static void Serialize(const SEFunction& src, cdm::FunctionData& dst);
 
 public:
   virtual bool                          IsValid() const;

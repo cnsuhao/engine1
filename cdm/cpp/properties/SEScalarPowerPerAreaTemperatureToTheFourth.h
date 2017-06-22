@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarPowerPerAreaTemperatureToTheFourthData.hxx"
 
 class DLL_DECL PowerPerAreaTemperatureToTheFourthUnit : public CCompoundUnit
 {
@@ -32,5 +31,9 @@ public:
   SEScalarPowerPerAreaTemperatureToTheFourth() {}
   virtual ~SEScalarPowerPerAreaTemperatureToTheFourth() {}
 
-  CDM::ScalarPowerPerAreaTemperatureToTheFourthData* Unload() const;
+  static void Load(const cdm::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst);
+  static cdm::ScalarPowerPerAreaTemperatureToTheFourthData* Unload(const SEScalarPowerPerAreaTemperatureToTheFourth& src);
+protected:
+  static void Serialize(const cdm::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst);
+  static void Serialize(const SEScalarPowerPerAreaTemperatureToTheFourth& src, cdm::ScalarPowerPerAreaTemperatureToTheFourthData& dst);
 };

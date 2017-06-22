@@ -35,29 +35,30 @@ void SEFunctionElectricPotentialVsTime::Clear()
   m_ElectricPotentialUnit = nullptr;
 }
 
-bool SEFunctionElectricPotentialVsTime::Load(const CDM::FunctionElectricPotentialVsTimeData& in)
+void SEFunctionElectricPotentialVsTime::Load(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
 {
-  if (!SEFunction::Load(in))
-    return false;
-  m_TimeUnit = &TimeUnit::GetCompoundUnit(in.IndependentUnit().get());
-  m_ElectricPotentialUnit = &ElectricPotentialUnit::GetCompoundUnit(in.DependentUnit().get());
-  return IsValid();
+  SEFunctionElectricPotentialVsTime::Serialize(src, dst);
+}
+void SEFunctionElectricPotentialVsTime::Serialize(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
+{
+  SEFunction::Serialize(src.functionelectricpotentialvstime(), dst);
+  dst.m_TimeUnit = &TimeUnit::GetCompoundUnit(src.functionelectricpotentialvstime().independentunit());
+  dst.m_ElectricPotentialUnit = &ElectricPotentialUnit::GetCompoundUnit(src.functionelectricpotentialvstime().dependentunit());
 }
 
-CDM::FunctionElectricPotentialVsTimeData*  SEFunctionElectricPotentialVsTime::Unload() const
+cdm::FunctionElectricPotentialVsTimeData* SEFunctionElectricPotentialVsTime::Unload(const SEFunctionElectricPotentialVsTime& src)
 {
-  if (!IsValid())
+  if (!src.IsValid())
     return nullptr;
-  CDM::FunctionElectricPotentialVsTimeData* data(new CDM::FunctionElectricPotentialVsTimeData());
-  Unload(*data);
-  return data;
+  cdm::FunctionElectricPotentialVsTimeData* dst = new cdm::FunctionElectricPotentialVsTimeData();
+  Serialize(src, *dst);
+  return dst;
 }
-
-void SEFunctionElectricPotentialVsTime::Unload(CDM::FunctionElectricPotentialVsTimeData& data) const
+void SEFunctionElectricPotentialVsTime::Serialize(const SEFunctionElectricPotentialVsTime& src, cdm::FunctionElectricPotentialVsTimeData& dst)
 {
-  SEFunction::Unload(data);
-  data.IndependentUnit(m_TimeUnit->GetString());
-  data.DependentUnit(m_ElectricPotentialUnit->GetString());
+  SEFunction::Serialize(src, *dst.mutable_functionelectricpotentialvstime());
+  dst.mutable_functionelectricpotentialvstime()->set_independentunit(src.m_TimeUnit->GetString());
+  dst.mutable_functionelectricpotentialvstime()->set_dependentunit(src.m_ElectricPotentialUnit->GetString());
 }
 
 double SEFunctionElectricPotentialVsTime::GetTimeValue(unsigned int index, const TimeUnit& unit)

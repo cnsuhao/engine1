@@ -20,15 +20,6 @@ const LengthUnit LengthUnit::um("um");
 const LengthUnit LengthUnit::in("in");
 const LengthUnit LengthUnit::ft("ft");
 
-CDM::ScalarLengthData* SEScalarLength::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarLengthData* data(new CDM::ScalarLengthData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool LengthUnit::IsValidUnit(const std::string& unit)
 {
   if (m.GetString().compare(unit) == 0)
@@ -63,4 +54,26 @@ const LengthUnit& LengthUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Length unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarLength::Load(const cdm::ScalarLengthData& src, SEScalarLength& dst)
+{
+  SEScalarLength::Serialize(src, dst);
+}
+void SEScalarLength::Serialize(const cdm::ScalarLengthData& src, SEScalarLength& dst)
+{
+  SEScalarQuantity<LengthUnit>::Serialize(src.scalarlength(), dst);
+}
+
+cdm::ScalarLengthData* SEScalarLength::Unload(const SEScalarLength& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarLengthData* dst = new cdm::ScalarLengthData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarLength::Serialize(const SEScalarLength& src, cdm::ScalarLengthData& dst)
+{
+  SEScalarQuantity<LengthUnit>::Serialize(src, *dst.mutable_scalarlength());
 }

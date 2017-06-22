@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/EndocrineSystemData.hxx"
 
 class DLL_DECL SEEndocrineSystem : public SESystem
 {
@@ -25,10 +24,12 @@ public:
   
   virtual const SEScalar* GetScalar(const std::string& name);
   
-  virtual bool Load(const CDM::EndocrineSystemData& in);
-  virtual CDM::EndocrineSystemData* Unload() const;
+
+  static void Load(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst);
+  static cdm::EndocrineSystemData* Unload(const SEEndocrineSystem& src);
 protected:
-  virtual void Unload(CDM::EndocrineSystemData& data) const;
+  static void Serialize(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst);
+  static void Serialize(const SEEndocrineSystem& src, cdm::EndocrineSystemData& dst);
 
 public:
 

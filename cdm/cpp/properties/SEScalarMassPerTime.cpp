@@ -22,15 +22,6 @@ const MassPerTimeUnit MassPerTimeUnit::ug_Per_s("ug/s");
 const MassPerTimeUnit MassPerTimeUnit::kg_Per_s("kg/s");
 const MassPerTimeUnit MassPerTimeUnit::ug_Per_min("ug/min");
 
-CDM::ScalarMassPerTimeData* SEScalarMassPerTime::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarMassPerTimeData* data(new CDM::ScalarMassPerTimeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool MassPerTimeUnit::IsValidUnit(const std::string& unit)
 {
   if (g_Per_s.GetString().compare(unit) == 0)
@@ -73,4 +64,26 @@ const MassPerTimeUnit& MassPerTimeUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid MassPerTime unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarMassPerTime::Load(const cdm::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
+{
+  SEScalarMassPerTime::Serialize(src, dst);
+}
+void SEScalarMassPerTime::Serialize(const cdm::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
+{
+  SEScalarQuantity<MassPerTimeUnit>::Serialize(src.scalarmasspertime(), dst);
+}
+
+cdm::ScalarMassPerTimeData* SEScalarMassPerTime::Unload(const SEScalarMassPerTime& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarMassPerTimeData* dst = new cdm::ScalarMassPerTimeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarMassPerTime::Serialize(const SEScalarMassPerTime& src, cdm::ScalarMassPerTimeData& dst)
+{
+  SEScalarQuantity<MassPerTimeUnit>::Serialize(src, *dst.mutable_scalarmasspertime());
 }

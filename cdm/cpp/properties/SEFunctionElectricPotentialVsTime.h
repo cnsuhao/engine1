@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEFunction.h"
-#include "bind/FunctionElectricPotentialVsTimeData.hxx"
 
 class DLL_DECL SEFunctionElectricPotentialVsTime : public SEFunction
 {
@@ -23,10 +22,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::FunctionElectricPotentialVsTimeData& in);
-  virtual CDM::FunctionElectricPotentialVsTimeData* Unload() const;
+  static void Load(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst);
+  static cdm::FunctionElectricPotentialVsTimeData* Unload(const SEFunctionElectricPotentialVsTime& src);
 protected:
-  virtual void Unload(CDM::FunctionElectricPotentialVsTimeData& data) const;
+  static void Serialize(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst);
+  static void Serialize(const SEFunctionElectricPotentialVsTime& src, cdm::FunctionElectricPotentialVsTimeData& dst);
 public:
 
   double                               GetIndependentValue(unsigned int index) = delete;

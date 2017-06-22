@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarVolumePerTimeAreaData.hxx"
 
 class DLL_DECL VolumePerTimeAreaUnit : public CCompoundUnit
 {
@@ -34,5 +33,9 @@ public:
   SEScalarVolumePerTimeArea() {}
   virtual ~SEScalarVolumePerTimeArea() {}
 
-  CDM::ScalarVolumePerTimeAreaData* Unload() const;
+  static void Load(const cdm::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst);
+  static cdm::ScalarVolumePerTimeAreaData* Unload(const SEScalarVolumePerTimeArea& src);
+protected:
+  static void Serialize(const cdm::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst);
+  static void Serialize(const SEScalarVolumePerTimeArea& src, cdm::ScalarVolumePerTimeAreaData& dst);
 };

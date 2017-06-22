@@ -19,15 +19,6 @@ const PressureUnit PressureUnit::cmH2O("cmH2O");
 const PressureUnit PressureUnit::psi("psi");
 const PressureUnit PressureUnit::atm("atm");
 
-CDM::ScalarPressureData* SEScalarPressure::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarPressureData* data(new CDM::ScalarPressureData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool PressureUnit::IsValidUnit(const std::string& unit)
 {
   if (Pa.GetString().compare(unit) == 0)
@@ -58,4 +49,26 @@ const PressureUnit& PressureUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Pressure unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarPressure::Load(const cdm::ScalarPressureData& src, SEScalarPressure& dst)
+{
+  SEScalarPressure::Serialize(src, dst);
+}
+void SEScalarPressure::Serialize(const cdm::ScalarPressureData& src, SEScalarPressure& dst)
+{
+  SEScalarQuantity<PressureUnit>::Serialize(src.scalarpressure(), dst);
+}
+
+cdm::ScalarPressureData* SEScalarPressure::Unload(const SEScalarPressure& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarPressureData* dst = new cdm::ScalarPressureData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarPressure::Serialize(const SEScalarPressure& src, cdm::ScalarPressureData& dst)
+{
+  SEScalarQuantity<PressureUnit>::Serialize(src, *dst.mutable_scalarpressure());
 }

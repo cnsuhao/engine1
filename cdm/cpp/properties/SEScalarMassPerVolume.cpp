@@ -28,15 +28,6 @@ const MassPerVolumeUnit MassPerVolumeUnit::mg_Per_dL("mg/dL");
 const MassPerVolumeUnit MassPerVolumeUnit::kg_Per_mL("kg/mL");
 const MassPerVolumeUnit MassPerVolumeUnit::kg_Per_L("kg/L");
 
-CDM::ScalarMassPerVolumeData* SEScalarMassPerVolume::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarMassPerVolumeData* data(new CDM::ScalarMassPerVolumeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool MassPerVolumeUnit::IsValidUnit(const std::string& unit)
 {
   if (g_Per_dL.GetString().compare(unit) == 0)
@@ -103,4 +94,26 @@ const MassPerVolumeUnit& MassPerVolumeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid MassPerVolume unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarMassPerVolume::Load(const cdm::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
+{
+  SEScalarMassPerVolume::Serialize(src, dst);
+}
+void SEScalarMassPerVolume::Serialize(const cdm::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
+{
+  SEScalarQuantity<MassPerVolumeUnit>::Serialize(src.scalarmasspervolume(), dst);
+}
+
+cdm::ScalarMassPerVolumeData* SEScalarMassPerVolume::Unload(const SEScalarMassPerVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarMassPerVolumeData* dst = new cdm::ScalarMassPerVolumeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarMassPerVolume::Serialize(const SEScalarMassPerVolume& src, cdm::ScalarMassPerVolumeData& dst)
+{
+  SEScalarQuantity<MassPerVolumeUnit>::Serialize(src, *dst.mutable_scalarmasspervolume());
 }

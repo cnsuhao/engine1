@@ -15,15 +15,6 @@ specific language governing permissions and limitations under the License.
 
 const ElectricCurrentUnit ElectricCurrentUnit::A("A");
 
-CDM::ScalarElectricCurrentData* SEScalarElectricCurrent::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarElectricCurrentData* data(new CDM::ScalarElectricCurrentData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool ElectricCurrentUnit::IsValidUnit(const std::string& unit)
 {
   if (A.GetString().compare(unit) == 0)
@@ -38,4 +29,26 @@ const ElectricCurrentUnit& ElectricCurrentUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid ElectricCurrent unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarElectricCurrent::Load(const cdm::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
+{
+  SEScalarElectricCurrent::Serialize(src, dst);
+}
+void SEScalarElectricCurrent::Serialize(const cdm::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
+{
+  SEScalarQuantity<ElectricCurrentUnit>::Serialize(src.scalarelectriccurrent(), dst);
+}
+
+cdm::ScalarElectricCurrentData* SEScalarElectricCurrent::Unload(const SEScalarElectricCurrent& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarElectricCurrentData* dst = new cdm::ScalarElectricCurrentData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarElectricCurrent::Serialize(const SEScalarElectricCurrent& src, cdm::ScalarElectricCurrentData& dst)
+{
+  SEScalarQuantity<ElectricCurrentUnit>::Serialize(src, *dst.mutable_scalarelectriccurrent());
 }

@@ -12,16 +12,19 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarNeg1To1Data.hxx"
 
-class DLL_DECL SEScalarNeg1To1 : public SEScalar
+class DLL_DECL SEScalarNegative1To1 : public SEScalar
 {
 
 public:
-  SEScalarNeg1To1();
-  virtual ~SEScalarNeg1To1() {}
+  SEScalarNegative1To1();
+  virtual ~SEScalarNegative1To1() {}
 
-  CDM::ScalarNeg1To1Data* Unload() const;
+  static void Load(const cdm::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst);
+  static cdm::ScalarNegative1To1Data* Unload(const SEScalarNegative1To1& src);
+protected:
+  static void Serialize(const cdm::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst);
+  static void Serialize(const SEScalarNegative1To1& src, cdm::ScalarNegative1To1Data& dst);
 
   double GetValue() const { return SEScalar::GetValue(); }
   double GetValue(const NoUnit& unitless) const { return SEScalar::GetValue(); }

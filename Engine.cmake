@@ -38,6 +38,9 @@ set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 find_package(Dirent REQUIRED)
 find_package(Eigen3 3.3.3 REQUIRED)
 find_package(ProtoBuf REQUIRED)
+find_package(Java REQUIRED)
+include(UseJava)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 if(MSVC)
   set(protobuf_BUILD_TESTS OFF CACHE TYPE INTERNAL FORCE)
@@ -53,16 +56,12 @@ add_subdirectory(engine)
 add_subdirectory(test)
 add_subdirectory(sdk)
 
-
 # TODO put a USE_JAVA option in (you would get no JNI, jar, and test suite, but maybe you just want the C++ SDK)
 # Java Compiling
-find_package(Java REQUIRED)
-include(UseJava)
-# Protobuf needs to auto generate some things needed to be used with Java
 
 file(GLOB_RECURSE JAVA_FILES 
   "${CMAKE_BINARY_DIR}/schema/java/*.java"
-  "${CMAKE_BINARY_DIR}/protobuf/src/protobuf/java/core/java/*.java"
+  "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/*.java"
   "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
   "${CMAKE_SOURCE_DIR}/engine/java/*.java"
   "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"

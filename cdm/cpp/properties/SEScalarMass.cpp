@@ -19,15 +19,6 @@ const MassUnit MassUnit::mg("mg");
 const MassUnit MassUnit::kg("kg");
 const MassUnit MassUnit::lb("lb");
 
-CDM::ScalarMassData* SEScalarMass::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarMassData* data(new CDM::ScalarMassData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool MassUnit::IsValidUnit(const std::string& unit)
 {
   if (g.GetString().compare(unit) == 0)
@@ -58,4 +49,26 @@ const MassUnit& MassUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Mass unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarMass::Load(const cdm::ScalarMassData& src, SEScalarMass& dst)
+{
+  SEScalarMass::Serialize(src, dst);
+}
+void SEScalarMass::Serialize(const cdm::ScalarMassData& src, SEScalarMass& dst)
+{
+  SEScalarQuantity<MassUnit>::Serialize(src.scalarmass(), dst);
+}
+
+cdm::ScalarMassData* SEScalarMass::Unload(const SEScalarMass& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarMassData* dst = new cdm::ScalarMassData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarMass::Serialize(const SEScalarMass& src, cdm::ScalarMassData& dst)
+{
+  SEScalarQuantity<MassUnit>::Serialize(src, *dst.mutable_scalarmass());
 }

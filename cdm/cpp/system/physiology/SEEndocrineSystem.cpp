@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "system/physiology/SEEndocrineSystem.h"
-#include "substance/SESubstanceManager.h"
 #include "properties/SEScalarAmountPerTime.h"
-#include "bind/ScalarAmountPerTimeData.hxx"
 
 SEEndocrineSystem::SEEndocrineSystem(Logger* logger) : SESystem(logger)
 {
@@ -39,26 +37,27 @@ const SEScalar* SEEndocrineSystem::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEEndocrineSystem::Load(const CDM::EndocrineSystemData& in)
+void SEEndocrineSystem::Load(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst)
 {
-  SESystem::Load(in);
-  if (in.InsulinSynthesisRate().present())
-    GetInsulinSynthesisRate().Load(in.InsulinSynthesisRate().get());
-  return true;
+  SEEndocrineSystem::Serialize(src, dst);
+}
+void SEEndocrineSystem::Serialize(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst)
+{
+  dst.Clear();
+  if (src.has_insulinsynthesisrate())
+    SEScalarAmountPerTime::Load(src.insulinsynthesisrate(), dst.GetInsulinSynthesisRate());
 }
 
-CDM::EndocrineSystemData* SEEndocrineSystem::Unload() const
+cdm::EndocrineSystemData* SEEndocrineSystem::Unload(const SEEndocrineSystem& src)
 {
-  CDM::EndocrineSystemData* data = new CDM::EndocrineSystemData();
-  Unload(*data);
-  return data;
+  cdm::EndocrineSystemData* dst = new cdm::EndocrineSystemData();
+  SEEndocrineSystem::Serialize(src, *dst);
+  return dst;
 }
-
-void SEEndocrineSystem::Unload(CDM::EndocrineSystemData& data) const
+void SEEndocrineSystem::Serialize(const SEEndocrineSystem& src, cdm::EndocrineSystemData& dst)
 {
-  if (m_InsulinSynthesisRate != nullptr)
-    data.InsulinSynthesisRate(std::unique_ptr<CDM::ScalarAmountPerTimeData>(m_InsulinSynthesisRate->Unload()));
-  SESystem::Unload(data);
+  if (src.HasInsulinSynthesisRate())
+    dst.set_allocated_insulinsynthesisrate(SEScalarAmountPerTime::Unload(*src.m_InsulinSynthesisRate));
 }
 
 bool SEEndocrineSystem::HasInsulinSynthesisRate() const

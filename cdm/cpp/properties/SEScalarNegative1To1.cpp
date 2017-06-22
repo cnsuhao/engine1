@@ -11,30 +11,43 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "properties/SEScalarNeg1To1.h"
+#include "properties/SEScalarNegative1To1.h"
 
-SEScalarNeg1To1::SEScalarNeg1To1() : SEScalar()
+SEScalarNegative1To1::SEScalarNegative1To1() : SEScalar()
 {
 
 }
 
-CDM::ScalarNeg1To1Data* SEScalarNeg1To1::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::ScalarNeg1To1Data* data(new CDM::ScalarNeg1To1Data());
-  SEScalar::Unload(*data);
-  return data;
-}
-
-void SEScalarNeg1To1::SetValue(double d)
+void SEScalarNegative1To1::SetValue(double d)
 { 
   if (d > 1 || d < -1)
-    throw CommonDataModelException("SEScalarNeg1To1 must be between [-1,1]");
+    throw CommonDataModelException("SEScalarNegative1To1 must be between [-1,1]");
   SEScalar::SetValue(d);
 }
 
-void SEScalarNeg1To1::SetValue(double d, const NoUnit& unitless)
+void SEScalarNegative1To1::SetValue(double d, const NoUnit& unitless)
 { 
-  SEScalarNeg1To1::SetValue(d);
+  SEScalarNegative1To1::SetValue(d);
 }
+
+void SEScalarNegative1To1::Load(const cdm::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst)
+{
+  SEScalarNegative1To1::Serialize(src, dst);
+}
+void SEScalarNegative1To1::Serialize(const cdm::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst)
+{
+  SEScalar::Serialize(src.scalarnegative1to1(), dst);
+}
+
+cdm::ScalarNegative1To1Data* SEScalarNegative1To1::Unload(const SEScalarNegative1To1& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarNegative1To1Data* dst = new cdm::ScalarNegative1To1Data();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarNegative1To1::Serialize(const SEScalarNegative1To1& src, cdm::ScalarNegative1To1Data& dst)
+{
+  SEScalar::Serialize(src, *dst.mutable_scalarnegative1to1());
+}                                       

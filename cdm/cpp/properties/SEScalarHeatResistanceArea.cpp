@@ -18,15 +18,6 @@ const HeatResistanceAreaUnit HeatResistanceAreaUnit::clo("clo");
 const HeatResistanceAreaUnit HeatResistanceAreaUnit::rValue("rValue");
 const HeatResistanceAreaUnit HeatResistanceAreaUnit::tog("tog");
 
-CDM::ScalarHeatResistanceAreaData* SEScalarHeatResistanceArea::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarHeatResistanceAreaData* data(new CDM::ScalarHeatResistanceAreaData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool HeatResistanceAreaUnit::IsValidUnit(const std::string& unit)
 {
   if (rsi.GetString().compare(unit) == 0)
@@ -53,4 +44,26 @@ const HeatResistanceAreaUnit& HeatResistanceAreaUnit::GetCompoundUnit(const std:
   std::stringstream err;
   err << unit << " is not a valid HeatResistanceArea unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarHeatResistanceArea::Load(const cdm::ScalarHeatResistanceAreaData& src, SEScalarHeatResistanceArea& dst)
+{
+  SEScalarHeatResistanceArea::Serialize(src, dst);
+}
+void SEScalarHeatResistanceArea::Serialize(const cdm::ScalarHeatResistanceAreaData& src, SEScalarHeatResistanceArea& dst)
+{
+  SEScalarQuantity<HeatResistanceAreaUnit>::Serialize(src.scalarheatresistancearea(), dst);
+}
+
+cdm::ScalarHeatResistanceAreaData* SEScalarHeatResistanceArea::Unload(const SEScalarHeatResistanceArea& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarHeatResistanceAreaData* dst = new cdm::ScalarHeatResistanceAreaData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarHeatResistanceArea::Serialize(const SEScalarHeatResistanceArea& src, cdm::ScalarHeatResistanceAreaData& dst)
+{
+  SEScalarQuantity<HeatResistanceAreaUnit>::Serialize(src, *dst.mutable_scalarheatresistancearea());
 }

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarPressurePerVolumeData.hxx"
 
 class DLL_DECL PressurePerVolumeUnit : public CCompoundUnit
 {
@@ -33,5 +32,9 @@ public:
   SEScalarPressurePerVolume() {}
   virtual ~SEScalarPressurePerVolume() {}
 
-  CDM::ScalarPressurePerVolumeData* Unload() const;
+  static void Load(const cdm::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst);
+  static cdm::ScalarPressurePerVolumeData* Unload(const SEScalarPressurePerVolume& src);
+protected:
+  static void Serialize(const cdm::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst);
+  static void Serialize(const SEScalarPressurePerVolume& src, cdm::ScalarPressurePerVolumeData& dst);
 };

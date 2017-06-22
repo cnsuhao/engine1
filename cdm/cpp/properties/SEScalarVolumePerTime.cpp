@@ -22,15 +22,6 @@ const VolumePerTimeUnit VolumePerTimeUnit::m3_Per_s("m^3/s");
 const VolumePerTimeUnit VolumePerTimeUnit::mL_Per_min("mL/min");
 const VolumePerTimeUnit VolumePerTimeUnit::mL_Per_hr("mL/hr");
 
-CDM::ScalarVolumePerTimeData* SEScalarVolumePerTime::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarVolumePerTimeData* data(new CDM::ScalarVolumePerTimeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool VolumePerTimeUnit::IsValidUnit(const std::string& unit)
 {
   if (L_Per_s.GetString().compare(unit) == 0)
@@ -73,4 +64,26 @@ const VolumePerTimeUnit& VolumePerTimeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid VolumePerTime unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarVolumePerTime::Load(const cdm::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
+{
+  SEScalarVolumePerTime::Serialize(src, dst);
+}
+void SEScalarVolumePerTime::Serialize(const cdm::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
+{
+  SEScalarQuantity<VolumePerTimeUnit>::Serialize(src.scalarvolumepertime(), dst);
+}
+
+cdm::ScalarVolumePerTimeData* SEScalarVolumePerTime::Unload(const SEScalarVolumePerTime& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarVolumePerTimeData* dst = new cdm::ScalarVolumePerTimeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarVolumePerTime::Serialize(const SEScalarVolumePerTime& src, cdm::ScalarVolumePerTimeData& dst)
+{
+  SEScalarQuantity<VolumePerTimeUnit>::Serialize(src, *dst.mutable_scalarvolumepertime());
 }

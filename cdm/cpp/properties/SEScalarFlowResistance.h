@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarFlowResistanceData.hxx"
 
 class DLL_DECL FlowResistanceUnit : public CCompoundUnit
 {
@@ -36,5 +35,9 @@ public:
   SEScalarFlowResistance() {}
   virtual ~SEScalarFlowResistance() {}
 
-  CDM::ScalarFlowResistanceData* Unload() const;
+  static void Load(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst);
+  static cdm::ScalarFlowResistanceData* Unload(const SEScalarFlowResistance& src);
+protected:
+  static void Serialize(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst);
+  static void Serialize(const SEScalarFlowResistance& src, cdm::ScalarFlowResistanceData& dst);
 };

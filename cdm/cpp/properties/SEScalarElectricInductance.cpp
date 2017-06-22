@@ -15,15 +15,6 @@ specific language governing permissions and limitations under the License.
 
 const ElectricInductanceUnit ElectricInductanceUnit::H("H");
 
-CDM::ScalarElectricInductanceData* SEScalarElectricInductance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarElectricInductanceData* data(new CDM::ScalarElectricInductanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool ElectricInductanceUnit::IsValidUnit(const std::string& unit)
 {
   if (H.GetString().compare(unit) == 0)
@@ -38,4 +29,26 @@ const ElectricInductanceUnit& ElectricInductanceUnit::GetCompoundUnit(const std:
   std::stringstream err;
   err << unit << " is not a valid ElectricInductance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarElectricInductance::Load(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
+{
+  SEScalarElectricInductance::Serialize(src, dst);
+}
+void SEScalarElectricInductance::Serialize(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
+{
+  SEScalarQuantity<ElectricInductanceUnit>::Serialize(src.scalarelectricinductance(), dst);
+}
+
+cdm::ScalarElectricInductanceData* SEScalarElectricInductance::Unload(const SEScalarElectricInductance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarElectricInductanceData* dst = new cdm::ScalarElectricInductanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarElectricInductance::Serialize(const SEScalarElectricInductance& src, cdm::ScalarElectricInductanceData& dst)
+{
+  SEScalarQuantity<ElectricInductanceUnit>::Serialize(src, *dst.mutable_scalarelectricinductance());
 }

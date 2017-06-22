@@ -16,15 +16,6 @@ specific language governing permissions and limitations under the License.
 const PressureTimePerAreaUnit PressureTimePerAreaUnit::mmHg_Per_mL_m2("mmHg/mL m^2");
 const PressureTimePerAreaUnit PressureTimePerAreaUnit::cmH2O_Per_mL_m2("cmH2O/mL m^2");
 
-CDM::ScalarPressureTimePerAreaData* SEScalarPressureTimePerArea::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarPressureTimePerAreaData* data(new CDM::ScalarPressureTimePerAreaData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
-
 bool PressureTimePerAreaUnit::IsValidUnit(const std::string& unit)
 {
   if (mmHg_Per_mL_m2.GetString().compare(unit) == 0)
@@ -43,4 +34,26 @@ const PressureTimePerAreaUnit& PressureTimePerAreaUnit::GetCompoundUnit(const st
   std::stringstream err;
   err << unit << " is not a valid PressureTimePerArea unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarPressureTimePerArea::Load(const cdm::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst)
+{
+  SEScalarPressureTimePerArea::Serialize(src, dst);
+}
+void SEScalarPressureTimePerArea::Serialize(const cdm::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst)
+{
+  SEScalarQuantity<PressureTimePerAreaUnit>::Serialize(src.scalarpressuretimeperarea(), dst);
+}
+
+cdm::ScalarPressureTimePerAreaData* SEScalarPressureTimePerArea::Unload(const SEScalarPressureTimePerArea& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarPressureTimePerAreaData* dst = new cdm::ScalarPressureTimePerAreaData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarPressureTimePerArea::Serialize(const SEScalarPressureTimePerArea& src, cdm::ScalarPressureTimePerAreaData& dst)
+{
+  SEScalarQuantity<PressureTimePerAreaUnit>::Serialize(src, *dst.mutable_scalarpressuretimeperarea());
 }

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEFunction.h"
-#include "bind/FunctionVolumeVsTimeData.hxx"
 
 class DLL_DECL SEFunctionVolumeVsTime : public SEFunction
 {
@@ -23,10 +22,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::FunctionVolumeVsTimeData& in);
-  virtual CDM::FunctionVolumeVsTimeData* Unload() const;
+  static void Load(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst);
+  static cdm::FunctionVolumeVsTimeData* Unload(const SEFunctionVolumeVsTime& src);
 protected:
-  virtual void Unload(CDM::FunctionVolumeVsTimeData& data) const;
+  static void Serialize(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst);
+  static void Serialize(const SEFunctionVolumeVsTime& src, cdm::FunctionVolumeVsTimeData& dst);
 public:
 
   double                       GetIndependentValue(unsigned int index) = delete;

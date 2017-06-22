@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "properties/SEHistogramFractionVsLength.h"
 #include "properties/SEScalarLength.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include <numeric>
 
 
@@ -47,29 +47,35 @@ bool SEHistogramFractionVsLength::IsVaild() const
   return true;
 }
 
-bool SEHistogramFractionVsLength::Load(const CDM::HistogramFractionVsLengthData& in)
+void SEHistogramFractionVsLength::Load(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst)
 {
-  if (!SEHistogram::Load(in))
-    return false;
-  m_LengthUnit = &LengthUnit::GetCompoundUnit(in.IndependentUnit().get());
-  return IsValid();
+  SEHistogramFractionVsLength::Serialize(src, dst);
+}
+void SEHistogramFractionVsLength::Serialize(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst)
+{
+  dst.Clear();
+  for (size_t i = 0; i<src.histogramfractionvslength().histogram().dependent().value_size(); i++)
+    dst.m_Dependent.push_back(src.histogramfractionvslength().histogram().dependent().value(i));
+  for (size_t i = 0; i<src.histogramfractionvslength().histogram().independent().value_size(); i++)
+    dst.m_Independent.push_back(src.histogramfractionvslength().histogram().independent().value(i));
 }
 
-CDM::HistogramFractionVsLengthData*  SEHistogramFractionVsLength::Unload() const
+cdm::HistogramFractionVsLengthData* SEHistogramFractionVsLength::Unload(const SEHistogramFractionVsLength& src)
 {
-  if (!IsValid())
+  if (!src.IsValid())
     return nullptr;
-  CDM::HistogramFractionVsLengthData* data(new CDM::HistogramFractionVsLengthData());
-  Unload(*data);
-  return data;
+  cdm::HistogramFractionVsLengthData* dst = new cdm::HistogramFractionVsLengthData();
+  SEHistogramFractionVsLength::Serialize(src, *dst);
+  return dst;
 }
-
-void SEHistogramFractionVsLength::Unload(CDM::HistogramFractionVsLengthData& data) const
+void SEHistogramFractionVsLength::Serialize(const SEHistogramFractionVsLength& src, cdm::HistogramFractionVsLengthData& dst)
 {
-  SEHistogram::Unload(data);
-  data.IndependentUnit(m_LengthUnit->GetString());  
+  for (unsigned int i = 0; i<src.m_Dependent.size(); i++)
+  {
+    dst.mutable_histogramfractionvslength()->mutable_histogram()->mutable_dependent()->add_value(src.m_Dependent[i]);
+    dst.mutable_histogramfractionvslength()->mutable_histogram()->mutable_independent()->add_value(src.m_Independent[i]);
+  }
 }
-
 double SEHistogramFractionVsLength::GetLengthValue(unsigned int index, const LengthUnit& unit) const
 {
   if (m_LengthUnit == nullptr)

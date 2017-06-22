@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarTimeData.hxx"
 
 class DLL_DECL TimeUnit : public CCompoundUnit
 {
@@ -36,5 +35,9 @@ public:
   SEScalarTime() {}
   virtual ~SEScalarTime() {}
 
-  CDM::ScalarTimeData* Unload() const;
+  static void Load(const cdm::ScalarTimeData& src, SEScalarTime& dst);
+  static cdm::ScalarTimeData* Unload(const SEScalarTime& src);
+protected:
+  static void Serialize(const cdm::ScalarTimeData& src, SEScalarTime& dst);
+  static void Serialize(const SEScalarTime& src, cdm::ScalarTimeData& dst);
 };
