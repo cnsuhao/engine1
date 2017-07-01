@@ -1,8 +1,10 @@
-
+# These are for eclipse projects
+# I should change these to be placed relative to a PHYSIOLOGY_BUILD directory
 /cdm/build/
 /engine/build/
 /schema/build/
 /test/build/
+/sdk/howto/build
 
 /verification/
 
