@@ -223,11 +223,11 @@ elseif(APPLE)
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.dylib
     CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG})
 else()
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.so
     CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.so
     CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.so
     CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
 
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
@@ -237,11 +237,11 @@ else()
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
     CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})    
   # Install Libs
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.so
     CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})  
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.so
     CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})  
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so.3.1
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.so
     CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
 
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
