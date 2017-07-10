@@ -195,33 +195,33 @@ if(WIN32)
       CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
   endif()
 elseif(APPLE)
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.3.1.dylib
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.dylib
     CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.3.1.dylib
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.dylib
     CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.3.1.dylib
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.dylib
     CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})  
 
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.dylib
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
     CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.dylib
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
     CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.dylib
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
     CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}) 
 
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.3.1.dylib
-    CONFIGURATIONS Release DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})
+    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.3.1.dylib
-    CONFIGURATIONS Debug DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
   install(FILES ${xerces_INSTALL}/lib/libxerces-c.3.1.dylib
-    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG})  
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
 
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.dylib
-    CONFIGURATIONS Release DESTINATION ${INSTALL_SDK_LIB}/release${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.dylib
-    CONFIGURATIONS Debug DESTINATION ${INSTALL_SDK_LIB}/debug${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libxerces-c.dylib
-    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_SDK_LIB}/relwithdebinfo${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
+    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/lib/libxerces-c.so
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
 else()
   install(FILES ${xerces_INSTALL}/lib/libxerces-c-3.1.so
     CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
