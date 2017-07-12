@@ -46,7 +46,7 @@ public class UnitConverter
     }
     else if (System.getProperty("os.name").toLowerCase().startsWith("mac"))
     {
-      libs.add("libxerces-c.3.1");
+      libs.add("libxerces-c-3.1");
       libs.add("liblog4cpp");
     }
     else
