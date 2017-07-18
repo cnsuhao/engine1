@@ -11,8 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(CircuitPathData)
-#include "bind/enumOpenClosed.hxx"
 #include "circuit/SECircuitNode.h"
 
 #define CIRCUIT_PATH_TEMPLATE typename FluxScalar, typename ResistanceScalar, typename CapacitanceScalar, typename InductanceScalar, typename PotentialScalar, typename QuantityScalar
@@ -32,10 +30,9 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::CircuitPathData& in);
-  virtual CDM::CircuitPathData* Unload() const = 0;
- protected:
-  virtual void Unload(CDM::CircuitPathData& data) const;
+protected:
+  static void Serialize(const cdm::CircuitPathData& src, SECircuitPath& dst);
+  static void Serialize(const SECircuitPath& src, cdm::CircuitPathData& dst);
 
 public:
   virtual std::string GetName() const;
@@ -88,38 +85,38 @@ public:
   virtual unsigned short NumberOfElements() const { return m_NumElements; }
   virtual unsigned short NumberOfNextElements() const { return m_NumNextElements; }
 
-  virtual CDM::enumOpenClosed::value GetSwitch() const;
-  virtual void SetSwitch(CDM::enumOpenClosed::value state);
+  virtual cdm::eGate GetSwitch() const;
+  virtual void SetSwitch(cdm::eGate state);
   virtual void FlipSwitch();
   virtual bool HasSwitch() const;
   virtual void InvalidateSwitch();
 
-  virtual CDM::enumOpenClosed::value GetNextSwitch() const;
-  virtual void SetNextSwitch(CDM::enumOpenClosed::value state);
+  virtual cdm::eGate GetNextSwitch() const;
+  virtual void SetNextSwitch(cdm::eGate state);
   virtual void FlipNextSwitch();
   virtual bool HasNextSwitch() const;
   virtual void InvalidateNextSwitch();
 
-  virtual CDM::enumOpenClosed::value GetValve() const;
-  virtual void SetValve(CDM::enumOpenClosed::value state);
+  virtual cdm::eGate GetValve() const;
+  virtual void SetValve(cdm::eGate state);
   virtual void FlipValve();
   virtual bool HasValve() const;
   virtual void InvalidateValve();
 
-  virtual CDM::enumOpenClosed::value GetNextValve() const;
-  virtual void SetNextValve(CDM::enumOpenClosed::value state);
+  virtual cdm::eGate GetNextValve() const;
+  virtual void SetNextValve(cdm::eGate state);
   virtual void FlipNextValve();
   virtual bool HasNextValve() const;
   virtual void InvalidateNextValve();
 
-  virtual CDM::enumOpenClosed::value GetPolarizedState() const;
-  virtual void SetPolarizedState(CDM::enumOpenClosed::value state);
+  virtual cdm::eGate GetPolarizedState() const;
+  virtual void SetPolarizedState(cdm::eGate state);
   virtual void FlipPolarizedState();
   virtual bool HasPolarizedState() const;
   virtual void InvalidatePolarizedState();
 
-  virtual CDM::enumOpenClosed::value GetNextPolarizedState() const;
-  virtual void SetNextPolarizedState(CDM::enumOpenClosed::value state);
+  virtual cdm::eGate GetNextPolarizedState() const;
+  virtual void SetNextPolarizedState(cdm::eGate state);
   virtual void FlipNextPolarizedState();
   virtual bool HasNextPolarizedState() const;
   virtual void InvalidateNextPolarizedState();
@@ -133,12 +130,12 @@ protected:
   /////////////////////////    
   // Valves and Switches //    
   /////////////////////////    
-  CDM::enumOpenClosed::value   m_Switch;
-  CDM::enumOpenClosed::value   m_NextSwitch;
-  CDM::enumOpenClosed::value   m_Valve;
-  CDM::enumOpenClosed::value   m_NextValve;
-  CDM::enumOpenClosed::value   m_PolarizedState;
-  CDM::enumOpenClosed::value   m_NextPolarizedState;
+  cdm::eGate                   m_Switch;
+  cdm::eGate                   m_NextSwitch;
+  cdm::eGate                   m_Valve;
+  cdm::eGate                   m_NextValve;
+  cdm::eGate                   m_PolarizedState;
+  cdm::eGate                   m_NextPolarizedState;
 
   ResistanceScalar*            m_Resistance;
   ResistanceScalar*            m_NextResistance;

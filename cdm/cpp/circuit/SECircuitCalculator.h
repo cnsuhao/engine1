@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "Eigen/Core"
 #include "utils/TimingProfile.h"
-#include "bind/enumOpenClosed.hxx"
 #include "circuit/SECircuit.h"
 #include "utils/SmartEnum.h"
 

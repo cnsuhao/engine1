@@ -14,10 +14,9 @@ specific language governing permissions and limitations under the License.
 #include "circuit/SECircuit.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
 #include "circuit/electrical/SEElectricalCircuitPath.h"
-#include "bind/ElectricalCircuitData.hxx"
 class SECircuitManager;
 
-class DLL_DECL SEElectricalCircuit : public SECircuit<CDM::ElectricalCircuitData, SEElectricalCircuitNode, CDM::ElectricalCircuitNodeData, SEElectricalCircuitPath, CDM::ElectricalCircuitPathData>
+class DLL_DECL SEElectricalCircuit : public SECircuit<cdm::ElectricalCircuitData, SEElectricalCircuitNode, cdm::ElectricalCircuitNodeData, SEElectricalCircuitPath, cdm::ElectricalCircuitPathData>
 {
   friend class SECircuitManager;
 protected:

@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(CircuitNodeData)
+#include "bind/cdm/Circuit.pb.h"
 
 #define CIRCUIT_NODE_TEMPLATE typename PotentialScalar, typename QuantityScalar
 #define CIRCUIT_NODE_TYPES PotentialScalar,QuantityScalar
@@ -30,10 +30,9 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::CircuitNodeData& in);
-  virtual CDM::CircuitNodeData* Unload() const = 0;
 protected:
-  virtual void Unload(CDM::CircuitNodeData& data) const;
+  static void Serialize(const cdm::CircuitNodeData& src, SECircuitNode& dst);
+  static void Serialize(const SECircuitNode& src, cdm::CircuitNodeData& dst);
 
 public:
   virtual std::string GetName() const;

@@ -19,7 +19,6 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarEnergy.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
-#include "bind/ThermalCircuitPathData.hxx"
 
 class DLL_DECL SEThermalCircuitPath : public SECircuitPath<THERMAL_CIRCUIT_PATH>
 {
@@ -31,10 +30,12 @@ public:
 
   virtual void Clear(); //clear memory
 
-  bool Load(const CDM::ThermalCircuitPathData& in);
-  CDM::ThermalCircuitPathData* Unload() const;
+  static void Load(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst);
+  static cdm::ThermalCircuitPathData* Unload(const SEThermalCircuitPath& src);
 protected:
-  void Unload(CDM::ThermalCircuitPathData& data) const;
+  static void Serialize(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst);
+  static void Serialize(const SEThermalCircuitPath& src, cdm::ThermalCircuitPathData& dst);
+
 
 public:
   virtual SEThermalCircuitNode& GetSourceNode() const { return m_ThermalSourceNode; }

@@ -30,7 +30,6 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "utils/DataTrack.h"
-#include "bind/Circuit.hxx"
 #include "Serializer.h"
 #include "utils/FileUtils.h"
 

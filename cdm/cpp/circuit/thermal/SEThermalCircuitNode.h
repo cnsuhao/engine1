@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 #include "circuit/SECircuitNode.h"
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarTemperature.h"
-#include "bind/ThermalCircuitNodeData.hxx"
 
 class DLL_DECL SEThermalCircuitNode : public SECircuitNode<THERMAL_CIRCUIT_NODE>
 {
@@ -26,10 +25,12 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::ThermalCircuitNodeData& in);
-  virtual CDM::ThermalCircuitNodeData* Unload() const;
+  static void Load(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst);
+  static cdm::ThermalCircuitNodeData* Unload(const SEThermalCircuitNode& src);
 protected:
-  virtual void Unload(CDM::ThermalCircuitNodeData& data) const;
+  static void Serialize(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst);
+  static void Serialize(const SEThermalCircuitNode& src, cdm::ThermalCircuitNodeData& dst);
+
 
 public:
   virtual bool HasTemperature() const;

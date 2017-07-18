@@ -19,7 +19,6 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarElectricPotential.h"
 #include "properties/SEScalarElectricCharge.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
-#include "bind/ElectricalCircuitPathData.hxx"
 
 class DLL_DECL SEElectricalCircuitPath : public SECircuitPath<SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge>
 {
@@ -31,10 +30,12 @@ public:
 
   virtual void Clear(); //clear memory
 
-  bool Load(const CDM::ElectricalCircuitPathData& in);
-  CDM::ElectricalCircuitPathData* Unload() const;
+  static void Load(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst);
+  static cdm::ElectricalCircuitPathData* Unload(const SEElectricalCircuitPath& src);
 protected:
-  void Unload(CDM::ElectricalCircuitPathData& data) const;
+  static void Serialize(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst);
+  static void Serialize(const SEElectricalCircuitPath& src, cdm::ElectricalCircuitPathData& dst);
+
 
 public:
   virtual SEElectricalCircuitNode& GetSourceNode() const { return m_ElectricalSourceNode; }

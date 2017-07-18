@@ -14,10 +14,9 @@ specific language governing permissions and limitations under the License.
 #include "circuit/SECircuit.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
-#include "bind/ThermalCircuitData.hxx"
 class SECircuitManager;
 
-class DLL_DECL SEThermalCircuit : public SECircuit<CDM::ThermalCircuitData,SEThermalCircuitNode, CDM::ThermalCircuitNodeData,SEThermalCircuitPath, CDM::ThermalCircuitPathData>
+class DLL_DECL SEThermalCircuit : public SECircuit<cdm::ThermalCircuitData,SEThermalCircuitNode, cdm::ThermalCircuitNodeData,SEThermalCircuitPath, cdm::ThermalCircuitPathData>
 {
   friend class SECircuitManager;
 protected:

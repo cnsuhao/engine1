@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 #include "circuit/SECircuitNode.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
-#include "bind/FluidCircuitNodeData.hxx"
 
 class DLL_DECL SEFluidCircuitNode : public SECircuitNode<FLUID_CIRCUIT_NODE>
 {
@@ -26,10 +25,11 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::FluidCircuitNodeData& in);
-  virtual CDM::FluidCircuitNodeData* Unload() const;
+  static void Load(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst);
+  static cdm::FluidCircuitNodeData* Unload(const SEFluidCircuitNode& src);
 protected:
-  virtual void Unload(CDM::FluidCircuitNodeData& data) const;
+  static void Serialize(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst);
+  static void Serialize(const SEFluidCircuitNode& src, cdm::FluidCircuitNodeData& dst);
 
 public:
   virtual bool HasPressure() const;

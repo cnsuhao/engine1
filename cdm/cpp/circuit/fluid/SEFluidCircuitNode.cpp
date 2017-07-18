@@ -28,40 +28,44 @@ void SEFluidCircuitNode::Clear()
   SECircuitNode::Clear();
 }
 
-bool SEFluidCircuitNode::Load(const CDM::FluidCircuitNodeData& in)
+void SEFluidCircuitNode::Load(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst)
 {
-  SECircuitNode::Load(in);
-  if (in.Pressure().present())
-    GetPressure().Load(in.Pressure().get());
-  if (in.NextPressure().present())
-    GetNextPressure().Load(in.NextPressure().get());
-  if (in.Volume().present())
-    GetVolume().Load(in.Volume().get());
-  if (in.NextVolume().present())
-    GetNextVolume().Load(in.NextVolume().get());
-  if (in.VolumeBaseline().present())
-    GetVolumeBaseline().Load(in.VolumeBaseline().get());
-  return true;
+  SEFluidCircuitNode::Serialize(src, dst);
 }
-CDM::FluidCircuitNodeData* SEFluidCircuitNode::Unload() const
+void SEFluidCircuitNode::Serialize(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst)
 {
-  CDM::FluidCircuitNodeData* data = new CDM::FluidCircuitNodeData();
-  Unload(*data);
-  return data;
+  SECircuitNode::Serialize(src.circuitnode(),dst);
+  if (src.has_pressure())
+    SEScalarPressure::Load(src.pressure(),dst.GetPressure());
+  if (src.has_nextpressure())
+    SEScalarPressure::Load(src.nextpressure(), dst.GetNextPressure());
+  if (src.has_volume())
+    SEScalarVolume::Load(src.volume(), dst.GetVolume());
+  if (src.has_nextvolume())
+    SEScalarVolume::Load(src.nextvolume(), dst.GetNextVolume());
+  if (src.has_volumebaseline())
+    SEScalarVolume::Load(src.volumebaseline(), dst.GetVolumeBaseline());
 }
-void SEFluidCircuitNode::Unload(CDM::FluidCircuitNodeData& data) const
+
+cdm::FluidCircuitNodeData* SEFluidCircuitNode::Unload(const SEFluidCircuitNode& src)
 {
-  SECircuitNode::Unload(data);
-  if (HasPressure())
-    data.Pressure(std::unique_ptr<CDM::ScalarPressureData>(m_Potential->Unload()));
-  if (HasNextPressure())
-    data.NextPressure(std::unique_ptr<CDM::ScalarPressureData>(m_NextPotential->Unload()));
-  if (HasVolume())
-    data.Volume(std::unique_ptr<CDM::ScalarVolumeData>(m_Quantity->Unload()));
-  if (HasNextVolume())
-    data.NextVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_NextQuantity->Unload()));
-  if (HasVolumeBaseline())
-    data.VolumeBaseline(std::unique_ptr<CDM::ScalarVolumeData>(m_QuantityBaseline->Unload()));
+  cdm::FluidCircuitNodeData* dst = new cdm::FluidCircuitNodeData();
+  SEFluidCircuitNode::Serialize(src, *dst);
+  return dst;
+}
+void SEFluidCircuitNode::Serialize(const SEFluidCircuitNode& src, cdm::FluidCircuitNodeData& dst)
+{
+  SECircuitNode::Serialize(src,*dst.mutable_circuitnode());
+  if (src.HasPressure())
+    dst.set_allocated_pressure(SEScalarPressure::Unload(*src.m_Potential));
+  if (src.HasNextPressure())
+    dst.set_allocated_nextpressure(SEScalarPressure::Unload(*src.m_NextPotential));
+  if (src.HasVolume())
+    dst.set_allocated_volume(SEScalarVolume::Unload(*src.m_Quantity));
+  if (src.HasNextVolume())
+    dst.set_allocated_nextvolume(SEScalarVolume::Unload(*src.m_NextQuantity));
+  if (src.HasVolumeBaseline())
+    dst.set_allocated_volumebaseline(SEScalarVolume::Unload(*src.m_QuantityBaseline));
 }
 
 bool SEFluidCircuitNode::HasPressure() const

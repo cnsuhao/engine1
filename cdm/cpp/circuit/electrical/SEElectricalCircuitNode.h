@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 #include "circuit/SECircuitNode.h"
 #include "properties/SEScalarElectricCharge.h"
 #include "properties/SEScalarElectricPotential.h"
-#include "bind/ElectricalCircuitNodeData.hxx"
 
 class DLL_DECL SEElectricalCircuitNode : public SECircuitNode<SEScalarElectricPotential, SEScalarElectricCharge>
 {
@@ -26,10 +25,12 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::ElectricalCircuitNodeData& in);
-  virtual CDM::ElectricalCircuitNodeData* Unload() const;
+  static void Load(const cdm::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst);
+  static cdm::ElectricalCircuitNodeData* Unload(const SEElectricalCircuitNode& src);
 protected:
-  virtual void Unload(CDM::ElectricalCircuitNodeData& data) const;
+  static void Serialize(const cdm::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst);
+  static void Serialize(const SEElectricalCircuitNode& src, cdm::ElectricalCircuitNodeData& dst);
+
 
 public:
   virtual bool HasVoltage() const;

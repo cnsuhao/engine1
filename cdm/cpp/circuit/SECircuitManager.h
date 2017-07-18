@@ -14,9 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
-
-#include "bind/enumCircuitType.hxx"
-CDM_BIND_DECL(CircuitManagerData);
+#include "bind/cdm/Circuit.pb.h"
 
 
 #define CIRCUIT_LEDGER_TEMPLATE typename NodeType, typename PathType, typename CircuitType
@@ -53,10 +51,11 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::CircuitManagerData& in);
-  virtual CDM::CircuitManagerData* Unload() const;
+  static void Load(const cdm::CircuitManagerData& src, SECircuitManager& dst);
+  static cdm::CircuitManagerData* Unload(const SECircuitManager& src);
 protected:
-  void Unload(CDM::CircuitManagerData& data) const;
+  static void Serialize(const cdm::CircuitManagerData& src, SECircuitManager& dst);
+  static void Serialize(const SECircuitManager& src, cdm::CircuitManagerData& dst);
 
 public:
   void SetReadOnly(bool b);  

@@ -1,6 +1,5 @@
 // The following tests will be exported and runnable
 
-#include "bind/biogears-cdm.hxx"
 #include "CommonDataModel.h"
 #include "circuit/SECircuitManager.h"
 #include "circuit/fluid/SEFluidCircuit.h"

@@ -1,3 +1,184 @@
 syntax = "proto3";
 package cdm;
 option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+
+enum eCompartmentType
+{
+  Electrical                                                   = 0;
+  Fluid                                                        = 1;
+  Thermal                                                      = 2;
+}
+
+
+message CircuitData
+{
+  string                             Name                      = 1;
+  repeated string                    ReferenceNode             = 2;
+  repeated string                    Node                      = 3;
+  repeated string                    Path                      = 4;
+}
+message CircuitNodeData
+{
+  string                             Name                      = 1;
+}
+message CircuitPathData
+{
+  string                             Name                      = 1;
+  string                             SourceNode                = 2;
+  string                             TargetNode                = 3;
+  
+  eGate                              Switch                    = 4;
+  eGate                              NextSwitch                = 5;
+  
+  eGate                              Valve                     = 6;
+  eGate                              NextValve                 = 7;
+  
+  eGate                              PolarizedState            = 8;
+  eGate                              NextPolarizedState        = 9;
+}
+
+message ElectricalCircuitData
+{
+  CircuitData                        Circuit                   = 1;
+}
+message ElectricalCircuitNodeData
+{
+  CircuitNodeData                    CircuitNode               = 1;
+  // Potential
+  ScalarElectricPotentialData        Voltage                   = 2;
+  ScalarElectricPotentialData        NextVoltage               = 3;
+  // Quantity
+  ScalarElectricChargeData           Charge                    = 4;
+  ScalarElectricChargeData           NextCharge                = 5;
+  ScalarElectricChargeData           ChargeBaseline            = 6;
+}
+message ElectricalCircuitPathData
+{
+  CircuitPathData                    CircuitPath               = 1;
+  // Resistance
+  ScalarElectricResistanceData       Resistance                = 2;
+  ScalarElectricResistanceData       NextResistance            = 3;
+  ScalarElectricResistanceData       ResistanceBaseline        = 4;
+  // Capacitance
+  ScalarElectricCapacitanceData      Capacitance               = 5;
+  ScalarElectricCapacitanceData      NextCapacitance           = 6;
+  ScalarElectricCapacitanceData      CapacitanceBaseline       = 7;
+  // Inductance
+  ScalarElectricInductanceData       Inductance                = 8;
+  ScalarElectricInductanceData       NextInductance            = 9;
+  ScalarElectricInductanceData       InductanceBaseline        = 10;
+  // Flux and Source
+  ScalarElectricCurrentData          Current                   = 11;
+  ScalarElectricCurrentData          NextCurrent               = 12;
+  ScalarElectricCurrentData          CurrentSource             = 13;
+  ScalarElectricCurrentData          NextCurrentSource         = 14;
+  ScalarElectricCurrentData          CurrentSourceBaseline     = 15;
+  // Potential Source
+  ScalarElectricPotentialData        VoltageSource             = 16;
+  ScalarElectricPotentialData        NextVoltageSource         = 17;
+  ScalarElectricPotentialData        VoltageSourceBaseline     = 18;
+  ScalarElectricPotentialData        ValveBreakdownVoltage     = 19;
+}
+
+message FluidCircuitData
+{
+  CircuitData                        Circuit                   = 1;
+}
+message FluidCircuitNodeData
+{
+  CircuitNodeData                    CircuitNode               = 1;
+  // Potential
+  ScalarPressureData                 Pressure                  = 2;
+  ScalarPressureData                 NextPressure              = 3;
+  // Quantity
+  ScalarVolumeData                   Volume                    = 4;
+  ScalarVolumeData                   NextVolume                = 5;
+  ScalarVolumeData                   VolumeBaseline            = 6;
+}
+message FluidCircuitPathData
+{
+  CircuitPathData                    CircuitPath               = 1;
+  // Resistance
+  ScalarFlowResistanceData           Resistance                = 2;
+  ScalarFlowResistanceData           NextResistance            = 3;
+  ScalarFlowResistanceData           ResistanceBaseline        = 4;
+  // Capacitance
+  ScalarFlowComplianceData           Compliance                = 5;
+  ScalarFlowComplianceData           NextCompliance            = 6;
+  ScalarFlowComplianceData           ComplianceBaseline        = 7;
+  // Inductance
+  ScalarFlowInertanceData            Inertance                 = 8;
+  ScalarFlowInertanceData            NextInertance             = 9;
+  ScalarFlowInertanceData            InertanceBaseline         = 10;
+  // Flux and Source
+  ScalarVolumePerTimeData            Flow                      = 11;
+  ScalarVolumePerTimeData            NextFlow                  = 12;
+  ScalarVolumePerTimeData            FlowSource                = 13;
+  ScalarVolumePerTimeData            NextFlowSource            = 14;
+  ScalarVolumePerTimeData            FlowSourceBaseline        = 15;
+  // Potential Source
+  ScalarPressureData                 PressureSource            = 16;
+  ScalarPressureData                 NextPressureSource        = 17;
+  ScalarPressureData                 PressureSourceBaseline    = 18;
+  ScalarPressureData                 ValveBreakdownPressure    = 19;
+}
+
+message ThermalCircuitData
+{
+  CircuitData                        Circuit                   = 1;
+}
+message ThermalCircuitNodeData
+{
+  CircuitNodeData                    CircuitNode               = 1;
+  // Potential
+  ScalarTemperatureData              Temperature               = 2;
+  ScalarTemperatureData              NextTemperature           = 3;
+  // Quantity
+  ScalarEnergyData                   Heat                      = 4;
+  ScalarEnergyData                   NextHeat                  = 5;
+  ScalarEnergyData                   HeatBaseline              = 6;
+}
+message ThermalCircuitPathData
+{
+  CircuitPathData                    CircuitPath               = 1;
+  // Resistance
+  ScalarHeatResistanceData           Resistance                = 2;
+  ScalarHeatResistanceData           NextResistance            = 3;
+  ScalarHeatResistanceData           ResistanceBaseline        = 4;
+  // Capacitance
+  ScalarHeatCapacitanceData          Capacitance               = 5;
+  ScalarHeatCapacitanceData          NextCapacitance           = 6;
+  ScalarHeatCapacitanceData          CapacitanceBaseline       = 7;
+  // Inductance
+  ScalarHeatInductanceData           Inductance                = 8;
+  ScalarHeatInductanceData           NextInductance            = 9;
+  ScalarHeatInductanceData           InductanceBaseline        = 10;
+  // Flux and Source
+  ScalarPowerData                    HeatTransferRate          = 11;
+  ScalarPowerData                    NextHeatTransferRate      = 12;
+  ScalarPowerData                    HeatSource                = 13;
+  ScalarPowerData                    NextHeatSource            = 14;
+  ScalarPowerData                    HeatSourceBaseline        = 15;
+  // Potential Source
+  ScalarTemperatureData              TemperatureSource         = 16;
+  ScalarTemperatureData              NextTemperatureSource     = 17;
+  ScalarTemperatureData              TemperatureSourceBaseline = 18;
+  ScalarTemperatureData              ValveBreakdownTemperature = 19;
+}
+
+message CircuitManagerData
+{
+  repeated ElectricalCircuitNodeData ElectricalNode            = 1;
+  repeated ElectricalCircuitPathData ElectricalPath            = 2;
+  repeated ElectricalCircuitData     ElectricalCircuit         = 3;
+  
+  repeated FluidCircuitNodeData      FluidNode                 = 4;
+  repeated FluidCircuitPathData      FluidPath                 = 5;
+  repeated FluidCircuitData          FluidCircuit              = 6;
+  
+  repeated ThermalCircuitNodeData    ThermalNode               = 7;
+  repeated ThermalCircuitPathData    ThermalPath               = 8;
+  repeated ThermalCircuitData        ThermalCircuit            = 9;
+}

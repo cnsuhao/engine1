@@ -1,7 +1,7 @@
 /**************************************************************************************
 Copyright 2015 Applied Research Associates, Inc.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
+this file except in capacitance with the License. You may obtain a copy of the License
 at:
 http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
@@ -30,93 +30,99 @@ void SEThermalCircuitPath::Clear()
   SECircuitPath::Clear();
 }
 
-bool SEThermalCircuitPath::Load(const CDM::ThermalCircuitPathData& in)
+void SEThermalCircuitPath::Load(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst)
 {
-  SECircuitPath::Load(in);
-  if (in.Resistance().present())
-    GetResistance().Load(in.Resistance().get());
-  if (in.NextResistance().present())
-    GetNextResistance().Load(in.NextResistance().get());
-  if (in.ResistanceBaseline().present())
-    GetResistanceBaseline().Load(in.ResistanceBaseline().get());
-  if (in.Capacitance().present())
-    GetCapacitance().Load(in.Capacitance().get());
-  if (in.NextCapacitance().present())
-    GetNextCapacitance().Load(in.NextCapacitance().get());
-  if (in.CapacitanceBaseline().present())
-    GetCapacitanceBaseline().Load(in.CapacitanceBaseline().get());
-  if (in.Inductance().present())
-    GetInductance().Load(in.Inductance().get());
-  if (in.NextInductance().present())
-    GetNextInductance().Load(in.NextInductance().get());
-  if (in.InductanceBaseline().present())
-    GetInductanceBaseline().Load(in.InductanceBaseline().get());
-  if (in.HeatTransferRate().present())
-    GetHeatTransferRate().Load(in.HeatTransferRate().get());
-  if (in.NextHeatTransferRate().present())
-    GetNextHeatTransferRate().Load(in.NextHeatTransferRate().get());
-  if (in.HeatSource().present())
-    GetHeatSource().Load(in.HeatSource().get());
-  if (in.NextHeatSource().present())
-    GetNextHeatSource().Load(in.NextHeatSource().get());
-  if (in.HeatSourceBaseline().present())
-    GetHeatSourceBaseline().Load(in.HeatSourceBaseline().get());
-  if (in.TemperatureSource().present())
-    GetTemperatureSource().Load(in.TemperatureSource().get());
-  if (in.NextTemperatureSource().present())
-    GetNextTemperatureSource().Load(in.NextTemperatureSource().get());
-  if (in.TemperatureSourceBaseline().present())
-    GetTemperatureSourceBaseline().Load(in.TemperatureSourceBaseline().get());
-  if (in.ValveBreakdownTemperature().present())
-    GetValveBreakdownTemperature().Load(in.ValveBreakdownTemperature().get());
+  SEThermalCircuitPath::Serialize(src, dst);
+}
+void SEThermalCircuitPath::Serialize(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst)
+{
+  SECircuitPath::Serialize(src.circuitpath(), dst);
+  if (src.has_resistance())
+    SEScalarHeatResistance::Load(src.resistance(), dst.GetResistance());
+  if (src.has_nextresistance())
+    SEScalarHeatResistance::Load(src.nextresistance(), dst.GetNextResistance());
+  if (src.has_resistancebaseline())
+    SEScalarHeatResistance::Load(src.resistancebaseline(), dst.GetResistanceBaseline());
+  if (src.has_capacitance())
+    SEScalarHeatCapacitance::Load(src.capacitance(), dst.GetCapacitance());
+  if (src.has_nextcapacitance())
+    SEScalarHeatCapacitance::Load(src.nextcapacitance(), dst.GetNextCapacitance());
+  if (src.has_capacitancebaseline())
+    SEScalarHeatCapacitance::Load(src.capacitancebaseline(), dst.GetCapacitanceBaseline());
+  if (src.has_inductance())
+    SEScalarHeatInductance::Load(src.inductance(), dst.GetInductance());
+  if (src.has_nextinductance())
+    SEScalarHeatInductance::Load(src.nextinductance(), dst.GetNextInductance());
+  if (src.has_inductancebaseline())
+    SEScalarHeatInductance::Load(src.inductancebaseline(), dst.GetInductanceBaseline());
+  if (src.has_heattransferrate())
+    SEScalarPower::Load(src.heattransferrate(), dst.GetHeatTransferRate());
+  if (src.has_nextheattransferrate())
+    SEScalarPower::Load(src.nextheattransferrate(), dst.GetNextHeatTransferRate());
+  if (src.has_heatsource())
+    SEScalarPower::Load(src.heatsource(), dst.GetHeatSource());
+  if (src.has_nextheatsource())
+    SEScalarPower::Load(src.nextheatsource(), dst.GetNextHeatSource());
+  if (src.has_heatsourcebaseline())
+    SEScalarPower::Load(src.heatsourcebaseline(), dst.GetHeatSourceBaseline());
+  if (src.has_temperaturesource())
+    SEScalarTemperature::Load(src.temperaturesource(), dst.GetTemperatureSource());
+  if (src.has_nexttemperaturesource())
+    SEScalarTemperature::Load(src.nexttemperaturesource(), dst.GetNextTemperatureSource());
+  if (src.has_temperaturesourcebaseline())
+    SEScalarTemperature::Load(src.temperaturesourcebaseline(), dst.GetTemperatureSourceBaseline());
+  if (src.has_valvebreakdowntemperature())
+    SEScalarTemperature::Load(src.valvebreakdowntemperature(), dst.GetValveBreakdownTemperature());
 
-  return HasValidElements();
+  if (!dst.HasValidElements())
+    dst.Warning("Path does not have valid elements");
 }
-CDM::ThermalCircuitPathData* SEThermalCircuitPath::Unload() const
+
+cdm::ThermalCircuitPathData* SEThermalCircuitPath::Unload(const SEThermalCircuitPath& src)
 {
-  CDM::ThermalCircuitPathData* data = new CDM::ThermalCircuitPathData();
-  Unload(*data);
-  return data;
+  cdm::ThermalCircuitPathData* dst = new cdm::ThermalCircuitPathData();
+  SEThermalCircuitPath::Serialize(src, *dst);
+  return dst;
 }
-void SEThermalCircuitPath::Unload(CDM::ThermalCircuitPathData& data) const
+void SEThermalCircuitPath::Serialize(const SEThermalCircuitPath& src, cdm::ThermalCircuitPathData& dst)
 {
-  SECircuitPath::Unload(data);
-  if (HasResistance())
-    data.Resistance(std::unique_ptr<CDM::ScalarHeatResistanceData>(m_Resistance->Unload()));
-  if (HasNextResistance())
-    data.NextResistance(std::unique_ptr<CDM::ScalarHeatResistanceData>(m_NextResistance->Unload()));
-  if (HasResistanceBaseline())
-    data.ResistanceBaseline(std::unique_ptr<CDM::ScalarHeatResistanceData>(m_ResistanceBaseline->Unload()));
-  if (HasCapacitance())
-    data.Capacitance(std::unique_ptr<CDM::ScalarHeatCapacitanceData>(m_Capacitance->Unload()));
-  if (HasNextCapacitance())
-    data.NextCapacitance(std::unique_ptr<CDM::ScalarHeatCapacitanceData>(m_NextCapacitance->Unload()));
-  if (HasCapacitanceBaseline())
-    data.CapacitanceBaseline(std::unique_ptr<CDM::ScalarHeatCapacitanceData>(m_CapacitanceBaseline->Unload()));
-  if (HasInductance())
-    data.Inductance(std::unique_ptr<CDM::ScalarHeatInductanceData>(m_Inductance->Unload()));
-  if (HasNextInductance())
-    data.NextInductance(std::unique_ptr<CDM::ScalarHeatInductanceData>(m_NextInductance->Unload()));
-  if (HasInductanceBaseline())
-    data.InductanceBaseline(std::unique_ptr<CDM::ScalarHeatInductanceData>(m_InductanceBaseline->Unload()));
-  if (HasHeatTransferRate())
-    data.HeatTransferRate(std::unique_ptr<CDM::ScalarPowerData>(m_Flux->Unload()));
-  if (HasNextHeatTransferRate())
-    data.NextHeatTransferRate(std::unique_ptr<CDM::ScalarPowerData>(m_NextFlux->Unload()));
-  if (HasHeatSource())
-    data.HeatSource(std::unique_ptr<CDM::ScalarPowerData>(m_FluxSource->Unload()));
-  if (HasNextHeatSource())
-    data.NextHeatSource(std::unique_ptr<CDM::ScalarPowerData>(m_NextFluxSource->Unload()));
-  if (HasHeatSourceBaseline())
-    data.HeatSourceBaseline(std::unique_ptr<CDM::ScalarPowerData>(m_FluxSourceBaseline->Unload()));
-  if (HasTemperatureSource())
-    data.TemperatureSource(std::unique_ptr<CDM::ScalarTemperatureData>(m_PotentialSource->Unload()));
-  if (HasNextTemperatureSource())
-    data.NextTemperatureSource(std::unique_ptr<CDM::ScalarTemperatureData>(m_NextPotentialSource->Unload()));
-  if (HasTemperatureSourceBaseline())
-    data.TemperatureSourceBaseline(std::unique_ptr<CDM::ScalarTemperatureData>(m_PotentialSourceBaseline->Unload()));
-  if (HasValveBreakdownTemperature())
-    data.ValveBreakdownTemperature(std::unique_ptr<CDM::ScalarTemperatureData>(m_ValveBreakdownPotential->Unload()));
+  SECircuitPath::Serialize(src, *dst.mutable_circuitpath());
+  if (src.HasResistance())
+    dst.set_allocated_resistance(SEScalarHeatResistance::Unload(*src.m_Resistance));
+  if (src.HasNextResistance())
+    dst.set_allocated_nextresistance(SEScalarHeatResistance::Unload(*src.m_NextResistance));
+  if (src.HasResistanceBaseline())
+    dst.set_allocated_resistancebaseline(SEScalarHeatResistance::Unload(*src.m_ResistanceBaseline));
+  if (src.HasCapacitance())
+    dst.set_allocated_capacitance(SEScalarHeatCapacitance::Unload(*src.m_Capacitance));
+  if (src.HasNextCapacitance())
+    dst.set_allocated_nextcapacitance(SEScalarHeatCapacitance::Unload(*src.m_NextCapacitance));
+  if (src.HasCapacitanceBaseline())
+    dst.set_allocated_capacitancebaseline(SEScalarHeatCapacitance::Unload(*src.m_CapacitanceBaseline));
+  if (src.HasInductance())
+    dst.set_allocated_inductance(SEScalarHeatInductance::Unload(*src.m_Inductance));
+  if (src.HasNextInductance())
+    dst.set_allocated_nextinductance(SEScalarHeatInductance::Unload(*src.m_NextInductance));
+  if (src.HasInductanceBaseline())
+    dst.set_allocated_inductancebaseline(SEScalarHeatInductance::Unload(*src.m_InductanceBaseline));
+  if (src.HasHeatTransferRate())
+    dst.set_allocated_heattransferrate(SEScalarPower::Unload(*src.m_Flux));
+  if (src.HasNextHeatTransferRate())
+    dst.set_allocated_nextheattransferrate(SEScalarPower::Unload(*src.m_NextFlux));
+  if (src.HasHeatSource())
+    dst.set_allocated_heatsource(SEScalarPower::Unload(*src.m_FluxSource));
+  if (src.HasNextHeatSource())
+    dst.set_allocated_nextheatsource(SEScalarPower::Unload(*src.m_NextFluxSource));
+  if (src.HasHeatSourceBaseline())
+    dst.set_allocated_heatsourcebaseline(SEScalarPower::Unload(*src.m_FluxSourceBaseline));
+  if (src.HasTemperatureSource())
+    dst.set_allocated_temperaturesource(SEScalarTemperature::Unload(*src.m_PotentialSource));
+  if (src.HasNextTemperatureSource())
+    dst.set_allocated_nexttemperaturesource(SEScalarTemperature::Unload(*src.m_NextPotentialSource));
+  if (src.HasTemperatureSourceBaseline())
+    dst.set_allocated_temperaturesourcebaseline(SEScalarTemperature::Unload(*src.m_PotentialSourceBaseline));
+  if (src.HasValveBreakdownTemperature())
+    dst.set_allocated_valvebreakdowntemperature(SEScalarTemperature::Unload(*src.m_ValveBreakdownPotential));
 }
 
 ////////////////////////////////

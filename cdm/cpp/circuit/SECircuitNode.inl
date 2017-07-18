@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 
 #include "circuit/SECircuitNode.h"
-#include "bind/CircuitNodeData.hxx"
 
 template<CIRCUIT_NODE_TEMPLATE>
 SECircuitNode<CIRCUIT_NODE_TYPES>::SECircuitNode(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)
@@ -42,15 +41,16 @@ void SECircuitNode<CIRCUIT_NODE_TYPES>::Clear()
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
-bool SECircuitNode<CIRCUIT_NODE_TYPES>::Load(const CDM::CircuitNodeData& in)
+void SECircuitNode<CIRCUIT_NODE_TYPES>::Serialize(const cdm::CircuitNodeData& src, SECircuitNode<CIRCUIT_NODE_TYPES>& dst)
 {
-  Clear();
-  return true;
+  dst.Clear();
+  if (!src.name().empty())
+    dst.m_Name = src.name();
 }
 template<CIRCUIT_NODE_TEMPLATE>
-void SECircuitNode<CIRCUIT_NODE_TYPES>::Unload(CDM::CircuitNodeData& data) const
+void SECircuitNode<CIRCUIT_NODE_TYPES>::Serialize(const SECircuitNode<CIRCUIT_NODE_TYPES>& src, cdm::CircuitNodeData& dst)
 {
-  data.Name(m_Name);
+  dst.set_name(src.m_Name);
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
