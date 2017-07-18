@@ -17,7 +17,7 @@ The high-level objectives for the engine include:
 
 ## Programmatics
 
-The Kitware phyisology engine is a fork of the BioGears project began at Applied Research Associates, Inc. (ARA) with oversight from 
+The Kitware physiology engine is a fork of the BioGears project began at Applied Research Associates, Inc. (ARA) with oversight from 
 the Telemedicine and Advanced Technology Research Center (TATRC) under award W81XWH-13-2-0068
 
 All files are released under the Apache 2.0 license
@@ -115,9 +115,9 @@ The code base provides a few driver programs to execute the physiology libraries
 ### Scenario Driver
 
 The Scenario Driver is a simple C++ driver that reads a scenario XML file and creates a CSV file with results.
-See <a href="https://biogearsengine.com/documentation/_scenario_x_m_l_file.html">here</a> for more info.
+See <a href="/_scenario_x_m_l_file.html">here</a> for more info.
 
-You will need to download the latest scenario/verification zip <a href="https://github.com/BioGearsEngine/Engine/releases/download/6.1.1-beta/BioGears_6.1.1-beta-verification-all.zip">here</a> and put the verification directory at the root of your source tree.
+You will need to download the latest scenario/verification zip <a href="https://github.com/BioGearsEngine/Engine/releases/download/6.1.1-beta/BioGears_6.1.1-beta-verification-all.zip">here</a> and put in a directory named 'verification' at the root of your source tree.
 In the near future, we will link the verification data to this repository, so it will be downloaded automatically.
 
 To run the driver, change directory in your cmd/bash shell to the build/install/bin directory and execute the following :
@@ -136,7 +136,7 @@ If you are going to run the SceanrioDriver through visual studio follow these st
   - You probably want to do this for all configuration in the solution
 - Click on 'Configuration Options->Debugging' on the left tree in the properties dialog
 - Put the directory to your bin directory as the 'Working Directory'
-- Enter the relative path to the associated directory containing the dlls for your selected configuration into the 'Envirionment' field.
+- Enter the relative path to the associated directory containing the dlls for your selected configuration into the 'Environment' field.
   - For example, this is what you would enter to run against the 64bit release dll's: PATH=PATH;./release
   - and this is what you would enter to run against the 32bit release dll's : PATH=PATH;./release32
   
@@ -144,13 +144,13 @@ If you are going to run the SceanrioDriver through visual studio follow these st
 
 ### Java Based Testing Suite
 
-The code base also provides a test harnes, written in Java, that will process a ./test/config/*.config file in the source tree by doing the following :
+The code base also provides a test harness, written in Java, that will process a ./test/config/*.config file in the source tree by doing the following :
 - For each line in the config file :
     - Run the ScenarioDriver or UnitTestDriver (depends on the line)
     - Compare the generated csv results to a baseline csv file and report any differences
-    - Generate an plot image file for each data column of the csv file over the time of the scenario
+    - Generate a plot image file for each data column of the csv file over the time of the scenario
 
-To run the test driver change directory in your cmd/bash shell to the build/install/bin directory and execute the run.cmake in the following way :
+To run the test driver, change directory in your cmd/bash shell to the build/install/bin directory and execute the run.cmake in the following way :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 cmake -DTYPE:STRING=[option] -P run.cmake 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -168,10 +168,23 @@ Where [option] can be one of the following :
 
 #### Configuration Files
 
-The configuration files, referenced above, provied the testing suite direction on how to execute the test harness and what to do with the results.
+The configuration files, referenced above, provide the testing suite direction on how to execute the test harness and what to do with the results.
 
+## Generating Documentation
 
-## Creating the Sofware Developmenet Kit (SDK)
+The physiology engine includes functionality to generate html documentation.  This including in-code documentation, data model design description, and physiology system methodology reports.  The html files are generated using Doxygen and custom Java applications.
+
+To generate the documentation, perform the following steps:
+- Install Doxygen, which can be found <a href="http://www.stack.nl/~dimitri/doxygen/download.html">here</a>
+- Install Ghostscript, which can be found <a href="https://www.ghostscript.com/download/">here</a>
+- Install MiKTeX, which can be found <a href="https://miktex.org/download">here</a>
+- Execute SystemValidation and PatientValidation as described above
+- Execute the doxygen tool using build/install/bin/run.cmake in your cmd/bash shell in the following way :
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+cmake -DTYPE:STRING=doxygen -P run.cmake 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+## Creating the Software Development Kit (SDK)
 
 In the source code tree is an sdk folder.
 This folder provides examples of how to use the physiology engine.
@@ -180,7 +193,7 @@ External applications only need to reference this directory for headers and libr
 
 Note, your application will still need to execute within the build/install/bin directory as it has the binaries and data files in it.
 
-There is a CMakeLists.txt in the sdk folder that you can also run to build and run any of the provided howto examples.
+There is a CMakeLists.txt in the sdk folder that you can also run to build and run any of the provided HowTo examples.
 You can edit the EngineHowTo.cpp to run a particular example, and even code in the HowToSandbox.cpp to run your own engine!
 
 

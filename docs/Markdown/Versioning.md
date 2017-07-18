@@ -13,6 +13,30 @@ This versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.
 
 ## %BioGears Version History
 
+### 6.1.0/6.1.1 (March 10, 2017)
+
+The latest deployment includes the following notable updates:
+<br>Note: 6.1.1 only contains a few minor bug fixes (no features)
+- General bug fixes, system improvements, and tools/solver improvements
+- Improved Epinephrine methodology
+- Improved Pupillary State for both Drug and %Nervous methodology
+- Improved %Renal Tubuloglomerular Feedback
+- Added cardiovascular chemoreceptor feedback
+- Added Diuretic drug effects (Furosemide)
+- Aerosolization of Solids and Liquids
+  - Improves administration of Albuterol
+  - New Smoke Particulate substance and smoke inhalation modeling
+- Carbon Monoxide support
+- New data requests and events
+- New Conditions
+  - Impaired Alveolar Exchange
+- New Actions
+  - Acute Stress
+  - Apnea
+  - Brain Injury
+  - Intubation now supports Leftmainstem, Rightmainstem, Esopageal, and Tracheal types
+  - Mechanical Ventilation
+
 ### 6.0.1 (December 15, 2016)
 
 The latest deployment includes the following notable updates:
