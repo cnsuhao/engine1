@@ -32,7 +32,7 @@ protected:
 public:
   
   virtual bool HasHematocrit();
-  virtual SEScalarFraction& GetHematocrit(); 
+  virtual SEScalar0To1& GetHematocrit(); 
 
   virtual bool HasHemoglobin();
   virtual SEScalarMassPerVolume& GetHemoglobin();
@@ -57,7 +57,7 @@ public:
 
 protected:
 
-  SEScalarFraction*        m_Hematocrit;
+  SEScalar0To1*        m_Hematocrit;
   SEScalarMassPerVolume*        m_Hemoglobin;
   SEScalarAmountPerVolume*      m_PlateletCount;
   SEScalarMassPerAmount*          m_MeanCorpuscularHemoglobin;

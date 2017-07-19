@@ -13,9 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 class SESubstance;
 class SESubstanceCompound;
-CDM_BIND_DECL(SubstanceData);
-CDM_BIND_DECL(SubstanceCompoundData);
-
+#include "bind/cdm/Substance.pb.h"
 
 class DLL_DECL SESubstanceManager : public Loggable
 {
@@ -77,6 +75,6 @@ protected:
   std::vector<SESubstanceCompound*>  m_ActiveCompounds;
 
 private:
-  std::map<SESubstance*, const CDM::SubstanceData*> m_OriginalSubstanceData;
-  std::map<SESubstanceCompound*, const CDM::SubstanceCompoundData*> m_OriginalCompoundData;
+  std::map<SESubstance*, const cdm::SubstanceData*> m_OriginalSubstanceData;  
+  std::map<SESubstanceCompound*, const cdm::SubstanceData_CompoundData*> m_OriginalCompoundData;
 };

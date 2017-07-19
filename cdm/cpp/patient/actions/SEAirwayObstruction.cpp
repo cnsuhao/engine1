@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SEAirwayObstruction.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEAirwayObstruction::SEAirwayObstruction() : SEPatientAction()
 {
@@ -43,25 +42,27 @@ bool SEAirwayObstruction::IsActive() const
   return IsValid() ? !m_Severity->IsZero() : false;
 }
 
-bool SEAirwayObstruction::Load(const CDM::AirwayObstructionData& in)
+void SEAirwayObstruction::Load(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst)
 {
-  SEPatientAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+	SEAirwayObstruction::Serialize(src, dst);
+}
+void SEAirwayObstruction::Serialize(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst)
+{
+	dst.Clear();
+	if (src.has_severity())
+		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::AirwayObstructionData* SEAirwayObstruction::Unload() const
+cdm::AirwayObstructionData* SEAirwayObstruction::Unload(const SEAirwayObstruction& src)
 {
-  CDM::AirwayObstructionData*data(new CDM::AirwayObstructionData());
-  Unload(*data);
-  return data;
+	cdm::AirwayObstructionData* dst = new cdm::AirwayObstructionData();
+	SEAirwayObstruction::Serialize(src, *dst);
+	return dst;
 }
-
-void SEAirwayObstruction::Unload(CDM::AirwayObstructionData& data) const
+void SEAirwayObstruction::Serialize(const SEAirwayObstruction& src, cdm::AirwayObstructionData& dst)
 {
-  SEPatientAction::Unload(data);
-  if(m_Severity!=nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+	if (src.HasSeverity())
+		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

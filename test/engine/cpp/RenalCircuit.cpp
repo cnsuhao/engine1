@@ -24,7 +24,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarVolumePerTimePressureArea.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/enumOnOff.hxx"
 
 void BioGearsEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirectory)

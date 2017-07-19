@@ -69,7 +69,7 @@ public:
   virtual double GetPartialPressure(const PressureUnit& unit) const;
 
   virtual bool HasSaturation() const;
-  virtual SEScalarFraction& GetSaturation();
+  virtual SEScalar0To1& GetSaturation();
   virtual double GetSaturation() const;
   virtual void SetHemoglobins(SESubstance& Hb, SESubstance& HbO2, SESubstance& HbCO2, SESubstance& HbO2CO2, SESubstance& HbCO);
 
@@ -89,7 +89,7 @@ protected:
   SEScalarMass*            m_MassExcreted;
   SEScalarAmountPerVolume* m_Molarity;
   SEScalarPressure*        m_PartialPressure;
-  SEScalarFraction*        m_Saturation;
+  SEScalar0To1*        m_Saturation;
 
   SELiquidCompartment&     m_Compartment;
   std::vector<SELiquidSubstanceQuantity*> m_Children;

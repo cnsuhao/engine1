@@ -22,7 +22,6 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarFraction.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarFlowCompliance.h"
@@ -31,8 +30,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEHistogramFractionVsLength.h"
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarNeg1To1.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarLength.h"
 
 void BioGearsEngineTest::AerosolTest(const std::string& sOutputDirectory)

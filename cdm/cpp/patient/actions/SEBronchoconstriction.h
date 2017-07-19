@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/BronchoconstrictionData.hxx"
 
 class DLL_DECL SEBronchoconstriction : public SEPatientAction
 {
@@ -26,10 +25,11 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::BronchoconstrictionData& in);
-  virtual CDM::BronchoconstrictionData* Unload() const;
+  static void Load(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst);
+  static cdm::BronchoconstrictionData* Unload(const SEBronchoconstriction& src);
 protected:
-  virtual void Unload(CDM::BronchoconstrictionData& data) const;
+	static void Serialize(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst);
+	static void Serialize(const SEBronchoconstriction& src, cdm::BronchoconstrictionData& dst);
 
 public:
 

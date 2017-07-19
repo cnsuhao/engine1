@@ -11,10 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "stdafx.h"
 #include "system/environment/actions/SEEnvironmentChange.h"
-#include "bind/EnvironmentalConditionsData.hxx"
 #include "substance/SESubstanceFraction.h"
 
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"
 #include "properties/SEScalarLengthPerTime.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -51,31 +50,38 @@ bool SEEnvironmentChange::IsValid() const
   return SEEnvironmentAction::IsValid() && (HasConditions() || HasConditionsFile());
 }
 
-bool SEEnvironmentChange::Load(const CDM::EnvironmentChangeData& in)
+void SEEnvironmentChange::Load(const cdm::EnvironmentData& src, SEEnvironmentChange& dst)
 {
-  SEEnvironmentAction::Load(in);
-  if (in.ConditionsFile().present())
-    SetConditionsFile(in.ConditionsFile().get());
-  else if (in.Conditions().present())
-    GetConditions().Load(in.Conditions().get());
-  return true;
+	SEEnvironmentChange::Serialize(src, dst);
+}
+void SEEnvironmentChange::Serialize(const cdm::EnvironmentData& src, SEEnvironmentChange& dst)
+{
+	dst.Clear();
+
+	//jbw - how does this work?
+	//SEEnvironmentAction::Load(in);
+	//if (in.ConditionsFile().present())
+	//	SetConditionsFile(in.ConditionsFile().get());
+	//else if (in.Conditions().present())
+	//	GetConditions().Load(in.Conditions().get());
 }
 
-CDM::EnvironmentChangeData* SEEnvironmentChange::Unload() const
+cdm::EnvironmentData* SEEnvironmentChange::Unload(const SEEnvironmentChange& src)
 {
-  CDM::EnvironmentChangeData* data = new CDM::EnvironmentChangeData();
-  Unload(*data);
-  return data;
+	cdm::EnvironmentData* dst = new cdm::EnvironmentData();
+	SEEnvironmentChange::Serialize(src, *dst);
+	return dst;
+}
+void SEEnvironmentChange::Serialize(const SEEnvironmentChange& src, cdm::EnvironmentData& dst)
+{
+	//jbw - how does this work?
+	//SEEnvironmentAction::Unload(data);
+	//if (HasConditions())
+	//	data.Conditions(std::unique_ptr<CDM::EnvironmentalConditionsData>(m_Conditions->Unload()));
+	//else if (HasConditionsFile())
+	//	data.ConditionsFile(m_ConditionsFile);
 }
 
-void SEEnvironmentChange::Unload(CDM::EnvironmentChangeData& data) const
-{
-  SEEnvironmentAction::Unload(data);
-  if (HasConditions())
-    data.Conditions(std::unique_ptr<CDM::EnvironmentalConditionsData>(m_Conditions->Unload()));
-  else if (HasConditionsFile())
-    data.ConditionsFile(m_ConditionsFile);
-}
 
 bool SEEnvironmentChange::HasConditions() const
 {

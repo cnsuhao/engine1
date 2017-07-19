@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "scenario/SEAction.h"
-#include "bind/AdvanceTimeData.hxx"
 
 class DLL_DECL SEAdvanceTime : public SEAction
 {
@@ -25,10 +24,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::AdvanceTimeData& in);
-  virtual CDM::AdvanceTimeData* Unload() const;
+  static void Load(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst);
+  static cdm::AdvanceTimeData* Unload(const SEAdvanceTime& src);
 protected:
-  virtual void Unload(CDM::AdvanceTimeData& data) const;
+	static void Serialize(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst);
+	static void Serialize(const SEAdvanceTime& src, cdm::AdvanceTimeData& dst);
 
 public:
 

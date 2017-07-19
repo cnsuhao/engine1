@@ -47,7 +47,7 @@ public:
   virtual double GetBloodPlasmaRatio() const;
 
   virtual bool HasFractionUnboundInPlasma() const;
-  virtual SEScalarFraction& GetFractionUnboundInPlasma();
+  virtual SEScalar0To1& GetFractionUnboundInPlasma();
   virtual double GetFractionUnboundInPlasma() const;
 
   virtual CDM::enumSubstanceIonicState::value GetIonicState() const;
@@ -67,7 +67,7 @@ protected:
   SEScalar*                                m_AcidDissociationConstant;
   CDM::enumSubstanceBindingProtein::value m_BindingProtein;
   SEScalar*                                m_BloodPlasmaRatio;
-  SEScalarFraction*                        m_FractionUnboundInPlasma;
+  SEScalar0To1*                        m_FractionUnboundInPlasma;
   CDM::enumSubstanceIonicState::value      m_IonicState;
   SEScalar*                                m_LogP;
   SEScalar*                                m_OralAbsorptionRateConstant;

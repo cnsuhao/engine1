@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SEBronchoconstriction.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEBronchoconstriction::SEBronchoconstriction() : SEPatientAction()
 {
@@ -41,25 +40,27 @@ bool SEBronchoconstriction::IsActive() const
   return IsValid() ? !m_Severity->IsZero() : false;
 }
 
-bool SEBronchoconstriction::Load(const CDM::BronchoconstrictionData& in)
+void SEBronchoconstriction::Load(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst)
 {
-  SEPatientAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+	SEBronchoconstriction::Serialize(src, dst);
+}
+void SEBronchoconstriction::Serialize(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst)
+{
+	dst.Clear();
+	if (src.has_severity())
+		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::BronchoconstrictionData* SEBronchoconstriction::Unload() const
+cdm::BronchoconstrictionData* SEBronchoconstriction::Unload(const SEBronchoconstriction& src)
 {
-  CDM::BronchoconstrictionData*data(new CDM::BronchoconstrictionData());
-  Unload(*data);
-  return data;
+	cdm::BronchoconstrictionData* dst = new cdm::BronchoconstrictionData();
+	SEBronchoconstriction::Serialize(src, *dst);
+	return dst;
 }
-
-void SEBronchoconstriction::Unload(CDM::BronchoconstrictionData& data) const
+void SEBronchoconstriction::Serialize(const SEBronchoconstriction& src, cdm::BronchoconstrictionData& dst)
 {
-  SEPatientAction::Unload(data);
-  if(m_Severity!=nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+	if (src.HasSeverity())
+		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

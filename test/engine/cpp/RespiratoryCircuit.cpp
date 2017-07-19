@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarFlowCompliance.h"

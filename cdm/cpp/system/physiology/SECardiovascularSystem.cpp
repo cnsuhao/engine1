@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "substance/SESubstanceManager.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarFrequency.h"
 #include "bind/ScalarFrequencyData.hxx"
@@ -455,10 +455,10 @@ bool SECardiovascularSystem::HasHeartEjectionFraction() const
 {
   return m_HeartEjectionFraction==nullptr?false:m_HeartEjectionFraction->IsValid();
 }
-SEScalarFraction& SECardiovascularSystem::GetHeartEjectionFraction()
+SEScalar0To1& SECardiovascularSystem::GetHeartEjectionFraction()
 {
   if(m_HeartEjectionFraction==nullptr)
-    m_HeartEjectionFraction=new SEScalarFraction();
+    m_HeartEjectionFraction=new SEScalar0To1();
   return *m_HeartEjectionFraction;
 }
 double SECardiovascularSystem::GetHeartEjectionFraction() const

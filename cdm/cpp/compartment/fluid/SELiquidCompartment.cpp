@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolumePerTime.h"
 
 SELiquidCompartment::SELiquidCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
@@ -144,10 +144,10 @@ bool SELiquidCompartment::HasWaterVolumeFraction() const
 {
   return m_WaterVolumeFraction == nullptr ? false : m_WaterVolumeFraction->IsValid();
 }
-SEScalarFraction& SELiquidCompartment::GetWaterVolumeFraction()
+SEScalar0To1& SELiquidCompartment::GetWaterVolumeFraction()
 {
   if (m_WaterVolumeFraction == nullptr)
-    m_WaterVolumeFraction = new SEScalarFraction();
+    m_WaterVolumeFraction = new SEScalar0To1();
   if (!m_FluidChildren.empty())
   {
     m_WaterVolumeFraction->SetReadOnly(false);

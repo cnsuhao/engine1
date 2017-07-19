@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/ScalarMassData.hxx"
 #include "properties/SEScalarMassPerTime.h"
 #include "bind/ScalarMassPerTimeData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
 #include "bind/ScalarVolumePerTimeData.hxx"
@@ -166,10 +166,10 @@ bool SEEnergySystem::HasAchievedExerciseLevel() const
 {
   return m_AchievedExerciseLevel == nullptr ? false : m_AchievedExerciseLevel->IsValid();
 }
-SEScalarFraction& SEEnergySystem::GetAchievedExerciseLevel()
+SEScalar0To1& SEEnergySystem::GetAchievedExerciseLevel()
 {
   if (m_AchievedExerciseLevel == nullptr)
-    m_AchievedExerciseLevel = new SEScalarFraction();
+    m_AchievedExerciseLevel = new SEScalar0To1();
   return *m_AchievedExerciseLevel;
 }
 double SEEnergySystem::GetAchievedExerciseLevel() const
@@ -234,10 +234,10 @@ bool SEEnergySystem::HasFatigueLevel() const
 {
   return m_FatigueLevel == nullptr ? false : m_FatigueLevel->IsValid();
 }
-SEScalarFraction& SEEnergySystem::GetFatigueLevel()
+SEScalar0To1& SEEnergySystem::GetFatigueLevel()
 {
   if (m_FatigueLevel == nullptr)
-    m_FatigueLevel = new SEScalarFraction();
+    m_FatigueLevel = new SEScalar0To1();
   return *m_FatigueLevel;
 }
 double SEEnergySystem::GetFatigueLevel() const
@@ -336,10 +336,10 @@ bool SEEnergySystem::HasTotalWorkRateLevel() const
 {
   return m_TotalWorkRateLevel == nullptr ? false : m_TotalWorkRateLevel->IsValid();
 }
-SEScalarFraction& SEEnergySystem::GetTotalWorkRateLevel()
+SEScalar0To1& SEEnergySystem::GetTotalWorkRateLevel()
 {
   if (m_TotalWorkRateLevel == nullptr)
-    m_TotalWorkRateLevel = new SEScalarFraction();
+    m_TotalWorkRateLevel = new SEScalar0To1();
   return *m_TotalWorkRateLevel;
 }
 double SEEnergySystem::GetTotalWorkRateLevel() const

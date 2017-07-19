@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
 
 #include "Serializer.h"
 
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarPressure.h"
 #include "bind/ScalarPressureData.hxx"
@@ -413,10 +413,10 @@ bool SEAnesthesiaMachine::HasOxygenFraction() const
 {
   return m_OxygenFraction == nullptr ? false : m_OxygenFraction->IsValid();
 }
-SEScalarFraction& SEAnesthesiaMachine::GetOxygenFraction()
+SEScalar0To1& SEAnesthesiaMachine::GetOxygenFraction()
 {
   if (m_OxygenFraction == nullptr)
-    m_OxygenFraction = new SEScalarFraction();
+    m_OxygenFraction = new SEScalar0To1();
   return *m_OxygenFraction;
 }
 double SEAnesthesiaMachine::GetOxygenFraction() const

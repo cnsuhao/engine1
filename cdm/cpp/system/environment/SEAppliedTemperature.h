@@ -42,7 +42,7 @@ public:
   virtual double GetSurfaceArea(const AreaUnit& unit) const;
 
   virtual bool HasSurfaceAreaFraction() const;
-  virtual SEScalarFraction& GetSurfaceAreaFraction();
+  virtual SEScalar0To1& GetSurfaceAreaFraction();
   virtual double GetSurfaceAreaFraction() const;
 
   virtual CDM::enumOnOff::value GetState() const;
@@ -54,6 +54,6 @@ protected:
   
   SEScalarTemperature*   m_Temperature;
   SEScalarArea*           m_SurfaceArea;
-  SEScalarFraction*      m_SurfaceAreaFraction;
+  SEScalar0To1*      m_SurfaceAreaFraction;
   CDM::enumOnOff::value  m_State;
 };

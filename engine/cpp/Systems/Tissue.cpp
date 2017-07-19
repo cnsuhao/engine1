@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarAreaPerTimePressure.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalarMass.h"

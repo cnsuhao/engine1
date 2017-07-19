@@ -37,7 +37,7 @@ public:
   virtual double GetGlomerularFiltrationRate(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasFiltrationFraction() const;
-  virtual SEScalarFraction& GetFiltrationFraction();
+  virtual SEScalar0To1& GetFiltrationFraction();
   virtual double GetFiltrationFraction() const;
 
   virtual bool HasLeftAfferentArterioleResistance() const;
@@ -81,7 +81,7 @@ public:
   virtual double GetLeftGlomerularFluidPermeability(const VolumePerTimePressureAreaUnit& unit) const;
 
   virtual bool HasLeftFiltrationFraction() const;
-  virtual SEScalarFraction& GetLeftFiltrationFraction();
+  virtual SEScalar0To1& GetLeftFiltrationFraction();
   virtual double GetLeftFiltrationFraction() const;
 
   virtual bool HasLeftNetFiltrationPressure() const;
@@ -177,7 +177,7 @@ public:
   virtual double GetRightGlomerularFluidPermeability(const VolumePerTimePressureAreaUnit& unit) const;
 
   virtual bool HasRightFiltrationFraction() const;
-  virtual SEScalarFraction& GetRightFiltrationFraction();
+  virtual SEScalar0To1& GetRightFiltrationFraction();
   virtual double GetRightFiltrationFraction() const;
 
   virtual bool HasRightNetFiltrationPressure() const;
@@ -251,7 +251,7 @@ public:
 protected:
 
   SEScalarVolumePerTime*             m_GlomerularFiltrationRate; 
-  SEScalarFraction*                   m_FiltrationFraction;
+  SEScalar0To1*                   m_FiltrationFraction;
 
   SEScalarFlowResistance*             m_LeftAfferentArterioleResistance;
   SEScalarPressure*                   m_LeftBowmansCapsulesHydrostaticPressure;
@@ -263,7 +263,7 @@ protected:
   SEScalarVolumePerTime*             m_LeftGlomerularFiltrationRate;
   SEScalarArea*                       m_LeftGlomerularFiltrationSurfaceArea;
   SEScalarVolumePerTimePressureArea* m_LeftGlomerularFluidPermeability;
-  SEScalarFraction*                   m_LeftFiltrationFraction;
+  SEScalar0To1*                   m_LeftFiltrationFraction;
   SEScalarPressure*                   m_LeftNetFiltrationPressure;
   SEScalarPressure*                   m_LeftNetReabsorptionPressure;
   SEScalarPressure*                   m_LeftPeritubularCapillariesHydrostaticPressure;
@@ -289,7 +289,7 @@ protected:
   SEScalarVolumePerTime*             m_RightGlomerularFiltrationRate;
   SEScalarArea*                       m_RightGlomerularFiltrationSurfaceArea;
   SEScalarVolumePerTimePressureArea* m_RightGlomerularFluidPermeability;
-  SEScalarFraction*                   m_RightFiltrationFraction;
+  SEScalar0To1*                   m_RightFiltrationFraction;
   SEScalarPressure*                   m_RightNetFiltrationPressure;
   SEScalarPressure*                   m_RightNetReabsorptionPressure;
   SEScalarPressure*                   m_RightPeritubularCapillariesHydrostaticPressure;

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEChestCompression.h"
-#include "bind/ChestCompressionForceData.hxx"
 
 class DLL_DECL SEChestCompressionForce : public SEChestCompression
 {
@@ -27,10 +26,11 @@ public:
   virtual bool IsActive() const;
 
 
-  virtual bool Load(const CDM::ChestCompressionForceData& in);
-  virtual CDM::ChestCompressionForceData* Unload() const;
+  static void Load(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst);
+  static cdm::ChestCompressionForceData* Unload(const SEChestCompressionForce& src);
 protected:
-  virtual void Unload(CDM::ChestCompressionForceData& data) const;
+	static void Serialize(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst);
+	static void Serialize(const SEChestCompressionForce& src, cdm::ChestCompressionForceData& dst);
 
 public:
 
@@ -41,4 +41,5 @@ public:
 
 protected:
   SEScalarForce*           m_Force;
+  //jbw - Why is there no ForcePeriod (like in ForceScale)?
 };

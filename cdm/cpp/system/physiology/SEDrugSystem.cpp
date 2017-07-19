@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar.h"
 #include "bind/ScalarData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarFrequency.h"
 #include "bind/ScalarFrequencyData.hxx"
@@ -159,10 +159,10 @@ bool SEDrugSystem::HasBronchodilationLevel() const
 {
   return m_BronchodilationLevel == nullptr ? false : m_BronchodilationLevel->IsValid();
 }
-SEScalarFraction& SEDrugSystem::GetBronchodilationLevel()
+SEScalar0To1& SEDrugSystem::GetBronchodilationLevel()
 {
   if (m_BronchodilationLevel == nullptr)
-    m_BronchodilationLevel = new SEScalarFraction();
+    m_BronchodilationLevel = new SEScalar0To1();
   return *m_BronchodilationLevel;
 }
 double SEDrugSystem::GetBronchodilationLevel() const
@@ -210,10 +210,10 @@ bool SEDrugSystem::HasNeuromuscularBlockLevel() const
 {
   return m_NeuromuscularBlockLevel == nullptr ? false : m_NeuromuscularBlockLevel->IsValid();
 }
-SEScalarFraction& SEDrugSystem::GetNeuromuscularBlockLevel()
+SEScalar0To1& SEDrugSystem::GetNeuromuscularBlockLevel()
 {
   if (m_NeuromuscularBlockLevel == nullptr)
-    m_NeuromuscularBlockLevel = new SEScalarFraction();
+    m_NeuromuscularBlockLevel = new SEScalar0To1();
   return *m_NeuromuscularBlockLevel;
 }
 double SEDrugSystem::GetNeuromuscularBlockLevel() const
@@ -280,10 +280,10 @@ bool SEDrugSystem::HasSedationLevel() const
 {
   return m_SedationLevel == nullptr ? false : m_SedationLevel->IsValid();
 }
-SEScalarFraction& SEDrugSystem::GetSedationLevel()
+SEScalar0To1& SEDrugSystem::GetSedationLevel()
 {
   if (m_SedationLevel == nullptr)
-    m_SedationLevel = new SEScalarFraction();
+    m_SedationLevel = new SEScalar0To1();
   return *m_SedationLevel;
 }
 double SEDrugSystem::GetSedationLevel() const
@@ -315,10 +315,10 @@ bool SEDrugSystem::HasTubularPermeabilityChange() const
 {
   return m_TubularPermeabilityChange == nullptr ? false : m_TubularPermeabilityChange->IsValid();
 }
-SEScalarFraction& SEDrugSystem::GetTubularPermeabilityChange()
+SEScalar0To1& SEDrugSystem::GetTubularPermeabilityChange()
 {
   if (m_TubularPermeabilityChange == nullptr)
-    m_TubularPermeabilityChange = new SEScalarFraction();
+    m_TubularPermeabilityChange = new SEScalar0To1();
   return *m_TubularPermeabilityChange;
 }
 double SEDrugSystem::GetTubularPermeabilityChange() const

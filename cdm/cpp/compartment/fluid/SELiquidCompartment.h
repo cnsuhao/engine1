@@ -46,7 +46,7 @@ public:
   virtual double GetPH() const;
 
   virtual bool HasWaterVolumeFraction() const;
-  virtual SEScalarFraction& GetWaterVolumeFraction();
+  virtual SEScalar0To1& GetWaterVolumeFraction();
   virtual double GetWaterVolumeFraction() const;
 
   virtual void AddChild(SELiquidCompartment& child);
@@ -57,7 +57,7 @@ protected:
   virtual SELiquidSubstanceQuantity& CreateSubstanceQuantity(SESubstance& substance);
 
   SEScalar* m_pH;
-  SEScalarFraction* m_WaterVolumeFraction;
+  SEScalar0To1* m_WaterVolumeFraction;
 
   std::vector<SELiquidCompartment*> m_Children;
   std::vector<SELiquidCompartment*> m_Leaves;

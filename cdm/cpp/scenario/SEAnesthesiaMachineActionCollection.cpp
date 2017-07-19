@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "system/equipment/Anesthesia/SEAnesthesiaMachineChamber.h"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachineOxygenBottle.h"
 #include "properties/SEScalarVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolumePerTime.h"

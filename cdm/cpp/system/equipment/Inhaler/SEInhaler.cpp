@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 
 #include "Serializer.h"
 
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarMass.h"
 #include "bind/ScalarMassData.hxx"
@@ -188,10 +188,10 @@ bool SEInhaler::HasNozzleLoss() const
 {
   return m_NozzleLoss == nullptr ? false : m_NozzleLoss->IsValid();
 }
-SEScalarFraction& SEInhaler::GetNozzleLoss()
+SEScalar0To1& SEInhaler::GetNozzleLoss()
 {
   if (m_NozzleLoss == nullptr)
-    m_NozzleLoss = new SEScalarFraction();
+    m_NozzleLoss = new SEScalar0To1();
   return *m_NozzleLoss;
 }
 double SEInhaler::GetNozzleLoss() const

@@ -156,7 +156,7 @@ public:
   virtual double GetLeftHeartElastanceMinimum(const FlowElastanceUnit& unit) const;
 
   virtual bool HasMinimumBloodVolumeFraction() const;
-  virtual SEScalarFraction& GetMinimumBloodVolumeFraction();
+  virtual SEScalar0To1& GetMinimumBloodVolumeFraction();
   virtual double GetMinimumBloodVolumeFraction() const;
 
   virtual bool HasRightHeartElastanceMaximum() const;
@@ -173,7 +173,7 @@ public:
 protected:
   SEScalarFlowElastance* m_LeftHeartElastanceMaximum; 
   SEScalarFlowElastance* m_LeftHeartElastanceMinimum; 
-  SEScalarFraction*      m_MinimumBloodVolumeFraction;
+  SEScalar0To1*      m_MinimumBloodVolumeFraction;
   SEScalarFlowElastance* m_RightHeartElastanceMaximum; 
   SEScalarFlowElastance* m_RightHeartElastanceMinimum;
   SEScalar*              m_StandardPulmonaryCapillaryCoverage;
@@ -364,11 +364,11 @@ public:
   virtual double GetCalciumDigestionRate(const MassPerTimeUnit& unit) const;
 
   virtual bool HasCalciumAbsorbtionFraction() const;
-  virtual SEScalarFraction& GetCalciumAbsorbtionFraction();
+  virtual SEScalar0To1& GetCalciumAbsorbtionFraction();
   virtual double GetCalciumAbsorbtionFraction() const;
 
   virtual bool HasCarbohydrateAbsorbtionFraction() const;
-  virtual SEScalarFraction& GetCarbohydrateAbsorbtionFraction();
+  virtual SEScalar0To1& GetCarbohydrateAbsorbtionFraction();
   virtual double GetCarbohydrateAbsorbtionFraction() const;
 
   virtual bool HasDefaultCarbohydrateDigestionRate() const;
@@ -388,11 +388,11 @@ public:
   virtual const SENutrition* GetDefaultStomachContents() const;
 
   virtual bool HasFatAbsorbtionFraction() const;
-  virtual SEScalarFraction& GetFatAbsorbtionFraction();
+  virtual SEScalar0To1& GetFatAbsorbtionFraction();
   virtual double GetFatAbsorbtionFraction() const;
 
   virtual bool HasProteinToUreaFraction() const;
-  virtual SEScalarFraction& GetProteinToUreaFraction();
+  virtual SEScalar0To1& GetProteinToUreaFraction();
   virtual double GetProteinToUreaFraction() const;
 
   virtual bool HasWaterDigestionRate() const;
@@ -402,14 +402,14 @@ public:
 protected:
 
   SEScalarMassPerTime*      m_CalciumDigestionRate;
-  SEScalarFraction*         m_CalciumAbsorbtionFraction;
-  SEScalarFraction*         m_CarbohydrateAbsorbtionFraction;
+  SEScalar0To1*         m_CalciumAbsorbtionFraction;
+  SEScalar0To1*         m_CarbohydrateAbsorbtionFraction;
   SEScalarMassPerTime*      m_DefaultCarbohydrateDigestionRate;
   SEScalarMassPerTime*      m_DefaultFatDigestionRate;
   SEScalarMassPerTime*      m_DefaultProteinDigestionRate;
   SENutrition*              m_DefaultStomachContents;
-  SEScalarFraction*         m_FatAbsorbtionFraction;
-  SEScalarFraction*         m_ProteinToUreaFraction;
+  SEScalar0To1*         m_FatAbsorbtionFraction;
+  SEScalar0To1*         m_ProteinToUreaFraction;
   SEScalarVolumePerTime*    m_WaterDigestionRate;
 
   ///////////////

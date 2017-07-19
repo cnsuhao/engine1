@@ -13,9 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
-#include "bind/SubstanceData.hxx"
 #include "substance/SESubstanceCompound.h"
-#include "bind/SubstanceCompoundData.hxx"
 #include "utils/FileUtils.h"
 #include "Serializer.h"
 #include "../utils/unitconversion/UnitConversionEngine.h"
@@ -108,9 +106,9 @@ void SESubstanceManager::AddActiveSubstance(SESubstance& substance)
 {
   if (IsActive(substance))
     return;
-  if(substance.GetState()==CDM::enumSubstanceState::Gas)
+  if(substance.GetState()==cdm::SubstanceData_eState_Gas)
     m_ActiveGases.push_back(&substance);
-  if(substance.GetState()==CDM::enumSubstanceState::Liquid)
+  if(substance.GetState()== cdm::SubstanceData_eState_Liquid)
     m_ActiveLiquids.push_back(&substance);
     m_ActiveSubstances.push_back(&substance);
 }
@@ -252,12 +250,12 @@ void SESubstanceManager::RemoveActiveCompounds(const std::vector<SESubstanceComp
 SESubstance* SESubstanceManager::ReadSubstanceFile(const std::string &xmlFile)
 {
   std::stringstream ss;
-  CDM::ObjectData *obj;
+  cdm::FunctionData *obj;
 
   SESubstance* sub;
-  CDM::SubstanceData *subData;
+  cdm::SubstanceData *subData;
 
-  std::unique_ptr<CDM::ObjectData> data;
+  std::unique_ptr<cdm::FunctionData> data;
 
   obj=nullptr;
   sub=nullptr;
@@ -269,7 +267,7 @@ SESubstance* SESubstanceManager::ReadSubstanceFile(const std::string &xmlFile)
   //Info(ss);
   obj = data.get();
   
-  subData = dynamic_cast<CDM::SubstanceData*>(obj);
+  subData = dynamic_cast<cdm::SubstanceData*>(obj);
   if(subData!=nullptr)
   {
     sub = new SESubstance(GetLogger());
@@ -303,15 +301,15 @@ bool SESubstanceManager::LoadSubstanceDirectory()
 
   if(dir != nullptr)
   {
-    CDM::ObjectData *obj;
+	cdm::FunctionData *obj;
 
     SESubstance* sub;
-    CDM::SubstanceData *subData;
+    cdm::SubstanceData *subData;
 
     SESubstanceCompound* compound;
-    CDM::SubstanceCompoundData *compoundData;
+    cdm::SubstanceData_CompoundData *compoundData;
 
-    std::unique_ptr<CDM::ObjectData> data;
+    std::unique_ptr<cdm::FunctionData> data;
     
     while ((ent = readdir(dir)) != nullptr)
     {
@@ -327,7 +325,7 @@ bool SESubstanceManager::LoadSubstanceDirectory()
         ss << "Reading substance file : ./substances/" << ent->d_name;
         Debug(ss);
         obj = data.release();
-        subData = dynamic_cast<CDM::SubstanceData*>(obj);
+        subData = dynamic_cast<cdm::SubstanceData*>(obj);
         if (subData != nullptr)
         {
           sub = new SESubstance(GetLogger());
@@ -336,7 +334,7 @@ bool SESubstanceManager::LoadSubstanceDirectory()
           m_OriginalSubstanceData[sub] = subData;
           continue;
         }
-        compoundData = dynamic_cast<CDM::SubstanceCompoundData*>(obj);
+        compoundData = dynamic_cast<cdm::SubstanceData_CompoundData*>(obj);
         if (compoundData != nullptr)
         {// Save this off and process it till later, once all substances are read
           compound = new SESubstanceCompound(GetLogger());
@@ -350,7 +348,7 @@ bool SESubstanceManager::LoadSubstanceDirectory()
     }// Done with directory search
     // Ok, now let's load up our compounds
     for (auto itr : m_OriginalCompoundData)
-      itr.first->Load((const CDM::SubstanceCompoundData&)*itr.second, *this);      
+      itr.first->Load((const cdm::SubstanceData_CompoundData&)*itr.second, *this);
     
     return succeed;
 

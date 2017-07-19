@@ -49,11 +49,11 @@ public:
   virtual double GetMatrixVolume(const VolumeUnit& unit) const;
 
   virtual bool HasNeutralLipidsVolumeFraction() const;
-  virtual SEScalarFraction& GetNeutralLipidsVolumeFraction();
+  virtual SEScalar0To1& GetNeutralLipidsVolumeFraction();
   virtual double GetNeutralLipidsVolumeFraction() const;
 
   virtual bool HasNeutralPhospholipidsVolumeFraction() const;
-  virtual SEScalarFraction& GetNeutralPhospholipidsVolumeFraction();
+  virtual SEScalar0To1& GetNeutralPhospholipidsVolumeFraction();
   virtual double GetNeutralPhospholipidsVolumeFraction() const;
 
   virtual bool HasTissueToPlasmaAlbuminRatio() const;
@@ -76,8 +76,8 @@ protected:
   
   SEScalarMassPerMass*   m_AcidicPhospohlipidConcentration;
   SEScalarVolume*        m_MatrixVolume;
-  SEScalarFraction*      m_NeutralLipidsVolumeFraction;
-  SEScalarFraction*      m_NeutralPhospholipidsVolumeFraction;
+  SEScalar0To1*      m_NeutralLipidsVolumeFraction;
+  SEScalar0To1*      m_NeutralPhospholipidsVolumeFraction;
   SEScalar*              m_TissueToPlasmaAlbuminRatio;
   SEScalar*              m_TissueToPlasmaAlphaAcidGlycoproteinRatio;
   SEScalar*              m_TissueToPlasmaLipoproteinRatio;

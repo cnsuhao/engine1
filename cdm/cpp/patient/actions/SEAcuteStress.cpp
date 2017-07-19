@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SEAcuteStress.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEAcuteStress::SEAcuteStress() : SEPatientAction()
 {
@@ -43,25 +42,27 @@ bool SEAcuteStress::IsActive() const
   return IsValid() ? !m_Severity->IsZero() : false;
 }
 
-bool SEAcuteStress::Load(const CDM::AcuteStressData& in)
+void SEAcuteStress::Load(const cdm::AcuteStressData& src, SEAcuteStress& dst)
 {
-  SEPatientAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+	SEAcuteStress::Serialize(src, dst);
+}
+void SEAcuteStress::Serialize(const cdm::AcuteStressData& src, SEAcuteStress& dst)
+{
+	dst.Clear();
+	if (src.has_severity())
+		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::AcuteStressData* SEAcuteStress::Unload() const
+cdm::AcuteStressData* SEAcuteStress::Unload(const SEAcuteStress& src)
 {
-  CDM::AcuteStressData*data(new CDM::AcuteStressData());
-  Unload(*data);
-  return data;
+	cdm::AcuteStressData* dst = new cdm::AcuteStressData();
+	SEAcuteStress::Serialize(src, *dst);
+	return dst;
 }
-
-void SEAcuteStress::Unload(CDM::AcuteStressData& data) const
+void SEAcuteStress::Serialize(const SEAcuteStress& src, cdm::AcuteStressData& dst)
 {
-  SEPatientAction::Unload(data);
-  if(m_Severity!=nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+	if (src.HasSeverity())
+		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

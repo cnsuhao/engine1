@@ -18,12 +18,12 @@
 		<link>
 			<name>java</name>
 			<type>2</type>
-			<location>C:/Programming/physiology/builds/x64/InnerBuild/schema/java</location>
+			<location>C:/Work/Source/protoBuild/InnerBuild/schema/java</location>
 		</link>
 		<link>
-			<name>protobuf</name>
+			<name>pbuff</name>
 			<type>2</type>
-			<location>C:/Programming/physiology/builds/x64/protobuf/src/protobuf/java/core/src/main/java</location>
+			<location>C:/Work/Source/protoBuild/protobuf/src/protobuf/java/core/src/main/java</location>
 		</link>
 	</linkedResources>
 </projectDescription>

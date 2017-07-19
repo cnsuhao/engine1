@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "bind/ScalarAmountPerVolumeData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarMass.h"
 #include "bind/ScalarMassData.hxx"
@@ -110,10 +110,10 @@ bool SECompleteBloodCount::HasHematocrit()
 {
   return m_Hematocrit == nullptr ? false : m_Hematocrit->IsValid();
 }
-SEScalarFraction& SECompleteBloodCount::GetHematocrit()
+SEScalar0To1& SECompleteBloodCount::GetHematocrit()
 {
   if (m_Hematocrit == nullptr)
-    m_Hematocrit = new SEScalarFraction();
+    m_Hematocrit = new SEScalar0To1();
   return *m_Hematocrit;
 }
 

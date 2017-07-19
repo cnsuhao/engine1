@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstancePharmacokinetics.h"
 #include "bind/SubstancePharmacokineticsData.hxx"
 #include "bind/SubstancePhysicochemicalData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 
 SESubstancePharmacokinetics::SESubstancePharmacokinetics(Logger* logger) : Loggable(logger)

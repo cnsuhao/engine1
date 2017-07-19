@@ -35,7 +35,7 @@ specific language governing permissions and limitations under the License.
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarElectricPotential.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarHeatResistanceArea.h"
 #include "properties/SEScalarLengthPerTime.h"

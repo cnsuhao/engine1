@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "substance/SESubstancePhysicochemicals.h"
 #include "bind/SubstancePhysicochemicalData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 
 SESubstancePhysicochemicals::SESubstancePhysicochemicals(Logger* logger) : Loggable(logger)
@@ -174,10 +174,10 @@ bool SESubstancePhysicochemicals::HasFractionUnboundInPlasma() const
 {
   return (m_FractionUnboundInPlasma == nullptr) ? false : m_FractionUnboundInPlasma->IsValid();
 }
-SEScalarFraction& SESubstancePhysicochemicals::GetFractionUnboundInPlasma()
+SEScalar0To1& SESubstancePhysicochemicals::GetFractionUnboundInPlasma()
 {
   if (m_FractionUnboundInPlasma == nullptr)
-    m_FractionUnboundInPlasma = new SEScalarFraction();
+    m_FractionUnboundInPlasma = new SEScalar0To1();
   return *m_FractionUnboundInPlasma;
 }
 double SESubstancePhysicochemicals::GetFractionUnboundInPlasma() const

@@ -21,7 +21,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "compartment/tissue/SETissueCompartment.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
@@ -185,7 +185,7 @@ void BioGearsSubstances::InitializeLiquidCompartmentGases()
   BioGearsCompartments& cmpts = m_data.GetCompartments();
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;

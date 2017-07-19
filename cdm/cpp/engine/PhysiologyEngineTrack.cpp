@@ -49,7 +49,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarMass.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarElectricPotential.h"
 #include "utils/DataTrack.h"

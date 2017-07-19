@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SEChestCompressionForce.h"
 #include "properties/SEScalarForce.h"
-#include "bind/ScalarForceData.hxx"
 
 SEChestCompressionForce::SEChestCompressionForce() : SEChestCompression()
 {
@@ -41,25 +40,27 @@ bool SEChestCompressionForce::IsActive() const
   return IsValid() ? !m_Force->IsZero() : false;
 }
 
-bool SEChestCompressionForce::Load(const CDM::ChestCompressionForceData& in)
+void SEChestCompressionForce::Load(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst)
 {
-  SEChestCompression::Load(in);
-  GetForce().Load(in.Force());
-  return true;
+	SEChestCompressionForce::Serialize(src, dst);
+}
+void SEChestCompressionForce::Serialize(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst)
+{
+	dst.Clear();
+	if (src.has_force())
+		SEScalarForce::Load(src.force(), dst.GetForce());
 }
 
-CDM::ChestCompressionForceData* SEChestCompressionForce::Unload() const
+cdm::ChestCompressionForceData* SEChestCompressionForce::Unload(const SEChestCompressionForce& src)
 {
-  CDM::ChestCompressionForceData*data(new CDM::ChestCompressionForceData());
-  Unload(*data);
-  return data;
+	cdm::ChestCompressionForceData* dst = new cdm::ChestCompressionForceData();
+	SEChestCompressionForce::Serialize(src, *dst);
+	return dst;
 }
-
-void SEChestCompressionForce::Unload(CDM::ChestCompressionForceData& data) const
+void SEChestCompressionForce::Serialize(const SEChestCompressionForce& src, cdm::ChestCompressionForceData& dst)
 {
-  SEChestCompression::Unload(data);
-  if (m_Force != nullptr)
-    data.Force(std::unique_ptr<CDM::ScalarForceData>(m_Force->Unload()));
+	if (src.HasForce())
+		dst.set_allocated_force(SEScalarForce::Unload(*src.m_Force));
 }
 
 bool SEChestCompressionForce::HasForce() const

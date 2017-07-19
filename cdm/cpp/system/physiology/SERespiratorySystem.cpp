@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
@@ -253,10 +253,10 @@ bool SERespiratorySystem::HasEndTidalCarbonDioxideFraction() const
 {
   return m_EndTidalCarbonDioxideFraction == nullptr ? false : m_EndTidalCarbonDioxideFraction->IsValid();
 }
-SEScalarFraction& SERespiratorySystem::GetEndTidalCarbonDioxideFraction()
+SEScalar0To1& SERespiratorySystem::GetEndTidalCarbonDioxideFraction()
 {
   if (m_EndTidalCarbonDioxideFraction == nullptr)
-    m_EndTidalCarbonDioxideFraction = new SEScalarFraction();
+    m_EndTidalCarbonDioxideFraction = new SEScalar0To1();
   return *m_EndTidalCarbonDioxideFraction;
 }
 double SERespiratorySystem::GetEndTidalCarbonDioxideFraction() const

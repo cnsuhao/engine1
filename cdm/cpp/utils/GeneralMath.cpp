@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -131,7 +131,7 @@ void GeneralMath::CalculateOsmolality(const SEScalarAmountPerVolume& sodiumMolar
 /// \brief
 /// Calculates the partial pressure of a substance in gas based on the volumeFraction * pressure
 //--------------------------------------------------------------------------------------------------
-void GeneralMath::CalculatePartialPressureInGas(const SEScalarFraction& volumeFraction, const SEScalarPressure& pressure, SEScalarPressure& partialPressure, Logger* logger)
+void GeneralMath::CalculatePartialPressureInGas(const SEScalar0To1& volumeFraction, const SEScalarPressure& pressure, SEScalarPressure& partialPressure, Logger* logger)
 {
   double VolumeFraction = volumeFraction.GetValue();
   double pressure_cmH2O = pressure.GetValue(PressureUnit::cmH2O);

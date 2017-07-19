@@ -32,7 +32,7 @@ protected:
 public:
 
   virtual bool HasAchievedExerciseLevel() const;
-  virtual SEScalarFraction& GetAchievedExerciseLevel();
+  virtual SEScalar0To1& GetAchievedExerciseLevel();
   virtual double GetAchievedExerciseLevel() const;
     
   virtual bool HasCoreTemperature() const;
@@ -48,7 +48,7 @@ public:
   virtual double GetExerciseMeanArterialPressureDelta(const PressureUnit& unit) const;
 
   virtual bool HasFatigueLevel() const;
-  virtual SEScalarFraction& GetFatigueLevel();
+  virtual SEScalar0To1& GetFatigueLevel();
   virtual double GetFatigueLevel() const;
   
   virtual bool HasKetoneProductionRate() const;
@@ -72,21 +72,21 @@ public:
   virtual double GetTotalMetabolicRate(const PowerUnit& unit) const;
 
   virtual bool HasTotalWorkRateLevel() const;
-  virtual SEScalarFraction& GetTotalWorkRateLevel();
+  virtual SEScalar0To1& GetTotalWorkRateLevel();
   virtual double GetTotalWorkRateLevel() const;
 
 protected:
 
-  SEScalarFraction*       m_AchievedExerciseLevel;
+  SEScalar0To1*       m_AchievedExerciseLevel;
   SEScalarTemperature*    m_CoreTemperature;
   SEScalarAmountPerTime*  m_CreatinineProductionRate;
   SEScalarPressure*        m_ExerciseMeanArterialPressureDelta;
-  SEScalarFraction*        m_FatigueLevel;
+  SEScalar0To1*        m_FatigueLevel;
   SEScalarAmountPerTime*  m_KetoneProductionRate;
   SEScalarAmountPerTime*  m_LactateProductionRate;
   SEScalarTemperature*    m_SkinTemperature;
   SEScalarMassPerTime*    m_SweatRate;
   SEScalarPower*          m_TotalMetabolicRate;
-  SEScalarFraction*        m_TotalWorkRateLevel;
+  SEScalar0To1*        m_TotalWorkRateLevel;
 
 };

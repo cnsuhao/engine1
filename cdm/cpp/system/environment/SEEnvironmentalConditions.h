@@ -12,8 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(EnvironmentalConditionsData)
-#include "bind/enumSurroundingType.hxx"
+#include "bind/cdm/EnvironmentConditions.pb.h"
 class SESubstance;
 class SESubstanceFraction;
 class SESubstanceConcentration;
@@ -35,10 +34,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::EnvironmentalConditionsData& in);
-  virtual CDM::EnvironmentalConditionsData* Unload() const;
+  static void Load(const cdm::EnvironmentConditionData& src, SEEnvironmentalConditions& dst);
+  static cdm::EnvironmentConditionData* Unload(const SEEnvironmentalConditions& src);
 protected:
-  virtual void Unload(CDM::EnvironmentalConditionsData& data) const;
+	static void Serialize(const cdm::EnvironmentConditionData& src, SEEnvironmentalConditions& dst);
+	static void Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentConditionData& dst);
 
    virtual void Merge(const SEEnvironmentalConditions& from);
 public:
@@ -47,9 +47,8 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-
-  virtual CDM::enumSurroundingType::value GetSurroundingType() const;
-  virtual void SetSurroundingType(CDM::enumSurroundingType::value name);
+  virtual cdm::EnvironmentData_eSurroundingType GetSurroundingType() const;
+  virtual void SetSurroundingType(cdm::EnvironmentData_eSurroundingType name);
   virtual bool HasSurroundingType() const;
   virtual void InvalidateSurroundingType();
 
@@ -74,7 +73,7 @@ public:
   virtual double GetClothingResistance(const HeatResistanceAreaUnit& unit) const;
 
   virtual bool HasEmissivity() const;
-  virtual SEScalarFraction& GetEmissivity();
+  virtual SEScalar0To1& GetEmissivity();
   virtual double GetEmissivity() const;
 
   virtual bool HasMeanRadiantTemperature() const;
@@ -82,7 +81,7 @@ public:
   virtual double GetMeanRadiantTemperature(const TemperatureUnit& unit) const;
 
   virtual bool HasRelativeHumidity() const;
-  virtual SEScalarFraction& GetRelativeHumidity();
+  virtual SEScalar0To1& GetRelativeHumidity();
   virtual double GetRelativeHumidity() const;
 
   virtual bool HasRespirationAmbientTemperature() const;
@@ -109,16 +108,16 @@ public:
 
 protected:
 
-  CDM::enumSurroundingType::value   m_SurroundingType;
+  cdm::EnvironmentData_eSurroundingType   m_SurroundingType;
   
   SEScalarMassPerVolume*            m_AirDensity;
   SEScalarLengthPerTime*            m_AirVelocity;
   SEScalarTemperature*              m_AmbientTemperature;
   SEScalarPressure*                  m_AtmosphericPressure;
   SEScalarHeatResistanceArea*        m_ClothingResistance;
-  SEScalarFraction*                  m_Emissivity;
+  SEScalar0To1*                  m_Emissivity;
   SEScalarTemperature*              m_MeanRadiantTemperature;
-  SEScalarFraction*                 m_RelativeHumidity;
+  SEScalar0To1*                 m_RelativeHumidity;
   SEScalarTemperature*              m_RespirationAmbientTemperature;
 
   std::vector<SESubstanceFraction*>       m_AmbientGases;

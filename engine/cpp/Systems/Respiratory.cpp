@@ -17,12 +17,12 @@ specific language governing permissions and limitations under the License.
 #include "circuit/fluid/SEFluidCircuit.h"
 // Properties
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarNeg1To1.h"
+#include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarFlowCompliance.h"
@@ -31,7 +31,6 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarInverseVolume.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarFraction.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEFunctionVolumeVsTime.h"
 //Circuits

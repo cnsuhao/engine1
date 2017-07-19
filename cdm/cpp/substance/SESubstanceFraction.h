@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License..
 class SESubstance;
 class SESubstanceManager;
 class SEEnvironmentalConditions;
-CDM_BIND_DECL(SubstanceFractionData)
+#include "bind/cdm/Substance.pb.h"
 
 class DLL_DECL SESubstanceFraction : public Loggable
 {
@@ -27,14 +27,16 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::SubstanceFractionData& in);
-  virtual CDM::SubstanceFractionData* Unload() const;
+  static void Load(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst);
+  static cdm::SubstanceData_FractionAmountData* Unload(const SESubstanceFraction& src);
 protected:
-  virtual void Unload(CDM::SubstanceFractionData& data) const;
+	static void Serialize(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst);
+	static void Serialize(const SESubstanceFraction& src, cdm::SubstanceData_FractionAmountData& dst);
+
 public:
 
   virtual bool HasFractionAmount() const;
-  virtual SEScalarFraction& GetFractionAmount();
+  virtual SEScalar0To1& GetFractionAmount();
   virtual double GetFractionAmount() const;
 
   virtual SESubstance& GetSubstance() const;
@@ -42,5 +44,5 @@ public:
 protected:
 
   SESubstance&       m_Substance;
-  SEScalarFraction*  m_FractionAmount;
+  SEScalar0To1*  m_FractionAmount;
 };  

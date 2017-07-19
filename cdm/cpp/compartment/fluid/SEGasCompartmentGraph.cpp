@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/GasCompartmentGraphData.hxx"
 #include "compartment/SECompartmentManager.h"
 #include "properties/SEScalarVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 
 bool SEGasCompartmentGraph::Load(const CDM::GasCompartmentGraphData& in, SECompartmentManager& cmptMgr)
 {

@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 
 SECardiacArrest::SECardiacArrest() : SEPatientAction()
 {
-  m_State = CDM::enumOnOff::Off;
+  m_State = cdm::eSwitch::Off;
 }
 
 SECardiacArrest::~SECardiacArrest()
@@ -26,7 +26,7 @@ SECardiacArrest::~SECardiacArrest()
 void SECardiacArrest::Clear()
 {
   SEPatientAction::Clear();
-  m_State = CDM::enumOnOff::Off;
+  m_State = cdm::eSwitch::Off;
 }
 
 bool SECardiacArrest::IsValid() const
@@ -36,32 +36,36 @@ bool SECardiacArrest::IsValid() const
 
 bool SECardiacArrest::IsActive() const
 {
-  return IsValid() && m_State == CDM::enumOnOff::On;
+  return IsValid() && m_State == cdm::eSwitch::On;
 }
 
 void SECardiacArrest::SetActive(bool b)
 {
-  m_State = b ? CDM::enumOnOff::On : CDM::enumOnOff::Off;
+  m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
 }
 
-bool SECardiacArrest::Load(const CDM::CardiacArrestData& in)
+void SECardiacArrest::Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
 {
-  SEPatientAction::Load(in);
-  m_State = in.State();
-  return true;
+	SECardiacArrest::Serialize(src, dst);
+}
+void SECardiacArrest::Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
+{
+	dst.Clear();
+	//dst.SetState(src.state());
+	//jbw - where are states?
 }
 
-CDM::CardiacArrestData* SECardiacArrest::Unload() const
+cdm::CardiacArrestData* SECardiacArrest::Unload(const SECardiacArrest& src)
 {
-  CDM::CardiacArrestData*data(new CDM::CardiacArrestData());
-  Unload(*data);
-  return data;
+	cdm::CardiacArrestData* dst = new cdm::CardiacArrestData();
+	SECardiacArrest::Serialize(src, *dst);
+	return dst;
 }
-
-void SECardiacArrest::Unload(CDM::CardiacArrestData& data) const
+void SECardiacArrest::Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst)
 {
-  SEPatientAction::Unload(data);
-  data.State(m_State);
+	//if (src.HasState())
+	//	dst.set_state(src.m_State);
+	//jbw - where are states?
 }
 
 void SECardiacArrest::ToString(std::ostream &str) const

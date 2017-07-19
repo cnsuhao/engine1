@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "Systems/Saturation.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarInversePressure.h"
@@ -172,7 +172,7 @@ SaturationCalculator::~SaturationCalculator()
 
 }
 
-void SaturationCalculator::SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalarFraction& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate)
+void SaturationCalculator::SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalar0To1& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate)
 {
     m_albumin_g_per_L = AlbuminConcentration.GetValue(MassPerVolumeUnit::g_Per_L);
     m_hematocrit = Hematocrit.GetValue();

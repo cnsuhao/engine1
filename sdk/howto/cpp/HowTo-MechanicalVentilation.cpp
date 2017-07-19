@@ -30,7 +30,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEForcedExhale.h"
 #include "patient/actions/SEBreathHold.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"

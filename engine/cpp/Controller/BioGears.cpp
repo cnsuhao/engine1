@@ -32,7 +32,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/EnvironmentalConditionsData.hxx"
 
 #include "properties/SEScalarArea.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalarMass.h"

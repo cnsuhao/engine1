@@ -22,7 +22,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachineOxygenBottle.h"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachineChamber.h"

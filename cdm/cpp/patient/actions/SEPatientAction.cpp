@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/actions/SEPatientAction.h"
-#include "bind/PatientActionData.hxx"
 
 SEPatientAction::SEPatientAction() : SEAction()
 {
@@ -34,13 +33,22 @@ bool SEPatientAction::IsValid() const
   return SEAction::IsValid();
 }
 
-bool SEPatientAction::Load(const CDM::PatientActionData& in)
+void SEPatientAction::Load(const cdm::PatientActionData& src, SEPatientAction& dst)
 {
-  SEAction::Load(in);
-  return true;
+	SEPatientAction::Serialize(src, dst);
+}
+void SEPatientAction::Serialize(const cdm::PatientActionData& src, SEPatientAction& dst)
+{
+	dst.Clear();
 }
 
-void SEPatientAction::Unload(CDM::PatientActionData& data) const
+cdm::PatientActionData* SEPatientAction::Unload(const SEPatientAction& src)
 {
-  SEAction::Unload(data);
+	cdm::PatientActionData* dst = new cdm::PatientActionData();
+	SEPatientAction::Serialize(src, *dst);
+	return dst;
+}
+void SEPatientAction::Serialize(const SEPatientAction& src, cdm::PatientActionData& dst)
+{
+	
 }

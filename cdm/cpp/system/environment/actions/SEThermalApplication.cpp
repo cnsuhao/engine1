@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/AppliedTemperatureData.hxx"
 #include "properties/SEScalarArea.h"
 #include "bind/ScalarAreaData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarPower.h"
 #include "bind/ScalarPowerData.hxx"

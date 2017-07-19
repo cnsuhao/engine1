@@ -24,7 +24,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"

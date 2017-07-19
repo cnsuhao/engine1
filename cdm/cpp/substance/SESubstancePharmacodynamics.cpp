@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "substance/SESubstancePharmacodynamics.h"
 #include "bind/SubstancePharmacodynamicsData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
 #include "bind/ScalarMassPerVolumeData.hxx"
@@ -176,10 +176,10 @@ bool SESubstancePharmacodynamics::HasBronchodilation() const
 {
   return (m_Bronchodilation == nullptr) ? false : m_Bronchodilation->IsValid();
 }
-SEScalarFraction& SESubstancePharmacodynamics::GetBronchodilation()
+SEScalar0To1& SESubstancePharmacodynamics::GetBronchodilation()
 {
   if (m_Bronchodilation == nullptr)
-    m_Bronchodilation = new SEScalarFraction();
+    m_Bronchodilation = new SEScalar0To1();
   return *m_Bronchodilation;
 }
 double SESubstancePharmacodynamics::GetBronchodilation() const
@@ -193,10 +193,10 @@ bool SESubstancePharmacodynamics::HasDiastolicPressureModifier() const
 {
   return (m_DiastolicPressureModifier == nullptr) ? false : m_DiastolicPressureModifier->IsValid();
 }
-SEScalarFraction& SESubstancePharmacodynamics::GetDiastolicPressureModifier()
+SEScalar0To1& SESubstancePharmacodynamics::GetDiastolicPressureModifier()
 {
   if (m_DiastolicPressureModifier == nullptr)
-    m_DiastolicPressureModifier = new SEScalarFraction();
+    m_DiastolicPressureModifier = new SEScalar0To1();
   return *m_DiastolicPressureModifier;
 }
 double SESubstancePharmacodynamics::GetDiastolicPressureModifier() const
@@ -244,10 +244,10 @@ bool SESubstancePharmacodynamics::HasHeartRateModifier() const
 {
   return (m_HeartRateModifier == nullptr) ? false : m_HeartRateModifier->IsValid();
 }
-SEScalarFraction& SESubstancePharmacodynamics::GetHeartRateModifier()
+SEScalar0To1& SESubstancePharmacodynamics::GetHeartRateModifier()
 {
   if (m_HeartRateModifier == nullptr)
-    m_HeartRateModifier = new SEScalarFraction();
+    m_HeartRateModifier = new SEScalar0To1();
   return *m_HeartRateModifier;
 }
 double SESubstancePharmacodynamics::GetHeartRateModifier() const
@@ -261,10 +261,10 @@ bool SESubstancePharmacodynamics::HasNeuromuscularBlock() const
 {
   return (m_NeuromuscularBlock == nullptr) ? false : m_NeuromuscularBlock->IsValid();
 }
-SEScalarFraction& SESubstancePharmacodynamics::GetNeuromuscularBlock()
+SEScalar0To1& SESubstancePharmacodynamics::GetNeuromuscularBlock()
 {
   if (m_NeuromuscularBlock == nullptr)
-    m_NeuromuscularBlock = new SEScalarFraction();
+    m_NeuromuscularBlock = new SEScalar0To1();
   return *m_NeuromuscularBlock;
 }
 double SESubstancePharmacodynamics::GetNeuromuscularBlock() const
@@ -297,10 +297,10 @@ bool SESubstancePharmacodynamics::HasRespirationRateModifier() const
 {
   return (m_RespirationRateModifier == nullptr) ? false : m_RespirationRateModifier->IsValid();
 }
-SEScalarFraction& SESubstancePharmacodynamics::GetRespirationRateModifier()
+SEScalar0To1& SESubstancePharmacodynamics::GetRespirationRateModifier()
 {
   if (m_RespirationRateModifier == nullptr)
-    m_RespirationRateModifier = new SEScalarFraction();
+    m_RespirationRateModifier = new SEScalar0To1();
   return *m_RespirationRateModifier;
 }
 double SESubstancePharmacodynamics::GetRespirationRateModifier() const
@@ -314,10 +314,10 @@ bool SESubstancePharmacodynamics::HasSedation() const
 {
   return (m_Sedation == nullptr) ? false : m_Sedation->IsValid();
 }
-SEScalarFraction& SESubstancePharmacodynamics::GetSedation()
+SEScalar0To1& SESubstancePharmacodynamics::GetSedation()
 {
   if (m_Sedation == nullptr)
-    m_Sedation = new SEScalarFraction();
+    m_Sedation = new SEScalar0To1();
   return *m_Sedation;
 }
 double SESubstancePharmacodynamics::GetSedation() const
@@ -331,10 +331,10 @@ bool SESubstancePharmacodynamics::HasSystolicPressureModifier() const
 {
   return (m_SystolicPressureModifier == nullptr) ? false : m_SystolicPressureModifier->IsValid();
 }
-SEScalarFraction& SESubstancePharmacodynamics::GetSystolicPressureModifier()
+SEScalar0To1& SESubstancePharmacodynamics::GetSystolicPressureModifier()
 {
   if (m_SystolicPressureModifier == nullptr)
-    m_SystolicPressureModifier = new SEScalarFraction();
+    m_SystolicPressureModifier = new SEScalar0To1();
   return *m_SystolicPressureModifier;
 }
 double SESubstancePharmacodynamics::GetSystolicPressureModifier() const
@@ -348,10 +348,10 @@ bool SESubstancePharmacodynamics::HasTidalVolumeModifier() const
 {
   return (m_TidalVolumeModifier == nullptr) ? false : m_TidalVolumeModifier->IsValid();
 }
-SEScalarFraction& SESubstancePharmacodynamics::GetTidalVolumeModifier()
+SEScalar0To1& SESubstancePharmacodynamics::GetTidalVolumeModifier()
 {
   if (m_TidalVolumeModifier == nullptr)
-    m_TidalVolumeModifier = new SEScalarFraction();
+    m_TidalVolumeModifier = new SEScalar0To1();
   return *m_TidalVolumeModifier;
 }
 double SESubstancePharmacodynamics::GetTidalVolumeModifier() const
@@ -365,10 +365,10 @@ bool SESubstancePharmacodynamics::HasTubularPermeabilityModifier() const
 {
   return (m_TubularPermeabilityModifier == nullptr) ? false : m_TubularPermeabilityModifier->IsValid();
 }
-SEScalarFraction& SESubstancePharmacodynamics::GetTubularPermeabilityModifier()
+SEScalar0To1& SESubstancePharmacodynamics::GetTubularPermeabilityModifier()
 {
   if (m_TubularPermeabilityModifier == nullptr)
-    m_TubularPermeabilityModifier = new SEScalarFraction();
+    m_TubularPermeabilityModifier = new SEScalar0To1();
   return *m_TubularPermeabilityModifier;
 }
 double SESubstancePharmacodynamics::GetTubularPermeabilityModifier() const

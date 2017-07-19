@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "substance/SESubstanceManager.h"
 
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerMass.h"
 #include "properties/SEScalarVolumePerTime.h"
@@ -169,10 +169,10 @@ bool SETissueCompartment::HasNeutralLipidsVolumeFraction() const
 {
   return m_NeutralLipidsVolumeFraction == nullptr ? false : m_NeutralLipidsVolumeFraction->IsValid();
 }
-SEScalarFraction& SETissueCompartment::GetNeutralLipidsVolumeFraction()
+SEScalar0To1& SETissueCompartment::GetNeutralLipidsVolumeFraction()
 {
   if (m_NeutralLipidsVolumeFraction == nullptr)
-    m_NeutralLipidsVolumeFraction = new SEScalarFraction();
+    m_NeutralLipidsVolumeFraction = new SEScalar0To1();
   return *m_NeutralLipidsVolumeFraction;
 }
 double SETissueCompartment::GetNeutralLipidsVolumeFraction() const
@@ -186,10 +186,10 @@ bool SETissueCompartment::HasNeutralPhospholipidsVolumeFraction() const
 {
   return m_NeutralPhospholipidsVolumeFraction == nullptr ? false : m_NeutralPhospholipidsVolumeFraction->IsValid();
 }
-SEScalarFraction& SETissueCompartment::GetNeutralPhospholipidsVolumeFraction()
+SEScalar0To1& SETissueCompartment::GetNeutralPhospholipidsVolumeFraction()
 {
   if (m_NeutralPhospholipidsVolumeFraction == nullptr)
-    m_NeutralPhospholipidsVolumeFraction = new SEScalarFraction();
+    m_NeutralPhospholipidsVolumeFraction = new SEScalar0To1();
   return *m_NeutralPhospholipidsVolumeFraction;
 }
 double SETissueCompartment::GetNeutralPhospholipidsVolumeFraction() const

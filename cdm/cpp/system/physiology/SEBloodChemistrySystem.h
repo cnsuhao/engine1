@@ -74,7 +74,7 @@ public:
   /// %Test if member has been allocated
   virtual bool HasCarbonDioxideSaturation() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalarFraction& GetCarbonDioxideSaturation();
+  virtual SEScalar0To1& GetCarbonDioxideSaturation();
   virtual double GetCarbonDioxideSaturation() const;
   //@}
 
@@ -84,7 +84,7 @@ public:
   /// %Test if member has been allocated
   virtual bool HasCarbonMonoxideSaturation() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalarFraction& GetCarbonMonoxideSaturation();
+  virtual SEScalar0To1& GetCarbonMonoxideSaturation();
   virtual double GetCarbonMonoxideSaturation() const;
   //@}
 
@@ -94,7 +94,7 @@ public:
   /// %Test if member has been allocated
   virtual bool HasHematocrit() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalarFraction& GetHematocrit();
+  virtual SEScalar0To1& GetHematocrit();
   virtual double GetHematocrit() const;
   //@}
 
@@ -114,7 +114,7 @@ public:
    /// %Test if member has been allocated
   virtual bool HasOxygenSaturation() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalarFraction& GetOxygenSaturation();
+  virtual SEScalar0To1& GetOxygenSaturation();
   virtual double GetOxygenSaturation() const;
   //@}
 
@@ -144,7 +144,7 @@ public:
   /// %Test if member has been allocated
   virtual bool HasPulseOximetry() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalarFraction& GetPulseOximetry();
+  virtual SEScalar0To1& GetPulseOximetry();
   virtual double GetPulseOximetry() const;
   //@}
 
@@ -174,7 +174,7 @@ public:
    /// %Test if member has been allocated
   virtual bool HasShuntFraction() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalarFraction& GetShuntFraction();
+  virtual SEScalar0To1& GetShuntFraction();
   virtual double GetShuntFraction() const;
   //@}
 
@@ -194,7 +194,7 @@ public:
   /// %Test if member has been allocated
   virtual bool HasVolumeFractionNeutralPhospholipidInPlasma() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalarFraction& GetVolumeFractionNeutralPhospholipidInPlasma();
+  virtual SEScalar0To1& GetVolumeFractionNeutralPhospholipidInPlasma();
   virtual double GetVolumeFractionNeutralPhospholipidInPlasma() const;
   //@}
 
@@ -204,7 +204,7 @@ public:
   /// %Test if member has been allocated
   virtual bool HasVolumeFractionNeutralLipidInPlasma() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalarFraction& GetVolumeFractionNeutralLipidInPlasma();
+  virtual SEScalar0To1& GetVolumeFractionNeutralLipidInPlasma();
   virtual double GetVolumeFractionNeutralLipidInPlasma() const;
   //@}
 
@@ -304,20 +304,20 @@ protected:
   SEScalar*                       m_BloodPH;
   SEScalarHeatCapacitancePerMass* m_BloodSpecificHeat;
   SEScalarMassPerVolume*          m_BloodUreaNitrogenConcentration;
-  SEScalarFraction*               m_CarbonDioxideSaturation;
-  SEScalarFraction*               m_CarbonMonoxideSaturation;
-  SEScalarFraction*               m_Hematocrit;
+  SEScalar0To1*               m_CarbonDioxideSaturation;
+  SEScalar0To1*               m_CarbonMonoxideSaturation;
+  SEScalar0To1*               m_Hematocrit;
   SEScalarMass*                   m_HemoglobinContent;
-  SEScalarFraction*               m_OxygenSaturation;
+  SEScalar0To1*               m_OxygenSaturation;
   SEScalarAmountPerVolume*        m_Phosphate;
   SEScalarVolume*                 m_PlasmaVolume;
-  SEScalarFraction*               m_PulseOximetry;
+  SEScalar0To1*               m_PulseOximetry;
   SEScalarAmountPerVolume*        m_RedBloodCellCount;
-  SEScalarFraction*               m_ShuntFraction;
+  SEScalar0To1*               m_ShuntFraction;
   SEScalarAmountPerVolume*        m_StrongIonDifference;
   SEScalarMassPerVolume*          m_TotalProteinConcentration;
-  SEScalarFraction*               m_VolumeFractionNeutralPhospholipidInPlasma;
-  SEScalarFraction*               m_VolumeFractionNeutralLipidInPlasma;
+  SEScalar0To1*               m_VolumeFractionNeutralPhospholipidInPlasma;
+  SEScalar0To1*               m_VolumeFractionNeutralLipidInPlasma;
   SEScalarAmountPerVolume*        m_WhiteBloodCellCount;
   
   SEScalarPressure*                m_ArterialCarbonDioxidePressure;
