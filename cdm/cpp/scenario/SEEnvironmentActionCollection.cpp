@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "system/environment/SEEnvironment.h"
 #include "substance/SESubstanceFraction.h"
 #include "properties/SEScalarLengthPerTime.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"
 #include "properties/SEScalarHeatResistanceArea.h"
 #include "properties/SEScalarPressure.h"

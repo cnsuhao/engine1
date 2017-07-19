@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/CardiacArrestData.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SECardiacArrest : public SEPatientAction
 {
@@ -28,16 +26,17 @@ public:
   virtual bool IsActive() const;
   virtual void SetActive(bool b);
 
-  virtual bool Load(const CDM::CardiacArrestData& in);
-  virtual CDM::CardiacArrestData* Unload() const;
+  static void Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst);
+  static cdm::CardiacArrestData* Unload(const SECardiacArrest& src);
 protected:
-  virtual void Unload(CDM::CardiacArrestData& data) const;
+	static void Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst);
+	static void Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst);
 
 public:
 
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  CDM::enumOnOff::value m_State;
+  cdm::eSwitch m_State;
 
 };

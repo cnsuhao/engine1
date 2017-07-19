@@ -32,21 +32,21 @@ protected:
 public:
 
   virtual bool HasReactivityModifier() const;
-  virtual SEScalarNeg1To1& GetReactivityModifier();
+  virtual SEScalarNegative1To1& GetReactivityModifier();
   virtual double GetReactivityModifier() const;
 
   virtual bool HasShapeModifier() const;
-  virtual SEScalarNeg1To1& GetShapeModifier();
+  virtual SEScalarNegative1To1& GetShapeModifier();
   virtual double GetShapeModifier() const;
 
   virtual bool HasSizeModifier() const;
-  virtual SEScalarNeg1To1& GetSizeModifier();
+  virtual SEScalarNegative1To1& GetSizeModifier();
   virtual double GetSizeModifier() const;
 
 protected:
 
-  SEScalarNeg1To1* m_ReactivityModifier;
-  SEScalarNeg1To1* m_ShapeModifier;
-  SEScalarNeg1To1* m_SizeModifier;
+  SEScalarNegative1To1* m_ReactivityModifier;
+  SEScalarNegative1To1* m_ShapeModifier;
+  SEScalarNegative1To1* m_SizeModifier;
 
 };

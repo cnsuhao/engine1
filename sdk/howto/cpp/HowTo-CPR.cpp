@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SEEnergySystem.h"
 #include "system/physiology/SERespiratorySystem.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarForce.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMass.h"

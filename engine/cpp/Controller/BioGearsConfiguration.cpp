@@ -39,7 +39,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/ScalarHeatConductanceData.hxx"
 #include "properties/SEScalarEnergyPerMass.h"
 #include "bind/ScalarEnergyPerMassData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarVolume.h"
 #include "bind/ScalarVolumeData.hxx"
@@ -1400,10 +1400,10 @@ bool BioGearsConfiguration::HasMinimumBloodVolumeFraction() const
 {
   return m_MinimumBloodVolumeFraction == nullptr ? false : m_MinimumBloodVolumeFraction->IsValid();
 }
-SEScalarFraction& BioGearsConfiguration::GetMinimumBloodVolumeFraction()
+SEScalar0To1& BioGearsConfiguration::GetMinimumBloodVolumeFraction()
 {
   if (m_MinimumBloodVolumeFraction == nullptr)
-    m_MinimumBloodVolumeFraction = new SEScalarFraction();
+    m_MinimumBloodVolumeFraction = new SEScalar0To1();
   return *m_MinimumBloodVolumeFraction;
 }
 double BioGearsConfiguration::GetMinimumBloodVolumeFraction() const
@@ -1993,10 +1993,10 @@ bool BioGearsConfiguration::HasCalciumAbsorbtionFraction() const
 {
   return m_CalciumAbsorbtionFraction == nullptr ? false : m_CalciumAbsorbtionFraction->IsValid();
 }
-SEScalarFraction& BioGearsConfiguration::GetCalciumAbsorbtionFraction()
+SEScalar0To1& BioGearsConfiguration::GetCalciumAbsorbtionFraction()
 {
   if (m_CalciumAbsorbtionFraction == nullptr)
-    m_CalciumAbsorbtionFraction = new SEScalarFraction();
+    m_CalciumAbsorbtionFraction = new SEScalar0To1();
   return *m_CalciumAbsorbtionFraction;
 }
 double BioGearsConfiguration::GetCalciumAbsorbtionFraction() const
@@ -2010,10 +2010,10 @@ bool BioGearsConfiguration::HasCarbohydrateAbsorbtionFraction() const
 {
   return m_CarbohydrateAbsorbtionFraction == nullptr ? false : m_CarbohydrateAbsorbtionFraction->IsValid();
 }
-SEScalarFraction& BioGearsConfiguration::GetCarbohydrateAbsorbtionFraction()
+SEScalar0To1& BioGearsConfiguration::GetCarbohydrateAbsorbtionFraction()
 {
   if (m_CarbohydrateAbsorbtionFraction == nullptr)
-    m_CarbohydrateAbsorbtionFraction = new SEScalarFraction();
+    m_CarbohydrateAbsorbtionFraction = new SEScalar0To1();
   return *m_CarbohydrateAbsorbtionFraction;
 }
 double BioGearsConfiguration::GetCarbohydrateAbsorbtionFraction() const
@@ -2093,10 +2093,10 @@ bool BioGearsConfiguration::HasFatAbsorbtionFraction() const
 {
   return m_FatAbsorbtionFraction == nullptr ? false : m_FatAbsorbtionFraction->IsValid();
 }
-SEScalarFraction& BioGearsConfiguration::GetFatAbsorbtionFraction()
+SEScalar0To1& BioGearsConfiguration::GetFatAbsorbtionFraction()
 {
   if (m_FatAbsorbtionFraction == nullptr)
-    m_FatAbsorbtionFraction = new SEScalarFraction();
+    m_FatAbsorbtionFraction = new SEScalar0To1();
   return *m_FatAbsorbtionFraction;
 }
 double BioGearsConfiguration::GetFatAbsorbtionFraction() const
@@ -2110,10 +2110,10 @@ bool BioGearsConfiguration::HasProteinToUreaFraction() const
 {
   return m_ProteinToUreaFraction == nullptr ? false : m_ProteinToUreaFraction->IsValid();
 }
-SEScalarFraction& BioGearsConfiguration::GetProteinToUreaFraction()
+SEScalar0To1& BioGearsConfiguration::GetProteinToUreaFraction()
 {
   if (m_ProteinToUreaFraction == nullptr)
-    m_ProteinToUreaFraction = new SEScalarFraction();
+    m_ProteinToUreaFraction = new SEScalar0To1();
   return *m_ProteinToUreaFraction;
 }
 double BioGearsConfiguration::GetProteinToUreaFraction() const

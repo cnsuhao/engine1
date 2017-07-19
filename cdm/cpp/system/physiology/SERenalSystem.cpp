@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarArea.h"
 #include "bind/ScalarAreaData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "bind/ScalarVolumePerTimePressureData.hxx"
@@ -559,10 +559,10 @@ bool SERenalSystem::HasFiltrationFraction() const
 {
   return m_FiltrationFraction == nullptr ? false : m_FiltrationFraction->IsValid();
 }
-SEScalarFraction& SERenalSystem::GetFiltrationFraction()
+SEScalar0To1& SERenalSystem::GetFiltrationFraction()
 {
   if (m_FiltrationFraction == nullptr)
-    m_FiltrationFraction = new SEScalarFraction();
+    m_FiltrationFraction = new SEScalar0To1();
   return *m_FiltrationFraction;
 }
 double SERenalSystem::GetFiltrationFraction() const
@@ -746,10 +746,10 @@ bool SERenalSystem::HasLeftFiltrationFraction() const
 {
   return m_LeftFiltrationFraction == nullptr ? false : m_LeftFiltrationFraction->IsValid();
 }
-SEScalarFraction& SERenalSystem::GetLeftFiltrationFraction()
+SEScalar0To1& SERenalSystem::GetLeftFiltrationFraction()
 {
   if (m_LeftFiltrationFraction == nullptr)
-    m_LeftFiltrationFraction = new SEScalarFraction();
+    m_LeftFiltrationFraction = new SEScalar0To1();
   return *m_LeftFiltrationFraction;
 }
 double SERenalSystem::GetLeftFiltrationFraction() const
@@ -1154,10 +1154,10 @@ bool SERenalSystem::HasRightFiltrationFraction() const
 {
   return m_RightFiltrationFraction == nullptr ? false : m_RightFiltrationFraction->IsValid();
 }
-SEScalarFraction& SERenalSystem::GetRightFiltrationFraction()
+SEScalar0To1& SERenalSystem::GetRightFiltrationFraction()
 {
   if (m_RightFiltrationFraction == nullptr)
-    m_RightFiltrationFraction = new SEScalarFraction();
+    m_RightFiltrationFraction = new SEScalar0To1();
   return *m_RightFiltrationFraction;
 }
 double SERenalSystem::GetRightFiltrationFraction() const

@@ -44,7 +44,7 @@ public:
   virtual void InvalidateState();
 
   virtual bool HasSubstanceFraction() const;
-  virtual SEScalarFraction& GetSubstanceFraction();
+  virtual SEScalar0To1& GetSubstanceFraction();
   virtual double GetSubstanceFraction() const;
 
   virtual bool HasSubstance() const;
@@ -58,7 +58,7 @@ protected:
 
   CDM::enumOnOff::value m_State;
   const SESubstance*    m_Substance;
-  SEScalarFraction*     m_SubstanceFraction;
+  SEScalar0To1*     m_SubstanceFraction;
 
   SESubstanceManager&   m_Substances;
 };

@@ -28,7 +28,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarPowerPerAreaTemperatureToTheFourth.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarHeatCapacitancePerAmount.h"

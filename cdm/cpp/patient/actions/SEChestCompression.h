@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/enumOnOff.hxx"
-#include "bind/ChestCompressionData.hxx"
 
 class DLL_DECL SEChestCompression : public SEPatientAction
 {
@@ -27,10 +25,10 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-
+  //jbw - How do I do this generically without Force or ForceScale?
   virtual bool Load(const CDM::ChestCompressionData& in);
 protected:
-  virtual void Unload(CDM::ChestCompressionData& data) const;
+	virtual void Unload(CDM::ChestCompressionData& data) const;
 
 public:
 

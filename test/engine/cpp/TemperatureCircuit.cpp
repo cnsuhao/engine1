@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarHeatResistanceArea.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarEnergy.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "circuit/SECircuit.h"
 #include "circuit/SECircuitNode.h"
 #include "circuit/SECircuitPath.h"

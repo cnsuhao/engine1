@@ -24,7 +24,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/tissue/SETissueCompartment.h"
 #include "compartment/fluid/SEGasCompartment.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerVolume.h"

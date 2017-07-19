@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "BioGearsEngineTest.h"
 #include "circuit/fluid/SEFluidCircuit.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "substance/SESubstanceFraction.h"
 #include "utils/TimingProfile.h"
 #include "utils/testing/SETestReport.h"

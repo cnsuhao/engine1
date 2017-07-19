@@ -45,7 +45,7 @@ public:
   virtual double GetVolume(const VolumeUnit& unit) const;
 
   virtual bool HasVolumeFraction() const;
-  virtual SEScalarFraction& GetVolumeFraction();
+  virtual SEScalar0To1& GetVolumeFraction();
   virtual double GetVolumeFraction() const;
 
 protected:
@@ -55,11 +55,11 @@ protected:
   virtual SEScalarVolume& GetExtensive() { return GetVolume(); }
 
   virtual bool HasIntensive() const { return HasVolumeFraction(); }
-  virtual SEScalarFraction& GetIntensive() { return GetVolumeFraction(); }
+  virtual SEScalar0To1& GetIntensive() { return GetVolumeFraction(); }
 
   SEScalarPressure* m_PartialPressure;
   SEScalarVolume*   m_Volume;
-  SEScalarFraction* m_VolumeFraction;
+  SEScalar0To1* m_VolumeFraction;
 
   SEGasCompartment&        m_Compartment;
   std::vector<SEGasSubstanceQuantity*> m_Children;

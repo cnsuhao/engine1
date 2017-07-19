@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "system/physiology/SEPupillaryResponse.h"
-#include "properties/SEScalarNeg1To1.h"
+#include "properties/SEScalarNegative1To1.h"
 #include "bind/ScalarNeg1To1Data.hxx"
 
 SEPupillaryResponse::SEPupillaryResponse(Logger* logger)
@@ -77,10 +77,10 @@ bool SEPupillaryResponse::HasReactivityModifier() const
 {
   return m_ReactivityModifier == nullptr ? false : m_ReactivityModifier->IsValid();
 }
-SEScalarNeg1To1& SEPupillaryResponse::GetReactivityModifier()
+SEScalarNegative1To1& SEPupillaryResponse::GetReactivityModifier()
 {
   if (m_ReactivityModifier == nullptr)
-    m_ReactivityModifier = new SEScalarNeg1To1();
+    m_ReactivityModifier = new SEScalarNegative1To1();
   return *m_ReactivityModifier;
 }
 double SEPupillaryResponse::GetReactivityModifier() const
@@ -94,10 +94,10 @@ bool SEPupillaryResponse::HasShapeModifier() const
 {
   return m_ShapeModifier == nullptr ? false : m_ShapeModifier->IsValid();
 }
-SEScalarNeg1To1& SEPupillaryResponse::GetShapeModifier()
+SEScalarNegative1To1& SEPupillaryResponse::GetShapeModifier()
 {
   if (m_ShapeModifier == nullptr)
-    m_ShapeModifier = new SEScalarNeg1To1();
+    m_ShapeModifier = new SEScalarNegative1To1();
   return *m_ShapeModifier;
 }
 double SEPupillaryResponse::GetShapeModifier() const
@@ -111,10 +111,10 @@ bool SEPupillaryResponse::HasSizeModifier() const
 {
   return m_SizeModifier == nullptr ? false : m_SizeModifier->IsValid();
 }
-SEScalarNeg1To1& SEPupillaryResponse::GetSizeModifier()
+SEScalarNegative1To1& SEPupillaryResponse::GetSizeModifier()
 {
   if (m_SizeModifier == nullptr)
-    m_SizeModifier = new SEScalarNeg1To1();
+    m_SizeModifier = new SEScalarNegative1To1();
   return *m_SizeModifier;
 }
 double SEPupillaryResponse::GetSizeModifier() const

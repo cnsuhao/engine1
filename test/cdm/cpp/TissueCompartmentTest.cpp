@@ -24,7 +24,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/SECompartmentManager.h"
 #include "engine/PhysiologyEngineConfiguration.h"
 
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerMass.h"
 #include "properties/SEScalarMassPerVolume.h"

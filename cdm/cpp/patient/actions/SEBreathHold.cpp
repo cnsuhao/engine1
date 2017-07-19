@@ -1,4 +1,4 @@
-/**************************************************************************************
+/*******************************************************cdm::ConsciousRespirationData_BreathHoldData*******************************
 Copyright 2015 Applied Research Associates, Inc.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the License
@@ -12,10 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/actions/SEBreathHold.h"
-#include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 #include "properties/SEScalarTime.h"
-#include "bind/ScalarTimeData.hxx"
 
 SEBreathHold::SEBreathHold() : SEConsciousRespirationCommand()
 {
@@ -43,25 +40,27 @@ bool SEBreathHold::IsActive() const
   return SEConsciousRespirationCommand::IsActive();
 }
 
-bool SEBreathHold::Load(const CDM::BreathHoldData& in)
+void SEBreathHold::Load(const cdm::ConsciousRespirationData_BreathHoldData& src, SEBreathHold& dst)
 {
-  SEConsciousRespirationCommand::Load(in);
-  GetPeriod().Load(in.Period());
-  return true;
+	SEBreathHold::Serialize(src, dst);
+}
+void SEBreathHold::Serialize(const cdm::ConsciousRespirationData_BreathHoldData& src, SEBreathHold& dst)
+{
+	dst.Clear();
+	if (src.has_period())
+		SEScalarTime::Load(src.period(), dst.GetPeriod());
 }
 
-CDM::BreathHoldData* SEBreathHold::Unload() const
+cdm::ConsciousRespirationData_BreathHoldData* SEBreathHold::Unload(const SEBreathHold& src)
 {
-  CDM::BreathHoldData*data(new CDM::BreathHoldData());
-  Unload(*data);
-  return data;
+	cdm::ConsciousRespirationData_BreathHoldData* dst = new cdm::ConsciousRespirationData_BreathHoldData();
+	SEBreathHold::Serialize(src, *dst);
+	return dst;
 }
-
-void SEBreathHold::Unload(CDM::BreathHoldData& data) const
+void SEBreathHold::Serialize(const SEBreathHold& src, cdm::ConsciousRespirationData_BreathHoldData& dst)
 {
-  SEConsciousRespirationCommand::Unload(data);
-  if (m_Period != nullptr)
-    data.Period(std::unique_ptr<CDM::ScalarTimeData>(m_Period->Unload()));
+	if (src.HasPeriod())
+		dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
 }
 
 bool SEBreathHold::HasPeriod() const

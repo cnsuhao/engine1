@@ -32,20 +32,22 @@ bool SEEnvironmentAction::IsValid() const
   return SEAction::IsValid();
 }
 
-bool SEEnvironmentAction::Load(const CDM::EnvironmentActionData& in)
+void SEEnvironmentAction::Load(const cdm::EnvironmentData& src, SEEnvironmentAction& dst)
 {
-  SEAction::Load(in);
-  return true;
+	SEEnvironmentAction::Serialize(src, dst);
+}
+void SEEnvironmentAction::Serialize(const cdm::EnvironmentData& src, SEEnvironmentAction& dst)
+{
+	dst.Clear();
 }
 
-CDM::EnvironmentActionData* SEEnvironmentAction::Unload() const
+cdm::EnvironmentData* SEEnvironmentAction::Unload(const SEEnvironmentAction& src)
 {
-  CDM::EnvironmentActionData* data = new CDM::EnvironmentActionData();
-  Unload(*data);
-  return data;
+	cdm::EnvironmentData* dst = new cdm::EnvironmentData();
+	SEEnvironmentAction::Serialize(src, *dst);
+	return dst;
 }
-
-void SEEnvironmentAction::Unload(CDM::EnvironmentActionData& data) const
+void SEEnvironmentAction::Serialize(const SEEnvironmentAction& src, cdm::EnvironmentActionData& dst)
 {
-  SEAction::Unload(data);
+
 }

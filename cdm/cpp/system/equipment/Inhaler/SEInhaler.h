@@ -69,7 +69,7 @@ public:
   virtual double GetMeteredDose(const MassUnit& unit) const;
 
   virtual bool HasNozzleLoss() const;
-  virtual SEScalarFraction& GetNozzleLoss();
+  virtual SEScalar0To1& GetNozzleLoss();
   virtual double GetNozzleLoss() const;
 
   virtual bool HasSpacerVolume() const;
@@ -86,7 +86,7 @@ protected:
 
   CDM::enumOnOff::value m_State;
   SEScalarMass*         m_MeteredDose;
-  SEScalarFraction*     m_NozzleLoss;
+  SEScalar0To1*     m_NozzleLoss;
   SEScalarVolume*       m_SpacerVolume;
   const SESubstance*    m_Substance;
 

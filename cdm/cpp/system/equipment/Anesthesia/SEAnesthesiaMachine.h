@@ -83,7 +83,7 @@ public:
   virtual double GetInspiratoryExpiratoryRatio() const;
     
   virtual bool HasOxygenFraction() const;
-  virtual SEScalarFraction& GetOxygenFraction();
+  virtual SEScalar0To1& GetOxygenFraction();
   virtual double GetOxygenFraction() const;
 
   virtual CDM::enumAnesthesiaMachineOxygenSource::value GetOxygenSource() const;
@@ -142,7 +142,7 @@ protected:
   CDM::enumAnesthesiaMachineConnection::value            m_Connection;
   SEScalarVolumePerTime*                                 m_InletFlow;
   SEScalar*                                               m_InspiratoryExpiratoryRatio;
-  SEScalarFraction*                                       m_OxygenFraction;
+  SEScalar0To1*                                       m_OxygenFraction;
   CDM::enumAnesthesiaMachineOxygenSource::value          m_OxygenSource;
   SEScalarPressure*                                       m_PositiveEndExpiredPressure;
   CDM::enumAnesthesiaMachinePrimaryGas::value             m_PrimaryGas;

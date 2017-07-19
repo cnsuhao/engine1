@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEChestCompression.h"
-#include "bind/ChestCompressionForceScaleData.hxx"
 
 class DLL_DECL SEChestCompressionForceScale : public SEChestCompression
 {
@@ -25,10 +24,12 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::ChestCompressionForceScaleData& in);
-  virtual CDM::ChestCompressionForceScaleData* Unload() const;
+  static void Load(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst);
+  static cdm::ChestCompressionForceScaleData* Unload(const SEChestCompressionForceScale& src);
 protected:
-  virtual void Unload(CDM::ChestCompressionForceScaleData& data) const;
+	static void Serialize(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst);
+	static void Serialize(const SEChestCompressionForceScale& src, cdm::ChestCompressionForceScaleData& dst);
+
 public:
 
   virtual bool HasForceScale() const;

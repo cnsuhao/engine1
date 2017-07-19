@@ -29,7 +29,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/SECompartmentManager.h"
 #include "engine/PhysiologyEngineConfiguration.h"
 
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTime.h"

@@ -65,7 +65,7 @@ public:
   virtual double GetDiastolicArterialPressure(const PressureUnit& unit) const;
 
   virtual bool HasHeartEjectionFraction() const;
-  virtual SEScalarFraction& GetHeartEjectionFraction();
+  virtual SEScalar0To1& GetHeartEjectionFraction();
   virtual double GetHeartEjectionFraction() const;
 
   virtual bool HasHeartRate() const;
@@ -163,7 +163,7 @@ protected:
   SEScalarVolumePerTime*                 m_CerebralBloodFlow;
   SEScalarPressure*                      m_CerebralPerfusionPressure;
   SEScalarPressure*                      m_DiastolicArterialPressure;
-  SEScalarFraction*                      m_HeartEjectionFraction;
+  SEScalar0To1*                      m_HeartEjectionFraction;
   SEScalarFrequency*                     m_HeartRate;
   CDM::enumHeartRhythm::value            m_HeartRhythm;
   SEScalarVolume*                        m_HeartStrokeVolume;  

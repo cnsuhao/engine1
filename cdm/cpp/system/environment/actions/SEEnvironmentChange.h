@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
-#include "bind/EnvironmentChangeData.hxx"
 
 class DLL_DECL SEEnvironmentChange : public SEEnvironmentAction
 {
@@ -25,10 +24,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::EnvironmentChangeData& in);
-  virtual CDM::EnvironmentChangeData* Unload() const;
+  static void Load(const cdm::EnvironmentData& src, SEEnvironmentChange& dst);
+  static cdm::EnvironmentData* Unload(const SEEnvironmentChange& src);
 protected:
-  virtual void Unload(CDM::EnvironmentChangeData& data) const;
+	static void Serialize(const cdm::EnvironmentData& src, SEEnvironmentChange& dst);
+	static void Serialize(const SEEnvironmentChange& src, cdm::EnvironmentData& dst);
 
 public:
   

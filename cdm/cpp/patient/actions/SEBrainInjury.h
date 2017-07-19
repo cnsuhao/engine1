@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/BrainInjuryData.hxx"
-#include "bind/enumBrainInjuryType.hxx"
 
 class DLL_DECL SEBrainInjury : public SEPatientAction
 {
@@ -27,18 +25,19 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::BrainInjuryData& in);
-  virtual CDM::BrainInjuryData* Unload() const;
+  static void Load(const cdm::BrainInjuryData& src, SEBrainInjury& dst);
+  static cdm::BrainInjuryData* Unload(const SEBrainInjury& src);
 protected:
-  virtual void Unload(CDM::BrainInjuryData& data) const;
+	static void Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst);
+	static void Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst);
 
 public:
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();  
 
-  virtual CDM::enumBrainInjuryType::value GetType() const;
-  virtual void SetType(CDM::enumBrainInjuryType::value t);
+  virtual cdm::BrainInjuryData_eType GetType() const;
+  virtual void SetType(cdm::BrainInjuryData_eType t);
   virtual bool HasType() const;
   virtual void InvalidateType();
 
@@ -46,5 +45,5 @@ public:
 
 protected:
   SEScalar0To1*                   m_Severity;
-  CDM::enumBrainInjuryType::value m_Type;
-};      
+  cdm::BrainInjuryData_eType      m_Type;
+};

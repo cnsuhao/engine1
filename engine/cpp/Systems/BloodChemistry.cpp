@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 #include "system/physiology/SECardiovascularSystem.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"

@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEUseInhaler.h"

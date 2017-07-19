@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "scenario/SEAction.h"
-#include "bind/EnvironmentActionData.hxx"
+#include "bind/cdm/EnvironmentActions.pb.h"
 
 class DLL_DECL SEEnvironmentAction : public SEAction
 {
@@ -24,10 +24,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::EnvironmentActionData& in);
-  virtual CDM::EnvironmentActionData* Unload() const;
+  static void Load(const cdm::EnvironmentData& src, SEEnvironmentAction& dst);
+  static cdm::EnvironmentData* Unload(const SEEnvironmentAction& src);
 protected:
-  virtual void Unload(CDM::EnvironmentActionData& data) const;
+	static void Serialize(const cdm::EnvironmentData& src, SEEnvironmentAction& dst);
+	static void Serialize(const SEEnvironmentAction& src, cdm::EnvironmentData& dst);
 
 public:
   virtual void ToString(std::ostream &str) const = 0;

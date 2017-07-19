@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/ScalarPressureData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
 #include "bind/ScalarVolumePerTimeData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceFraction.h"

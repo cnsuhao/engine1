@@ -34,7 +34,7 @@ protected:
 public:
 
   virtual bool HasBronchodilationLevel() const;
-  virtual SEScalarFraction& GetBronchodilationLevel();
+  virtual SEScalar0To1& GetBronchodilationLevel();
   virtual double GetBronchodilationLevel() const;
 
   virtual bool HasHeartRateChange() const;
@@ -46,7 +46,7 @@ public:
   virtual double GetMeanBloodPressureChange(const PressureUnit& unit) const;
 
   virtual bool HasNeuromuscularBlockLevel() const;
-  virtual SEScalarFraction& GetNeuromuscularBlockLevel();
+  virtual SEScalar0To1& GetNeuromuscularBlockLevel();
   virtual double GetNeuromuscularBlockLevel() const;
 
   virtual bool HasPulsePressureChange() const;
@@ -63,7 +63,7 @@ public:
   virtual double GetRespirationRateChange(const FrequencyUnit& unit) const;
 
   virtual bool HasSedationLevel() const;
-  virtual SEScalarFraction& GetSedationLevel();
+  virtual SEScalar0To1& GetSedationLevel();
   virtual double GetSedationLevel() const;
 
   virtual bool HasTidalVolumeChange() const;
@@ -71,19 +71,19 @@ public:
   virtual double GetTidalVolumeChange(const VolumeUnit& unit) const;
 
   virtual bool HasTubularPermeabilityChange() const;
-  virtual SEScalarFraction& GetTubularPermeabilityChange();
+  virtual SEScalar0To1& GetTubularPermeabilityChange();
   virtual double GetTubularPermeabilityChange() const;
 
 protected:
 
-  SEScalarFraction*          m_BronchodilationLevel;
+  SEScalar0To1*          m_BronchodilationLevel;
   SEScalarFrequency*         m_HeartRateChange;
   SEScalarPressure*          m_MeanBloodPressureChange;
-  SEScalarFraction*          m_NeuromuscularBlockLevel;
+  SEScalar0To1*          m_NeuromuscularBlockLevel;
   SEScalarPressure*          m_PulsePressureChange;
   SEPupillaryResponse*       m_PupillaryResponse;
   SEScalarFrequency*         m_RespirationRateChange;
-  SEScalarFraction*          m_SedationLevel;
+  SEScalar0To1*          m_SedationLevel;
   SEScalarVolume*            m_TidalVolumeChange;
-  SEScalarFraction*          m_TubularPermeabilityChange;
+  SEScalar0To1*          m_TubularPermeabilityChange;
 };

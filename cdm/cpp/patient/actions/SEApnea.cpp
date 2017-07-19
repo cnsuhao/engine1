@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SEApnea.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEApnea::SEApnea() : SEPatientAction()
 {
@@ -43,25 +42,27 @@ bool SEApnea::IsActive() const
   return IsValid() ? !m_Severity->IsZero() : false;
 }
 
-bool SEApnea::Load(const CDM::ApneaData& in)
+void SEApnea::Load(const cdm::ApneaData& src, SEApnea& dst)
 {
-  SEPatientAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+	SEApnea::Serialize(src, dst);
+}
+void SEApnea::Serialize(const cdm::ApneaData& src, SEApnea& dst)
+{
+	dst.Clear();
+	if (src.has_severity())
+		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::ApneaData* SEApnea::Unload() const
+cdm::ApneaData* SEApnea::Unload(const SEApnea& src)
 {
-  CDM::ApneaData*data(new CDM::ApneaData());
-  Unload(*data);
-  return data;
+	cdm::ApneaData* dst = new cdm::ApneaData();
+	SEApnea::Serialize(src, *dst);
+	return dst;
 }
-
-void SEApnea::Unload(CDM::ApneaData& data) const
+void SEApnea::Serialize(const SEApnea& src, cdm::ApneaData& dst)
 {
-  SEPatientAction::Unload(data);
-  if(m_Severity!=nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+	if (src.HasSeverity())
+		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

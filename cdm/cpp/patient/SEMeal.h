@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/MealData.hxx"
 #include "patient/SENutrition.h"
 
 class DLL_DECL SEMeal : public SENutrition
@@ -23,10 +22,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::MealData& in);
-  virtual CDM::MealData* Unload() const;
+  static void Load(const cdm::MealData& src, SEMeal& dst);
+  static cdm::MealData* Unload(const SEMeal& src);
 protected:
-  virtual void Unload(CDM::MealData& data) const;
+	static void Serialize(const cdm::MealData& src, SEMeal& dst);
+	static void Serialize(const SEMeal& src, cdm::MealData& dst);
 
 public:
 

@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "bind/ScalarAmountPerVolumeData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarMass.h"
 #include "bind/ScalarMassData.hxx"
@@ -364,10 +364,10 @@ bool SEBloodChemistrySystem::HasCarbonDioxideSaturation() const
 {
   return m_CarbonDioxideSaturation == nullptr ? false : m_CarbonDioxideSaturation->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetCarbonDioxideSaturation()
+SEScalar0To1& SEBloodChemistrySystem::GetCarbonDioxideSaturation()
 {
   if (m_CarbonDioxideSaturation == nullptr)
-    m_CarbonDioxideSaturation = new SEScalarFraction();
+    m_CarbonDioxideSaturation = new SEScalar0To1();
   return *m_CarbonDioxideSaturation;
 }
 double SEBloodChemistrySystem::GetCarbonDioxideSaturation() const
@@ -381,10 +381,10 @@ bool SEBloodChemistrySystem::HasCarbonMonoxideSaturation() const
 {
   return m_CarbonMonoxideSaturation == nullptr ? false : m_CarbonMonoxideSaturation->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetCarbonMonoxideSaturation()
+SEScalar0To1& SEBloodChemistrySystem::GetCarbonMonoxideSaturation()
 {
   if (m_CarbonMonoxideSaturation == nullptr)
-    m_CarbonMonoxideSaturation = new SEScalarFraction();
+    m_CarbonMonoxideSaturation = new SEScalar0To1();
   return *m_CarbonMonoxideSaturation;
 }
 double SEBloodChemistrySystem::GetCarbonMonoxideSaturation() const
@@ -398,10 +398,10 @@ bool SEBloodChemistrySystem::HasHematocrit() const
 {
   return m_Hematocrit==nullptr?false:m_Hematocrit->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetHematocrit()
+SEScalar0To1& SEBloodChemistrySystem::GetHematocrit()
 {
   if(m_Hematocrit==nullptr)
-    m_Hematocrit = new SEScalarFraction();
+    m_Hematocrit = new SEScalar0To1();
   return *m_Hematocrit;
 }
 double SEBloodChemistrySystem::GetHematocrit() const
@@ -432,10 +432,10 @@ bool SEBloodChemistrySystem::HasOxygenSaturation() const
 {
   return m_OxygenSaturation==nullptr?false:m_OxygenSaturation->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetOxygenSaturation()
+SEScalar0To1& SEBloodChemistrySystem::GetOxygenSaturation()
 {
   if(m_OxygenSaturation==nullptr)
-    m_OxygenSaturation=new SEScalarFraction();
+    m_OxygenSaturation=new SEScalar0To1();
   return *m_OxygenSaturation;
 }
 double SEBloodChemistrySystem::GetOxygenSaturation() const
@@ -483,10 +483,10 @@ bool SEBloodChemistrySystem::HasPulseOximetry() const
 {
   return m_PulseOximetry == nullptr ? false : m_PulseOximetry->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetPulseOximetry()
+SEScalar0To1& SEBloodChemistrySystem::GetPulseOximetry()
 {
   if (m_PulseOximetry == nullptr)
-    m_PulseOximetry = new SEScalarFraction();
+    m_PulseOximetry = new SEScalar0To1();
   return *m_PulseOximetry;
 }
 double SEBloodChemistrySystem::GetPulseOximetry() const
@@ -517,10 +517,10 @@ bool SEBloodChemistrySystem::HasShuntFraction() const
 {
   return m_ShuntFraction==nullptr?false:m_ShuntFraction->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetShuntFraction()
+SEScalar0To1& SEBloodChemistrySystem::GetShuntFraction()
 {
   if(m_ShuntFraction==nullptr)
-    m_ShuntFraction=new SEScalarFraction();
+    m_ShuntFraction=new SEScalar0To1();
   return *m_ShuntFraction;
 }
 double SEBloodChemistrySystem::GetShuntFraction() const
@@ -568,10 +568,10 @@ bool SEBloodChemistrySystem::HasVolumeFractionNeutralPhospholipidInPlasma() cons
 {
   return m_VolumeFractionNeutralPhospholipidInPlasma == nullptr ? false : m_VolumeFractionNeutralPhospholipidInPlasma->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetVolumeFractionNeutralPhospholipidInPlasma()
+SEScalar0To1& SEBloodChemistrySystem::GetVolumeFractionNeutralPhospholipidInPlasma()
 {
   if (m_VolumeFractionNeutralPhospholipidInPlasma == nullptr)
-    m_VolumeFractionNeutralPhospholipidInPlasma = new SEScalarFraction();
+    m_VolumeFractionNeutralPhospholipidInPlasma = new SEScalar0To1();
   return *m_VolumeFractionNeutralPhospholipidInPlasma;
 }
 double SEBloodChemistrySystem::GetVolumeFractionNeutralPhospholipidInPlasma() const
@@ -585,10 +585,10 @@ bool SEBloodChemistrySystem::HasVolumeFractionNeutralLipidInPlasma() const
 {
   return m_VolumeFractionNeutralLipidInPlasma == nullptr ? false : m_VolumeFractionNeutralLipidInPlasma->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetVolumeFractionNeutralLipidInPlasma()
+SEScalar0To1& SEBloodChemistrySystem::GetVolumeFractionNeutralLipidInPlasma()
 {
   if (m_VolumeFractionNeutralLipidInPlasma == nullptr)
-    m_VolumeFractionNeutralLipidInPlasma = new SEScalarFraction();
+    m_VolumeFractionNeutralLipidInPlasma = new SEScalar0To1();
   return *m_VolumeFractionNeutralLipidInPlasma;
 }
 double SEBloodChemistrySystem::GetVolumeFractionNeutralLipidInPlasma() const

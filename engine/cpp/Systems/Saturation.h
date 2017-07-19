@@ -33,7 +33,7 @@ public:
 
   void Initialize(SESubstanceManager& substances);
 
-  void SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalarFraction& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate);
+  void SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalar0To1& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate);
   void CalculateBloodGasDistribution(SELiquidCompartment& cmpt);
   void CalculateCarbonMonoxideSpeciesDistribution(SELiquidCompartment& cmpt);
 

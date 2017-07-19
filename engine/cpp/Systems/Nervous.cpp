@@ -25,8 +25,8 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarPressurePerVolume.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarLength.h"
-#include "properties/SEScalarFraction.h"
-#include "properties/SEScalarNeg1To1.h"
+#include "properties/SEScalar0To1.h"
+#include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalar0To1.h"
 
 #pragma warning(disable:4786)

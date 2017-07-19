@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarHeatConductance.h"
 #include "properties/SEScalarEnergyPerMass.h"
 #include "properties/SEScalarEnergy.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarEnergyPerAmount.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarAmountPerTime.h"

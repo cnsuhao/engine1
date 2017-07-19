@@ -27,7 +27,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarVolume.h"
@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarAmountPerMass.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
-#include "properties/SEScalarNeg1To1.h"
+#include "properties/SEScalarNegative1To1.h"
 
 Drugs::Drugs(BioGears& bg) : SEDrugSystem(bg.GetLogger()), m_data(bg)
 {

@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/SEMeal.h"
-#include "Serializer.h"
 #include "properties/SEScalarTime.h"
-#include "bind/ScalarTimeData.hxx"
+#include <google/protobuf/text_format.h>
 
 SEMeal::SEMeal(Logger* logger) : SENutrition(logger)
 {
@@ -33,49 +32,43 @@ void SEMeal::Clear()
 }
 
 
-bool SEMeal::Load(const CDM::MealData& in)
+void SEMeal::Load(const cdm::MealData& src, SEMeal& dst)
 {
-  SENutrition::Load(in);
-  GetElapsedTime().Load(in.ElapsedTime());  
-  return true;
+	SEMeal::Serialize(src, dst);
+}
+void SEMeal::Serialize(const cdm::MealData& src, SEMeal& dst)
+{
+	SENutrition::Serialize(src.nutrition(), dst);
+	dst.Clear();
+	if (src.has_elapsedtime())
+		SEScalarTime::Load(src.elapsedtime(), dst.GetElapsedTime());
 }
 
-CDM::MealData*  SEMeal::Unload() const
+cdm::MealData* SEMeal::Unload(const SEMeal& src)
 {
-  CDM::MealData* data = new CDM::MealData();
-  Unload(*data);
-  return data;
+	cdm::MealData* dst = new cdm::MealData();
+	SEMeal::Serialize(src, *dst);
+	return dst;
+}
+void SEMeal::Serialize(const SEMeal& src, cdm::MealData& dst)
+{
+	SENutrition::Serialize(src, *dst.mutable_nutrition());
+	if (src.HasElapsedTime())
+		dst.set_allocated_elapsedtime(SEScalarTime::Unload(*src.m_ElapsedTime));
 }
 
-void SEMeal::Unload(CDM::MealData& data) const
+bool SEMeal::LoadFile(const std::string& mealFile)
 {
-  SENutrition::Unload(data);
-  if (m_ElapsedTime != nullptr)
-    data.ElapsedTime(std::unique_ptr<CDM::ScalarTimeData>(m_ElapsedTime->Unload()));
-}
+	cdm::MealData src;
+	std::ifstream file_stream(mealFile, std::ios::in);
+	std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+	google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+	SEMeal::Load(src, *this);
+	return true;
 
-bool SEMeal::LoadFile(const std::string& MealFile)
-{
-  CDM::MealData* pData;
-  std::unique_ptr<CDM::ObjectData> data;
-
-  std::string nFile = MealFile;
-  if (nFile.find("/Meals") == std::string::npos)
-  {
-    nFile = "./Meals/";
-    nFile += MealFile;
-  }
-
-  data = Serializer::ReadFile(nFile,GetLogger());
-  pData = dynamic_cast<CDM::MealData*>(data.get());
-  if (pData == nullptr)
-  {
-    std::stringstream ss;
-    ss << "Meal file could not be read : " << MealFile << std::endl;
-    Error(ss);
-    return false;
-  }
-  return Load(*pData);
+	// If its a binary string in the file...
+	//std::ifstream binary_istream(mealFile, std::ios::in | std::ios::binary);
+	//src.ParseFromIstream(&binary_istream);
 }
 
 bool SEMeal::HasElapsedTime() const

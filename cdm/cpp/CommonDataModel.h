@@ -124,7 +124,7 @@ class CCompoundUnit;
 
 class SEScalar; class SEUnitScalar; class SEGenericScalar; class NoUnit;
 class SEScalar0To1; 
-class SEScalarNeg1To1;
+class SEScalarNegative1To1;
 class SEScalarAmount; class AmountUnit;
 class SEScalarAmountPerMass; class AmountPerMassUnit;
 class SEScalarAmountPerTime; class AmountPerTimeUnit;
@@ -145,7 +145,7 @@ class SEScalarFlowElastance; class FlowElastanceUnit;
 class SEScalarFlowInertance; class FlowInertanceUnit;
 class SEScalarFlowResistance; class FlowResistanceUnit;
 class SEScalarForce; class ForceUnit;
-class SEScalarFraction;
+class SEScalar0To1;
 class SEScalarFrequency; class FrequencyUnit;
 class SEScalarHeatCapacitance; class HeatCapacitanceUnit;
 class SEScalarHeatCapacitancePerAmount; class HeatCapacitancePerAmountUnit;

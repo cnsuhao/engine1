@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstance.h"
 
 #include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMass.h"
@@ -526,12 +526,12 @@ bool SELiquidSubstanceQuantity::HasSaturation() const
   }
   return (m_Saturation == nullptr) ? false : m_Saturation->IsValid();
 }
-SEScalarFraction& SELiquidSubstanceQuantity::GetSaturation()
+SEScalar0To1& SELiquidSubstanceQuantity::GetSaturation()
 {
   if (!m_isO2 && !m_isCO2 && !m_isCO)
     Error("Only Oxygen, CarbonMonoxide, and CarbonDioxide have Saturation");
   if (m_Saturation == nullptr)
-    m_Saturation = new SEScalarFraction();
+    m_Saturation = new SEScalar0To1();
   if (!m_Children.empty())
   {
     m_Saturation->SetReadOnly(false);

@@ -22,7 +22,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstancePharmacodynamics.h"
 #include "bind/SubstancePharmacodynamicsData.hxx"
 #include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarMass.h"
@@ -562,10 +562,10 @@ bool SESubstance::HasEndTidalFraction() const
 {
   return (m_EndTidalFraction == nullptr) ? false : m_EndTidalFraction->IsValid();
 }
-SEScalarFraction& SESubstance::GetEndTidalFraction()
+SEScalar0To1& SESubstance::GetEndTidalFraction()
 {
   if (m_EndTidalFraction == nullptr)
-    m_EndTidalFraction = new SEScalarFraction();
+    m_EndTidalFraction = new SEScalar0To1();
   return *m_EndTidalFraction;
 }
 double SESubstance::GetEndTidalFraction() const

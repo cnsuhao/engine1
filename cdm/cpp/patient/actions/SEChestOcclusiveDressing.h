@@ -12,9 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/ChestOcclusiveDressingData.hxx"
-#include "bind/enumSide.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SEChestOcclusiveDressing : public SEPatientAction
 {
@@ -29,22 +26,23 @@ public:
   virtual bool IsActive() const;
   virtual void SetActive(bool b);
 
-  virtual bool Load(const CDM::ChestOcclusiveDressingData& in);
-  virtual CDM::ChestOcclusiveDressingData* Unload() const;
+  static void Load(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst);
+  static cdm::ChestOcclusiveDressingData* Unload(const SEChestOcclusiveDressing& src);
 protected:
-  virtual void Unload(CDM::ChestOcclusiveDressingData& data) const;
+	static void Serialize(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst);
+	static void Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst);
 
 public:
 
-  virtual CDM::enumSide::value GetSide() const;
-  virtual void SetSide(CDM::enumSide::value LeftOrRight);
+  virtual cdm::eSide GetSide() const;
+  virtual void SetSide(cdm::eSide LeftOrRight);
   virtual bool HasSide() const;
   virtual void InvalidateSide();
 
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  CDM::enumSide::value m_Side;
-  CDM::enumOnOff::value m_State;
-  
+	cdm::eSide m_Side;
+	cdm::eSwitch m_State;
+ 
 };   

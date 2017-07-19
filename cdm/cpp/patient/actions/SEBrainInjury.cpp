@@ -13,12 +13,11 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEBrainInjury::SEBrainInjury() : SEPatientAction()
 {
   m_Severity=nullptr;
-  m_Type = (CDM::enumBrainInjuryType::value) - 1;
+  m_Type = (cdm::BrainInjuryData_eType) - 1;
 }
 
 SEBrainInjury::~SEBrainInjury()
@@ -31,7 +30,7 @@ void SEBrainInjury::Clear()
   
   SEPatientAction::Clear();
   SAFE_DELETE(m_Severity);
-  m_Type = (CDM::enumBrainInjuryType::value) - 1;  
+  m_Type = (cdm::BrainInjuryData_eType) - 1;
 }
 
 bool SEBrainInjury::IsValid() const
@@ -44,28 +43,30 @@ bool SEBrainInjury::IsActive() const
   return IsValid() ? !m_Severity->IsZero() : false;
 }
 
-bool SEBrainInjury::Load(const CDM::BrainInjuryData& in)
+void SEBrainInjury::Load(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
 {
-  SEPatientAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  m_Type = in.Type();
-  return true;
+	SEBrainInjury::Serialize(src, dst);
+}
+void SEBrainInjury::Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
+{
+	dst.Clear();
+	if (src.has_severity())
+		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
+	dst.SetType(src.type());
 }
 
-CDM::BrainInjuryData* SEBrainInjury::Unload() const
+cdm::BrainInjuryData* SEBrainInjury::Unload(const SEBrainInjury& src)
 {
-  CDM::BrainInjuryData*data(new CDM::BrainInjuryData());
-  Unload(*data);
-  return data;
+	cdm::BrainInjuryData* dst = new cdm::BrainInjuryData();
+	SEBrainInjury::Serialize(src, *dst);
+	return dst;
 }
-
-void SEBrainInjury::Unload(CDM::BrainInjuryData& data) const
+void SEBrainInjury::Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst)
 {
-  SEPatientAction::Unload(data);
-  if(m_Severity!=nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
-  if (HasType())
-    data.Type(m_Type);
+	if (src.HasSeverity())
+		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+	if (src.HasType())
+		dst.set_type(src.m_Type);
 }
 
 bool SEBrainInjury::HasSeverity() const
@@ -79,21 +80,21 @@ SEScalar0To1& SEBrainInjury::GetSeverity()
   return *m_Severity;
 }
 
-CDM::enumBrainInjuryType::value SEBrainInjury::GetType() const
+cdm::BrainInjuryData_eType SEBrainInjury::GetType() const
 {
   return m_Type;
 }
-void SEBrainInjury::SetType(CDM::enumBrainInjuryType::value Type)
+void SEBrainInjury::SetType(cdm::BrainInjuryData_eType Type)
 {
   m_Type = Type;
 }
 bool SEBrainInjury::HasType() const
 {
-  return m_Type == ((CDM::enumBrainInjuryType::value) - 1) ? false : true;
+  return m_Type == ((cdm::BrainInjuryData_eType) - 1) ? false : true;
 }
 void SEBrainInjury::InvalidateType()
 {
-  m_Type = (CDM::enumBrainInjuryType::value) - 1;
+  m_Type = (cdm::BrainInjuryData_eType) - 1;
 }
 
 void SEBrainInjury::ToString(std::ostream &str) const

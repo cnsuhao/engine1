@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SEGasCompartment.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 
 SEGasCompartment::SEGasCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {

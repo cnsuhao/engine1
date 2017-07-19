@@ -41,7 +41,7 @@ public:
   virtual double GetCarricoIndex(const PressureUnit& unit) const;
 
   virtual bool HasEndTidalCarbonDioxideFraction() const;
-  virtual SEScalarFraction& GetEndTidalCarbonDioxideFraction();
+  virtual SEScalar0To1& GetEndTidalCarbonDioxideFraction();
   virtual double GetEndTidalCarbonDioxideFraction() const;
 
   virtual bool HasEndTidalCarbonDioxidePressure() const;
@@ -113,7 +113,7 @@ protected:
 
   SEScalarPressure*          m_AlveolarArterialGradient;
   SEScalarPressure*          m_CarricoIndex;
-  SEScalarFraction*          m_EndTidalCarbonDioxideFraction;
+  SEScalar0To1*          m_EndTidalCarbonDioxideFraction;
   SEScalarPressure*          m_EndTidalCarbonDioxidePressure;
   SEScalarVolumePerTime*    m_ExpiratoryFlow;
   SEScalar*                  m_InspiratoryExpiratoryRatio;

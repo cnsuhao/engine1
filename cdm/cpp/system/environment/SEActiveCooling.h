@@ -41,7 +41,7 @@ public:
   virtual double GetSurfaceArea(const AreaUnit& unit) const;
 
   virtual bool HasSurfaceAreaFraction() const;
-  virtual SEScalarFraction& GetSurfaceAreaFraction();
+  virtual SEScalar0To1& GetSurfaceAreaFraction();
   virtual double GetSurfaceAreaFraction() const;
 
   virtual void ToString(std::ostream &str) const;
@@ -49,5 +49,5 @@ public:
 protected:
   SEScalarPower*       m_Power;
   SEScalarArea*         m_SurfaceArea;
-  SEScalarFraction*    m_SurfaceAreaFraction;
+  SEScalar0To1*    m_SurfaceAreaFraction;
 };

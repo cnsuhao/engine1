@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "scenario/SEAction.h"
-#include "bind/SerializeStateData.hxx"
-#include "bind/enumSerializationType.hxx"
 
 class DLL_DECL SESerializeState : public SEAction
 {
@@ -26,17 +24,18 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::SerializeStateData& in);
-  virtual CDM::SerializeStateData* Unload() const;
+  static void Load(const cdm::SerializeStateData& src, SESerializeState& dst);
+  static cdm::SerializeStateData* Unload(const SESerializeState& src);
 protected:
-  virtual void Unload(CDM::SerializeStateData& data) const;
+	static void Serialize(const cdm::SerializeStateData& src, SESerializeState& dst);
+	static void Serialize(const SESerializeState& src, cdm::SerializeStateData& dst);
 
 public:
 
   virtual void ToString(std::ostream &str) const;
 
-  virtual CDM::enumSerializationType::value GetType() const;
-  virtual void SetType(CDM::enumSerializationType::value t);
+  virtual cdm::SerializeStateData_eSerializationType GetType() const;
+  virtual void SetType(cdm::SerializeStateData_eSerializationType t);
   virtual bool HasType() const;
   virtual void InvalidateType();
 
@@ -48,5 +47,5 @@ public:
 protected:
 
   std::string                       m_Filename;
-  CDM::enumSerializationType::value m_Type;
+  cdm::SerializeStateData_eSerializationType m_Type;
 };                  

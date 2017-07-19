@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/SECompartmentManager.h"
 #include "utils/GeneralMath.h"
 #include "utils/DataTrack.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
@@ -90,7 +90,7 @@ void BioGearsEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
   //normalDissolvedCO2_gPerL = CO2ppGuess_mmHg*(44.01*0.0314) / 1000.0;
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -329,7 +329,7 @@ void BioGearsEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   double percentCO2Bound = 0.01;
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -440,7 +440,7 @@ void BioGearsEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   double percentCO2Bound = 0.01;
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -650,7 +650,7 @@ void BioGearsEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
   double percentCO2Bound = 0.01;
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -843,7 +843,7 @@ void BioGearsEngineTest::AcidBaseBloodGasTest(BioGears& bg, bloodType bloodCompa
   cmptMgr.StateChange();
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;

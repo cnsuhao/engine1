@@ -22,7 +22,7 @@ specific language governing permissions and limitations under the License.
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "properties/SEScalar.h"
 #include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarPressure.h"

@@ -21,7 +21,7 @@ specific language governing permissions and limitations under the License.
 #include "system/physiology/SERespiratorySystem.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstanceCompound.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"

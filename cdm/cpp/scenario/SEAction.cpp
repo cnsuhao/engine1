@@ -12,103 +12,56 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "scenario/SEAction.h"
-#include "bind/ActionData.hxx"
 #include "substance/SESubstanceManager.h"
 
 #include "scenario/SEAdvanceTime.h"
-#include "bind/AdvanceTimeData.hxx"
 
 #include "scenario/SESerializeState.h"
-#include "bind/SerializeStateData.hxx"
 // Environment Actions
 #include "system/environment/actions/SEEnvironmentChange.h"
-#include "bind/EnvironmentChangeData.hxx"
 #include "system/environment/actions/SEThermalApplication.h"
-#include "bind/ThermalApplicationData.hxx"
 // Anesthesia Actions
-#include "bind/AnesthesiaMachineActionData.hxx"
-#include "bind/AnesthesiaMachineConfigurationData.hxx"
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineConfiguration.h"
-#include "bind/OxygenWallPortPressureLossData.hxx"
 #include "system/equipment/Anesthesia/actions/SEOxygenWallPortPressureLoss.h"
-#include "bind/OxygenTankPressureLossData.hxx"
 #include "system/equipment/Anesthesia/actions/SEOxygenTankPressureLoss.h"
-#include "bind/ExpiratoryValveLeakData.hxx"
 #include "system/equipment/Anesthesia/actions/SEExpiratoryValveLeak.h"
-#include "bind/ExpiratoryValveObstructionData.hxx"
 #include "system/equipment/Anesthesia/actions/SEExpiratoryValveObstruction.h"
-#include "bind/InspiratoryValveLeakData.hxx"
 #include "system/equipment/Anesthesia/actions/SEInspiratoryValveLeak.h"
-#include "bind/InspiratoryValveObstructionData.hxx"
 #include "system/equipment/Anesthesia/actions/SEInspiratoryValveObstruction.h"
-#include "bind/MaskLeakData.hxx"
 #include "system/equipment/Anesthesia/actions/SEMaskLeak.h"
-#include "bind/SodaLimeFailureData.hxx"
 #include "system/equipment/Anesthesia/actions/SESodaLimeFailure.h"
-#include "bind/TubeCuffLeakData.hxx"
 #include "system/equipment/Anesthesia/actions/SETubeCuffLeak.h"
-#include "bind/VaporizerFailureData.hxx"
 #include "system/equipment/Anesthesia/actions/SEVaporizerFailure.h"
-#include "bind/VentilatorPressureLossData.hxx"
 #include "system/equipment/Anesthesia/actions/SEVentilatorPressureLoss.h"
-#include "bind/YPieceDisconnectData.hxx"
 #include "system/equipment/Anesthesia/actions/SEYPieceDisconnect.h"
 // Inhaler Actions
 #include "system/equipment/Inhaler/actions/SEInhalerConfiguration.h"
-#include "bind/InhalerConfigurationData.hxx"
 // Patient Actions
-#include "bind/PatientActionData.hxx"
-#include "bind/PatientAssessmentRequestData.hxx"
 #include "patient/actions/SEPatientAssessmentRequest.h"
-#include "bind/AcuteStressData.hxx"
 #include "patient/actions/SEAcuteStress.h"
-#include "bind/AirwayObstructionData.hxx"
 #include "patient/actions/SEAirwayObstruction.h"
-#include "bind/ApneaData.hxx"
 #include "patient/actions/SEApnea.h"
-#include "bind/AsthmaAttackData.hxx"
 #include "patient/actions/SEAsthmaAttack.h"
-#include "bind/BrainInjuryData.hxx"
 #include "patient/actions/SEBrainInjury.h"
-#include "bind/BronchoconstrictionData.hxx"
 #include "patient/actions/SEBronchoconstriction.h"
-#include "bind/CardiacArrestData.hxx"
 #include "patient/actions/SECardiacArrest.h"
-#include "bind/ChestCompressionData.hxx"
 #include "patient/actions/SEChestCompression.h"
-#include "bind/ChestCompressionForceData.hxx"
 #include "patient/actions/SEChestCompressionForce.h"
-#include "bind/ChestCompressionForceScaleData.hxx"
 #include "patient/actions/SEChestCompressionForceScale.h"
-#include "bind/ChestOcclusiveDressingData.hxx"
 #include "patient/actions/SEChestOcclusiveDressing.h"
-#include "bind/ConsciousRespirationData.hxx"
 #include "patient/actions/SEConsciousRespiration.h"
-#include "bind/ConsumeNutrientsData.hxx"
 #include "patient/actions/SEConsumeNutrients.h"
-#include "bind/IntubationData.hxx"
 #include "patient/actions/SEIntubation.h"
-#include "bind/ExerciseData.hxx"
 #include "patient/actions/SEExercise.h"
-#include "bind/HemorrhageData.hxx"
 #include "patient/actions/SEHemorrhage.h"
-#include "bind/IntubationData.hxx"
 #include "patient/actions/SEIntubation.h"
-#include "bind/MechanicalVentilationData.hxx"
 #include "patient/actions/SEMechanicalVentilation.h"
-#include "bind/NeedleDecompressionData.hxx"
 #include "patient/actions/SENeedleDecompression.h"
-#include "bind/PericardialEffusionData.hxx"
 #include "patient/actions/SEPericardialEffusion.h"
-#include "bind/SubstanceBolusData.hxx"
 #include "patient/actions/SESubstanceBolus.h"
-#include "bind/SubstanceInfusionData.hxx"
 #include "patient/actions/SESubstanceInfusion.h"
-#include "bind/SubstanceCompoundInfusionData.hxx"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "bind/TensionPneumothoraxData.hxx"
 #include "patient/actions/SETensionPneumothorax.h"
-#include "bind/UrinateData.hxx"
 #include "patient/actions/SEUrinate.h"
 
 SEAction::SEAction() : Loggable()
@@ -126,32 +79,32 @@ void SEAction::Clear()
   m_Comment="";
 }
 
-SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager& substances)
+SEAction* SEAction::newFromBind(const cdm::ActionData& data, SESubstanceManager& substances)
 {
   std::stringstream ss;
   SESubstance* substance;
   SESubstanceCompound* compound;
 
   // Anesthesia Machine Actions
-  CDM::AnesthesiaMachineConfigurationData* anConfig;
+  cdm::AnesthesiaMachineConfigurationData* anConfig;
   // Anesthesia Machine Failure Action
-  CDM::ExpiratoryValveLeakData* anExLeak;
-  CDM::ExpiratoryValveObstructionData* anExObs;
-  CDM::InspiratoryValveLeakData* anInLeak;
-  CDM::InspiratoryValveObstructionData* anInObs;
-  CDM::MaskLeakData* anMskLeak;
-  CDM::SodaLimeFailureData* anSodaFail;
-  CDM::TubeCuffLeakData* anTubLeak;
-  CDM::VaporizerFailureData* anVapFail;
-  CDM::VentilatorPressureLossData* anVentLoss;
-  CDM::YPieceDisconnectData* anYDisc;
+  cdm::ExpiratoryValveLeakData* anExLeak;
+  cdm::ExpiratoryValveObstructionData* anExObs;
+  cdm::InspiratoryValveLeakData* anInLeak;
+  cdm::InspiratoryValveObstructionData* anInObs;
+  cdm::MaskLeakData* anMskLeak;
+  cdm::SodaLimeFailureData* anSodaFail;
+  cdm::TubeCuffLeakData* anTubLeak;
+  cdm::VaporizerFailureData* anVapFail;
+  cdm::VentilatorPressureLossData* anVentLoss;
+  cdm::YPieceDisconnectData* anYDisc;
   // Anesthesia Machine Incidents
-  CDM::OxygenWallPortPressureLossData* anO2WallLoss;
-  CDM::OxygenTankPressureLossData* anO2TankLoss;
+  cdm::OxygenWallPortPressureLossData* anO2WallLoss;
+  cdm::OxygenTankPressureLossData* anO2TankLoss;
 
 
-  CDM::ActionData* action = (CDM::ActionData*)&data;
-  CDM::AdvanceTimeData* advData = dynamic_cast<CDM::AdvanceTimeData*>(action);
+  cdm::ActionData* action = (cdm::ActionData*)&data;
+  cdm::AdvanceTimeData* advData = dynamic_cast<cdm::AdvanceTimeData*>(action);
   if (advData != nullptr)
   {
     SEAdvanceTime* a = new SEAdvanceTime();
@@ -159,7 +112,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
     return a;
   }
 
-  CDM::SerializeStateData* stData = dynamic_cast<CDM::SerializeStateData*>(action);
+  cdm::SerializeStateData* stData = dynamic_cast<cdm::SerializeStateData*>(action);
   if (stData != nullptr)
   {
     SESerializeState* a = new SESerializeState();
@@ -167,33 +120,33 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
     return a;
   }
 
-  if (dynamic_cast<CDM::EnvironmentActionData*>(action) != nullptr)
+  if (dynamic_cast<cdm::EnvironmentActionData*>(action) != nullptr)
   {
-    if (dynamic_cast<CDM::EnvironmentChangeData*>(action) != nullptr)
+    if (dynamic_cast<cdm::EnvironmentChangeData*>(action) != nullptr)
     {
       SEEnvironmentChange* a = new SEEnvironmentChange(substances);
-      a->Load(*(CDM::EnvironmentChangeData*)action);
+      a->Load(*(cdm::EnvironmentChangeData*)action);
       return a;
     }
-    if (dynamic_cast<CDM::ThermalApplicationData*>(action) != nullptr)
+    if (dynamic_cast<cdm::ThermalApplicationData*>(action) != nullptr)
     {
       SEThermalApplication* a = new SEThermalApplication();
-      a->Load(*(CDM::ThermalApplicationData*)action);
+      a->Load(*(cdm::ThermalApplicationData*)action);
       return a;
     }
     substances.GetLogger()->Error("Unsupported Environment Action Received", "SEScenario::Load");
   }
 
-  if (dynamic_cast<CDM::PatientActionData*>(action) != nullptr)
+  if (dynamic_cast<cdm::PatientActionData*>(action) != nullptr)
   {
-    if (dynamic_cast<CDM::PatientAssessmentRequestData*>(action) != nullptr)
+    if (dynamic_cast<cdm::PatientAssessmentRequestData*>(action) != nullptr)
     {
       SEPatientAssessmentRequest* a = new SEPatientAssessmentRequest();
-      a->Load(*(CDM::PatientAssessmentRequestData*)action);
+      a->Load(*(cdm::PatientAssessmentRequestData*)action);
       return a;
     }
 
-    CDM::AcuteStressData* aStressData = dynamic_cast<CDM::AcuteStressData*>(action);
+    cdm::AcuteStressData* aStressData = dynamic_cast<cdm::AcuteStressData*>(action);
     if (aStressData != nullptr)
     {
       SEAcuteStress* a = new SEAcuteStress();
@@ -201,7 +154,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::AirwayObstructionData* airObData = dynamic_cast<CDM::AirwayObstructionData*>(action);
+    cdm::AirwayObstructionData* airObData = dynamic_cast<cdm::AirwayObstructionData*>(action);
     if (airObData != nullptr)
     {
       SEAirwayObstruction* a = new SEAirwayObstruction();
@@ -209,7 +162,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::ApneaData* apneaData = dynamic_cast<CDM::ApneaData*>(action);
+    cdm::ApneaData* apneaData = dynamic_cast<cdm::ApneaData*>(action);
     if (apneaData != nullptr)
     {
       SEApnea* a = new SEApnea();
@@ -217,7 +170,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::BrainInjuryData* brainInjData = dynamic_cast<CDM::BrainInjuryData*>(action);
+    cdm::BrainInjuryData* brainInjData = dynamic_cast<cdm::BrainInjuryData*>(action);
     if (brainInjData != nullptr)
     {
       SEBrainInjury* a = new SEBrainInjury();
@@ -225,7 +178,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::BronchoconstrictionData* bconData = dynamic_cast<CDM::BronchoconstrictionData*>(action);
+    cdm::BronchoconstrictionData* bconData = dynamic_cast<cdm::BronchoconstrictionData*>(action);
     if (bconData != nullptr)
     {
       SEBronchoconstriction* a = new SEBronchoconstriction();
@@ -233,7 +186,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::CardiacArrestData* carrestData = dynamic_cast<CDM::CardiacArrestData*>(action);
+    cdm::CardiacArrestData* carrestData = dynamic_cast<cdm::CardiacArrestData*>(action);
     if (carrestData != nullptr)
     {
       SECardiacArrest* a = new SECardiacArrest();
@@ -241,7 +194,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::AsthmaAttackData* asthmaData = dynamic_cast<CDM::AsthmaAttackData*>(action);
+    cdm::AsthmaAttackData* asthmaData = dynamic_cast<cdm::AsthmaAttackData*>(action);
     if (asthmaData != nullptr)
     {
       SEAsthmaAttack* a = new SEAsthmaAttack();
@@ -249,17 +202,17 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::ChestCompressionData* cprData = dynamic_cast<CDM::ChestCompressionData*>(action);
+    cdm::ChestCompressionData* cprData = dynamic_cast<cdm::ChestCompressionData*>(action);
     if (cprData != nullptr)
     {
-      CDM::ChestCompressionForceData* cprForce = dynamic_cast<CDM::ChestCompressionForceData*>(cprData);
+      cdm::ChestCompressionForceData* cprForce = dynamic_cast<cdm::ChestCompressionForceData*>(cprData);
       if (cprForce != nullptr)
       {
         SEChestCompressionForce* a = new SEChestCompressionForce();
         a->Load(*cprForce);
         return a;
       }
-      CDM::ChestCompressionForceScaleData* cprScale = dynamic_cast<CDM::ChestCompressionForceScaleData*>(cprData);
+      cdm::ChestCompressionForceScaleData* cprScale = dynamic_cast<cdm::ChestCompressionForceScaleData*>(cprData);
       if (cprScale != nullptr)
       {
         SEChestCompressionForceScale* a = new SEChestCompressionForceScale();
@@ -268,7 +221,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       }
     }
 
-    CDM::ChestOcclusiveDressingData* codData = dynamic_cast<CDM::ChestOcclusiveDressingData*>(action);
+    cdm::ChestOcclusiveDressingData* codData = dynamic_cast<cdm::ChestOcclusiveDressingData*>(action);
     if (codData != nullptr)
     {
       SEChestOcclusiveDressing* a = new SEChestOcclusiveDressing();
@@ -276,7 +229,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::ConsciousRespirationData* conRespData = dynamic_cast<CDM::ConsciousRespirationData*>(action);
+    cdm::ConsciousRespirationData* conRespData = dynamic_cast<cdm::ConsciousRespirationData*>(action);
     if (conRespData != nullptr)
     {
       SEConsciousRespiration* a = new SEConsciousRespiration();
@@ -284,7 +237,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::ConsumeNutrientsData* consumeData = dynamic_cast<CDM::ConsumeNutrientsData*>(action);
+    cdm::ConsumeNutrientsData* consumeData = dynamic_cast<cdm::ConsumeNutrientsData*>(action);
     if (consumeData != nullptr)
     {
       SEConsumeNutrients* a = new SEConsumeNutrients();
@@ -292,7 +245,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::ExerciseData* exerciseData = dynamic_cast<CDM::ExerciseData*>(action);
+    cdm::ExerciseData* exerciseData = dynamic_cast<cdm::ExerciseData*>(action);
     if (exerciseData != nullptr)
     {
       SEExercise* a = new SEExercise();
@@ -300,7 +253,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::IntubationData* intub8Data = dynamic_cast<CDM::IntubationData*>(action);
+    cdm::IntubationData* intub8Data = dynamic_cast<cdm::IntubationData*>(action);
     if (intub8Data != nullptr)
     {
       SEIntubation* a = new SEIntubation();
@@ -308,7 +261,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::MechanicalVentilationData* mechVentData = dynamic_cast<CDM::MechanicalVentilationData*>(action);
+    cdm::MechanicalVentilationData* mechVentData = dynamic_cast<cdm::MechanicalVentilationData*>(action);
     if (mechVentData != nullptr)
     {
       SEMechanicalVentilation* a = new SEMechanicalVentilation();
@@ -316,7 +269,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::NeedleDecompressionData* needlData = dynamic_cast<CDM::NeedleDecompressionData*>(action);
+    cdm::NeedleDecompressionData* needlData = dynamic_cast<cdm::NeedleDecompressionData*>(action);
     if (needlData != nullptr)
     {
       SENeedleDecompression* a = new SENeedleDecompression();
@@ -324,7 +277,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::HemorrhageData* hemData = dynamic_cast<CDM::HemorrhageData*>(action);
+    cdm::HemorrhageData* hemData = dynamic_cast<cdm::HemorrhageData*>(action);
     if (hemData != nullptr)
     {
       SEHemorrhage* a = new SEHemorrhage();
@@ -332,7 +285,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::PericardialEffusionData* pericData = dynamic_cast<CDM::PericardialEffusionData*>(action);
+    cdm::PericardialEffusionData* pericData = dynamic_cast<cdm::PericardialEffusionData*>(action);
     if (pericData != nullptr)
     {
       SEPericardialEffusion* a = new SEPericardialEffusion();
@@ -340,7 +293,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::TensionPneumothoraxData* pneumoData = dynamic_cast<CDM::TensionPneumothoraxData*>(action);
+    cdm::TensionPneumothoraxData* pneumoData = dynamic_cast<cdm::TensionPneumothoraxData*>(action);
     if (pneumoData != nullptr)
     {
       SETensionPneumothorax* a = new SETensionPneumothorax();
@@ -348,7 +301,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::SubstanceBolusData* bolusData = dynamic_cast<CDM::SubstanceBolusData*>(action);
+    cdm::SubstanceBolusData* bolusData = dynamic_cast<cdm::SubstanceBolusData*>(action);
     if (bolusData != nullptr)
     {
       substance = substances.GetSubstance(bolusData->Substance());
@@ -362,7 +315,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::SubstanceInfusionData* subInfuzData = dynamic_cast<CDM::SubstanceInfusionData*>(action);
+    cdm::SubstanceInfusionData* subInfuzData = dynamic_cast<cdm::SubstanceInfusionData*>(action);
     if (subInfuzData != nullptr)
     {
       substance = substances.GetSubstance(subInfuzData->Substance());
@@ -376,7 +329,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::SubstanceCompoundInfusionData* subCInfuzData = dynamic_cast<CDM::SubstanceCompoundInfusionData*>(action);
+    cdm::SubstanceCompoundInfusionData* subCInfuzData = dynamic_cast<cdm::SubstanceCompoundInfusionData*>(action);
     if (subCInfuzData != nullptr)
     {
       compound = substances.GetCompound(subCInfuzData->SubstanceCompound());
@@ -390,7 +343,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    CDM::UrinateData* urinateData = dynamic_cast<CDM::UrinateData*>(action);
+    cdm::UrinateData* urinateData = dynamic_cast<cdm::UrinateData*>(action);
     if (urinateData != nullptr)
     {
       SEUrinate* a = new SEUrinate();
@@ -399,9 +352,9 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
     }
     substances.GetLogger()->Error("Unsupported Patient Action Received", "SEScenario::Load");
   }
-  else if (dynamic_cast<CDM::AnesthesiaMachineActionData*>(action) != nullptr)
+  else if (dynamic_cast<cdm::AnesthesiaMachineActionData*>(action) != nullptr)
   {
-    anConfig = dynamic_cast<CDM::AnesthesiaMachineConfigurationData*>(action);
+    anConfig = dynamic_cast<cdm::AnesthesiaMachineConfigurationData*>(action);
     if (anConfig != nullptr)
     {
       SEAnesthesiaMachineConfiguration* a = new SEAnesthesiaMachineConfiguration(substances);
@@ -409,7 +362,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anO2WallLoss = dynamic_cast<CDM::OxygenWallPortPressureLossData*>(action);
+    anO2WallLoss = dynamic_cast<cdm::OxygenWallPortPressureLossData*>(action);
     if (anO2WallLoss != nullptr)
     {
       SEOxygenWallPortPressureLoss* a = new SEOxygenWallPortPressureLoss();
@@ -417,7 +370,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anO2TankLoss = dynamic_cast<CDM::OxygenTankPressureLossData*>(action);
+    anO2TankLoss = dynamic_cast<cdm::OxygenTankPressureLossData*>(action);
     if (anO2TankLoss != nullptr)
     {
       SEOxygenTankPressureLoss* a = new SEOxygenTankPressureLoss();
@@ -425,7 +378,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anExLeak = dynamic_cast<CDM::ExpiratoryValveLeakData*>(action);
+    anExLeak = dynamic_cast<cdm::ExpiratoryValveLeakData*>(action);
     if (anExLeak != nullptr)
     {
       SEExpiratoryValveLeak* a = new SEExpiratoryValveLeak();
@@ -433,7 +386,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anExObs = dynamic_cast<CDM::ExpiratoryValveObstructionData*>(action);
+    anExObs = dynamic_cast<cdm::ExpiratoryValveObstructionData*>(action);
     if (anExObs != nullptr)
     {
       SEExpiratoryValveObstruction* a = new SEExpiratoryValveObstruction();
@@ -441,7 +394,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anInLeak = dynamic_cast<CDM::InspiratoryValveLeakData*>(action);
+    anInLeak = dynamic_cast<cdm::InspiratoryValveLeakData*>(action);
     if (anInLeak != nullptr)
     {
       SEInspiratoryValveLeak* a = new SEInspiratoryValveLeak();
@@ -449,7 +402,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anInObs = dynamic_cast<CDM::InspiratoryValveObstructionData*>(action);
+    anInObs = dynamic_cast<cdm::InspiratoryValveObstructionData*>(action);
     if (anInObs != nullptr)
     {
       SEInspiratoryValveObstruction* a = new SEInspiratoryValveObstruction();
@@ -457,7 +410,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anMskLeak = dynamic_cast<CDM::MaskLeakData*>(action);
+    anMskLeak = dynamic_cast<cdm::MaskLeakData*>(action);
     if (anMskLeak != nullptr)
     {
       SEMaskLeak* a = new SEMaskLeak();
@@ -465,7 +418,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anSodaFail = dynamic_cast<CDM::SodaLimeFailureData*>(action);
+    anSodaFail = dynamic_cast<cdm::SodaLimeFailureData*>(action);
     if (anSodaFail != nullptr)
     {
       SESodaLimeFailure* a = new SESodaLimeFailure();
@@ -473,7 +426,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anTubLeak = dynamic_cast<CDM::TubeCuffLeakData*>(action);
+    anTubLeak = dynamic_cast<cdm::TubeCuffLeakData*>(action);
     if (anTubLeak != nullptr)
     {
       SETubeCuffLeak* a = new SETubeCuffLeak();
@@ -481,7 +434,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anVapFail = dynamic_cast<CDM::VaporizerFailureData*>(action);
+    anVapFail = dynamic_cast<cdm::VaporizerFailureData*>(action);
     if (anVapFail != nullptr)
     {
       SEVaporizerFailure* a = new SEVaporizerFailure();
@@ -489,7 +442,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anVentLoss = dynamic_cast<CDM::VentilatorPressureLossData*>(action);
+    anVentLoss = dynamic_cast<cdm::VentilatorPressureLossData*>(action);
     if (anVentLoss != nullptr)
     {
       SEVentilatorPressureLoss* a = new SEVentilatorPressureLoss();
@@ -497,7 +450,7 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
       return a;
     }
 
-    anYDisc = dynamic_cast<CDM::YPieceDisconnectData*>(action);
+    anYDisc = dynamic_cast<cdm::YPieceDisconnectData*>(action);
     if (anYDisc != nullptr)
     {
       SEYPieceDisconnect* a = new SEYPieceDisconnect();
@@ -506,9 +459,9 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
     }
     substances.GetLogger()->Error("Unsupported Anesthesia Machine Action Received", "SEScenario::Load");
   }
-  else if (dynamic_cast<CDM::InhalerActionData*>(action) != nullptr)
+  else if (dynamic_cast<cdm::InhalerActionData*>(action) != nullptr)
   {
-    CDM::InhalerConfigurationData* inhaleConfig = dynamic_cast<CDM::InhalerConfigurationData*>(action);
+    cdm::InhalerConfigurationData* inhaleConfig = dynamic_cast<cdm::InhalerConfigurationData*>(action);
     if (inhaleConfig != nullptr)
     {
       SEInhalerConfiguration* a = new SEInhalerConfiguration(substances);
@@ -522,25 +475,31 @@ SEAction* SEAction::newFromBind(const CDM::ActionData& data, SESubstanceManager&
   return nullptr;
 }
 
-bool SEAction::Load(const CDM::ActionData& in)
+void SEAction::Load(const cdm::ActionData& src, SEAction& dst)
 {
-  Clear();
-  if(in.Comment().present())
-    m_Comment=in.Comment().get();
-  return true;
+	SEAction::Serialize(src, dst);
+}
+void SEAction::Serialize(const cdm::ActionData& src, SEAction& dst)
+{
+	dst.Clear();
+	
+	//jbw - how does this work?
+	if (!src.comment().empty())
+		dst.GetComment().empty();
 }
 
-CDM::ActionData* SEAction::Unload() const
+cdm::ActionData* SEAction::Unload(const SEAction& src)
 {
-  CDM::ActionData* data = new CDM::ActionData();
-  Unload(*data);
-  return data;
+  cdm::ActionData* dst = new cdm::ActionData();
+  SEAction::Serialize(src, *dst);
+  return dst;
 }
 
-void SEAction::Unload(CDM::ActionData& data) const
+void SEAction::Serialize(const SEAction& src, cdm::ActionData& dst)
 {
-  if(HasComment())
-    data.Comment(m_Comment);
+	//jbw - how does this work?
+	//if (HasComment())
+	//	src.GetComment(m_Comment);
 }
 
 

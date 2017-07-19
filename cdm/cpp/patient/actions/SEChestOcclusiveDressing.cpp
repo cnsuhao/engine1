@@ -15,8 +15,8 @@ specific language governing permissions and limitations under the License.
 
 SEChestOcclusiveDressing::SEChestOcclusiveDressing() : SEPatientAction()
 {
-  m_State = CDM::enumOnOff::Off;
-  m_Side=(CDM::enumSide::value)-1;
+  m_State = cdm::eSwitch::Off;
+  m_Side=(cdm::eSide)-1;
 }
 
 SEChestOcclusiveDressing::~SEChestOcclusiveDressing()
@@ -27,8 +27,8 @@ SEChestOcclusiveDressing::~SEChestOcclusiveDressing()
 void SEChestOcclusiveDressing::Clear()
 {
   SEPatientAction::Clear();
-  m_State=CDM::enumOnOff::Off;
-  m_Side=(CDM::enumSide::value)-1;
+  m_State= cdm::eSwitch::Off;
+  m_Side=(cdm::eSide)-1;
 }
 
 bool SEChestOcclusiveDressing::IsValid() const
@@ -38,53 +38,53 @@ bool SEChestOcclusiveDressing::IsValid() const
 
 bool SEChestOcclusiveDressing::IsActive() const
 {
-  return IsValid() && m_State == CDM::enumOnOff::On;
+  return IsValid() && m_State == cdm::eSwitch::On;
 }
 
 void SEChestOcclusiveDressing::SetActive(bool b)
 {
-  m_State = b ? CDM::enumOnOff::On : CDM::enumOnOff::Off;
+  m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
 }
 
-bool SEChestOcclusiveDressing::Load(const CDM::ChestOcclusiveDressingData& in)
+void SEChestOcclusiveDressing::Load(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
 {
-  SEPatientAction::Load(in);
-  m_Side=in.Side();
-  m_State=in.State();
-  return true;
+	SEChestOcclusiveDressing::Serialize(src, dst);
 }
-
-CDM::ChestOcclusiveDressingData* SEChestOcclusiveDressing::Unload() const
+void SEChestOcclusiveDressing::Serialize(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
 {
-  CDM::ChestOcclusiveDressingData*data(new CDM::ChestOcclusiveDressingData());
-  Unload(*data);
-  return data;
+	dst.Clear();
+	dst.SetSide(src.side());
+	//jbw - How to do state?
 }
 
-void SEChestOcclusiveDressing::Unload(CDM::ChestOcclusiveDressingData& data) const
+cdm::ChestOcclusiveDressingData* SEChestOcclusiveDressing::Unload(const SEChestOcclusiveDressing& src)
 {
-  SEPatientAction::Unload(data);
-  data.State(m_State);
-  if(HasSide())
-    data.Side(m_Side);
-    
+	cdm::ChestOcclusiveDressingData* dst = new cdm::ChestOcclusiveDressingData();
+	SEChestOcclusiveDressing::Serialize(src, *dst);
+	return dst;
+}
+void SEChestOcclusiveDressing::Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst)
+{
+	if (src.HasSide())
+		dst.set_side(src.m_Side);
+	//jbw - How to do state?
 }
 
-CDM::enumSide::value SEChestOcclusiveDressing::GetSide() const
+cdm::eSide SEChestOcclusiveDressing::GetSide() const
 {
   return m_Side;
 }
-void SEChestOcclusiveDressing::SetSide(CDM::enumSide::value Side)
+void SEChestOcclusiveDressing::SetSide(cdm::eSide Side)
 {
   m_Side = Side;
 }
 bool SEChestOcclusiveDressing::HasSide() const
 {
-  return m_Side==((CDM::enumSide::value)-1)?false:true;
+  return m_Side==((cdm::eSide)-1)?false:true;
 }
 void SEChestOcclusiveDressing::InvalidateSide()
 {
-  m_Side = (CDM::enumSide::value)-1;
+  m_Side = (cdm::eSide)-1;
 }
 
 void SEChestOcclusiveDressing::ToString(std::ostream &str) const

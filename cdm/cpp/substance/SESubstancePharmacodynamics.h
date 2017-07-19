@@ -33,11 +33,11 @@ protected:
 
 public:
   virtual bool HasBronchodilation() const;
-  virtual SEScalarFraction& GetBronchodilation();
+  virtual SEScalar0To1& GetBronchodilation();
   virtual double GetBronchodilation() const;
 
   virtual bool HasDiastolicPressureModifier() const;
-  virtual SEScalarFraction& GetDiastolicPressureModifier();
+  virtual SEScalar0To1& GetDiastolicPressureModifier();
   virtual double GetDiastolicPressureModifier() const;
 
   virtual bool HasEC50() const;
@@ -49,11 +49,11 @@ public:
   virtual double GetEMaxShapeParameter() const;
 
   virtual bool HasHeartRateModifier() const;
-  virtual SEScalarFraction& GetHeartRateModifier();
+  virtual SEScalar0To1& GetHeartRateModifier();
   virtual double GetHeartRateModifier() const;
 
   virtual bool HasNeuromuscularBlock() const;
-  virtual SEScalarFraction& GetNeuromuscularBlock();
+  virtual SEScalar0To1& GetNeuromuscularBlock();
   virtual double GetNeuromuscularBlock() const;
 
   virtual bool HasPupillaryResponse() const;
@@ -62,38 +62,38 @@ public:
   virtual void RemovePupillaryResponse();
 
   virtual bool HasRespirationRateModifier() const;
-  virtual SEScalarFraction& GetRespirationRateModifier();
+  virtual SEScalar0To1& GetRespirationRateModifier();
   virtual double GetRespirationRateModifier() const;
 
   virtual bool HasSedation() const;
-  virtual SEScalarFraction& GetSedation();
+  virtual SEScalar0To1& GetSedation();
   virtual double GetSedation() const;
 
   virtual bool HasSystolicPressureModifier() const;
-  virtual SEScalarFraction& GetSystolicPressureModifier();
+  virtual SEScalar0To1& GetSystolicPressureModifier();
   virtual double GetSystolicPressureModifier() const;
 
   virtual bool HasTidalVolumeModifier() const;
-  virtual SEScalarFraction& GetTidalVolumeModifier();
+  virtual SEScalar0To1& GetTidalVolumeModifier();
   virtual double GetTidalVolumeModifier() const;
 
   virtual bool HasTubularPermeabilityModifier() const;
-  virtual SEScalarFraction& GetTubularPermeabilityModifier();
+  virtual SEScalar0To1& GetTubularPermeabilityModifier();
   virtual double GetTubularPermeabilityModifier() const;
 
 protected:
   virtual void CalculateDerived();
 
-  SEScalarFraction*          m_Bronchodilation;
-  SEScalarFraction*          m_DiastolicPressureModifier;
+  SEScalar0To1*          m_Bronchodilation;
+  SEScalar0To1*          m_DiastolicPressureModifier;
   SEScalarMassPerVolume*     m_EC50;
   SEScalar*                  m_EMaxShapeParameter;
-  SEScalarFraction*          m_HeartRateModifier;
-  SEScalarFraction*          m_NeuromuscularBlock;
+  SEScalar0To1*          m_HeartRateModifier;
+  SEScalar0To1*          m_NeuromuscularBlock;
   SEPupillaryResponse*       m_PupillaryResponse;
-  SEScalarFraction*          m_RespirationRateModifier;
-  SEScalarFraction*          m_Sedation;
-  SEScalarFraction*          m_SystolicPressureModifier;
-  SEScalarFraction*          m_TidalVolumeModifier;
-  SEScalarFraction*          m_TubularPermeabilityModifier;
+  SEScalar0To1*          m_RespirationRateModifier;
+  SEScalar0To1*          m_Sedation;
+  SEScalar0To1*          m_SystolicPressureModifier;
+  SEScalar0To1*          m_TidalVolumeModifier;
+  SEScalar0To1*          m_TubularPermeabilityModifier;
 };

@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/conditions/SEChronicAnemia.h"
 
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 
 void BioGearsEngineTest::ConditionCombinations(const std::string& rptDirectory)
 {

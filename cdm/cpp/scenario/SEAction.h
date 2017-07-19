@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(ActionData);
 class SESubstanceManager;
+#include "bind/cdm/Actions.pb.h"
 
 class DLL_DECL SEAction : public Loggable
 {
@@ -29,12 +29,13 @@ public:
   *  This method will encapsulate that logic in a single function */
   virtual bool IsActive() const { return IsValid(); }
 
-  static SEAction* newFromBind(const CDM::ActionData& action, SESubstanceManager& substances);
+  static SEAction* newFromBind(const cdm::ActionData& action, SESubstanceManager& substances);
 
-  virtual bool Load(const CDM::ActionData& in);
-  virtual CDM::ActionData* Unload() const;
+  static void Load(const cdm::ActionData& src, SEAction& dst);
+  static cdm::ActionData* Unload(const SEAction& src);
 protected:
-  void Unload(CDM::ActionData& data) const;
+	static void Serialize(const cdm::ActionData& src, SEAction& dst);
+	static void Serialize(const SEAction& src, cdm::ActionData& dst);
 
 public:
 

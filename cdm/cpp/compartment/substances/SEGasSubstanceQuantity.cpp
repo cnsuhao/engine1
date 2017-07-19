@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 
 SEGasSubstanceQuantity::SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartment& compartment) : SESubstanceQuantity(sub), m_Compartment(compartment)
 {
@@ -138,7 +138,7 @@ double SEGasSubstanceQuantity::GetPartialPressure(const PressureUnit& unit) cons
   {
     if (!HasVolumeFraction() || !m_Compartment.HasPressure())
       return SEScalar::dNaN();
-    SEScalarFraction volFrac;
+    SEScalar0To1 volFrac;
     SEScalarPressure partialPressure;
     volFrac.SetValue(const_cast<const SEGasSubstanceQuantity*>(this)->GetVolumeFraction());
     GeneralMath::CalculatePartialPressureInGas(volFrac, m_Compartment.GetPressure(), partialPressure, m_Logger);
@@ -201,10 +201,10 @@ bool SEGasSubstanceQuantity::HasVolumeFraction() const
   }
   return (m_VolumeFraction == nullptr) ? false : m_VolumeFraction->IsValid();
 }
-SEScalarFraction& SEGasSubstanceQuantity::GetVolumeFraction()
+SEScalar0To1& SEGasSubstanceQuantity::GetVolumeFraction()
 {
   if (m_VolumeFraction == nullptr)
-    m_VolumeFraction = new SEScalarFraction();
+    m_VolumeFraction = new SEScalar0To1();
   if (!m_Children.empty())
   {
     m_VolumeFraction->SetReadOnly(false);

@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/ActiveHeatingData.hxx"
 #include "properties/SEScalarArea.h"
 #include "bind/ScalarAreaData.hxx"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarPower.h"
 #include "bind/ScalarPowerData.hxx"
@@ -120,10 +120,10 @@ bool SEActiveHeating::HasSurfaceAreaFraction() const
 {
   return m_SurfaceAreaFraction == nullptr ? false : m_SurfaceAreaFraction->IsValid();
 }
-SEScalarFraction& SEActiveHeating::GetSurfaceAreaFraction()
+SEScalar0To1& SEActiveHeating::GetSurfaceAreaFraction()
 {
   if (m_SurfaceAreaFraction == nullptr)
-    m_SurfaceAreaFraction = new SEScalarFraction();
+    m_SurfaceAreaFraction = new SEScalar0To1();
   return *m_SurfaceAreaFraction;
 }
 double SEActiveHeating::GetSurfaceAreaFraction() const

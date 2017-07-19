@@ -11,8 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(SubstanceData)
-#include "bind/enumSubstanceState.hxx"
+#include "bind/cdm/Substance.pb.h"
 
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceClearance.h"
@@ -108,7 +107,7 @@ public:
   virtual double GetDiffusingCapacity(const VolumePerTimePressureUnit& unit) const;
 
   virtual bool HasEndTidalFraction() const;
-  virtual SEScalarFraction& GetEndTidalFraction();
+  virtual SEScalar0To1& GetEndTidalFraction();
   virtual double GetEndTidalFraction() const;
 
   virtual bool HasEndTidalPressure() const;
@@ -160,7 +159,7 @@ protected:
 
   SEScalarVolumePerTime*            m_AlveolarTransfer;
   SEScalarVolumePerTimePressure*    m_DiffusingCapacity;
-  SEScalarFraction*                  m_EndTidalFraction;
+  SEScalar0To1*                  m_EndTidalFraction;
   SEScalarPressure*                 m_EndTidalPressure;
   SEScalar*                          m_RelativeDiffusionCoefficient;
   SEScalarInversePressure*          m_SolubilityCoefficient;

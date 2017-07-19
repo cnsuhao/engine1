@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/AnesthesiaMachineChamberData.hxx"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "bind/ScalarFractionData.hxx"
 
 SEAnesthesiaMachineChamber::SEAnesthesiaMachineChamber(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
@@ -125,10 +125,10 @@ bool SEAnesthesiaMachineChamber::HasSubstanceFraction() const
 {
   return m_SubstanceFraction==nullptr?false:m_SubstanceFraction->IsValid();
 }
-SEScalarFraction& SEAnesthesiaMachineChamber::GetSubstanceFraction()
+SEScalar0To1& SEAnesthesiaMachineChamber::GetSubstanceFraction()
 {
   if(m_SubstanceFraction==nullptr)
-    m_SubstanceFraction = new SEScalarFraction();
+    m_SubstanceFraction = new SEScalar0To1();
   return *m_SubstanceFraction;
 }
 double SEAnesthesiaMachineChamber::GetSubstanceFraction() const
