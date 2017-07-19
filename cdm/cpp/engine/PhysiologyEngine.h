@@ -40,8 +40,6 @@ class SECompartmentManager;
 class PhysiologyEngineTrack;
 class PhysiologyEngineConfiguration;
 
-#include "bind/PhysiologyEngineStateData.hxx"
-
 /** 
  * @brief
  * Base exception class that all CDM classes throw when an error occurs
@@ -78,7 +76,7 @@ public:
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool LoadState(const CDM::PhysiologyEngineStateData& state, const SEScalarTime* simTime = nullptr) = 0;
+  virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -87,7 +85,7 @@ public:
   /// State object will be returned.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual std::unique_ptr<CDM::PhysiologyEngineStateData> SaveState(const std::string& file = "") = 0;
+  virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& file = "") = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
