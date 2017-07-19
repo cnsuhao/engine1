@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "circuit/thermal/SEThermalCircuit.h"
 #include "circuit/SECircuitManager.h"
 
-SEThermalCircuit::SEThermalCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<CDM::ThermalCircuitData, SEThermalCircuitNode, CDM::ThermalCircuitNodeData, SEThermalCircuitPath, CDM::ThermalCircuitPathData>(name, mgr.GetLogger()), m_Mgr(mgr)
+SEThermalCircuit::SEThermalCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<cdm::ThermalCircuitData, SEThermalCircuitNode, cdm::ThermalCircuitNodeData, SEThermalCircuitPath, cdm::ThermalCircuitPathData>(name, mgr.GetLogger()), m_Mgr(mgr)
 {
 
 }

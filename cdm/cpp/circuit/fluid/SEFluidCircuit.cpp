@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/SECircuitManager.h"
 
-SEFluidCircuit::SEFluidCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<CDM::FluidCircuitData, SEFluidCircuitNode, CDM::FluidCircuitNodeData, SEFluidCircuitPath, CDM::FluidCircuitPathData>(name, mgr.GetLogger()), m_Mgr(mgr)
+SEFluidCircuit::SEFluidCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<cdm::FluidCircuitData, SEFluidCircuitNode, cdm::FluidCircuitNodeData, SEFluidCircuitPath, cdm::FluidCircuitPathData>(name, mgr.GetLogger()), m_Mgr(mgr)
 {
 
 }

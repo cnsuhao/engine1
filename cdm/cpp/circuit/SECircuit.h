@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(CircuitData)
 #include "circuit/SECircuitNode.h"
 #include "circuit/SECircuitPath.h"
 
@@ -28,10 +27,11 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CircuitBindType& in, const std::map<std::string,NodeType*>& nodes, const std::map<std::string,PathType*>& paths);
-  virtual CircuitBindType* Unload() const;
+  static void Load(const CircuitBindType& src, SECircuit& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths);
+  static CircuitBindType* Unload(const SECircuit& src);
 protected:
-  virtual void Unload(CircuitBindType& data) const;
+  static void Serialize(const CircuitBindType& src, SECircuit& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths);
+  static void Serialize(const SECircuit& src, CircuitBindType& dst);
 
 public:
   virtual std::string GetName() const;

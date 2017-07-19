@@ -14,10 +14,10 @@ specific language governing permissions and limitations under the License.
 #include "circuit/SECircuit.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
-#include "bind/FluidCircuitData.hxx"
+
 class SECircuitManager;
 
-class DLL_DECL SEFluidCircuit : public SECircuit<CDM::FluidCircuitData, SEFluidCircuitNode, CDM::FluidCircuitNodeData, SEFluidCircuitPath, CDM::FluidCircuitPathData>
+class DLL_DECL SEFluidCircuit : public SECircuit<cdm::FluidCircuitData, SEFluidCircuitNode, cdm::FluidCircuitNodeData, SEFluidCircuitPath, cdm::FluidCircuitPathData>
 {
   friend class SECircuitManager;
 protected:
