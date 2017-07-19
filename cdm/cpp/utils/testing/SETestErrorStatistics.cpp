@@ -11,9 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "bind/TestErrorStatisticsData.hxx"
 #include "utils/testing/SETestErrorStatistics.h"
-#include "bind/FunctionData.hxx"
 #include "properties/SEFunction.h"
 
 SETestErrorStatistics::SETestErrorStatistics(Logger* logger) : Loggable(logger)
@@ -35,71 +33,64 @@ void SETestErrorStatistics::Reset()
 {
 }
 
-bool SETestErrorStatistics::Load(const CDM::TestErrorStatisticsData& in)
+void SETestErrorStatistics::Load(const cdm::TestReportData_TestErrorStatisticsData& src, SETestErrorStatistics& dst)
 {
-  Reset();
-  m_MinimumError = in.MinimumError().get();
-  m_MaximumError = in.MaximumError().get();
-  m_AverageError = in.AverageError().get();
-  m_StandardDeviation = in.StandardDeviation().get();
+  SETestErrorStatistics::Serialize(src, dst);
+}
+void SETestErrorStatistics::Serialize(const cdm::TestReportData_TestErrorStatisticsData& src, SETestErrorStatistics& dst)
+{
+  dst.Clear();
+
+  dst.m_PropertyName = src.propertyname();
+  dst.m_PercentTolerance = src.percenttolerance();
+  dst.m_NumberOfErrors = src.numberoferrors();
+  dst.m_ComputedPropertyID = src.computedpropertyid();
+  dst.m_ExpectedPropertyID = src.expectedpropertyid();
+
+  dst.m_MinimumError = src.minimumerror();
+  dst.m_MaximumError = src.maximumerror();
+  dst.m_AverageError = src.averageerror();
+  dst.m_StandardDeviation = src.standarddeviation();
+
+  if (src.has_percenttolerancevsnumerrors())
+    SEFunction::Load(src.percenttolerancevsnumerrors(), dst.GetPercentToleranceVsNumErrorsHistogram());
+
+  for (int i=0; i<src.differences_size(); i++)
+    dst.m_Differences.push_back(src.differences(i));
+}
+
+cdm::TestReportData_TestErrorStatisticsData* SETestErrorStatistics::Unload(const SETestErrorStatistics& src)
+{
+  cdm::TestReportData_TestErrorStatisticsData* dst = new cdm::TestReportData_TestErrorStatisticsData();
+  SETestErrorStatistics::Serialize(src,*dst);
+  return dst;
+}
+void SETestErrorStatistics::Serialize(const SETestErrorStatistics& src, cdm::TestReportData_TestErrorStatisticsData& dst)
+{
+  if (!src.m_PropertyName.empty())
+    dst.set_propertyname(src.m_PropertyName);
+  dst.set_percenttolerance(src.m_PercentTolerance);
+  dst.set_numberoferrors(src.m_NumberOfErrors);
+  if (!src.m_ComputedPropertyID.empty())
+    dst.set_computedpropertyid(src.m_ComputedPropertyID);
+  if (!src.m_ExpectedPropertyID.empty())
+    dst.set_expectedpropertyid(src.m_ExpectedPropertyID);
+   
+  if (!std::isnan(src.m_MinimumError))
+    dst.set_minimumerror(src.m_MinimumError);
+  if (!std::isnan(src.m_MaximumError))
+    dst.set_maximumerror(src.m_MaximumError);
+  if (!std::isnan(src.m_AverageError))
+    dst.set_averageerror(src.m_AverageError);
+  if (!std::isnan(src.m_StandardDeviation))
+    dst.set_standarddeviation(src.m_StandardDeviation);
 
   std::string dData;
-  for(unsigned int i=0; i<in.Differences().size(); i++)
-  {
-    dData=(std::string)in.Differences().at(i);
-    if(dData!=nullptr)
-      m_Differences.push_back(dData);
-  }
-  m_ComputedPropertyID = in.ComputedPropertyID();
-  m_ExpectedPropertyID = in.ExpectedPropertyID();
-  m_NumberOfErrors = in.NumberOfErrors().get();
-  m_PercentTolerance = in.PercentTolerance();
-  m_PropertyName = in.PropertyName();
-  return IsValid();
-}
+  for (auto s : src.m_Differences)
+      dst.mutable_differences()->Add(s.c_str());
 
-std::unique_ptr<CDM::TestErrorStatisticsData>  SETestErrorStatistics::Unload() const
-{
-  std::unique_ptr<CDM::TestErrorStatisticsData> data(new CDM::TestErrorStatisticsData());
-  Unload(*data);
-  return data;
-}
-
-void SETestErrorStatistics::Unload(CDM::TestErrorStatisticsData& data) const
-{
-  if (!std::isnan(m_MinimumError))
-    data.MinimumError(m_MinimumError);
-  if (!std::isnan(m_MaximumError))
-    data.MaximumError(m_MaximumError);
-  if (!std::isnan(m_AverageError))
-    data.AverageError(m_AverageError);
-  if (!std::isnan(m_StandardDeviation))
-    data.StandardDeviation(m_StandardDeviation);
-
-  std::string dData;
-  for(unsigned int i=0; i<m_Differences.size(); i++)
-  {
-    dData=m_Differences.at(i);
-    if(dData!=nullptr)
-      data.Differences().push_back(dData);
-  }
-  if(!m_ComputedPropertyID.empty())
-    data.ComputedPropertyID(m_ComputedPropertyID);
-  if(!m_ExpectedPropertyID.empty())
-    data.ExpectedPropertyID(m_ExpectedPropertyID);
-  data.NumberOfErrors(m_NumberOfErrors);
-  data.PercentTolerance(m_PercentTolerance);
-  if(!m_PropertyName.empty())
-    data.PropertyName(m_PropertyName);
-  if(m_PercentToleranceVsNumErrorsHistogram != nullptr)
-  {
-    data.PercentToleranceVsNumErrors(std::unique_ptr<CDM::FunctionData>(m_PercentToleranceVsNumErrorsHistogram->Unload()));
-  }
-}
-
-bool SETestErrorStatistics::IsValid()
-{
-  return true;
+  if (src.m_PercentToleranceVsNumErrorsHistogram != nullptr)
+    dst.set_allocated_percenttolerancevsnumerrors(SEFunction::Unload(*src.m_PercentToleranceVsNumErrorsHistogram));
 }
 
 void SETestErrorStatistics::SetMinimumError(double MinimumError)

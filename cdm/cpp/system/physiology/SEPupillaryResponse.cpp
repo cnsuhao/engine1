@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/physiology/SEPupillaryResponse.h"
 #include "properties/SEScalarNegative1To1.h"
-#include "bind/ScalarNeg1To1Data.hxx"
 
 SEPupillaryResponse::SEPupillaryResponse(Logger* logger)
 {
@@ -45,32 +44,35 @@ const SEScalar* SEPupillaryResponse::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEPupillaryResponse::Load(const CDM::PupillaryResponseData& in)
+void SEPupillaryResponse::Load(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst)
 {
-  if (in.ReactivityModifier().present())
-    GetReactivityModifier().Load(in.ReactivityModifier().get());
-  if (in.ShapeModifier().present())
-    GetShapeModifier().Load(in.ShapeModifier().get());
-  if (in.SizeModifier().present())
-    GetSizeModifier().Load(in.SizeModifier().get());
-  return true;
+  SEPupillaryResponse::Serialize(src, dst);
+}
+void SEPupillaryResponse::Serialize(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst)
+{
+  dst.Clear();
+  if (src.has_reactivitymodifier())
+    SEScalarNegative1To1::Load(src.reactivitymodifier(), dst.GetReactivityModifier());
+  if (src.has_shapemodifier())
+    SEScalarNegative1To1::Load(src.shapemodifier(), dst.GetShapeModifier());
+  if (src.has_sizemodifier())
+    SEScalarNegative1To1::Load(src.sizemodifier(), dst.GetSizeModifier());
 }
 
-CDM::PupillaryResponseData* SEPupillaryResponse::Unload() const
+cdm::PupillaryResponseData* SEPupillaryResponse::Unload(const SEPupillaryResponse& src)
 {
-  CDM::PupillaryResponseData* data = new CDM::PupillaryResponseData();
-  Unload(*data);
-  return data;
+  cdm::PupillaryResponseData* dst = new cdm::PupillaryResponseData();
+  SEPupillaryResponse::Serialize(src, *dst);
+  return dst;
 }
-
-void SEPupillaryResponse::Unload(CDM::PupillaryResponseData& data) const
+void SEPupillaryResponse::Serialize(const SEPupillaryResponse& src, cdm::PupillaryResponseData& dst)
 {
-  if (m_ReactivityModifier != nullptr)
-    data.ReactivityModifier(std::unique_ptr<CDM::ScalarNeg1To1Data>(m_ReactivityModifier->Unload()));
-  if (m_ShapeModifier != nullptr)
-    data.ShapeModifier(std::unique_ptr<CDM::ScalarNeg1To1Data>(m_ShapeModifier->Unload()));
-  if (m_SizeModifier != nullptr)
-    data.SizeModifier(std::unique_ptr<CDM::ScalarNeg1To1Data>(m_SizeModifier->Unload()));
+  if (src.HasReactivityModifier())
+    dst.set_allocated_reactivitymodifier(SEScalarNegative1To1::Unload(*src.m_ReactivityModifier));
+  if (src.HasShapeModifier())
+    dst.set_allocated_shapemodifier(SEScalarNegative1To1::Unload(*src.m_ShapeModifier));
+  if (src.HasSizeModifier())
+    dst.set_allocated_sizemodifier(SEScalarNegative1To1::Unload(*src.m_SizeModifier));
 }
 
 bool SEPupillaryResponse::HasReactivityModifier() const

@@ -20,7 +20,6 @@ add_library(DataModelBindings SHARED ${SOURCE})
 # Preprocessor Definitions and Include Paths
 target_include_directories(DataModelBindings PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
 target_include_directories(DataModelBindings PRIVATE ${PROTOBUF_INCLUDE_DIR})
-message(STATUS "PROTOBUF_INCLUDE_DIR ${PROTOBUF_INCLUDE_DIR}")
 set(FLAGS)
 list(APPEND FLAGS " -DXML_LIBRARY")
 set_target_properties(DataModelBindings PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")

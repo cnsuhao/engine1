@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 class SESubstance;
 class SESubstanceManager;
 class SESubstanceConcentration;
-CDM_BIND_DECL(SubstanceCompoundData)
+#include "bind/cdm/Substance.pb.h"
 
 class DLL_DECL SESubstanceCompound : public Loggable
 {
@@ -25,10 +25,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::SubstanceCompoundData& in, const SESubstanceManager& subMgr);
-  virtual CDM::SubstanceCompoundData* Unload() const;
+  static void Load(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst);
+  static cdm::SubstanceData_CompoundData* Unload(const SESubstanceCompound& src);
 protected:
-  virtual void Unload(CDM::SubstanceCompoundData& data) const;
+  static void Serialize(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst);
+  static void Serialize(const SESubstanceCompound& src, cdm::SubstanceData_CompoundData& dst);
 
 public:
   virtual std::string GetName() const;

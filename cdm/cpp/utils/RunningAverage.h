@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(RunningAverageData);
+#include "bind/cdm/Properties.pb.h"
 
 class DLL_DECL RunningAverage
 {
@@ -20,10 +20,12 @@ public:
   RunningAverage();
   virtual ~RunningAverage();
 
-  bool Load(const CDM::RunningAverageData& in);
-  CDM::RunningAverageData* Unload() const;
+
+  static void Load(const cdm::RunningAverageData& src, RunningAverage& dst);
+  static cdm::RunningAverageData* Unload(const RunningAverage& src);
 protected:
-  void Unload(CDM::RunningAverageData& data) const;
+  static void Serialize(const cdm::RunningAverageData& src, RunningAverage& dst);
+  static void Serialize(const RunningAverage& src, cdm::RunningAverageData& dst);
 
 public:
   /** Reset Counter info */

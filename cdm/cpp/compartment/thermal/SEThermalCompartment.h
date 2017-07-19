@@ -11,8 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "compartment/SECompartment.h"
-CDM_BIND_DECL(ThermalCompartmentData)
-#include "bind/ThermalCompartmentData.hxx"
 #include "compartment/SECompartmentNodes.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
 class SEThermalCompartmentLink;
@@ -28,10 +26,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::ThermalCompartmentData& in, SECircuitManager* circuits = nullptr);
-  virtual CDM::ThermalCompartmentData* Unload();
+  static void Load(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits=nullptr);
+  static cdm::ThermalCompartmentData* Unload(const SEThermalCompartment& src);
 protected:
-  virtual void Unload(CDM::ThermalCompartmentData& data);
+  static void Serialize(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SEThermalCompartment& src, cdm::ThermalCompartmentData& dst);
 
 public:
   virtual const SEScalar* GetScalar(const std::string& name);
@@ -47,11 +46,11 @@ public:
   virtual void StateChange();
 
   virtual bool HasHeatTransferRateIn() const;
-  virtual const SEScalarPower& GetHeatTransferRateIn();
+  virtual const SEScalarPower& GetHeatTransferRateIn() const;
   virtual double GetHeatTransferRateIn(const PowerUnit& unit) const;
 
   virtual bool HasHeatTransferRateOut() const;
-  virtual const SEScalarPower& GetHeatTransferRateOut();
+  virtual const SEScalarPower& GetHeatTransferRateOut() const;
   virtual double GetHeatTransferRateOut(const PowerUnit& unit) const;
 
   virtual bool HasHeat() const;
@@ -74,8 +73,8 @@ protected:
   virtual double CalculateInFlow_W() const;
   virtual double CalculateOutFlow_W() const;
 
-  SEScalarPower*       m_HeatTransferRateIn;
-  SEScalarPower*       m_HeatTransferRateOut;
+  mutable SEScalarPower*       m_HeatTransferRateIn;
+  mutable SEScalarPower*       m_HeatTransferRateOut;
   SEScalarEnergy*      m_Heat;
   SEScalarTemperature* m_Temperature;
 

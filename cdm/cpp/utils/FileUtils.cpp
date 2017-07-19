@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 
 std::string Replace(const std::string& original, const std::string& replace, const std::string& withThis)
 {
-  int idx=0;
+  size_t idx=0;
   std::string s = original;
   idx=s.find(replace);
   if(idx!=std::string::npos)
@@ -59,7 +59,7 @@ bool CreateFilePath(const std::string& path)
     std::string dir;
     
     // Create the folders iteratively, backwards
-    for (unsigned int i=folderLevels.size()-1; i >= 1; i--)
+    for (size_t i=folderLevels.size()-1; i >= 1; i--)
     {
         dir = folderLevels.at(i);
       if (dir == "/" || dir == "\\")
@@ -79,7 +79,7 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, const st
   {
     while ((ent = readdir(d)) != nullptr)
     {
-      int nameLength = strlen(ent->d_name);
+      size_t nameLength = strlen(ent->d_name);
 
       if ( ent->d_name[0] == '.' && 
          ((nameLength == 1) || (nameLength == 2 && ent->d_name[1] == '.')))
@@ -110,7 +110,7 @@ void DeleteDirectory(const std::string &dir, bool bDeleteSubdirectories)
   {
     while ((ent = readdir(d)) != nullptr)
     {
-      int nameLength = strlen(ent->d_name);
+      size_t nameLength = strlen(ent->d_name);
 
       if (ent->d_name[0] == '.' &&
         ((nameLength == 1) || (nameLength == 2 && ent->d_name[1] == '.')))

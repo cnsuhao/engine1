@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/PupillaryResponseData.hxx"
+#include "bind/cdm/Physiology.pb.h"
 
 class DLL_DECL SEPupillaryResponse
 {
@@ -23,12 +23,13 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::PupillaryResponseData& in);
-  virtual CDM::PupillaryResponseData* Unload() const;
-protected:
-  virtual void Unload(CDM::PupillaryResponseData& data) const;
 
+  static void Load(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst);
+  static cdm::PupillaryResponseData* Unload(const SEPupillaryResponse& src);
+protected:
+  static void Serialize(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst);
+  static void Serialize(const SEPupillaryResponse& src, cdm::PupillaryResponseData& dst);
+  
 public:
 
   virtual bool HasReactivityModifier() const;

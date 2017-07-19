@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 class SESubstance;
 class SESubstanceManager;
 class SEEnvironmentalConditions;
-CDM_BIND_DECL(SubstanceConcentrationData)
+#include "bind/cdm/Substance.pb.h"
 
 class DLL_DECL SESubstanceConcentration : public Loggable
 {
@@ -27,10 +27,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::SubstanceConcentrationData& in);
-  virtual CDM::SubstanceConcentrationData* Unload() const;
+  static void Load(const cdm::SubstanceData_ConcentrationData& src, SESubstanceConcentration& dst);
+  static cdm::SubstanceData_ConcentrationData* Unload(const SESubstanceConcentration& src);
 protected:
-  virtual void Unload(CDM::SubstanceConcentrationData& data) const;
+  static void Serialize(const cdm::SubstanceData_ConcentrationData& src, SESubstanceConcentration& dst);
+  static void Serialize(const SESubstanceConcentration& src, cdm::SubstanceData_ConcentrationData& dst);
 
 public:
   virtual bool HasConcentration() const;

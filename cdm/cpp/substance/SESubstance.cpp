@@ -12,15 +12,10 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "substance/SESubstance.h"
-#include "bind/SubstanceData.hxx"
 #include "substance/SESubstanceAerosolization.h"
-#include "bind/SubstanceAerosolizationData.hxx"
 #include "substance/SESubstanceClearance.h"
-#include "bind/SubstanceClearanceData.hxx"
 #include "substance/SESubstancePharmacokinetics.h"
-#include "bind/SubstancePharmacokineticsData.hxx"
 #include "substance/SESubstancePharmacodynamics.h"
-#include "bind/SubstancePharmacodynamicsData.hxx"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
@@ -34,7 +29,7 @@ specific language governing permissions and limitations under the License.
 SESubstance::SESubstance(Logger* logger) : Loggable(logger)
 {
   m_Name = "";
-  m_State = (CDM::enumSubstanceState::value) - 1;
+  m_State = (cdm::SubstanceData_eState) - 1;
   m_Density = nullptr;
   m_MolarMass = nullptr;
 
@@ -70,7 +65,7 @@ SESubstance::~SESubstance()
 void SESubstance::Clear()
 {
   m_Name = "";
-  m_State = (CDM::enumSubstanceState::value) - 1;
+  m_State = (cdm::SubstanceData_eState) - 1;
   SAFE_DELETE(m_Density); 
   SAFE_DELETE(m_MolarMass);
   
@@ -300,21 +295,21 @@ void SESubstance::InvalidateName()
   m_Name = "";
 }
 
-CDM::enumSubstanceState::value SESubstance::GetState() const
+cdm::SubstanceData_eState SESubstance::GetState() const
 {
   return m_State;
 }
-void SESubstance::SetState(CDM::enumSubstanceState::value state)
+void SESubstance::SetState(cdm::SubstanceData_eState state)
 {
   m_State = state;
 }
 bool SESubstance::HasState() const
 {
-  return m_State == ((CDM::enumSubstanceState::value) - 1) ? false : true;
+  return m_State == ((cdm::SubstanceData_eState) - 1) ? false : true;
 }
 void SESubstance::InvalidateState()
 {
-  m_State = (CDM::enumSubstanceState::value) - 1;
+  m_State = (cdm::SubstanceData_eState) - 1;
 }
 
 bool SESubstance::HasDensity() const

@@ -71,7 +71,8 @@ message LiquidCompartmentData
 {
   FluidCompartmentData                   FluidCompartment                         = 1;
   ScalarData                             pH                                       = 2;
-  repeated LiquidSubstanceQuantityData   SubstanceQuantity                        = 3;
+  Scalar0To1Data                         WaterVolumeFraction                      = 3;
+  repeated LiquidSubstanceQuantityData   SubstanceQuantity                        = 4;
   
 }
 message LiquidCompartmentLinkData

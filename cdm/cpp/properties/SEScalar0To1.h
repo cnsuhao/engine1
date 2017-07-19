@@ -25,8 +25,8 @@ public:
 protected:
   static void Serialize(const cdm::Scalar0To1Data& src, SEScalar0To1& dst);
   static void Serialize(const SEScalar0To1& src, cdm::Scalar0To1Data& dst);
-public:
 
+public:
   double GetValue() const { return SEScalar::GetValue(); }
   double GetValue(const NoUnit& unitless) const { return SEScalar::GetValue(); }
   void SetValue(double d);

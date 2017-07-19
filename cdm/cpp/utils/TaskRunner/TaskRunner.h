@@ -51,6 +51,6 @@ private:
     unsigned int m_threadCount = 1;                 ///< The number of threads to spawn when running tasks
 
     bool m_echoPercentComplete = false;             ///< Whether or not the task runner should output percent complete as it executes
-    unsigned int m_totalTaskCount = 0;              ///< Total number of tasks in the queue when the task running begins to execute
+    size_t m_totalTaskCount = 0;                    ///< Total number of tasks in the queue when the task running begins to execute
     unsigned int m_tasksComplete = 0;               ///< Number of completed tasks
 };

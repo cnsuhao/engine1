@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(SubstancePharmacodynamicsData)
 #include "system/physiology/SEPupillaryResponse.h"
 
 class DLL_DECL SESubstancePharmacodynamics : Loggable
@@ -26,10 +25,11 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::SubstancePharmacodynamicsData& in);
-  virtual CDM::SubstancePharmacodynamicsData* Unload() const;
+  static void Load(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst);
+  static cdm::SubstanceData_PharmacodynamicsData* Unload(const SESubstancePharmacodynamics& src);
 protected:
-  virtual void Unload(CDM::SubstancePharmacodynamicsData& data) const;
+  static void Serialize(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst);
+  static void Serialize(const SESubstancePharmacodynamics& src, cdm::SubstanceData_PharmacodynamicsData& dst);
 
 public:
   virtual bool HasBronchodilation() const;

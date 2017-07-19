@@ -13,49 +13,54 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "bind/GasCompartmentGraphData.hxx"
 #include "compartment/SECompartmentManager.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
 
-bool SEGasCompartmentGraph::Load(const CDM::GasCompartmentGraphData& in, SECompartmentManager& cmptMgr)
+void SEGasCompartmentGraph::Load(const cdm::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr)
 {
-  m_Name = in.Name();
-  for (auto name : in.Compartment())
+  SEGasCompartmentGraph::Serialize(src, dst, cmptMgr);
+}
+void SEGasCompartmentGraph::Serialize(const cdm::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr)
+{
+  dst.m_Name = src.fluidgraph().graph().name();
+  for (int i=0; i<src.fluidgraph().graph().compartment_size(); i++)
   {
+    std::string name = src.fluidgraph().graph().compartment(i);
     SEGasCompartment* cmpt = cmptMgr.GetGasCompartment(name);
     if (cmpt == nullptr)
     {
-      Error("Could not find compartment " + name + " for graph " + m_Name);
-      return false;
+      dst.Error("Could not find compartment " + name + " for graph " + dst.m_Name);
+      continue;
     }
-    AddCompartment(*cmpt);
+    dst.AddCompartment(*cmpt);
   }
-  for (auto name : in.Link())
+  for (int i = 0; i<src.fluidgraph().graph().link_size(); i++)
   {
+    std::string name = src.fluidgraph().graph().link(i);
     SEGasCompartmentLink* link = cmptMgr.GetGasLink(name);
     if (link == nullptr)
     {
-      Error("Could not find link " + name + " for graph " + m_Name);
-      return false;
+      dst.Error("Could not find link " + name + " for graph " + dst.m_Name);
+      continue;
     }
-    AddLink(*link);
+    dst.AddLink(*link);
   }
-  return true;
 }
-CDM::GasCompartmentGraphData* SEGasCompartmentGraph::Unload()
+
+cdm::GasCompartmentGraphData* SEGasCompartmentGraph::Unload(const SEGasCompartmentGraph& src)
 {
-  CDM::GasCompartmentGraphData* data = new CDM::GasCompartmentGraphData();
-  Unload(*data);
-  return data;
+  cdm::GasCompartmentGraphData* dst = new cdm::GasCompartmentGraphData();
+  SEGasCompartmentGraph::Serialize(src, *dst);
+  return dst;
 }
-void SEGasCompartmentGraph::Unload(CDM::GasCompartmentGraphData& data)
+void SEGasCompartmentGraph::Serialize(const SEGasCompartmentGraph& src, cdm::GasCompartmentGraphData& dst)
 {
-  data.Name(m_Name);
-  for (SEGasCompartment* cmpt : m_Compartments)
-    data.Compartment().push_back(cmpt->GetName());
-  for (SEGasCompartmentLink* link : m_CompartmentLinks)
-    data.Link().push_back(link->GetName());
+  dst.mutable_fluidgraph()->mutable_graph()->set_name(src.m_Name);
+  for (SEGasCompartment* cmpt : src.m_Compartments)
+    dst.mutable_fluidgraph()->mutable_graph()->add_compartment(cmpt->GetName());
+  for (SEGasCompartmentLink* link : src.m_CompartmentLinks)
+    dst.mutable_fluidgraph()->mutable_graph()->add_link(link->GetName());
 }
 
 void SEGasCompartmentGraph::BalanceByIntensive()

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "compartment/SECompartmentLink.h"
-#include "bind/ThermalCompartmentLinkData.hxx"
 #include "substance/SESubstanceTransport.h"
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
@@ -27,10 +26,11 @@ public:
 
   virtual void Clear();
   
-  virtual bool Load(const CDM::ThermalCompartmentLinkData& in, SECircuitManager* circuits = nullptr);
-  virtual CDM::ThermalCompartmentLinkData* Unload();
+  static void Load(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits=nullptr);
+  static cdm::ThermalCompartmentLinkData* Unload(const SEThermalCompartmentLink& src);
 protected:
-  virtual void Unload(CDM::ThermalCompartmentLinkData& data);
+  static void Serialize(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SEThermalCompartmentLink& src, cdm::ThermalCompartmentLinkData& dst);
   
 public:
   virtual const SEScalar* GetScalar(const std::string& name);

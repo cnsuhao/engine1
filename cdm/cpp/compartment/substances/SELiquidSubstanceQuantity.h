@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
-#include "bind/LiquidSubstanceQuantityData.hxx"
 class SELiquidCompartment;
 
 enum class BalanceLiquidBy { Mass, Concentration, Molarity, PartialPressure };
@@ -29,10 +28,11 @@ public:
   virtual void Clear(); 
   virtual void Invalidate();
 
-  virtual bool Load(const CDM::LiquidSubstanceQuantityData& in);
-  virtual CDM::LiquidSubstanceQuantityData* Unload();
+  static void Load(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
+  static cdm::LiquidSubstanceQuantityData* Unload(const SELiquidSubstanceQuantity& src);
 protected:
-  virtual void Unload(CDM::LiquidSubstanceQuantityData& data);
+  static void Serialize(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
+  static void Serialize(const SELiquidSubstanceQuantity& src, cdm::LiquidSubstanceQuantityData& dst);
 
 public:
   virtual void SetToZero();
@@ -89,7 +89,7 @@ protected:
   SEScalarMass*            m_MassExcreted;
   SEScalarAmountPerVolume* m_Molarity;
   SEScalarPressure*        m_PartialPressure;
-  SEScalar0To1*        m_Saturation;
+  SEScalar0To1*            m_Saturation;
 
   SELiquidCompartment&     m_Compartment;
   std::vector<SELiquidSubstanceQuantity*> m_Children;

@@ -11,10 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "bind/TestCase.hxx"
 #include "utils/testing/SETestCase.h"
 #include "properties/SEScalarTime.h"
-#include "bind/TestErrorStatisticsData.hxx"
 
 SETestCase::SETestCase(Logger* logger) : Loggable(logger)
 {
@@ -33,6 +31,7 @@ SETestCase::~SETestCase()
 void SETestCase::Clear()
 {
   m_Failure.clear();
+  m_Duration.SetValue(0, TimeUnit::s);
   DELETE_VECTOR(m_CaseEqualsErrors);
 }
 
@@ -43,56 +42,48 @@ void SETestCase::Reset()
   DELETE_VECTOR(m_CaseEqualsErrors);
 }
 
-bool SETestCase::Load(const CDM::TestCase& in)
+void SETestCase::Load(const cdm::TestReportData_TestCaseData& src, SETestCase& dst)
 {
-  Reset();
+  SETestCase::Serialize(src, dst);
+}
+void SETestCase::Serialize(const cdm::TestReportData_TestCaseData& src, SETestCase& dst)
+{
+  dst.Clear();
 
-  m_Name = in.Name();
-  GetDuration().Load(in.Time());
+  dst.m_Name = src.name();
+  if(src.has_duration())
+    SEScalarTime::Load(src.duration(), dst.GetDuration());
 
   SETestErrorStatistics* ex;
-  CDM::TestErrorStatisticsData* eData;
-  for(unsigned int i=0; i<in.CaseEqualError().size(); i++)
+  for (int i = 0; i<src.errorstats_size(); i++)
   {
-    eData=(CDM::TestErrorStatisticsData*)&in.CaseEqualError().at(i);
-    if(eData!=nullptr)
-    {
-      ex=new SETestErrorStatistics(GetLogger());
-      ex->Load(*eData);
-    }
-    m_CaseEqualsErrors.push_back(ex);
+    auto eData = src.errorstats(i);
+    ex = new SETestErrorStatistics(dst.GetLogger());
+    SETestErrorStatistics::Load(eData, *ex);
+    dst.m_CaseEqualsErrors.push_back(ex);
   }
 
-  for(unsigned int i=0; i<in.Failure().size(); i++)
-  {
-    m_Failure.push_back(in.Failure().at(i));
-  }
-
-  return true;
+  for (int i=0; i<src.failure_size(); i++)
+    dst.m_Failure.push_back(src.failure(i));
 }
 
-std::unique_ptr<CDM::TestCase>  SETestCase::Unload() const
+cdm::TestReportData_TestCaseData* SETestCase::Unload(const SETestCase& src)
 {
-  std::unique_ptr<CDM::TestCase> data(new CDM::TestCase());
-  Unload(*data);
-  return data;
+  cdm::TestReportData_TestCaseData* dst = new cdm::TestReportData_TestCaseData();
+  SETestCase::Serialize(src,*dst);
+  return dst;
 }
-
-void SETestCase::Unload(CDM::TestCase& data) const
+void SETestCase::Serialize(const SETestCase& src, cdm::TestReportData_TestCaseData& dst)
 {
-  data.Name(m_Name);
-    
-  data.Time(std::unique_ptr<CDM::ScalarTimeData>(m_Duration.Unload()));
+  dst.set_name(src.m_Name);
 
-  for(unsigned int i=0; i < m_Failure.size(); i++)
-  {
-    data.Failure().push_back(m_Failure.at(i));
-  }
+  dst.set_allocated_duration(SEScalarTime::Unload(src.m_Duration));
 
-  for(unsigned int i=0; i < m_CaseEqualsErrors.size(); i++)
-  {
-    data.CaseEqualError().push_back(*m_CaseEqualsErrors.at(i)->Unload());
-  }
+  for (std::string s : src.m_Failure)
+    dst.mutable_failure()->Add(s.c_str());
+
+  for (auto s : src.m_CaseEqualsErrors)
+    dst.mutable_errorstats()->AddAllocated(SETestErrorStatistics::Unload(*s));
 }
 
 void SETestCase::SetName(const std::string& Name)

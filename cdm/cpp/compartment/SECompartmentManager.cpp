@@ -12,9 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "compartment/SECompartmentManager.h"
-#include "bind/CompartmentManagerData.hxx"
-#include "bind/GasCompartmentGraphData.hxx"
-#include "bind/LiquidCompartmentGraphData.hxx"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -69,172 +66,249 @@ void SECompartmentManager::Clear()
   m_TissueName2Compartments.clear();
 }
 
-#define LOAD_COMPARTMENT(type) \
-for (auto& cData : in.type##Compartment()) \
-{ \
-  if (!Create##type##Compartment(cData.Name()).Load(cData, m_subMgr, circuits)) \
-    return false; \
-} 
-#define LOAD_THERMAL_COMPARTMENT(type) \
-for (auto& cData : in.type##Compartment()) \
-{ \
-  if (!Create##type##Compartment(cData.Name()).Load(cData, circuits)) \
-    return false; \
-} 
-#define LOAD_LINK(type) \
-for (auto& cData : in.type##Link()) \
-{ \
-  auto* src = Get##type##Compartment(cData.SourceCompartment()); \
-  if (src == nullptr) \
-  { \
-    Error("Unable to find source compartment " + cData.SourceCompartment() + " for link " + cData.Name().c_str()); \
-    return false; \
-  } \
-  auto* tgt = Get##type##Compartment(cData.TargetCompartment()); \
-  if (src == nullptr) \
-  { \
-    Error("Unable to find target compartment " + cData.TargetCompartment() + " for link " + cData.Name().c_str()); \
-    return false; \
-  } \
-  if (!Create##type##Link(*src, *tgt, cData.Name()).Load(cData, circuits)) \
-    return false; \
-}
-#define LOAD_HIERARCHY(type) \
-for (auto& cData : in.type##Compartment()) \
-{ \
-  auto* cmpt = Get##type##Compartment(cData.Name()); \
-  for (auto name : cData.Child()) \
-  { \
-    auto* child = Get##type##Compartment(name); \
-    if (child == nullptr) \
-    { \
-      Error("Could not find child " + name + " for node " + cmpt->GetName()); \
-      return false; \
-    } \
-    cmpt->AddChild(*child); \
-  } \
-}
-#define LOAD_GRAPH(type) \
-for (auto& cData : in.type##Graph()) \
-{ \
-  if (!Create##type##Graph(cData.Name()).Load(cData, *this)) \
-    return false; \
-} 
-#define LOAD_SUBSTANCE(type) \
-for (auto subName : in.type##Substance()) \
-{ \
-  SESubstance* sub = m_subMgr.GetSubstance(subName); \
-  if (sub == nullptr) \
-  { \
-    Error("Could not find substance " + subName); \
-    return false; \
-  } \
-  Add##type##CompartmentSubstance(*sub); \
-}
-
-bool SECompartmentManager::Load(const CDM::CompartmentManagerData& in, SECircuitManager* circuits)
+void SECompartmentManager::Load(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits)
 {
-  Clear();
-
-  LOAD_COMPARTMENT(Gas);
-  LOAD_LINK(Gas);
-  LOAD_HIERARCHY(Gas);
-  LOAD_SUBSTANCE(Gas);
-  LOAD_GRAPH(Gas);
-
-  LOAD_COMPARTMENT(Liquid);
-  LOAD_LINK(Liquid);
-  LOAD_HIERARCHY(Liquid);
-  LOAD_SUBSTANCE(Liquid);
-  LOAD_GRAPH(Liquid);
-
-  LOAD_THERMAL_COMPARTMENT(Thermal);
-  LOAD_LINK(Thermal);
-  LOAD_HIERARCHY(Thermal);
-
-  LOAD_COMPARTMENT(Tissue);
-  
-  StateChange();
-  return true;
+  SECompartmentManager::Serialize(src, dst, circuits);
+  dst.StateChange();
 }
-CDM::CompartmentManagerData* SECompartmentManager::Unload() const
+void SECompartmentManager::Serialize(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits)
 {
-  CDM::CompartmentManagerData* data = new CDM::CompartmentManagerData();
-  Unload(*data);
-  return data;
+  dst.Clear();
+
+  for (int i = 0; i<src.gascompartment_size(); i++) 
+  { 
+    auto& cData = src.gascompartment(i);
+    SEGasCompartment::Load(cData, dst.CreateGasCompartment(cData.fluidcompartment().compartment().name()),dst.m_subMgr,circuits);
+  } 
+  for (int i=0; i<src.gaslink_size(); i++) 
+  { 
+    auto& cData = src.gaslink(i);
+    auto* srcCmpt = dst.GetGasCompartment(cData.fluidlink().link().sourcecompartment()); 
+    if (srcCmpt == nullptr)
+    { 
+      dst.Error("Unable to find source compartment " + cData.fluidlink().link().sourcecompartment() + " for link " + cData.fluidlink().link().name());
+      continue; 
+    } 
+    auto* tgtCmpt = dst.GetGasCompartment(cData.fluidlink().link().targetcompartment());
+    if (tgtCmpt == nullptr)
+    { 
+      dst.Error("Unable to find target compartment " + cData.fluidlink().link().targetcompartment() + " for link " + cData.fluidlink().link().name());
+      continue; 
+    } 
+    SEGasCompartmentLink::Load(cData, dst.CreateGasLink(*srcCmpt, *tgtCmpt, cData.fluidlink().link().name()), circuits);
+  }
+  for (int i = 0; i < src.gascompartment_size(); i++)
+  {
+    auto& cData = src.gascompartment(i);
+    auto* cmpt = dst.GetGasCompartment(cData.fluidcompartment().compartment().name());
+    for (int j = 0; j < cData.fluidcompartment().compartment().child_size(); j++)
+    {
+      std::string name = cData.fluidcompartment().compartment().child(j);
+      auto* child = dst.GetGasCompartment(name);
+      if (child == nullptr)
+      {
+        dst.Error("Could not find child " + name + " for node " + cmpt->GetName());
+        continue;
+      }
+      cmpt->AddChild(*child);
+    }
+  }
+  for (int i=0; i<src.gassubstance_size(); i++)
+  {
+    std::string subName = src.gassubstance(i);
+    SESubstance* sub = dst.m_subMgr.GetSubstance(subName);
+    if (sub == nullptr)
+    {
+      dst.Error("Could not find substance " + subName);
+      continue;
+    }
+    dst.AddGasCompartmentSubstance(*sub);
+  }
+  for (int i=0; i<src.gasgraph_size(); i++) 
+  { 
+    auto& cData = src.gasgraph(i);
+    SEGasCompartmentGraph::Load(cData, dst.CreateGasGraph(cData.fluidgraph().graph().name()), dst);
+  } 
+
+  for (int i = 0; i<src.liquidcompartment_size(); i++)
+  {
+    auto& cData = src.liquidcompartment(i);
+    SELiquidCompartment::Load(cData, dst.CreateLiquidCompartment(cData.fluidcompartment().compartment().name()), dst.m_subMgr, circuits);
+  }
+  for (int i = 0; i<src.liquidlink_size(); i++)
+  {
+    auto& cData = src.liquidlink(i);
+    auto* srcCmpt = dst.GetLiquidCompartment(cData.fluidlink().link().sourcecompartment());
+    if (srcCmpt == nullptr)
+    {
+      dst.Error("Unable to find source compartment " + cData.fluidlink().link().sourcecompartment() + " for link " + cData.fluidlink().link().name());
+      continue;
+    }
+    auto* tgtCmpt = dst.GetLiquidCompartment(cData.fluidlink().link().targetcompartment());
+    if (tgtCmpt == nullptr)
+    {
+      dst.Error("Unable to find target compartment " + cData.fluidlink().link().targetcompartment() + " for link " + cData.fluidlink().link().name());
+      continue;
+    }
+    SELiquidCompartmentLink::Load(cData, dst.CreateLiquidLink(*srcCmpt, *tgtCmpt, cData.fluidlink().link().name()), circuits);
+  }
+  for (int i = 0; i < src.liquidcompartment_size(); i++)
+  {
+    auto& cData = src.liquidcompartment(i);
+    auto* cmpt = dst.GetLiquidCompartment(cData.fluidcompartment().compartment().name());
+    for (int j = 0; j < cData.fluidcompartment().compartment().child_size(); j++)
+    {
+      std::string name = cData.fluidcompartment().compartment().child(j);
+      auto* child = dst.GetLiquidCompartment(name);
+      if (child == nullptr)
+      {
+        dst.Error("Could not find child " + name + " for node " + cmpt->GetName());
+        continue;
+      }
+      cmpt->AddChild(*child);
+    }
+  }
+  for (int i = 0; i<src.liquidsubstance_size(); i++)
+  {
+    std::string subName = src.liquidsubstance(i);
+    SESubstance* sub = dst.m_subMgr.GetSubstance(subName);
+    if (sub == nullptr)
+    {
+      dst.Error("Could not find substance " + subName);
+      continue;
+    }
+    dst.AddLiquidCompartmentSubstance(*sub);
+  }
+  for (int i = 0; i<src.liquidgraph_size(); i++)
+  {
+    auto& cData = src.liquidgraph(i);
+    SELiquidCompartmentGraph::Load(cData, dst.CreateLiquidGraph(cData.fluidgraph().graph().name()), dst);
+  }
+
+  for (int i = 0; i<src.thermalcompartment_size(); i++)
+  {
+    auto& cData = src.thermalcompartment(i);
+    SEThermalCompartment::Load(cData, dst.CreateThermalCompartment(cData.compartment().name()), circuits);
+  }
+  for (int i = 0; i<src.thermallink_size(); i++)
+  {
+    auto& cData = src.thermallink(i);
+    auto* srcCmpt = dst.GetThermalCompartment(cData.link().sourcecompartment());
+    if (srcCmpt == nullptr)
+    {
+      dst.Error("Unable to find source compartment " + cData.link().sourcecompartment() + " for link " + cData.link().name());
+      continue;
+    }
+    auto* tgtCmpt = dst.GetThermalCompartment(cData.link().targetcompartment());
+    if (tgtCmpt == nullptr)
+    {
+      dst.Error("Unable to find target compartment " + cData.link().targetcompartment() + " for link " + cData.link().name());
+      continue;
+    }
+    SEThermalCompartmentLink::Load(cData, dst.CreateThermalLink(*srcCmpt, *tgtCmpt, cData.link().name()),circuits);
+  }
+  for (int i = 0; i < src.thermalcompartment_size(); i++)
+  {
+    auto& cData = src.thermalcompartment(i);
+    auto* cmpt = dst.GetThermalCompartment(cData.compartment().name());
+    for (int j = 0; j < cData.compartment().child_size(); j++)
+    {
+      std::string name = cData.compartment().child(j);
+      auto* child = dst.GetThermalCompartment(name);
+      if (child == nullptr)
+      {
+        dst.Error("Could not find child " + name + " for node " + cmpt->GetName());
+        continue;
+      }
+      cmpt->AddChild(*child);
+    }
+  }
+
+  for (int i = 0; i<src.tissuecompartment_size(); i++)
+  {
+    auto& cData = src.tissuecompartment(i);
+    SETissueCompartment::Load(cData, dst.CreateTissueCompartment(cData.compartment().name()));
+  }
 }
-void SECompartmentManager::Unload(CDM::CompartmentManagerData& data) const
+
+cdm::CompartmentManagerData* SECompartmentManager::Unload(const SECompartmentManager& src)
 {
-  for (SELiquidCompartment* cmpt : m_LiquidCompartments)
-    data.LiquidCompartment().push_back(std::unique_ptr<CDM::LiquidCompartmentData>(cmpt->Unload()));
-  for (SELiquidCompartmentLink* link : m_LiquidLinks)
-    data.LiquidLink().push_back(std::unique_ptr<CDM::LiquidCompartmentLinkData>(link->Unload()));
-  for (SELiquidCompartmentGraph* graph : m_LiquidGraphs)
-    data.LiquidGraph().push_back(std::unique_ptr<CDM::LiquidCompartmentGraphData>(graph->Unload()));
-  for (SESubstance* sub : m_LiquidSubstances)
-    data.LiquidSubstance().push_back(sub->GetName());
+  cdm::CompartmentManagerData* dst = new cdm::CompartmentManagerData();
+  SECompartmentManager::Serialize(src,*dst);
+  return dst;
+}
+void SECompartmentManager::Serialize(const SECompartmentManager& src, cdm::CompartmentManagerData& dst)
+{
+  for (SELiquidCompartment* cmpt : src.m_LiquidCompartments)
+    dst.mutable_liquidcompartment()->AddAllocated(SELiquidCompartment::Unload(*cmpt));
+  for (SELiquidCompartmentLink* link : src.m_LiquidLinks)
+    dst.mutable_liquidlink()->AddAllocated(SELiquidCompartmentLink::Unload(*link));
+  for (SELiquidCompartmentGraph* graph : src.m_LiquidGraphs)
+    dst.mutable_liquidgraph()->AddAllocated(SELiquidCompartmentGraph::Unload(*graph));
+  for (SESubstance* sub : src.m_LiquidSubstances)
+    dst.mutable_liquidsubstance()->Add(sub->GetName());
 
-  for (SEGasCompartment* cmpt : m_GasCompartments)
-    data.GasCompartment().push_back(std::unique_ptr<CDM::GasCompartmentData>(cmpt->Unload()));
-  for (SEGasCompartmentLink* link : m_GasLinks)
-    data.GasLink().push_back(std::unique_ptr<CDM::GasCompartmentLinkData>(link->Unload()));
-  for (SEGasCompartmentGraph* graph : m_GasGraphs)
-    data.GasGraph().push_back(std::unique_ptr<CDM::GasCompartmentGraphData>(graph->Unload()));
-  for (SESubstance* sub : m_GasSubstances)
-    data.GasSubstance().push_back(sub->GetName());
+  for (SEGasCompartment* cmpt : src.m_GasCompartments)
+    dst.mutable_gascompartment()->AddAllocated(SEGasCompartment::Unload(*cmpt));
+  for (SEGasCompartmentLink* link : src.m_GasLinks)
+    dst.mutable_gaslink()->AddAllocated(SEGasCompartmentLink::Unload(*link));
+  for (SEGasCompartmentGraph* graph : src.m_GasGraphs)
+    dst.mutable_gasgraph()->AddAllocated(SEGasCompartmentGraph::Unload(*graph));
+  for (SESubstance* sub : src.m_GasSubstances)
+    dst.mutable_gassubstance()->Add(sub->GetName());
 
-  for (SEThermalCompartment* cmpt : m_ThermalCompartments)
-    data.ThermalCompartment().push_back(std::unique_ptr<CDM::ThermalCompartmentData>(cmpt->Unload()));
-  for (SEThermalCompartmentLink* link : m_ThermalLinks)
-    data.ThermalLink().push_back(std::unique_ptr<CDM::ThermalCompartmentLinkData>(link->Unload()));
+  for (SEThermalCompartment* cmpt : src.m_ThermalCompartments)
+    dst.mutable_thermalcompartment()->AddAllocated(SEThermalCompartment::Unload(*cmpt));
+  for (SEThermalCompartmentLink* link : src.m_ThermalLinks)
+    dst.mutable_thermallink()->AddAllocated(SEThermalCompartmentLink::Unload(*link));
 
-  for (SETissueCompartment* cmpt : m_TissueCompartments)
-    data.TissueCompartment().push_back(std::unique_ptr<CDM::TissueCompartmentData>(cmpt->Unload()));
+  for (SETissueCompartment* cmpt : src.m_TissueCompartments)
+    dst.mutable_tissuecompartment()->AddAllocated(SETissueCompartment::Unload(*cmpt));
  
 }
 
 
-bool SECompartmentManager::HasCompartment(CDM::enumCompartmentType::value type, const std::string& name) const
+bool SECompartmentManager::HasCompartment(cdm::eCompartmentType type, const std::string& name) const
 {
   switch (type)
   {
-  case CDM::enumCompartmentType::Gas:
+  case cdm::eCompartmentType::Gas:
     return HasGasCompartment(name);
-  case CDM::enumCompartmentType::Liquid:
+  case cdm::eCompartmentType::Liquid:
     return HasLiquidCompartment(name);
-  case CDM::enumCompartmentType::Thermal:
+  case cdm::eCompartmentType::Thermal:
     return HasThermalCompartment(name);
-  case CDM::enumCompartmentType::Tissue:
+  case cdm::eCompartmentType::Tissue:
     return HasTissueCompartment(name);
   }
   return false;
 }
-SECompartment* SECompartmentManager::GetCompartment(CDM::enumCompartmentType::value type, const std::string& name)
+SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartmentType type, const std::string& name)
 {
   switch (type)
   {
-  case CDM::enumCompartmentType::Gas:
+  case cdm::eCompartmentType::Gas:
     return GetGasCompartment(name);
-  case CDM::enumCompartmentType::Liquid:
+  case cdm::eCompartmentType::Liquid:
     return GetLiquidCompartment(name);
-  case CDM::enumCompartmentType::Thermal:
+  case cdm::eCompartmentType::Thermal:
     return GetThermalCompartment(name);
-  case CDM::enumCompartmentType::Tissue:
+  case cdm::eCompartmentType::Tissue:
     return GetTissueCompartment(name);
   }
   return nullptr;
 }
-const SECompartment* SECompartmentManager::GetCompartment(CDM::enumCompartmentType::value type, const std::string& name) const
+const SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartmentType type, const std::string& name) const
 {
   switch (type)
   {
-  case CDM::enumCompartmentType::Gas:
+  case cdm::eCompartmentType::Gas:
     return GetGasCompartment(name);
-  case CDM::enumCompartmentType::Liquid:
+  case cdm::eCompartmentType::Liquid:
     return GetLiquidCompartment(name);
-  case CDM::enumCompartmentType::Thermal:
+  case cdm::eCompartmentType::Thermal:
     return GetThermalCompartment(name);
-  case CDM::enumCompartmentType::Tissue:
+  case cdm::eCompartmentType::Tissue:
     return GetTissueCompartment(name);
   }
   return nullptr;

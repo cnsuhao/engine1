@@ -26,48 +26,52 @@ SEThermalCompartmentLink::~SEThermalCompartmentLink()
 
 }
 
-bool SEThermalCompartmentLink::Load(const CDM::ThermalCompartmentLinkData& in, SECircuitManager* circuits)
+void SEThermalCompartmentLink::Load(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits)
 {
-  if (!SECompartmentLink::Load(in, circuits))
-    return false;
-  if (in.Path().present())
+  SEThermalCompartmentLink::Serialize(src, dst, circuits);
+}
+void SEThermalCompartmentLink::Serialize(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits)
+{
+  SECompartmentLink::Serialize(src.link(), dst);
+
+  if (!src.link().path().empty())
   {
     if (circuits == nullptr)
     {
-      Error("Link is mapped to circuit path, " + in.Path().get() + ", but no circuit manager was provided, cannot load");
-      return false;
+      dst.Error("Link is mapped to circuit path, " + src.link().path() + ", but no circuit manager was provided, cannot load");
+      return;
     }
-    SEThermalCircuitPath* path = circuits->GetThermalPath(in.Path().get());
+    SEThermalCircuitPath* path = circuits->GetThermalPath(src.link().path());
     if (path == nullptr)
     {
-      Error("Link is mapped to circuit path, " + in.Path().get() + ", but provided circuit manager did not have that path");
-      return false;
+      dst.Error("Link is mapped to circuit path, " + src.link().path() + ", but provided circuit manager did not have that path");
+      return;
     }
-    MapPath(*path);
+    dst.MapPath(*path);
   }
   else
   {
-    if (in.HeatTransferRate().present())
-      const_cast<SEScalarPower&>(GetHeatTransferRate()).Load(in.HeatTransferRate().get());
+    if (src.has_heattransferrate())
+      SEScalarPower::Load(src.heattransferrate(), dst.GetHeatTransferRate());
   }  
-  return true;
 }
-CDM::ThermalCompartmentLinkData* SEThermalCompartmentLink::Unload()
+
+cdm::ThermalCompartmentLinkData* SEThermalCompartmentLink::Unload(const SEThermalCompartmentLink& src)
 {
-  CDM::ThermalCompartmentLinkData* data = new CDM::ThermalCompartmentLinkData();
-  Unload(*data);
-  return data;
+  cdm::ThermalCompartmentLinkData* dst = new cdm::ThermalCompartmentLinkData();
+  Serialize(src,*dst);
+  return dst;
 }
-void SEThermalCompartmentLink::Unload(CDM::ThermalCompartmentLinkData& data)
+void SEThermalCompartmentLink::Serialize(const SEThermalCompartmentLink& src, cdm::ThermalCompartmentLinkData& dst)
 {
-  SECompartmentLink::Unload(data);
-  data.SourceCompartment(m_SourceCmpt.GetName());
-  data.TargetCompartment(m_TargetCmpt.GetName());
-  if (m_Path != nullptr)
-    data.Path(m_Path->GetName());
+  SECompartmentLink::Serialize(src,*dst.mutable_link());
+  dst.mutable_link()->set_sourcecompartment(src.m_SourceCmpt.GetName());
+  dst.mutable_link()->set_targetcompartment(src.m_TargetCmpt.GetName());
+  if (src.m_Path != nullptr)
+    dst.mutable_link()->set_path(src.m_Path->GetName());
   // Even if you have a path, I am unloading everything, this makes the xml actually usefull...
-  if (HasHeatTransferRate())
-    data.HeatTransferRate(std::unique_ptr<CDM::ScalarPowerData>(GetHeatTransferRate().Unload()));
+  if (src.HasHeatTransferRate())
+    dst.set_allocated_heattransferrate(SEScalarPower::Unload(*src.m_HeatTransferRate));
 }
 
 void SEThermalCompartmentLink::Clear()

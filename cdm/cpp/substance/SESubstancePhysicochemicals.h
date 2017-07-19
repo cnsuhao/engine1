@@ -11,9 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(SubstancePhysicochemicalData)
-#include "bind/enumSubstanceIonicState.hxx"
-#include "bind/enumSubstanceBindingProtein.hxx"
+#include "bind/cdm/Substance.pb.h"
 
 class DLL_DECL SESubstancePhysicochemicals : public Loggable
 {
@@ -27,18 +25,19 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::SubstancePhysicochemicalData& in);
-  virtual CDM::SubstancePhysicochemicalData* Unload() const;
+  static void Load(const cdm::SubstanceData_PhysicochemicalData& src, SESubstancePhysicochemicals& dst);
+  static cdm::SubstanceData_PhysicochemicalData* Unload(const SESubstancePhysicochemicals& src);
 protected:
-  virtual void Unload(CDM::SubstancePhysicochemicalData& data) const;
+  static void Serialize(const cdm::SubstanceData_PhysicochemicalData& src, SESubstancePhysicochemicals& dst);
+  static void Serialize(const SESubstancePhysicochemicals& src, cdm::SubstanceData_PhysicochemicalData& dst);
 
 public:
   virtual bool HasAcidDissociationConstant() const;
   virtual SEScalar& GetAcidDissociationConstant();
   virtual double GetAcidDissociationConstant() const;
 
-  virtual CDM::enumSubstanceBindingProtein::value GetBindingProtein() const;
-  virtual void SetBindingProtein(CDM::enumSubstanceBindingProtein::value state);
+  virtual cdm::SubstanceData_eBindingProtein GetBindingProtein() const;
+  virtual void SetBindingProtein(cdm::SubstanceData_eBindingProtein state);
   virtual bool HasBindingProtein() const;
   virtual void InvalidateBindingProtein();
 
@@ -50,8 +49,8 @@ public:
   virtual SEScalar0To1& GetFractionUnboundInPlasma();
   virtual double GetFractionUnboundInPlasma() const;
 
-  virtual CDM::enumSubstanceIonicState::value GetIonicState() const;
-  virtual void SetIonicState(CDM::enumSubstanceIonicState::value state);
+  virtual cdm::SubstanceData_eIonicState GetIonicState() const;
+  virtual void SetIonicState(cdm::SubstanceData_eIonicState state);
   virtual bool HasIonicState() const;
   virtual void InvalidateIonicState();
 
@@ -65,10 +64,10 @@ public:
 
 protected: 
   SEScalar*                                m_AcidDissociationConstant;
-  CDM::enumSubstanceBindingProtein::value m_BindingProtein;
+  cdm::SubstanceData_eBindingProtein       m_BindingProtein;
   SEScalar*                                m_BloodPlasmaRatio;
-  SEScalar0To1*                        m_FractionUnboundInPlasma;
-  CDM::enumSubstanceIonicState::value      m_IonicState;
+  SEScalar0To1*                            m_FractionUnboundInPlasma;
+  cdm::SubstanceData_eIonicState           m_IonicState;
   SEScalar*                                m_LogP;
   SEScalar*                                m_OralAbsorptionRateConstant;
 };

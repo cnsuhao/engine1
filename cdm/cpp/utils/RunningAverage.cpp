@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "utils/RunningAverage.h"
-#include "bind/RunningAverageData.hxx"
-
 
 RunningAverage::RunningAverage()
 {
@@ -25,22 +23,26 @@ RunningAverage::~RunningAverage()
 
 }
 
-bool RunningAverage::Load(const CDM::RunningAverageData& in)
+void RunningAverage::Load(const cdm::RunningAverageData& src, RunningAverage& dst)
 {
-  m_Sum = in.sum();
-  m_NumSamples = in.numSamples();
-  return true;
+  RunningAverage::Serialize(src, dst);
 }
-CDM::RunningAverageData* RunningAverage::Unload() const
+void RunningAverage::Serialize(const cdm::RunningAverageData& src, RunningAverage& dst)
 {
-  CDM::RunningAverageData* data = new CDM::RunningAverageData();
-  Unload(*data);
-  return data;
+  dst.m_Sum = src.sum();
+  dst.m_NumSamples = src.numsamples();
 }
-void RunningAverage::Unload(CDM::RunningAverageData& data) const
+
+cdm::RunningAverageData* RunningAverage::Unload(const RunningAverage& src)
 {
-  data.sum(m_Sum);
-  data.numSamples(m_NumSamples);
+  cdm::RunningAverageData* dst = new cdm::RunningAverageData();
+  RunningAverage::Serialize(src,*dst);
+  return dst;
+}
+void RunningAverage::Serialize(const RunningAverage& src, cdm::RunningAverageData& dst)
+{
+  dst.set_sum(src.m_Sum);
+  dst.set_numsamples(src.m_NumSamples);
 }
 
 void RunningAverage::Reset()

@@ -13,8 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "utils/testing/SETestSuite.h"
 
-CDM_BIND_DECL(TestReportData)
-
 class DLL_DECL SETestReport : public Loggable
 {
 public:
@@ -25,10 +23,11 @@ public:
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
 
-  bool Load(const CDM::TestReportData& in);
-  std::unique_ptr<CDM::TestReportData> Unload() const;
+  static void Load(const cdm::TestReportData& src, SETestReport& dst);
+  static cdm::TestReportData* Unload(const SETestReport& src);
 protected:
-  void Unload(CDM::TestReportData& data) const;
+  static void Serialize(const cdm::TestReportData& src, SETestReport& dst);
+  static void Serialize(const SETestReport& src, cdm::TestReportData& dst);
 
 public:
 

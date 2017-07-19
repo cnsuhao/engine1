@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 #include "utils/testing/SETestCase.h"
 class SETestReport;
 
-CDM_BIND_DECL(TestSuite)
 class DLL_DECL SETestSuite : public Loggable
 {
   friend SETestReport;
@@ -26,10 +25,11 @@ public:
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
 
-  bool Load(const CDM::TestSuite& in);
-  std::unique_ptr<CDM::TestSuite> Unload() const;
+  static void Load(const cdm::TestReportData_TestSuiteData& src, SETestSuite& dst);
+  static cdm::TestReportData_TestSuiteData* Unload(const SETestSuite& src);
 protected:
-  void Unload(CDM::TestSuite& data) const;
+  static void Serialize(const cdm::TestReportData_TestSuiteData& src, SETestSuite& dst);
+  static void Serialize(const SETestSuite& src, cdm::TestReportData_TestSuiteData& dst);
 
 public:
 
@@ -45,11 +45,9 @@ public:
 
   SETestCase& CreateTestCase();
   const std::vector<SETestCase*>&  GetTestCases() const;
-  
-  int                 GetNumberOfErrors() const;
 
-  int                  GetNumberOfTests() const;
-                
+  size_t GetNumberOfErrors() const;
+
 protected:
 
   bool m_Performed;

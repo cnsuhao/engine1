@@ -4,14 +4,6 @@ option java_package = "com.kitware.physiology.cdm";
 
 import "cdm/Properties.proto";
 
-enum eCompartmentType
-{
-  Electrical                                                   = 0;
-  Fluid                                                        = 1;
-  Thermal                                                      = 2;
-}
-
-
 message CircuitData
 {
   string                             Name                      = 1;

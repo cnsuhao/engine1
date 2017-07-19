@@ -32,7 +32,7 @@ public:
   virtual void StateChange(); //analyze and cache for optimization
 
   virtual bool HasMapping() const { return !m_AllNodes.empty(); }
-  virtual std::vector<NodeType*>& GetNodes() { return m_AllNodes; }
+  virtual const std::vector<NodeType*>& GetNodes() const { return m_AllNodes; }
   virtual void RemoveNode(NodeType& node);
   virtual void MapNode(NodeType& node);
 

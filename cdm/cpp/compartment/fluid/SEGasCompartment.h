@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SEFluidCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "bind/GasCompartmentData.hxx"
 #include "substance/SESubstanceTransport.h"
 
 enum class BalanceGasBy { Volume, VolumeFraction };
@@ -27,10 +26,11 @@ protected:
 public:
   virtual ~SEGasCompartment();
 
-  virtual bool Load(const CDM::GasCompartmentData& in, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  virtual CDM::GasCompartmentData* Unload();
+  static void Load(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
+  static cdm::GasCompartmentData* Unload(const SEGasCompartment& src);
 protected:
-  virtual void Unload(CDM::GasCompartmentData& data);
+  static void Serialize(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SEGasCompartment& src, cdm::GasCompartmentData& dst);
 
 public:
   virtual void StateChange();

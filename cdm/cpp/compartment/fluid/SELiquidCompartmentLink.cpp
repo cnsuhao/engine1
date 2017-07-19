@@ -14,9 +14,22 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 
-CDM::LiquidCompartmentLinkData* SELiquidCompartmentLink::Unload()
+void SELiquidCompartmentLink::Load(const cdm::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits)
 {
-  CDM::LiquidCompartmentLinkData* data = new CDM::LiquidCompartmentLinkData();
-  SEFluidCompartmentLink::Unload(*data);
-  return data;
+  SELiquidCompartmentLink::Serialize(src, dst, circuits);
+}
+void SELiquidCompartmentLink::Serialize(const cdm::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits)
+{
+  SEFluidCompartmentLink::Serialize(src.fluidlink(), dst, circuits);
+}
+
+cdm::LiquidCompartmentLinkData* SELiquidCompartmentLink::Unload(const SELiquidCompartmentLink& src)
+{
+  cdm::LiquidCompartmentLinkData* dst = new cdm::LiquidCompartmentLinkData();
+  SELiquidCompartmentLink::Serialize(src, *dst);
+  return dst;
+}
+void SELiquidCompartmentLink::Serialize(const SELiquidCompartmentLink& src, cdm::LiquidCompartmentLinkData& dst)
+{
+  SEFluidCompartmentLink::Serialize(src, *dst.mutable_fluidlink());
 }

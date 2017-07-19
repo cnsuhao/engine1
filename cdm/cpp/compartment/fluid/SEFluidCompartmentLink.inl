@@ -30,43 +30,42 @@ SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::~SEFluidCompartmentLink()
 }
 
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-bool SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Load(const CDM::FluidCompartmentLinkData& in, SECircuitManager* circuits)
+void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Serialize(const cdm::FluidCompartmentLinkData& src, SEFluidCompartmentLink& dst, SECircuitManager* circuits)
 {
-  if (!SECompartmentLink::Load(in,circuits))
-    return false;
-  if (in.Path().present())
+  SECompartmentLink::Serialize(src.link(), dst);
+
+  if (!src.link().path().empty())
   {
     if (circuits == nullptr)
     {
-      Error("Link is mapped to circuit path, "+in.Path().get()+", but no circuit manager was provided, cannot load");
-      return false;
+      dst.Error("Link is mapped to circuit path, "+ src.link().path() +", but no circuit manager was provided, cannot load");
+      return;
     }
-    SEFluidCircuitPath* path = circuits->GetFluidPath(in.Path().get());
+    SEFluidCircuitPath* path = circuits->GetFluidPath(src.link().path());
     if (path == nullptr)
     {
-      Error("Link is mapped to circuit path, " + in.Path().get() + ", but provided circuit manager did not have that path");
-      return false;
+      dst.Error("Link is mapped to circuit path, " + src.link().path() + ", but provided circuit manager did not have that path");
+      return;
     }
-    MapPath(*path);
+    dst.MapPath(*path);
   }
   else
   {
-    if (in.Flow().present())
-      const_cast<SEScalarVolumePerTime&>(GetFlow()).Load(in.Flow().get());
+    if (src.has_flow())
+      SEScalarVolumePerTime::Load(src.flow(), dst.GetFlow());
   }
-  return true;
 }
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Unload(CDM::FluidCompartmentLinkData& data)
+void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Serialize(const SEFluidCompartmentLink& src, cdm::FluidCompartmentLinkData& dst)
 {
-  SECompartmentLink::Unload(data);
-  data.SourceCompartment(m_SourceCmpt.GetName());
-  data.TargetCompartment(m_TargetCmpt.GetName());
-  if (m_Path != nullptr)
-    data.Path(m_Path->GetName());
+  SECompartmentLink::Serialize(src,*dst.mutable_link());
+  dst.mutable_link()->set_sourcecompartment(src.m_SourceCmpt.GetName());
+  dst.mutable_link()->set_targetcompartment(src.m_TargetCmpt.GetName());
+  if (src.m_Path != nullptr)
+    dst.mutable_link()->set_path(src.m_Path->GetName());
   // Even if you have a path, I am unloading everything, this makes the xml actually usefull...
-  if (HasFlow())
-    data.Flow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(GetFlow().Unload()));  
+  if (src.HasFlow())
+    dst.set_allocated_flow(SEScalarVolumePerTime::Unload(*src.m_Flow));
 }
 
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>

@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 class SECircuitManager;
+#include "bind/cdm/Compartment.pb.h"
 
-CDM_BIND_DECL(CompartmentLinkData)
 class DLL_DECL SECompartmentLink : public Loggable
 {
 protected:
@@ -23,10 +23,9 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::CompartmentLinkData& in, SECircuitManager* circuits = nullptr);
-  virtual CDM::CompartmentLinkData* Unload() = 0;
 protected:
-  virtual void Unload(CDM::CompartmentLinkData& data);
+  static void Serialize(const cdm::CompartmentLinkData& src, SECompartmentLink& dst);
+  static void Serialize(const SECompartmentLink& src, cdm::CompartmentLinkData& dst);
 
 public:
   virtual std::string GetName() const;

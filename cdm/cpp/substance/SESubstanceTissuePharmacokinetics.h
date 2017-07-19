@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/SubstanceTissuePharmacokineticsData.hxx"
 
 class DLL_DECL SESubstanceTissuePharmacokinetics : public Loggable
 {
@@ -22,10 +21,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::SubstanceTissuePharmacokineticsData& in);
-  virtual CDM::SubstanceTissuePharmacokineticsData* Unload() const;
+  static void Load(const cdm::SubstanceData_TissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst);
+  static cdm::SubstanceData_TissuePharmacokineticsData* Unload(const SESubstanceTissuePharmacokinetics& src);
 protected:
-  virtual void Unload(CDM::SubstanceTissuePharmacokineticsData& data) const;
+  static void Serialize(const cdm::SubstanceData_TissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst);
+  static void Serialize(const SESubstanceTissuePharmacokinetics& src, cdm::SubstanceData_TissuePharmacokineticsData& dst);
 
 public:
   const SEScalar* GetScalar(const std::string& name);

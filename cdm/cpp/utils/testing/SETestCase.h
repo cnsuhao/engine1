@@ -15,8 +15,6 @@ specific language governing permissions and limitations under the License.
 #include "utils/testing/SETestErrorStatistics.h"
 class SETestSuite;
 
-CDM_BIND_DECL(TestCase)
-
 class DLL_DECL SETestCase : public Loggable
 {
   friend SETestSuite;
@@ -29,19 +27,20 @@ public:
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
 
-  bool Load(const CDM::TestCase& in);
-  std::unique_ptr<CDM::TestCase> Unload() const;
+  static void Load(const cdm::TestReportData_TestCaseData& src, SETestCase& dst);
+  static cdm::TestReportData_TestCaseData* Unload(const SETestCase& src);
 protected:
-  void Unload(CDM::TestCase& data) const;
+  static void Serialize(const cdm::TestReportData_TestCaseData& src, SETestCase& dst);
+  static void Serialize(const SETestCase& src, cdm::TestReportData_TestCaseData& dst);
 
 public:
 
   void                                 SetName(const std::string& name);
-  std::string                           GetName() const;
-  SEScalarTime&                         GetDuration();
+  std::string                          GetName() const;
+  SEScalarTime&                        GetDuration();
   void                                 AddFailure(std::stringstream &msg);
   void                                 AddFailure(const std::string& err);
-  const std::vector<std::string>&       GetFailures();
+  const std::vector<std::string>&      GetFailures();
 
   SETestErrorStatistics& CreateErrorStatistic();
   const std::vector<SETestErrorStatistics*>& GetErrorStatistics() const;

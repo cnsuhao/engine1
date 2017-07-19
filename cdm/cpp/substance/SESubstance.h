@@ -29,10 +29,11 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::SubstanceData& in);
-  virtual CDM::SubstanceData* Unload() const;
+  static void Load(const cdm::SubstanceData& src, SESubstance& dst);
+  static cdm::SubstanceData* Unload(const SESubstance& src);
 protected:
-  virtual void Unload(CDM::SubstanceData& data) const;
+  static void Serialize(const cdm::SubstanceData& src, SESubstance& dst);
+  static void Serialize(const SESubstance& src, cdm::SubstanceData& dst);
 
 public:
   
@@ -41,8 +42,8 @@ public:
   virtual bool HasName() const;
   virtual void InvalidateName();
 
-  virtual CDM::enumSubstanceState::value GetState() const;
-  virtual void SetState(CDM::enumSubstanceState::value state);
+  virtual cdm::SubstanceData_eState GetState() const;
+  virtual void SetState(cdm::SubstanceData_eState state);
   virtual bool HasState() const;
   virtual void InvalidateState();
 
@@ -141,7 +142,7 @@ public:
 protected: 
 
   std::string                       m_Name;
-  CDM::enumSubstanceState::value    m_State;
+  cdm::SubstanceData_eState         m_State;
   SEScalarMassPerVolume*            m_Density;
   SEScalarMassPerAmount*            m_MolarMass;
 

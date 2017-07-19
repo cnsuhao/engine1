@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "compartment/SECompartment.h"
-#include "bind/TissueCompartmentData.hxx"
 class SESubstance;
 class SESubstanceManager;
 class SELiquidCompartment;
@@ -26,10 +25,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::TissueCompartmentData& in, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  virtual CDM::TissueCompartmentData* Unload();
+  static void Load(const cdm::TissueCompartmentData& src, SETissueCompartment& dst);
+  static cdm::TissueCompartmentData* Unload(const SETissueCompartment& src);
 protected:
-  virtual void Unload(CDM::TissueCompartmentData& data);
+  static void Serialize(const cdm::TissueCompartmentData& src, SETissueCompartment& dst);
+  static void Serialize(const SETissueCompartment& src, cdm::TissueCompartmentData& dst);
 
 public:
   virtual const SEScalar* GetScalar(const std::string& name);

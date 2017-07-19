@@ -28,7 +28,7 @@ SEGasSubstanceQuantity::SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartmen
   m_Volume = nullptr;
   m_VolumeFraction = nullptr;
 
-  if (m_Substance.GetState() != CDM::enumSubstanceState::Gas)
+  if (m_Substance.GetState() != cdm::SubstanceData_eState_Gas)
     Fatal("The substance for a Gas Substance quantity must be a gas");
 }
 
@@ -54,38 +54,40 @@ void SEGasSubstanceQuantity::Clear()
   m_Children.clear();
 }
 
-bool SEGasSubstanceQuantity::Load(const CDM::GasSubstanceQuantityData& in)
+void SEGasSubstanceQuantity::Load(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
 {
-  SESubstanceQuantity::Load(in);
-  if (!m_Compartment.HasChildren())
+  SEGasSubstanceQuantity::Serialize(src, dst);
+}
+void SEGasSubstanceQuantity::Serialize(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
+{
+  SESubstanceQuantity::Serialize(src.substancequantity(), dst);
+  if (!dst.m_Compartment.HasChildren())
   {
-    if (in.PartialPressure().present())
-      GetPartialPressure().Load(in.PartialPressure().get());
-    if (in.Volume().present())
-      GetVolume().Load(in.Volume().get());
-    if (in.VolumeFraction().present())
-      GetVolumeFraction().Load(in.VolumeFraction().get());
+    if (src.has_partialpressure())
+      SEScalarPressure::Load(src.partialpressure(), dst.GetPartialPressure());
+    if (src.has_volume())
+      SEScalarVolume::Load(src.volume(), dst.GetVolume());
+    if (src.has_volumefraction())
+      SEScalar0To1::Load(src.volumefraction(), dst.GetVolumeFraction());
   }
-  return true;
 }
 
-CDM::GasSubstanceQuantityData* SEGasSubstanceQuantity::Unload()
+cdm::GasSubstanceQuantityData* SEGasSubstanceQuantity::Unload(const SEGasSubstanceQuantity& src)
 {
-  CDM::GasSubstanceQuantityData* data = new CDM::GasSubstanceQuantityData();
-  Unload(*data);
-  return data;
+  cdm::GasSubstanceQuantityData* dst = new cdm::GasSubstanceQuantityData();
+  SEGasSubstanceQuantity::Serialize(src, *dst);
+  return dst;
 }
-
-void SEGasSubstanceQuantity::Unload(CDM::GasSubstanceQuantityData& data)
+void SEGasSubstanceQuantity::Serialize(const SEGasSubstanceQuantity& src, cdm::GasSubstanceQuantityData& dst)
 {
-  SESubstanceQuantity::Unload(data);
-  // Even if you have children, I am unloading everything, this makes the xml actually usefull...
-  if (HasPartialPressure())
-    data.PartialPressure(std::unique_ptr<CDM::ScalarPressureData>(GetPartialPressure().Unload()));
-  if (HasVolume())
-    data.Volume(std::unique_ptr<CDM::ScalarVolumeData>(GetVolume().Unload()));
-  if (HasVolumeFraction())
-    data.VolumeFraction(std::unique_ptr<CDM::ScalarFractionData>(GetVolumeFraction().Unload()));
+  SESubstanceQuantity::Serialize(src, *dst.mutable_substancequantity());
+  // Even if you have children, I am unloading everything, this makes the output actually usefull...
+  if (src.HasPartialPressure())
+    dst.set_allocated_partialpressure(SEScalarPressure::Unload(*src.m_PartialPressure));
+  if (src.HasVolume())
+    dst.set_allocated_volume(SEScalarVolume::Unload(*src.m_Volume));
+  if (src.HasVolumeFraction())
+    dst.set_allocated_volumefraction(SEScalar0To1::Unload(*src.m_VolumeFraction));
 }
 
 void SEGasSubstanceQuantity::SetToZero()

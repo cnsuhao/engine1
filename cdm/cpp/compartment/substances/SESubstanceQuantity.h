@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "substance/SESubstance.h"
-CDM_BIND_DECL(SubstanceQuantityData)
+#include "bind/cdm/SubstanceQuantity.pb.h"
 
 class DLL_DECL SESubstanceQuantity : public Loggable
 {
@@ -23,10 +23,9 @@ public:
   virtual void Clear() = 0; //clear memory
   virtual void Invalidate() = 0;
 
-  virtual bool Load(const CDM::SubstanceQuantityData& in);
-  virtual CDM::SubstanceQuantityData* Unload() = 0;
 protected:
-  virtual void Unload(CDM::SubstanceQuantityData& data);
+  static void Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst);
+  static void Serialize(const SESubstanceQuantity& src, cdm::SubstanceQuantityData& dst);
 
 public:
   

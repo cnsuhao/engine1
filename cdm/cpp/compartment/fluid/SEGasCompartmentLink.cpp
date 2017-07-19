@@ -14,9 +14,22 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 
-CDM::GasCompartmentLinkData* SEGasCompartmentLink::Unload()
+void SEGasCompartmentLink::Load(const cdm::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits)
 {
-  CDM::GasCompartmentLinkData* data = new CDM::GasCompartmentLinkData();
-  SEFluidCompartmentLink::Unload(*data);
-  return data;
+  SEGasCompartmentLink::Serialize(src, dst,circuits);
+}
+void SEGasCompartmentLink::Serialize(const cdm::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits)
+{
+  SEFluidCompartmentLink::Serialize(src.fluidlink(), dst, circuits);
+}
+
+cdm::GasCompartmentLinkData* SEGasCompartmentLink::Unload(const SEGasCompartmentLink& src)
+{
+  cdm::GasCompartmentLinkData* dst = new cdm::GasCompartmentLinkData();
+  SEGasCompartmentLink::Serialize(src, *dst);
+  return dst;
+}
+void SEGasCompartmentLink::Serialize(const SEGasCompartmentLink& src, cdm::GasCompartmentLinkData& dst)
+{
+  SEFluidCompartmentLink::Serialize(src, *dst.mutable_fluidlink());
 }

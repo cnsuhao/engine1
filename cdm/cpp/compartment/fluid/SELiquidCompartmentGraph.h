@@ -11,10 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(LiquidCompartmentGraphData)
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentLink.h"
-#include "bind/GasCompartmentData.hxx"
 #include "compartment/SECompartmentTransportGraph.h"
 class SECompartmentManager;
 
@@ -28,10 +26,11 @@ public:
 
   void AddGraph(SELiquidCompartmentGraph& graph);
 
-  virtual bool Load(const CDM::LiquidCompartmentGraphData& in, SECompartmentManager& cmptMgr);
-  virtual CDM::LiquidCompartmentGraphData* Unload();
+  static void Load(const cdm::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr);
+  static cdm::LiquidCompartmentGraphData* Unload(const SELiquidCompartmentGraph& src);
 protected:
-  virtual void Unload(CDM::LiquidCompartmentGraphData& data);
+  static void Serialize(const cdm::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr);
+  static void Serialize(const SELiquidCompartmentGraph& src, cdm::LiquidCompartmentGraphData& dst);
 
 protected:
   void BalanceByIntensive();

@@ -17,8 +17,8 @@ class SEThermalCompartment;
 class SETissueCompartment;
 class SESubstance;
 class SECircuitManager;
+#include "bind/cdm/Compartment.pb.h"
 
-CDM_BIND_DECL(CompartmentData)
 class DLL_DECL SECompartment : public Loggable
 {
 protected:
@@ -28,10 +28,9 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::CompartmentData& in, SECircuitManager* circuits = nullptr);
-  virtual CDM::CompartmentData* Unload() = 0;
 protected:
-  virtual void Unload(CDM::CompartmentData& data);
+  static void Serialize(const cdm::CompartmentData& src, SECompartment& dst);
+  static void Serialize(const SECompartment& src, cdm::CompartmentData& dst);
 
 public:
   virtual std::string GetName() const;

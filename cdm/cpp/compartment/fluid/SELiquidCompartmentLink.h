@@ -11,9 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/LiquidCompartmentData.hxx"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
-#include "bind/LiquidCompartmentLinkData.hxx"
 
 class SELiquidCompartment;
 
@@ -25,5 +23,9 @@ protected:
 public:
   ~SELiquidCompartmentLink() {}
 
-  virtual CDM::LiquidCompartmentLinkData* Unload();
+  static void Load(const cdm::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static cdm::LiquidCompartmentLinkData* Unload(const SELiquidCompartmentLink& src);
+protected:
+  static void Serialize(const cdm::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SELiquidCompartmentLink& src, cdm::LiquidCompartmentLinkData& dst);
 };

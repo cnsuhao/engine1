@@ -13,16 +13,14 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 
 #include "compartment/substances/SESubstanceQuantity.h"
-#include "bind/SubstanceQuantityData.hxx"
 #include "substance/SESubstance.h"
 
-bool SESubstanceQuantity::Load(const CDM::SubstanceQuantityData& in)
+void SESubstanceQuantity::Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst)
 {
-  Clear();
-  return true;
+  dst.Clear();
+  // Name will be used to get substance for ctor
 }
-
-void SESubstanceQuantity::Unload(CDM::SubstanceQuantityData& data)
+void SESubstanceQuantity::Serialize(const SESubstanceQuantity& src, cdm::SubstanceQuantityData& dst)
 {
-  data.Substance(m_Substance.GetName());
+  dst.set_substance(src.m_Substance.GetName());
 }

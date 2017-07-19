@@ -8,12 +8,12 @@ set_target_properties(ScenarioDriver PROPERTIES COMPILE_FLAGS -pthread LINK_FLAG
 
 # Preprocessor Definitions and Include Paths
 target_include_directories(ScenarioDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
+target_include_directories(ScenarioDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
 target_include_directories(ScenarioDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 target_include_directories(ScenarioDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(ScenarioDriver PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_include_directories(ScenarioDriver PRIVATE ${LOG4CPP_INCLUDE_DIR})
-target_include_directories(ScenarioDriver PRIVATE ${XercesC_INCLUDE_DIR})
-target_include_directories(ScenarioDriver PRIVATE ${XSD_INCLUDE_DIR})
+target_include_directories(ScenarioDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 # Dependent Libraries
 target_link_libraries(ScenarioDriver BioGearsEngine)

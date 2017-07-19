@@ -53,7 +53,7 @@ SELiquidSubstanceQuantity::SELiquidSubstanceQuantity(SESubstance& sub, SELiquidC
   else if (sub.GetName() == "CarbonDioxide")
     m_isCO2 = true;
 
-  if (m_Substance.GetState() != CDM::enumSubstanceState::Gas)
+  if (m_Substance.GetState() != cdm::SubstanceData_eState_Gas)
     GetPartialPressure().SetReadOnly(true);// Cannot have a partial pressure of a non gas
 }
 
@@ -73,7 +73,7 @@ void SELiquidSubstanceQuantity::Invalidate()
     m_MassDeposited->Invalidate();
   if (m_MassExcreted != nullptr)
     m_MassExcreted->Invalidate();
-  if (m_PartialPressure != nullptr && m_Substance.GetState() == CDM::enumSubstanceState::Gas)
+  if (m_PartialPressure != nullptr && m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
     m_PartialPressure->Invalidate();
   if (m_Saturation != nullptr)
     m_Saturation->Invalidate();
@@ -92,58 +92,56 @@ void SELiquidSubstanceQuantity::Clear()
   m_Children.clear();
 }
 
-bool SELiquidSubstanceQuantity::Load(const CDM::LiquidSubstanceQuantityData& in)
+void SELiquidSubstanceQuantity::Load(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst)
 {
-  SESubstanceQuantity::Load(in);
-  if (!m_Compartment.HasChildren())
+  SELiquidSubstanceQuantity::Serialize(src, dst);
+}
+void SELiquidSubstanceQuantity::Serialize(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst)
+{
+  SESubstanceQuantity::Serialize(src.substancequantity(),dst);
+  if (!dst.m_Compartment.HasChildren())
   {
-    if (in.Concentration().present())
-      GetConcentration().Load(in.Concentration().get());
-    if (in.Mass().present())
-      GetMass().Load(in.Mass().get());
-    if (in.MassCleared().present())
-      GetMassCleared().Load(in.MassCleared().get());
-    if (in.MassDeposited().present())
-      GetMassDeposited().Load(in.MassDeposited().get());
-    if (in.MassExcreted().present())
-      GetMassExcreted().Load(in.MassExcreted().get());
-    if (in.Molarity().present())
-      GetMolarity().Load(in.Molarity().get());
-    if (in.PartialPressure().present())
-      GetPartialPressure().Load(in.PartialPressure().get());
-    if (in.Saturation().present())
-      GetSaturation().Load(in.Saturation().get());
+    if (src.has_concentration())
+      SEScalarMassPerVolume::Load(src.concentration(), dst.GetConcentration());
+    if (src.has_mass())
+      SEScalarMass::Load(src.mass(), dst.GetMass());
+    if (src.has_masscleared())
+      SEScalarMass::Load(src.masscleared(), dst.GetMassCleared());
+    if (src.has_massdeposited())
+      SEScalarMass::Load(src.massdeposited(), dst.GetMassDeposited());
+    if (src.has_massexcreted())
+      SEScalarMass::Load(src.massexcreted(), dst.GetMassExcreted());
+    if (src.has_partialpressure())
+      SEScalarPressure::Load(src.partialpressure(), dst.GetPartialPressure());
+    if (src.has_saturation())
+      SEScalar0To1::Load(src.saturation(), dst.GetSaturation());
   }
-  return true;
 }
 
-CDM::LiquidSubstanceQuantityData* SELiquidSubstanceQuantity::Unload()
+cdm::LiquidSubstanceQuantityData* SELiquidSubstanceQuantity::Unload(const SELiquidSubstanceQuantity& src)
 {
-  CDM::LiquidSubstanceQuantityData* data = new CDM::LiquidSubstanceQuantityData();
-  Unload(*data);
-  return data;
+  cdm::LiquidSubstanceQuantityData* dst = new cdm::LiquidSubstanceQuantityData();
+  SELiquidSubstanceQuantity::Serialize(src,*dst);
+  return dst;
 }
-
-void SELiquidSubstanceQuantity::Unload(CDM::LiquidSubstanceQuantityData& data)
+void SELiquidSubstanceQuantity::Serialize(const SELiquidSubstanceQuantity& src, cdm::LiquidSubstanceQuantityData& dst)
 {
-  SESubstanceQuantity::Unload(data);  
-  // Even if you have children, I am unloading everything, this makes the xml actually usefull...
-  if (HasConcentration())
-    data.Concentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(GetConcentration().Unload()));
-  if (HasMass())
-    data.Mass(std::unique_ptr<CDM::ScalarMassData>(GetMass().Unload()));
-  if (m_MassCleared != nullptr)
-    data.MassCleared(std::unique_ptr<CDM::ScalarMassData>(m_MassCleared->Unload()));
-  if (m_MassDeposited != nullptr)
-    data.MassDeposited(std::unique_ptr<CDM::ScalarMassData>(m_MassDeposited->Unload()));
-  if (m_MassExcreted != nullptr)
-    data.MassExcreted(std::unique_ptr<CDM::ScalarMassData>(m_MassExcreted->Unload()));
-  if (HasMolarity())
-    data.Molarity(std::unique_ptr<CDM::ScalarAmountPerVolumeData>(GetMolarity().Unload()));
-  if (HasPartialPressure())
-    data.PartialPressure(std::unique_ptr<CDM::ScalarPressureData>(GetPartialPressure().Unload()));
-  if (HasSaturation())
-    data.Saturation(std::unique_ptr<CDM::ScalarFractionData>(GetSaturation().Unload()));
+  SESubstanceQuantity::Serialize(src,*dst.mutable_substancequantity());
+  // Even if you have children, I am unloading everything, this makes the output actually usefull...
+  if (src.HasConcentration())
+    dst.set_allocated_concentration(SEScalarMassPerVolume::Unload(*src.m_Concentration));
+  if (src.HasMass())
+    dst.set_allocated_mass(SEScalarMass::Unload(*src.m_Mass));
+  if (src.HasMassCleared())
+    dst.set_allocated_masscleared(SEScalarMass::Unload(*src.m_MassCleared));
+  if (src.HasMassDeposited())
+    dst.set_allocated_massdeposited(SEScalarMass::Unload(*src.m_MassDeposited));
+  if (src.HasMassExcreted())
+    dst.set_allocated_massexcreted(SEScalarMass::Unload(*src.m_MassExcreted));
+  if (src.HasPartialPressure())
+    dst.set_allocated_partialpressure(SEScalarPressure::Unload(*src.m_PartialPressure));
+  if (src.HasSaturation())
+    dst.set_allocated_saturation(SEScalar0To1::Unload(*src.m_Saturation));
 }
 
 void SELiquidSubstanceQuantity::SetToZero()
@@ -151,7 +149,7 @@ void SELiquidSubstanceQuantity::SetToZero()
   GetConcentration().SetValue(0, MassPerVolumeUnit::mg_Per_mL);
   GetMass().SetValue(0, MassUnit::mg);
   GetMolarity().SetValue(0, AmountPerVolumeUnit::mmol_Per_mL);
-  if (m_Substance.GetState() == CDM::enumSubstanceState::Gas)
+  if (m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
     GetPartialPressure().SetValue(0, PressureUnit::mmHg);
   if (m_isO2 || m_isCO || m_isCO2)
     GetSaturation().SetValue(0);
@@ -205,7 +203,7 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
         GetMass().SetValue(std::numeric_limits<double>::infinity(), MassUnit::ug);
       else
         GeneralMath::CalculateMass(volume, GetConcentration(), GetMass(), m_Logger);
-      if (m_Substance.GetState() == CDM::enumSubstanceState::Gas)
+      if (m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
         GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
       double molarity_mmol_Per_mL = GetMass(MassUnit::ug) / m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) / volume.GetValue(VolumeUnit::mL);
       GetMolarity().SetValue(molarity_mmol_Per_mL, AmountPerVolumeUnit::mmol_Per_mL);
@@ -216,7 +214,7 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
       if (!volume.IsValid() || volume.IsInfinity() || !GetMass().IsValid() ||GetMass().IsInfinity())
         Fatal("Cannot balance by Mass if volume or mass is invalid or set to Infinity", "SELiquidSubstanceQuantity::Balance");
       GeneralMath::CalculateConcentration(GetMass(),volume,GetConcentration(), m_Logger);
-      if (m_Substance.GetState() == CDM::enumSubstanceState::Gas)
+      if (m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
         GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
       double molarity_mmol_Per_mL = GetMass(MassUnit::ug) / m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) / volume.GetValue(VolumeUnit::mL);
       GetMolarity().SetValue(molarity_mmol_Per_mL, AmountPerVolumeUnit::mmol_Per_mL);
@@ -229,13 +227,13 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
       double mass_ug = GetMolarity(AmountPerVolumeUnit::mmol_Per_mL) *  m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) * volume.GetValue(VolumeUnit::mL);
       GetMass().SetValue(mass_ug, MassUnit::ug);
       GeneralMath::CalculateConcentration(GetMass(), volume, GetConcentration(), m_Logger);
-      if (m_Substance.GetState() == CDM::enumSubstanceState::Gas)
+      if (m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
         GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
       break;
     }
     case BalanceLiquidBy::PartialPressure:
     {
-    if (m_Substance.GetState() != CDM::enumSubstanceState::Gas)
+    if (m_Substance.GetState() != cdm::SubstanceData_eState_Gas)
       Fatal("Cannot balance by Partial Pressure if substance is not a gas", "SELiquidSubstanceQuantity::Balance");
     if (!volume.IsValid() || volume.IsInfinity() || !GetPartialPressure().IsValid() || GetPartialPressure().IsInfinity())
         Fatal("Cannot balance by Partial Pressure if volume or partial pressure is invalid or set to Infinity", "SELiquidSubstanceQuantity::Balance");

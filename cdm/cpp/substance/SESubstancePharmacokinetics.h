@@ -11,9 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(SubstancePharmacokineticsData)
-#include "bind/enumSubstanceIonicState.hxx"
-#include "bind/enumSubstanceBindingProtein.hxx"
 #include "substance/SESubstancePhysicochemicals.h"
 #include "substance/SESubstanceTissuePharmacokinetics.h"
 
@@ -29,10 +26,11 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::SubstancePharmacokineticsData& in);
-  virtual CDM::SubstancePharmacokineticsData* Unload() const;
+  static void Load(const cdm::SubstanceData_PharmacokineticsData& src, SESubstancePharmacokinetics& dst);
+  static cdm::SubstanceData_PharmacokineticsData* Unload(const SESubstancePharmacokinetics& src);
 protected:
-  virtual void Unload(CDM::SubstancePharmacokineticsData& data) const;
+  static void Serialize(const cdm::SubstanceData_PharmacokineticsData& src, SESubstancePharmacokinetics& dst);
+  static void Serialize(const SESubstancePharmacokinetics& src, cdm::SubstanceData_PharmacokineticsData& dst);
 
 public:
   virtual bool HasPhysicochemicals() const;

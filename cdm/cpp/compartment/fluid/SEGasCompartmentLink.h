@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "compartment/fluid/SEFluidCompartmentLink.h"
 #include "compartment/fluid/SEGasCompartment.h"
-#include "bind/GasCompartmentLinkData.hxx"
 
 class SEGasCompartment;
 
@@ -25,5 +24,9 @@ protected:
 public:
   ~SEGasCompartmentLink() {}
 
-  virtual CDM::GasCompartmentLinkData* Unload();
+  static void Load(const cdm::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static cdm::GasCompartmentLinkData* Unload(const SEGasCompartmentLink& src);
+protected:
+  static void Serialize(const cdm::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SEGasCompartmentLink& src, cdm::GasCompartmentLinkData& dst);
 };

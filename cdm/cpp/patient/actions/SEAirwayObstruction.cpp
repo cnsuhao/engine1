@@ -44,25 +44,25 @@ bool SEAirwayObstruction::IsActive() const
 
 void SEAirwayObstruction::Load(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst)
 {
-	SEAirwayObstruction::Serialize(src, dst);
+  SEAirwayObstruction::Serialize(src, dst);
 }
 void SEAirwayObstruction::Serialize(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst)
 {
-	dst.Clear();
-	if (src.has_severity())
-		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
+  dst.Clear();
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
 cdm::AirwayObstructionData* SEAirwayObstruction::Unload(const SEAirwayObstruction& src)
 {
-	cdm::AirwayObstructionData* dst = new cdm::AirwayObstructionData();
-	SEAirwayObstruction::Serialize(src, *dst);
-	return dst;
+  cdm::AirwayObstructionData* dst = new cdm::AirwayObstructionData();
+  SEAirwayObstruction::Serialize(src, *dst);
+  return dst;
 }
 void SEAirwayObstruction::Serialize(const SEAirwayObstruction& src, cdm::AirwayObstructionData& dst)
 {
-	if (src.HasSeverity())
-		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "compartment/SECompartmentLink.h"
-#include "bind/CompartmentLinkData.hxx"
 #include "circuit/SECircuitManager.h"
 
 
@@ -31,14 +30,16 @@ void SECompartmentLink::Clear()
  
 }
 
-bool SECompartmentLink::Load(const CDM::CompartmentLinkData& in, SECircuitManager* circuits)
-{  
-  Clear();  
-  return true;
-}
-void SECompartmentLink::Unload(CDM::CompartmentLinkData& data)
+void SECompartmentLink::Serialize(const cdm::CompartmentLinkData& src, SECompartmentLink& dst)
 {
-  data.Name(m_Name);  
+  dst.Clear();
+  if (!src.name().empty())
+    dst.m_Name = src.name();
+}
+
+void SECompartmentLink::Serialize(const SECompartmentLink& src, cdm::CompartmentLinkData& dst)
+{
+  dst.set_name(src.m_Name);
 }
 
 std::string SECompartmentLink::GetName() const

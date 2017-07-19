@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
-#include "bind/GasSubstanceQuantityData.hxx"
 class SEGasCompartment;
 
 class DLL_DECL SEGasSubstanceQuantity : public SESubstanceQuantity, public SEGasTransportSubstance
@@ -27,10 +26,11 @@ public:
   virtual void Clear();
   virtual void Invalidate();
 
-  virtual bool Load(const CDM::GasSubstanceQuantityData& in);
-  virtual CDM::GasSubstanceQuantityData* Unload();
+  static void Load(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
+  static cdm::GasSubstanceQuantityData* Unload(const SEGasSubstanceQuantity& src);
 protected:
-  virtual void Unload(CDM::GasSubstanceQuantityData& data);
+  static void Serialize(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
+  static void Serialize(const SEGasSubstanceQuantity& src, cdm::GasSubstanceQuantityData& dst);
 
 public:
   virtual void SetToZero();

@@ -12,47 +12,52 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
-#include "bind/LiquidCompartmentGraphData.hxx"
 #include "compartment/SECompartmentManager.h"
 
-bool SELiquidCompartmentGraph::Load(const CDM::LiquidCompartmentGraphData& in, SECompartmentManager& cmptMgr)
+void SELiquidCompartmentGraph::Load(const cdm::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr)
 {
-  m_Name = in.Name();
-  for (auto name : in.Compartment())
+  SELiquidCompartmentGraph::Serialize(src, dst, cmptMgr);
+}
+void SELiquidCompartmentGraph::Serialize(const cdm::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr)
+{
+  dst.m_Name = src.fluidgraph().graph().name();
+  for (int i = 0; i<src.fluidgraph().graph().compartment_size(); i++)
   {
+    std::string name = src.fluidgraph().graph().compartment(i);
     SELiquidCompartment* cmpt = cmptMgr.GetLiquidCompartment(name);
     if (cmpt == nullptr)
     {
-      Error("Could not find compartment " + name + " for graph " + m_Name);
-      return false;
+      dst.Error("Could not find compartment " + name + " for graph " + dst.m_Name);
+      continue;
     }
-    AddCompartment(*cmpt);
+    dst.AddCompartment(*cmpt);
   }
-  for (auto name : in.Link())
+  for (int i = 0; i<src.fluidgraph().graph().link_size(); i++)
   {
+    std::string name = src.fluidgraph().graph().link(i);
     SELiquidCompartmentLink* link = cmptMgr.GetLiquidLink(name);
     if (link == nullptr)
     {
-      Error("Could not find link " + name + " for graph " + m_Name);
-      return false;
+      dst.Error("Could not find link " + name + " for graph " + dst.m_Name);
+      continue;
     }
-    AddLink(*link);
+    dst.AddLink(*link);
   }
-  return true;
 }
-CDM::LiquidCompartmentGraphData* SELiquidCompartmentGraph::Unload()
+
+cdm::LiquidCompartmentGraphData* SELiquidCompartmentGraph::Unload(const SELiquidCompartmentGraph& src)
 {
-  CDM::LiquidCompartmentGraphData* data = new CDM::LiquidCompartmentGraphData();
-  Unload(*data);
-  return data;
+  cdm::LiquidCompartmentGraphData* dst = new cdm::LiquidCompartmentGraphData();
+  SELiquidCompartmentGraph::Serialize(src, *dst);
+  return dst;
 }
-void SELiquidCompartmentGraph::Unload(CDM::LiquidCompartmentGraphData& data)
+void SELiquidCompartmentGraph::Serialize(const SELiquidCompartmentGraph& src, cdm::LiquidCompartmentGraphData& dst)
 {
-  data.Name(m_Name);
-  for (SELiquidCompartment* cmpt : m_Compartments)
-    data.Compartment().push_back(cmpt->GetName());
-  for (SELiquidCompartmentLink* link : m_CompartmentLinks)
-    data.Link().push_back(link->GetName());
+  dst.mutable_fluidgraph()->mutable_graph()->set_name(src.m_Name);
+  for (SELiquidCompartment* cmpt : src.m_Compartments)
+    dst.mutable_fluidgraph()->mutable_graph()->add_compartment(cmpt->GetName());
+  for (SELiquidCompartmentLink* link : src.m_CompartmentLinks)
+    dst.mutable_fluidgraph()->mutable_graph()->add_link(link->GetName());
 }
 
 void SELiquidCompartmentGraph::BalanceByIntensive()

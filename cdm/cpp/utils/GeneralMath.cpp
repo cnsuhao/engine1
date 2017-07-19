@@ -92,7 +92,7 @@ void GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMass
 void GeneralMath::CalculateHenrysLawConcentration(const SESubstance& substance, const SEScalarPressure& partialPressure, SEScalarMassPerVolume& concentration, Logger* logger)
 {
   double pp_mmHg = partialPressure.GetValue(PressureUnit::mmHg);
-  if (substance.GetState() != CDM::enumSubstanceState::Gas)
+  if (substance.GetState() != cdm::SubstanceData_eState_Gas)
     throw CommonDataModelException("Cannot calculate a molarity by Henry's law from partial pressure of a non gaseous substance in a liquid");
   if (pp_mmHg < 0.0)
   {
@@ -151,7 +151,7 @@ void GeneralMath::CalculatePartialPressureInGas(const SEScalar0To1& volumeFracti
 //--------------------------------------------------------------------------------------------------
 void GeneralMath::CalculatePartialPressureInLiquid(const SESubstance& substance, const SEScalarMassPerVolume& concentration, SEScalarPressure& partialPressure, Logger* logger)
 {
-  if (substance.GetState() != CDM::enumSubstanceState::Gas)
+  if (substance.GetState() != cdm::SubstanceData_eState_Gas)
     throw CommonDataModelException("Cannot calculate a partial pressure of a non gaseous substance in a liquid");
   double concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   if (concentration_ug_Per_mL < 0.0)
@@ -244,7 +244,7 @@ void GeneralMath::Combinations(std::vector<int> maxValues, std::vector<std::vect
 {
   int Oidx = 0;
   int numVals = 1;
-  int Olength = maxValues.size();
+  size_t Olength = maxValues.size();
   std::vector<int> *current, *next;
 
   for (int i = 0; i < Olength; i++)

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "compartment/SECompartment.h"
-#include "bind/CompartmentData.hxx"
 #include "circuit/SECircuitManager.h"
 
 
@@ -31,14 +30,15 @@ void SECompartment::Clear()
   
 }
 
-bool SECompartment::Load(const CDM::CompartmentData& in, SECircuitManager* circuits)
-{  
-  Clear();
-  return true;
-}
-void SECompartment::Unload(CDM::CompartmentData& data)
+void SECompartment::Serialize(const cdm::CompartmentData& src, SECompartment& dst)
 {
-  data.Name(m_Name);
+  dst.Clear();
+  // Name is set in ctor
+}
+
+void SECompartment::Serialize(const SECompartment& src, cdm::CompartmentData& dst)
+{
+  dst.set_name(src.m_Name);
 }
 
 std::string SECompartment::GetName() const

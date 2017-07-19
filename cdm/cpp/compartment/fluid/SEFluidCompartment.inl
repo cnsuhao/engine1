@@ -47,57 +47,57 @@ void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Clear()
 }
 
 template<FLUID_COMPARTMENT_TEMPLATE>
-bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Load(const CDM::FluidCompartmentData& in, SECircuitManager* circuits)
+void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Serialize(const cdm::FluidCompartmentData& src, SEFluidCompartment& dst, SECircuitManager* circuits)
 {
-  if (!SECompartment::Load(in, circuits))
-    return false;
-  // Not Loading In/Out Flow, those are calculated on demand
-  if (!in.Child().empty())
-    return true;
-  else if (!in.Node().empty())
+  SECompartment::Serialize(src.compartment(), dst);
+  // This compartment has children
+  // We will not load any data as those are calculated on demand based on children
+  if (src.compartment().child_size()>0)
+    return;
+  // Now let's see if we are mapped to a circuit node
+  // If we are, the circuit node(s) hold the data, not us
+  else if (src.compartment().node_size()>0)
   {
     if (circuits == nullptr)
     {
-      Error("Compartment is mapped to circuit nodes, but no circuit manager was provided, cannot load");
-      return false;
+      dst.Error("Compartment is mapped to circuit nodes, but no circuit manager was provided, cannot load");
+      return;
     }
-    for (auto name : in.Node())
-    {      
+    for (int i = 0; i<src.compartment().node_size(); i++)
+    {
+      const std::string name = src.compartment().node(i);
       SEFluidCircuitNode* node = circuits->GetFluidNode(name);
       if (node == nullptr)
-      {
-        Error("Compartment is mapped to circuit node, " + name + ", but provided circuit manager did not have that node");
-        return false;
-      }
-      MapNode(*node);
+        dst.Error("Compartment is mapped to circuit node, " + name + ", but provided circuit manager did not have that node");
+      else
+        dst.MapNode(*node);
     }
   }
   else 
   {// Only load these if you don't have children or nodes
-    if (in.Pressure().present())
-      GetPressure().Load(in.Pressure().get());
-    if (in.Volume().present())
-      GetVolume().Load(in.Volume().get());
+    if (src.has_pressure())
+      SEScalarPressure::Load(src.pressure(), dst.GetPressure());
+    if (src.has_volume())
+      SEScalarVolume::Load(src.volume(), dst.GetVolume());
   }
-  return true;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Unload(CDM::FluidCompartmentData& data)
+void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Serialize(const SEFluidCompartment& src, cdm::FluidCompartmentData& dst)
 {
-  SECompartment::Unload(data);  
-  for (SEFluidCompartment* child : m_FluidChildren)
-    data.Child().push_back(child->GetName());
-  for (SEFluidCircuitNode* nodes : m_Nodes.GetNodes())
-    data.Node().push_back(nodes->GetName());
+  SECompartment::Serialize(src, *dst.mutable_compartment());
+  for (SEFluidCompartment* child : src.m_FluidChildren)
+    dst.mutable_compartment()->add_child(child->GetName());
+  for (SEFluidCircuitNode* nodes : src.m_Nodes.GetNodes())
+    dst.mutable_compartment()->add_node(nodes->GetName());
   // Even if you have children or nodes, I am unloading everything, this makes the xml actually usefull...
-  if (HasInFlow())
-    data.InFlow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(GetInFlow().Unload()));
-  if (HasOutFlow())
-    data.OutFlow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(GetOutFlow().Unload()));
-  if (HasPressure())
-    data.Pressure(std::unique_ptr<CDM::ScalarPressureData>(GetPressure().Unload()));
-  if (HasVolume())
-    data.Volume(std::unique_ptr<CDM::ScalarVolumeData>(GetVolume().Unload()));
+  if (src.HasInFlow())
+    dst.set_allocated_inflow(SEScalarVolumePerTime::Unload(src.GetInFlow()));
+  if (src.HasOutFlow())
+    dst.set_allocated_outflow(SEScalarVolumePerTime::Unload(src.GetOutFlow()));
+  if (src.HasPressure())
+    dst.set_allocated_pressure(SEScalarPressure::Unload(*src.m_Pressure));
+  if (src.HasVolume())
+    dst.set_allocated_volume(SEScalarVolume::Unload(*src.m_Volume));
   }
 
 
@@ -135,7 +135,7 @@ bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasInFlow() const
   return false;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetInFlow()
+const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetInFlow() const
 {
   if (m_InFlow == nullptr)
     m_InFlow = new SEScalarVolumePerTime();
@@ -166,7 +166,7 @@ bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasOutFlow() const
   return false;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetOutFlow()
+const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetOutFlow() const
 {
   if (m_OutFlow == nullptr)
     m_OutFlow = new SEScalarVolumePerTime();

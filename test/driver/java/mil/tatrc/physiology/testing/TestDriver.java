@@ -19,9 +19,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.TestReportData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.scenario.SEScenarioAutoSerialization;
 import mil.tatrc.physiology.utilities.FileUtils;

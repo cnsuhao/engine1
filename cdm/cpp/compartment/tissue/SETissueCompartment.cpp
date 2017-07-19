@@ -53,56 +53,56 @@ void SETissueCompartment::Clear()
   SAFE_DELETE(m_TotalMass);
 }
 
-bool SETissueCompartment::Load(const CDM::TissueCompartmentData& in, SESubstanceManager& subMgr, SECircuitManager* circuits)
+void SETissueCompartment::Load(const cdm::TissueCompartmentData& src, SETissueCompartment& dst)
 {
-  if (!SECompartment::Load(in))
-    return false;
-  if (in.AcidicPhospohlipidConcentration().present())
-    GetAcidicPhospohlipidConcentration().Load(in.AcidicPhospohlipidConcentration().get());
-  if (in.MatrixVolume().present())
-    GetMatrixVolume().Load(in.MatrixVolume().get());
-  if (in.NeutralLipidsVolumeFraction().present())
-    GetNeutralLipidsVolumeFraction().Load(in.NeutralLipidsVolumeFraction().get());
-  if (in.NeutralPhospholipidsVolumeFraction().present())
-    GetNeutralPhospholipidsVolumeFraction().Load(in.NeutralPhospholipidsVolumeFraction().get());
-  if (in.TissueToPlasmaAlbuminRatio().present())
-    GetTissueToPlasmaAlbuminRatio().Load(in.TissueToPlasmaAlbuminRatio().get());
-  if (in.TissueToPlasmaAlphaAcidGlycoproteinRatio().present())
-    GetTissueToPlasmaAlphaAcidGlycoproteinRatio().Load(in.TissueToPlasmaAlphaAcidGlycoproteinRatio().get());
-  if (in.TissueToPlasmaLipoproteinRatio().present())
-    GetTissueToPlasmaLipoproteinRatio().Load(in.TissueToPlasmaLipoproteinRatio().get());
-  if (in.TotalMass().present())
-    GetTotalMass().Load(in.TotalMass().get());
+  SETissueCompartment::Serialize(src, dst);
+}
+void SETissueCompartment::Serialize(const cdm::TissueCompartmentData& src, SETissueCompartment& dst)
+{
+  SECompartment::Serialize(src.compartment(), dst);
+  if (src.has_acidicphospohlipidconcentration())
+    SEScalarMassPerMass::Load(src.acidicphospohlipidconcentration(), dst.GetAcidicPhospohlipidConcentration());
+  if (src.has_matrixvolume())
+    SEScalarVolume::Load(src.matrixvolume(), dst.GetMatrixVolume());
+  if (src.has_neutrallipidsvolumefraction())
+    SEScalar0To1::Load(src.neutrallipidsvolumefraction(), dst.GetNeutralLipidsVolumeFraction());
+  if (src.has_neutralphospholipidsvolumefraction())
+    SEScalar0To1::Load(src.neutralphospholipidsvolumefraction(), dst.GetNeutralPhospholipidsVolumeFraction());
+  if (src.has_tissuetoplasmaalbuminratio())
+    SEScalar::Load(src.tissuetoplasmaalbuminratio(), dst.GetTissueToPlasmaAlbuminRatio());
+  if (src.has_tissuetoplasmaalphaacidglycoproteinratio())
+    SEScalar::Load(src.tissuetoplasmaalphaacidglycoproteinratio(), dst.GetTissueToPlasmaAlphaAcidGlycoproteinRatio());
+  if (src.has_tissuetoplasmalipoproteinratio())
+    SEScalar::Load(src.tissuetoplasmalipoproteinratio(), dst.GetTissueToPlasmaLipoproteinRatio());
+  if (src.has_totalmass())
+    SEScalarMass::Load(src.totalmass(), dst.GetTotalMass());
+}
 
-  return true;
-}
-CDM::TissueCompartmentData* SETissueCompartment::Unload()
+cdm::TissueCompartmentData* SETissueCompartment::Unload(const SETissueCompartment& src)
 {
-  CDM::TissueCompartmentData* data = new CDM::TissueCompartmentData();
-  Unload(*data);
-  return data;
+  cdm::TissueCompartmentData* dst = new cdm::TissueCompartmentData();
+  SETissueCompartment::Serialize(src,*dst);
+  return dst;
 }
-void SETissueCompartment::Unload(CDM::TissueCompartmentData& data)
+void SETissueCompartment::Serialize(const SETissueCompartment& src, cdm::TissueCompartmentData& dst)
 {
-  SECompartment::Unload(data);
-  if (HasAcidicPhospohlipidConcentration())
-    data.AcidicPhospohlipidConcentration(std::unique_ptr<CDM::ScalarMassPerMassData>(m_AcidicPhospohlipidConcentration->Unload()));
-  if (HasMatrixVolume())
-    data.MatrixVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_MatrixVolume->Unload())); 
-  if (HasNeutralLipidsVolumeFraction())
-    data.NeutralLipidsVolumeFraction(std::unique_ptr<CDM::ScalarFractionData>(m_NeutralLipidsVolumeFraction->Unload()));
-  if (HasNeutralPhospholipidsVolumeFraction())
-    data.NeutralPhospholipidsVolumeFraction(std::unique_ptr<CDM::ScalarFractionData>(m_NeutralPhospholipidsVolumeFraction->Unload()));
-  if (HasTissueToPlasmaAlbuminRatio())
-    data.TissueToPlasmaAlbuminRatio(std::unique_ptr<CDM::ScalarData>(m_TissueToPlasmaAlbuminRatio->Unload()));
-  if (HasTissueToPlasmaAlbuminRatio())
-    data.TissueToPlasmaAlbuminRatio(std::unique_ptr<CDM::ScalarData>(m_TissueToPlasmaAlbuminRatio->Unload()));
-  if (HasTissueToPlasmaAlphaAcidGlycoproteinRatio())
-    data.TissueToPlasmaAlphaAcidGlycoproteinRatio(std::unique_ptr<CDM::ScalarData>(m_TissueToPlasmaAlphaAcidGlycoproteinRatio->Unload()));
-  if (HasTissueToPlasmaLipoproteinRatio())
-    data.TissueToPlasmaLipoproteinRatio(std::unique_ptr<CDM::ScalarData>(m_TissueToPlasmaLipoproteinRatio->Unload()));
-  if (HasTotalMass())
-    data.TotalMass(std::unique_ptr<CDM::ScalarMassData>(m_TotalMass->Unload()));
+  SECompartment::Serialize(src,*dst.mutable_compartment());
+  if (src.HasAcidicPhospohlipidConcentration())
+    dst.set_allocated_acidicphospohlipidconcentration(SEScalarMassPerMass::Unload(*src.m_AcidicPhospohlipidConcentration));
+  if (src.HasMatrixVolume())
+    dst.set_allocated_matrixvolume(SEScalarVolume::Unload(*src.m_MatrixVolume));
+  if (src.HasNeutralLipidsVolumeFraction())
+    dst.set_allocated_neutrallipidsvolumefraction(SEScalar0To1::Unload(*src.m_NeutralLipidsVolumeFraction));
+  if (src.HasNeutralPhospholipidsVolumeFraction())
+    dst.set_allocated_neutralphospholipidsvolumefraction(SEScalar0To1::Unload(*src.m_NeutralPhospholipidsVolumeFraction));
+  if (src.HasTissueToPlasmaAlbuminRatio())
+    dst.set_allocated_tissuetoplasmaalbuminratio(SEScalar::Unload(*src.m_TissueToPlasmaAlbuminRatio));
+  if (src.HasTissueToPlasmaAlphaAcidGlycoproteinRatio())
+    dst.set_allocated_tissuetoplasmaalphaacidglycoproteinratio(SEScalar::Unload(*src.m_TissueToPlasmaAlphaAcidGlycoproteinRatio));
+  if (src.HasTissueToPlasmaLipoproteinRatio())
+    dst.set_allocated_tissuetoplasmalipoproteinratio(SEScalar::Unload(*src.m_TissueToPlasmaLipoproteinRatio));
+  if (src.HasTotalMass())
+    dst.set_allocated_totalmass(SEScalarMass::Unload(*src.m_TotalMass));
 }
 
 const SEScalar* SETissueCompartment::GetScalar(const std::string& name)
