@@ -82,7 +82,7 @@ list(APPEND CMAKE_PREFIX_PATH ${log4cpp_INSTALL})
 ###################################################
 
 message( STATUS "External project - protobuf" )
-set(protobuf_VERSION "3.3.1" )
+set(protobuf_VERSION "3.3.2" )
 set(protobuf_DIR "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 set(protobuf_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/protobuf/install")
 
@@ -90,7 +90,7 @@ ExternalProject_Add( protobuf
   PREFIX protobuf
   GIT_REPOSITORY "https://github.com/google/protobuf.git"
   GIT_SHALLOW 1
-  GIT_TAG "v3.3.1"
+  GIT_TAG "v3.3.2"
   SOURCE_SUBDIR ./cmake
   INSTALL_DIR "${protobuf_INSTALL}"
   CMAKE_ARGS 

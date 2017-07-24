@@ -1,0 +1,11 @@
+syntax = "proto3";
+package biogears;
+option java_package = "com.kitware.physiology.biogears";
+
+ //oneof ElectroCardioGramInterpolator
+ // {
+ //  string                                    InterpolatorFileName            = 3;/**<< @brief */
+ //  ElectroCardioGramWaveformInterpolatorData Interpolator                    = 4;/**<< @brief */
+ //}/
+ 
+ // eSwitch                                     WritePatientBaselineFile        = 5;/**<< @brief Inform execution to write out patient object after stabilization completes. */

@@ -11,248 +11,168 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "engine/PhysiologyEngineConfiguration.h"
-#include "engine/PhysiologyEngineDynamicStabilization.h"
-#include "engine/PhysiologyEngineTimedStabilization.h"
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGramInterpolator.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "engine/SEEngineConfiguration.h"
+#include <google/protobuf/text_format.h>
 
-PhysiologyEngineConfiguration::PhysiologyEngineConfiguration(Logger* logger) : Loggable(logger)
+SEEngineConfiguration::SEEngineConfiguration(Logger* logger) : Loggable(logger)
 {
   m_Merge = false;
-  m_ECGInterpolator = nullptr;
-  m_StabilizationCriteria = nullptr;
-  m_TimedStabilizationCriteria = nullptr;
-  m_DynamicStabilizationCriteria = nullptr;
   m_TimeStep = nullptr;
-  m_WritePatientBaselineFile = cdm::eSwitch(-1);
-  
+  m_TimedStabilization = nullptr;
+  m_DynamicStabilization = nullptr;
 }
 
-PhysiologyEngineConfiguration::~PhysiologyEngineConfiguration()
+SEEngineConfiguration::~SEEngineConfiguration()
 {
   Clear();
 }
 
-void PhysiologyEngineConfiguration::Clear()
+void SEEngineConfiguration::Clear()
 {
-  SAFE_DELETE(m_ECGInterpolator);
-  RemoveStabilizationCriteria();
   SAFE_DELETE(m_TimeStep);
-
-  m_WritePatientBaselineFile = CDM::enumOnOff::value(-1);
+  RemoveStabilization();
 }
 
-void PhysiologyEngineConfiguration::Merge(const PhysiologyEngineConfiguration& from)
+void SEEngineConfiguration::Merge(const SEEngineConfiguration& from)
 {
   m_Merge = true;
   CDM_COPY((&from), this);
   m_Merge = false;
 }
 
-bool PhysiologyEngineConfiguration::LoadFile(const std::string& file)
+bool SEEngineConfiguration::LoadFile(const std::string& file)
 {
-  // if file does not exist, we stick with defaults
-
-  CDM::PhysiologyEngineConfigurationData* pData;
-  std::unique_ptr<CDM::ObjectData> data;
-
-  data = Serializer::ReadFile(file,GetLogger());
-  pData = dynamic_cast<CDM::PhysiologyEngineConfigurationData*>(data.get());
-  if (pData == nullptr)
+  try
   {
-    std::stringstream ss;
-    ss << "Configuration file : " << file << " not found, using default configuration" << std::endl;
-    Info(ss);
+    Clear();
+    std::ifstream input(file);
+    std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+    cdm::EngineConfigurationData c;
+    google::protobuf::TextFormat::ParseFromString(fmsg, &c);
+    SEEngineConfiguration::Load(c, *this);
     return true;
   }
-  return Load(*pData);
-}
-
-bool PhysiologyEngineConfiguration::Load(const CDM::PhysiologyEngineConfigurationData& in)
-{
-  if (!m_Merge)
-    Clear();// Reset only if we are not merging
-
-  if(in.TimeStep().present())
-    GetTimeStep().Load(in.TimeStep().get());
-  if (in.WritePatientBaselineFile().present())
-    SetWritePatientBaselineFile(in.WritePatientBaselineFile().get());
-  
-  if (in.ElectroCardioGramInterpolatorFile().present())
+  catch (std::exception ex)
   {
-    if(!GetECGInterpolator().LoadWaveforms(in.ElectroCardioGramInterpolatorFile().get()))
-    {
-      Error("Unable to load ElectroCardioGram Waveforms file");
-      return false;
-    }
+    Error("Unable to read file : " + file);
   }
-  else if (in.ElectroCardioGramInterpolator().present())
-  {
-    if(!GetECGInterpolator().Load(in.ElectroCardioGramInterpolator().get()))
-    {
-      Error("Unable to load ElectroCardioGram Waveforms");
-      return false;
-    }
-  }
-
-  std::unique_ptr<CDM::ObjectData> sData;
-  const CDM::PhysiologyEngineTimedStabilizationData* tData = nullptr;
-  const CDM::PhysiologyEngineDynamicStabilizationData* dData = nullptr;
-  if (in.StabilizationCriteriaFile().present())
-  {
-    sData  = Serializer::ReadFile(in.StabilizationCriteriaFile().get(), GetLogger());
-    if (sData == nullptr)
-    {
-      Error("Unable to load Stabilization Criteria file");
-      return false;
-    }
-    tData = dynamic_cast<const CDM::PhysiologyEngineTimedStabilizationData*>(sData.get());
-    dData = dynamic_cast<const CDM::PhysiologyEngineDynamicStabilizationData*>(sData.get());
-  }
-  else if (in.StabilizationCriteria().present())
-  {
-    tData = dynamic_cast<const CDM::PhysiologyEngineTimedStabilizationData*>(&in.StabilizationCriteria().get());
-    dData = dynamic_cast<const CDM::PhysiologyEngineDynamicStabilizationData*>(&in.StabilizationCriteria().get());
-  }
-  if (tData != nullptr)
-  {
-    if(!GetTimedStabilizationCriteria().Load(*tData))
-    {
-      Error("Unable to load Stabilization Criteria");
-      return false;
-    }
-  }
-  else if (dData != nullptr)
-  {
-    if(!GetDynamicStabilizationCriteria().Load(*dData))
-    {
-      Error("Unable to load Stabilization Criteria");
-      return false;
-    }
-  }
-
-  return true;
+  return false;
 }
 
-CDM::PhysiologyEngineConfigurationData* PhysiologyEngineConfiguration::Unload() const
+void SEEngineConfiguration::Load(const cdm::EngineConfigurationData& src, SEEngineConfiguration& dst)
 {
-  CDM::PhysiologyEngineConfigurationData* data(new CDM::PhysiologyEngineConfigurationData());
-  Unload(*data);
-  return data;
+  SEEngineConfiguration::Serialize(src, dst);
 }
+void SEEngineConfiguration::Serialize(const cdm::EngineConfigurationData& src, SEEngineConfiguration& dst)
+{
+  if (!dst.m_Merge)
+    dst.Clear();// Reset only if we are not merging
 
-void PhysiologyEngineConfiguration::Unload(CDM::PhysiologyEngineConfigurationData& data) const
-{
-  if (HasECGInterpolator())
-    data.ElectroCardioGramInterpolator(std::unique_ptr<CDM::ElectroCardioGramWaveformInterpolatorData>(m_ECGInterpolator->Unload()));
-  if (HasStabilizationCriteria())
-    data.StabilizationCriteria(std::unique_ptr<CDM::PhysiologyEngineStabilizationData>(m_StabilizationCriteria->Unload()));
- if (HasTimeStep())
-    data.TimeStep(std::unique_ptr<CDM::ScalarTimeData>(m_TimeStep->Unload()));
-  if (HasWritePatientBaselineFile())
-    data.WritePatientBaselineFile(m_WritePatientBaselineFile);
-}
-
-bool PhysiologyEngineConfiguration::HasECGInterpolator() const
-{
-  return m_ECGInterpolator != nullptr;
-}
-SEElectroCardioGramInterpolator& PhysiologyEngineConfiguration::GetECGInterpolator()
-{
-  if (m_ECGInterpolator == nullptr)
-    m_ECGInterpolator = new SEElectroCardioGramInterpolator(GetLogger());
-  return *m_ECGInterpolator;
-}
-const SEElectroCardioGramInterpolator* PhysiologyEngineConfiguration::GetECGInterpolator() const
-{
-  return m_ECGInterpolator;
-}
-void PhysiologyEngineConfiguration::RemoveECGInterpolator()
-{
-  SAFE_DELETE(m_ECGInterpolator);
-}
-
-bool PhysiologyEngineConfiguration::HasStabilizationCriteria() const
-{
-  return m_StabilizationCriteria != nullptr;
-}
-PhysiologyEngineStabilization* PhysiologyEngineConfiguration::GetStabilizationCriteria()
-{
-  return m_StabilizationCriteria;
-}
-void PhysiologyEngineConfiguration::RemoveStabilizationCriteria()
-{
-  SAFE_DELETE(m_TimedStabilizationCriteria);
-  SAFE_DELETE(m_DynamicStabilizationCriteria);
-  m_StabilizationCriteria = nullptr;// Generic pointer used to point to one of the above pointers
-}
-bool PhysiologyEngineConfiguration::HasTimedStabilizationCriteria() const
-{
-  return m_TimedStabilizationCriteria != nullptr;
-}
-PhysiologyEngineTimedStabilization& PhysiologyEngineConfiguration::GetTimedStabilizationCriteria()
-{
-  RemoveDynamicStabilizationCriteria();
-  if (m_TimedStabilizationCriteria == nullptr)
+  if (src.has_timestep())
+    SEScalarTime::Load(src.timestep(), dst.GetTimeStep());
+  if (src.has_timedstabilization())
+    SETimedStabilization::Load(src.timedstabilization(), dst.GetTimedStabilization());
+  else if (src.has_dynamicstabilization())
+    SEDynamicStabilization::Load(src.dynamicstabilization(), dst.GetDynamicStabilization());
+  else if (!src.stabilizationfilename().empty())
   {
-    m_TimedStabilizationCriteria = new PhysiologyEngineTimedStabilization(GetLogger());
-    m_StabilizationCriteria = m_TimedStabilizationCriteria;
+    if (!dst.GetTimedStabilization().LoadFile(src.stabilizationfilename()))
+      if (!dst.GetDynamicStabilization().LoadFile(src.stabilizationfilename()))
+      {
+        dst.Error("Unable to load stabilization file");
+        dst.RemoveStabilization();
+      }
   }
-  return *m_TimedStabilizationCriteria;
-}
-const PhysiologyEngineTimedStabilization* PhysiologyEngineConfiguration::GetTimedStabilizationCriteria() const
-{
-  return m_TimedStabilizationCriteria;
-}
-void PhysiologyEngineConfiguration::RemoveTimedStabilizationCriteria()
-{
-  if (m_StabilizationCriteria == m_TimedStabilizationCriteria)
-    m_StabilizationCriteria = nullptr;
-  SAFE_DELETE(m_TimedStabilizationCriteria);
-}
-bool PhysiologyEngineConfiguration::HasDynamicStabilizationCriteria() const
-{
-  return m_DynamicStabilizationCriteria != nullptr;
-}
-PhysiologyEngineDynamicStabilization& PhysiologyEngineConfiguration::GetDynamicStabilizationCriteria()
-{
-  RemoveTimedStabilizationCriteria();
-  if (m_DynamicStabilizationCriteria == nullptr)
-  {
-    m_DynamicStabilizationCriteria = new PhysiologyEngineDynamicStabilization(GetLogger());
-    m_StabilizationCriteria = m_DynamicStabilizationCriteria;
-  }
-  return *m_DynamicStabilizationCriteria;
-}
-const PhysiologyEngineDynamicStabilization* PhysiologyEngineConfiguration::GetDynamicStabilizationCriteria() const
-{
-  return m_DynamicStabilizationCriteria;
-}
-void PhysiologyEngineConfiguration::RemoveDynamicStabilizationCriteria()
-{
-  if (m_StabilizationCriteria == m_DynamicStabilizationCriteria)
-    m_StabilizationCriteria = nullptr;
-  SAFE_DELETE(m_DynamicStabilizationCriteria);
+  if (src.has_customconfig())
+    dst.LoadCustomConfig(src.customconfig());
 }
 
-bool PhysiologyEngineConfiguration::HasTimeStep() const
+cdm::EngineConfigurationData* SEEngineConfiguration::Unload(const SEEngineConfiguration& src)
+{
+  cdm::EngineConfigurationData* dst =new cdm::EngineConfigurationData();
+  SEEngineConfiguration::Serialize(src,*dst);
+  return dst;
+}
+void SEEngineConfiguration::Serialize(const SEEngineConfiguration& src, cdm::EngineConfigurationData& dst)
+{
+  if (src.HasTimedStabilization())
+    dst.set_allocated_timedstabilization(SETimedStabilization::Unload(*src.m_TimedStabilization));
+  else if (src.HasDynamicStabilization())
+    dst.set_allocated_dynamicstabilization(SEDynamicStabilization::Unload(*src.m_DynamicStabilization));
+  if (src.HasTimeStep())
+    dst.set_allocated_timestep(SEScalarTime::Unload(*src.m_TimeStep));
+  dst.set_allocated_customconfig(src.UnloadCustomConfig());
+}
+
+bool SEEngineConfiguration::HasTimeStep() const
 {
   return m_TimeStep == nullptr ? false : m_TimeStep->IsValid();
 }
-SEScalarTime& PhysiologyEngineConfiguration::GetTimeStep()
+SEScalarTime& SEEngineConfiguration::GetTimeStep()
 {
   if (m_TimeStep == nullptr)
     m_TimeStep = new SEScalarTime();
   return *m_TimeStep;
 }
-double PhysiologyEngineConfiguration::GetTimeStep(const TimeUnit& unit) const
+double SEEngineConfiguration::GetTimeStep(const TimeUnit& unit) const
 {
   if (m_TimeStep == nullptr)
     return SEScalar::dNaN();
   return m_TimeStep->GetValue(unit);
+}
+
+bool SEEngineConfiguration::HasStabilization() const
+{
+  return m_TimedStabilization != nullptr || m_DynamicStabilization != nullptr;
+}
+SEEngineStabilization* SEEngineConfiguration::GetStabilization()
+{
+  if (m_TimedStabilization != nullptr)
+    return m_TimedStabilization;
+  if (m_DynamicStabilization != nullptr)
+    return m_DynamicStabilization;
+  return nullptr;
+}
+void SEEngineConfiguration::RemoveStabilization()
+{
+  SAFE_DELETE(m_TimedStabilization);
+  SAFE_DELETE(m_DynamicStabilization);
+}
+bool SEEngineConfiguration::HasTimedStabilization() const
+{
+  return m_TimedStabilization != nullptr;
+}
+SETimedStabilization& SEEngineConfiguration::GetTimedStabilization()
+{
+  RemoveDynamicStabilization();
+  if (m_TimedStabilization == nullptr)
+    m_TimedStabilization = new SETimedStabilization(GetLogger());
+  return *m_TimedStabilization;
+}
+const SETimedStabilization* SEEngineConfiguration::GetTimedStabilization() const
+{
+  return m_TimedStabilization;
+}
+void SEEngineConfiguration::RemoveTimedStabilization()
+{
+  SAFE_DELETE(m_TimedStabilization);
+}
+bool SEEngineConfiguration::HasDynamicStabilization() const
+{
+  return m_DynamicStabilization != nullptr;
+}
+SEDynamicStabilization& SEEngineConfiguration::GetDynamicStabilization()
+{
+  RemoveTimedStabilization();
+  if (m_DynamicStabilization == nullptr)
+    m_DynamicStabilization = new SEDynamicStabilization(GetLogger());
+  return *m_DynamicStabilization;
+}
+const SEDynamicStabilization* SEEngineConfiguration::GetDynamicStabilization() const
+{
+  return m_DynamicStabilization;
+}
+void SEEngineConfiguration::RemoveDynamicStabilization()
+{
+  SAFE_DELETE(m_DynamicStabilization);
 }

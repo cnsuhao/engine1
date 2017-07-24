@@ -42,6 +42,18 @@ protected:
 
   SESubstanceManager& m_Substances;
 
+  virtual bool HasECGInterpolator() const;
+  virtual SEElectroCardioGramInterpolator& GetECGInterpolator();
+  virtual const SEElectroCardioGramInterpolator* GetECGInterpolator() const;
+  virtual void RemoveECGInterpolator();
+
+  virtual bool HasWritePatientBaselineFile() const { return m_WritePatientBaselineFile != (CDM::enumOnOff::value) - 1; }
+  virtual bool WritePatientBaselineFile() const { return m_WritePatientBaselineFile == CDM::enumOnOff::On; }
+  virtual void SetWritePatientBaselineFile(CDM::enumOnOff::value v) { m_WritePatientBaselineFile = v; }
+protected:
+  SEElectroCardioGramInterpolator*         m_ECGInterpolator;
+  CDM::enumOnOff::value                    m_WritePatientBaselineFile;
+
   ////////////////////
   /** Baroreceptors */
   ////////////////////

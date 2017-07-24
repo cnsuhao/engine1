@@ -55,17 +55,11 @@ void SEDynamicStabilization::Serialize(const cdm::DynamicStabilizationData& src,
   if (src.has_feedbackconvergence())
     SEDynamicStabilizationEngineConvergence::Load(src.feedbackconvergence(), dst.GetFeedbackConvergence());
 
-  for (int i = 0; i < src.conditionconvergence_size(); i++)
+  for (auto itr : src.conditionconvergence())
   {
-    const cdm::DynamicStabilizationData_ConditionConvergenceData& ccData = src.conditionconvergence(i);
-    if (ccData.name().empty())
-    {
-      dst.Warning("Ignorning a nameless dynamic condition convergence, check your stabilization data");
-      continue;
-    }
     SEDynamicStabilizationEngineConvergence* c = new SEDynamicStabilizationEngineConvergence(dst.GetLogger());
-    SEDynamicStabilizationEngineConvergence::Load(ccData.engineconvergence(),*c);
-    dst.m_ConditionConvergence[ccData.name()] = c;
+    SEDynamicStabilizationEngineConvergence::Load(itr.second,*c);
+    dst.m_ConditionConvergence[itr.first] = c;
   }
 }
 
@@ -83,10 +77,9 @@ void SEDynamicStabilization::Serialize(const SEDynamicStabilization& src, cdm::D
     dst.set_allocated_feedbackconvergence(SEDynamicStabilizationEngineConvergence::Unload(src.m_FeedbackConvergence));
   for (auto &c : src.m_ConditionConvergence)
   {
-    cdm::DynamicStabilizationData_ConditionConvergenceData* ccData = new cdm::DynamicStabilizationData_ConditionConvergenceData();
-    ccData->set_name(c.first);
-    ccData->set_allocated_engineconvergence(SEDynamicStabilizationEngineConvergence::Unload(*c.second));
-    dst.mutable_conditionconvergence()->AddAllocated(ccData);
+    cdm::DynamicStabilizationData_EngineConvergenceData* cData = SEDynamicStabilizationEngineConvergence::Unload(*c.second);
+    (*dst.mutable_conditionconvergence())[c.first] = *cData;
+    delete cData;
   }
 }
 

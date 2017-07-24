@@ -1045,6 +1045,26 @@ void BioGearsConfiguration::Unload(CDM::BioGearsConfigurationData& data) const
   data.TissueConfiguration(std::unique_ptr<CDM::TissueConfigurationData>(tissue));
 }
 
+
+bool PhysiologyEngineConfiguration::HasECGInterpolator() const
+{
+  return m_ECGInterpolator != nullptr;
+}
+SEElectroCardioGramInterpolator& PhysiologyEngineConfiguration::GetECGInterpolator()
+{
+  if (m_ECGInterpolator == nullptr)
+    m_ECGInterpolator = new SEElectroCardioGramInterpolator(GetLogger());
+  return *m_ECGInterpolator;
+}
+const SEElectroCardioGramInterpolator* PhysiologyEngineConfiguration::GetECGInterpolator() const
+{
+  return m_ECGInterpolator;
+}
+void PhysiologyEngineConfiguration::RemoveECGInterpolator()
+{
+  SAFE_DELETE(m_ECGInterpolator);
+}
+
 ////////////////////
 /** Baroreceptors */
 ////////////////////

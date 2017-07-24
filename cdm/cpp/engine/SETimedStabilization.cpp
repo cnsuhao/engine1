@@ -161,19 +161,11 @@ void SETimedStabilization::Serialize(const cdm::TimedStabilizationData& src, SET
     SEScalarTime::Load(src.restingstabilizationtime(), dst.GetRestingStabilizationTime());
   if(src.has_feedbackstabilizationtime())
     SEScalarTime::Load(src.feedbackstabilizationtime(), dst.GetFeedbackStabilizationTime());
-  for (int i=0; i<src.conditionstabilization_size(); i++)
+  for (auto itr : src.conditionstabilization())
   {
-    const cdm::TimedStabilizationData_ConditionTimingData& csData = src.conditionstabilization(i);
-    if (csData.has_stabilizationtime())
-    {
-      SEScalarTime* time = new SEScalarTime();
-      SEScalarTime::Load(csData.stabilizationtime(), *time);
-      dst.m_ConditionTimes[csData.name()] = time;
-    }
-    else
-    {
-      dst.Warning("Ignoring timed stabilization for condition " + csData.name() + ", as it does not include a time");
-    }
+    SEScalarTime* time = new SEScalarTime();
+    SEScalarTime::Load(itr.second, *time);
+    dst.m_ConditionTimes[itr.first] = time;
   }
 }
 
@@ -193,10 +185,9 @@ void SETimedStabilization::Serialize(const SETimedStabilization& src, cdm::Timed
   {
     if (cc.second == nullptr)
       continue;
-    cdm::TimedStabilizationData_ConditionTimingData* csData = new cdm::TimedStabilizationData_ConditionTimingData();
-    csData->set_name(cc.first);
-    csData->set_allocated_stabilizationtime(SEScalarTime::Unload(*cc.second));
-    dst.mutable_conditionstabilization()->AddAllocated(csData);
+    cdm::ScalarTimeData* time = SEScalarTime::Unload(*cc.second);
+    (*dst.mutable_conditionstabilization())[cc.first] = *time;
+    delete time;
   }
 }
 

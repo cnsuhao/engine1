@@ -11,68 +11,57 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-class SEElectroCardioGramInterpolator;
-class PhysiologyEngineStabilization;
-class PhysiologyEngineTimedStabilization;
-class PhysiologyEngineDynamicStabilization;
 #include "utils/GeneralMath.h"
+#include "engine/SEDynamicStabilization.h"
+#include "engine/SETimedStabilization.h"
+#include "bind/cdm/Engine.pb.h"
 
 
-class DLL_DECL PhysiologyEngineConfiguration : public Loggable
+class DLL_DECL SEEngineConfiguration : public Loggable
 {
 public:
 
-  PhysiologyEngineConfiguration(Logger* logger);
-  virtual ~PhysiologyEngineConfiguration();
+  SEEngineConfiguration(Logger* logger);
+  virtual ~SEEngineConfiguration();
 
   virtual void Clear();
 
-  virtual void Merge(const PhysiologyEngineConfiguration& from);
+  virtual void Merge(const SEEngineConfiguration& from);
 
-  virtual bool Load(const CDM::PhysiologyEngineConfigurationData& in);
-  virtual CDM::PhysiologyEngineConfigurationData* Unload() const;
+  static void Load(const cdm::EngineConfigurationData& src, SEEngineConfiguration& dst);
+  static cdm::EngineConfigurationData* Unload(const SEEngineConfiguration& src);
 protected:
-  void Unload(CDM::PhysiologyEngineConfigurationData& data) const;
+  static void Serialize(const cdm::EngineConfigurationData& src, SEEngineConfiguration& dst);
+  static void Serialize(const SEEngineConfiguration& src, cdm::EngineConfigurationData& dst);
+  virtual void LoadCustomConfig(const google::protobuf::Any& any) {}
+  virtual google::protobuf::Any* UnloadCustomConfig() const { return nullptr; }
 
 public:
   virtual bool LoadFile(const std::string& file);
 
-  virtual bool HasECGInterpolator() const;
-  virtual SEElectroCardioGramInterpolator& GetECGInterpolator();
-  virtual const SEElectroCardioGramInterpolator* GetECGInterpolator() const;
-  virtual void RemoveECGInterpolator();
-
-  // You can have either timed or dynamic stabilization criteria
-  virtual bool HasStabilizationCriteria() const;
-  virtual PhysiologyEngineStabilization* GetStabilizationCriteria();
-  virtual void RemoveStabilizationCriteria();
-  // Timed Methods, If you have dynamic, calling GetTimedStabilizationCriteria will remove the dynamic object
-  virtual bool HasTimedStabilizationCriteria() const;
-  virtual PhysiologyEngineTimedStabilization& GetTimedStabilizationCriteria();
-  virtual const PhysiologyEngineTimedStabilization* GetTimedStabilizationCriteria() const;
-  virtual void RemoveTimedStabilizationCriteria();
-  // Dynamic Methods, If you have timed, calling GetDynamicStabilizationCriteria will remove the timed object
-  virtual bool HasDynamicStabilizationCriteria() const;
-  virtual PhysiologyEngineDynamicStabilization& GetDynamicStabilizationCriteria();
-  virtual const PhysiologyEngineDynamicStabilization* GetDynamicStabilizationCriteria() const;
-  virtual void RemoveDynamicStabilizationCriteria();
-
-  
   virtual bool HasTimeStep() const;
   virtual SEScalarTime& GetTimeStep();
   virtual double GetTimeStep(const TimeUnit& unit) const;
 
-  virtual bool HasWritePatientBaselineFile() const { return m_WritePatientBaselineFile != (CDM::enumOnOff::value) - 1; }
-  virtual bool WritePatientBaselineFile() const { return m_WritePatientBaselineFile == CDM::enumOnOff::On; }
-  virtual void SetWritePatientBaselineFile(CDM::enumOnOff::value v) { m_WritePatientBaselineFile = v; }
+  // You can have either a timed or dynamic stabilization object (cannot have both)
+  virtual bool HasStabilization() const;
+  virtual SEEngineStabilization* GetStabilization();
+  virtual void RemoveStabilization();
+  // Timed Methods, If you have dynamic, calling GetTimedStabilization will remove the dynamic object
+  virtual bool HasTimedStabilization() const;
+  virtual SETimedStabilization& GetTimedStabilization();
+  virtual const SETimedStabilization* GetTimedStabilization() const;
+  virtual void RemoveTimedStabilization();
+  // Dynamic Methods, If you have timed, calling GetDynamicStabilization will remove the timed object
+  virtual bool HasDynamicStabilization() const;
+  virtual SEDynamicStabilization& GetDynamicStabilization();
+  virtual const SEDynamicStabilization* GetDynamicStabilization() const;
+  virtual void RemoveDynamicStabilization();
 
 protected:
-  bool                                     m_Merge;
-  SEElectroCardioGramInterpolator*         m_ECGInterpolator;
+  bool                       m_Merge;
 
-  PhysiologyEngineStabilization*           m_StabilizationCriteria;
-  PhysiologyEngineTimedStabilization*      m_TimedStabilizationCriteria;
-  PhysiologyEngineDynamicStabilization*    m_DynamicStabilizationCriteria;
-  SEScalarTime*                             m_TimeStep;  
-  CDM::enumOnOff::value                    m_WritePatientBaselineFile;
+  SEScalarTime*              m_TimeStep;
+  SETimedStabilization*      m_TimedStabilization;
+  SEDynamicStabilization*    m_DynamicStabilization;
 };

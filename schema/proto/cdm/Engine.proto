@@ -3,22 +3,17 @@ package cdm;
 option java_package = "com.kitware.physiology.cdm";
 
 import "cdm/Properties.proto";
-import "cdm/ElectroCardioGram.proto";
 import "cdm/Scenario.proto";
+import "google/protobuf/any.proto";
+
 
 /** @brief Static timed stabilization lengths */
 message TimedStabilizationData
 {
-  message ConditionTimingData
-  {
-    string                                    Name                           = 1;/**<< @brief */
-    ScalarTimeData                            StabilizationTime              = 2;/**<< @brief */
-  }
-  
   eSwitch                                     TrackingStabilization          = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
   ScalarTimeData                              RestingStabilizationTime       = 2;/**<< @brief */
   ScalarTimeData                              FeedbackStabilizationTime      = 3;/**<< @brief */
-  repeated ConditionTimingData                ConditionStabilization         = 4;/**<< @brief */
+  map<string,ScalarTimeData>                  ConditionStabilization         = 4;/**<< @brief */
 }
 
 
@@ -41,35 +36,24 @@ message DynamicStabilizationData
     ScalarTimeData                            MaximumAllowedStabilizationTime = 3;/**<< @brief */
     repeated PropertyConvergenceData          PropertyConvergence             = 4;/**<< @brief */
   }
-  
-  message ConditionConvergenceData
-  {
-    string                                    Name                            = 1;/**<< @brief */
-    EngineConvergenceData                     EngineConvergence               = 2;/**<< @brief */
-  }
 
   eSwitch                                     TrackingStabilization           = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
   EngineConvergenceData                       RestingConvergence              = 2;/**<< @brief */
   EngineConvergenceData                       FeedbackConvergence             = 3;/**<< @brief */
-  repeated ConditionConvergenceData           ConditionConvergence            = 4;/**<< @brief */
+  map<string,EngineConvergenceData>           ConditionConvergence            = 4;/**<< @brief */
 }
 
 /** @brief Engine configuration parameters */
 message EngineConfigurationData
 {
   ScalarTimeData                              TimeStep                        = 1;/**<< @brief */
-  eSwitch                                     WritePatientBaselineFile        = 2;/**<< @brief */
-
-  oneof ElectroCardioGramInterpolator
-  {
-    string                                    InterpolatorFileName            = 3;/**<< @brief */
-    ElectroCardioGramWaveformInterpolatorData Interpolator                    = 4;/**<< @brief */
-  }
 
   oneof StabilizationCriteria
   {
-    string                                    StabilizationFileName           = 5;/**<< @brief */
-    TimedStabilizationData                    TimedStabilization              = 6;/**<< @brief */
-    DynamicStabilizationData                  DynamicStabilization            = 7;/**<< @brief */
+    string                                    StabilizationFileName           = 2;/**<< @brief */
+    TimedStabilizationData                    TimedStabilization              = 3;/**<< @brief */
+    DynamicStabilizationData                  DynamicStabilization            = 4;/**<< @brief */
   }
+  
+  google.protobuf.Any                         CustomConfig                    = 100;
 }
