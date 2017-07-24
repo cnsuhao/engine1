@@ -12,8 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/InhalerData.hxx"
-#include "bind/enumOnOff.hxx"
+#include "bind/cdm/Inhaler.pb.h"
 class Serializer; 
 class SESubstance;
 class SESubstanceManager;
@@ -40,12 +39,12 @@ public:
   */
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::InhalerData& in);
-  virtual CDM::InhalerData* Unload() const;
+  static void Load(const cdm::InhalerData& src, SEInhaler& dst);
+  static cdm::InhalerData* Unload(const SEInhaler& src);
 protected:
-  virtual void Unload(CDM::InhalerData& data) const;
+  static void Serialize(const cdm::InhalerData& src, SEInhaler& dst);
+  static void Serialize(const SEInhaler& src, cdm::InhalerData& dst);
 
-  
   /** @name StateChange
   *   @brief - This method is called when ever there is a state change
   *            Specically a new file has been loaded, configuration action, or the system reset
@@ -59,8 +58,8 @@ public:
 
   bool LoadFile(const std::string& file);
 
-  virtual CDM::enumOnOff::value GetState() const;
-  virtual void SetState(CDM::enumOnOff::value name);
+  virtual cdm::eSwitch GetState() const;
+  virtual void SetState(cdm::eSwitch name);
   virtual bool HasState() const;
   virtual void InvalidateState();
 
@@ -82,11 +81,9 @@ public:
 
 protected:
 
-  std::stringstream    m_ss;
-
-  CDM::enumOnOff::value m_State;
+  cdm::eSwitch          m_State;
   SEScalarMass*         m_MeteredDose;
-  SEScalar0To1*     m_NozzleLoss;
+  SEScalar0To1*         m_NozzleLoss;
   SEScalarVolume*       m_SpacerVolume;
   const SESubstance*    m_Substance;
 

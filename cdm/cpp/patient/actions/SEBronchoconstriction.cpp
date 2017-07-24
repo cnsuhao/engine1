@@ -42,25 +42,25 @@ bool SEBronchoconstriction::IsActive() const
 
 void SEBronchoconstriction::Load(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst)
 {
-	SEBronchoconstriction::Serialize(src, dst);
+  SEBronchoconstriction::Serialize(src, dst);
 }
 void SEBronchoconstriction::Serialize(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst)
 {
-	dst.Clear();
-	if (src.has_severity())
-		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
+  dst.Clear();
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
 cdm::BronchoconstrictionData* SEBronchoconstriction::Unload(const SEBronchoconstriction& src)
 {
-	cdm::BronchoconstrictionData* dst = new cdm::BronchoconstrictionData();
-	SEBronchoconstriction::Serialize(src, *dst);
-	return dst;
+  cdm::BronchoconstrictionData* dst = new cdm::BronchoconstrictionData();
+  SEBronchoconstriction::Serialize(src, *dst);
+  return dst;
 }
 void SEBronchoconstriction::Serialize(const SEBronchoconstriction& src, cdm::BronchoconstrictionData& dst)
 {
-	if (src.HasSeverity())
-		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

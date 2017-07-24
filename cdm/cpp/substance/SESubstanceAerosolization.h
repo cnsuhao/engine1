@@ -28,8 +28,8 @@ public:
   static void Load(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst);
   static cdm::SubstanceData_AerosolizationData* Unload(const SESubstanceAerosolization& src);
 protected:
-	static void Serialize(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst);
-	static void Serialize(const SESubstanceAerosolization& src, cdm::SubstanceData_AerosolizationData& dst);
+  static void Serialize(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst);
+  static void Serialize(const SESubstanceAerosolization& src, cdm::SubstanceData_AerosolizationData& dst);
 
 public:
 

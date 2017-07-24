@@ -30,8 +30,8 @@ public:
   static void Load(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst);
   static cdm::SubstanceData_FractionAmountData* Unload(const SESubstanceFraction& src);
 protected:
-	static void Serialize(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst);
-	static void Serialize(const SESubstanceFraction& src, cdm::SubstanceData_FractionAmountData& dst);
+  static void Serialize(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst);
+  static void Serialize(const SESubstanceFraction& src, cdm::SubstanceData_FractionAmountData& dst);
 
 public:
 

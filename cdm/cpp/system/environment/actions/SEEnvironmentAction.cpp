@@ -34,18 +34,18 @@ bool SEEnvironmentAction::IsValid() const
 
 void SEEnvironmentAction::Load(const cdm::EnvironmentData& src, SEEnvironmentAction& dst)
 {
-	SEEnvironmentAction::Serialize(src, dst);
+  SEEnvironmentAction::Serialize(src, dst);
 }
 void SEEnvironmentAction::Serialize(const cdm::EnvironmentData& src, SEEnvironmentAction& dst)
 {
-	dst.Clear();
+  dst.Clear();
 }
 
 cdm::EnvironmentData* SEEnvironmentAction::Unload(const SEEnvironmentAction& src)
 {
-	cdm::EnvironmentData* dst = new cdm::EnvironmentData();
-	SEEnvironmentAction::Serialize(src, *dst);
-	return dst;
+  cdm::EnvironmentData* dst = new cdm::EnvironmentData();
+  SEEnvironmentAction::Serialize(src, *dst);
+  return dst;
 }
 void SEEnvironmentAction::Serialize(const SEEnvironmentAction& src, cdm::EnvironmentActionData& dst)
 {

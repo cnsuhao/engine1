@@ -16,17 +16,17 @@ specific language governing permissions and limitations under the License.
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 {
-  Reset();
+  Clear();
   if (dfault != nullptr) 
     Set(*dfault); 
 }
 
 SEDecimalFormat::~SEDecimalFormat()
 {
-  Reset();
+  Clear();
 }
 
-void SEDecimalFormat::Reset()
+void SEDecimalFormat::Clear()
 {
   m_Precision = 6;
   m_Notation = cdm::DecimalFormatData_eType_FixedMantissa;
@@ -44,7 +44,7 @@ void SEDecimalFormat::Load(const cdm::DecimalFormatData& src, SEDecimalFormat& d
 }
 void SEDecimalFormat::Serialize(const cdm::DecimalFormatData& src, SEDecimalFormat& dst)
 {
-  dst.Reset();
+  dst.Clear();
   dst.SetNotation(src.type());
   dst.SetPrecision(src.precision());
 }
@@ -58,7 +58,7 @@ cdm::DecimalFormatData* SEDecimalFormat::Unload(const SEDecimalFormat& src)
 void SEDecimalFormat::Serialize(const SEDecimalFormat& src, cdm::DecimalFormatData& dst)
 {
   dst.set_type(src.m_Notation);
-  dst.set_precision(src.m_Precision);
+  dst.set_precision((google::protobuf::uint32)src.m_Precision);
 }
 
 void SEDecimalFormat::SetPrecision(std::streamsize p)

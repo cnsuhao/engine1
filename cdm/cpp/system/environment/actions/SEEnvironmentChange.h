@@ -27,8 +27,8 @@ public:
   static void Load(const cdm::EnvironmentData& src, SEEnvironmentChange& dst);
   static cdm::EnvironmentData* Unload(const SEEnvironmentChange& src);
 protected:
-	static void Serialize(const cdm::EnvironmentData& src, SEEnvironmentChange& dst);
-	static void Serialize(const SEEnvironmentChange& src, cdm::EnvironmentData& dst);
+  static void Serialize(const cdm::EnvironmentData& src, SEEnvironmentChange& dst);
+  static void Serialize(const SEEnvironmentChange& src, cdm::EnvironmentData& dst);
 
 public:
   

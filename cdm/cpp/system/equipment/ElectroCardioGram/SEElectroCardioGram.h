@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/ElectroCardioGramData.hxx"
+#include "bind/cdm/ElectroCardioGram.pb.h"
 
 class DLL_DECL SEElectroCardioGram : public SESystem
 {
@@ -27,10 +27,11 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::ElectroCardioGramData& in);
-  virtual CDM::ElectroCardioGramData* Unload() const;
+  static void Load(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst);
+  static cdm::ElectroCardioGramData* Unload(const SEElectroCardioGram& src);
 protected:
-  virtual void Unload(CDM::ElectroCardioGramData& data) const;
+  static void Serialize(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst);
+  static void Serialize(const SEElectroCardioGram& src, cdm::ElectroCardioGramData& dst);
 
 public:
   virtual bool HasLead1ElectricPotential() const;
@@ -94,6 +95,4 @@ protected:
   SEScalarElectricPotential* m_Lead10ElectricPotential;
   SEScalarElectricPotential* m_Lead11ElectricPotential;
   SEScalarElectricPotential* m_Lead12ElectricPotential;
-
-  std::stringstream       m_ss;
 };

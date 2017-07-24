@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "substance/SESubstanceTissuePharmacokinetics.h"
-
 #include "properties/SEScalar.h"
-#include "bind/ScalarData.hxx"
 
 SESubstanceTissuePharmacokinetics::SESubstanceTissuePharmacokinetics(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)
 {
@@ -31,24 +29,28 @@ void SESubstanceTissuePharmacokinetics::Clear()
   SAFE_DELETE(m_PartitionCoefficient)
 }
 
-bool SESubstanceTissuePharmacokinetics::Load(const CDM::SubstanceTissuePharmacokineticsData& in)
+void SESubstanceTissuePharmacokinetics::Load(const cdm::SubstanceData_TissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst)
 {
-  Clear();   
-  if (in.PartitionCoefficient().present())
-    GetPartitionCoefficient().Load(in.PartitionCoefficient().get());
-  return true;
+  SESubstanceTissuePharmacokinetics::Serialize(src, dst);
 }
-CDM::SubstanceTissuePharmacokineticsData*  SESubstanceTissuePharmacokinetics::Unload() const
+void SESubstanceTissuePharmacokinetics::Serialize(const cdm::SubstanceData_TissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst)
 {
-  CDM::SubstanceTissuePharmacokineticsData* data = new CDM::SubstanceTissuePharmacokineticsData();
-  Unload(*data);
-  return data;
+  dst.Clear();
+  if (src.has_partitioncoefficient())
+    SEScalar::Load(src.partitioncoefficient(),dst.GetPartitionCoefficient());
 }
-void SESubstanceTissuePharmacokinetics::Unload(CDM::SubstanceTissuePharmacokineticsData& data) const
+
+cdm::SubstanceData_TissuePharmacokineticsData* SESubstanceTissuePharmacokinetics::Unload(const SESubstanceTissuePharmacokinetics& src)
 {
-  data.Name(m_Name);  
-  if (m_PartitionCoefficient != nullptr)
-    data.PartitionCoefficient(std::unique_ptr<CDM::ScalarData>(m_PartitionCoefficient->Unload()));
+  cdm::SubstanceData_TissuePharmacokineticsData* dst = new cdm::SubstanceData_TissuePharmacokineticsData();
+  SESubstanceTissuePharmacokinetics::Serialize(src,*dst);
+  return dst;
+}
+void SESubstanceTissuePharmacokinetics::Serialize(const SESubstanceTissuePharmacokinetics& src, cdm::SubstanceData_TissuePharmacokineticsData& dst)
+{
+  dst.set_name(src.m_Name);
+  if (src.HasPartitionCoefficient())
+    dst.set_allocated_partitioncoefficient(SEScalar::Unload(*src.m_PartitionCoefficient));
 }
 
 const SEScalar* SESubstanceTissuePharmacokinetics::GetScalar(const std::string& name)

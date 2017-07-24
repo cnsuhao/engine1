@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/EnergySystemData.hxx"
+#include "bind/cdm/Physiology.pb.h"
 
 class DLL_DECL SEEnergySystem : public SESystem
 {
@@ -24,11 +24,13 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::EnergySystemData& in);
-  virtual CDM::EnergySystemData* Unload() const;
+
+  static void Load(const cdm::EnergySystemData& src, SEEnergySystem& dst);
+  static cdm::EnergySystemData* Unload(const SEEnergySystem& src);
 protected:
-  virtual void Unload(CDM::EnergySystemData& data) const;
+  static void Serialize(const cdm::EnergySystemData& src, SEEnergySystem& dst);
+  static void Serialize(const SEEnergySystem& src, cdm::EnergySystemData& dst);
+
 public:
 
   virtual bool HasAchievedExerciseLevel() const;
@@ -77,16 +79,16 @@ public:
 
 protected:
 
-  SEScalar0To1*       m_AchievedExerciseLevel;
+  SEScalar0To1*           m_AchievedExerciseLevel;
   SEScalarTemperature*    m_CoreTemperature;
   SEScalarAmountPerTime*  m_CreatinineProductionRate;
-  SEScalarPressure*        m_ExerciseMeanArterialPressureDelta;
-  SEScalar0To1*        m_FatigueLevel;
+  SEScalarPressure*       m_ExerciseMeanArterialPressureDelta;
+  SEScalar0To1*           m_FatigueLevel;
   SEScalarAmountPerTime*  m_KetoneProductionRate;
   SEScalarAmountPerTime*  m_LactateProductionRate;
   SEScalarTemperature*    m_SkinTemperature;
   SEScalarMassPerTime*    m_SweatRate;
   SEScalarPower*          m_TotalMetabolicRate;
-  SEScalar0To1*        m_TotalWorkRateLevel;
+  SEScalar0To1*           m_TotalWorkRateLevel;
 
 };

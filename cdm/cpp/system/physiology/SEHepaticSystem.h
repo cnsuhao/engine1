@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
+#include "bind/cdm/Physiology.pb.h"
 
 class DLL_DECL SEHepaticSystem : public SESystem
 {
@@ -23,12 +24,13 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
+
   static void Load(const cdm::HepaticSystemData& src, SEHepaticSystem& dst);
   static cdm::HepaticSystemData* Unload(const SEHepaticSystem& src);
 protected:
   static void Serialize(const cdm::HepaticSystemData& src, SEHepaticSystem& dst);
   static void Serialize(const SEHepaticSystem& src, cdm::HepaticSystemData& dst);
+
 public:
 
   

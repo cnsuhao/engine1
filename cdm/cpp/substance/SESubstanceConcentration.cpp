@@ -14,9 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstanceConcentration.h"
-#include "bind/SubstanceConcentrationData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/ScalarMassPerVolumeData.hxx"
 
 SESubstanceConcentration::SESubstanceConcentration(SESubstance& substance) : Loggable(substance.GetLogger()), m_Substance(substance)
 {
@@ -33,26 +31,31 @@ void SESubstanceConcentration::Clear()
   SAFE_DELETE(m_Concentration);
 }
 
-bool SESubstanceConcentration::Load(const CDM::SubstanceConcentrationData& in)
+void SESubstanceConcentration::Load(const cdm::SubstanceData_ConcentrationData& src, SESubstanceConcentration& dst)
 {
-  Clear();
-  GetConcentration().Load(in.Concentration());
-  return true;
+  dst.Clear();
+  if(src.has_concentration())
+    SEScalarMassPerVolume::Load(src.concentration(),dst.GetConcentration());
+}
+void SESubstanceConcentration::Serialize(const cdm::SubstanceData_ConcentrationData& src, SESubstanceConcentration& dst)
+{
+
 }
 
-CDM::SubstanceConcentrationData*  SESubstanceConcentration::Unload() const
+cdm::SubstanceData_ConcentrationData* SESubstanceConcentration::Unload(const SESubstanceConcentration& src)
 {
-  CDM::SubstanceConcentrationData* data = new CDM::SubstanceConcentrationData();
-  Unload(*data);
-  return data;
+  cdm::SubstanceData_ConcentrationData* dst = new cdm::SubstanceData_ConcentrationData();
+  SESubstanceConcentration::Serialize(src,*dst);
+  return dst;
 }
 
-void SESubstanceConcentration::Unload(CDM::SubstanceConcentrationData& data) const
+void SESubstanceConcentration::Serialize(const SESubstanceConcentration& src, cdm::SubstanceData_ConcentrationData& dst)
 {
-  data.Name(m_Substance.GetName());
-  if(m_Concentration!=nullptr)
-    data.Concentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_Concentration->Unload())); 
+  dst.set_name(src.m_Substance.GetName());
+  if (src.HasConcentration())
+    dst.set_allocated_concentration(SEScalarMassPerVolume::Unload(*src.m_Concentration));
 }
+
 
 bool SESubstanceConcentration::HasConcentration() const
 {

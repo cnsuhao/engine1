@@ -28,8 +28,8 @@ public:
   static void Load(const cdm::BrainInjuryData& src, SEBrainInjury& dst);
   static cdm::BrainInjuryData* Unload(const SEBrainInjury& src);
 protected:
-	static void Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst);
-	static void Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst);
+  static void Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst);
+  static void Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst);
 
 public:
 

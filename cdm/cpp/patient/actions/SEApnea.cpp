@@ -44,25 +44,25 @@ bool SEApnea::IsActive() const
 
 void SEApnea::Load(const cdm::ApneaData& src, SEApnea& dst)
 {
-	SEApnea::Serialize(src, dst);
+  SEApnea::Serialize(src, dst);
 }
 void SEApnea::Serialize(const cdm::ApneaData& src, SEApnea& dst)
 {
-	dst.Clear();
-	if (src.has_severity())
-		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
+  dst.Clear();
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
 cdm::ApneaData* SEApnea::Unload(const SEApnea& src)
 {
-	cdm::ApneaData* dst = new cdm::ApneaData();
-	SEApnea::Serialize(src, *dst);
-	return dst;
+  cdm::ApneaData* dst = new cdm::ApneaData();
+  SEApnea::Serialize(src, *dst);
+  return dst;
 }
 void SEApnea::Serialize(const SEApnea& src, cdm::ApneaData& dst)
 {
-	if (src.HasSeverity())
-		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

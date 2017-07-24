@@ -28,8 +28,8 @@ public:
   static void Load(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst);
   static cdm::AirwayObstructionData* Unload(const SEAirwayObstruction& src);
 protected:
-	static void Serialize(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst);
-	static void Serialize(const SEAirwayObstruction& src, cdm::AirwayObstructionData& dst);
+  static void Serialize(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst);
+  static void Serialize(const SEAirwayObstruction& src, cdm::AirwayObstructionData& dst);
 
 public:
 

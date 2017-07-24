@@ -15,14 +15,15 @@ import java.util.*;
 
 import com.kitware.physiology.cdm.EngineConfiguration.PhysiologyEngineDynamicStabilizationData;
 
+import mil.tatrc.physiology.datamodel.datarequests.SEDataRequest;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
 public class PhysiologyEngineDynamicStabilizationCriteria
 {
   public class PropertyConvergence
   {
-    public String name;
-    public double percentDifference;
+    public SEDataRequest dataRequest;
+    public double        percentDifference;
   }
   
   protected SEScalarTime convergenceTime;
@@ -48,7 +49,9 @@ public class PhysiologyEngineDynamicStabilizationCriteria
       SEScalarTime.load(src.getMaximumAllowedStabilizationTime(),dst.getMaximumAllowedStabilizationTime());      
     for(PhysiologyEngineDynamicStabilizationData.PropertyConvergenceData pcData : src.getPropertyConvergenceList())
     {
-      dst.createProperty(pcData.getPercentDifference(),pcData.getName());
+    	SEDataRequest dr = new SEDataRequest();
+    	SEDataRequest.load(pcData.getDataRequest(), dr);
+      dst.createProperty(pcData.getPercentDifference(),dr);
     }
   }
   public static PhysiologyEngineDynamicStabilizationData.CriteriaData unload(PhysiologyEngineDynamicStabilizationCriteria src)
@@ -68,7 +71,7 @@ public class PhysiologyEngineDynamicStabilizationCriteria
     for(PropertyConvergence pc : src.properties)
     {
       PhysiologyEngineDynamicStabilizationData.PropertyConvergenceData.Builder pcData = dst.addPropertyConvergenceBuilder();
-      pcData.setName(pc.name);
+      pcData.setDataRequest(SEDataRequest.unload(pc.dataRequest));
       pcData.setPercentDifference(pc.percentDifference);
     }
   }
@@ -106,10 +109,10 @@ public class PhysiologyEngineDynamicStabilizationCriteria
     return maximumAllowedStabilizationTime;
   }
   
-  public void createProperty(double percentDifference, String property)
+  public void createProperty(double percentDifference, SEDataRequest dr)
   {
     PropertyConvergence pc = new PropertyConvergence();
-    pc.name=property;
+    pc.dataRequest=dr;
     pc.percentDifference=percentDifference;
     this.properties.add(pc);
   }

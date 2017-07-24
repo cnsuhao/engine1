@@ -18,9 +18,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
-#include "scenario/requests/SEDataRequestManager.h"
-
-
+#include "scenario/SEDataRequestManager.h"
 #include "utils/DataTrack.h"
 class SESystem; 
 class SEPatient;
@@ -68,16 +66,11 @@ public:
   // Tissue cmpts don't have children and they don't have computed data that changes on call (like flow)
 };
 
-class DLL_DECL PhysiologyEngineTrack : public Loggable
+class DLL_DECL SEEngineTracker : public Loggable
 {
 public:
-  PhysiologyEngineTrack(PhysiologyEngine& engine);
-  PhysiologyEngineTrack(SEPatient& patient, 
-                        SESubstanceManager& subMgr, 
-                        SECompartmentManager& cmptMgr,
-                        const std::vector<SESystem*>& physiology, 
-                        const std::vector<SESystem*>& equipment);
-  virtual ~PhysiologyEngineTrack();
+  SEEngineTracker(PhysiologyEngine& engine);
+  virtual ~SEEngineTracker();
 
   void Clear();// Remove all requests and close the results file
     
@@ -109,6 +102,8 @@ protected:
 
   SEEnvironment*               m_Environment;
   std::vector<SESystem*>       m_PhysiologySystems;
-  std::vector<SESystem*>       m_EquipmentSystems;
+  SESystem*                    m_AnesthesiaMachine;
+  SESystem*                    m_ECG;
+  SESystem*                    m_Inhaler;
   std::map<const SEDataRequest*, SEDataRequestScalar*> m_Request2Scalar;
 };

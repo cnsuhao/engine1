@@ -28,8 +28,8 @@ public:
   static void Load(const cdm::ApneaData& src, SEApnea& dst);
   static cdm::ApneaData* Unload(const SEApnea& src);
 protected:
-	static void Serialize(const cdm::ApneaData& src, SEApnea& dst);
-	static void Serialize(const SEApnea& src, cdm::ApneaData& dst);
+  static void Serialize(const cdm::ApneaData& src, SEApnea& dst);
+  static void Serialize(const SEApnea& src, cdm::ApneaData& dst);
 
 public:
 

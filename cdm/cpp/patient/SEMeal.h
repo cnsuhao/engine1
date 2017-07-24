@@ -25,8 +25,8 @@ public:
   static void Load(const cdm::MealData& src, SEMeal& dst);
   static cdm::MealData* Unload(const SEMeal& src);
 protected:
-	static void Serialize(const cdm::MealData& src, SEMeal& dst);
-	static void Serialize(const SEMeal& src, cdm::MealData& dst);
+  static void Serialize(const cdm::MealData& src, SEMeal& dst);
+  static void Serialize(const SEMeal& src, cdm::MealData& dst);
 
 public:
 

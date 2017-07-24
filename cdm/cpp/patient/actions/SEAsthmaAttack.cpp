@@ -42,25 +42,25 @@ bool SEAsthmaAttack::IsActive() const
 
 void SEAsthmaAttack::Load(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
 {
-	SEAsthmaAttack::Serialize(src, dst);
+  SEAsthmaAttack::Serialize(src, dst);
 }
 void SEAsthmaAttack::Serialize(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
 {
-	dst.Clear();
-	if (src.has_severity())
-		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
+  dst.Clear();
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
 cdm::AsthmaAttackData* SEAsthmaAttack::Unload(const SEAsthmaAttack& src)
 {
-	cdm::AsthmaAttackData* dst = new cdm::AsthmaAttackData();
-	SEAsthmaAttack::Serialize(src, *dst);
-	return dst;
+  cdm::AsthmaAttackData* dst = new cdm::AsthmaAttackData();
+  SEAsthmaAttack::Serialize(src, *dst);
+  return dst;
 }
 void SEAsthmaAttack::Serialize(const SEAsthmaAttack& src, cdm::AsthmaAttackData& dst)
 {
-	if (src.HasSeverity())
-		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

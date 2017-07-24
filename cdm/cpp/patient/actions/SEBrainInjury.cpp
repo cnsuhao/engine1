@@ -45,28 +45,28 @@ bool SEBrainInjury::IsActive() const
 
 void SEBrainInjury::Load(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
 {
-	SEBrainInjury::Serialize(src, dst);
+  SEBrainInjury::Serialize(src, dst);
 }
 void SEBrainInjury::Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
 {
-	dst.Clear();
-	if (src.has_severity())
-		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-	dst.SetType(src.type());
+  dst.Clear();
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
+  dst.SetType(src.type());
 }
 
 cdm::BrainInjuryData* SEBrainInjury::Unload(const SEBrainInjury& src)
 {
-	cdm::BrainInjuryData* dst = new cdm::BrainInjuryData();
-	SEBrainInjury::Serialize(src, *dst);
-	return dst;
+  cdm::BrainInjuryData* dst = new cdm::BrainInjuryData();
+  SEBrainInjury::Serialize(src, *dst);
+  return dst;
 }
 void SEBrainInjury::Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst)
 {
-	if (src.HasSeverity())
-		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-	if (src.HasType())
-		dst.set_type(src.m_Type);
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+  if (src.HasType())
+    dst.set_type(src.m_Type);
 }
 
 bool SEBrainInjury::HasSeverity() const

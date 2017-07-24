@@ -29,8 +29,8 @@ public:
   static void Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst);
   static cdm::CardiacArrestData* Unload(const SECardiacArrest& src);
 protected:
-	static void Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst);
-	static void Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst);
+  static void Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst);
+  static void Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst);
 
 public:
 

@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/TissueSystemData.hxx"
+#include "bind/cdm/Physiology.pb.h"
 
 class DLL_DECL SETissueSystem : public SESystem
 {
@@ -25,10 +25,11 @@ public:
   
   virtual const SEScalar* GetScalar(const std::string& name);
   
-  virtual bool Load(const CDM::TissueSystemData& in);
-  virtual CDM::TissueSystemData* Unload() const;
+  static void Load(const cdm::TissueSystemData& src, SETissueSystem& dst);
+  static cdm::TissueSystemData* Unload(const SETissueSystem& src);
 protected:
-  virtual void Unload(CDM::TissueSystemData& data) const;
+  static void Serialize(const cdm::TissueSystemData& src, SETissueSystem& dst);
+  static void Serialize(const SETissueSystem& src, cdm::TissueSystemData& dst);
 
 public:
 
@@ -68,7 +69,7 @@ protected:
   SEScalarVolume*         m_IntracellularFluidVolume;//planned
   SEScalar*               m_IntracellularFluidPH;
   SEScalarVolumePerTime*  m_OxygenConsumptionRate;
-  SEScalar*                m_RespiratoryExchangeRatio;
+  SEScalar*               m_RespiratoryExchangeRatio;
 
 
 };

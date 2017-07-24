@@ -42,25 +42,25 @@ bool SEBreathHold::IsActive() const
 
 void SEBreathHold::Load(const cdm::ConsciousRespirationData_BreathHoldData& src, SEBreathHold& dst)
 {
-	SEBreathHold::Serialize(src, dst);
+  SEBreathHold::Serialize(src, dst);
 }
 void SEBreathHold::Serialize(const cdm::ConsciousRespirationData_BreathHoldData& src, SEBreathHold& dst)
 {
-	dst.Clear();
-	if (src.has_period())
-		SEScalarTime::Load(src.period(), dst.GetPeriod());
+  dst.Clear();
+  if (src.has_period())
+    SEScalarTime::Load(src.period(), dst.GetPeriod());
 }
 
 cdm::ConsciousRespirationData_BreathHoldData* SEBreathHold::Unload(const SEBreathHold& src)
 {
-	cdm::ConsciousRespirationData_BreathHoldData* dst = new cdm::ConsciousRespirationData_BreathHoldData();
-	SEBreathHold::Serialize(src, *dst);
-	return dst;
+  cdm::ConsciousRespirationData_BreathHoldData* dst = new cdm::ConsciousRespirationData_BreathHoldData();
+  SEBreathHold::Serialize(src, *dst);
+  return dst;
 }
 void SEBreathHold::Serialize(const SEBreathHold& src, cdm::ConsciousRespirationData_BreathHoldData& dst)
 {
-	if (src.HasPeriod())
-		dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
+  if (src.HasPeriod())
+    dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
 }
 
 bool SEBreathHold::HasPeriod() const

@@ -48,26 +48,26 @@ void SEChestOcclusiveDressing::SetActive(bool b)
 
 void SEChestOcclusiveDressing::Load(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
 {
-	SEChestOcclusiveDressing::Serialize(src, dst);
+  SEChestOcclusiveDressing::Serialize(src, dst);
 }
 void SEChestOcclusiveDressing::Serialize(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
 {
-	dst.Clear();
-	dst.SetSide(src.side());
-	//jbw - How to do state?
+  dst.Clear();
+  dst.SetSide(src.side());
+  //jbw - How to do state?
 }
 
 cdm::ChestOcclusiveDressingData* SEChestOcclusiveDressing::Unload(const SEChestOcclusiveDressing& src)
 {
-	cdm::ChestOcclusiveDressingData* dst = new cdm::ChestOcclusiveDressingData();
-	SEChestOcclusiveDressing::Serialize(src, *dst);
-	return dst;
+  cdm::ChestOcclusiveDressingData* dst = new cdm::ChestOcclusiveDressingData();
+  SEChestOcclusiveDressing::Serialize(src, *dst);
+  return dst;
 }
 void SEChestOcclusiveDressing::Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst)
 {
-	if (src.HasSide())
-		dst.set_side(src.m_Side);
-	//jbw - How to do state?
+  if (src.HasSide())
+    dst.set_side(src.m_Side);
+  //jbw - How to do state?
 }
 
 cdm::eSide SEChestOcclusiveDressing::GetSide() const

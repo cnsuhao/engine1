@@ -477,15 +477,15 @@ SEAction* SEAction::newFromBind(const cdm::ActionData& data, SESubstanceManager&
 
 void SEAction::Load(const cdm::ActionData& src, SEAction& dst)
 {
-	SEAction::Serialize(src, dst);
+  SEAction::Serialize(src, dst);
 }
 void SEAction::Serialize(const cdm::ActionData& src, SEAction& dst)
 {
-	dst.Clear();
-	
-	//jbw - how does this work?
-	if (!src.comment().empty())
-		dst.GetComment().empty();
+  dst.Clear();
+  
+  //jbw - how does this work?
+  if (!src.comment().empty())
+    dst.GetComment().empty();
 }
 
 cdm::ActionData* SEAction::Unload(const SEAction& src)
@@ -497,9 +497,9 @@ cdm::ActionData* SEAction::Unload(const SEAction& src)
 
 void SEAction::Serialize(const SEAction& src, cdm::ActionData& dst)
 {
-	//jbw - how does this work?
-	//if (HasComment())
-	//	src.GetComment(m_Comment);
+  //jbw - how does this work?
+  //if (HasComment())
+  //  src.GetComment(m_Comment);
 }
 
 

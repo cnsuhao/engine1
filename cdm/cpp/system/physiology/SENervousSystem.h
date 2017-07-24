@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/NervousSystemData.hxx"
+#include "bind/cdm/Physiology.pb.h"
 #include "system/physiology/SEPupillaryResponse.h"
 
 class DLL_DECL SENervousSystem : public SESystem
@@ -25,11 +25,12 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::NervousSystemData& in);
-  virtual CDM::NervousSystemData* Unload() const;
+
+  static void Load(const cdm::NervousSystemData& src, SENervousSystem& dst);
+  static cdm::NervousSystemData* Unload(const SENervousSystem& src);
 protected:
-  virtual void Unload(CDM::NervousSystemData& data) const;
+  static void Serialize(const cdm::NervousSystemData& src, SENervousSystem& dst);
+  static void Serialize(const SENervousSystem& src, cdm::NervousSystemData& dst);
 
 public:
 
@@ -74,8 +75,8 @@ protected:
   SEScalar*              m_BaroreceptorHeartElastanceScale;
   SEScalar*              m_BaroreceptorResistanceScale;
   SEScalar*              m_BaroreceptorComplianceScale;
-  SEPupillaryResponse*  m_LeftEyePupillaryResponse;
-  SEPupillaryResponse*  m_RightEyePupillaryResponse;
-  SEScalar*           m_ChemoreceptorHeartRateScale;
-  SEScalar*           m_ChemoreceptorHeartElastanceScale;
+  SEPupillaryResponse*   m_LeftEyePupillaryResponse;
+  SEPupillaryResponse*   m_RightEyePupillaryResponse;
+  SEScalar*              m_ChemoreceptorHeartRateScale;
+  SEScalar*              m_ChemoreceptorHeartElastanceScale;
 };

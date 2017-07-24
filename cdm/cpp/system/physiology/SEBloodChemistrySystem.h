@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/BloodChemistrySystemData.hxx"
+#include "bind/cdm/Physiology.pb.h"
 
 /** @copydoc Physiology_BloodChemistrySystemData
   @nosubgrouping */
@@ -28,10 +28,12 @@ public:
   virtual const SEScalar* GetScalar(const std::string& name);                                         /**< @copydoc DOXY_CDM_GET_SCALAR */
 
                                                                                                       /**  @name Serialization *///@{
-  virtual bool Load(const CDM::BloodChemistrySystemData& in);                                         /**< @copydoc DOXY_CDM_LOAD */
-  virtual CDM::BloodChemistrySystemData* Unload() const;                                              /**< @copydoc DOXY_CDM_UNLOAD */
+  static void Load(const cdm::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst);            /**< @copydoc DOXY_CDM_LOAD    */
+  static cdm::BloodChemistrySystemData* Unload(const SEBloodChemistrySystem& src);                    /**< @copydoc DOXY_CDM_UNLLOAD */
 protected:
-  virtual void Unload(CDM::BloodChemistrySystemData& data) const;                                     /**< @copydoc DOXY_CDM_UNLOAD_TO *///@}
+  static void Serialize(const cdm::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst);       /**< @copydoc DOXY_CDM_SERIALIZE_IN  */
+  static void Serialize(const SEBloodChemistrySystem& src, cdm::BloodChemistrySystemData& dst);       /**< @copydoc DOXY_CDM_SERIALIZE_OUT *///@}
+  
 public:
   /**  @name BloodDensity *///@{ @copybrief Physiology_BloodChemistrySystemData_BloodDensity
   virtual bool HasBloodDensity() const;                                                               /**< @copydoc DOXY_CDM_HAS */
@@ -168,14 +170,14 @@ public:
   virtual double GetStrongIonDifference(const AmountPerVolumeUnit& unit) const;
   //@}
 
-  /** @name ShuntFraction
-   *  @brief @copybrief Physiology_BloodChemistrySystemData_ShuntFraction
+  /** @name ShuntFrBloodChemistry
+   *  @brief @copybrief Physiology_BloodChemistrySystemData_ShuntFrBloodChemistry
    *  @{*/
    /// %Test if member has been allocated
-  virtual bool HasShuntFraction() const;
+  virtual bool HasShuntFrBloodChemistry() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalar0To1& GetShuntFraction();
-  virtual double GetShuntFraction() const;
+  virtual SEScalar0To1& GetShuntFrBloodChemistry();
+  virtual double GetShuntFrBloodChemistry() const;
   //@}
 
   /** @name TotalProteinConcentration
@@ -188,24 +190,24 @@ public:
   virtual double GetTotalProteinConcentration(const MassPerVolumeUnit& unit) const;
   //@}
 
-  /** @name VolumeFractionNeutralPhospholipidInPlasma
-  *  @brief @copybrief Physiology_BloodChemistrySystemData_VolumeFractionNeutralPhospholipidInPlasma
+  /** @name VolumeFrBloodChemistryNeutralPhospholipidInPlasma
+  *  @brief @copybrief Physiology_BloodChemistrySystemData_VolumeFrBloodChemistryNeutralPhospholipidInPlasma
   *  @{*/
   /// %Test if member has been allocated
-  virtual bool HasVolumeFractionNeutralPhospholipidInPlasma() const;
+  virtual bool HasVolumeFrBloodChemistryNeutralPhospholipidInPlasma() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalar0To1& GetVolumeFractionNeutralPhospholipidInPlasma();
-  virtual double GetVolumeFractionNeutralPhospholipidInPlasma() const;
+  virtual SEScalar0To1& GetVolumeFrBloodChemistryNeutralPhospholipidInPlasma();
+  virtual double GetVolumeFrBloodChemistryNeutralPhospholipidInPlasma() const;
   //@}
 
-  /** @name VolumeFractionNeutralLipidInPlasma
-  *  @brief @copybrief Physiology_BloodChemistrySystemData_VolumeFractionNeutralLipidInPlasma
+  /** @name VolumeFrBloodChemistryNeutralLipidInPlasma
+  *  @brief @copybrief Physiology_BloodChemistrySystemData_VolumeFrBloodChemistryNeutralLipidInPlasma
   *  @{*/
   /// %Test if member has been allocated
-  virtual bool HasVolumeFractionNeutralLipidInPlasma() const;
+  virtual bool HasVolumeFrBloodChemistryNeutralLipidInPlasma() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalar0To1& GetVolumeFractionNeutralLipidInPlasma();
-  virtual double GetVolumeFractionNeutralLipidInPlasma() const;
+  virtual SEScalar0To1& GetVolumeFrBloodChemistryNeutralLipidInPlasma();
+  virtual double GetVolumeFrBloodChemistryNeutralLipidInPlasma() const;
   //@}
 
   /** @name WhiteBloodCellCount
@@ -304,28 +306,28 @@ protected:
   SEScalar*                       m_BloodPH;
   SEScalarHeatCapacitancePerMass* m_BloodSpecificHeat;
   SEScalarMassPerVolume*          m_BloodUreaNitrogenConcentration;
-  SEScalar0To1*               m_CarbonDioxideSaturation;
-  SEScalar0To1*               m_CarbonMonoxideSaturation;
-  SEScalar0To1*               m_Hematocrit;
+  SEScalar0To1*                   m_CarbonDioxideSaturation;
+  SEScalar0To1*                   m_CarbonMonoxideSaturation;
+  SEScalar0To1*                   m_Hematocrit;
   SEScalarMass*                   m_HemoglobinContent;
-  SEScalar0To1*               m_OxygenSaturation;
+  SEScalar0To1*                   m_OxygenSaturation;
   SEScalarAmountPerVolume*        m_Phosphate;
   SEScalarVolume*                 m_PlasmaVolume;
-  SEScalar0To1*               m_PulseOximetry;
+  SEScalar0To1*                   m_PulseOximetry;
   SEScalarAmountPerVolume*        m_RedBloodCellCount;
-  SEScalar0To1*               m_ShuntFraction;
+  SEScalar0To1*                   m_ShuntFrBloodChemistry;
   SEScalarAmountPerVolume*        m_StrongIonDifference;
   SEScalarMassPerVolume*          m_TotalProteinConcentration;
-  SEScalar0To1*               m_VolumeFractionNeutralPhospholipidInPlasma;
-  SEScalar0To1*               m_VolumeFractionNeutralLipidInPlasma;
+  SEScalar0To1*                   m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma;
+  SEScalar0To1*                   m_VolumeFrBloodChemistryNeutralLipidInPlasma;
   SEScalarAmountPerVolume*        m_WhiteBloodCellCount;
   
-  SEScalarPressure*                m_ArterialCarbonDioxidePressure;
-  SEScalarPressure*                m_ArterialOxygenPressure;
-  SEScalarPressure*                m_PulmonaryArterialCarbonDioxidePressure;
-  SEScalarPressure*                m_PulmonaryArterialOxygenPressure;
-  SEScalarPressure*                m_PulmonaryVenousCarbonDioxidePressure;
-  SEScalarPressure*                m_PulmonaryVenousOxygenPressure;
-  SEScalarPressure*                m_VenousCarbonDioxidePressure;
-  SEScalarPressure*                m_VenousOxygenPressure;
+  SEScalarPressure*               m_ArterialCarbonDioxidePressure;
+  SEScalarPressure*               m_ArterialOxygenPressure;
+  SEScalarPressure*               m_PulmonaryArterialCarbonDioxidePressure;
+  SEScalarPressure*               m_PulmonaryArterialOxygenPressure;
+  SEScalarPressure*               m_PulmonaryVenousCarbonDioxidePressure;
+  SEScalarPressure*               m_PulmonaryVenousOxygenPressure;
+  SEScalarPressure*               m_VenousCarbonDioxidePressure;
+  SEScalarPressure*               m_VenousOxygenPressure;
 };

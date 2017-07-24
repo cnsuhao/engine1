@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(ConditionData);
 class SESubstanceManager;
+#include "bind/cdm/Conditions.pb.h"
 
 class DLL_DECL SECondition : public Loggable
 {
@@ -23,15 +23,16 @@ public:
   
   virtual void Clear();// Deletes all members
  
-  static SECondition* newFromBind(const CDM::ConditionData& condition, SESubstanceManager& substances);
+  static SECondition* newFromBind(const cdm::ConditionData& condition, SESubstanceManager& substances);
 
-  virtual bool Load(const CDM::ConditionData& in);
-  virtual CDM::ConditionData* Unload() const;
+  static void Load(const cdm::ConditionData& src, SECondition& dst);
+  static cdm::ConditionData* Unload(const SECondition& src);
 protected:
-  void Unload(CDM::ConditionData& data) const;
+  static void Serialize(const cdm::ConditionData& src, SECondition& dst);
+  static void Serialize(const SECondition& src, cdm::ConditionData& dst);
 
 public:
-  /** Test if the action has all data it needs */
+  /** Test if the Condition has all data it needs */
   virtual bool IsValid() const { return true; }
 
   virtual std::string GetName() const = 0;

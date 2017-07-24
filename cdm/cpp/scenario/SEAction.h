@@ -34,8 +34,8 @@ public:
   static void Load(const cdm::ActionData& src, SEAction& dst);
   static cdm::ActionData* Unload(const SEAction& src);
 protected:
-	static void Serialize(const cdm::ActionData& src, SEAction& dst);
-	static void Serialize(const SEAction& src, cdm::ActionData& dst);
+  static void Serialize(const cdm::ActionData& src, SEAction& dst);
+  static void Serialize(const SEAction& src, cdm::ActionData& dst);
 
 public:
 

@@ -28,7 +28,7 @@ public:
   //jbw - How do I do this generically without Force or ForceScale?
   virtual bool Load(const CDM::ChestCompressionData& in);
 protected:
-	virtual void Unload(CDM::ChestCompressionData& data) const;
+  virtual void Unload(CDM::ChestCompressionData& data) const;
 
 public:
 

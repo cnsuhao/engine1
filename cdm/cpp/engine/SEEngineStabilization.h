@@ -12,25 +12,18 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 class PhysiologyEngine;
-class PhysiologyEngineTrack;
-class PhysiologyEngineConfiguration; 
+class SEEngineTrack;
+class SEEngineConfiguration; 
 class SECondition;
-#include "bind/enumOnOff.hxx"
+#include "bind/cdm/Engine.pb.h"
 
-CDM_BIND_DECL(PhysiologyEngineStabilizationData)
-class DLL_DECL PhysiologyEngineStabilization : public Loggable
+class DLL_DECL SEEngineStabilization : public Loggable
 {
 public:
-  PhysiologyEngineStabilization(Logger* logger);
-  virtual ~PhysiologyEngineStabilization();
+  SEEngineStabilization(Logger* logger);
+  virtual ~SEEngineStabilization();
 
   virtual void Clear();
-
-  virtual bool Load(const CDM::PhysiologyEngineStabilizationData& in);
-  virtual CDM::PhysiologyEngineStabilizationData* Unload() const;
-protected:
-  virtual void Unload(CDM::PhysiologyEngineStabilizationData& data) const;
-public:
 
   virtual bool LoadFile(const std::string& file) = 0;
 
@@ -42,7 +35,7 @@ public:
 
   virtual void CancelStabilization();
 
-  virtual void TrackStabilization(CDM::enumOnOff::value state);
+  virtual void TrackStabilization(cdm::eSwitch state);
   virtual bool IsTrackingStabilization();
 
   virtual bool HasStabilizationDuration();
@@ -52,7 +45,7 @@ protected:
 
   bool m_Cancelled;
   bool m_LogProgress;
-  CDM::enumOnOff::value m_TrackingStabilization;
+  cdm::eSwitch m_TrackingStabilization;
   double m_currentTime_s;
   std::stringstream m_ss;
 

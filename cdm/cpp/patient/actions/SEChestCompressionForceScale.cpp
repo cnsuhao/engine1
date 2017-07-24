@@ -45,29 +45,29 @@ bool SEChestCompressionForceScale::IsActive() const
 
 void SEChestCompressionForceScale::Load(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
 {
-	SEChestCompressionForceScale::Serialize(src, dst);
+  SEChestCompressionForceScale::Serialize(src, dst);
 }
 void SEChestCompressionForceScale::Serialize(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
 {
-	dst.Clear();
-	if (src.has_forcescale())
-		SEScalar0To1::Load(src.forcescale(), dst.GetForceScale());
-	if (src.has_forceperiod())
-		SEScalarTime::Load(src.forceperiod(), dst.GetForcePeriod());
+  dst.Clear();
+  if (src.has_forcescale())
+    SEScalar0To1::Load(src.forcescale(), dst.GetForceScale());
+  if (src.has_forceperiod())
+    SEScalarTime::Load(src.forceperiod(), dst.GetForcePeriod());
 }
 
 cdm::ChestCompressionForceScaleData* SEChestCompressionForceScale::Unload(const SEChestCompressionForceScale& src)
 {
-	cdm::ChestCompressionForceScaleData* dst = new cdm::ChestCompressionForceScaleData();
-	SEChestCompressionForceScale::Serialize(src, *dst);
-	return dst;
+  cdm::ChestCompressionForceScaleData* dst = new cdm::ChestCompressionForceScaleData();
+  SEChestCompressionForceScale::Serialize(src, *dst);
+  return dst;
 }
 void SEChestCompressionForceScale::Serialize(const SEChestCompressionForceScale& src, cdm::ChestCompressionForceScaleData& dst)
 {
-	if (src.HasForceScale())
-		dst.set_allocated_forcescale(SEScalar0To1::Unload(*src.m_ForceScale));
-	if (src.HasForcePeriod())
-		dst.set_allocated_forceperiod(SEScalarTime::Unload(*src.m_ForcePeriod));
+  if (src.HasForceScale())
+    dst.set_allocated_forcescale(SEScalar0To1::Unload(*src.m_ForceScale));
+  if (src.HasForcePeriod())
+    dst.set_allocated_forceperiod(SEScalarTime::Unload(*src.m_ForcePeriod));
 }
 
 bool SEChestCompressionForceScale::HasForceScale() const

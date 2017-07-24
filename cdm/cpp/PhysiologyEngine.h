@@ -37,8 +37,10 @@ class SEInhaler;
 class SEElectroCardioGram;
 class SECompartmentManager;
 
-class PhysiologyEngineTrack;
+class SEEngineTracker;
 class PhysiologyEngineConfiguration;
+
+#include <google/protobuf/message.h>
 
 /** 
  * @brief
@@ -117,9 +119,11 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Retrieve the PhysiologyEngineTrack associated with tracking data from this engine to a file
+  /// Retrieve the SEEngineTracker associated with tracking data from this engine to a file
+  /// The SEEngineTracker is a class set up to pull data requested from the engine (via SEDataRequest's)
+  /// and provide access to the data easily (ex. to easily write data to csv files)
   //--------------------------------------------------------------------------------------------------
-  virtual PhysiologyEngineTrack* GetEngineTrack() = 0;
+  virtual SEEngineTracker* GetEngineTracker() = 0;
   
   //--------------------------------------------------------------------------------------------------
   /// \brief

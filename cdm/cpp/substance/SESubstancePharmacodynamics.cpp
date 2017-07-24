@@ -12,11 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "substance/SESubstancePharmacodynamics.h"
-#include "bind/SubstancePharmacodynamicsData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/ScalarMassPerVolumeData.hxx"
 
 SESubstancePharmacodynamics::SESubstancePharmacodynamics(Logger* logger) : Loggable(logger)
 {
@@ -112,59 +109,75 @@ const SEScalar* SESubstancePharmacodynamics::GetScalar(const std::string& name)
   return GetPupillaryResponse().GetScalar(name);
 }
 
-bool SESubstancePharmacodynamics::Load(const CDM::SubstancePharmacodynamicsData& in)
+void SESubstancePharmacodynamics::Load(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
 {
-  GetBronchodilation().Load(in.Bronchodilation());
-  GetDiastolicPressureModifier().Load(in.DiastolicPressureModifier());
-  GetEC50().Load(in.EC50());
-  GetEMaxShapeParameter().Load(in.EMaxShapeParameter());
-  GetHeartRateModifier().Load(in.HeartRateModifier());
-  GetNeuromuscularBlock().Load(in.NeuromuscularBlock());
-  GetPupillaryResponse().Load(in.PupillaryResponse());
-  GetRespirationRateModifier().Load(in.RespirationRateModifier());
-  GetSedation().Load(in.Sedation());
-  GetSystolicPressureModifier().Load(in.SystolicPressureModifier());
-  GetTidalVolumeModifier().Load(in.TidalVolumeModifier());
-  GetTubularPermeabilityModifier().Load(in.TubularPermeabilityModifier());
-  CalculateDerived();
-  return true;
+  SESubstancePharmacodynamics::Serialize(src, dst);
+  dst.CalculateDerived();
+}
+void SESubstancePharmacodynamics::Serialize(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
+{
+  dst.Clear();
+
+  if (src.has_bronchodilation())
+    SEScalar0To1::Load(src.bronchodilation(), dst.GetBronchodilation());
+  if (src.has_diastolicpressuremodifier())
+    SEScalar0To1::Load(src.diastolicpressuremodifier(), dst.GetDiastolicPressureModifier());
+  if (src.has_ec50())
+    SEScalarMassPerVolume::Load(src.ec50(), dst.GetEC50());
+  if (src.has_emaxshapeparameter())
+    SEScalar::Load(src.emaxshapeparameter(), dst.GetEMaxShapeParameter());
+  if (src.has_heartratemodifier())
+    SEScalar0To1::Load(src.heartratemodifier(), dst.GetHeartRateModifier());
+  if (src.has_neuromuscularblock())
+    SEScalar0To1::Load(src.neuromuscularblock(), dst.GetNeuromuscularBlock());
+  if (src.has_pupillaryresponse())
+    SEPupillaryResponse::Load(src.pupillaryresponse(), dst.GetPupillaryResponse());
+  if (src.has_respirationratemodifier())
+    SEScalar0To1::Load(src.respirationratemodifier(), dst.GetRespirationRateModifier());
+  if (src.has_sedation())
+    SEScalar0To1::Load(src.sedation(), dst.GetSedation());
+  if (src.has_systolicpressuremodifier())
+    SEScalar0To1::Load(src.systolicpressuremodifier(), dst.GetSystolicPressureModifier());
+  if (src.has_tidalvolumemodifier())
+    SEScalar0To1::Load(src.tidalvolumemodifier(), dst.GetTidalVolumeModifier());
+  if (src.has_tubularpermeabilitymodifier())
+    SEScalar0To1::Load(src.tubularpermeabilitymodifier(), dst.GetTubularPermeabilityModifier());
 }
 
-CDM::SubstancePharmacodynamicsData*  SESubstancePharmacodynamics::Unload() const
+cdm::SubstanceData_PharmacodynamicsData* SESubstancePharmacodynamics::Unload(const SESubstancePharmacodynamics& src)
 {
-  if (!IsValid())
+  if (!src.IsValid())
     return nullptr;
-  CDM::SubstancePharmacodynamicsData* data= new CDM::SubstancePharmacodynamicsData();
-  Unload(*data);
-  return data;
+  cdm::SubstanceData_PharmacodynamicsData* dst = new cdm::SubstanceData_PharmacodynamicsData();
+  SESubstancePharmacodynamics::Serialize(src,*dst);
+  return dst;
 }
-
-void SESubstancePharmacodynamics::Unload(CDM::SubstancePharmacodynamicsData& data) const
+void SESubstancePharmacodynamics::Serialize(const SESubstancePharmacodynamics& src, cdm::SubstanceData_PharmacodynamicsData& dst)
 {
-  if (HasBronchodilation())
-    data.Bronchodilation(std::unique_ptr<CDM::ScalarFractionData>(m_Bronchodilation->Unload()));
-  if (HasDiastolicPressureModifier())
-    data.DiastolicPressureModifier(std::unique_ptr<CDM::ScalarFractionData>(m_DiastolicPressureModifier->Unload()));
-  if (HasEC50())
-    data.EC50(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_EC50->Unload()));
-  if (HasEMaxShapeParameter())
-    data.EMaxShapeParameter(std::unique_ptr<CDM::ScalarData>(m_EMaxShapeParameter->Unload()));
-  if (HasHeartRateModifier())
-    data.HeartRateModifier(std::unique_ptr<CDM::ScalarFractionData>(m_HeartRateModifier->Unload()));
-  if (HasNeuromuscularBlock())
-    data.NeuromuscularBlock(std::unique_ptr<CDM::ScalarFractionData>(m_NeuromuscularBlock->Unload()));
-  if (HasPupillaryResponse())
-    data.PupillaryResponse(std::unique_ptr<CDM::PupillaryResponseData>(m_PupillaryResponse->Unload()));
-  if (HasRespirationRateModifier())
-    data.RespirationRateModifier(std::unique_ptr<CDM::ScalarFractionData>(m_RespirationRateModifier->Unload()));
-  if (HasSedation())
-    data.Sedation(std::unique_ptr<CDM::ScalarFractionData>(m_Sedation->Unload()));
-  if (HasSystolicPressureModifier())
-    data.SystolicPressureModifier(std::unique_ptr<CDM::ScalarFractionData>(m_SystolicPressureModifier->Unload()));
-  if (HasTidalVolumeModifier())
-    data.TidalVolumeModifier(std::unique_ptr<CDM::ScalarFractionData>(m_TidalVolumeModifier->Unload()));
-  if (HasTubularPermeabilityModifier())
-    data.TubularPermeabilityModifier(std::unique_ptr<CDM::ScalarFractionData>(m_TubularPermeabilityModifier->Unload()));
+  if (src.HasBronchodilation())
+    dst.set_allocated_bronchodilation(SEScalar0To1::Unload(*src.m_Bronchodilation));
+  if (src.HasDiastolicPressureModifier())
+    dst.set_allocated_diastolicpressuremodifier(SEScalar0To1::Unload(*src.m_DiastolicPressureModifier));
+  if (src.HasEC50())
+    dst.set_allocated_ec50(SEScalarMassPerVolume::Unload(*src.m_EC50));
+  if (src.HasEMaxShapeParameter())
+    dst.set_allocated_emaxshapeparameter(SEScalar::Unload(*src.m_EMaxShapeParameter));
+  if (src.HasHeartRateModifier())
+    dst.set_allocated_heartratemodifier(SEScalar0To1::Unload(*src.m_HeartRateModifier));
+  if (src.HasNeuromuscularBlock())
+    dst.set_allocated_neuromuscularblock(SEScalar0To1::Unload(*src.m_NeuromuscularBlock));
+  if (src.HasPupillaryResponse())
+    dst.set_allocated_pupillaryresponse(SEPupillaryResponse::Unload(*src.m_PupillaryResponse));
+  if (src.HasRespirationRateModifier())
+    dst.set_allocated_respirationratemodifier(SEScalar0To1::Unload(*src.m_RespirationRateModifier));
+  if (src.HasSedation())
+    dst.set_allocated_sedation(SEScalar0To1::Unload(*src.m_Sedation));
+  if (src.HasSystolicPressureModifier())
+    dst.set_allocated_systolicpressuremodifier(SEScalar0To1::Unload(*src.m_SystolicPressureModifier));
+  if (src.HasTidalVolumeModifier())
+    dst.set_allocated_tidalvolumemodifier(SEScalar0To1::Unload(*src.m_TidalVolumeModifier));
+  if (src.HasTubularPermeabilityModifier())
+    dst.set_allocated_tubularpermeabilitymodifier(SEScalar0To1::Unload(*src.m_TubularPermeabilityModifier));
 }
 
 void SESubstancePharmacodynamics::CalculateDerived()

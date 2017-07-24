@@ -11,8 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/DataRequestsData.hxx"
-#include "bind/ScenarioData.hxx"
 class SESubstanceManager;
 class SEAction;
 class SEDataRequest;

@@ -34,41 +34,41 @@ void SEMeal::Clear()
 
 void SEMeal::Load(const cdm::MealData& src, SEMeal& dst)
 {
-	SEMeal::Serialize(src, dst);
+  SEMeal::Serialize(src, dst);
 }
 void SEMeal::Serialize(const cdm::MealData& src, SEMeal& dst)
 {
-	SENutrition::Serialize(src.nutrition(), dst);
-	dst.Clear();
-	if (src.has_elapsedtime())
-		SEScalarTime::Load(src.elapsedtime(), dst.GetElapsedTime());
+  SENutrition::Serialize(src.nutrition(), dst);
+  dst.Clear();
+  if (src.has_elapsedtime())
+    SEScalarTime::Load(src.elapsedtime(), dst.GetElapsedTime());
 }
 
 cdm::MealData* SEMeal::Unload(const SEMeal& src)
 {
-	cdm::MealData* dst = new cdm::MealData();
-	SEMeal::Serialize(src, *dst);
-	return dst;
+  cdm::MealData* dst = new cdm::MealData();
+  SEMeal::Serialize(src, *dst);
+  return dst;
 }
 void SEMeal::Serialize(const SEMeal& src, cdm::MealData& dst)
 {
-	SENutrition::Serialize(src, *dst.mutable_nutrition());
-	if (src.HasElapsedTime())
-		dst.set_allocated_elapsedtime(SEScalarTime::Unload(*src.m_ElapsedTime));
+  SENutrition::Serialize(src, *dst.mutable_nutrition());
+  if (src.HasElapsedTime())
+    dst.set_allocated_elapsedtime(SEScalarTime::Unload(*src.m_ElapsedTime));
 }
 
 bool SEMeal::LoadFile(const std::string& mealFile)
 {
-	cdm::MealData src;
-	std::ifstream file_stream(mealFile, std::ios::in);
-	std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-	google::protobuf::TextFormat::ParseFromString(fmsg, &src);
-	SEMeal::Load(src, *this);
-	return true;
+  cdm::MealData src;
+  std::ifstream file_stream(mealFile, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  SEMeal::Load(src, *this);
+  return true;
 
-	// If its a binary string in the file...
-	//std::ifstream binary_istream(mealFile, std::ios::in | std::ios::binary);
-	//src.ParseFromIstream(&binary_istream);
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(mealFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
 }
 
 bool SEMeal::HasElapsedTime() const

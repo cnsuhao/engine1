@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "system/SESystem.h"
 #include "patient/SENutrition.h"
-#include "bind/GastrointestinalSystemData.hxx"
+#include "bind/cdm/Physiology.pb.h"
 
 class DLL_DECL SEGastrointestinalSystem : public SESystem
 {
@@ -23,9 +23,16 @@ public:
   virtual ~SEGastrointestinalSystem();
 
   virtual void Clear();// Deletes all members
-  
+
   virtual const SEScalar* GetScalar(const std::string& name);
 
+  static void Load(const cdm::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst);
+  static cdm::GastrointestinalSystemData* Unload(const SEGastrointestinalSystem& src);
+protected:
+  static void Serialize(const cdm::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst);
+  static void Serialize(const SEGastrointestinalSystem& src, cdm::GastrointestinalSystemData& dst);
+  
+public:
   virtual bool HasChymeAbsorbtionRate() const;
   virtual SEScalarVolumePerTime& GetChymeAbsorbtionRate();
   virtual double GetChymeAbsorbtionRate(const VolumePerTimeUnit& unit) const;
@@ -34,11 +41,6 @@ public:
   virtual SENutrition& GetStomachContents();
   virtual const SENutrition* GetStomachContents() const;
   virtual void RemoveStomachContents();
-
-  virtual bool Load(const CDM::GastrointestinalSystemData& in);
-  virtual CDM::GastrointestinalSystemData* Unload() const;
-protected:
-  virtual void Unload(CDM::GastrointestinalSystemData& data) const;
 
 protected:
 

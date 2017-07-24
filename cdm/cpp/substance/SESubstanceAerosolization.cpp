@@ -59,33 +59,33 @@ const SEScalar* SESubstanceAerosolization::GetScalar(const std::string& name)
 
 void SESubstanceAerosolization::Load(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst)
 {
-	SESubstanceAerosolization::Serialize(src, dst);
+  SESubstanceAerosolization::Serialize(src, dst);
 }
 void SESubstanceAerosolization::Serialize(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst)
 {
-	dst.Clear();
-	if (src.has_bronchiolemodifier())
-		SEScalarNegative1To1::Load(src.bronchiolemodifier(), dst.GetBronchioleModifier());
-	if (src.has_inflammationcoefficient())
-		SEScalar0To1::Load(src.inflammationcoefficient(), dst.GetInflammationCoefficient());
-	if (src.has_particulatesizedistribution())
-		SEHistogramFractionVsLength::Load(src.particulatesizedistribution(), dst.GetParticulateSizeDistribution());
+  dst.Clear();
+  if (src.has_bronchiolemodifier())
+    SEScalarNegative1To1::Load(src.bronchiolemodifier(), dst.GetBronchioleModifier());
+  if (src.has_inflammationcoefficient())
+    SEScalar0To1::Load(src.inflammationcoefficient(), dst.GetInflammationCoefficient());
+  if (src.has_particulatesizedistribution())
+    SEHistogramFractionVsLength::Load(src.particulatesizedistribution(), dst.GetParticulateSizeDistribution());
 }
 
 cdm::SubstanceData_AerosolizationData* SESubstanceAerosolization::Unload(const SESubstanceAerosolization& src)
 {
-	cdm::SubstanceData_AerosolizationData* dst = new cdm::SubstanceData_AerosolizationData();
-	SESubstanceAerosolization::Serialize(src, *dst);
-	return dst;
+  cdm::SubstanceData_AerosolizationData* dst = new cdm::SubstanceData_AerosolizationData();
+  SESubstanceAerosolization::Serialize(src, *dst);
+  return dst;
 }
 void SESubstanceAerosolization::Serialize(const SESubstanceAerosolization& src, cdm::SubstanceData_AerosolizationData& dst)
 {
-	if (src.HasBronchioleModifier())
-		dst.set_allocated_bronchiolemodifier(SEScalarNegative1To1::Unload(*src.m_BronchioleModifier));
-	if (src.HasInflammationCoefficient())
-		dst.set_allocated_inflammationcoefficient(SEScalar0To1::Unload(*src.m_InflammationCoefficient));
-	if (src.HasParticulateSizeDistribution())
-		dst.set_allocated_particulatesizedistribution(SEHistogramFractionVsLength::Unload(*src.m_ParticulateSizeDistribution));
+  if (src.HasBronchioleModifier())
+    dst.set_allocated_bronchiolemodifier(SEScalarNegative1To1::Unload(*src.m_BronchioleModifier));
+  if (src.HasInflammationCoefficient())
+    dst.set_allocated_inflammationcoefficient(SEScalar0To1::Unload(*src.m_InflammationCoefficient));
+  if (src.HasParticulateSizeDistribution())
+    dst.set_allocated_particulatesizedistribution(SEHistogramFractionVsLength::Unload(*src.m_ParticulateSizeDistribution));
 }
 
 

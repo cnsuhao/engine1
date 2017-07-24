@@ -32,12 +32,12 @@ message DataRequestData
   eCategory                        Category                  = 2;/**<<@brief A category assocated with the Name */
   string                           CompartmentName           = 3;/**<<@brief The compartment name the property could be associated with */
   string                           SubstanceName             = 4;/**<<@brief The substance name the property could be associated with */
-  string                           Name                      = 5;/**<<@brief The name of the property requested */
+  string                           PropertyName              = 5;/**<<@brief The name of the property requested */
   string                           Unit                      = 6;/**<<@brief If writing to a file, the unit the data will be in. */
 }
 message DataRequestManagerData
 {
-  string                           Filename                  = 1;
+  string                           ResultsFilename           = 1;
   double                           SamplesPerSecond          = 2;
   DecimalFormatData                DefaultDecimalFormatting  = 3;
   DecimalFormatData                OverrideDecimalFormatting = 4;

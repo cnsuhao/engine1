@@ -12,8 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/CardiovascularSystemData.hxx"
-#include "bind/enumHeartRhythm.hxx"
+#include "bind/cdm/Physiology.pb.h"
 
 class DLL_DECL SECardiovascularSystem : public SESystem
 {
@@ -26,10 +25,12 @@ public:
   
   virtual const SEScalar* GetScalar(const std::string& name);
   
-  virtual bool Load(const CDM::CardiovascularSystemData& in);
-  virtual CDM::CardiovascularSystemData* Unload() const;
-protected:
-  virtual void Unload(CDM::CardiovascularSystemData& data) const;
+  static void Load(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst);    
+  static cdm::CardiovascularSystemData* Unload(const SECardiovascularSystem& src);            
+protected:                                                                                    
+  static void Serialize(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst);
+  static void Serialize(const SECardiovascularSystem& src, cdm::CardiovascularSystemData& dst);
+
 public:
 
   virtual bool HasArterialPressure() const;
@@ -72,8 +73,8 @@ public:
   virtual SEScalarFrequency& GetHeartRate();
   virtual double GetHeartRate(const FrequencyUnit& unit) const;
 
-  virtual CDM::enumHeartRhythm::value GetHeartRhythm() const;
-  virtual void SetHeartRhythm(CDM::enumHeartRhythm::value Rhythm);
+  virtual cdm::eHeartRhythm GetHeartRhythm() const;
+  virtual void SetHeartRhythm(cdm::eHeartRhythm Rhythm);
   virtual bool HasHeartRhythm() const;
   virtual void InvalidateHeartRhythm();
 
@@ -163,9 +164,9 @@ protected:
   SEScalarVolumePerTime*                 m_CerebralBloodFlow;
   SEScalarPressure*                      m_CerebralPerfusionPressure;
   SEScalarPressure*                      m_DiastolicArterialPressure;
-  SEScalar0To1*                      m_HeartEjectionFraction;
+  SEScalar0To1*                          m_HeartEjectionFraction;
   SEScalarFrequency*                     m_HeartRate;
-  CDM::enumHeartRhythm::value            m_HeartRhythm;
+  cdm::eHeartRhythm                      m_HeartRhythm;
   SEScalarVolume*                        m_HeartStrokeVolume;  
   SEScalarPressure*                      m_IntracranialPressure;
   SEScalarPressure*                      m_MeanArterialPressure;
@@ -180,7 +181,7 @@ protected:
   SEScalarVolumePerTime*                 m_PulmonaryMeanCapillaryFlow;
   SEScalarVolumePerTime*                 m_PulmonaryMeanShuntFlow;
   SEScalarPressure*                      m_PulmonarySystolicArterialPressure;
-  SEScalarFlowResistance*           m_PulmonaryVascularResistance;
+  SEScalarFlowResistance*                m_PulmonaryVascularResistance;
   SEScalarPressureTimePerVolumeArea*     m_PulmonaryVascularResistanceIndex;
   SEScalarPressure*                      m_PulsePressure;
   SEScalarPressure*                      m_SystolicArterialPressure;

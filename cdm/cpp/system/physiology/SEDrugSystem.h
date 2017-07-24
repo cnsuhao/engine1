@@ -12,25 +12,25 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/DrugSystemData.hxx"
-#include "bind/enumOnOff.hxx"
+#include "bind/cdm/Physiology.pb.h"
 #include "system/physiology/SEPupillaryResponse.h"
 
 class DLL_DECL SEDrugSystem : public SESystem
 {
 public:
-
   SEDrugSystem(Logger* logger);
   virtual ~SEDrugSystem();
 
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::DrugSystemData& in);
-  virtual CDM::DrugSystemData* Unload() const;
+
+  static void Load(const cdm::DrugSystemData& src, SEDrugSystem& dst);
+  static cdm::DrugSystemData* Unload(const SEDrugSystem& src);
 protected:
-  virtual void Unload(CDM::DrugSystemData& data) const;
+  static void Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst);
+  static void Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst);
+
 public:
 
   virtual bool HasBronchodilationLevel() const;
@@ -77,13 +77,13 @@ public:
 protected:
 
   SEScalar0To1*          m_BronchodilationLevel;
-  SEScalarFrequency*         m_HeartRateChange;
-  SEScalarPressure*          m_MeanBloodPressureChange;
+  SEScalarFrequency*     m_HeartRateChange;
+  SEScalarPressure*      m_MeanBloodPressureChange;
   SEScalar0To1*          m_NeuromuscularBlockLevel;
-  SEScalarPressure*          m_PulsePressureChange;
-  SEPupillaryResponse*       m_PupillaryResponse;
-  SEScalarFrequency*         m_RespirationRateChange;
+  SEScalarPressure*      m_PulsePressureChange;
+  SEPupillaryResponse*   m_PupillaryResponse;
+  SEScalarFrequency*     m_RespirationRateChange;
   SEScalar0To1*          m_SedationLevel;
-  SEScalarVolume*            m_TidalVolumeChange;
+  SEScalarVolume*        m_TidalVolumeChange;
   SEScalar0To1*          m_TubularPermeabilityChange;
 };

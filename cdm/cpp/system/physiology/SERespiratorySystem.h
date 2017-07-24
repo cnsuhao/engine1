@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/RespiratorySystemData.hxx"
+#include "bind/cdm/Physiology.pb.h"
 
 
 class DLL_DECL SERespiratorySystem : public SESystem
@@ -25,11 +25,13 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::RespiratorySystemData& in); 
-  virtual CDM::RespiratorySystemData* Unload() const;
+
+  static void Load(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst);
+  static cdm::RespiratorySystemData* Unload(const SERespiratorySystem& src);
 protected:
-  virtual void Unload(CDM::RespiratorySystemData& data) const;
+  static void Serialize(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst);
+  static void Serialize(const SERespiratorySystem& src, cdm::RespiratorySystemData& dst);
+
 public:
 
   virtual bool HasAlveolarArterialGradient() const;
@@ -113,21 +115,21 @@ protected:
 
   SEScalarPressure*          m_AlveolarArterialGradient;
   SEScalarPressure*          m_CarricoIndex;
-  SEScalar0To1*          m_EndTidalCarbonDioxideFraction;
+  SEScalar0To1*              m_EndTidalCarbonDioxideFraction;
   SEScalarPressure*          m_EndTidalCarbonDioxidePressure;
-  SEScalarVolumePerTime*    m_ExpiratoryFlow;
+  SEScalarVolumePerTime*     m_ExpiratoryFlow;
   SEScalar*                  m_InspiratoryExpiratoryRatio;
-  SEScalarVolumePerTime*    m_InspiratoryFlow;
+  SEScalarVolumePerTime*     m_InspiratoryFlow;
   SEScalarFlowCompliance*    m_PulmonaryCompliance;
   SEScalarFlowResistance*    m_PulmonaryResistance;
-  SEScalarPressure*         m_RespirationDriverPressure;
-  SEScalarPressure*         m_RespirationMusclePressure;
-  SEScalarFrequency*        m_RespirationRate;
+  SEScalarPressure*          m_RespirationDriverPressure;
+  SEScalarPressure*          m_RespirationMusclePressure;
+  SEScalarFrequency*         m_RespirationRate;
   SEScalar*                  m_SpecificVentilation;
   SEScalarVolume*            m_TidalVolume;
-  SEScalarVolumePerTime*    m_TotalAlveolarVentilation;
-  SEScalarVolumePerTime*    m_TotalDeadSpaceVentilation;
+  SEScalarVolumePerTime*     m_TotalAlveolarVentilation;
+  SEScalarVolumePerTime*     m_TotalDeadSpaceVentilation;
   SEScalarVolume*            m_TotalLungVolume;
-  SEScalarVolumePerTime*    m_TotalPulmonaryVentilation;
+  SEScalarVolumePerTime*     m_TotalPulmonaryVentilation;
   SEScalarPressure*          m_TranspulmonaryPressure;
 };

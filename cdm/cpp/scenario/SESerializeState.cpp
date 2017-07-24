@@ -38,27 +38,27 @@ bool SESerializeState::IsValid() const
 
 void SESerializeState::Load(const cdm::SerializeStateData& src, SESerializeState& dst)
 {
-	SESerializeState::Serialize(src, dst);
+  SESerializeState::Serialize(src, dst);
 }
 void SESerializeState::Serialize(const cdm::SerializeStateData& src, SESerializeState& dst)
 {
-	dst.Clear();
-	dst.SetType(src.type());
-	dst.SetFilename(src.filename());
+  dst.Clear();
+  dst.SetType(src.type());
+  dst.SetFilename(src.filename());
 }
 
 cdm::SerializeStateData* SESerializeState::Unload(const SESerializeState& src)
 {
-	cdm::SerializeStateData* dst = new cdm::SerializeStateData();
-	SESerializeState::Serialize(src, *dst);
-	return dst;
+  cdm::SerializeStateData* dst = new cdm::SerializeStateData();
+  SESerializeState::Serialize(src, *dst);
+  return dst;
 }
 void SESerializeState::Serialize(const SESerializeState& src, cdm::SerializeStateData& dst)
 {
-	if (src.HasType())
-		dst.set_type(src.m_Type);
-	if (src.HasFilename())
-		dst.set_filename(src.m_Filename);
+  if (src.HasType())
+    dst.set_type(src.m_Type);
+  if (src.HasFilename())
+    dst.set_filename(src.m_Filename);
 }
 
 

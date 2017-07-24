@@ -44,25 +44,25 @@ bool SEAcuteStress::IsActive() const
 
 void SEAcuteStress::Load(const cdm::AcuteStressData& src, SEAcuteStress& dst)
 {
-	SEAcuteStress::Serialize(src, dst);
+  SEAcuteStress::Serialize(src, dst);
 }
 void SEAcuteStress::Serialize(const cdm::AcuteStressData& src, SEAcuteStress& dst)
 {
-	dst.Clear();
-	if (src.has_severity())
-		SEScalar0To1::Load(src.severity(), dst.GetSeverity());
+  dst.Clear();
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
 cdm::AcuteStressData* SEAcuteStress::Unload(const SEAcuteStress& src)
 {
-	cdm::AcuteStressData* dst = new cdm::AcuteStressData();
-	SEAcuteStress::Serialize(src, *dst);
-	return dst;
+  cdm::AcuteStressData* dst = new cdm::AcuteStressData();
+  SEAcuteStress::Serialize(src, *dst);
+  return dst;
 }
 void SEAcuteStress::Serialize(const SEAcuteStress& src, cdm::AcuteStressData& dst)
 {
-	if (src.HasSeverity())
-		dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

@@ -32,27 +32,27 @@ void SESubstanceFraction::Clear()
 
 void SESubstanceFraction::Load(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst)
 {
-	SESubstanceFraction::Serialize(src, dst);
+  SESubstanceFraction::Serialize(src, dst);
 }
 void SESubstanceFraction::Serialize(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst)
 {
-	dst.Clear();
-	if (src.has_amount())
-		SEScalar0To1::Load(src.amount(), dst.GetFractionAmount());
+  dst.Clear();
+  if (src.has_amount())
+    SEScalar0To1::Load(src.amount(), dst.GetFractionAmount());
 }
 
 cdm::SubstanceData_FractionAmountData* SESubstanceFraction::Unload(const SESubstanceFraction& src)
 {
-	cdm::SubstanceData_FractionAmountData* dst = new cdm::SubstanceData_FractionAmountData();
-	SESubstanceFraction::Serialize(src, *dst);
-	return dst;
+  cdm::SubstanceData_FractionAmountData* dst = new cdm::SubstanceData_FractionAmountData();
+  SESubstanceFraction::Serialize(src, *dst);
+  return dst;
 }
 void SESubstanceFraction::Serialize(const SESubstanceFraction& src, cdm::SubstanceData_FractionAmountData& dst)
 {
-	if (src.HasFractionAmount())
-		dst.set_allocated_amount(SEScalar0To1::Unload(*src.m_FractionAmount));
+  dst.set_name(src.m_Substance.GetName());
+  if (src.HasFractionAmount())
+    dst.set_allocated_amount(SEScalar0To1::Unload(*src.m_FractionAmount));
 }
-
 
 bool SESubstanceFraction::HasFractionAmount() const
 {

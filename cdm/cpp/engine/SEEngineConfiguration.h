@@ -16,9 +16,7 @@ class PhysiologyEngineStabilization;
 class PhysiologyEngineTimedStabilization;
 class PhysiologyEngineDynamicStabilization;
 #include "utils/GeneralMath.h"
-#include "bind/enumOnOff.hxx"
 
-CDM_BIND_DECL(PhysiologyEngineConfigurationData)
 
 class DLL_DECL PhysiologyEngineConfiguration : public Loggable
 {

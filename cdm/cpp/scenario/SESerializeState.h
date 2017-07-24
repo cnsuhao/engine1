@@ -27,8 +27,8 @@ public:
   static void Load(const cdm::SerializeStateData& src, SESerializeState& dst);
   static cdm::SerializeStateData* Unload(const SESerializeState& src);
 protected:
-	static void Serialize(const cdm::SerializeStateData& src, SESerializeState& dst);
-	static void Serialize(const SESerializeState& src, cdm::SerializeStateData& dst);
+  static void Serialize(const cdm::SerializeStateData& src, SESerializeState& dst);
+  static void Serialize(const SESerializeState& src, cdm::SerializeStateData& dst);
 
 public:
 

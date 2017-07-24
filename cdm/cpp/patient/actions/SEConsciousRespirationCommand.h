@@ -28,8 +28,8 @@ public:
   static void Load(const cdm::ConsciousRespirationData_AnyCommandData& src, SEConsciousRespirationCommand& dst);
   static cdm::ConsciousRespirationData_AnyCommandData* Unload(const SEConsciousRespirationCommand& src);
 protected:
-	static void Serialize(const cdm::ConsciousRespirationData_AnyCommandData& src, SEConsciousRespirationCommand& dst);
-	static void Serialize(const SEConsciousRespirationCommand& src, cdm::ConsciousRespirationData_AnyCommandData& dst);
+  static void Serialize(const cdm::ConsciousRespirationData_AnyCommandData& src, SEConsciousRespirationCommand& dst);
+  static void Serialize(const SEConsciousRespirationCommand& src, cdm::ConsciousRespirationData_AnyCommandData& dst);
 
 public:
 

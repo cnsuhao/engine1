@@ -81,21 +81,21 @@ void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)
   {
     if (it->find("xml") != std::string::npos)
     {
-			if (it->find("PFT@") != std::string::npos ||
+      if (it->find("PFT@") != std::string::npos ||
           it->find("CBC@") != std::string::npos ||
           it->find("MP@") != std::string::npos  ||
           it->find("Urinalysis@") != std::string::npos)// Ignore PFT, CBC, UPanel  and MP files
-				continue;// TODO should actually peek the file and ensure it starts with a <scenario> tag
+        continue;// TODO should actually peek the file and ensure it starts with a <scenario> tag
 
       pTimer.Start("Case");
       SETestCase& testCase = testSuite.CreateTestCase();
       Info(it->c_str());
-			try
-			{
-				if (scenario.LoadFile(*it))
-				{
-					if (!scenario.IsValid())
-						testCase.AddFailure(*it + " is not a valid scenario!");
+      try
+      {
+        if (scenario.LoadFile(*it))
+        {
+          if (!scenario.IsValid())
+            testCase.AddFailure(*it + " is not a valid scenario!");
 
           //if (scenario.GetInitialParameters().HasPatientFile())
           //{
@@ -142,19 +142,19 @@ void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)
           //  }
           //}
 
-				}
-				else
-				{
-					testCase.AddFailure(*it + " has failed to load!");
-				}
-			}
-			catch (...)
-			{
-				testCase.AddFailure(*it + " has failed to load! unknown exception.");
-			}
+        }
+        else
+        {
+          testCase.AddFailure(*it + " has failed to load!");
+        }
+      }
+      catch (...)
+      {
+        testCase.AddFailure(*it + " has failed to load! unknown exception.");
+      }
       testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
       testCase.SetName(*it);
-		}
-	}
-  testReport.WriteFile(rptDirectory + "\\" + testName + "Report.xml");	
+    }
+  }
+  testReport.WriteFile(rptDirectory + "\\" + testName + "Report.xml");  
 }

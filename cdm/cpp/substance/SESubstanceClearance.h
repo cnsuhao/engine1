@@ -30,8 +30,8 @@ public:
   static void Load(const cdm::SubstanceData_ClearanceData& src, SESubstanceClearance& dst);
   static cdm::SubstanceData_ClearanceData* Unload(const SESubstanceClearance& src);
 protected:
-	static void Serialize(const cdm::SubstanceData_ClearanceData& src, SESubstanceClearance& dst);
-	static void Serialize(const SESubstanceClearance& src, cdm::SubstanceData_ClearanceData& dst);
+  static void Serialize(const cdm::SubstanceData_ClearanceData& src, SESubstanceClearance& dst);
+  static void Serialize(const SESubstanceClearance& src, cdm::SubstanceData_ClearanceData& dst);
 
 public:
   virtual bool HasSystemic() const { return m_hasSystemic; }

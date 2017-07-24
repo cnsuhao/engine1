@@ -37,8 +37,8 @@ public:
   static void Load(const cdm::EnvironmentConditionData& src, SEEnvironmentalConditions& dst);
   static cdm::EnvironmentConditionData* Unload(const SEEnvironmentalConditions& src);
 protected:
-	static void Serialize(const cdm::EnvironmentConditionData& src, SEEnvironmentalConditions& dst);
-	static void Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentConditionData& dst);
+  static void Serialize(const cdm::EnvironmentConditionData& src, SEEnvironmentalConditions& dst);
+  static void Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentConditionData& dst);
 
    virtual void Merge(const SEEnvironmentalConditions& from);
 public:

@@ -27,8 +27,8 @@ public:
   static void Load(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst);
   static cdm::ChestCompressionForceScaleData* Unload(const SEChestCompressionForceScale& src);
 protected:
-	static void Serialize(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst);
-	static void Serialize(const SEChestCompressionForceScale& src, cdm::ChestCompressionForceScaleData& dst);
+  static void Serialize(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst);
+  static void Serialize(const SEChestCompressionForceScale& src, cdm::ChestCompressionForceScaleData& dst);
 
 public:
 

@@ -15,9 +15,9 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceCompound.h"
 #include "utils/FileUtils.h"
-#include "Serializer.h"
 #include "../utils/unitconversion/UnitConversionEngine.h"
 #include "dirent.h"
+#include <google/protobuf/text_format.h>
 
 SESubstanceManager::SESubstanceManager(Logger* logger) : Loggable(logger)
 {
@@ -48,9 +48,9 @@ void SESubstanceManager::Reset()
   m_ActiveGases.clear();
   m_ActiveLiquids.clear();
   for (auto itr : m_OriginalSubstanceData)
-    itr.first->Load(*itr.second);
+    SESubstance::Load(*itr.second,*itr.first);
   for (auto itr : m_OriginalCompoundData)
-    itr.first->Load(*itr.second, *this);
+    SESubstanceCompound::Load(*itr.second, *itr.first, *this);
 }
 
 /**
@@ -247,40 +247,6 @@ void SESubstanceManager::RemoveActiveCompounds(const std::vector<SESubstanceComp
     RemoveActiveCompound(*c);
 }
 
-SESubstance* SESubstanceManager::ReadSubstanceFile(const std::string &xmlFile)
-{
-  std::stringstream ss;
-  cdm::FunctionData *obj;
-
-  SESubstance* sub;
-  cdm::SubstanceData *subData;
-
-  std::unique_ptr<cdm::FunctionData> data;
-
-  obj=nullptr;
-  sub=nullptr;
-  subData=nullptr;
-      
-  data=Serializer::ReadFile(xmlFile,GetLogger());
-  //ss.str("");        
-  //ss<<"Reading substance file : ./substances/"<<xmlFile;        
-  //Info(ss);
-  obj = data.get();
-  
-  subData = dynamic_cast<cdm::SubstanceData*>(obj);
-  if(subData!=nullptr)
-  {
-    sub = new SESubstance(GetLogger());
-    sub->Load(*subData);
-    return sub;
-  }
-  ss.str("");
-  /// \error Substance file could not be read in
-  ss<<"Substance file could not be read in : ./substances/"<<xmlFile;    
-  Error(ss,"SESubstanceManager::ReadSubstanceFile");
-  return nullptr;
-}
-
 bool SESubstanceManager::LoadSubstanceDirectory()
 {
   bool succeed = true;
@@ -299,56 +265,58 @@ bool SESubstanceManager::LoadSubstanceDirectory()
     dir = opendir(std::string(workingDirectory + std::string("/substances/")).c_str());
 #endif
 
+    cdm::SubstanceData* subData;
+    cdm::SubstanceData_CompoundData* compoundData;
+
   if(dir != nullptr)
   {
-	cdm::FunctionData *obj;
-
-    SESubstance* sub;
-    cdm::SubstanceData *subData;
-
-    SESubstanceCompound* compound;
-    cdm::SubstanceData_CompoundData *compoundData;
-
-    std::unique_ptr<cdm::FunctionData> data;
-    
     while ((ent = readdir(dir)) != nullptr)
     {
-      obj = nullptr;
-      sub = nullptr;
-      subData = nullptr;
       ss.str("");
       ss << workingDirectory << "/substances/" << ent->d_name;
       if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
       {
-        data = Serializer::ReadFile(ss.str(),GetLogger());
         ss.str("");
         ss << "Reading substance file : ./substances/" << ent->d_name;
         Debug(ss);
-        obj = data.release();
-        subData = dynamic_cast<cdm::SubstanceData*>(obj);
-        if (subData != nullptr)
+
+        std::ifstream input(ss.str());
+        std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+
+        try 
         {
-          sub = new SESubstance(GetLogger());
-          sub->Load(*subData);
+          subData = new cdm::SubstanceData();
+          google::protobuf::TextFormat::ParseFromString(fmsg, subData);
+          SESubstance* sub = new SESubstance(GetLogger());
+          SESubstance::Load(*subData,*sub);
           AddSubstance(*sub);
           m_OriginalSubstanceData[sub] = subData;
           continue;
         }
-        compoundData = dynamic_cast<cdm::SubstanceData_CompoundData*>(obj);
-        if (compoundData != nullptr)
-        {// Save this off and process it till later, once all substances are read
-          compound = new SESubstanceCompound(GetLogger());
-          m_OriginalCompoundData[compound] = compoundData;
-          AddCompound(*compound);
-          continue;
+        catch (std::exception ex)
+        {// Try and see if it is a compound
+          SAFE_DELETE(subData);
+          try
+          {
+            compoundData = new cdm::SubstanceData_CompoundData();
+            google::protobuf::TextFormat::ParseFromString(fmsg, compoundData);
+            SESubstanceCompound* compound = new SESubstanceCompound(GetLogger());
+            m_OriginalCompoundData[compound] = compoundData;
+            AddCompound(*compound);
+            continue;
+          }
+          catch (std::exception ex2)
+          {
+            SAFE_DELETE(compoundData);
+            Error("Unknown Type");
+            succeed = false;
+          }
         }
-        Error("Unknown Type");
-        succeed = false;
       }      
     }// Done with directory search
     // Ok, now let's load up our compounds
     for (auto itr : m_OriginalCompoundData)
-      itr.first->Load((const cdm::SubstanceData_CompoundData&)*itr.second, *this);
+      SESubstanceCompound::Load(*itr.second,*itr.first, *this);
     
     return succeed;
 

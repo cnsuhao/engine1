@@ -37,25 +37,25 @@ bool SEAdvanceTime::IsValid() const
 
 void SEAdvanceTime::Load(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst)
 {
-	SEAdvanceTime::Serialize(src, dst);
+  SEAdvanceTime::Serialize(src, dst);
 }
 void SEAdvanceTime::Serialize(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst)
 {
-	dst.Clear();
-	if (src.has_time())
-		SEScalarTime::Load(src.time(), dst.GetTime());
+  dst.Clear();
+  if (src.has_time())
+    SEScalarTime::Load(src.time(), dst.GetTime());
 }
 
 cdm::AdvanceTimeData* SEAdvanceTime::Unload(const SEAdvanceTime& src)
 {
-	cdm::AdvanceTimeData* dst = new cdm::AdvanceTimeData();
-	SEAdvanceTime::Serialize(src, *dst);
-	return dst;
+  cdm::AdvanceTimeData* dst = new cdm::AdvanceTimeData();
+  SEAdvanceTime::Serialize(src, *dst);
+  return dst;
 }
 void SEAdvanceTime::Serialize(const SEAdvanceTime& src, cdm::AdvanceTimeData& dst)
 {
-	if (src.HasTime())
-		dst.set_allocated_time(SEScalarTime::Unload(*src.m_Time));
+  if (src.HasTime())
+    dst.set_allocated_time(SEScalarTime::Unload(*src.m_Time));
 }
 
 void SEAdvanceTime::ToString(std::ostream &str) const

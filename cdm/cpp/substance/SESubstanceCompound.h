@@ -25,10 +25,10 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst);
+  static void Load(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr);
   static cdm::SubstanceData_CompoundData* Unload(const SESubstanceCompound& src);
 protected:
-  static void Serialize(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst);
+  static void Serialize(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SESubstanceCompound& src, cdm::SubstanceData_CompoundData& dst);
 
 public:

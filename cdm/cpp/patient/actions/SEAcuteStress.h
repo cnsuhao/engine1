@@ -28,8 +28,8 @@ public:
   static void Load(const cdm::AcuteStressData& src, SEAcuteStress& dst);
   static cdm::AcuteStressData* Unload(const SEAcuteStress& src);
 protected:
-	static void Serialize(const cdm::AcuteStressData& src, SEAcuteStress& dst);
-	static void Serialize(const SEAcuteStress& src, cdm::AcuteStressData& dst);
+  static void Serialize(const cdm::AcuteStressData& src, SEAcuteStress& dst);
+  static void Serialize(const SEAcuteStress& src, cdm::AcuteStressData& dst);
 
 public:
 

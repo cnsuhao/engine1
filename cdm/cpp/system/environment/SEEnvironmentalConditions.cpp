@@ -94,14 +94,14 @@ const SEScalar* SEEnvironmentalConditions::GetScalar(const std::string& name)
 
 void SEEnvironmentalConditions::Load(const cdm::EnvironmentConditionData& src, SEEnvironmentalConditions& dst)
 {
-	SEEnvironmentalConditions::Serialize(src, dst);
+  SEEnvironmentalConditions::Serialize(src, dst);
 }
-	
+  
 void SEEnvironmentalConditions::Serialize(const cdm::EnvironmentConditionData& src, SEEnvironmentalConditions& dst)
 {
-	dst.Clear();
+  dst.Clear();
 
-	//jbw - How does this work?
+  //jbw - How does this work?
   //if (in.SurroundingType().present())
   //  m_SurroundingType = in.SurroundingType().get();
   //if (in.AirDensity().present())
@@ -165,40 +165,40 @@ void SEEnvironmentalConditions::Serialize(const cdm::EnvironmentConditionData& s
 
 cdm::EnvironmentConditionData* SEEnvironmentalConditions::Unload(const SEEnvironmentalConditions& src)
 {
-	cdm::EnvironmentConditionData* dst = new cdm::EnvironmentConditionData();
-	SEEnvironmentalConditions::Serialize(src, *dst);
-	return dst;
+  cdm::EnvironmentConditionData* dst = new cdm::EnvironmentConditionData();
+  SEEnvironmentalConditions::Serialize(src, *dst);
+  return dst;
 }
 
 void SEEnvironmentalConditions::Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentConditionData& dst)
 {
-	//jbw - How does this work?
-	//if (HasSurroundingType())
-	//	data.SurroundingType(m_SurroundingType);
-	//if (m_AirDensity != nullptr)
-	//	data.AirDensity(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_AirDensity->Unload()));
-	//if (m_AirVelocity != nullptr)
-	//	data.AirVelocity(std::unique_ptr<CDM::ScalarLengthPerTimeData>(m_AirVelocity->Unload()));
-	//if (m_AmbientTemperature != nullptr)
-	//	data.AmbientTemperature(std::unique_ptr<CDM::ScalarTemperatureData>(m_AmbientTemperature->Unload()));
-	//if (m_AtmosphericPressure != nullptr)
-	//	data.AtmosphericPressure(std::unique_ptr<CDM::ScalarPressureData>(m_AtmosphericPressure->Unload()));
-	//if (m_ClothingResistance != nullptr)
-	//	data.ClothingResistance(std::unique_ptr<CDM::ScalarHeatResistanceAreaData>(m_ClothingResistance->Unload()));
-	//if (m_Emissivity != nullptr)
-	//	data.Emissivity(std::unique_ptr<CDM::ScalarFractionData>(m_Emissivity->Unload()));
-	//if (m_MeanRadiantTemperature != nullptr)
-	//	data.MeanRadiantTemperature(std::unique_ptr<CDM::ScalarTemperatureData>(m_MeanRadiantTemperature->Unload()));
-	//if (m_RelativeHumidity != nullptr)
-	//	data.RelativeHumidity(std::unique_ptr<CDM::ScalarFractionData>(m_RelativeHumidity->Unload()));
-	//if (m_RespirationAmbientTemperature != nullptr)
-	//	data.RespirationAmbientTemperature(std::unique_ptr<CDM::ScalarTemperatureData>(m_RespirationAmbientTemperature->Unload()));
+  //jbw - How does this work?
+  //if (HasSurroundingType())
+  //  data.SurroundingType(m_SurroundingType);
+  //if (m_AirDensity != nullptr)
+  //  data.AirDensity(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_AirDensity->Unload()));
+  //if (m_AirVelocity != nullptr)
+  //  data.AirVelocity(std::unique_ptr<CDM::ScalarLengthPerTimeData>(m_AirVelocity->Unload()));
+  //if (m_AmbientTemperature != nullptr)
+  //  data.AmbientTemperature(std::unique_ptr<CDM::ScalarTemperatureData>(m_AmbientTemperature->Unload()));
+  //if (m_AtmosphericPressure != nullptr)
+  //  data.AtmosphericPressure(std::unique_ptr<CDM::ScalarPressureData>(m_AtmosphericPressure->Unload()));
+  //if (m_ClothingResistance != nullptr)
+  //  data.ClothingResistance(std::unique_ptr<CDM::ScalarHeatResistanceAreaData>(m_ClothingResistance->Unload()));
+  //if (m_Emissivity != nullptr)
+  //  data.Emissivity(std::unique_ptr<CDM::ScalarFractionData>(m_Emissivity->Unload()));
+  //if (m_MeanRadiantTemperature != nullptr)
+  //  data.MeanRadiantTemperature(std::unique_ptr<CDM::ScalarTemperatureData>(m_MeanRadiantTemperature->Unload()));
+  //if (m_RelativeHumidity != nullptr)
+  //  data.RelativeHumidity(std::unique_ptr<CDM::ScalarFractionData>(m_RelativeHumidity->Unload()));
+  //if (m_RespirationAmbientTemperature != nullptr)
+  //  data.RespirationAmbientTemperature(std::unique_ptr<CDM::ScalarTemperatureData>(m_RespirationAmbientTemperature->Unload()));
 
-	//for (SESubstanceFraction *sf : m_AmbientGases)
-	//	data.AmbientGas().push_back(std::unique_ptr<CDM::SubstanceFractionData>(sf->Unload()));
+  //for (SESubstanceFraction *sf : m_AmbientGases)
+  //  data.AmbientGas().push_back(std::unique_ptr<CDM::SubstanceFractionData>(sf->Unload()));
 
-	//for (SESubstanceConcentration *sc : m_AmbientAerosols)
-	//	data.AmbientAerosol().push_back(std::unique_ptr<CDM::SubstanceConcentrationData>(sc->Unload()));
+  //for (SESubstanceConcentration *sc : m_AmbientAerosols)
+  //  data.AmbientAerosol().push_back(std::unique_ptr<CDM::SubstanceConcentrationData>(sc->Unload()));
 }
 
 void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)

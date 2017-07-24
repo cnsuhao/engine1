@@ -153,130 +153,129 @@ const SEScalar* SESubstance::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SESubstance::Load(const CDM::SubstanceData& in)
+void SESubstance::Load(const cdm::SubstanceData& src, SESubstance& dst)
 {
-  Clear();
-  m_Name = in.Name();
+  SESubstance::Serialize(src, dst);
 
-  if (in.State().present())
-    m_State = in.State().get();
-  if (in.Density().present())
-    GetDensity().Load(in.Density().get());
-  if (in.MolarMass().present())
-    GetMolarMass().Load(in.MolarMass().get());
-
-  if (in.MaximumDiffusionFlux().present())
-    GetMaximumDiffusionFlux().Load(in.MaximumDiffusionFlux().get());
-  if (in.MichaelisCoefficient().present())
-    GetMichaelisCoefficient().Load(in.MichaelisCoefficient().get());
-  
-  if (in.BloodConcentration().present())
-    GetBloodConcentration().Load(in.BloodConcentration().get());
-  if (in.MassInBody().present())
-    GetMassInBody().Load(in.MassInBody().get());
-  if (in.MassInBlood().present())
-    GetMassInBlood().Load(in.MassInBlood().get());
-  if (in.MassInTissue().present())
-    GetMassInTissue().Load(in.MassInTissue().get());
-  if (in.PlasmaConcentration().present())
-    GetPlasmaConcentration().Load(in.PlasmaConcentration().get());
-  if (in.SystemicMassCleared().present())
-    GetSystemicMassCleared().Load(in.SystemicMassCleared().get());
-  if (in.TissueConcentration().present())
-    GetTissueConcentration().Load(in.TissueConcentration().get());
-
-  if (in.AlveolarTransfer().present())
-    GetAlveolarTransfer().Load(in.AlveolarTransfer().get());
-  if (in.DiffusingCapacity().present())
-    GetDiffusingCapacity().Load(in.DiffusingCapacity().get());
-  if (in.EndTidalFraction().present())
-    GetEndTidalFraction().Load(in.EndTidalFraction().get());
-  if (in.EndTidalPressure().present())
-    GetEndTidalPressure().Load(in.EndTidalPressure().get());
-  if (in.RelativeDiffusionCoefficient().present())
-    GetRelativeDiffusionCoefficient().Load(in.RelativeDiffusionCoefficient().get());
-  if (in.SolubilityCoefficient().present())
-    GetSolubilityCoefficient().Load(in.SolubilityCoefficient().get());
-
-  if (in.Aerosolization().present())
-    GetAerosolization().Load(in.Aerosolization().get());
-  if (in.Clearance().present())
-    GetClearance().Load(in.Clearance().get());
-  if (in.Pharmacokinetics().present())
-    GetPK().Load(in.Pharmacokinetics().get());
-  if (in.Pharmacodynamics().present())
-    GetPD().Load(in.Pharmacodynamics().get());
-
-  if (HasClearance() && HasPK() && GetPK().HasPhysicochemicals() &&
-     GetClearance().HasFractionUnboundInPlasma() &&
-    !GetClearance().GetFractionUnboundInPlasma().Equals(GetPK().GetPhysicochemicals().GetFractionUnboundInPlasma()))
+  if (dst.HasClearance() && dst.HasPK() && dst.GetPK().HasPhysicochemicals() &&
+    dst.GetClearance().HasFractionUnboundInPlasma() &&
+    !dst.GetClearance().GetFractionUnboundInPlasma().Equals(dst.GetPK().GetPhysicochemicals().GetFractionUnboundInPlasma()))
   {
-    Fatal("Multiple FractionUnboundInPlasma values specified, but not the same. These must match at this time.");
+    dst.Fatal("Multiple FractionUnboundInPlasma values specified, but not the same. These must match at this time.");
   }
-  
-  return true;
+}
+void SESubstance::Serialize(const cdm::SubstanceData& src, SESubstance& dst)
+{
+  dst.Clear();
+  dst.SetName(src.name());
+  dst.SetState(src.state());
+  if (src.has_density())
+    SEScalarMassPerVolume::Load(src.density(), dst.GetDensity());
+  if (src.has_molarmass())
+    SEScalarMassPerAmount::Load(src.molarmass(), dst.GetMolarMass());
+
+  if (src.has_maximumdiffusionflux())
+    SEScalarMassPerAreaTime::Load(src.maximumdiffusionflux(), dst.GetMaximumDiffusionFlux());
+  if (src.has_michaeliscoefficient())
+    SEScalar::Load(src.michaeliscoefficient(), dst.GetMichaelisCoefficient());
+
+  if (src.has_aerosolization())
+    SESubstanceAerosolization::Load(src.aerosolization(), dst.GetAerosolization());
+  if (src.has_bloodconcentration())
+    SEScalarMassPerVolume::Load(src.bloodconcentration(), dst.GetBloodConcentration());
+  if (src.has_massinbody())
+    SEScalarMass::Load(src.massinbody(), dst.GetMassInBody());
+  if (src.has_massinblood())
+    SEScalarMass::Load(src.massinblood(), dst.GetMassInBlood());
+  if (src.has_massintissue())
+    SEScalarMass::Load(src.massintissue(), dst.GetMassInTissue());
+  if (src.has_plasmaconcentration())
+    SEScalarMassPerVolume::Load(src.plasmaconcentration(), dst.GetPlasmaConcentration());
+  if (src.has_systemicmasscleared())
+    SEScalarMass::Load(src.systemicmasscleared(), dst.GetSystemicMassCleared());
+  if (src.has_tissueconcentration())
+    SEScalarMassPerVolume::Load(src.tissueconcentration(), dst.GetTissueConcentration());
+
+  if (src.has_alveolartransfer())
+    SEScalarVolumePerTime::Load(src.alveolartransfer(), dst.GetAlveolarTransfer());
+  if (src.has_diffusingcapacity())
+    SEScalarVolumePerTimePressure::Load(src.diffusingcapacity(), dst.GetDiffusingCapacity());
+  if (src.has_endtidalfraction())
+    SEScalar0To1::Load(src.endtidalfraction(), dst.GetEndTidalFraction());
+  if (src.has_endtidalpressure())
+    SEScalarPressure::Load(src.endtidalpressure(), dst.GetEndTidalPressure());
+  if (src.has_relativediffusioncoefficient())
+    SEScalar::Load(src.relativediffusioncoefficient(), dst.GetRelativeDiffusionCoefficient());
+  if (src.has_solubilitycoefficient())
+    SEScalarInversePressure::Load(src.solubilitycoefficient(), dst.GetSolubilityCoefficient());
+
+  if (src.has_clearance())
+    SESubstanceClearance::Load(src.clearance(), dst.GetClearance());
+  if (src.has_pharmacokinetics())
+    SESubstancePharmacokinetics::Load(src.pharmacokinetics(), dst.GetPK());
+  if (src.has_pharmacodynamics())
+    SESubstancePharmacodynamics::Load(src.pharmacodynamics(), dst.GetPD());
 }
 
-CDM::SubstanceData*  SESubstance::Unload() const
+cdm::SubstanceData* SESubstance::Unload(const SESubstance& src)
 {
-  CDM::SubstanceData* data = new CDM::SubstanceData();
-  Unload(*data);
-  return data;
+  cdm::SubstanceData* dst = new cdm::SubstanceData();
+  SESubstance::Serialize(src,*dst);
+  return dst;
 }
-
-void SESubstance::Unload(CDM::SubstanceData& data) const
+void SESubstance::Serialize(const SESubstance& src, cdm::SubstanceData& dst)
 {
-  if (HasName())
-    data.Name(m_Name);
-  if (HasState())
-    data.State(m_State);
-  if (HasDensity())
-    data.Density(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_Density->Unload()));
-  if (HasMolarMass())
-    data.MolarMass(std::unique_ptr<CDM::ScalarMassPerAmountData>(m_MolarMass->Unload()));
+  if (src.HasName())
+    dst.set_name(src.m_Name);
+  if (src.HasState())
+    dst.set_state(src.m_State);
+  if (src.HasDensity())
+    dst.set_allocated_density(SEScalarMassPerVolume::Unload(*src.m_Density));
+  if (src.HasMolarMass())
+    dst.set_allocated_molarmass(SEScalarMassPerAmount::Unload(*src.m_MolarMass));
 
-  if (HasMaximumDiffusionFlux())
-    data.MaximumDiffusionFlux(std::unique_ptr<CDM::ScalarMassPerAreaTimeData>(m_MaximumDiffusionFlux->Unload()));
-  if (HasMichaelisCoefficient())
-    data.MichaelisCoefficient(std::unique_ptr<CDM::ScalarData>(m_MichaelisCoefficient->Unload()));
- 
-  if (HasBloodConcentration())
-    data.BloodConcentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_BloodConcentration->Unload()));
-  if (HasMassInBody())
-    data.MassInBody(std::unique_ptr<CDM::ScalarMassData>(m_MassInBody->Unload()));
-  if (HasMassInBlood())
-    data.MassInBlood(std::unique_ptr<CDM::ScalarMassData>(m_MassInBlood->Unload()));
-  if (HasMassInTissue())
-    data.MassInTissue(std::unique_ptr<CDM::ScalarMassData>(m_MassInTissue->Unload()));
-  if (HasPlasmaConcentration())
-    data.PlasmaConcentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_PlasmaConcentration->Unload()));
-  if (HasSystemicMassCleared())
-    data.SystemicMassCleared(std::unique_ptr<CDM::ScalarMassData>(m_SystemicMassCleared->Unload()));
-  if (HasTissueConcentration())
-    data.TissueConcentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_TissueConcentration->Unload()));
+  if (src.HasMaximumDiffusionFlux())
+    dst.set_allocated_maximumdiffusionflux(SEScalarMassPerAreaTime::Unload(*src.m_MaximumDiffusionFlux));
+  if (src.HasMichaelisCoefficient())
+    dst.set_allocated_michaeliscoefficient(SEScalar::Unload(*src.m_MichaelisCoefficient));
 
-  if (HasAlveolarTransfer())
-    data.AlveolarTransfer(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_AlveolarTransfer->Unload()));
-  if (HasDiffusingCapacity())
-    data.DiffusingCapacity(std::unique_ptr<CDM::ScalarVolumePerTimePressureData>(m_DiffusingCapacity->Unload()));
-  if (HasEndTidalFraction())
-    data.EndTidalFraction(std::unique_ptr<CDM::ScalarFractionData>(m_EndTidalFraction->Unload()));
-  if (HasEndTidalPressure())
-    data.EndTidalPressure(std::unique_ptr<CDM::ScalarPressureData>(m_EndTidalPressure->Unload()));
-  if (HasSolubilityCoefficient())
-    data.SolubilityCoefficient(std::unique_ptr<CDM::ScalarInversePressureData>(m_SolubilityCoefficient->Unload()));
-  if (HasRelativeDiffusionCoefficient())
-    data.RelativeDiffusionCoefficient(std::unique_ptr<CDM::ScalarData>(m_RelativeDiffusionCoefficient->Unload()));
-  
-  if (HasAerosolization())
-    data.Aerosolization(std::unique_ptr<CDM::SubstanceAerosolizationData>(m_Aerosolization->Unload()));
-  if (HasClearance())
-    data.Clearance(std::unique_ptr<CDM::SubstanceClearanceData>(m_Clearance->Unload()));
-  if (HasPK())
-    data.Pharmacokinetics(std::unique_ptr<CDM::SubstancePharmacokineticsData>(m_PK->Unload()));
-  if (HasPD())
-    data.Pharmacodynamics(std::unique_ptr<CDM::SubstancePharmacodynamicsData>(m_PD->Unload()));
-};
+  if (src.HasAerosolization())
+    dst.set_allocated_aerosolization(SESubstanceAerosolization::Unload(*src.m_Aerosolization));
+  if (src.HasBloodConcentration())
+    dst.set_allocated_bloodconcentration(SEScalarMassPerVolume::Unload(*src.m_BloodConcentration));
+  if (src.HasMassInBody())
+    dst.set_allocated_massinbody(SEScalarMass::Unload(*src.m_MassInBody));
+  if (src.HasMassInBlood())
+    dst.set_allocated_massinblood(SEScalarMass::Unload(*src.m_MassInBlood));
+  if (src.HasMassInTissue())
+    dst.set_allocated_massintissue(SEScalarMass::Unload(*src.m_MassInTissue));
+  if (src.HasPlasmaConcentration())
+    dst.set_allocated_plasmaconcentration(SEScalarMassPerVolume::Unload(*src.m_PlasmaConcentration));
+  if (src.HasSystemicMassCleared())
+    dst.set_allocated_systemicmasscleared(SEScalarMass::Unload(*src.m_SystemicMassCleared));
+  if (src.HasTissueConcentration())
+    dst.set_allocated_tissueconcentration(SEScalarMassPerVolume::Unload(*src.m_TissueConcentration));
+
+  if (src.HasAlveolarTransfer())
+    dst.set_allocated_alveolartransfer(SEScalarVolumePerTime::Unload(*src.m_AlveolarTransfer));
+  if (src.HasDiffusingCapacity())
+    dst.set_allocated_diffusingcapacity(SEScalarVolumePerTimePressure::Unload(*src.m_DiffusingCapacity));
+  if (src.HasEndTidalFraction())
+    dst.set_allocated_endtidalfraction(SEScalar0To1::Unload(*src.m_EndTidalFraction));
+  if (src.HasEndTidalPressure())
+    dst.set_allocated_endtidalpressure(SEScalarPressure::Unload(*src.m_EndTidalPressure));
+  if (src.HasRelativeDiffusionCoefficient())
+    dst.set_allocated_relativediffusioncoefficient(SEScalar::Unload(*src.m_RelativeDiffusionCoefficient));
+  if (src.HasSolubilityCoefficient())
+    dst.set_allocated_solubilitycoefficient(SEScalarInversePressure::Unload(*src.m_SolubilityCoefficient));
+
+  if (src.HasClearance())
+    dst.set_allocated_clearance(SESubstanceClearance::Unload(*src.m_Clearance));
+  if (src.HasPK())
+    dst.set_allocated_pharmacokinetics(SESubstancePharmacokinetics::Unload(*src.m_PK));
+  if (src.HasPD())
+    dst.set_allocated_pharmacodynamics(SESubstancePharmacodynamics::Unload(*src.m_PD));
+}
 
 std::string SESubstance::GetName() const
 {

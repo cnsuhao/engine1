@@ -28,8 +28,8 @@ public:
   static void Load(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst);
   static cdm::BronchoconstrictionData* Unload(const SEBronchoconstriction& src);
 protected:
-	static void Serialize(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst);
-	static void Serialize(const SEBronchoconstriction& src, cdm::BronchoconstrictionData& dst);
+  static void Serialize(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst);
+  static void Serialize(const SEBronchoconstriction& src, cdm::BronchoconstrictionData& dst);
 
 public:
 

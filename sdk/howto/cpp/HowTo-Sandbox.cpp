@@ -26,27 +26,27 @@ specific language governing permissions and limitations under the License.
 //--------------------------------------------------------------------------------------------------
 void HowToSandbox()
 {
-	std::stringstream ss;
-	// Create a BioGears Engine and load the standard patient
-	std::unique_ptr<PhysiologyEngine> bg = CreateBioGearsEngine("Sandbox.log");
-	if (!bg->LoadState("./states/StandardMale@0s.xml"))
-	{
-		bg->GetLogger()->Error("Could not load state, check the error");
-		return;
-	}
-	bg->AdvanceModelTime(5, TimeUnit::s);
-	bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-	bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
+  std::stringstream ss;
+  // Create a BioGears Engine and load the standard patient
+  std::unique_ptr<PhysiologyEngine> bg = CreateBioGearsEngine("Sandbox.log");
+  if (!bg->LoadState("./states/StandardMale@0s.xml"))
+  {
+    bg->GetLogger()->Error("Could not load state, check the error");
+    return;
+  }
+  bg->AdvanceModelTime(5, TimeUnit::s);
+  bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
 
-	// Ok we are done with that patient, let's do another patient with the same engine
-	if (!bg->LoadState("./states/StandardFemale@0s.xml"))
-	{
-		bg->GetLogger()->Error("Could not load state, check the error");
-		return;
-	}
-	bg->AdvanceModelTime(5, TimeUnit::s);
-	bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-	bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
+  // Ok we are done with that patient, let's do another patient with the same engine
+  if (!bg->LoadState("./states/StandardFemale@0s.xml"))
+  {
+    bg->GetLogger()->Error("Could not load state, check the error");
+    return;
+  }
+  bg->AdvanceModelTime(5, TimeUnit::s);
+  bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
 
-	bg->AdvanceModelTime(5, TimeUnit::min);
+  bg->AdvanceModelTime(5, TimeUnit::min);
 }

@@ -28,8 +28,8 @@ public:
   static void Load(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst);
   static cdm::AsthmaAttackData* Unload(const SEAsthmaAttack& src);
 protected:
-	static void Serialize(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst);
-	static void Serialize(const SEAsthmaAttack& src, cdm::AsthmaAttackData& dst);
+  static void Serialize(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst);
+  static void Serialize(const SEAsthmaAttack& src, cdm::AsthmaAttackData& dst);
 
 public:
 

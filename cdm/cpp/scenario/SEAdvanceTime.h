@@ -27,8 +27,8 @@ public:
   static void Load(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst);
   static cdm::AdvanceTimeData* Unload(const SEAdvanceTime& src);
 protected:
-	static void Serialize(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst);
-	static void Serialize(const SEAdvanceTime& src, cdm::AdvanceTimeData& dst);
+  static void Serialize(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst);
+  static void Serialize(const SEAdvanceTime& src, cdm::AdvanceTimeData& dst);
 
 public:
 

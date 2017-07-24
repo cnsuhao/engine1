@@ -49,8 +49,6 @@ public:
   virtual void                                     RemoveActiveCompound(SESubstanceCompound& compound);
   virtual void                                     RemoveActiveCompounds(const std::vector<SESubstanceCompound*>& compounds);
 
-  virtual SESubstance*                             ReadSubstanceFile(const std::string &xmlFile);
-
 protected:
 
   // I am making all these vectors of SESubstances,

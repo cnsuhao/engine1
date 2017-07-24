@@ -23,7 +23,7 @@ enum eSwitch
 enum eCharge
 {
   Negative = 0;
-  Neutral     = 1;
+  Neutral  = 1;
   Positive = 2;
 }
 

@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/DataRequestData.hxx"
 #include "properties/SEDecimalFormat.h"
+#include "bind/cdm/Scenario.pb.h"
 class SESubstanceManager;
 class CCompoundUnit;
 class SEDecimalFormat;
@@ -22,26 +22,44 @@ class DLL_DECL SEDataRequest : public SEDecimalFormat
 {
   friend class SEDataRequestManager;
 protected:
-  SEDataRequest(const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest(cdm::DataRequestData_eCategory category, const SEDecimalFormat* dfault = nullptr);
 public:
 
   virtual ~SEDataRequest();
 
   virtual void Clear(); //clear memory
+  virtual bool IsValid();
 
-  virtual bool Load(const CDM::DataRequestData& in);
-  virtual CDM::DataRequestData* Unload() const;
+  static void Load(const cdm::DataRequestData& src, SEDataRequest& dst);
+  static cdm::DataRequestData* Unload(const SEDataRequest& src);
 protected:
-  virtual void Unload(CDM::DataRequestData& data) const;
+  static void Serialize(const cdm::DataRequestData& src, SEDataRequest& dst);
+  static void Serialize(const SEDataRequest& src, cdm::DataRequestData& dst);
+
 public:
 
   virtual size_t HashCode() const;
 
+  // The Request Category
+  virtual cdm::DataRequestData_eCategory GetCategory() const;
+
+  // OPTIONAL The Compartment Name holding the property
+  virtual std::string GetCompartmentName() const;
+  virtual void SetCompartmentName(const std::string& name);
+  virtual bool HasCompartmentName() const;
+  virtual void InvalidateCompartmentName();
+
+  // OPTIONAL The Substance Name holding the property
+  virtual std::string GetSubstanceName() const;
+  virtual void SetSubstanceName(const std::string& name);
+  virtual bool HasSubstanceName() const;
+  virtual void InvalidateSubstanceName();
+
   // The System Property Name
-  virtual std::string GetName() const;
-  virtual void SetName(const std::string& name);
-  virtual bool HasName() const;
-  virtual void InvalidateName();
+  virtual std::string GetPropertyName() const;
+  virtual void SetPropertyName(const std::string& name);
+  virtual bool HasPropertyName() const;
+  virtual void InvalidatePropertyName();
 
   // The Requested Unit String
   virtual std::string GetRequestedUnit() const;
@@ -58,12 +76,12 @@ public:
   virtual bool HasUnit() const;
   virtual void InvalidateUnit();
 
-  virtual void Set(const std::string& name, const std::string&unit = "");
-  virtual void Set(const std::string& name, const CCompoundUnit& unit);
-
 protected:
 
-  std::string m_Name;
-  std::string m_RequestedUnit;
-  const CCompoundUnit* m_Unit;
-};                  
+  cdm::DataRequestData_eCategory m_Category;
+  std::string                    m_CompartmentName;
+  std::string                    m_SubstanceName;
+  std::string                    m_PropertyName;
+  std::string                    m_RequestedUnit;
+  const CCompoundUnit*           m_Unit;
+};

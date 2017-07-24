@@ -30,23 +30,23 @@ void SEConsciousRespirationCommand::Clear()
 
 void SEConsciousRespirationCommand::Load(const cdm::ConsciousRespirationData_AnyCommandData& src, SEConsciousRespirationCommand& dst)
 {
-	SEConsciousRespirationCommand::Serialize(src, dst);
+  SEConsciousRespirationCommand::Serialize(src, dst);
 }
 void SEConsciousRespirationCommand::Serialize(const cdm::ConsciousRespirationData_AnyCommandData& src, SEConsciousRespirationCommand& dst)
 {
-	dst.Clear();
-	//jbw - do I need to do something about comment?
+  dst.Clear();
+  //jbw - do I need to do something about comment?
 }
 
 cdm::ConsciousRespirationData_AnyCommandData* SEConsciousRespirationCommand::Unload(const SEConsciousRespirationCommand& src)
 {
-	cdm::ConsciousRespirationData_AnyCommandData* dst = new cdm::ConsciousRespirationData_AnyCommandData();
-	SEConsciousRespirationCommand::Serialize(src, *dst);
-	return dst;
+  cdm::ConsciousRespirationData_AnyCommandData* dst = new cdm::ConsciousRespirationData_AnyCommandData();
+  SEConsciousRespirationCommand::Serialize(src, *dst);
+  return dst;
 }
 void SEConsciousRespirationCommand::Serialize(const SEConsciousRespirationCommand& src, cdm::ConsciousRespirationData_AnyCommandData& dst)
 {
-	//jbw - do I need to do something about comment?
+  //jbw - do I need to do something about comment?
 }
 
 bool SEConsciousRespirationCommand::IsValid() const

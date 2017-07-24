@@ -135,124 +135,123 @@ const SEScalar* SESubstanceClearance::GetScalar(const std::string& name)
 
 void SESubstanceClearance::Load(const cdm::SubstanceData_ClearanceData& src, SESubstanceClearance& dst)
 {
-	SESubstanceClearance::Serialize(src, dst);
+  SESubstanceClearance::Serialize(src, dst);
 }
 void SESubstanceClearance::Serialize(const cdm::SubstanceData_ClearanceData& src, SESubstanceClearance& dst)
 {
-	dst.Clear();
-	
-	// Make sure dups match
-	if (src.has_systemicclearance() && src.has_renalclearance() &&
-		src.systemicclearance().renalclearance() != src.renalclearance().clearance())
-	{
-		Fatal("Multiple Renal Clearances specified, but not the same. These must match at this time.");
-	}
-	if (src.has_systemicclearance() && src.has_renalclearance() &&
-		src.systemicclearance().fractionunboundinplasma() != src.renalclearance().regulation().fractionunboundinplasma())
-	{
-		Fatal("Multiple FractionUnboundInPlasma values specified, but not the same. These must match at this time.");
-	}
+  dst.Clear();
+  
+  // Make sure dups match
+  if (src.has_systemicclearance() && src.has_renalclearance() &&
+    src.systemicclearance().renalclearance().scalarvolumepertimemass().value() != src.renalclearance().clearance().scalarvolumepertimemass().value())
+  {// This is assuming the same unit, so make sure that is not your problem - lazy developer
+    dst.Fatal("Multiple Renal Clearances specified, but not the same. These must match at this time.");
+  }
+  if (src.has_systemicclearance() && src.has_renalclearance() &&
+    src.systemicclearance().fractionunboundinplasma().scalar0to1().value() != src.renalclearance().regulation().fractionunboundinplasma().scalar0to1().value())
+  {
+    dst.Fatal("Multiple FractionUnboundInPlasma values specified, but not the same. These must match at this time.");
+  }
 
-	if (src.has_systemicclearance())
-	{
-		dst.SetSystemic(true);
-		SEScalar0To1::Load(src.systemicclearance().fractionexcretedinfeces(), dst.GetFractionExcretedInFeces());		
-		SEScalar0To1::Load(src.systemicclearance().fractionexcretedinurine(), dst.GetFractionExcretedInUrine()); //jbw this one was commented out before - is it okay to have now?
-		//SEScalar0To1::Load(src.systemicclearance().fractionexcretedingut(), dst.GetFractionExcretedInGut());
-		SEScalar0To1::Load(src.systemicclearance().fractionunboundinplasma(), dst.GetFractionUnboundInPlasma());
-		SEScalarVolumePerTimeMass::Load(src.systemicclearance().intrinsicclearance(), dst.GetIntrinsicClearance());
-		SEScalarVolumePerTimeMass::Load(src.systemicclearance().renalclearance(), dst.GetRenalClearance());
-		SEScalarVolumePerTimeMass::Load(src.systemicclearance().systemicclearance(), dst.GetSystemicClearance());
-	}
+  if (src.has_systemicclearance())
+  {
+    dst.SetSystemic(true);
+    SEScalar0To1::Load(src.systemicclearance().fractionexcretedinfeces(), dst.GetFractionExcretedInFeces());
+    SEScalar0To1::Load(src.systemicclearance().fractionexcretedinurine(), dst.GetFractionExcretedInUrine());
+    SEScalar0To1::Load(src.systemicclearance().fractionmetabolizedingut(), dst.GetFractionMetabolizedInGut());
+    SEScalar0To1::Load(src.systemicclearance().fractionunboundinplasma(), dst.GetFractionUnboundInPlasma());
+    SEScalarVolumePerTimeMass::Load(src.systemicclearance().intrinsicclearance(), dst.GetIntrinsicClearance());
+    SEScalarVolumePerTimeMass::Load(src.systemicclearance().renalclearance(), dst.GetRenalClearance());
+    SEScalarVolumePerTimeMass::Load(src.systemicclearance().systemicclearance(), dst.GetSystemicClearance());
+  }
 
-	if (src.has_renalclearance())
-	{		
-		if (src.renalclearance().has_regulation())
-		{
-			dst.m_RenalDynamic = RenalDynamic::Regulation;
-			dst.SetRenalDynamic(src.renalclearance().regulation().chargeinblood());
-			SEScalar0To1::Load(src.renalclearance().regulation().fractionunboundinplasma(), dst.GetFractionUnboundInPlasma());
-			SEScalar::Load(src.renalclearance().regulation().reabsorptionratio(), dst.GetRenalReabsorptionRate());
-			SEScalarMassPerTime::Load(src.renalclearance().regulation().transportmaximum(), dst.GetRenalTransportMaximum());
-		}
-		else if (src.renalclearance().has_clearance())
-		{
-			dst.m_RenalDynamic = RenalDynamic::Clearance;
-			SEScalarVolumePerTimeMass::Load(src.renalclearance().clearance(), dst.GetRenalClearance());
-		}
+  if (src.has_renalclearance())
+  {    
+    if (src.renalclearance().has_regulation())
+    {
+      dst.m_RenalDynamic = RenalDynamic::Regulation;
+      dst.SetChargeInBlood(src.renalclearance().regulation().chargeinblood());
+      SEScalar0To1::Load(src.renalclearance().regulation().fractionunboundinplasma(), dst.GetFractionUnboundInPlasma());
+      SEScalar::Load(src.renalclearance().regulation().reabsorptionratio(), dst.GetRenalReabsorptionRate());
+      SEScalarMassPerTime::Load(src.renalclearance().regulation().transportmaximum(), dst.GetRenalTransportMaximum());
+    }
+    else if (src.renalclearance().has_clearance())
+    {
+      dst.m_RenalDynamic = RenalDynamic::Clearance;
+      SEScalarVolumePerTimeMass::Load(src.renalclearance().clearance(), dst.GetRenalClearance());
+    }
 
-		if (src.renalclearance().has_filtrationrate())
-			SEScalarMassPerTime::Load(src.renalclearance().filtrationrate(), dst.GetRenalFiltrationRate());
-		if (src.renalclearance().has_glomerularfilterability())
-			SEScalar::Load(src.renalclearance().glomerularfilterability(), dst.GetGlomerularFilterability());
-		if (src.renalclearance().has_reabsorptionrate())
-			SEScalarMassPerTime::Load(src.renalclearance().reabsorptionrate(), dst.GetRenalReabsorptionRate());
-		if (src.renalclearance().has_excretionrate())
-			SEScalarMassPerTime::Load(src.renalclearance().excretionrate(), dst.GetRenalExcretionRate());
-	}
+    if (src.renalclearance().has_filtrationrate())
+      SEScalarMassPerTime::Load(src.renalclearance().filtrationrate(), dst.GetRenalFiltrationRate());
+    if (src.renalclearance().has_glomerularfilterability())
+      SEScalar::Load(src.renalclearance().glomerularfilterability(), dst.GetGlomerularFilterability());
+    if (src.renalclearance().has_reabsorptionrate())
+      SEScalarMassPerTime::Load(src.renalclearance().reabsorptionrate(), dst.GetRenalReabsorptionRate());
+    if (src.renalclearance().has_excretionrate())
+      SEScalarMassPerTime::Load(src.renalclearance().excretionrate(), dst.GetRenalExcretionRate());
+  }
 }
 
 cdm::SubstanceData_ClearanceData* SESubstanceClearance::Unload(const SESubstanceClearance& src)
 {
-	cdm::SubstanceData_ClearanceData* dst = new cdm::SubstanceData_ClearanceData();
-	SESubstanceClearance::Serialize(src, *dst);
-	return dst;
+  cdm::SubstanceData_ClearanceData* dst = new cdm::SubstanceData_ClearanceData();
+  SESubstanceClearance::Serialize(src, *dst);
+  return dst;
 }
 void SESubstanceClearance::Serialize(const SESubstanceClearance& src, cdm::SubstanceData_ClearanceData& dst)
 {
-	if (src.HasSystemicClearance())
-	{
-		//jbw - How does this stuff work?		
-		CDM::Systemic* sys(new CDM::Systemic());
-		data.Systemic(std::unique_ptr<CDM::Systemic>(sys));
+  if (src.HasSystemicClearance())
+  {
+    //jbw - How does this stuff work?    
+    cdm::SubstanceData_SystemicClearanceData* sys = new cdm::SubstanceData_SystemicClearanceData();
+    dst.set_allocated_systemicclearance(sys);
 
-		if (src.HasFractionExcretedInFeces())
-			sys->FractionExcretedInFeces(std::unique_ptr<CDM::ScalarFractionData>(m_FractionExcretedInFeces->Unload()));
-		if (src.HasFractionExcretedInUrine())
-			sys->FractionExcretedInUrine(std::unique_ptr<CDM::ScalarFractionData>(m_FractionExcretedInUrine->Unload()));
-		if (src.HasFractionMetabolizedInGut())
-			sys->FractionMetabolizedInGut(std::unique_ptr<CDM::ScalarFractionData>(m_FractionMetabolizedInGut->Unload()));
-		if (src.HasFractionUnboundInPlasma())
-			sys->FractionUnboundInPlasma(std::unique_ptr<CDM::ScalarFractionData>(m_FractionUnboundInPlasma->Unload()));
-		if (src.HasRenalClearance())
-			sys->RenalClearance(std::unique_ptr<CDM::ScalarVolumePerTimeMassData>(m_RenalClearance->Unload()));
-		if (src.HasIntrinsicClearance())
-			sys->IntrinsicClearance(std::unique_ptr<CDM::ScalarVolumePerTimeMassData>(m_IntrinsicClearance->Unload()));
-		if (src.HasSystemicClearance())
-			sys->SystemicClearance(std::unique_ptr<CDM::ScalarVolumePerTimeMassData>(m_SystemicClearance->Unload()));
-	}
+    if (src.HasFractionExcretedInFeces())
+      sys->set_allocated_fractionexcretedinfeces(SEScalar0To1::Unload(*src.m_FractionExcretedInFeces));
+    if (src.HasFractionExcretedInUrine())
+      sys->set_allocated_fractionexcretedinurine(SEScalar0To1::Unload(*src.m_FractionExcretedInUrine));
+    if (src.HasFractionMetabolizedInGut())
+      sys->set_allocated_fractionmetabolizedingut(SEScalar0To1::Unload(*src.m_FractionMetabolizedInGut));
+    if (src.HasFractionUnboundInPlasma())
+      sys->set_allocated_fractionunboundinplasma(SEScalar0To1::Unload(*src.m_FractionUnboundInPlasma));
+    if (src.HasRenalClearance())
+      sys->set_allocated_renalclearance(SEScalarVolumePerTimeMass::Unload(*src.m_RenalClearance));
+    if (src.HasIntrinsicClearance())
+      sys->set_allocated_intrinsicclearance(SEScalarVolumePerTimeMass::Unload(*src.m_IntrinsicClearance));
+    if (src.HasSystemicClearance())
+      sys->set_allocated_systemicclearance(SEScalarVolumePerTimeMass::Unload(*src.m_SystemicClearance));
+  }
 
-	if (src.HasRenalDynamic())
-	{
-		//jbw - How does this stuff work?
-		CDM::RenalDynamics* rd(new CDM::RenalDynamics());
-		data.RenalDynamics(std::unique_ptr<CDM::RenalDynamics>(rd));
+  if (src.HasRenalDynamic())
+  {
+    cdm::SubstanceData_RenalClearanceData* rc = new cdm::SubstanceData_RenalClearanceData();
+    dst.set_allocated_renalclearance(rc);
 
-		if (m_RenalDynamic == RenalDynamic::Clearance && HasRenalClearance())
-			rd->Clearance(std::unique_ptr<CDM::ScalarVolumePerTimeMassData>(m_RenalClearance->Unload()));
-		else if (m_RenalDynamic == RenalDynamic::Regulation)
-		{
-			CDM::Regulation* rdr(new CDM::Regulation());
-			rd->Regulation(std::unique_ptr<CDM::Regulation>(rdr));
+    if (src.m_RenalDynamic == RenalDynamic::Clearance && src.HasRenalClearance())
+      rc->set_allocated_clearance(SEScalarVolumePerTimeMass::Unload(*src.m_RenalClearance));
+    else if (src.m_RenalDynamic == RenalDynamic::Regulation)
+    {
+      cdm::SubstanceData_RenalRegulationData* rr = new cdm::SubstanceData_RenalRegulationData();
+      rc->set_allocated_regulation(rr);
 
-			if (src.HasChargeInBlood())
-				rdr->ChargeInBlood(m_ChargeInBlood);
-			if (src.HasFractionUnboundInPlasma())
-				rdr->FractionUnboundInPlasma(std::unique_ptr<CDM::ScalarFractionData>(m_FractionUnboundInPlasma->Unload()));
-			if (src.HasRenalReabsorptionRatio())
-				rdr->ReabsorptionRatio(std::unique_ptr<CDM::ScalarData>(m_RenalReabsorptionRatio->Unload()));
-			if (src.HasRenalTransportMaximum())
-				rdr->TransportMaximum(std::unique_ptr<CDM::ScalarMassPerTimeData>(m_RenalTransportMaximum->Unload()));
-		}
-		if (src.HasGlomerularFilterability())
-			rd->GlomerularFilterability(std::unique_ptr<CDM::ScalarData>(m_GlomerularFilterability->Unload()));
-		if (src.HasRenalFiltrationRate())
-			rd->FiltrationRate(std::unique_ptr<CDM::ScalarMassPerTimeData>(m_RenalFiltrationRate->Unload()));
-		if (src.HasRenalReabsorptionRate())
-			rd->ReabsorptionRate(std::unique_ptr<CDM::ScalarMassPerTimeData>(m_RenalReabsorptionRate->Unload()));
-		if (src.HasRenalExcretionRate())
-			rd->ExcretionRate(std::unique_ptr<CDM::ScalarMassPerTimeData>(m_RenalExcretionRate->Unload()));
-	}
+      if (src.HasChargeInBlood())
+        rr->set_chargeinblood(src.m_ChargeInBlood);
+      if (src.HasFractionUnboundInPlasma())
+        rr->set_allocated_fractionunboundinplasma(SEScalar0To1::Unload(*src.m_FractionUnboundInPlasma));
+      if (src.HasRenalReabsorptionRatio())
+        rr->set_allocated_reabsorptionratio(SEScalar::Unload(*src.m_RenalReabsorptionRatio));
+      if (src.HasRenalTransportMaximum())
+        rr->set_allocated_transportmaximum(SEScalarMassPerTime::Unload(*src.m_RenalTransportMaximum));
+    }
+    if (src.HasGlomerularFilterability())
+      rc->set_allocated_glomerularfilterability(SEScalar::Unload(*src.m_GlomerularFilterability));
+    if (src.HasRenalFiltrationRate())
+      rc->set_allocated_filtrationrate(SEScalarMassPerTime::Unload(*src.m_RenalFiltrationRate));
+    if (src.HasRenalReabsorptionRate())
+      rc->set_allocated_reabsorptionrate(SEScalarMassPerTime::Unload(*src.m_RenalReabsorptionRate));
+    if (src.HasRenalExcretionRate())
+      rc->set_allocated_excretionrate(SEScalarMassPerTime::Unload(*src.m_RenalExcretionRate));
+  }
 }
 
 cdm::eCharge SESubstanceClearance::GetChargeInBlood() const

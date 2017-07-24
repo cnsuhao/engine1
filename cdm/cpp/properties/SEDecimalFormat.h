@@ -19,7 +19,7 @@ public:
   SEDecimalFormat(const SEDecimalFormat* dfault = nullptr);
   virtual ~SEDecimalFormat();
 
-  virtual void Reset();
+  virtual void Clear();
   virtual void Set(const SEDecimalFormat& f);
 
   static void Load(const cdm::DecimalFormatData& src, SEDecimalFormat& dst);

@@ -12,18 +12,13 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
+#include "bind/cdm/AnesthesiaMachine.pb.h"
 class SEEventHandler;
 class SESubstanceManager;
 class SEAnesthesiaMachineChamber;
 class SEAnesthesiaMachineOxygenBottle;
 class SEAnesthesiaMachineConfiguration;
 class Serializer;
-#include "bind/AnesthesiaMachineData.hxx"
-#include "bind/enumOnOff.hxx"
-#include "bind/enumAnesthesiaMachineEvent.hxx"
-#include "bind/enumAnesthesiaMachineConnection.hxx"
-#include "bind/enumAnesthesiaMachineOxygenSource.hxx"
-#include "bind/enumAnesthesiaMachinePrimaryGas.hxx"
 
 class DLL_DECL SEAnesthesiaMachine : public SESystem
 {
@@ -36,10 +31,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::AnesthesiaMachineData& in);
-  virtual CDM::AnesthesiaMachineData* Unload() const;
+  static void Load(const cdm::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst);
+  static cdm::AnesthesiaMachineData* Unload(const SEAnesthesiaMachine& src);
 protected:
-  virtual void Unload(CDM::AnesthesiaMachineData& data) const;
+  static void Serialize(const cdm::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst);
+  static void Serialize(const SEAnesthesiaMachine& src, cdm::AnesthesiaMachineData& dst);
 
   /** @name StateChange
   *   @brief - This method is called when ever there is a state change
@@ -55,10 +51,10 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual const std::map<CDM::enumAnesthesiaMachineEvent::value, bool>& GetEventStates() const { return m_EventState; }
-  virtual void SetEvent(CDM::enumAnesthesiaMachineEvent::value state, bool active, const SEScalarTime& time);
-  virtual bool IsEventActive(CDM::enumAnesthesiaMachineEvent::value state) const;
-  virtual double GetEventDuration(CDM::enumAnesthesiaMachineEvent::value type, const TimeUnit& unit) const;
+  virtual const std::map<cdm::AnesthesiaMachineData_eEvent, bool>& GetEventStates() const { return m_EventState; }
+  virtual void SetEvent(cdm::AnesthesiaMachineData_eEvent state, bool active, const SEScalarTime& time);
+  virtual bool IsEventActive(cdm::AnesthesiaMachineData_eEvent state) const;
+  virtual double GetEventDuration(cdm::AnesthesiaMachineData_eEvent type, const TimeUnit& unit) const;
   virtual void UpdateEvents(const SEScalarTime& timeStep);
   /** @name ForwardEvents
   *  @brief - Set a callback class to invoke when any event changes
@@ -69,8 +65,8 @@ public:
   */
   virtual void ForwardEvents(SEEventHandler* handler);
 
-  virtual CDM::enumAnesthesiaMachineConnection::value GetConnection() const;
-  virtual void SetConnection(CDM::enumAnesthesiaMachineConnection::value c);
+  virtual cdm::AnesthesiaMachineData_eConnection GetConnection() const;
+  virtual void SetConnection(cdm::AnesthesiaMachineData_eConnection c);
   virtual bool HasConnection() const;
   virtual void InvalidateConnection();
 
@@ -86,8 +82,8 @@ public:
   virtual SEScalar0To1& GetOxygenFraction();
   virtual double GetOxygenFraction() const;
 
-  virtual CDM::enumAnesthesiaMachineOxygenSource::value GetOxygenSource() const;
-  virtual void SetOxygenSource(CDM::enumAnesthesiaMachineOxygenSource::value name);
+  virtual cdm::AnesthesiaMachineData_eOxygenSource GetOxygenSource() const;
+  virtual void SetOxygenSource(cdm::AnesthesiaMachineData_eOxygenSource name);
   virtual bool HasOxygenSource() const;
   virtual void InvalidateOxygenSource();
 
@@ -95,8 +91,8 @@ public:
   virtual SEScalarPressure& GetPositiveEndExpiredPressure();
   virtual double GetPositiveEndExpiredPressure(const PressureUnit& unit) const;
   
-  virtual CDM::enumAnesthesiaMachinePrimaryGas::value GetPrimaryGas() const;
-  virtual void SetPrimaryGas(CDM::enumAnesthesiaMachinePrimaryGas::value name);
+  virtual cdm::AnesthesiaMachineData_ePrimaryGas GetPrimaryGas() const;
+  virtual void SetPrimaryGas(cdm::AnesthesiaMachineData_ePrimaryGas name);
   virtual bool HasPrimaryGas() const;
   virtual void InvalidatePrimaryGas();
   
@@ -134,25 +130,24 @@ public:
 
 protected:
 
-  std::stringstream m_ss;
-  SEEventHandler*   m_EventHandler;
-  std::map<CDM::enumAnesthesiaMachineEvent::value, bool>   m_EventState;
-  std::map<CDM::enumAnesthesiaMachineEvent::value, double> m_EventDuration_s;
+  SEEventHandler*                                        m_EventHandler;
+  std::map<cdm::AnesthesiaMachineData_eEvent, bool>      m_EventState;
+  std::map<cdm::AnesthesiaMachineData_eEvent, double>    m_EventDuration_s;
 
-  CDM::enumAnesthesiaMachineConnection::value            m_Connection;
+  cdm::AnesthesiaMachineData_eConnection                 m_Connection;
   SEScalarVolumePerTime*                                 m_InletFlow;
-  SEScalar*                                               m_InspiratoryExpiratoryRatio;
-  SEScalar0To1*                                       m_OxygenFraction;
-  CDM::enumAnesthesiaMachineOxygenSource::value          m_OxygenSource;
-  SEScalarPressure*                                       m_PositiveEndExpiredPressure;
-  CDM::enumAnesthesiaMachinePrimaryGas::value             m_PrimaryGas;
+  SEScalar*                                              m_InspiratoryExpiratoryRatio;
+  SEScalar0To1*                                          m_OxygenFraction;  
+  cdm::AnesthesiaMachineData_eOxygenSource               m_OxygenSource;
+  SEScalarPressure*                                      m_PositiveEndExpiredPressure;  
+  cdm::AnesthesiaMachineData_ePrimaryGas                 m_PrimaryGas;
   SEScalarFrequency*                                     m_RespiratoryRate;
-  SEScalarPressure*                                       m_ReliefValvePressure;
+  SEScalarPressure*                                      m_ReliefValvePressure;
 
   SEScalarPressure*                                      m_VentilatorPressure;
 
-  SEAnesthesiaMachineChamber*                             m_LeftChamber;
-  SEAnesthesiaMachineChamber*                             m_RightChamber;
+  SEAnesthesiaMachineChamber*                            m_LeftChamber;
+  SEAnesthesiaMachineChamber*                            m_RightChamber;
 
   SEAnesthesiaMachineOxygenBottle*                       m_OxygenBottleOne;
   SEAnesthesiaMachineOxygenBottle*                       m_OxygenBottleTwo;

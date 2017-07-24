@@ -52,34 +52,34 @@ bool SEEnvironmentChange::IsValid() const
 
 void SEEnvironmentChange::Load(const cdm::EnvironmentData& src, SEEnvironmentChange& dst)
 {
-	SEEnvironmentChange::Serialize(src, dst);
+  SEEnvironmentChange::Serialize(src, dst);
 }
 void SEEnvironmentChange::Serialize(const cdm::EnvironmentData& src, SEEnvironmentChange& dst)
 {
-	dst.Clear();
+  dst.Clear();
 
-	//jbw - how does this work?
-	//SEEnvironmentAction::Load(in);
-	//if (in.ConditionsFile().present())
-	//	SetConditionsFile(in.ConditionsFile().get());
-	//else if (in.Conditions().present())
-	//	GetConditions().Load(in.Conditions().get());
+  //jbw - how does this work?
+  //SEEnvironmentAction::Load(in);
+  //if (in.ConditionsFile().present())
+  //  SetConditionsFile(in.ConditionsFile().get());
+  //else if (in.Conditions().present())
+  //  GetConditions().Load(in.Conditions().get());
 }
 
 cdm::EnvironmentData* SEEnvironmentChange::Unload(const SEEnvironmentChange& src)
 {
-	cdm::EnvironmentData* dst = new cdm::EnvironmentData();
-	SEEnvironmentChange::Serialize(src, *dst);
-	return dst;
+  cdm::EnvironmentData* dst = new cdm::EnvironmentData();
+  SEEnvironmentChange::Serialize(src, *dst);
+  return dst;
 }
 void SEEnvironmentChange::Serialize(const SEEnvironmentChange& src, cdm::EnvironmentData& dst)
 {
-	//jbw - how does this work?
-	//SEEnvironmentAction::Unload(data);
-	//if (HasConditions())
-	//	data.Conditions(std::unique_ptr<CDM::EnvironmentalConditionsData>(m_Conditions->Unload()));
-	//else if (HasConditionsFile())
-	//	data.ConditionsFile(m_ConditionsFile);
+  //jbw - how does this work?
+  //SEEnvironmentAction::Unload(data);
+  //if (HasConditions())
+  //  data.Conditions(std::unique_ptr<CDM::EnvironmentalConditionsData>(m_Conditions->Unload()));
+  //else if (HasConditionsFile())
+  //  data.ConditionsFile(m_ConditionsFile);
 }
 
 

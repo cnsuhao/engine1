@@ -29,8 +29,8 @@ public:
   static void Load(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst);
   static cdm::ChestOcclusiveDressingData* Unload(const SEChestOcclusiveDressing& src);
 protected:
-	static void Serialize(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst);
-	static void Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst);
+  static void Serialize(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst);
+  static void Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst);
 
 public:
 
@@ -42,7 +42,7 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-	cdm::eSide m_Side;
-	cdm::eSwitch m_State;
+  cdm::eSide m_Side;
+  cdm::eSwitch m_State;
  
 };   

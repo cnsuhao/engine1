@@ -155,7 +155,7 @@ message SubstanceData
   ScalarMassData                        MassInBody                     = 9; /**<< @brief Total Amount of mass of this substance that is in the body. */
   ScalarMassData                        MassInBlood                    = 10;/**<< @brief Amount of mass of this substance that is in the blood. */
   ScalarMassData                        MassInTissue                   = 11;/**<< @brief Amount of mass of this substance that is in the tissue. */
-  ScalarMassPerVolumeData               Plasma_concentration           = 12;/**<< @brief Calculated concentration of a substance in the plasma. */
+  ScalarMassPerVolumeData               PlasmaConcentration            = 12;/**<< @brief Calculated concentration of a substance in the plasma. */
   ScalarMassData                        SystemicMassCleared            = 13;/**<< @brief The total amount of mass that has been systemicly cleared*/          
   ScalarMassPerVolumeData               TissueConcentration            = 14;/**<< @brief Concentration of this substance that is in the tissue. */
   /** Gas */

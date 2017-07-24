@@ -11,19 +11,13 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "Serializer.h"
 #include "engine/PhysiologyEngineConfiguration.h"
-#include "bind/PhysiologyEngineConfigurationData.hxx"
 #include "engine/PhysiologyEngineDynamicStabilization.h"
-#include "bind/PhysiologyEngineDynamicStabilizationData.hxx"
 #include "engine/PhysiologyEngineTimedStabilization.h"
-#include "bind/PhysiologyEngineTimedStabilizationData.hxx"
 #include "system/equipment/ElectroCardioGram/SEElectroCardioGramInterpolator.h"
-#include "bind/ElectroCardioGramWaveformInterpolatorData.hxx"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTime.h"
-#include "bind/ScalarTimeData.hxx"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 
@@ -35,7 +29,7 @@ PhysiologyEngineConfiguration::PhysiologyEngineConfiguration(Logger* logger) : L
   m_TimedStabilizationCriteria = nullptr;
   m_DynamicStabilizationCriteria = nullptr;
   m_TimeStep = nullptr;
-  m_WritePatientBaselineFile = CDM::enumOnOff::value(-1);
+  m_WritePatientBaselineFile = cdm::eSwitch(-1);
   
 }
 

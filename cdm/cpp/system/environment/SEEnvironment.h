@@ -12,8 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/EnvironmentData.hxx"
-#include "bind/enumSurroundingType.hxx"
+#include "bind/cdm/Environment.pb.h"
 class SESubstance;
 class SESubstanceFraction;
 class SESubstanceManager;
@@ -33,10 +32,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::EnvironmentData& in);
-  virtual CDM::EnvironmentData* Unload() const;
+  static void Load(const cdm::EnvironmentData& src, SEEnvironment& dst);
+  static cdm::EnvironmentData* Unload(const SEEnvironment& src);
 protected:
-  virtual void Unload(CDM::EnvironmentData& data) const;
+  static void Serialize(const cdm::EnvironmentData& src, SEEnvironment& dst);
+  static void Serialize(const SEEnvironment& src, cdm::EnvironmentData& dst);
 
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Action
@@ -113,11 +113,11 @@ public:
 protected:
 
   SEScalarPower*                    m_ConvectiveHeatLoss;
-  SEScalarHeatConductancePerArea*    m_ConvectiveHeatTranferCoefficient;
+  SEScalarHeatConductancePerArea*   m_ConvectiveHeatTranferCoefficient;
   SEScalarPower*                    m_EvaporativeHeatLoss;
-  SEScalarHeatConductancePerArea*    m_EvaporativeHeatTranferCoefficient;
+  SEScalarHeatConductancePerArea*   m_EvaporativeHeatTranferCoefficient;
   SEScalarPower*                    m_RadiativeHeatLoss;
-  SEScalarHeatConductancePerArea*    m_RadiativeHeatTranferCoefficient;
+  SEScalarHeatConductancePerArea*   m_RadiativeHeatTranferCoefficient;
   SEScalarPower*                    m_RespirationHeatLoss;
   SEScalarPower*                    m_SkinHeatLoss;
 
@@ -127,4 +127,4 @@ protected:
   SEEnvironmentalConditions*        m_Conditions;
 
   SESubstanceManager&               m_Substances;
-};                  
+};

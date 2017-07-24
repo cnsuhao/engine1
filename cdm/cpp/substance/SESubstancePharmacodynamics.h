@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "system/physiology/SEPupillaryResponse.h"
+#include "bind/cdm/Substance.pb.h"
 
 class DLL_DECL SESubstancePharmacodynamics : Loggable
 {

@@ -46,26 +46,26 @@ void SECardiacArrest::SetActive(bool b)
 
 void SECardiacArrest::Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
 {
-	SECardiacArrest::Serialize(src, dst);
+  SECardiacArrest::Serialize(src, dst);
 }
 void SECardiacArrest::Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
 {
-	dst.Clear();
-	//dst.SetState(src.state());
-	//jbw - where are states?
+  dst.Clear();
+  //dst.SetState(src.state());
+  //jbw - where are states?
 }
 
 cdm::CardiacArrestData* SECardiacArrest::Unload(const SECardiacArrest& src)
 {
-	cdm::CardiacArrestData* dst = new cdm::CardiacArrestData();
-	SECardiacArrest::Serialize(src, *dst);
-	return dst;
+  cdm::CardiacArrestData* dst = new cdm::CardiacArrestData();
+  SECardiacArrest::Serialize(src, *dst);
+  return dst;
 }
 void SECardiacArrest::Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst)
 {
-	//if (src.HasState())
-	//	dst.set_state(src.m_State);
-	//jbw - where are states?
+  //if (src.HasState())
+  //  dst.set_state(src.m_State);
+  //jbw - where are states?
 }
 
 void SECardiacArrest::ToString(std::ostream &str) const

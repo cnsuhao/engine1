@@ -29,8 +29,8 @@ public:
   static void Load(const cdm::ConsciousRespirationData_BreathHoldData& src, SEBreathHold& dst);
   static cdm::ConsciousRespirationData_BreathHoldData* Unload(const SEBreathHold& src);
 protected:
-	static void Serialize(const cdm::ConsciousRespirationData_BreathHoldData& src, SEBreathHold& dst);
-	static void Serialize(const SEBreathHold& src, cdm::ConsciousRespirationData_BreathHoldData& dst);
+  static void Serialize(const cdm::ConsciousRespirationData_BreathHoldData& src, SEBreathHold& dst);
+  static void Serialize(const SEBreathHold& src, cdm::ConsciousRespirationData_BreathHoldData& dst);
 
 public:
 

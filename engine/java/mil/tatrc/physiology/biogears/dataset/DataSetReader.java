@@ -26,9 +26,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
 import com.kitware.physiology.cdm.Properties.eCharge;
+import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
 
 import mil.tatrc.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
+import mil.tatrc.physiology.datamodel.datarequests.SEDataRequest;
 import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineDynamicStabilization;
 import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineDynamicStabilizationCriteria;
 import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineTimedStabilization;
@@ -1316,7 +1318,11 @@ public class DataSetReader
         }         
         else if(property.equals("Criteria"))
         {
-          criteria.createProperty(row.getCell(1).getNumericCellValue(),row.getCell(2).getStringCellValue());
+        	// Note it is assumed that the all criteria are physiology requests
+        	SEDataRequest dr = new SEDataRequest();
+        	dr.setName(row.getCell(2).getStringCellValue());
+        	dr.setCategory(eCategory.Physiology);
+          criteria.createProperty(row.getCell(1).getNumericCellValue(),dr);
         }
         else if(property.equals("ConvergenceTime"))
         {
