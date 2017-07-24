@@ -13,12 +13,12 @@ package mil.tatrc.physiology.datamodel.engine;
 
 import java.util.*;
 
-import com.kitware.physiology.cdm.EngineConfiguration.PhysiologyEngineDynamicStabilizationData;
+import com.kitware.physiology.cdm.Engine.DynamicStabilizationData;
 
 import mil.tatrc.physiology.datamodel.datarequests.SEDataRequest;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
-public class PhysiologyEngineDynamicStabilizationCriteria
+public class SEDynamicStabilizationEngineConvergence
 {
   public class PropertyConvergence
   {
@@ -39,7 +39,7 @@ public class PhysiologyEngineDynamicStabilizationCriteria
     this.properties.clear();
   }
 
-  public static void load(PhysiologyEngineDynamicStabilizationData.CriteriaData src, PhysiologyEngineDynamicStabilizationCriteria dst)
+  public static void load(DynamicStabilizationData.EngineConvergenceData src, SEDynamicStabilizationEngineConvergence dst)
   {
     if(src.hasConvergenceTime())
       SEScalarTime.load(src.getConvergenceTime(), dst.getConvergenceTime());
@@ -47,20 +47,20 @@ public class PhysiologyEngineDynamicStabilizationCriteria
       SEScalarTime.load(src.getMinimumReactionTime(),dst.getMinimumReactionTime());
     if(src.hasMaximumAllowedStabilizationTime())
       SEScalarTime.load(src.getMaximumAllowedStabilizationTime(),dst.getMaximumAllowedStabilizationTime());      
-    for(PhysiologyEngineDynamicStabilizationData.PropertyConvergenceData pcData : src.getPropertyConvergenceList())
+    for(DynamicStabilizationData.PropertyConvergenceData pcData : src.getPropertyConvergenceList())
     {
     	SEDataRequest dr = new SEDataRequest();
     	SEDataRequest.load(pcData.getDataRequest(), dr);
       dst.createProperty(pcData.getPercentDifference(),dr);
     }
   }
-  public static PhysiologyEngineDynamicStabilizationData.CriteriaData unload(PhysiologyEngineDynamicStabilizationCriteria src)
+  public static DynamicStabilizationData.EngineConvergenceData unload(SEDynamicStabilizationEngineConvergence src)
   {
-    PhysiologyEngineDynamicStabilizationData.CriteriaData.Builder dst = PhysiologyEngineDynamicStabilizationData.CriteriaData.newBuilder();
+    DynamicStabilizationData.EngineConvergenceData.Builder dst = DynamicStabilizationData.EngineConvergenceData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  public static void unload(PhysiologyEngineDynamicStabilizationCriteria src, PhysiologyEngineDynamicStabilizationData.CriteriaData.Builder dst)
+  public static void unload(SEDynamicStabilizationEngineConvergence src, DynamicStabilizationData.EngineConvergenceData.Builder dst)
   {
     if(src.hasConvergenceTime())
       dst.setConvergenceTime(SEScalarTime.unload(src.convergenceTime));
@@ -70,7 +70,7 @@ public class PhysiologyEngineDynamicStabilizationCriteria
       dst.setMaximumAllowedStabilizationTime(SEScalarTime.unload(src.maximumAllowedStabilizationTime));
     for(PropertyConvergence pc : src.properties)
     {
-      PhysiologyEngineDynamicStabilizationData.PropertyConvergenceData.Builder pcData = dst.addPropertyConvergenceBuilder();
+      DynamicStabilizationData.PropertyConvergenceData.Builder pcData = dst.addPropertyConvergenceBuilder();
       pcData.setDataRequest(SEDataRequest.unload(pc.dataRequest));
       pcData.setPercentDifference(pc.percentDifference);
     }

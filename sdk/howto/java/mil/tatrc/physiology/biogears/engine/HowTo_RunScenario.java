@@ -111,17 +111,17 @@ public class HowTo_RunScenario
     // The units will be set to whatever units the engine uses.
     SEDataRequest hr = new SEDataRequest();
     hr.setCategory(eCategory.Physiology);
-    hr.setName("HeartRate");
+    hr.setPropertyName("HeartRate");
     hr.setUnit(FrequencyUnit.Per_min.toString());
     sce.getDataRequestManager().getRequestedData().add(hr);
     SEDataRequest rr = new SEDataRequest();
     hr.setCategory(eCategory.Physiology);
-    rr.setName("RespirationRate");
+    rr.setPropertyName("RespirationRate");
     rr.setUnit(FrequencyUnit.Per_min.toString());
     sce.getDataRequestManager().getRequestedData().add(rr);
     SEDataRequest tlv = new SEDataRequest();   
     hr.setCategory(eCategory.Physiology); 
-    tlv.setName("TotalLungVolume");
+    tlv.setPropertyName("TotalLungVolume");
     tlv.setUnit(VolumeUnit.mL.toString());
     sce.getDataRequestManager().getRequestedData().add(tlv);
     // Let's just run for 2 minutes

@@ -18,7 +18,7 @@ import com.kitware.physiology.cdm.Scenario.*;
 
 public class SEDataRequestManager
 {
-  protected String                        filename;
+  protected String                        resultsFilename;
   // TODO Decimal Formatting Data
   protected List<SEDataRequest>           dataRequests = new ArrayList<SEDataRequest>();  
   protected double                        samplesPerSecond;
@@ -30,7 +30,7 @@ public class SEDataRequestManager
   
   public void reset() 
   {
-    this.filename = "";
+    this.resultsFilename = "";
     this.samplesPerSecond = 0;
     dataRequests.clear();
   }
@@ -38,7 +38,7 @@ public class SEDataRequestManager
   public static void load(DataRequestManagerData src, SEDataRequestManager dst)
   {
     dst.reset();
-    dst.setFilename(src.getFilename());
+    dst.setResultsFilename(src.getResultsFilename());
     if(src.getSamplesPerSecond()>0)
       dst.setSamplesPerSecond(src.getSamplesPerSecond());
     for (DataRequestData drData : src.getDataRequestList())
@@ -57,17 +57,17 @@ public class SEDataRequestManager
   }
   protected static void unload(SEDataRequestManager src, DataRequestManagerData.Builder dst)
   {
-    if(src.hasFilename())
-      dst.setFilename(src.filename);
+    if(src.hasResultsFilename())
+      dst.setResultsFilename(src.resultsFilename);
     if(src.samplesPerSecond>0)
       dst.setSamplesPerSecond(src.samplesPerSecond);
     for(SEDataRequest dr : src.dataRequests)
       dst.addDataRequest(SEDataRequest.unload(dr));
   }
   
-  public boolean hasFilename(){ return this.filename!=null&&!this.filename.isEmpty(); }
-  public void setFilename(String f) { this.filename = f; }
-  public String getFilename(){ return this.filename; }
+  public boolean hasResultsFilename(){ return this.resultsFilename!=null&&!this.resultsFilename.isEmpty(); }
+  public void setResultsFilename(String f) { this.resultsFilename = f; }
+  public String getResultsFilename(){ return this.resultsFilename; }
   
   public void setSamplesPerSecond(double d){ this.samplesPerSecond=d; }
   public double getSamplesPerSecond(){ return this.samplesPerSecond; }

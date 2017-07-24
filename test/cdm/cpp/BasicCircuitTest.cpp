@@ -30,7 +30,6 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "utils/DataTrack.h"
-#include "Serializer.h"
 #include "utils/FileUtils.h"
 
 void CommonDataModelTest::TestSetup7SeriesRCDC()
@@ -838,7 +837,7 @@ void CommonDataModelTest::TestSetup15SwitchRCDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
@@ -872,7 +871,7 @@ void CommonDataModelTest::TestSetup15SwitchRCSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
@@ -906,7 +905,7 @@ void CommonDataModelTest::TestSetup15SwitchRCPULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
@@ -942,7 +941,7 @@ void CommonDataModelTest::TestSetup16Comprehensive1DC()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path3.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
   Path4.GetNextInertance().SetValue(0.1, FlowInertanceUnit::Pa_s2_Per_m3);
   Path4.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
@@ -986,7 +985,7 @@ void CommonDataModelTest::TestSetup16Comprehensive1SIN()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path3.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
   Path4.GetNextInertance().SetValue(0.1, FlowInertanceUnit::Pa_s2_Per_m3);
   Path4.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
@@ -1030,7 +1029,7 @@ void CommonDataModelTest::TestSetup16Comprehensive1PULSE()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path3.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
   Path4.GetNextInertance().SetValue(0.1, FlowInertanceUnit::Pa_s2_Per_m3);
   Path4.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
@@ -1076,7 +1075,7 @@ void CommonDataModelTest::TestSetup17BasicDiodeDC()
   Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 }
 
 void CommonDataModelTest::TestSetup17BasicDiodeSIN()
@@ -1109,7 +1108,7 @@ void CommonDataModelTest::TestSetup17BasicDiodeSIN()
   Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 }
 
 void CommonDataModelTest::TestSetup17BasicDiodePULSE()
@@ -1142,7 +1141,7 @@ void CommonDataModelTest::TestSetup17BasicDiodePULSE()
   Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
   // Basic Description
   // Scenario 1 DC Pressure Source => Capacitor charges and turns into an infinite impedance circuit element (0 flow across at steady state)
   // Scenario 2 Sinusoidal Pressure Source => Capacitor Flow will be relative to the derivative of the pressure source, should see volume change at nodes 2 and 3
@@ -1186,7 +1185,7 @@ void CommonDataModelTest::TestSetup17BasicDiodePULSE()
 //  SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
 //  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
 //  SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-//  Path3.SetSwitch(CDM::enumOpenClosed::Open);
+//  Path3.SetSwitch(cdm::eGate::Open);
 //  SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
 //  Path4.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
 //  SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node1,Node4,"Path5");
@@ -1623,13 +1622,13 @@ void CommonDataModelTest::TestSetup22CurrentCompDC()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path3.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
   Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node2,Node4,"Path5");
   Path5.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
-  Path6.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path6.SetNextValve(cdm::eGate::Closed);
 }
 
 void CommonDataModelTest::TestSetup22CurrentCompSIN()
@@ -1658,13 +1657,13 @@ void CommonDataModelTest::TestSetup22CurrentCompSIN()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path3.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
   Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node2,Node4,"Path5");
   Path5.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
-  Path6.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path6.SetNextValve(cdm::eGate::Closed);
 }
 
 void CommonDataModelTest::TestSetup22CurrentCompPulse()
@@ -1693,13 +1692,13 @@ void CommonDataModelTest::TestSetup22CurrentCompPulse()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path3.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
   Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node2,Node4,"Path5");
   Path5.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
-  Path6.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path6.SetNextValve(cdm::eGate::Closed);
 }
 
 void CommonDataModelTest::TestSetup23SeriesRLDCCurrent()
@@ -1922,7 +1921,7 @@ void CommonDataModelTest::TestSetup25BasicDiodeDCCurrent()
   Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 }
 
 void CommonDataModelTest::TestSetup25BasicDiodeSINCurrent()
@@ -1956,7 +1955,7 @@ void CommonDataModelTest::TestSetup25BasicDiodeSINCurrent()
   Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 }
 
 void CommonDataModelTest::TestSetup25BasicDiodePULSECurrent()
@@ -1990,7 +1989,7 @@ void CommonDataModelTest::TestSetup25BasicDiodePULSECurrent()
   Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 }
 
 void CommonDataModelTest::TestSetup26SwitchRCDCCurrent()
@@ -2020,7 +2019,7 @@ void CommonDataModelTest::TestSetup26SwitchRCDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
@@ -2055,7 +2054,7 @@ void CommonDataModelTest::TestSetup26SwitchRCSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
@@ -2090,7 +2089,7 @@ void CommonDataModelTest::TestSetup26SwitchRCPULSECurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
@@ -3415,7 +3414,7 @@ void CommonDataModelTest::TestSetup40BadDiodeDC()
   Path1.GetNextPressureSource().SetValue(20,PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node2,Node1,"Path2");
-  Path2.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path2.SetNextValve(cdm::eGate::Closed);
 
   // should fail if working properly
 }
@@ -3444,7 +3443,7 @@ void CommonDataModelTest::TestSetup40BadDiodeSIN()
   Path1.GetNextPressureSource().SetValue(20,PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node2,Node1,"Path2");
-  Path2.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path2.SetNextValve(cdm::eGate::Closed);
 
   // should fail if working properly
 }
@@ -3474,7 +3473,7 @@ void CommonDataModelTest::TestSetup40BadDiodePulse()
   Path1.GetNextPressureSource().SetValue(20,PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node2,Node1,"Path2");
-  Path2.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path2.SetNextValve(cdm::eGate::Closed);
 
   // should fail if working properly
 }
@@ -3516,11 +3515,11 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1DC()
 
   //Switch
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node5,Node6,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
 
   //Diode
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 
   //Resistors
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node1,Node2,"Path11");
@@ -3582,11 +3581,11 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1SIN()
 
   //Switch
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node5,Node6,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
 
   //Diode
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 
   //Resistors
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node1,Node2,"Path11");
@@ -3648,11 +3647,11 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1Pulse()
 
   //Switch
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node5,Node6,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
 
   //Diode
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 
   //Resistors
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node2,Node1,"Path11");
@@ -3714,11 +3713,11 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1SINCentered()
 
   //Switch
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node5,Node6,"Path2");
-  Path2.SetNextSwitch(CDM::enumOpenClosed::Open);
+  Path2.SetNextSwitch(cdm::eGate::Open);
 
   //Diode
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 
   //Resistors
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node1,Node2,"Path11");
@@ -3782,7 +3781,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2DC()
 
   //Diode
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node1,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 
   //Resistors
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node2,Node3,"Path2");
@@ -3846,7 +3845,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2SIN()
 
   //Diode
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node1,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 
   //Resistors
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node2,Node3,"Path2");
@@ -3910,7 +3909,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2Pulse()
 
   //Diode
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node1,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 
   //Resistors
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node2,Node3,"Path2");
@@ -3973,7 +3972,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2SINCentered()
 
   //Diode
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node1,"Path4");
-  Path4.SetNextValve(CDM::enumOpenClosed::Closed);
+  Path4.SetNextValve(cdm::eGate::Closed);
 
   //Resistors
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node3,Node2,"Path2");
@@ -4080,22 +4079,22 @@ void CommonDataModelTest::TestPreProcess1(double dT, int i)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(CDM::enumOpenClosed::Open);
+        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(CDM::enumOpenClosed::Closed);
+        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
     else if(i==9||i==15)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(CDM::enumOpenClosed::Open);
+        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(CDM::enumOpenClosed::Closed);
+        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
 
@@ -4184,22 +4183,22 @@ void CommonDataModelTest::TestPreProcess2(double dT, int i)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(CDM::enumOpenClosed::Open);
+        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(CDM::enumOpenClosed::Closed);
+        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
     else if(i==9||i==15)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(CDM::enumOpenClosed::Open);
+        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(CDM::enumOpenClosed::Closed);
+        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
 
@@ -4326,22 +4325,22 @@ void CommonDataModelTest::TestPreProcess3(double dT, int i)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(CDM::enumOpenClosed::Open);
+        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(CDM::enumOpenClosed::Closed);
+        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
     else if(i==9||i==15)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(CDM::enumOpenClosed::Open);
+        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(CDM::enumOpenClosed::Closed);
+        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
 
@@ -4430,22 +4429,22 @@ void CommonDataModelTest::TestPreProcess4(double dT, int i)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(CDM::enumOpenClosed::Open);
+        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(CDM::enumOpenClosed::Closed);
+        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
     else if(i==9||i==15)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(CDM::enumOpenClosed::Open);
+        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(CDM::enumOpenClosed::Closed);
+        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
 

@@ -17,7 +17,6 @@ specific language governing permissions and limitations under the License.
 #include "utils/testing/SETestSuite.h"
 #include "utils/FileUtils.h"
 #include "utils/TimingProfile.h"
-#include "Serializer.h"
 
 void CommonDataModelTest::ReadSubstanceDirectory(const std::string& rptDirectory)
 {
@@ -42,5 +41,5 @@ void CommonDataModelTest::ReadSubstanceDirectory(const std::string& rptDirectory
   testCase.SetName(obj.GetName());
   // TODO would be nice to listen to errors on the logger and add them to the testCase failures...
 
-  testReport.WriteFile(rptDirectory +"\\"+testName+"Report.xml");
+  testReport.WriteFile(rptDirectory +"\\"+testName+"Report.pba");
 }

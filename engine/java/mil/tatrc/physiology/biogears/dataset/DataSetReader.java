@@ -31,9 +31,9 @@ import com.kitware.physiology.cdm.Substance.SubstanceData;
 
 import mil.tatrc.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
 import mil.tatrc.physiology.datamodel.datarequests.SEDataRequest;
-import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineDynamicStabilization;
-import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineDynamicStabilizationCriteria;
-import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineTimedStabilization;
+import mil.tatrc.physiology.datamodel.engine.SEDynamicStabilization;
+import mil.tatrc.physiology.datamodel.engine.SEDynamicStabilizationEngineConvergence;
+import mil.tatrc.physiology.datamodel.engine.SETimedStabilization;
 import mil.tatrc.physiology.datamodel.system.environment.SEEnvironmentalConditions;
 import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveform;
 import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveformInterpolator;
@@ -169,28 +169,28 @@ public class DataSetReader
           throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for nutrition");
       }
       
-      PhysiologyEngineTimedStabilization timed = new PhysiologyEngineTimedStabilization();
-      PhysiologyEngineDynamicStabilization dynamic = new PhysiologyEngineDynamicStabilization();
+      SETimedStabilization timed = new SETimedStabilization();
+      SEDynamicStabilization dynamic = new SEDynamicStabilization();
       if(readStabilization(xlWBook.getSheet("Stabilization"),timed,dynamic))
       {
         String fileName = "./config/TimedStabilization.pba";
         Log.info("Writing : "+fileName);
         timed.writeFile(fileName);
-        PhysiologyEngineTimedStabilization checkTimed = new PhysiologyEngineTimedStabilization();
+        SETimedStabilization checkTimed = new SETimedStabilization();
         checkTimed.readFile(fileName);
         Log.info("Checking : "+fileName);
         
-        if(!PhysiologyEngineTimedStabilization.unload(timed).toString().equals(PhysiologyEngineTimedStabilization.unload(checkTimed).toString()))
+        if(!SETimedStabilization.unload(timed).toString().equals(SETimedStabilization.unload(checkTimed).toString()))
           throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for timed stabilization");
         
         fileName = "./config/DynamicStabilization.pba";
         Log.info("Writing : "+fileName);
         dynamic.writeFile(fileName);
-        PhysiologyEngineDynamicStabilization checkDynamic = new PhysiologyEngineDynamicStabilization();
+        SEDynamicStabilization checkDynamic = new SEDynamicStabilization();
         checkDynamic.readFile(fileName);
         Log.info("Checking : "+fileName);
         
-        if(!PhysiologyEngineDynamicStabilization.unload(dynamic).toString().equals(PhysiologyEngineDynamicStabilization.unload(checkDynamic).toString()))
+        if(!SEDynamicStabilization.unload(dynamic).toString().equals(SEDynamicStabilization.unload(checkDynamic).toString()))
           throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for dynamic stabilization");
       }
       
@@ -1271,7 +1271,7 @@ public class DataSetReader
     throw new RuntimeException("Not a valid environment property " + property);
   }
 
-  protected static boolean readStabilization(XSSFSheet xlSheet, PhysiologyEngineTimedStabilization timed, PhysiologyEngineDynamicStabilization dynamic)
+  protected static boolean readStabilization(XSSFSheet xlSheet, SETimedStabilization timed, SEDynamicStabilization dynamic)
   {
     int split;
     // Fields are expected data we must have
@@ -1285,7 +1285,7 @@ public class DataSetReader
     String property,value,unit,cellValue;
    
     SEScalarTime time=null;
-    PhysiologyEngineDynamicStabilizationCriteria criteria=null;
+    SEDynamicStabilizationEngineConvergence criteria=null;
     try
     {
       int rows = xlSheet.getPhysicalNumberOfRows();     
@@ -1301,17 +1301,17 @@ public class DataSetReader
         {
           if(property.equals("Resting"))
           {
-            criteria=dynamic.getRestingStabilizationCriteria();
+            criteria=dynamic.getRestingConvergence();
             time=timed.getRestingStabilizationTime();
           }
           else if(property.equals("Feedback"))
           {
-            criteria=dynamic.getFeedbackStabilizationCriteria();
+            criteria=dynamic.getFeedbackConvergence();
             time=timed.getFeedbackStabilizationTime();
           }
           else
           {
-            criteria=dynamic.createConditionCriteria(property);
+            criteria=dynamic.createConditionConvergence(property);
             time=timed.createConditionStabilizationTime(property);
           }
           continue;
@@ -1320,7 +1320,7 @@ public class DataSetReader
         {
         	// Note it is assumed that the all criteria are physiology requests
         	SEDataRequest dr = new SEDataRequest();
-        	dr.setName(row.getCell(2).getStringCellValue());
+        	dr.setPropertyName(row.getCell(2).getStringCellValue());
         	dr.setCategory(eCategory.Physiology);
           criteria.createProperty(row.getCell(1).getNumericCellValue(),dr);
         }

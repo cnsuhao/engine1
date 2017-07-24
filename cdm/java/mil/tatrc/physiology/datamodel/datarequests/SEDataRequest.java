@@ -20,7 +20,7 @@ import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
 
 public class SEDataRequest implements Serializable
 {
-  protected String                  name;
+  protected String                  propertyName;
   protected String                  unit;
   protected eCategory               category;
   protected String                  compartmentName;
@@ -35,7 +35,7 @@ public class SEDataRequest implements Serializable
   
   public void reset()
   {
-    name            = "";
+    propertyName            = "";
     unit            = null;
     category        = null;
     compartmentName = null;
@@ -47,7 +47,7 @@ public class SEDataRequest implements Serializable
   public static void load(DataRequestData src, SEDataRequest dst)
   {
     dst.reset();    
-    dst.name = src.getName();
+    dst.propertyName = src.getPropertyName();
     dst.unit = src.getUnit();
     dst.category = src.getCategory();
     dst.compartmentName = src.getCompartmentName();
@@ -66,8 +66,8 @@ public class SEDataRequest implements Serializable
   }
   protected static void unload(SEDataRequest src, DataRequestData.Builder dst)
   {
-    if(src.hasName())
-      dst.setName(src.name);
+    if(src.hasPropertyName())
+      dst.setPropertyName(src.propertyName);
     if(src.hasUnit())
       dst.setUnit(src.unit);
     if(src.hasCategory())
@@ -85,8 +85,8 @@ public class SEDataRequest implements Serializable
   public int hashCode()
   {
     int c = 17;
-    if(name!=null)
-    c = 31 * c + name.hashCode();
+    if(propertyName!=null)
+    c = 31 * c + propertyName.hashCode();
     if(unit!=null)
       c = 31 * c + unit.hashCode();
     if(category!=null)
@@ -102,9 +102,9 @@ public class SEDataRequest implements Serializable
     return c;
   }
   
-  public String getName(){ return name; }
-  public void setName(String name){ this.name = name; }
-  public boolean hasName() { return name==null||name.isEmpty() ? false : true; }
+  public String getPropertyName(){ return propertyName; }
+  public void setPropertyName(String name){ this.propertyName = name; }
+  public boolean hasPropertyName() { return propertyName==null||propertyName.isEmpty() ? false : true; }
   
   public String getUnit(){ return unit; }
   public void setUnit(String unit){ this.unit = unit; }

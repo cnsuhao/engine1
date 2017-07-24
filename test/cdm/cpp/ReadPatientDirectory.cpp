@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "CommonDataModelTest.h"
 #include "patient/SEPatient.h"
-#include "Serializer.h"
 #include "utils/TimingProfile.h"
 #include "utils/FileUtils.h"
 #include "utils/testing/SETestReport.h"
@@ -33,10 +32,10 @@ void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
   testSuite.SetName(testName);
 
   std::vector<std::string> files;
-  ListFiles(dir, files, ".xml");
+  ListFiles(dir, files, ".pba");
   for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) 
   {
-    if(it->find("xml")!=std::string::npos)
+    if(it->find("pba")!=std::string::npos)
     {
       pTimer.Start("Case");
       SETestCase& testCase = testSuite.CreateTestCase();
@@ -47,5 +46,5 @@ void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
       testCase.SetName(obj.GetName());
     }
   }
-  testReport.WriteFile(rptDirectory +"\\"+testName+"Report.xml");
+  testReport.WriteFile(rptDirectory +"\\"+testName+"Report.pba");
 }

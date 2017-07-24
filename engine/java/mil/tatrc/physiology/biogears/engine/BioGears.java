@@ -304,7 +304,7 @@ public class BioGears
           SEScalar scalar = null;
           for (SESystem sys : systems)
           {
-            scalar = SEScalar.getScalar(sys,dr.getName());
+            scalar = SEScalar.getScalar(sys,dr.getPropertyName());
             if (scalar != null)
             {
               dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
@@ -314,9 +314,9 @@ public class BioGears
             // I could do this more generically with reflection...
             // I know there should be a dash
   
-            if (sys instanceof SEGastrointestinalSystem && dr.getName().startsWith("StomachContents"))
+            if (sys instanceof SEGastrointestinalSystem && dr.getPropertyName().startsWith("StomachContents"))
             {
-              String scalarNameWithoutStomach = dr.getName().substring(dr.getName().indexOf('-')+1);
+              String scalarNameWithoutStomach = dr.getPropertyName().substring(dr.getPropertyName().indexOf('-')+1);
               SENutrition nutrition = ((SEGastrointestinalSystem)sys).getStomachContents();
   
               scalar = SEScalar.getScalar(nutrition, scalarNameWithoutStomach);
@@ -327,9 +327,9 @@ public class BioGears
               }
             }
   
-            if (sys instanceof SEDrugSystem && dr.getName().startsWith("PupillaryResponse"))
+            if (sys instanceof SEDrugSystem && dr.getPropertyName().startsWith("PupillaryResponse"))
             {
-              String propertyName = dr.getName().substring(dr.getName().indexOf('-')+1);
+              String propertyName = dr.getPropertyName().substring(dr.getPropertyName().indexOf('-')+1);
               SEPupillaryResponse pupillaryResponse = ((SEDrugSystem)sys).getPupillaryResponse();
   
               scalar = SEScalar.getScalar(pupillaryResponse, propertyName);
@@ -340,15 +340,15 @@ public class BioGears
               }
             }
   
-            if (sys instanceof SENervousSystem && (dr.getName().startsWith("LeftEyePupillaryResponse") || dr.getName().startsWith("RightEyePupillaryResponse")))
+            if (sys instanceof SENervousSystem && (dr.getPropertyName().startsWith("LeftEyePupillaryResponse") || dr.getPropertyName().startsWith("RightEyePupillaryResponse")))
             {
-              String propertyName = dr.getName().substring(dr.getName().indexOf('-')+1);
+              String propertyName = dr.getPropertyName().substring(dr.getPropertyName().indexOf('-')+1);
   
   
               SEPupillaryResponse pupillaryResponse=null;
-              if(dr.getName().startsWith("Left"))
+              if(dr.getPropertyName().startsWith("Left"))
                 pupillaryResponse = ((SENervousSystem)sys).getLeftEyePupillaryResponse();
-              else if(dr.getName().startsWith("Right"))
+              else if(dr.getPropertyName().startsWith("Right"))
                 pupillaryResponse = ((SENervousSystem)sys).getRightEyePupillaryResponse();
   
               scalar = SEScalar.getScalar(pupillaryResponse, propertyName);
@@ -361,7 +361,7 @@ public class BioGears
           }
           if(scalar!=null)
             continue;
-          Log.error("Unable to find system property " + dr.getName());
+          Log.error("Unable to find system property " + dr.getPropertyName());
           return false;
         }
         case GasCompartment:
@@ -370,12 +370,12 @@ public class BioGears
           if(dr.hasSubstanceName())
           {
             SESubstance sub = this.substanceManager.getSubstance(dr.getSubstanceName());
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getName())));
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getPropertyName())));
             continue;
           }
           else
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
             continue;
           }
         }
@@ -385,39 +385,39 @@ public class BioGears
           if(dr.hasSubstanceName())
           {
             SESubstance sub = this.substanceManager.getSubstance(dr.getSubstanceName());
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getName())));
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getPropertyName())));
             continue;
           }
           else
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
+            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
             continue;
           }
         }
         case ThermalCompartment:
         {
           SEThermalCompartment cmpt = compartments.GetThermalCompartment(dr.getCompartmentName());        
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
+          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
           continue;
         }      
         case TissueCompartment:
         {
           SETissueCompartment cmpt = compartments.GetTissueCompartment(dr.getCompartmentName()); 
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getName())));
+          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
           continue;
         }
         case Patient:
         {
-          String name = dr.getName();
-          if(dr.getName().startsWith("Patient"))
-            name = dr.getName().substring(7);
+          String name = dr.getPropertyName();
+          if(dr.getPropertyName().startsWith("Patient"))
+            name = dr.getPropertyName().substring(7);
           SEScalar scalar = SEScalar.getScalar(this.patient, name);
           if (scalar != null)
           {
             dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
             continue;
           }
-          Log.error("Unable to find patient property " + dr.getName());
+          Log.error("Unable to find patient property " + dr.getPropertyName());
           return false;
         }
         case Substance:
@@ -425,7 +425,7 @@ public class BioGears
           SESubstance sub = this.substanceManager.getSubstance(dr.getSubstanceName());
           if(dr.hasCompartmentName())
           {
-            if(dr.getName().equals("PartitionCoefficient"))
+            if(dr.getPropertyName().equals("PartitionCoefficient"))
             {
               SESubstanceTissuePharmacokinetics subTk = sub.getPK().getTissueKinetics(dr.getCompartmentName());
               dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,subTk.getPartitionCoefficient()));
@@ -433,64 +433,64 @@ public class BioGears
             }
             else
             {
-              Log.error("Do not have a property " + dr.getName() +" associated with compartments on a substance");
+              Log.error("Do not have a property " + dr.getPropertyName() +" associated with compartments on a substance");
               return false;
             }
           }
           else
           {
-            SEScalar scalar = SEScalar.getScalar(sub, dr.getName());
+            SEScalar scalar = SEScalar.getScalar(sub, dr.getPropertyName());
             if (scalar != null)
             {
               dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
               continue;
             }
           }
-          Log.error("Unable to find substance property " + dr.getName());
+          Log.error("Unable to find substance property " + dr.getPropertyName());
           return false;
         }
         case Environment:
         {
-          SEScalar scalar = SEScalar.getScalar(environment, dr.getName());
+          SEScalar scalar = SEScalar.getScalar(environment, dr.getPropertyName());
           if (scalar != null)
           {
             dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
             continue;
           }
-          Log.error("Unable to find environment property " + dr.getName());
+          Log.error("Unable to find environment property " + dr.getPropertyName());
           return false;
         }    
         case AnesthesiaMachine:
         {
-          SEScalar scalar = SEScalar.getScalar(anesthesiaMachine, dr.getName());
+          SEScalar scalar = SEScalar.getScalar(anesthesiaMachine, dr.getPropertyName());
           if (scalar != null)
           {
             dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));          
             continue;
           }
-          Log.error("Unable to find anesthesia machine property " + dr.getName());
+          Log.error("Unable to find anesthesia machine property " + dr.getPropertyName());
           return false;
         }   
         case ECG:
         {
-          SEScalar scalar = SEScalar.getScalar(ecg, dr.getName());
+          SEScalar scalar = SEScalar.getScalar(ecg, dr.getPropertyName());
           if (scalar != null)
           {
             dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));          
             continue;
           }
-          Log.error("Unable to find ecg property " + dr.getName());
+          Log.error("Unable to find ecg property " + dr.getPropertyName());
           return false;
         }   
         case Inhaler:
         {
-          SEScalar scalar = SEScalar.getScalar(inhaler, dr.getName());
+          SEScalar scalar = SEScalar.getScalar(inhaler, dr.getPropertyName());
           if (scalar != null)
           {
             dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));          
             continue;
           }
-          Log.error("Unable to find inhaler property " + dr.getName());
+          Log.error("Unable to find inhaler property " + dr.getPropertyName());
           return false;
         }   
         default:

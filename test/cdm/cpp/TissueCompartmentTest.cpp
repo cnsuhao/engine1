@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "CommonDataModelTest.h"
-#include "Serializer.h"
 
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
@@ -22,7 +21,6 @@ specific language governing permissions and limitations under the License.
 #include "compartment/tissue/SETissueCompartment.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/SECompartmentManager.h"
-#include "engine/PhysiologyEngineConfiguration.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"

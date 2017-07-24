@@ -30,6 +30,9 @@ message(STATUS "cpp bindings are here : ${cpp_bindings_DIR}" )
 execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_DST}/../../protobuf/src/protobuf/src/
                                   --java_out=${SCHEMA_DST}/../../protobuf/src/protobuf/java/core/src/main/java/
                                     ${SCHEMA_DST}/../../protobuf/src/protobuf/src/google/protobuf/descriptor.proto)
+execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_DST}/../../protobuf/src/protobuf/src/
+                                  --java_out=${SCHEMA_DST}/../../protobuf/src/protobuf/java/core/src/main/java/
+                                    ${SCHEMA_DST}/../../protobuf/src/protobuf/src/google/protobuf/any.proto)
 set(java_bindings_DIR "${to}/java")
 file(MAKE_DIRECTORY "${java_bindings_DIR}")
 file(GLOB_RECURSE _OLD_FILES "${java_bindings_DIR}/*.*")

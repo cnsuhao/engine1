@@ -15,21 +15,20 @@ import java.util.*;
 
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
-import com.kitware.physiology.cdm.EngineConfiguration.PhysiologyEngineDynamicStabilizationData;
-import com.kitware.physiology.cdm.EngineConfiguration.PhysiologyEngineTimedStabilizationData;
+import com.kitware.physiology.cdm.Engine.TimedStabilizationData;
 import com.kitware.physiology.cdm.Properties.eSwitch;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 import mil.tatrc.physiology.utilities.FileUtils;
 
-public class PhysiologyEngineTimedStabilization
+public class SETimedStabilization
 {
   protected eSwitch                  trackingStabilization;
   protected SEScalarTime             restingStabilizationTime;
   protected SEScalarTime             feedbackStabilizationTime;
   protected Map<String,SEScalarTime> conditionStabilizationTimes;
   
-  public PhysiologyEngineTimedStabilization()
+  public SETimedStabilization()
   {
     super();
     this.conditionStabilizationTimes=new HashMap<String,SEScalarTime>();
@@ -46,16 +45,16 @@ public class PhysiologyEngineTimedStabilization
   
   public void readFile(String fileName) throws ParseException
   {
-    PhysiologyEngineTimedStabilizationData.Builder builder = PhysiologyEngineTimedStabilizationData.newBuilder();
+    TimedStabilizationData.Builder builder = TimedStabilizationData.newBuilder();
     TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
-    PhysiologyEngineTimedStabilization.load(builder.build(), this);
+    SETimedStabilization.load(builder.build(), this);
   }
   public void writeFile(String fileName)
   {
-    FileUtils.writeFile(fileName, PhysiologyEngineTimedStabilization.unload(this).toString());
+    FileUtils.writeFile(fileName, SETimedStabilization.unload(this).toString());
   }
   
-  public static void load(PhysiologyEngineTimedStabilizationData src, PhysiologyEngineTimedStabilization dst) 
+  public static void load(TimedStabilizationData src, SETimedStabilization dst) 
   {
     if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED)
       dst.trackingStabilization=src.getTrackingStabilization();
@@ -63,20 +62,20 @@ public class PhysiologyEngineTimedStabilization
       SEScalarTime.load(src.getRestingStabilizationTime(),dst.getRestingStabilizationTime());
     if(src.hasFeedbackStabilizationTime())
       SEScalarTime.load(src.getFeedbackStabilizationTime(),dst.getFeedbackStabilizationTime());
-    for(PhysiologyEngineTimedStabilizationData.ConditionTimingData c : src.getConditionStabilizationList())
+    for(String name : src.getConditionStabilizationMap().keySet())
     {
-      SEScalarTime.load(c.getStabilizationTime(),dst.createConditionStabilizationTime(c.getName()));     
+      SEScalarTime.load(src.getConditionStabilizationMap().get(name),dst.createConditionStabilizationTime(name));     
     }
   }
   
-  public static PhysiologyEngineTimedStabilizationData unload(PhysiologyEngineTimedStabilization src)
+  public static TimedStabilizationData unload(SETimedStabilization src)
   {
-    PhysiologyEngineTimedStabilizationData.Builder dst = PhysiologyEngineTimedStabilizationData.newBuilder();
+    TimedStabilizationData.Builder dst = TimedStabilizationData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
   
-  protected static void unload(PhysiologyEngineTimedStabilization src, PhysiologyEngineTimedStabilizationData.Builder dst)
+  protected static void unload(SETimedStabilization src, TimedStabilizationData.Builder dst)
   {
     if(src.hasTrackingStabilization())
       dst.setTrackingStabilization(src.trackingStabilization);
@@ -86,9 +85,7 @@ public class PhysiologyEngineTimedStabilization
       dst.setFeedbackStabilizationTime(SEScalarTime.unload(src.feedbackStabilizationTime));
     for(String name : src.conditionStabilizationTimes.keySet())
     {
-      PhysiologyEngineTimedStabilizationData.ConditionTimingData.Builder c = dst.addConditionStabilizationBuilder();
-      c.setName(name);
-      c.setStabilizationTime(SEScalarTime.unload(src.conditionStabilizationTimes.get(name)));
+    	dst.getConditionStabilizationMap().put(name, SEScalarTime.unload(src.conditionStabilizationTimes.get(name)));
     }
   }
   

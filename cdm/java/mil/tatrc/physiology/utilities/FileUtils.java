@@ -991,7 +991,7 @@ public class FileUtils
 
   /**
    * 
-   * @param filename of the zip (including ext.)
+   * @param resultsFilename of the zip (including ext.)
    * @return integer, total unpacked size of all the files that are in the zipfile 
    */
   public static int getUnzippedFileSize(String fileName)

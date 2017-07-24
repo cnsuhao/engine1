@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #include <jni.h>
 #include <iostream>
 #include "CommonDataModel.h" 
-#include "Serializer.h"
 #include "utils/unitconversion/UCCommon.h"
 #include "CommonDataModelTest.h"
 

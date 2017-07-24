@@ -39,13 +39,13 @@ void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
 {
   std::ofstream file;
   SEDecimalFormat dfault;
-  dfault.SetNotation(DecimalNotation::Default);
+  dfault.SetNotation(cdm::DecimalFormatData::Default);
   dfault.SetPrecision(6);
   SEDecimalFormat fixed;
-  dfault.SetNotation(DecimalNotation::Fixed);
+  dfault.SetNotation(cdm::DecimalFormatData_eType_FixedMantissa);
   dfault.SetPrecision(8);
   SEDecimalFormat sci;
-  dfault.SetNotation(DecimalNotation::Scientific);
+  dfault.SetNotation(cdm::DecimalFormatData_eType_SignificantDigits);
   dfault.SetPrecision(4);
 
   DataTrack track;

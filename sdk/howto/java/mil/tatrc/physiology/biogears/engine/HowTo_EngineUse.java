@@ -116,22 +116,22 @@ public class HowTo_EngineUse
    SEDataRequestManager dataRequests = new SEDataRequestManager();
    SEDataRequest hr = new SEDataRequest();
    hr.setCategory(eCategory.Physiology);
-   hr.setName("HeartRate");
+   hr.setPropertyName("HeartRate");
    hr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(hr);
    SEDataRequest rr = new SEDataRequest();
    hr.setCategory(eCategory.Physiology);
-   rr.setName("RespirationRate");
+   rr.setPropertyName("RespirationRate");
    rr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(rr);
    SEDataRequest tlv = new SEDataRequest(); 
    hr.setCategory(eCategory.Physiology);   
-   tlv.setName("TotalLungVolume");
+   tlv.setPropertyName("TotalLungVolume");
    tlv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(tlv);
    SEDataRequest bv = new SEDataRequest();  
    hr.setCategory(eCategory.Physiology);  
-   bv.setName("BloodVolume");
+   bv.setPropertyName("BloodVolume");
    bv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(bv);
    

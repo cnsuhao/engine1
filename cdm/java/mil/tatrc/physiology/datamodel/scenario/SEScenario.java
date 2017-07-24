@@ -46,7 +46,7 @@ public class SEScenario
     s.getInitialParameters().setPatientFile("StandardMale.pba");
     SEDataRequest dr = new SEDataRequest();
     dr.setCategory(eCategory.Physiology);
-    dr.setName("Weight");
+    dr.setPropertyName("Weight");
     dr.setUnit("kg");
     dr.setPrecision(1);
     s.getDataRequestManager().getRequestedData().add(dr);
