@@ -7,7 +7,7 @@ simulation across the medical community. The engine can be used as a
 standalone application or integrated with simulators, sensor interfaces,
 and models of all fidelities.
 
-Physiology Engine high-level objectives include:
+Original BioGears high-level objectives include:
 -   Create a publicly available physiology research platform that
     enables accurate and consistent simulated physiology across training
     applications
@@ -122,7 +122,7 @@ The deliberate identification of data requirements must precede any model modifi
 if an extension of the Common Data Model is required. If the existing data model is sufficient to meet your modeling needs, 
 you may be able to implement changes satisfactorily just by modifying the source code for the physiologic system 
 of interest. If a Common Data Model extension is necessary, modification of the source code becomes more complicated. The 
-quickest and easiest way to modify the physiology engine to meet your needs is to work with Kitware - email: jeff.webb@kitware.com.
+quickest and easiest way to modify the physiology engine to meet your needs is to work with Kitware - email: physiology@kitware.com.
 
 We can help with requirements definition, provide development support, and/or make modifications for you.
 

@@ -8,7 +8,7 @@
 # So for MSVC I am going to build the bind DLL with the min generated source to speed up build times
 # Maybe one day I will figure out how to properly get a gcc compiler to digest the min folder as well
 # I tried precompiled headers in MinGW but that did not really work as I expected..
-# Shoot me an email if you have any ideas (aaron.bray@kitware.com)
+# Shoot an email if you have any ideas (physiology@kitware.com)
 
 # Look to see if the XSD has changed since our last build
 # and only rebuild if that is the case

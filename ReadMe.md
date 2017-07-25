@@ -29,7 +29,7 @@ The code provided utilizes C++11, here is a list of popular compilers and their 
 - Clang 3.3 and later
 - MSVC 2015 and later
 
-If you have any questions\comments, don't hesitate to email aaron.bray@kitware.com
+If you have any questions\comments, don't hesitate to email physiology@kitware.com.
 
 While the provided cmake superbuild automatically pulls many libraries it needs to compile, 
 you will still need to have the following tools installed (along with your choice of C++ compiler) :

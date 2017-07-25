@@ -2,7 +2,7 @@
 
 # Welcome to the Kitware Physiology Engine
 
-The Kitware Physiology Engine is a fork of the %BioGears<sup>&reg;</sup> project began at Applied Research Associates, Inc.  Therefore, you will see the Physiology Engine referred to as "BioGears" throughout the Apache 2.0 licenses documentation.
+The <a href="https://gitlab.kitware.com/physiology/engine">Kitware Physiology Engine</a> is a fork of the %BioGears<sup>&reg;</sup> project began at Applied Research Associates, Inc.  Therefore, you will see the Physiology Engine referred to as "BioGears" throughout the Apache 2.0 licensed documentation.
 
 - - -
 

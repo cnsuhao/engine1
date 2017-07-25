@@ -45,7 +45,7 @@ The community at large is contributing to the advancement of this version of the
 
 ## Can I contact the Physiology Engine team to work on my current or upcoming project?
 Absolutely. We always welcome new and challenging opportunities to 
-work with research partners and sponsors. Please email <a href="https://www.kitware.com/jeff-webb/">Jeff Webb</a> at jeff.webb@kitware.com.
+work with research partners and sponsors. Please email us at physiology@kitware.com.
 
 ## What open source license does the Physiology Engine Use?
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html">Apache 2.0</a>. For more information see our @ref License.
@@ -71,7 +71,7 @@ extended and improved by our team and the community over time.
 ## Where can I ask questions or get help?
 Our team spent a great deal of time documenting the engine and our 
 system models. Please look at the documentation first. For more specific questions about connecting the engine 
-with an external interface or extending system models, email <a href="https://www.kitware.com/jeff-webb/">Jeff Webb</a> directly at jeff.webb@kitware.com.
+with an external interface or extending system models, email us at physiology@kitware.com.
 
 ## Is the Physiology Engine a game?
 No, it is a physiology engine that can power immersive 
