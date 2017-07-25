@@ -13,7 +13,7 @@ Usage: Cross-platform build process using compiler-independent methods.
 
 ---
 
-## <a href="http://www.stack.nl/~dimitri/doxygen/">Code Synthesis</a>
+## <a href="http://www.codesynthesis.com/">Code Synthesis</a>
 
 Usage: XML data binding compiler to C++.
 
@@ -52,11 +52,10 @@ Usage: Creating realtime plots of output data.
 <img src="./images/Credits/SourceForge.png" alt="SourceForge" align="left"> <br> <br> <br> <br> <br> <br> <br>
 
 ---
-## <a href="http://ant.apache.org/">Apache Ant</a>
 
-Usage: Compiling and running Java applications.
+## <a href="https://code.google.com/p/reflections/">Reflections</a>
 
-<img src="./images/Credits/Ant.gif" alt="Ant" align="left"> <br> <br> <br> <br> <br>
+Usage: Reflectively analyze classes for dynamic GUI generation.
 
 ---
 
@@ -65,6 +64,10 @@ Usage: Compiling and running Java applications.
 Usage: HTML documentation generation.
 
 <img src="./images/Credits/doxygen.png" alt="Doxygen" align="left"> <br> <br> <br> <br>
+
+---
+
+Tools used on windows for doxygen generation :
 
 ---
 
@@ -78,12 +81,15 @@ Usage: Required by Doxygen for citations and creating a references page.
 
 ## <a href="http://miktex.org/">MiKTeX</a>
 
-Usage: Required by Doxygen for citations and creating a references page.
+Usage: Required by Doxygen for citations and creating a references pages.
 
 <img src="./images/Credits/MiKTeX.png" alt="MiKTeX" align="left"> <br> <br> <br> <br>
 
 ---
+## <a href="https://ghostscript.com/">Ghost Script</a>
 
-## <a href="https://code.google.com/p/reflections/">Reflections</a>
+Usage: Required by MikeTeX when generating images of equations.
 
-Usage: Reflectively analyze classes for dynamic GUI generation.
+<img src="./images/Credits/MiKTeX.png" alt="GhostScript" align="left"> <br> <br> <br> <br>
+
+
