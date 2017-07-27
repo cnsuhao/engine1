@@ -8,7 +8,7 @@ Overview
 Abstract
 --------
 
-The %Renal system's purpose in the body is to filter blood. Each kidney is modeled in the %BioGears Engine using a single, lumped nephron to represent its behavior. By using this circuit analogue of a lumped nephron, %BioGears accurately simulates the major functions of the kidney: filtration, clearance, secretion, and reabsorption. Through these nephron-level processes, we are able to accurately recreate the mechanism by which urine is produced and blood is filtered. The renal system is complex and able to mechanistically and accurately recreate the clearance of the substances currently in %BioGears. The system passes the majority of validation and demonstrates the correct trends in scenarios that test specific functionality.
+The %Renal system's purpose in the body is to filter blood. Each kidney is modeled in the engine using a single, lumped nephron to represent its behavior. By using this circuit analogue of a lumped nephron, the engine accurately simulates the major functions of the kidney: filtration, clearance, secretion, and reabsorption. Through these nephron-level processes, we are able to accurately recreate the mechanism by which urine is produced and blood is filtered. The renal system is complex and able to mechanistically and accurately recreate the clearance of the substances currently in the engine. The system passes the majority of validation and demonstrates the correct trends in scenarios that test specific functionality.
 
 @anchor renal-introduction
 Introduction
@@ -56,7 +56,7 @@ nitrogen content over long periods of time. Nitrogen waste from the liver is exc
 
 ### %Renal Modeling
 
-The %BioGears %Renal model lumps each kidney into a single nephron (Figure 2). The  fluid flow through the kidney is modeled with an electrical circuit analogue, and the substance transport is a combination of the generic transporter and active filtration/reabsorption/secretion based on feedback and substance parameters. Alternatively, excretion can be directly applied and is governed via clearance equations - as with the drug model (@ref DrugsMethodology). This is consistent with other %BioGears system models, which also employ lumped parameter modeling.
+The %Renal model lumps each kidney into a single nephron (Figure 2). The  fluid flow through the kidney is modeled with an electrical circuit analogue, and the substance transport is a combination of the generic transporter and active filtration/reabsorption/secretion based on feedback and substance parameters. Alternatively, excretion can be directly applied and is governed via clearance equations - as with the drug model (@ref DrugsMethodology). This is consistent with other system models, which also employ lumped parameter modeling.
 
 @image html LumpedNephron.png
 <center>
@@ -74,7 +74,7 @@ Background and Scope
 
 ### Requirements
 
-The %Renal system needs to meet the following requirements in %BioGears:
+The %Renal system needs to meet the following requirements in the engine:
 - General kidney functions @cite guyton2006medical
 	- Excretion of metabolic waste products and foreign chemicals
 	- Regulation of water and electrolyte balances
@@ -132,7 +132,7 @@ desired size of the network increases, it can become computationally intensive. 
 
 ### Approach
 
-The %Renal model includes both the upper and lower urinary tracts.  The urine formation in the kidneys is simulated using a single lumped nephron model, which is the internal functional element shown as #2 in Figure 1. The computational representation of the system includes the renal artery that feeds into the afferent arteriole. Filtration takes place through the glomerular capillaries, and re-absorption occurs through the tubules into the peritubular capillaries. The peritubular capillaries connect into the vena cava, allowing transport back into the cardiovascular system. The ureter and bladder make up the rest of the kidney model in %Biogears. This model of the renal system allows for tubuloglomerular feedback and re-absorption feedback. These mechanisms allow for diuresis under heavy pressure loads and filtrate regulation under variable pressure scenarios. 
+The %Renal model includes both the upper and lower urinary tracts.  The urine formation in the kidneys is simulated using a single lumped nephron model, which is the internal functional element shown as #2 in Figure 1. The computational representation of the system includes the renal artery that feeds into the afferent arteriole. Filtration takes place through the glomerular capillaries, and re-absorption occurs through the tubules into the peritubular capillaries. The peritubular capillaries connect into the vena cava, allowing transport back into the cardiovascular system. The ureter and bladder make up the rest of the kidney model in the engine. This model of the renal system allows for tubuloglomerular feedback and re-absorption feedback. These mechanisms allow for diuresis under heavy pressure loads and filtrate regulation under variable pressure scenarios. 
 
 The %Renal fluid circuit is inserted in the the circulatory system and replaces a calibrated three-element (two resistances and one compliance) Windkessel model that is used for %Cardiovascular validation.  In this way, the standalone circuit at a resting physiologic state matches from a total fluid mechanics standpoint.
 
@@ -166,7 +166,7 @@ The Postprocess step moves values calculated in the Process step from the next t
 
 There is one assessment that is done within the %Renal system - urinalysis.  This is a data call that requires further calculations and analysis to create outputs.  It is discussed in detail later.
 
-<img src="./images/Renal/RenalFlowChart.png" width="1100">
+<img src="./Images/Renal/RenalFlowChart.png" width="1100">
 <center>
 <i>
 Figure 3. The data flow for the %Renal System consists of Preprocess, Process, and Postprocess. Preprocess determines the circuit element values based on feedback mechanisms and engine actions. Process uses generic circuit methodology to solve the circuit for pressures, volumes, and flows along the paths and on nodes. Postprocess updates these quantities to the next time step and then begins advancing time, which causes the loop to repeat.
@@ -179,7 +179,7 @@ Features, Capabilities, and Dependencies
 
 ### Circuit
 
-The %BioGears %Renal circuit (Figure 4) determines blood and urine pressure, flow, and volume, organized by compartments.  These compartments are comprised of lumped parameter models that use resistors, capacitors, pressure sources, and valves.  The number of lumped parameter models used to represent the %Renal System was chosen to provide a level of fidelity that meets the requirements of the overall project and to provide sufficient system capability.
+The %Renal circuit (Figure 4) determines blood and urine pressure, flow, and volume, organized by compartments.  These compartments are comprised of lumped parameter models that use resistors, capacitors, pressure sources, and valves.  The number of lumped parameter models used to represent the %Renal System was chosen to provide a level of fidelity that meets the requirements of the overall project and to provide sufficient system capability.
 @anchor renal-circuit
 @image html RenalCircuit.png
 <center>
@@ -193,8 +193,8 @@ pressures are measured. Each %Renal node contains a pressure value, which is giv
 with respect to the atmospheric reference node (indicated in the diagram by the
 equipotential symbol). Nodes can also hold the values for volume or the mass and
 concentration of substances. Paths contain information about the flow (volume
-per time) and volumes of compliances. The %BioGears @ref CircuitMethodology document
-contains more information about %BioGears circuit definitions and modeling. The %BioGears @ref SubstanceTransportMethodology
+per time) and volumes of compliances. The @ref CircuitMethodology document
+contains more information about circuit definitions and modeling. The @ref SubstanceTransportMethodology
 contains more information about the substance transport and mass and concentration calculations.
 
 Dynamic pressure sources are used at the filtration and reabsorption locations to model the colloid osmotic pressures caused by protein in the fluid.  These pressures, in combination with the hydrostatic pressures, give a correct total pressure difference to cause a correct net fluid flow.
@@ -267,14 +267,14 @@ The untuned baseline resistance values were calculated using the values in Table
 @anchor renal-dependencies
 ### Patient Variability
 
-The total vascular volume of the %renal system in %Biogears is defined to be a fraction of the body total, making kidney volume directly dependent upon the patient data: height, weight, and gender. The volume fraction of both kidneys is set to be 0.0202, or about 1/50th of total blood volume @cite valtin1995renal. This volume is then divided in half to populate the total vascular volume of one kidney. For a further breakdown of the volume of each kidney compartment see @ref renal-features "Features".
+The total vascular volume of the %renal system in is defined to be a fraction of the body total, making kidney volume directly dependent upon the patient data: height, weight, and gender. The volume fraction of both kidneys is set to be 0.0202, or about 1/50th of total blood volume @cite valtin1995renal. This volume is then divided in half to populate the total vascular volume of one kidney. For a further breakdown of the volume of each kidney compartment see @ref renal-features "Features".
 
 
 ### Feedback
 
 #### Colloid Osmotic Pressure
 
-The net filtration and reabsorption pressures are determined by the sum of the hydrostatic and colloid osmotic forces across the membranes.  While the hydrostatic pressure is automatically handled using the generic circuit algorithms, the colloid osmotic pressure needs to be determined specifically.  This is done by using the Landis-Pappenheimer equation (Equation 4) that is dependent on total protein @cite khazaei2008new.  Since the %BioGears engine tracks albumin, a constant relationship between total protein and albumin can be leveraged using Equation 3.  *C<sub>TP</sub>* is the local concentration of total protein, *C<sub>A</sub>* is the local concentration of albmuin, and *P<sub>CO</sub>* is colloid osmotic pressure.
+The net filtration and reabsorption pressures are determined by the sum of the hydrostatic and colloid osmotic forces across the membranes.  While the hydrostatic pressure is automatically handled using the generic circuit algorithms, the colloid osmotic pressure needs to be determined specifically.  This is done by using the Landis-Pappenheimer equation (Equation 4) that is dependent on total protein @cite khazaei2008new.  Since the engine tracks albumin, a constant relationship between total protein and albumin can be leveraged using Equation 3.  *C<sub>TP</sub>* is the local concentration of total protein, *C<sub>A</sub>* is the local concentration of albmuin, and *P<sub>CO</sub>* is colloid osmotic pressure.
 
 \f[{C_{TP}} = 1.6{C_A}\f]
 <center>
@@ -295,7 +295,7 @@ Figure 6. The four pressure sources that represent the colloid osmotic pressure 
 </i>
 </center><br>
 
-Table 2 gives the typical colloid osmotic pressure values.  The tubular osmotic pressure is set constant in our model and does not change because we are not modeling the interstitial space.  The remaining osmotic pressures will increase and decrease in relation to the local albumin concentration variations.  See Table 5 for %BioGears resulting values when albumin concentration feedback is applied.
+Table 2 gives the typical colloid osmotic pressure values.  The tubular osmotic pressure is set constant in our model and does not change because we are not modeling the interstitial space.  The remaining osmotic pressures will increase and decrease in relation to the local albumin concentration variations.  See Table 5 for resulting values when albumin concentration feedback is applied.
 
 <br><center>
 <i>Table 2. The baseline colloid osmotic pressure values used for both initialization and model validation @cite guyton2006medical. The numbering matches that of the previous figure. </i>
@@ -319,7 +319,7 @@ The hydraulic and colloid osmotic pressure gradients across the glomerular and p
 
 *L<sub>p</sub>* is the hydraulic conductivity of the membrane and S<sub>f</sub> is the surface area. Relating the equation above to the linear fluid dynamics equations, it is apparent that the resistance to flow can be modeled as 1/(*L<sub>p</sub>* *S<sub>f</sub>*). The product, *L<sub>p</sub>* *S<sub>f</sub>*, has been called the glomerular filtration coefficient @cite tuma2011microcirculation. A similar reabsorption coefficient can be derived from the equations governing the reabsorption of water in the renal tubules @cite tuma2011microcirculation.
 
-The hydraulic permeability is computed for use in the %BioGears model using filtration coefficients reported in literature as well as surface area estimates. The surface area of the glomerular capillaries is estimated to be about 2.0 square meters per human kidney @cite valentin2002icrp. The surface area of the peritubular capillaries is larger than the glomerular capillaries @cite tuma2011microcirculation. However, how much larger is difficult to quantify. For the %BioGears model, it is assumed that the surface area of the peritubular capillaries is 25 percent larger than the surface area of the glomerular capillaries. Using the glomerular filtration coefficient value of 13 mL/min-mmHg for both kidneys as reported in @cite tuma2011microcirculation (6.5 mL/min-mmHg each kidney assuming an equal distribution of surface area), the hydraulic conductivity of the glomerular capillaries is calculated to be 3.67647 mL/m2-min-mmHg. Likewise, using the reabsorption coefficient value of 10  mL/min-mmHg for both kidneys @cite tuma2011microcirculation, the hydraulic conductivity of the peritubular capillaries is computed to be 2.91747 mL/m2-min-mmHg.
+The hydraulic permeability is computed for use in the model using filtration coefficients reported in literature as well as surface area estimates. The surface area of the glomerular capillaries is estimated to be about 2.0 square meters per human kidney @cite valentin2002icrp. The surface area of the peritubular capillaries is larger than the glomerular capillaries @cite tuma2011microcirculation. However, how much larger is difficult to quantify. For the model, it is assumed that the surface area of the peritubular capillaries is 25 percent larger than the surface area of the glomerular capillaries. Using the glomerular filtration coefficient value of 13 mL/min-mmHg for both kidneys as reported in @cite tuma2011microcirculation (6.5 mL/min-mmHg each kidney assuming an equal distribution of surface area), the hydraulic conductivity of the glomerular capillaries is calculated to be 3.67647 mL/m2-min-mmHg. Likewise, using the reabsorption coefficient value of 10  mL/min-mmHg for both kidneys @cite tuma2011microcirculation, the hydraulic conductivity of the peritubular capillaries is computed to be 2.91747 mL/m2-min-mmHg.
 
 These values are applied in the model as the resistances circled in Figure 7 and are determined using Equation 6.  *R<sub>Filt</sub>* is the membrane fluid resistance, *k<sub>p</sub>* is the permeability, and *A* is the total membrane area.
 
@@ -341,7 +341,7 @@ Individual substance transport from the glomerular capillaries to the bowmans ca
 
 Empirical data was used to determine a generic relationship between molecular weight and molecular radius.  Values for water, glucose, inulin, myoglobin, hemoglobin, and albumin were used to determine the best fit shown in Figure 8 @cite rhoades2003medical.
 
-<center><img src="./images/Renal/MolecularRadius.png" width="600"></center>
+<center><img src="./Images/Renal/MolecularRadius.png" width="600"></center>
 <center>
 <i>
 Figure 8. This is the best fit of molecules present in the blood molecular weight to molecular radius.  The resulting equation shows very good fit.
@@ -350,7 +350,7 @@ Figure 8. This is the best fit of molecules present in the blood molecular weigh
 
 Electrical charge of each molecule has an effect on the total filterability.  A negative charge restricts filtration, where as a positive charge filters more readily.  Figure 9 shows the relative filterability best fit for positively charged, neutral, and negatively charged molecules as a function of molecular radius (determined using the relationship in Figure 8).
 
-<center><img src="./images/Renal/RelativeFilterability.png" width="600"></center>
+<center><img src="./Images/Renal/RelativeFilterability.png" width="600"></center>
 <center>
 <i>
 Figure 9. Effect of size and electrical charge of dextran on its filterability by the glomerular capillaries @cite bohrer1978permselectivity.  A value of 1.0 indicates that the substance is filtered as freely as water.  This relationship can be extrapollated to all substances.  The resulting equations show very good fit.
@@ -359,15 +359,15 @@ Figure 9. Effect of size and electrical charge of dextran on its filterability b
 
 #### Reabsorption
 
-Reabsorption works in much the same way as glomerular filtration, with additional active mechanisms that are different for each substance. For the %BioGears %Renal model, all of the active transport mechanisms are lumped into a single reabsorption ratio parameter defined for each substance. This ratio represents the extent to which the substance is reabsorbed from the tubules to the peritubular capillaries in relation to the fluid flow. Therefore, a value of 1.0 indicates that the substance is reabsorbed at the same rate as water, values below 1.0 indicate that it is reabsorbed more avidly than water, and values above 1.0 indicate that it is reabsorbed less avidly than water. Each substance also has a transport maximum value defined that prevents substance mass movement at a specific transient value. A value of infinity is allowed for both reabsorption-specific substance parameters.
+Reabsorption works in much the same way as glomerular filtration, with additional active mechanisms that are different for each substance. For the %Renal model, all of the active transport mechanisms are lumped into a single reabsorption ratio parameter defined for each substance. This ratio represents the extent to which the substance is reabsorbed from the tubules to the peritubular capillaries in relation to the fluid flow. Therefore, a value of 1.0 indicates that the substance is reabsorbed at the same rate as water, values below 1.0 indicate that it is reabsorbed more avidly than water, and values above 1.0 indicate that it is reabsorbed less avidly than water. Each substance also has a transport maximum value defined that prevents substance mass movement at a specific transient value. A value of infinity is allowed for both reabsorption-specific substance parameters.
 
 ##### Reabsorption Feedback
 
-Pressure natriuresis and diuresis are simulated in the %Biogears %Renal model through reabsorption premeability modifiers. In the kidneys, as arterial pressure increases, shear stresses are developed along the cell walls. These stresses induce the release of nitric oxide, which is diffused downstream to the tubules of the nephron. This serves to decrease the sodium reabsorption rate through select entry pathways @cite navar1999kidney. This decrease in sodium resabsorptioin decreases the osmotic gradient along this fluid path, consequently leading to a coupled decrease in fluid reabsorption. %Biogears does not currently support nitric oxide, so we model this mechanism by coupling the fluid permeability characteristics of the tubules as function of arterial pressure. This allows for the connection to downstream pressure changes and sodium/water reabsorption. A second order polynomial (See Equation 7) is fit to the data taken from @cite guyton2006medical that scales the tubules' fluid permeability as a function of arterial pressure. This permeability then directly affects the resistance along the reabsorption pathway, leading to a decrease or increase in water/sodium transport. Diruetic administration can also inhibit the reabsorption by modifying the tubular lumen permeabilty as a function of plasma concentration of Furosemide, @ref DrugsMethodology.
+Pressure natriuresis and diuresis are simulated in the %Renal model through reabsorption premeability modifiers. In the kidneys, as arterial pressure increases, shear stresses are developed along the cell walls. These stresses induce the release of nitric oxide, which is diffused downstream to the tubules of the nephron. This serves to decrease the sodium reabsorption rate through select entry pathways @cite navar1999kidney. This decrease in sodium resabsorptioin decreases the osmotic gradient along this fluid path, consequently leading to a coupled decrease in fluid reabsorption. The engine does not currently support nitric oxide, so we model this mechanism by coupling the fluid permeability characteristics of the tubules as function of arterial pressure. This allows for the connection to downstream pressure changes and sodium/water reabsorption. A second order polynomial (See Equation 7) is fit to the data taken from @cite guyton2006medical that scales the tubules' fluid permeability as a function of arterial pressure. This permeability then directly affects the resistance along the reabsorption pathway, leading to a decrease or increase in water/sodium transport. Diruetic administration can also inhibit the reabsorption by modifying the tubular lumen permeabilty as a function of plasma concentration of Furosemide, @ref DrugsMethodology.
 
 <center><img src="./plots/Renal/MAP_vs_UPR.jpg" width="600"></center>
 <center> 
-<i>Figure 10 shows the urine production rate as a function of the mean arterial pressure. Blue is experimental data and red is %Biogears simulation data. Diuresis takes place in response to increased blood pressure, in agreement with renal functionality.</i>
+<i>Figure 10 shows the urine production rate as a function of the mean arterial pressure. Blue is experimental data and red is simulated data. Diuresis takes place in response to increased blood pressure, in agreement with renal functionality.</i>
 </center><br>
 
 
@@ -387,7 +387,7 @@ Here *K<sub>mod</sub>(C<sub>p</sub>)* is the modification coefficient calculated
 
 
 ### Secretion 
-Flow of substances can be directed from the peritubular capillaries into the tubules through secretion. As fluid travels along the tubules and into the collecting ducts of the nephron, various stages of the journey either reabsorb or secret substances and water back into and out of the fluid. One of the most important tasks of the renal system is handling of potassium levels in the blood stream. Secretion is one of the main ways that the renal system handles this task with active transport mechanisms located along the tubular cell wall. %Biogears simulates this active handling of potassium by allowing for secretion into the ureter from peritubular capillaries. Mass is calculated and tightly regulated by the %Biogears renal system by actively moving any mass above a certain threshold directly into the urine. %Biogears does not currently support disturbances to the permeable layer and so shifts in potassium levels in the body will not currently be possible. 
+Flow of substances can be directed from the peritubular capillaries into the tubules through secretion. As fluid travels along the tubules and into the collecting ducts of the nephron, various stages of the journey either reabsorb or secret substances and water back into and out of the fluid. One of the most important tasks of the renal system is handling of potassium levels in the blood stream. Secretion is one of the main ways that the renal system handles this task with active transport mechanisms located along the tubular cell wall. The engine simulates this active handling of potassium by allowing for secretion into the ureter from peritubular capillaries. Mass is calculated and tightly regulated by the renal system by actively moving any mass above a certain threshold directly into the urine. The engine does not currently support disturbances to the permeable layer and so shifts in potassium levels in the body will not currently be possible. 
 
 #### Bladder and Excretion
 
@@ -395,7 +395,7 @@ Excretion of fluid and substances to the bladder is done generically by the circ
 
 #### Tubuloglomerular Feedback
 
-One of the main mechanisms for kidney regulation of renal blood flow due to changes in the mean arterial pressure is tubuloglomerular feedback. This is caused by a transient increase in GFR that leads to an increased sodium delivery to the macula densa @cite rhoades2003medical. For the %BioGears %Renal model, the macula densa is lumped with all tubules. When the mass flow rate of sodium changes in the tubules, a response is applied.
+One of the main mechanisms for kidney regulation of renal blood flow due to changes in the mean arterial pressure is tubuloglomerular feedback. This is caused by a transient increase in GFR that leads to an increased sodium delivery to the macula densa @cite rhoades2003medical. For the %Renal model, the macula densa is lumped with all tubules. When the mass flow rate of sodium changes in the tubules, a response is applied.
 
 Within an autoregulatory range of 80 to 180 mmHg for the MAP, the renal blood flow is is maintained by either constricting (increased resistance) or dilating (decreased resistance) the afferent areteriole @cite rhoades2003medical. A higher sodium mass flow rate in the tubules leads to a higher resistance, and a lower mass flow rate leads to a lower resistance (see Figure 11). The minimum and maximum resistances for the afferent arteriole were determined through a unit test to be 1.7 mmHg/mL-s (at MAP of 80 mmHg) and 12.382 mmHg/mL-s (at MAP of 180 mmHg).
 
@@ -406,7 +406,7 @@ Figure 11. A flow diagram showing the tubuloglomerular response to increased and
 </i>
 </center><br>
 
-High frequency oscillations of the tubuloglomerular feedback are damped using the tuning constant, alpha, in Equation 8.  *R<sub>Aff</sub>* is the afferent arteriole resistance where i and i+1 signify the current and the next resistance respectively, ||&Delta; U<sub>Na</sub>|| is the normalized change in sodium flow into the tubules. Normalization is used to decrease sensitivity of the response. Large fluctuations are not only physiologically incorrect but also create instabilities during heartbeats. The sodium mass flow setpoint is the expected value with a stable standard patient. Figure 13 indicates good agreement between the mechanics of %Biogears and experimental data. Autoregulation is handled entirely from the TGF response, with the myogenic response not modeled currently.
+High frequency oscillations of the tubuloglomerular feedback are damped using the tuning constant, alpha, in Equation 8.  *R<sub>Aff</sub>* is the afferent arteriole resistance where i and i+1 signify the current and the next resistance respectively, ||&Delta; U<sub>Na</sub>|| is the normalized change in sodium flow into the tubules. Normalization is used to decrease sensitivity of the response. Large fluctuations are not only physiologically incorrect but also create instabilities during heartbeats. The sodium mass flow setpoint is the expected value with a stable standard patient. Figure 13 indicates good agreement between the mechanics of the engine and experimental data. Autoregulation is handled entirely from the TGF response, with the myogenic response not modeled currently.
 
 \f[R_{Aff}^{i + 1} * = \frac{{R_{Aff}^i}}{{R_{Aff}^{i + 1}}} + \alpha \left\| {\Delta {U_{Na}}} \right\|\f]
 <center>
@@ -431,7 +431,7 @@ Figure 12. The circle shows the location used to determine the sodium value, and
 </center>
 <center>
 <i>
-Figure 13. The plots show the flow response to variations in mean arterial pressure: blue indicates experimental data and red indicates %Biogears simulation data. Autoregulatory plateau is seen in GFR and RBF. 
+Figure 13. The plots show the flow response to variations in mean arterial pressure: blue indicates experimental data and red indicates engine simulation data. Autoregulatory plateau is seen in GFR and RBF. 
 </i>
 </center><br>
 
@@ -456,7 +456,7 @@ The sensitivity of the osmoreceptor feedback is calibrated using the tuning cons
 
 #### Gluconeogenesis
 
-Gluconeogenesis is a metabolic pathway that results in the generation of glucose from non-carbohydrate carbon substrates, such as lactate.  Within the %BioGears %Renal system, this process is applied by converting excreted lactate at a one-to-one mass ratio into reabsorbed glucose. This effectively removes all lactate from the urine until the transport maximum is achieved. If the converted mass exceeds the transport maximum, it is capped and the remainder continues to the urine.
+Gluconeogenesis is a metabolic pathway that results in the generation of glucose from non-carbohydrate carbon substrates, such as lactate.  Within the %Renal system, this process is applied by converting excreted lactate at a one-to-one mass ratio into reabsorbed glucose. This effectively removes all lactate from the urine until the transport maximum is achieved. If the converted mass exceeds the transport maximum, it is capped and the remainder continues to the urine.
 
 #### %Renal Clearance
 
@@ -506,19 +506,19 @@ Events
 
 ### Diuresis
 
-Diuresis is the state of producing urine at a significantly faster rate than normal. In %BioGears, we consider diuresis to occur when the average production rate of urine exceeds 8 mL/min @cite upsdell1988diuretic, and the event is reversed when the average production rate of urine falls below 7.5 mL/min.
+Diuresis is the state of producing urine at a significantly faster rate than normal. In the engine, we consider diuresis to occur when the average production rate of urine exceeds 8 mL/min @cite upsdell1988diuretic, and the event is reversed when the average production rate of urine falls below 7.5 mL/min.
 
 ### Antidiuresis
 
-Antidiuresis occurs when small quantities of urine are being produced at an osmolarity greater than that of the plasma. For %BioGears, this event is thrown when the average urine production rate is less than 0.5 mL/min and the urine osmolarity is greater than 280 mOsm/L @cite valtin1995renal. The event is reversed when either the urine production rate rises above 0.55 mL/min or the urine osmolarity falls below 275 mOsm/L.
+Antidiuresis occurs when small quantities of urine are being produced at an osmolarity greater than that of the plasma. For the engine, this event is thrown when the average urine production rate is less than 0.5 mL/min and the urine osmolarity is greater than 280 mOsm/L @cite valtin1995renal. The event is reversed when either the urine production rate rises above 0.55 mL/min or the urine osmolarity falls below 275 mOsm/L.
 
 ### Natriuresis
 
-Natriuresis is the state of an unusually high rate of sodium excretion into the urine. In %BioGears, the setpoint for natriuresis is an average sodium excretion rate of 14.4 mg/min, or 6 times the resting sodium excretion rate @cite moss2014hormonal. The event is reversed when the average sodium excretion rate falls below 14.0 mg/min.
+Natriuresis is the state of an unusually high rate of sodium excretion into the urine. In the engine, the setpoint for natriuresis is an average sodium excretion rate of 14.4 mg/min, or 6 times the resting sodium excretion rate @cite moss2014hormonal. The event is reversed when the average sodium excretion rate falls below 14.0 mg/min.
 
 ### Functional Incontinence
 
-Functional incontinence occurs when the bladder becomes too full of urine and automatially urinates. When the urine volume exceeds the maximum volume of the bladder in %BioGears, 400 mL, the functional incontinence event is thrown and a urinate action is automatically executed.
+Functional incontinence occurs when the bladder becomes too full of urine and automatially urinates. When the urine volume exceeds the maximum volume of the bladder in the engine, 400 mL, the functional incontinence event is thrown and a urinate action is automatically executed.
 
 @anchor renal-assessments
 Assessments
@@ -529,7 +529,7 @@ Assessments
 Validation of the urine panel is done by analyzing at the resting physiologic quantities. Urine color is determined based on the osmolality of the urine according to Table 3 below. Urine blood content registers as positive if the concentration of hemoglobin in the urine is greater than 0.15 ug/mL @cite walker1990clinical. Currently, the presence of blood does not affect the color of the urine, with urine color being determined entirely by osmolality of the urine, table 3.
 
 <br><center>
-<i>Table 3. Healthy urine color is determined by the osmolality of the urine. The colors used in %BioGears were derived from @cite kovacs1999urine . </i>
+<i>Table 3. Healthy urine color is determined by the osmolality of the urine. The colors used in the engine were derived from @cite kovacs1999urine . </i>
 </center>
 |Urine Osmolality                     |Urine Color              | 
 |------------------------             |------------------------ |
@@ -538,7 +538,7 @@ Validation of the urine panel is done by analyzing at the resting physiologic qu
 |UrineOsmolality > 750 mOsm/kg        |Light Brown              |
 
 <br><center>
-<i>Table 4. Urinalysis is conducted as described by Roxe @cite walker1990clinical . In the current scope of %BioGears, there are no scenarios where blood, glucose, ketones, or 
+<i>Table 4. Urinalysis is conducted as described by Roxe @cite walker1990clinical . In the current scope of the engine, there are no scenarios where blood, glucose, ketones, or 
 proteins are expected in the urine in significant quantities, which is confirmed below. Specific gravity and color are each dependent on the osmolarity of the urine and are within
 expected values for a healthy individual at rest.</i>
 </center>
@@ -554,14 +554,14 @@ Validation - Resting Physiologic State
 Validation results for system and compartment quantities for a resting standard patient are listed in Tables 5 and 6. System-level quantities show favorable agreement with validation values. The pressure value discrepancies in urine compartments can be largely explained by the %Renal model's lack of a specific extracellular space that affects both the hydrostatic and osmotic pressures.
 
 <br><center>
-*Table 5. Validation of the resting physiologic state system-level outputs from %BioGears compared 
+*Table 5. Validation of the resting physiologic state system-level outputs from the engine compared 
 to referenced values.*
 </center>
 
 @insert ./test_results/tables/RenalValidationTable.md
 
 <br><center>
-*Table 6. Validation of the resting physiologic state comparison of compartment-level outputs from %BioGears
+*Table 6. Validation of the resting physiologic state comparison of compartment-level outputs from the engine
 to referenced values.*
 </center>
 
@@ -570,7 +570,7 @@ to referenced values.*
 Validation results for substance parameters that are determined and/or applied by the %Renal system are shown in Table 7.  These values are highly dependent on substance parameters and show favorable overall agreement for the resting standard patient. Sodium is especially critical for the osmoreceptor and tubuloglomerular feedback mechanisms.
 
 <br><center>
-*Table 7. Validation of the resting physiologic state substance parameter outputs from %BioGears compared 
+*Table 7. Validation of the resting physiologic state substance parameter outputs from the engine compared 
 to referenced values.*
 </center>
 
@@ -601,7 +601,7 @@ scenarios indicating a very good agreement with the validation data.
 
 ### Hemorrhage - Action
 
-The renal system regulates glomerular filtration and renal blood flow through the tubuloglomerular feedback mechanism. This mechanism is modeled through constriction and dilation of the afferent arteriole as a function of sodium flow rate into the tubules. This mechanism is tested through two different hemorrhage scenarios: HemorrhageClass2NoFluid and HemorrhageClass4NoFluid. In each scenario, the body loses blood at a rate of 250 mL/min with the differences in class being the length of the bleeding. As the patient bleeds, blood volume and mean arterial pressure decrease, causing a reduction in blood flow to the renal system. As this decrease happens, the TGF system tries to compensate by dilating the afferent arteriole, reducing the resistance to flow into the glomerular capillaries. This balances the filtrate up to a point, but as blood volume and pressure continue to decrease, renal blood flow and glomerular filtration rate see reductions in line with past research @cite corcoran1943effects. This is more pronounced as the hemorrhage is allowed to persist. Qualitatively, the renal system in %Biogears displays the mechanical trends seen in past research. 
+The renal system regulates glomerular filtration and renal blood flow through the tubuloglomerular feedback mechanism. This mechanism is modeled through constriction and dilation of the afferent arteriole as a function of sodium flow rate into the tubules. This mechanism is tested through two different hemorrhage scenarios: HemorrhageClass2NoFluid and HemorrhageClass4NoFluid. In each scenario, the body loses blood at a rate of 250 mL/min with the differences in class being the length of the bleeding. As the patient bleeds, blood volume and mean arterial pressure decrease, causing a reduction in blood flow to the renal system. As this decrease happens, the TGF system tries to compensate by dilating the afferent arteriole, reducing the resistance to flow into the glomerular capillaries. This balances the filtrate up to a point, but as blood volume and pressure continue to decrease, renal blood flow and glomerular filtration rate see reductions in line with past research @cite corcoran1943effects. This is more pronounced as the hemorrhage is allowed to persist. Qualitatively, the renal system in engine displays the mechanical trends seen in past research. 
 
 Table 9 shows the effect seen in the %Renal system. For a complete write-up of the hemorrhage scenarios, see the @ref CardiovascularMethodology.
 
@@ -699,13 +699,13 @@ as shown in the top left figure. The top right and bottom left figures show the 
 The salt ingestion scenario simulates the patient drinking 1 L of seawater. Since the osmolarity of seawater exceeds the concentrating capacity of the
 human renal system @cite hall2011guyton, this provides a relevant edge case that pushes the kidneys to the limit of their ability to clear the excess
 sodium. A 30 minute condition is applied to allow some time to pass for digestion before the effects are analyzed. After the ingestion of seawater, there is a significant change 
-in the concentration of sodium in the blood. Since %BioGears does not currently model the fluid shift seen from the intracellular to extracellular space in response 
+in the concentration of sodium in the blood. Since the engine does not currently model the fluid shift seen from the intracellular to extracellular space in response 
 to changes in osmolarity, this causes a drastic drop in urine production rate as seen in Table 12 @cite hall2011guyton. The resulting urine
 becomes hyperosmotic relative to the plasma and contains a high concentration of sodium.
 
 <center>
 <i>
-Table 12. Urine production rate stays steady. Kidney doesn't quite respond accordingly due to such slight sodium changes. Chronic salt loading causes much more pronounced changed in renal function in patients, something %Biogears isn't meant to handle now.
+Table 12. Urine production rate stays steady. Kidney doesn't quite respond accordingly due to such slight sodium changes. Chronic salt loading causes much more pronounced changed in renal function in patients, something the engine isn't meant to handle now.
 </i>
 </center>
 |	Actions	|	Notes	|	Occurrence Time (s)	|	Urine Production Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Urine Chloride Concentration (g/L)	|	Urine Urea Concentration (g/L)	|
@@ -714,7 +714,7 @@ Table 12. Urine production rate stays steady. Kidney doesn't quite respond accor
 
 ### Water Ingestion - Action
 
-The water ingestion scenario simulates the patient drinking 1 liter of water with no other nutrients included. This causes a lowering of blood plasma concentration. This reaction leads to a decrease in the permeability of the tubules leading to an increase in urine production rate. The renal system in %Biogears shows a marked increase of dilute urine in line with that seen in a patient @cite baldes1934effect. 
+The water ingestion scenario simulates the patient drinking 1 liter of water with no other nutrients included. This causes a lowering of blood plasma concentration. This reaction leads to a decrease in the permeability of the tubules leading to an increase in urine production rate. The renal system shows a marked increase of dilute urine in line with that seen in a patient @cite baldes1934effect. 
 
 <center>
 <i>
@@ -728,7 +728,7 @@ Table 13. Urine production rate and plasma sodium concentrations behave as expec
 
 
 ### Dehydration
-%Biogears does not currently support this functionality, although scenarios can be made and run for days at a time without fluid intake, simulating dehydration.
+The engine does not currently support this functionality, although scenarios can be made and run for days at a time without fluid intake, simulating dehydration.
 
 Dehydration conditions demonstrate the %Renal system's capability to conserve substances. As the blood volume is lowered, the production rate of urine is decreased
 to a minimum by reabsorbing as much of the filtered water as possible. The outputs of the urine content are dependent on what food has been consumed during the dehydration
@@ -749,10 +749,10 @@ decrease in sodium excretion and urine sodium concentration in keeping with the 
 |Urine Sodium Concentration  (g/L)|        0.717      |       0.1           |
 
 ### Starvation
-%Biogears does not currently support this functionality, although scenarios can be made and run for days at a time without nutrient intake, simulating starvation.
+The engine does not currently support this functionality, although scenarios can be made and run for days at a time without nutrient intake, simulating starvation.
 
 When nutrients from food are restricted, the kidneys attempt to conserve substances in the blood, which leads to decreases in urinary concentrations. This is accomplished 
-by increasing reabsorptive capacity where it is possible to, namely with sodium. The %BioGears starvation scenario provides the patient with enough water to last the 4 day starvation 
+by increasing reabsorptive capacity where it is possible to, namely with sodium. The starvation scenario provides the patient with enough water to last the 4 day starvation 
 period, which leads to decreasing concentrations of substances in the blood. The %renal methodology has no direct input in how starvation is implemented, aside from clearing substances
 from the blood according to the time dictated by the consume meal condition.
 
@@ -770,7 +770,7 @@ calcium, and creatinine are due to an unvalidated drop in urine production rate,
 
 ### %Renal Stenosis - Condition
 
-The %Renal Stenosis condition is validated against two different scenarios, testing severity and location of the condition. The moderate unilateral stenosis places a 60 percent severity on the left kidney and none on the right. The direct effect of a stenosis is a seen through a decrease in renal blood flow and glomerular filtration rate. Total vascular resistance and mean arterial pressure is increased because of the increased resistance on the renal artery. This causes a drop in cardiac output via the baroreceptor feedback response to the increased vascular resistance. The blood volume is steady in %BioGears due to a lack of angiotensin 2 and aldesterone hormonal responses.
+The %Renal Stenosis condition is validated against two different scenarios, testing severity and location of the condition. The moderate unilateral stenosis places a 60 percent severity on the left kidney and none on the right. The direct effect of a stenosis is a seen through a decrease in renal blood flow and glomerular filtration rate. Total vascular resistance and mean arterial pressure is increased because of the increased resistance on the renal artery. This causes a drop in cardiac output via the baroreceptor feedback response to the increased vascular resistance. The blood volume is steady in the engine due to a lack of angiotensin 2 and aldesterone hormonal responses.
 
 <center>
 <i>
@@ -786,7 +786,7 @@ The severe bilateral stenosis condition tests the effects of kidney function due
 
 <center>
 <i>
-Table 17. There is good agreement in %BioGears in response to the 90% bilateral stenosis. The effect on pressure is significant enough
+Table 17. There is good agreement in response to the 90% bilateral stenosis. The effect on pressure is significant enough
 to meet validation. The blood volume is unaffected. The systemic vascular resistance increases as expected along with the corresponding 
 decrease in cardiac output. The renal blood flow and GFR each decrease as expected.
 </i>
@@ -799,7 +799,7 @@ decrease in cardiac output. The renal blood flow and GFR each decrease as expect
 Conclusions
 -----------
 
-%BioGears has implemented a functional renal model in conjunction with a whole-body physiology engine. Even with the simplified single-node nephron model, the system is able to accurately follow the overall renal transport of fluid and substances. The capabilities of the renal model allow for fluctuations in urine production rate, changes in blood pressure, and variations in clearance rates, as well as allowing for autogregulation with accurate responses to pressure changes and sodium concentration changes in the tubules.
+The engine has implemented a functional renal model in conjunction with a whole-body physiology engine. Even with the simplified single-node nephron model, the system is able to accurately follow the overall renal transport of fluid and substances. The capabilities of the renal model allow for fluctuations in urine production rate, changes in blood pressure, and variations in clearance rates, as well as allowing for autogregulation with accurate responses to pressure changes and sodium concentration changes in the tubules.
 
 @anchor renal-futurework
 Future Work

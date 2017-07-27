@@ -8,12 +8,12 @@ Overview
 Abstract
 --------
 
-%BioGears allows for patient variability via a set of parameters used to define aspects of the simulated human. These parameters are used throughout the system models to manipulate the physiological responses and homeostatic state.  %BioGears is deployed with several defined patients created for various testing and analysis purposes.
+The engine allows for patient variability via a set of parameters used to define aspects of the simulated human. These parameters are used throughout the system models to manipulate the physiological responses and homeostatic state. The code base contains several defined patients created for various testing and analysis purposes.
 @anchor patient-intro
 Introduction
 ------------
 
-The %BioGears program consists of the development and integration of multiscale models for an individualized whole-body predictive patient physiology model. %BioGears incorporates existing and novel models of organs and physiological systems into a whole-body model of a single generic individual within a reference population. Therefore, specific patient definitions are needed to create a virtual representation of the specific virtual human being simulated. The patient definition leverages the Commmon Data Model (CDM) to allow physiological parameters to be disseminated throughout the engine.
+The engine was architected for the development and integration of multiscale models for an individualized whole-body predictive patient physiology model. The engine incorporates existing and novel models of organs and physiological systems into a whole-body model of a single generic individual within a reference population. Therefore, specific patient definitions are needed to create a virtual representation of the specific virtual human being simulated. The patient definition leverages the Commmon Data Model (CDM) to allow physiological parameters to be disseminated throughout the engine.
 @anchor patient-design
 System Design
 =============
@@ -23,7 +23,7 @@ Background and Scope
 
 ### Requirements
 
-The %BioGears patient needs to contain all user-definable parameters specific to an individual. Any parameters that are not explicitly set need to be calculated based on standard, healthy values.
+The patient needs to contain all user-definable parameters specific to an individual. Any parameters that are not explicitly set need to be calculated based on standard, healthy values.
 
 ### Approach
 
@@ -133,120 +133,120 @@ Results and Conclusions
 |	<b>Diastolic Arterial Pressure Baseline</b>	|	73.5 mmHg	|	60 mmHg	|	80 mmHg	|	73.5 mmHg	|	80 mmHg	|	60 mmHg	|	73.5 mmHg	|	73.5 mmHg	|	73.5 mmHg	|	73.5 mmHg	|
 |	<b>Respiration Rate Baseline</b>	|	18 bpm	|	14 bpm	|	15 bpm	|	16 bpm	|	16 bpm	|	18 bpm	|	16 bpm	|	16 bpm	|	18 bpm	|	18 bpm	|
 
-All of the patients that are included with the %BioGears deployment have been validated to ensure that they reach a homeostatic point that hits all of the defined criteria. The following tables show the state of the patients after all stabilization phases (see @ref SystemMethodology for details) and compare the resulting patient values to those initially set/computed. Values that are explicitly set are expected to have very tight tolerances, while those that are initially calculated may drift due to the complex interaction of all patient parameters and system settings. The most sensitive of these parameters to external effects is tidal volume.
+All of the patients that are included with the code base have been validated to ensure that they reach a homeostatic point that hits all of the defined criteria. The following tables show the state of the patients after all stabilization phases (see @ref SystemMethodology for details) and compare the resulting patient values to those initially set/computed. Values that are explicitly set are expected to have very tight tolerances, while those that are initially calculated may drift due to the complex interaction of all patient parameters and system settings. The most sensitive of these parameters to external effects is tidal volume.
 
 Values that are colored green are within 10% of the original set or calculated/estimated (expected) value, yellow are within 30%, and red are greater than 30% error. Values that are not within 10% are not necessarily a failure.  As previously described, many of these are estimated before the stabilization simulation begins, and are really determined and overwritten after all other factors reach homeostasis. Those values that are explicitly set by the user/patient file should have much tighter tolerances.
 
 <center>
-*Table 4. StandardMale patient values with expected and %BioGears Engine output.*
+*Table 4. StandardMale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/StandardMalePatientValidationTable.md
 
 <center>
-*Table 5. StandardFemale patient values with expected and %BioGears Engine output.*
+*Table 5. StandardFemale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/StandardFemalePatientValidationTable.md
 
 <center>
-*Table 6. DefaultMale patient values with expected and %BioGears Engine output.*
+*Table 6. DefaultMale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/DefaultMalePatientValidationTable.md
 
 <center>
-*Table 7. DefaultFemale patient values with expected and %BioGears Engine output.*
+*Table 7. DefaultFemale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/DefaultFemalePatientValidationTable.md
 
 <center>
-*Table 8. Overweight patient values with expected and %BioGears Engine output.*
+*Table 8. Overweight patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/OverweightPatientValidationTable.md
 
 <center>
-*Table 9. Underweight patient values with expected and %BioGears Engine output.*
+*Table 9. Underweight patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/UnderweightPatientValidationTable.md
 
 <center>
-*Table 10. Tachycardic patient values with expected and %BioGears Engine output.*
+*Table 10. Tachycardic patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/TachycardicPatientValidationTable.md
 
 <center>
-*Table 11. Bradycardic patient values with expected and %BioGears Engine output.*
+*Table 11. Bradycardic patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/BradycardicPatientValidationTable.md
 
 <center>
-*Table 12. Cynthia patient values with expected and %BioGears Engine output.*
+*Table 12. Cynthia patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/CynthiaPatientValidationTable.md
 
 <center>
-*Table 13. Gus patient values with expected and %BioGears Engine output.*
+*Table 13. Gus patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/GusPatientValidationTable.md
 
 <center>
-*Table 14. Joel patient values with expected and %BioGears Engine output.*
+*Table 14. Joel patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/JoelPatientValidationTable.md
 
 <center>
-*Table 15. Nathan patient values with expected and %BioGears Engine output.*
+*Table 15. Nathan patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/NathanPatientValidationTable.md
 
 <center>
-*Table 16. Hassan patient values with expected and %BioGears Engine output.*
+*Table 16. Hassan patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/HassanPatientValidationTable.md
 
 <center>
-*Table 17. Soldier patient values with expected and %BioGears Engine output.*
+*Table 17. Soldier patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/SoldierPatientValidationTable.md
 
 <center>
-*Table 18. Jeff patient values with expected and %BioGears Engine output.*
+*Table 18. Jeff patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/JeffPatientValidationTable.md
 
 <center>
-*Table 19. Carol patient values with expected and %BioGears Engine output.*
+*Table 19. Carol patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/CarolPatientValidationTable.md
 
 <center>
-*Table 20. Jane patient values with expected and %BioGears Engine output.*
+*Table 20. Jane patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/JanePatientValidationTable.md
 
 <center>
-*Table 21. ExtremeFemale patient values with expected and %BioGears Engine output.*
+*Table 21. ExtremeFemale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/ExtremeFemalePatientValidationTable.md
 
 <center>
-*Table 22. ExtremeMale patient values with expected and %BioGears Engine output.*
+*Table 22. ExtremeMale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/ExtremeMalePatientValidationTable.md
@@ -267,9 +267,9 @@ There are no planned near-term additions.
 Recommended Improvements
 ------------------------
 
-The %BioGears physiology engine is providing consistent and accurate physiology simulation, and its ability to simulate physiology for a generic representative of a population will improve as development continues. It is not within the scope of the current project for %BioGears to predictively simulate the physiology of a specific (or average) individual within a population, but the development of technologies that make %BioGears usable and extensible to the community also facilitate multiscale model development and can be leveraged for predictive simulation and thus clinical use.
+The physiology engine is providing consistent and accurate physiology simulation, and its ability to simulate physiology for a generic representative of a population will improve as development continues. It is not within the scope of the current project for the engine to predictively simulate the physiology of a specific (or average) individual within a population, but the development of technologies that make the engine usable and extensible to the community also facilitate multiscale model development and can be leveraged for predictive simulation and thus clinical use.
 
-One way to extend %BioGears for clinical use is to use data from sources such as electronic health records (EHRs), lab reports, fitness evaluations, or wearable sensors to create a personalized physiological profile. A tool could then translate the personal physiological profile into parameters that can inform the %BioGears physiology models within the systems' framework.
+One way to extend the engine for clinical use is to use data from sources such as electronic health records (EHRs), lab reports, fitness evaluations, or wearable sensors to create a personalized physiological profile. A tool could then translate the personal physiological profile into parameters that can inform the physiology models within the systems' framework.
 @anchor patient-appendices
 Appendices
 ==========

@@ -8,7 +8,7 @@ Overview
 Abstract
 --------
 
-The %BioGears&reg; transporter was created to extract the methodology of substance transport from the individual systems. This creates a generic set of transport functions that can be used by any existing or future system by performing calculations on the circuits defined in the Common Data Model (CDM).
+The engine transporter was created to extract the methodology of substance transport from the individual systems. This creates a generic set of transport functions that can be used by any existing or future system by performing calculations on the circuits defined in the Common Data Model (CDM).
 At each time step, the mass, concentration, substance volume, volume fraction, and/or partial pressure are calculated based on the assumption that substances travel with the fluid flow.
 @anchor substance-intro
 Introduction
@@ -16,13 +16,13 @@ Introduction
 
 %Substances are transported through the body within the fluids, such as air in the %Respiratory System and blood in the %Cardiovascular System. To assess the substance levels of a patient, the substance must circulate through the system and distribute into the different nodes. The mass and concentration of a fluid must be calculated for substances in a liquid, and the volume of an individual substance (gas) and the volume fraction must be calculated for a gaseous fluid. After these basic calculations have been completed, calculations for partial pressures (gases), saturation (oxygen and carbon dioxide), and system totals (mass, concentration, volumes) are completed.
 
-The %BioGears modeling approach takes the human body and conceptually divides it into various fluid compartments that represents a real division in terms of how portions of the body's water, solutes, and suspended elements are segregated @cite rhoades2012medical.  Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In %BioGears, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts.
+The engine modeling approach takes the human body and conceptually divides it into various fluid compartments that represents a real division in terms of how portions of the body's water, solutes, and suspended elements are segregated @cite rhoades2012medical.  Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In the engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts.
 
-Links represent connections between compartments with a directional flow component defining a volume change each time-step.  In %BioGears, links can be assigned a path that provides the instantaneous flow value.  Figure 1 shows the base transport elements definitions in an example graph.
+Links represent connections between compartments with a directional flow component defining a volume change each time-step.  In the engine, links can be assigned a path that provides the instantaneous flow value.  Figure 1 shows the base transport elements definitions in an example graph.
 
-<center><img src="./images/SubstanceTransporter/Components.png" width="400"></center>
+<center><img src="./Images/SubstanceTransporter/Components.png" width="400"></center>
 <center>
-<i>Figure 1. This is a conceptual example graph that describes the lowest level elements used to define properties used by the %BioGears Transporter.  Links provide flow between compartments that store both fluid and substance quantity information.</i>
+<i>Figure 1. This is a conceptual example graph that describes the lowest level elements used to define properties used by the Transporter.  Links provide flow between compartments that store both fluid and substance quantity information.</i>
 </center><br>
 @anchor substance-design
 System Design
@@ -33,13 +33,13 @@ Background and Scope
 
 ### Requirements
 
-Given the overall goals of %BioGears, we set out to create a generic
+Given the overall engine goals, we set out to create a generic
 and reusable substance transporter.  Some high-level requirements include:
 
 -   Generic - All systems should be able to use the same basic transporter engine.  This allows rapid development, and makes engine
     outputs much easier to validate and verify.
 
--   Computational Speed - %BioGears is required to maintain a transient
+-   Computational Speed - The engine is required to maintain a transient
     full-body solution faster than real time on typical personal
     computers.
 
@@ -59,7 +59,7 @@ and reusable substance transporter.  Some high-level requirements include:
 -   Common Data Model - The entire solution must reside within and
     effectively use the @ref CDM.
 
--   Fluid types - %BioGears will include liquid and gas systems.  It is beneficial to use the same solver for both types.
+-   Fluid types - The engine will include liquid and gas systems.  It is beneficial to use the same solver for both types.
 
 -   Bifurcations - Each compartment can have an unlimited number of links providing flow/substances both in (up stream) and out (down stream).
 
@@ -129,7 +129,7 @@ By simultaneously combining Equation 3 for all compartments in a graph, the line
 Data Flow
 ---------
 
-The current implementation of the Circuit Transporter is set up to operate on the circuit nodes using the Preprocess, Process, and Post Process methodology of the other %BioGears systems.
+The current implementation of the Circuit Transporter is set up to operate on the circuit nodes using the Preprocess, Process, and Post Process methodology of the other systems.
 
 ### Preprocess
 
@@ -137,7 +137,7 @@ The Circuit Transporter has no functionality in Preprocess.
 
 ### Process
 
-The generic substance methodology developed for the %BioGears Engine is used to solve for the mass, concentration, substance volume, and volume fraction in each compartment each time-step.  The steps used by the transporter to solve a graph using Equation 4 in a given time-step are:
+The generic substance methodology developed for the engine is used to solve for the mass, concentration, substance volume, and volume fraction in each compartment each time-step.  The steps used by the transporter to solve a graph using Equation 4 in a given time-step are:
 
 1. Loop over compartments to populate the *A* matrix (one row per compartment) - this is the same for all substances
 	1. Handle infinite volume (often the environment) by setting intensive property constant
@@ -167,7 +167,7 @@ There are three successful unit tests that were created specifically to ensure t
 
 ## Conclusion
 
-This generic methodology has proven to be a satisfactory algorithm for transport within the human body. The methodology is robust and successfully navigates all of the lumped parameter models in %BioGears. The algorithm is able to run faster than real time, allowing the %BioGears Engine to run faster than real time. Mass is conserved throughout the calculation.
+This generic methodology has proven to be a satisfactory algorithm for transport within the human body. The methodology is robust and successfully navigates all of the lumped parameter models in the engine. The algorithm is able to run faster than real time, allowing the engine to run faster than real time. Mass is conserved throughout the calculation.
 @anchor substance-appendices
 Appendices
 ==========

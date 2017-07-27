@@ -6,11 +6,11 @@ Overview
 ========
 Abstract
 --------
-The purpose of the %BioGears&reg; Blood Chemistry System is primarily to hold the system-level blood substance data. It also uses information about the blood to compute plasma volume and whole-body mass and concentration information. In the future, all blood chemistry computations will take place in the Blood Chemistry system, including the acid-base balance computations of blood gas binding and species distribution that are currently performed by the Saturation class. For that reason, the saturation and acid-base balance models are described in the [appraoch](@ref bloodchemistry-approach) section of this document.
+The purpose of the Blood Chemistry System is primarily to hold the system-level blood substance data. It also uses information about the blood to compute plasma volume and whole-body mass and concentration information. In the future, all blood chemistry computations will take place in the Blood Chemistry system, including the acid-base balance computations of blood gas binding and species distribution that are currently performed by the Saturation class. For that reason, the saturation and acid-base balance models are described in the [appraoch](@ref bloodchemistry-approach) section of this document.
 
 Introduction
 ------------
-The Blood Chemistry System holds the system-level blood substance data that is computed on the compartment level by other systems. The Blood Chemistry system provides a link for systems and users to acquire blood substance data. In other words, if a user or another system needs to know the concentration of a substance in the blood or plasma, that information is obtained from the Blood Chemistry system data. The Blood Chemistry system also processes information about the blood to compute plasma volume, and it computes the %BioGears Complete Blood Count and Metabolic Panel [assessments](@ref bloodchemistry-assessments).
+The Blood Chemistry System holds the system-level blood substance data that is computed on the compartment level by other systems. The Blood Chemistry system provides a link for systems and users to acquire blood substance data. In other words, if a user or another system needs to know the concentration of a substance in the blood or plasma, that information is obtained from the Blood Chemistry system data. The Blood Chemistry system also processes information about the blood to compute plasma volume, and it computes the Complete Blood Count and Metabolic Panel [assessments](@ref bloodchemistry-assessments).
 
 Although they currently reside in a different class, the blood gas distribution models in the Saturation class are conceptually a part of the Blood Chemistry system. Therefore, models from the Saturation class are described here.
 
@@ -23,7 +23,7 @@ The analysis of the blood constituents is important for assessing physiological 
 
 There are three models commonly used for acid-base analysis. One model, often called the Boston model, is easy to understand and remember, but it is based entirely on the Henderson-Hasselbalch equation, and bicarbonate equilibrium alone is demonstrably insufficient for predicting carbon dioxide species distribution in human blood @cite wooten2010standard. To compensate, the Boston model includes six bicarbonate-based rules that are used to assess acid-base status at the bedside. Another model extends the Boston approach by introducing a new parameter called "base excess" to quantify the metabolic component of an acid-base disturbance @cite siggaard1977van. The problem with base-excess is that it is not CO2-invariant in vivo due to the ionic shifts between the intravascular and interstitial compartments. However, base excess is CO2-invariant when it is computed from measured plasma pH and PCO2, but at a constant hemoglobin concentration of 50 g/L. A third model, developed by Peter Stewart and thus called the Stewart approach, describes acid-base balance mechanistically through the electrochemical equilibrium dynamics @cite kellum2009stewart.
 
-The Stewart approach has been the subject of criticism. Some researchers have used dilutional acidosis as a model to argue that Stewart's approach does not actually provide any mechanistic insights because "neither the principle of electroneutrality, nor a change in [SID], nor increased H2O dissociation plays a mechanistic role" @cite doberer2009critique. However, others have noted that the Stewart method "is physicochemically well grounded" and that a dilution of the [SID] is "inevitably a dilution of the buffer base" @cite lang2010comment. Although the Boston model and the Copenhagen model are used more often for clinical, or bedside, analysis of acid-base status, the mechanistic detail of the Stewart model facilitates the computational modeling of acid-base balance and disturbances. We use the Stewart model as the basis for the %BioGears acid-base balance model.
+The Stewart approach has been the subject of criticism. Some researchers have used dilutional acidosis as a model to argue that Stewart's approach does not actually provide any mechanistic insights because "neither the principle of electroneutrality, nor a change in [SID], nor increased H2O dissociation plays a mechanistic role" @cite doberer2009critique. However, others have noted that the Stewart method "is physicochemically well grounded" and that a dilution of the [SID] is "inevitably a dilution of the buffer base" @cite lang2010comment. Although the Boston model and the Copenhagen model are used more often for clinical, or bedside, analysis of acid-base status, the mechanistic detail of the Stewart model facilitates the computational modeling of acid-base balance and disturbances. We use the Stewart model as the basis for the acid-base balance model.
 
 @anchor bloodchemistry-requirements
 ### Requirements
@@ -35,17 +35,17 @@ A simple oxygen-hemoglobin binging curve.
 
 @anchor bloodchemistry-approach
 ### Approach
-The %BioGears Blood Chemistry system is the link between compartment-level and system-level blood constituent data. It populates system-level concentration and other data from compartment level data. 
+The Blood Chemistry system is the link between compartment-level and system-level blood constituent data. It populates system-level concentration and other data from compartment level data. 
 
-Additionally, the blood chemistry computations required to compute acid-base balance and blood gas distribution are performed by the Blood Chemistry system (note that these equations are in the separate Saturation class in the current %BioGears engine). The Blood Chemistry system does not adjust mass or concentration of substances independently, but it does adjust concentration of species of a substance. For example, the Blood Chemistry system does not adjust the mass or concentration of total carbon dioxide in the blood, but it does compute the concentrations of the constituent species of total carbon dioxide (CO2): dissolved CO2, bound CO2, and bicarbonate. The acid-base and hemoglobin saturation models are used to compute how much of the total amount of carbon dioxide is in the form of bicarbonate, how much is dissolved, and how much is bound to hemoglobin. Similarly, the Blood Chemistry system does not change the total amount of oxygen in a compartment, but it does compute how much oxygen is dissolved and how much is bound to hemoglobin.
+Additionally, the blood chemistry computations required to compute acid-base balance and blood gas distribution are performed by the Blood Chemistry system (note that these equations are in the separate Saturation class in the current engine). The Blood Chemistry system does not adjust mass or concentration of substances independently, but it does adjust concentration of species of a substance. For example, the Blood Chemistry system does not adjust the mass or concentration of total carbon dioxide in the blood, but it does compute the concentrations of the constituent species of total carbon dioxide (CO2): dissolved CO2, bound CO2, and bicarbonate. The acid-base and hemoglobin saturation models are used to compute how much of the total amount of carbon dioxide is in the form of bicarbonate, how much is dissolved, and how much is bound to hemoglobin. Similarly, the Blood Chemistry system does not change the total amount of oxygen in a compartment, but it does compute how much oxygen is dissolved and how much is bound to hemoglobin.
 
-The %BioGears acid-base and blood gas distribution model is based on the Stewart model for acid-base balance and the hemoglobin binding model described by Dash and Bassingthwaighte @cite dash2010erratum. As described by Stewart, the model begins with electroneutrality. The charge of all strong ions in solution must be zero, as demonstrated by Equation 1.
+The acid-base and blood gas distribution model is based on the Stewart model for acid-base balance and the hemoglobin binding model described by Dash and Bassingthwaighte @cite dash2010erratum. As described by Stewart, the model begins with electroneutrality. The charge of all strong ions in solution must be zero, as demonstrated by Equation 1.
 
 \f[\ \ \left[Na^+\right]+\left[K^+\right]+\left[I^{n+}\right]+\left[Cl^-\right]+\left[La^-\right]+\left[Ket^-\right]+\left[I^{n-}\right]+{\mathrm{[HCO}}^-_{\mathrm{3}}]-\left[A^-\right]\ =0 \f]
 <center>
 <i>Equation 1.</i>
 </center><br>
-Where *I<sup>n,+/-</sup>* represents the n anions and cations not included in %BioGears. All symbols are defined in [Table 6](@ref bloodchemistry-symbols). Note that some ions, such as carbonate, are in such minute concentrations that their contribution to electrical neutrality is negligible. These ions are neglected and thus excluded from Equation 1.
+Where *I<sup>n,+/-</sup>* represents the n anions and cations not included in the engine. All symbols are defined in [Table 6](@ref bloodchemistry-symbols). Note that some ions, such as carbonate, are in such minute concentrations that their contribution to electrical neutrality is negligible. These ions are neglected and thus excluded from Equation 1.
 
 It is convenient to define a concentration called strong ion difference [SID], described by Equation 2, which reduces the electroneutrality to Equation 3.
 
@@ -112,13 +112,13 @@ The conservation of mass requires that the total amount of oxygen and carbon dio
 <i>Equation 12.</i>
 </center><br>
 
-The blood gas distribution model is used to compute the acid-base status and gas saturation in every cardiovascular compartment at every time slice. This model is used only for intravascular fluid, which is a lumped model of the intra and extracellular fluid spaces within the blood vessels. In %BioGears, the extravascular fluid does not contain hemoglobin or any substrate for gases to bind.
+The blood gas distribution model is used to compute the acid-base status and gas saturation in every cardiovascular compartment at every time slice. This model is used only for intravascular fluid, which is a lumped model of the intra and extracellular fluid spaces within the blood vessels. In the engine, the extravascular fluid does not contain hemoglobin or any substrate for gases to bind.
 
 @anchor bloodchemistry-data-flow
 Data Flow
 ---------
 ### Initialize
-Compartment-level substance data is initialized by the BioGearsSubstances controller class, and whole-body blood substance data is initialized from the compartment data by the Blood Chemistry system. The constant values of blood density, blood specific heat, plasma fraction of neutral lipid and phospholipid, white blood cell count, phosphate, and strong ion difference concentrations are also initialized by the Blood Chemistry system. Note that the strong ion difference will not be constant following a planned future improvement. The blood chemistry system does not require stabilization. Blood properties are initialized and initial system data is set in the initialization method. System data is populated throughout the engine stabilization process. 
+Compartment-level substance data is initialized by the substances controller class, and whole-body blood substance data is initialized from the compartment data by the Blood Chemistry system. The constant values of blood density, blood specific heat, plasma fraction of neutral lipid and phospholipid, white blood cell count, phosphate, and strong ion difference concentrations are also initialized by the Blood Chemistry system. Note that the strong ion difference will not be constant following a planned future improvement. The blood chemistry system does not require stabilization. Blood properties are initialized and initial system data is set in the initialization method. System data is populated throughout the engine stabilization process. 
 
 ### Preprocess
 There is no system specific function for Preprocess in Blood Chemistry.
@@ -130,10 +130,10 @@ During Process, the blood concentrations, blood gases, and other blood propertie
 There is no system specific function for Post Process in Blood Chemistry.
 
 ### Assessments
-Assessments in %BioGears are data collected and packaged to resemble a report or analysis that might be ordered by a physician. There are two %BioGears assessments in the Blood Chemistry system: a Metabolic panel and a complete blood count (CBC). The metabolic panel is modeled after the Chem-14 blood test. Currently, eight of the fourteen Chem-14 components are included in the %BioGears metabolic panel. 
+Assessments are data collected and packaged to resemble a report or analysis that might be ordered by a physician. There are two assessments in the Blood Chemistry system: a Metabolic panel and a complete blood count (CBC). The metabolic panel is modeled after the Chem-14 blood test. Currently, eight of the fourteen Chem-14 components are included in the metabolic panel. 
 
 <br>
-<img src="./images/BloodChemistry/BloodChemistryDataFlow.png" width="600">
+<img src="./Images/BloodChemistry/BloodChemistryDataFlow.png" width="600">
 <center>
 *Figure 1. The data flow for the Blood Chemistry system consists of a Reset, Conditions, Preprocess, Process, Post Process, and Assessments. Only the Process and Assessments categories have system-specific functionality for the Blood Chemistry System.*
 </center><br>
@@ -147,7 +147,7 @@ Some calculations are preformed by the Blood Chemistry system. The red blood cel
 
 @anchor bloodchemistry-variability
 ### Patient Variability
-%BioGears substances are initialized in the body by concentration rather than by mass, so morphological variability in patients will have no effect on initial concentrations. However, patient variability does affect physiology, and homeostatic states will vary with patient parameters. For that reason, post-stabilization variance in blood chemistry, including substance concentration, is possible between two different patients. A detailed discussion of patient variability in %BioGears is available in the @ref PatientMethodology report.
+Substances are initialized in the body by concentration rather than by mass, so morphological variability in patients will have no effect on initial concentrations. However, patient variability does affect physiology, and homeostatic states will vary with patient parameters. For that reason, post-stabilization variance in blood chemistry, including substance concentration, is possible between two different patients. A detailed discussion of patient variability is available in the @ref PatientMethodology report.
 
 ### Outputs
 The Blood Chemistry system provides (for circulating substances):
@@ -160,7 +160,7 @@ Assumptions and Limitations
 ---------------------------
 Limitations on the Blood Chemistry system are imposed by the supported systems and by the active substances in the simulation. For example, ALT, AST, and ALP are not supported substances, and therefore cannot be included in the metabolic panel assessment. 
 
-Additionally, blood cells are not modeled in %BioGears. We attempt to account for the contribution of cellular elements to the blood volume, as described above, but white cells and platelets are not included. 
+Additionally, blood cells are not modeled. We attempt to account for the contribution of cellular elements to the blood volume, as described above, but white cells and platelets are not included. 
 
 @anchor bloodchemistry-events
 Events
@@ -168,29 +168,29 @@ Events
 ### Hypercapnia
 Hypercapnia occurs when the partial pressure of carbon dioxide in the blood rises to greater than 60&nbsp;mmHg @cite guyton2006medical, as is most commonly seen in respiratory conditions, such as severe airway obstruction. This condition manifests as a decrease in blood pH and an increase in cardiac output, blood pressure, and heart rate.
 
-The %BioGears Engine triggers the hypercapnia event when the partial pressure of carbon dioxide in the aorta rises above 60&nbsp;mmHg. This is a reversible condition and is considered resolved when the partial pressure falls below 57&nbsp;mmHg. This 3&nbsp;mmHg window provides a buffer to account for normal fluctuations in the model.
+The engine triggers the hypercapnia event when the partial pressure of carbon dioxide in the aorta rises above 60&nbsp;mmHg. This is a reversible condition and is considered resolved when the partial pressure falls below 57&nbsp;mmHg. This 3&nbsp;mmHg window provides a buffer to account for normal fluctuations in the model.
 
 If the partial pressure of carbon dioxide in the blood rises to greater than 80&nbsp;mmHg an irreversible state is triggered and it will be impossible to regain homeostasis.
 
 ### Hypoxia
 Hypoxia occurs when the partial pressure of oxygen in the blood falls below 65&nbsp;mmHg @cite Pierson2000Pathophysiology. This can be due to a number of conditions that range from heart failure to poor respiratory function. This condition manifests as a decrease in oxygen saturation, increased heart rate, increased respiratory rate, decreased tidal volume, and pulmonary hypertension.
 
-The %BioGears Engine triggers the hypoxia event when the partial pressure of oxygen in the aorta falls below 65&nbsp;mmHg. This is a reversible condition and is considered resolved when the partial pressure rises above 68&nbsp;mmHg. This 3&nbsp;mmHg window provides a buffer to account for normal fluctuations in the model.
+The engine triggers the hypoxia event when the partial pressure of oxygen in the aorta falls below 65&nbsp;mmHg. This is a reversible condition and is considered resolved when the partial pressure rises above 68&nbsp;mmHg. This 3&nbsp;mmHg window provides a buffer to account for normal fluctuations in the model.
 
 If the partial pressure of oxygen in the blood falls below 15&nbsp; an irreversible state is triggered and it will be impossible to regain homeostasis.
 
 ### Brain Oxygen Deficit
 The brain is unable to complete any significant anaerobic metabolism. Therefore, without oxygen in the brain, unconsciousness results within five to ten seconds, and permanent damage can occur within five to ten minutes @cite guyton2006medical. Additionally, irreversible damage can occur if the oxygen tension in the brain is too low for a prolonged period of time @cite dhawan2011neurointensive. 
 
-There are two events in %BioGears related to an oxygen deficit in the brain: Brain Oxygen Deficit and Critical Brain Oxygen Deficit. %BioGears triggers the brain oxygen deficit event when the partial pressure of oxygen in the brain drops below 21 mmHg. If the brain remains in this deficit state for 30 minutes, an irreversible state is triggered, and it will be impossible to regain homeostasis (akin to death). If the partial pressure of oxygen in the brain drops below 10 mmHg, the patient enters a critical brain oxygen deficit state, which causes an irreversible state after 10 minutes. If the critical deficit event is active, it is removed when the oxygen partial pressure increases above 12 mmHg, and only the less-critical deficit event will be active. Both deficit events are removed when the oxygen partial pressure returns above 25 mmHg, assuming the irreversible state was never reached. The threshold values are chosen based on empirical data reviewed in summary in @cite dhawan2011neurointensive, and from data presented in @cite purins2012brain and @cite doppenberg1998determination.
+There are two events in the engine related to an oxygen deficit in the brain: Brain Oxygen Deficit and Critical Brain Oxygen Deficit. The engine triggers the brain oxygen deficit event when the partial pressure of oxygen in the brain drops below 21 mmHg. If the brain remains in this deficit state for 30 minutes, an irreversible state is triggered, and it will be impossible to regain homeostasis (akin to death). If the partial pressure of oxygen in the brain drops below 10 mmHg, the patient enters a critical brain oxygen deficit state, which causes an irreversible state after 10 minutes. If the critical deficit event is active, it is removed when the oxygen partial pressure increases above 12 mmHg, and only the less-critical deficit event will be active. Both deficit events are removed when the oxygen partial pressure returns above 25 mmHg, assuming the irreversible state was never reached. The threshold values are chosen based on empirical data reviewed in summary in @cite dhawan2011neurointensive, and from data presented in @cite purins2012brain and @cite doppenberg1998determination.
 
 ### Myocardium Oxygen Deficit
-Blood flow through the coronary arteries provides required oxygen to the heart muscle. If the oxygen supply to the heart is limited through respiratory distress or some other condition, the demand for oxygen will cause dilation of the coronary arteries. By increasing the flow of blood to the heart muscle, the oxygen supply increases @cite guyton2006medical. This effect is not currently modeled in %BioGears, but the myocardium oxygen level is observed and an event is triggered when it becomes too low. In the future, the resistance to flow in the coronary arteries will be increased to represent blood vessel dilation, and the asystole rhythm change will be tied to the arterial partial pressure of oxygen.
+Blood flow through the coronary arteries provides required oxygen to the heart muscle. If the oxygen supply to the heart is limited through respiratory distress or some other condition, the demand for oxygen will cause dilation of the coronary arteries. By increasing the flow of blood to the heart muscle, the oxygen supply increases @cite guyton2006medical. This effect is not currently modeled in the engine, but the myocardium oxygen level is observed and an event is triggered when it becomes too low. In the future, the resistance to flow in the coronary arteries will be increased to represent blood vessel dilation, and the asystole rhythm change will be tied to the arterial partial pressure of oxygen.
 
-The %BioGears Engine triggers the myocardium oxygen deficit event when the partial pressure of oxygen is less than 5&nbsp;mmHg. If the oxygen level in the heart muscle remains low for more than 40 minutes an irreversible state is triggered and it will be impossible to regain homeostasis. 
+The engine triggers the myocardium oxygen deficit event when the partial pressure of oxygen is less than 5&nbsp;mmHg. If the oxygen level in the heart muscle remains low for more than 40 minutes an irreversible state is triggered and it will be impossible to regain homeostasis. 
 
 ### Acid-Base Disturbance Events
-Acid-base disturbances can be respiratory or metabolic in origin. When an acid-base disturbance is caused by a change in the total amount of carbon dioxide in the blood, it is considered to be a respiratory disturbance because that system regulates carbon dioxide. If the origin is a change in the strong ion difference, then the disturbance is said to be metabolic in origin. Because the respiratory system responds to a metabolic disturbance and the renal and other systems respond to a respiratory disturbance with compensatory mechanisms, it is difficult to observe a purely metabolic or respiratory disturbance. For that reason, disturbances are sometimes further classified as acute, compensated, and mixed @cite hall2011guyton. There are four acid-base disturbance events observed in %BioGears.
+Acid-base disturbances can be respiratory or metabolic in origin. When an acid-base disturbance is caused by a change in the total amount of carbon dioxide in the blood, it is considered to be a respiratory disturbance because that system regulates carbon dioxide. If the origin is a change in the strong ion difference, then the disturbance is said to be metabolic in origin. Because the respiratory system responds to a metabolic disturbance and the renal and other systems respond to a respiratory disturbance with compensatory mechanisms, it is difficult to observe a purely metabolic or respiratory disturbance. For that reason, disturbances are sometimes further classified as acute, compensated, and mixed @cite hall2011guyton. There are four acid-base disturbance events observed in the engine.
 
 #### Metabolic Acidosis
 The metabolic acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is less than 22.0&nbsp;mM. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions. If the blood becomes so acidic that the pH drops below 6.5, an irreversible state is triggered, and it will be impossible to regain homeostasis.
@@ -227,15 +227,15 @@ Results and Conclusions
 
 Validation - Resting Physiologic State
 --------------------------------------
-Published values from the literature were compared to the %BioGears Engine output to perform a quantitative validation of the blood chemistry resting physiology. Table&nbsp;1 shows the validation results.  The validation is specified with a color coding system, with green indicating a less than 10% error, yellow indicating a less than 30% error, and red indicating a greater than 30% error when comparing the %BioGears output to the published values. All references are noted in the table.
+Published values from the literature were compared to the engine output to perform a quantitative validation of the blood chemistry resting physiology. Table&nbsp;1 shows the validation results.  The validation is specified with a color coding system, with green indicating a less than 10% error, yellow indicating a less than 30% error, and red indicating a greater than 30% error when comparing the engine output to the published values. All references are noted in the table.
 
 <center>
-*Table 1. Results of the resting physiology validation of the %BioGears Blood Chemistry System.*
+*Table 1. Results of the resting physiology validation of the Blood Chemistry System.*
 </center>
 
 @insert ./test_results/tables/BloodChemistryValidationTable.md
 
-Overall, the %BioGears Engine meets validation, with 37 of the 44 validation parameters having less than a 10% error when compared to published values.  An additional two parameters have less than a 30% error. The parameters with greater than 30% error are all related to carbon dioxide saturation and binding in the blood stream.  A detailed explanation of how these values are calculated can be found @ref bloodchemistry-approach "above", with additional information in @ref tissue-diffusion "Tissue". This binding calculation will be reviewed to correct errors in the future.
+Overall, the engine meets validation, with 37 of the 44 validation parameters having less than a 10% error when compared to published values.  An additional two parameters have less than a 30% error. The parameters with greater than 30% error are all related to carbon dioxide saturation and binding in the blood stream.  A detailed explanation of how these values are calculated can be found @ref bloodchemistry-approach "above", with additional information in @ref tissue-diffusion "Tissue". This binding calculation will be reviewed to correct errors in the future.
 
 Validation - Conditions and Actions
 -----------------------
@@ -273,17 +273,17 @@ All of the measures in the two Blood Chemistry assessments meet validation.
 @anchor bloodchemistry-fourCompartment
 Four Compartment Test
 ------------------------
-As mentioned above, the Blood Chemistry system serves the primary purpose of storing and relaying information between the other %BioGears systems. This heavy reliance on other systems can make it difficult to test the funcitonality of blood gas balance. To this end, the scalability of %BioGears was leveraged to create a simpler system comprised of only four compartments: Pulmonary, to represent the capillaries in the lungs where oxygen and carbon dioxide exchange occurs; Arteries, representing all of the oxygen-rich vasculature running to the tissues; Capillaries, representing the location of oxygen removal from the vasculature; and Veins, representing the section of the vasulature containing oxygen-poor blood. A diagram of this simplified system can be seen in Figure 4 below.
+As mentioned above, the Blood Chemistry system serves the primary purpose of storing and relaying information between the other systems. This heavy reliance on other systems can make it difficult to test the funcitonality of blood gas balance. To this end, the scalability of the engine was leveraged to create a simpler system comprised of only four compartments: Pulmonary, to represent the capillaries in the lungs where oxygen and carbon dioxide exchange occurs; Arteries, representing all of the oxygen-rich vasculature running to the tissues; Capillaries, representing the location of oxygen removal from the vasculature; and Veins, representing the section of the vasulature containing oxygen-poor blood. A diagram of this simplified system can be seen in Figure 4 below.
 
-<img src="./images/BloodChemistry/FourCompartment.png" width="600">
+<img src="./Images/BloodChemistry/FourCompartment.png" width="600">
 <center>
 *Figure 4. The simplified Four Compartment test uses only Pulmonary, Arteries, Capillaries, and Veins to hone in on the functionality in the Blood Chemistry system.*
 </center><br>
 
-Pressures, volumes, and substances were initialized to good values (see Table 4 below), and then the simplified Four Compartment system was run as %BioGears would run the normal, complete model using the Preprocess, Process, Postprocess paradigm. In the Preprocess step, oxygen is removed and carbon dioxide is added in the Capillaries to simulate metabolism while oxygen is added and carbon dioxide is removed in the Pulmonary compartment to represent respiration. If a tissue compartment was present, diffusion could also occur in this stage. In the Process step, circuit calculation and substance transport are done. Then, the Postprocess step moves the "Next" values to "Current". For more information about this paradigm, see @ref CircuitMethodology.
+Pressures, volumes, and substances were initialized to good values (see Table 4 below), and then the simplified Four Compartment system was run as the engine would run the normal, complete model using the Preprocess, Process, Postprocess paradigm. In the Preprocess step, oxygen is removed and carbon dioxide is added in the Capillaries to simulate metabolism while oxygen is added and carbon dioxide is removed in the Pulmonary compartment to represent respiration. If a tissue compartment was present, diffusion could also occur in this stage. In the Process step, circuit calculation and substance transport are done. Then, the Postprocess step moves the "Next" values to "Current". For more information about this paradigm, see @ref CircuitMethodology.
 
 <center>
-*Table 4. Initial values for the Four Compartment test. Variables with an asterisk indicate that the values were pulled from a %BioGears simulation run to a stable point.*
+*Table 4. Initial values for the Four Compartment test. Variables with an asterisk indicate that the values were pulled from a simulation run to a stable point.*
 | Variable | Initial Value |
 | :---------------- | :---------- |
 | Veins Pressure | 4 mmHg @cite Leeuwen2015laboratory |
@@ -317,7 +317,7 @@ Pressures, volumes, and substances were initialized to good values (see Table 4 
 | Carbon Dioxide Exchange Rate | 6140.4 ug/S @cite guyton2006medical |
 </center>
 
-Because the Four Compartment test is initialized to good values, and because of the design of the %BioGears engine and Blood Chemistry system, output values should be within physiological ranges. Indeed, the outputs shown below reflect the proper function of the Blood Chemistry system.
+Because the Four Compartment test is initialized to good values, and because of the design of the engine and Blood Chemistry system, output values should be within physiological ranges. Indeed, the outputs shown below reflect the proper function of the Blood Chemistry system.
 <center>
 *Table 5. Stable results of the Four Compartment test.*
 Variable			|	Four Compartment Test Ending Value	|	Valid Value	|
@@ -342,7 +342,7 @@ Total Hemoglobin			|	765.0004356	|<span class="success">	[661.5, 835.2] g @cite 
 @anchor bloodchemistry-conclusions
 Conclusions
 -----------
-The current values output from the Blood Chemistry System provide accurate results for a clinical overview of patient health. Blood gases and hemoglobin (multiple types) are circulated using the transport methodology discussed in the @ref CircuitMethodology and the @ref TissueMethodology. The Blood Chemistry System is a powerful tool for validation of multiple systems within the %BioGears Engine. The system is able to illustrate the dependencies each system has on another, i.e., if the %Respiratory System is unable to provide oxygen, a shortage of oxygen in the blood stream results, reducing both the arterial oxygen partial pressure and the oxygen saturation as displayed by the Blood Chemistry system. Future work will focus on adding additional key substances to provide a more complete assessment of a patient's overall health.
+The current values output from the Blood Chemistry System provide accurate results for a clinical overview of patient health. Blood gases and hemoglobin (multiple types) are circulated using the transport methodology discussed in the @ref CircuitMethodology and the @ref TissueMethodology. The Blood Chemistry System is a powerful tool for validation of multiple systems within the engine. The system is able to illustrate the dependencies each system has on another, i.e., if the %Respiratory System is unable to provide oxygen, a shortage of oxygen in the blood stream results, reducing both the arterial oxygen partial pressure and the oxygen saturation as displayed by the Blood Chemistry system. Future work will focus on adding additional key substances to provide a more complete assessment of a patient's overall health.
 
 @anchor bloodchemistry-future
 Future Work
@@ -350,7 +350,7 @@ Future Work
 
 Coming Soon
 -----------
-Planned improvements to other systems will have an indirect effect on Blood Chemistry. For example, a planned improvement to the vascular tone model in the [Cardiovascular](@ref CardiovascularMethodology) system will reduce the resistance of the blood vessels supplying the myocardium, simulating dilation. This improvement to homeostatic feedback will make the %BioGears heart muscle more robust to an oxygen deficit, enabling a physiologically accurate threshold for the myocardium hypoxia event. Additionally, major work has already been completed toward a more accurate and complete handling of all substances within the %BioGears body. This work will allow for a direct computation of the ion concentrations and the strong ion difference, enabling mechanistic simulation of acid-base disturbances and compensation.
+Planned improvements to other systems will have an indirect effect on Blood Chemistry. For example, a planned improvement to the vascular tone model in the [Cardiovascular](@ref CardiovascularMethodology) system will reduce the resistance of the blood vessels supplying the myocardium, simulating dilation. This improvement to homeostatic feedback will make the heart muscle more robust to an oxygen deficit, enabling a physiologically accurate threshold for the myocardium hypoxia event. Additionally, major work has already been completed toward a more accurate and complete handling of all substances within the engine. This work will allow for a direct computation of the ion concentrations and the strong ion difference, enabling mechanistic simulation of acid-base disturbances and compensation.
 
 Recommended Improvements
 ------------------------

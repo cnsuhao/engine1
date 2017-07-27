@@ -20,7 +20,7 @@ An XML schema is an open standard that describes the structure of an XML documen
 This representation enforces the meaning and structure and relationships as described in the data dictionary and provides an industry standard basis for implementation and data exchange. 
 This XML schema can then be used to generate binding classes that can serialize XML for use in programming languages such as C++, Java, and C#.
 
-<img src="./images/CDM.png" alt="Common Data Model">
+<img src="./Images/CDM.png" alt="Common Data Model">
 
 We then created a set of API classes built to reflect the organization of the data dictionary, encapsulate the binding classes, and provide various data validation, manipulation, and translation algorithms. 
 These classes are prefixed with SE, which stands for Synthetic %Environment. These classes provide an encompassing interface for holding and translating data in a simple-to-use, yet flexible and expandable, interface. 

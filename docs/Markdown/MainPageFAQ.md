@@ -2,20 +2,19 @@
 
 The Physiology Engine is a C++ based, open source, multi-platform (Windows, Mac, and Linux), comprehensive human physiology
 engine that will drive medical education, research, and training technologies. 
-The Physiology Engine enables accurate and consistent physiology
-simulation across the medical community. The engine can be used as a
-standalone application or integrated with simulators, sensor interfaces,
-and models of all fidelities.
+The Physiology Engine enables accurate and consistent physiology simulation across the medical community. 
+The engine can be used as a standalone application or integrated with simulators, sensor interfaces, and models of all fidelities.
+This engine is a fork of the %BioGears physiology engine, maintained by its original authors, now at Kitware.
 
-Original BioGears high-level objectives include:
+High-level objectives include:
 -   Create a publicly available physiology research platform that
     enables accurate and consistent simulated physiology across training
     applications
 -   Lower the barrier to create medical training content
 -   Engage the community to develop and extend physiology models
--   Meet the training needs of the military
 -   Expand the body of knowledge regarding the use of simulated
     physiology for medical education
+-   Meet the training needs of the military
 
 ## How do I get The Physiology Engine?
 
@@ -112,7 +111,7 @@ outputs.
 
 ## How can I modify the Physiology Engine, or integrate my model?
 
-%BioGears uses an extensible architecture to promote integration with external
+The engine uses an extensible architecture to promote integration with external
 models with varying levels of fidelity. System-level model fidelity can be 
 increased or decreased by adding or removing nodes and sub-circuits.
 
@@ -135,6 +134,6 @@ Any new result that is over 2% error is marked as a failure.
 This data is used extensively to validate each system individually, as well as the combined effects of insults and interventions. See the Methodology Reports for more details.  
 The scenarios output requests match the columns in the results file; we recommend that these scenarios remain unmodified.
 
-## What do I contribute to the Physiology Engine?
+## How can I contribute to the Physiology Engine?
 
-Once you have a branch with updates you wish to include in the master branch, send a pull request to the public repository located <a href="https://gitlab.kitware.com/physiology/engine">here</a>.
+Take a look at our <a href="https://gitlab.kitware.com/physiology/engine/blob/master/CONTRIBUTING.md">Contribution Guide</a>.

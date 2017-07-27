@@ -2,9 +2,9 @@ Physiology Engine Interface {#physeng}
 ===========================
 
 The following infomation is a method by method walk through of the %PhysiologyEngine.h class that everything revolves around.
-Reading this in parrallel with the HowTo-EngineUse.cpp provided in the SDK will give you a firm understanding of using %BioGears.
+Reading this in parrallel with the HowTo-EngineUse.cpp provided in the SDK will give you a firm understanding of using the engine.
 
-When you create an instance of a %BioGears engine, you will be returned a pointer to a PhysiologyEngine object.
+When you create an instance of an engine, you will be returned a pointer to a PhysiologyEngine object.
 This generic interface is the controlling class for a physiology engine modeling a single patient.
 
 @code 
@@ -16,7 +16,7 @@ This generic interface is the controlling class for a physiology engine modeling
 
 You can provide an optional string into this creation method that will create a log file on disk where the engine will output all errors, warnings and other logged information.
 It is highly recommended to create a log, and check it often. If you do not wish to have this engine create a log, you can pass in nullptr.
-You can also provide a callback class to the logger that will forward all logging events to so that your application can easily monitor the %BioGears engine.
+You can also provide a callback class to the logger that will forward all logging events to so that your application can easily monitor the engine.
 For more details, please consult the HowTo-EngineUse.cpp file in the SDK.
 You can access and utilize this logger with in your own application as such:
 @code
@@ -106,7 +106,7 @@ you will need to initialize the engine with a patient definition.
 @endcode
 
 @anchor ConditionsInterface
-When a patient definition is provided, %BioGears will go through an initialization algorithm that will take several minutes
+When a patient definition is provided, the engine will go through an initialization algorithm that will take several minutes
 as to tune the engine to model the specific state requested of the patient. 
 This initalization method is also the only way to specify any conditions (chronic/disease states).
 
@@ -137,7 +137,7 @@ The SDK provides multiple tested patient files for use in the bin/patients direc
 ##### Engine Configuration
 
 You can provide an engine configuration to the initialize methods. 
-This configuration is used to tweek various variables associated in the %BioGears methodology.
+This configuration is used to tweek various variables associated in the engine methodology.
 Configuration modification requires a very indepth knowledge of the engine.
 It is not recommended to provide another configuration unless you know what effects it will have.
 There are some useful configuration options that may be of interest, such as writing data to a csv file while the initialization algorithm executes.
@@ -156,8 +156,8 @@ You can retrieve and view the configuration with this method (note you will need
 @anchor DataTracking
 ### Data Tracking
 
-%BioGears has the ability to write specifically requested data to a comma seperated text file as the engine advances time.
-These csv file are very helpful in debugging and ensuring %BioGears is modeling correctly.
+The engine has the ability to write specifically requested data to a comma seperated text file as the engine advances time.
+These csv file are very helpful in debugging and ensuring the engine is modeling correctly.
 How to utilize this functionality is demonstrated in all the HowTo files provided in the SDK.
 
 @code
@@ -333,7 +333,7 @@ Look at the SDK HowTo-UseEngine.cpp for a full example in using both of these me
 ### Patient Assessments
 
 Patient assessments are intended to give general patient overviews, formed at the level of a clinician's report.
-The following assessments are availiable from %BioGears:
+The following assessments are availiable :
 
 @secreflist
   @refitem CompleteBloodCountTable "Complete Blood Count"
@@ -361,7 +361,7 @@ You must create and provide an assessment object to the physiology engine via th
 
 The bodies physiology, equipment, and the environment are all systems and each system has a method to retrieve its associated class in order to access this system data.<br>
 
-%BioGears supports the following systems:
+The engine supports the following systems:
 
 |Code Method                                                                             | CDM Table                                           |
 |---                                                                                     |---                                                  |
@@ -418,9 +418,9 @@ The following types are used to hold compartment substance information
  @refitem LiquidSubstanceQuantityTable "Liquid Substance Quantity"
 @endsecreflist
 
-The enumerations for compartments available in %BioGears is found in the BioGearsPhysiologyEngine.h file.
+The enumerations for compartments available is found in the BioGearsPhysiologyEngine.h file.
 As these are programatic enumerations, you can use the auto-complete feature of your favorite programming IDE to view these enumerations as you code.
-%BioGears discritizes it's compartments into enumerations based on fluid type and equipment. Here is a list of the various enumerated compartment names:
+The engine discritizes it's compartments into enumerations based on fluid type and equipment. Here is a list of the various enumerated compartment names:
 
 @secreflist
  @refitem LiquidCompartmentTable  "Chyme"
@@ -438,7 +438,7 @@ As these are programatic enumerations, you can use the auto-complete feature of 
  @refitem GasCompartmentTable     "Inhaler"
 @endsecreflist
 
-As we make changes to models, some of the naming/hierarchy of compartments used by %BioGears could change, it's best to refer to the code file itself 
+As we make changes to models, some of the naming/hierarchy of compartments used could change, it's best to refer to the code file itself 
 for the latest list of available compartments and their hierarchy.
 
 Note that there are both liquid and gas compartments available for pulmonary spaces. 

@@ -9,7 +9,7 @@ Overview
 Abstract
 --------
 
-The %Respiratory System supplies oxygen and removes waste carbon dioxide from the body through a combination of ventilation and gas exchange across the blood-gas barrier (pulmonary capillary-alveoli interface). The %BioGears %Respiratory System is designed to model the ventilatory behavior (both positive- and negative-pressure) of the patient %Respiratory System using electrical analogue lumped parameter models. The %Respiratory Model employs realistic pressure source signal and chemical stimuli feedback mechanisms as drivers for spontaneous ventilation. The model handles several patient conditions, including tension pneumothorax and airway obstruction. The majority of the lung values investigated for the overall model matched the validation data found in publications. Patient conditions also showed strong agreement with clinically significant output parameters, i.e., respiration rate, oxygen saturation, heart rate, and blood pressure.
+The %Respiratory System supplies oxygen and removes waste carbon dioxide from the body through a combination of ventilation and gas exchange across the blood-gas barrier (pulmonary capillary-alveoli interface). The %Respiratory System is designed to model the ventilatory behavior (both positive- and negative-pressure) of the patient %Respiratory System using electrical analogue lumped parameter models. The %Respiratory Model employs realistic pressure source signal and chemical stimuli feedback mechanisms as drivers for spontaneous ventilation. The model handles several patient conditions, including tension pneumothorax and airway obstruction. The majority of the lung values investigated for the overall model matched the validation data found in publications. Patient conditions also showed strong agreement with clinically significant output parameters, i.e., respiration rate, oxygen saturation, heart rate, and blood pressure.
 
 @anchor respiratory-intro
 ## Introduction
@@ -93,26 +93,26 @@ Background and Scope
 
 ### Existing
 
-The %BioGears %Respiratory Model has its roots in the mathematical model of
+The %Respiratory Model has its roots in the mathematical model of
 Yashuri Fukui and N. Ty Smith @cite FukuiSmith1981hybrid . The researchers
 developed a lumped parameter mathematical model to describe the uptake and
 distribution of halothane. Their %Respiratory Model consisted of two pulmonary
 compartments corresponding to the dead space and the alveoli @cite FukuiSmith1981hybrid. 
-The %Respiratory Model in the %BioGears Engine is an
+The %Respiratory Model in the engine is an
 extension of the work by Fukui and Smith. This model was developed and released
 by Advanced Simulation Corporation as part of the simulator, Body Simulation for
 Anesthesia&trade;. This later formed the backbone of the HumanSim&trade; physiology engine,
 which continues to provide realistic physiology for several serious training
 games in the HumanSim product line, including HumanSim: Combat Medic and
 HumanSim: Sedation and Airway @cite Clipp2012Humansim . The HumanSim
-physiology engine is the starting point for the %BioGears Physiology Engine. The
+physiology engine is the starting point for the engine. The
 basic elements of the %Respiratory System remain the same as the HumanSim
 physiology engine; however, the respiratory circuit has been further developed
 to allow realistic mechanical responses to pathological conditions.
 
 ### Approach
 
-The current version of the %BioGears %Respiratory Model represents the two lungs
+The current version of the %Respiratory Model represents the two lungs
 and associated airways as five major functional units, or compartments, that are
 designated as the carina, right and left anatomic dead space, and right and
 left alveoli. In the model, the carina compartment represents the anatomical region
@@ -164,7 +164,7 @@ calculated based on chemical stimuli feedback control mechanism.
 
 ### Process
 
-The generic circuit methodology developed for the %BioGears Engine is used to
+The generic circuit methodology developed for the engine is used to
 solve for the pressure, flow, and volume at each node or path. For more details
 on this, see the @ref CircuitMethodology. Substance volumes and volume
 fractions (concentrations) are also calculated during this step. See the @ref SubstanceTransportMethodology for more details.
@@ -183,7 +183,7 @@ analysis during the next time step.
 
 Assessments are called outside of the system to allow compiling of information from multiple systems.
 
-<center><img src="./images/Respiratory/Respiratory_Figure02.png" width="900"></center>
+<center><img src="./Images/Respiratory/Respiratory_Figure02.png" width="900"></center>
 <center> 
 <i>Figure 2. The data flow for the %Respiratory System consists of Preprocess,
 Process, and Postprocess. Preprocess sets the circuit element values based on
@@ -200,7 +200,7 @@ Features and Capabilities
 
 ### %Respiratory Circuit
 
-The %BioGears %Respiratory System designates a set of functional elements, or
+The %Respiratory System designates a set of functional elements, or
 compartments, to model mechanical ventilation. The functional elements are
 represented by an electric analogue circuit comprised of resistors, capacitors,
 switches, diodes, and power sources. The latter represents the driving pressure
@@ -217,7 +217,7 @@ direction, preventing flow in the opposite direction. Such functional elements
 are employed to represent insults that allow unidirectional gas flow into the
 pleural cavity through an opening at the alveoli or the thoracic wall.
 
-<img src="./images/Respiratory/Respiratory_Figure03.png" width="650">
+<img src="./Images/Respiratory/Respiratory_Figure03.png" width="650">
 <center>
 <i>Figure 3. Circuit diagram of the %Respiratory System. The diagram depicts a
 closed circuit of the seven major compartments (trachea, right and left anatomic
@@ -244,7 +244,7 @@ analogue, the model predicts the dynamic properties of the %Respiratory System.
 Figure 3 depicts the network of respiratory circuit elements and their
 interconnections.
 
-The %BioGears respiratory circuit employs circuit nodes and paths to represent
+The respiratory circuit employs circuit nodes and paths to represent
 physiological state variables belonging to the %Respiratory System's functional
 units. In this representation, the pressures across the compartmental units are
 designated to the nodes, while all other variables (flow, volume, hydraulic
@@ -286,11 +286,11 @@ The patient Alveoli Surface Area is also modified when COPD and lobar pneumonia 
 
 #### Driver Pressure Source
 
-The %BioGears %Respiratory System interacts with other systems in the engine to
+The %Respiratory System interacts with other systems in the engine to
 receive feedback and adjust spontaneous breathing for homeostasis. To
 accurately model the respiratory response under various physiological and
 pathological conditions, a robust %Respiratory Model that responds to mechanical
-stresses and chemical stimuli is required. To this end, the %BioGears
+stresses and chemical stimuli is required. To this end, the engine
 %Respiratory System employs a time-dependent pressure source based on a chemical
 feedback mechanism that mimics the respiratory response to blood gas levels as
 sensed by the central and peripheral chemoreceptors. The pressure source
@@ -308,7 +308,7 @@ pleural node. In the case of mechanical ventilation, the anesthesia machine
 controls the pressure at the airway node for positive pressure ventilation. More
 details on positive pressure ventilation can be found in the @ref AnesthesiaMachineMethodology.
 
-For a realistic muscle pressure source signal, the %BioGears %Respiratory System
+For a realistic muscle pressure source signal, the %Respiratory System
 adopted the mathematical model proposed by Fresnel, et al. @cite Fresnel2014musclePressure , which is
 based on clinical data. Accordingly, the time series of the respiratory muscle
 pressure, <i>P<sub>mus</sub></i>, is given by,
@@ -318,9 +318,9 @@ pressure, <i>P<sub>mus</sub></i>, is given by,
 <i>Equation 6.</i>
 </center><br> 
 
-Where <i>T<sub>I</sub></i> and <i>T<sub>tot</sub></i> are the inspiratory and total respiration times, respectively.  <i>f<sub>v</sub>=1/T<sub>tot</sub></i> is the ventilation frequency, <i>P<sub>0.1</sub></i> is the mouth occlusion pressure, and <i>P<sub>max</sub></i> is the maximum muscle pressure that specifies the amplitude of the pressure source signal.  <i>P<sub>max</sub></i> is estimated using a pressure/volume curve constructed from simulation data. The %BioGears %Respiratory System circuit was exercised over a range of pressures to produce a curve showing lung volume as a function of driver pressure (Figure 4). Given the desired lung volume (based on target tidal volume, see Equation 13), P<sub>max</sub> can be estimated. 
+Where <i>T<sub>I</sub></i> and <i>T<sub>tot</sub></i> are the inspiratory and total respiration times, respectively.  <i>f<sub>v</sub>=1/T<sub>tot</sub></i> is the ventilation frequency, <i>P<sub>0.1</sub></i> is the mouth occlusion pressure, and <i>P<sub>max</sub></i> is the maximum muscle pressure that specifies the amplitude of the pressure source signal.  <i>P<sub>max</sub></i> is estimated using a pressure/volume curve constructed from simulation data. The %Respiratory System circuit was exercised over a range of pressures to produce a curve showing lung volume as a function of driver pressure (Figure 4). Given the desired lung volume (based on target tidal volume, see Equation 13), P<sub>max</sub> can be estimated. 
 
-<img src="./images/Respiratory/Respiratory_Figure04.png" width="550">
+<img src="./Images/Respiratory/Respiratory_Figure04.png" width="550">
 <center> 
 <i>Figure 4. Maximum driver pressure, P<sub>max</sub>, as a function of lung volume.</i>
 </center><br>
@@ -341,7 +341,7 @@ through the relation @cite Fresnel2014musclePressure
 <i>Equation 8.</i>
 </center><br> 
 @anchor respiratory-chemoreceptors
-The Fresnel model uses pre-selected ventilation frequencies to model various physiological and pathological conditions. The %BioGears %Respiratory System extended the Fresnel, et. al. model by incorporating a chemical stimuli feedback mechanism that contributes to the overall blood gas regulation. As a chemical feedback mechanism, past works used empirical relationships between minute ventilation, <i>V<sup><b>.</b></sup><sub>E</sub></i>, or alveolar ventilation, <i>V<sup><b>.</b></sup><sub>A</sub></i>, and the blood gas partial pressures that represent the respiratory response to chemical stimuli at the peripheral and central chemoreceptors @cite Khoo1982chemicalFeedback , @cite Batzel2005chemicalFeedback . The %BioGears %Respiratory Model adopted the mathematical relation  that links the alveolar ventilation with the blood gas levels. The resulting mathematical relationship implemented in the %BioGears %Respiratory System is 
+The Fresnel model uses pre-selected ventilation frequencies to model various physiological and pathological conditions. The %Respiratory System extended the Fresnel, et. al. model by incorporating a chemical stimuli feedback mechanism that contributes to the overall blood gas regulation. As a chemical feedback mechanism, past works used empirical relationships between minute ventilation, <i>V<sup><b>.</b></sup><sub>E</sub></i>, or alveolar ventilation, <i>V<sup><b>.</b></sup><sub>A</sub></i>, and the blood gas partial pressures that represent the respiratory response to chemical stimuli at the peripheral and central chemoreceptors @cite Khoo1982chemicalFeedback , @cite Batzel2005chemicalFeedback . The %Respiratory Model adopted the mathematical relation  that links the alveolar ventilation with the blood gas levels. The resulting mathematical relationship implemented in the %Respiratory System is 
 
 \f[\dot{V}_{A} =G_{p} e^{-0.05P_{a} O_{2} } \max (0,P_{aCO_{2} } -I_{p} )+G_{c} \max (0,P_{aCO_{2} } -I_{c} )\f] 
 <center>
@@ -364,7 +364,7 @@ where <i>V<sup><b>.</b></sup><sub>E</sub></i> is calculated using the relation
 
 <i>V<sup><b>.</b></sup><sub>D</sub></i> is the dead space ventilation and is obtained by taking the product of the dead space volume and the respiration rate. The target tidal volume <i>V<sub>T</sub></i> needed to predict <i>f<sub>v</sub></i>  using Equation 10 is calculated from the  pulmonary ventilation based on a piecewise linear relationship between the tidal volume and the minute ventilation as shown by Watson @cite watson1974tidalVolume . In the article, the author presented data that  describes the relationship between the minute ventilation and tidal volume by straight line. The data is reproduced in Figure 5 below.
 
-<img src="./images/Respiratory/Respiratory_Figure05.png" width="800">
+<img src="./Images/Respiratory/Respiratory_Figure05.png" width="800">
 <center>
 <i>Figure 5. The figure shows data from literature that presents the linear relationship between the minute ventilation 
 and tidal volume. The relationship was derived from a line fit of experimental data with a wide range of varying carbon dioxide, exercise, postures, alveolar gas tensions, adrenaline, mild acidaemia, alkalosis, morphine, mederidine, mild hypoxia, and breathing through a small fixed resistance.  All test cases matched this trend of two intersecting straight lines.  The figure is reproduced from @cite watson1974tidalVolume .</i>
@@ -382,7 +382,7 @@ Up to about half of the vital capacity <i>V<sub>C</sub></i>, the minute ventilat
 
 where <i>m</i> is the slope and <i>c</i> is the x-intercept of the minute ventilation versus tidal volume plot. The data 
 shows that the minute ventilation is constant above half of the vital capacity. Based on this observation, the 
-%BioGears %Respiratory Model employs the linear relation given below to predict the target tidal 
+%%Respiratory Model employs the linear relation given below to predict the target tidal 
 volume from the minute ventilation.
 
 \f[V_{T} =\left\{\begin{array}{l} {c+\dot{V}_{E} /m,V_{T} \le V_{C} } \\ {0.5*V_{C} ,V_{T} >V_{C} } \end{array}\right. \f] 
@@ -396,7 +396,7 @@ Once <i>m</i> and <i>c</i> are selected this way, they are used as patient param
 
 In the calculation of the target tidal volume, the %Respiratory Model allows the target tidal volume to increase linearly with the calculated minute ventilation as long as the target volume is below half the vital capacity. In the event that the calculated target volume is above half of the vital capacity, the target volume is set to a constant value of 0.5V<sub>C</sub> as shown in the above equation. In the model, the lung vital capacity V<sub>C</sub> is calculated from the patient's total lung capacity and residual volume as described in the sections below.
 
-The model described above is implemented in the %BioGears Engine with reference values and model parameters that are tuned to meet validation data. The reference and tuned values for the model parameters are shown in Table 1 below.  Note that our model is tuned to use the reference values without modification.
+The model described above is implemented in the engine with reference values and model parameters that are tuned to meet validation data. The reference and tuned values for the model parameters are shown in Table 1 below.  Note that our model is tuned to use the reference values without modification.
 
 <center>
 <i>Table 1: %Respiratory driver model parameters and reference values used in the chemical feedback mechanism implementations.</i>
@@ -408,7 +408,7 @@ The model described above is implemented in the %BioGears Engine with reference 
 |P<sub>0.1</sub>(cmH<SUB>2</SUB>O)                   |0.75  @cite Budwiser2007chemicalFeedback  |0.75                    |
 </center><br>
 
-Figure 6 depicts the time-dependent driver pressure source of the %BioGears %Respiratory System as obtained during simulation of the standard patient model of the engine (77 kg adult male) under normal physiological conditions. For comparison, the driver pressure is plotted with the alveolar, intrapleural, and transpulmonary pressures. The figure shows the pressures for several breathing cycles. As seen in Figure 6, the model driver pressure exhibits distinct waveforms during the inspiration and expiration phases. These patterns represent the active distension and passive relaxation behaviors of the inspiratory muscles. As a result of such input, the model distinguishes between the active inspiratory and passive expiratory phases of the breathing cycle. The time-dependent muscle pressure together with the atmospheric pressure and the compliances act in tandem to generate the pleural and alveolar pressure waveforms shown in the figure.
+Figure 6 depicts the time-dependent driver pressure source of the %Respiratory System as obtained during simulation of the standard patient model of the engine (77 kg adult male) under normal physiological conditions. For comparison, the driver pressure is plotted with the alveolar, intrapleural, and transpulmonary pressures. The figure shows the pressures for several breathing cycles. As seen in Figure 6, the model driver pressure exhibits distinct waveforms during the inspiration and expiration phases. These patterns represent the active distension and passive relaxation behaviors of the inspiratory muscles. As a result of such input, the model distinguishes between the active inspiratory and passive expiratory phases of the breathing cycle. The time-dependent muscle pressure together with the atmospheric pressure and the compliances act in tandem to generate the pleural and alveolar pressure waveforms shown in the figure.
 
 <center>
 <table border="0">
@@ -437,7 +437,7 @@ residual volume (RV) correspond to the four standard lung volumes. The
 inspiratory capacity (IC), forced residual capacity (FRC), vital capacity (V<sub>C</sub>),
 and total lung capacity (TLC) are the four standard lung capacities that consist
 of two or more standard lung volumes. These volumes and capacities are good
-diagnostics for lung functionality, and the %BioGears %Respiratory Model reports
+diagnostics for lung functionality, and the %Respiratory Model reports
 their values as outputs. As mentioned above, some of the parameters are obtained
 from patient data as input variables. The TLC and FRC are two of these
 parameters that are drawn from the patient data. For the standard patient in the
@@ -448,14 +448,14 @@ capacities as described below.
 ##### Residual volume (RV)
 
 The residual volume is the volume of gas remaining in the lungs after maximal
-exhalation. As mentioned above, the %BioGears %Respiratory Model approximates the residual volume
+exhalation. As mentioned above, the %Respiratory Model approximates the residual volume
 based on the patient weight (RV = 16.0 mL/kg) (@cite Corning2007pulmonary , 
 @cite Rennie2013pulmonary ). 
 For the standard patient in the model 
 with 77 kg weight, the residual volume
 RV=1.23 L. Typical values of RV vary in the literature. For example, for 70 kg
 patients: RV=1.5 L @cite Levitzky2013pulmonary , 1.2 L @cite silverthorn2013human, 
-and 1.682 L @cite stocks1995reference . The %BioGears
+and 1.682 L @cite stocks1995reference . The 
 engine employs weight-based relation and the values used in the engine are close 
 to those found in the literature @cite silverthorn2013human .
 
@@ -480,12 +480,12 @@ Tidal volume corresponds to the volume of air inspired or expired in a single
 breathing cycle during normal quiet breathing. For a healthy 70 kg adult, the
 tidal volume is 540 ml per breath. The tidal volume can be calculated by
 numerically integrating the volumetric flow rate of inspired air flowing through
-the trachea. The %BioGears %Respiratory Model calculates the tidal volume by
+the trachea. The %Respiratory Model calculates the tidal volume by
 taking the difference between the maximum and minimum total lung volumes during
 each breathing cycle.
 
 Figure 7 depicts the typical lung volume waveform for multiple breathing
-cycles. The %BioGears %Respiratory Model outputs the value of V<sub>T</sub> for each
+cycles. The %Respiratory Model outputs the value of V<sub>T</sub> for each
 breathing cycle. Figure 7 presents the plot of the total lung volume and V<sub>T</sub> as a
 function of time.
 
@@ -557,7 +557,7 @@ determined to be 3.85 L.
 
 ##### Respiration Rate (RR)
 
-As described above, the %BioGears %Respiratory Model employs chemical feedback
+As described above, the %Respiratory Model employs chemical feedback
 mechanisms to regulate the ventilation frequency that affects the breathing cycle
 through the respiratory driver. The breathing frequency is adjusted in
 accordance to the arterial O<SUB>2</SUB> and CO<SUB>2</SUB> levels and other modifiers, such as drug and metabolic effects.
@@ -579,7 +579,7 @@ product of tidal volume (V<sub>T</sub>) and respiration rate (RR), i.e.,
 <i>Equation 19.</i>
 </center><br> 
 
-The %BioGears %Respiratory Model calculates both V<sub>T</sub> and RR from the simulation data. 
+The %Respiratory Model calculates both V<sub>T</sub> and RR from the simulation data. 
 V<sup><b>.</b></sup><sub>E</sub> can thus be determined from the above equation by using the average values of V<sub>T</sub> and
 RR. For the standard patient in the model, under normal physiological conditions,
 the average values of V<sub>T</sub> and RR are 0.540 L and 16 breaths/min,
@@ -596,8 +596,7 @@ leaving the alveoli per minute @cite Levitzky2013pulmonary . The alveolar
 ventilation is calculated as V<sup><b>.</b></sup><sub>A</sub>=(V<sub>T</sub>-V<sub>D</sub>)\*RR where V<sup><b>.</b></sup><sub>A</sub> is the alveolar
 ventilation in liters per minute and V<sub>D</sub> is the volume of the conducting airways
 that is referred to as the anatomical dead space. This is the region of
-respiratory tract where no gas exchange takes place. In the %BioGears
-%Respiratory Model, the volume of the dead space is calculated from the values
+respiratory tract where no gas exchange takes place. In the %Respiratory Model, the volume of the dead space is calculated from the values
 assigned to the right and left anatomic dead space nodes. These nodes have continuously changing volumes due the compliances that are connected to the
 nodes. The right and left anatomic dead space volumes when
 compared to the right and left alveoli volumes are shown in Figure 8. When the patient weight is factored into the 
@@ -608,13 +607,13 @@ calculation, the alveolar ventilation predicted from the model is close to the e
 <i>Figure 8. The right and left anatomic dead space volumes together with the right and left 
 alveoli volumes. The difference in the alveoli volumes is due to the difference in 
  the lung ratio of the right and left lungs. The right and left lung ratios of the standard patient 
- in the %BioGears %Respiratory Model are 0.525 and 0.475, respectively. The left and right dead space volumes are equivalent.</i>
+ in the %Respiratory Model are 0.525 and 0.475, respectively. The left and right dead space volumes are equivalent.</i>
 </center><br>
 
 ##### Tracheal Airflow
 
 Airflow is measured by taking the instantaneous pressure difference across a
-fixed resistance. The %BioGears %Respiratory Model measures tracheal airflow
+fixed resistance. The %Respiratory Model measures tracheal airflow
 <i>Q<sub>trachea</sub></i> by using the instantaneous pressure difference across the tracheal
 resistance <i>R<sub>trachea</sub></i> as:
 
@@ -661,55 +660,55 @@ expiration phase.</i>
 ##### Transpulmonary pressure
 
 Transpulmonary pressure is defined as the difference between the alveolar 
- and the intrapleural pressures. The %BioGears %Respiratory System derives the transpulmonary 
+ and the intrapleural pressures. The %Respiratory System derives the transpulmonary 
  pressure from the calculated values of the alveolar pressure and intrapleural pressures. 
  The alveolar pressure is obtained by taking the average of the left and right 
  alveolar pressures. Similarly, the total intrapleural pressure is obtained by taking the average of the 
- the left and right pleural pressures. The plots shown below compare the transpulmonary pressure from the %BioGears 
- Engine with that found in literature @cite guyton2006medical. Some variations in the waveforms and 
+ the left and right pleural pressures. The plots shown below compare the transpulmonary pressure from the 
+ engine with that found in literature @cite guyton2006medical. Some variations in the waveforms and 
  possibly the average values is a consequence of the specific driver pressure and 
  patient parameters employed in the engine.
 
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/BioGears_Pressures.jpg" width="550"></td>
+    <td><img src="./plots/Respiratory/Engine_Pressures.jpg" width="550"></td>
     <td><img src="./plots/Respiratory/Guyton_Lung_Pressures.jpg" width="550"></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/BioGears_Lung_Volume.jpg" width="550"></td>
+    <td><img src="./plots/Respiratory/Engine_Lung_Volume.jpg" width="550"></td>
     <td><img src="./plots/Respiratory/Guyton_Lung_Volume.jpg" width="550"></td>
 </tr>
 </table>
 </center>
 <center>
-<i>Figure 11. A plot showing the transpulmonary pressure obtained from the %BioGears engine with 
-that found and digitized from literature @cite guyton2006medical. The left %BioGears plots use absolute pressure, while the right Guyton plots use the pressure difference from ambient (1033 cmH2O).  For comparison, the plot also shows the lung volumes from the two sources.</i>
+<i>Figure 11. A plot showing the transpulmonary pressure obtained from the engine with 
+that found and digitized from literature @cite guyton2006medical. The left plots use absolute pressure, while the right Guyton plots use the pressure difference from ambient (1033 cmH2O).  For comparison, the plot also shows the lung volumes from the two sources.</i>
 </center><br>
 
 #### Pressure-Volume (P-V) curve
 One method of characterizing the lungs' elastic behavior is to use a diagram
 that relates the lung volume changes to changes in pleural pressure. The pressure-volume 
 curve of a healthy person shows hysteresis during the inspiratory and expiratory phases. 
-Figure 12 presents the pressure-volume diagram of data extracted from the %BioGears
+Figure 12 presents the pressure-volume diagram of data extracted from the 
 %Respiratory Model. For comparison, the plot also shows a P-V diagram reproduced from literature
 @cite guyton2006medical . The figures show the plot of lung volume changes versus pleural pressure
  for one breathing cycle. The pleural pressure from the model is the average of the right and left pleural 
  pressures. The lung volume change corresponds to the change in the total lung volume  
  during a complete breathing cycle.  
-As shown in the figure, the %BioGears %Respiratory Model mimics the expected 
+As shown in the figure, the %Respiratory Model mimics the expected 
 hysteresis of the P-V curve.
 
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/BioGears_Pulmonary_Compliance.jpg" width="550"></td>
+    <td><img src="./plots/Respiratory/Engine_Pulmonary_Compliance.jpg" width="550"></td>
     <td><img src="./plots/Respiratory/Guyton_Pulmonary_Compliance.jpg" width="550"></td>
 </tr>
 </table>
 </center>
 <center>
-<i>Figure 12. The pressure-volume curve for the standard patient of the %BioGears %Respiratory Model 
+<i>Figure 12. The pressure-volume curve for the standard patient of the %Respiratory Model 
 under normal physiological conditions. For comparison, the figure includes plot reproduced from 
 literature @cite guyton2006medical . The plot from the model shows the expected hysteresis of the P-V 
 diagram observed in a healthy person.</i>
@@ -736,7 +735,7 @@ the results of alveolar and tracheal partial pressures of O<SUB>2</SUB> and CO<S
 
 ##### Alveolar O<SUB>2</SUB> Partial Pressure
 
-The %BioGears Engine calculates the O<SUB>2</SUB> partial pressure P<sub>Lung<sub>O<SUB>2</SUB></sub/></sub/> at each
+The engine calculates the O<SUB>2</SUB> partial pressure P<sub>Lung<sub>O<SUB>2</SUB></sub/></sub/> at each
 alveoli node by using the oxygen volume fraction VF<sub>Lung<sub>O<SUB>2</SUB></sub/></sub/> and the total
 pressure P<sub>Lung</sub/> at the alveoli nodes as
 
@@ -749,7 +748,7 @@ The alveolar O<SUB>2</SUB> partial pressure can thus be determined by taking the
 O<SUB>2</SUB> partial pressures at the two alveoli nodes. In the model, the alveoli node
 pressures are gauge pressures and are expressed relative to the atmospheric
 pressure. The model converts these relative pressures to their absolute
-pressures when calculating the gas partial pressures. The %BioGears Engine
+pressures when calculating the gas partial pressures. The engine
 assumes the inspired air is heated and humidified. Therefore, the water vapor
 pressure at normal body temperature (P<sub>H<SUB>2</SUB>O</sub>=47 mm Hg) is subtracted from the
 standard atmospheric pressure of P<sub>B</sub>=760 mm Hg when the gas partial pressure is
@@ -824,20 +823,20 @@ carina node. The plot shows the value of tracheal O<SUB>2</SUB> partial pressure
 @anchor respiratory-dependencies
 ### Dependencies
 
-The %BioGears %Respiratory System interacts with other physiological
+The %Respiratory System interacts with other physiological
 systems either directly or indirectly through processes that involve the
 transport and exchange of gases. These interdependencies are discussed below.
 
 #### Gas Transport
 
-The transport of gases in the %BioGears %Respiratory Model is handled through
+The transport of gases in the %Respiratory Model is handled through
 the Transport functionality of the engine, where mass conservation based
 on volume fraction and volumetric flow rate of gases at the nodes and paths of
 the respiratory circuit is employed (see the @ref SubstanceTransportMethodology for
 details). During free breathing, the ambient atmospheric volume fractions are used as an input to the %Respiratory Model.
  
-By using methods described in the @ref SubstanceTransportMethodology, the %BioGears
-Engine calculates the volume fraction of gases at the nodes associated with the
+By using methods described in the @ref SubstanceTransportMethodology, the 
+engine calculates the volume fraction of gases at the nodes associated with the
 respiratory functional units. The %Respiratory System uses the calculated volume
 fractions and predicts various physiological parameters. For example, the gas volume
 fraction at the end of expiration, referred to as end-tidal gas concentration,
@@ -854,7 +853,7 @@ airway node.
 
 #### %Environment
 
-The %BioGears %Respiratory System interacts with the %Environment System for
+The %Respiratory System interacts with the %Environment System for
 the atmospheric pressure values assigned to the mouth node. Changes to the 
 environmental conditions, such as changes in altitude, ambient temperature, humidity, 
 and others, can affect the breathing pattern of the patient. The %Respiratory System 
@@ -872,14 +871,14 @@ transport inhaled agents into the bloodstream from the
 %Respiratory System. For more details on gas transport, see @ref
 SubstanceTransportMethodology and @ref BloodChemistryMethodology.
 
-In the %BioGears %Respiratory Model, the spontaneous respiration rate is adjusted based on a chemical feedback mechanism
+In the %Respiratory Model, the spontaneous respiration rate is adjusted based on a chemical feedback mechanism
 that depends on the arterial oxygen and carbon dioxide levels as described
 above. The arterial oxygen and carbon dioxide levels depend on the level of O<SUB>2</SUB>
 consumption and CO<SUB>2</SUB> production in the circulatory system, which in turn affects
 the gas exchange at the alveolar-capillary interface. As the arterial O<SUB>2</SUB> and CO<SUB>2</SUB>
 levels change, the breathing rate, tidal volume, and alveolar ventilation also change,
 which in turn facilitates efficient gas exchange between the atmosphere and the
-body. This presents an example of how the %BioGears Engine integrates the
+body. This presents an example of how the engine integrates the
 circulatory and %Respiratory Systems to regulate the blood gas levels.
 
 #### Drug Effects
@@ -910,7 +909,7 @@ the flow across the trachea <i>Q<sub>trachea</sub></i> as
 <i>Equation 24.</i>
 </center><br> 
 
-The %BioGears %Respiratory Model calculates the pulmonary compliance <i>C<sub>pulm</sub></i> by dividing the tidal 
+The %Respiratory Model calculates the pulmonary compliance <i>C<sub>pulm</sub></i> by dividing the tidal 
 volume <i>V<sub>T</sub></i> by the intrapleural pressure <i>P<sub>pleu</sub></i> difference as
 
 \f[C_{pulm} =\frac{V_{T} }{P_{pleau(\max )} -P_{pleu(\min )} } \f] 
@@ -927,7 +926,7 @@ Assumptions and Limitations
 
 ### Assumptions
 
-As in most lumped parameter models of mechanical ventilation, the %BioGears
+As in most lumped parameter models of mechanical ventilation, the 
 %Respiratory Model is based on two main parameters: the resistance R and the
 compliance C (or elastance E). Similar to their electrical analogues, these
 elements form a closed circuit to represent the energy dissipation and storage
@@ -941,7 +940,7 @@ In the model, the %Respiratory System is assumed to behave linearly in that the
 hydraulic resistance R is assumed to be independent of the flow rate Q, and the
 elastance E or the compliance C of the elastic component is assumed to be
 independent of the volume V. Therefore, under normal physiological conditions,
-the circuit elements (resistors and capacitors) of the %BioGears %Respiratory
+the circuit elements (resistors and capacitors) of the %Respiratory
 System are treated as constants. However, their values can be adjusted when
 addressing pathological conditions.
 
@@ -988,30 +987,30 @@ Conditions
 
 #### Chronic Obstructive Pulmonary Disease
 
-Chronic Obstructive Pulmonary Disease (COPD) is an obstructive lung disease characterized by chronically reduced airflow into the lungs. Symptoms typically include increased respiration rate, decreased  tidal volume, decreased expiratory flow, and reduced oxygen saturation @cite man2003contemporary . Unlike asthma, the reduction in airflow does not generally improve with medication. Symptoms typically worsen over time, often leading to death. COPD is caused by damage to the small airways in the lungs and destruction of the alveolar membranes. When tissue damage occurs primarily in the airways, the condition is called chronic bronchitis. When tissue destruction is focused in the alveoli, the condition is called emphysema. In %BioGears, COPD is a manifestation of both conditions, although one condition may dominate. 
+Chronic Obstructive Pulmonary Disease (COPD) is an obstructive lung disease characterized by chronically reduced airflow into the lungs. Symptoms typically include increased respiration rate, decreased  tidal volume, decreased expiratory flow, and reduced oxygen saturation @cite man2003contemporary . Unlike asthma, the reduction in airflow does not generally improve with medication. Symptoms typically worsen over time, often leading to death. COPD is caused by damage to the small airways in the lungs and destruction of the alveolar membranes. When tissue damage occurs primarily in the airways, the condition is called chronic bronchitis. When tissue destruction is focused in the alveoli, the condition is called emphysema. In the engine, COPD is a manifestation of both conditions, although one condition may dominate. 
 
-%BioGears simulates COPD by modeling damage to the small airways and alveolar membranes. COPD severity is controlled by two severity values, a chronic bronchitis severity value and an emphysema severity value. Chronic bronchitis severity is used to scale the airflow resistance through the lower airways in the circuit model, simulating airway tissue damage and scarring. Increasing chronic bronchitis severity increases the airflow resistance through the lower airways. The function used to determine airflow resistance for COPD is the same as that used for asthma (see Figure 18) and is based on chronic bronchitis severity.
+The engine simulates COPD by modeling damage to the small airways and alveolar membranes. COPD severity is controlled by two severity values, a chronic bronchitis severity value and an emphysema severity value. Chronic bronchitis severity is used to scale the airflow resistance through the lower airways in the circuit model, simulating airway tissue damage and scarring. Increasing chronic bronchitis severity increases the airflow resistance through the lower airways. The function used to determine airflow resistance for COPD is the same as that used for asthma (see Figure 18) and is based on chronic bronchitis severity.
 
-Emphysema severity is used to scale destruction of the alveolar membranes. Destruction of the alveolar membranes decreases the effective surface area for gas exchange, thereby reducing alveolar gas transfer. In cases of severe emphysema, up to 80% of the alveolar membranes are destroyed, with a corresponding reduction in effective gas diffusion surface area @cite guyton2006medical. %Biogears scales the gas diffusion surface area using a multiplier based on emphysema severity.  The function used to determine the gas diffusion surface area multiplier is plotted in Figure 17. 
+Emphysema severity is used to scale destruction of the alveolar membranes. Destruction of the alveolar membranes decreases the effective surface area for gas exchange, thereby reducing alveolar gas transfer. In cases of severe emphysema, up to 80% of the alveolar membranes are destroyed, with a corresponding reduction in effective gas diffusion surface area @cite guyton2006medical. The engine scales the gas diffusion surface area using a multiplier based on emphysema severity.  The function used to determine the gas diffusion surface area multiplier is plotted in Figure 17. 
 
-Additionally, %Biogears models destruction of lung tissue with an increase in alveolar compliance.  The function used to determine the compliance multiplier is plotted in Figure 18. 
+Additionally, The engine models destruction of lung tissue with an increase in alveolar compliance.  The function used to determine the compliance multiplier is plotted in Figure 18. 
 
-The destruction of the alveolar membranes also destroys the pulmonary capillaries embedded in the membranes. To model pulmonary capillary destruction, %BioGears increases the pulmonary capillary flow resistance based on severity. Although increased pulmonary capillary resistance is related to alveolar membrane destruction, and therefore associated with emphysema, %BioGears uses either emphysema severity or chronic bronchitis severity (whichever is higher) to determine the pulmonary capillary resistance multiplier - see Figure 19. This was done in an attempt to model increased blood pressure and elevated heart rate, which are symptoms of both emphysema and chronic bronchitis. Increasing the capillary resistance should increase arterial blood pressure as the heart pumps harder to overcome the increased resistance in the lungs. However, we were unable to successfully model either increased blood pressure or elevated heart rate for COPD, as the validation results show (see @ref respiratory-results "Results and Conclusions"). This will be the focus of later efforts to improve the model.  
+The destruction of the alveolar membranes also destroys the pulmonary capillaries embedded in the membranes. To model pulmonary capillary destruction, the engine increases the pulmonary capillary flow resistance based on severity. Although increased pulmonary capillary resistance is related to alveolar membrane destruction, and therefore associated with emphysema, the engine uses either emphysema severity or chronic bronchitis severity (whichever is higher) to determine the pulmonary capillary resistance multiplier - see Figure 19. This was done in an attempt to model increased blood pressure and elevated heart rate, which are symptoms of both emphysema and chronic bronchitis. Increasing the capillary resistance should increase arterial blood pressure as the heart pumps harder to overcome the increased resistance in the lungs. However, we were unable to successfully model either increased blood pressure or elevated heart rate for COPD, as the validation results show (see @ref respiratory-results "Results and Conclusions"). This will be the focus of later efforts to improve the model.  
 
 Decreased Inspiration-Expiration (IE) ratio is another pathophysiologic feature of COPD.  As with asthma, the normal IE ratio is scaled using a multiplier based on severity. Either chronic bronchitis severity or emphysema severity (whichever is higher) is used to determine the IE ratio scaling multiplier - see Figure 20. 
 
 <table border="0">
 <tr>
-    <td><img src="./images/Respiratory/Respiratory_Figure17_GasDiffusion.png" width="550"></td>
-    <td><img src="./images/Respiratory/Respiratory_Figure18_AlveoliCompliance_COPD.png" width="550"></td>
+    <td><img src="./Images/Respiratory/Respiratory_Figure17_GasDiffusion.png" width="550"></td>
+    <td><img src="./Images/Respiratory/Respiratory_Figure18_AlveoliCompliance_COPD.png" width="550"></td>
 </tr>
 <tr>
     <td><center><i>Figure 17. Gas diffusion surface area multiplier as a function of emphysema severity. Gas diffusion surface area decreases with increasing emphysema severity.</i></center></td>
     <td><center><i>Figure 18. Alveoli compliance multiplier as a function of emphysema severity. Alveoli compliance increases with increasing emphysema severity.</i></center></td>
 </tr>
 <tr>
-    <td><img src="./images/Respiratory/Respiratory_Figure19_PCResistance.png" width="550"></td>
-    <td><img src="./images/Respiratory/Respiratory_Figure20_IERatio_COPD.png" width="550"></td>
+    <td><img src="./Images/Respiratory/Respiratory_Figure19_PCResistance.png" width="550"></td>
+    <td><img src="./Images/Respiratory/Respiratory_Figure20_IERatio_COPD.png" width="550"></td>
 </tr>
 <tr>
     <td><center><i>Figure 19. Pulmonary capillary flow resistance multiplier as a function of COPD severity. Pulmonary capillary flow resistance increases with increasing chronic bronchitis or emphysema severity, whichever is higher.</i></center></td>
@@ -1021,9 +1020,9 @@ Decreased Inspiration-Expiration (IE) ratio is another pathophysiologic feature 
 
 #### Lobar Pneumonia
 
-Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lungs.  Symptoms typically include increased respiration rate, decreased  tidal volume, reduced oxygen saturation, decreased IE ratio, and increased body temperature @cite ebell2006outpatient .  As fluid fills portions of the lung, it becomes more difficult to breathe. Fluid also reduces the effective gas diffusion surface area in the alveoli, reducing alveolar transfer of oxygen and carbon dioxide into and out of the bloodstream @cite guyton2006medical . %BioGears simulates lobar pneumonia by decreasing the alveoli compliance in the respiratory circuit, which models increased breathing difficulty due to fluid congestion in the alveoli. Similarly, gas diffusion surface area is reduced using the same function as for COPD (see Figure 17). Decreased IE ratio is pathophysiologic feature of lobar pneumonia.  Like COPD, the normal IE ratio is scaled using a multiplier based on severity. %BioGears uses the same function as for COPD to determine the IE ratio multiplier (see Figure 20).   
+Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lungs.  Symptoms typically include increased respiration rate, decreased  tidal volume, reduced oxygen saturation, decreased IE ratio, and increased body temperature @cite ebell2006outpatient .  As fluid fills portions of the lung, it becomes more difficult to breathe. Fluid also reduces the effective gas diffusion surface area in the alveoli, reducing alveolar transfer of oxygen and carbon dioxide into and out of the bloodstream @cite guyton2006medical . The engine simulates lobar pneumonia by decreasing the alveoli compliance in the respiratory circuit, which models increased breathing difficulty due to fluid congestion in the alveoli. Similarly, gas diffusion surface area is reduced using the same function as for COPD (see Figure 17). Decreased IE ratio is pathophysiologic feature of lobar pneumonia.  Like COPD, the normal IE ratio is scaled using a multiplier based on severity. The engine uses the same function as for COPD to determine the IE ratio multiplier (see Figure 20).   
 
-<img src="./images/Respiratory/Respiratory_Figure21_AlveoliCompliance_LP.png" width="550">
+<img src="./Images/Respiratory/Respiratory_Figure21_AlveoliCompliance_LP.png" width="550">
 <center>
 <i>Figure 21. Alveoli compliance multiplier as a function of lobar pneumonia severity. Alveoli compliance decreases with increasing severity.</i>
 </center><br>
@@ -1051,7 +1050,7 @@ obvious common symptom of airway obstruction. The complications of breathing
 difficulty include hypoxia (low oxygen levels) and hypercapnia (high carbon
 dioxide levels), respiratory acidosis, and others.
 
-The current version of the %BioGears %Respiratory Model attempts to reproduce
+The current version of the %Respiratory Model attempts to reproduce
 the physiological responses arising from foreign body upper airway obstruction.
 Foreign body airway obstruction is fairly common during anesthesia. One example
 is the case reported by @cite Roy2005airwayObstruction where the oxygen
@@ -1062,7 +1061,7 @@ path connecting the airway node to the carina node. This path corresponds to the
 flow through the trachea. The model then calculates the physiological responses
 due to increased airway resistance.
 
-<img src="./images/Respiratory/Respiratory_Figure22.png" width="550">
+<img src="./Images/Respiratory/Respiratory_Figure22.png" width="550">
 <center>
 <i>Figure 22. Logarithmically increasing resistance values used to increase the airway resistance in relation
 to the airway obstruction severity levels.</i>
@@ -1076,7 +1075,7 @@ the bronchial airway diameter, or bronchoconstriction, results in the reduction 
 gas flow into or out of the lungs and causes difficulty in both spontaneous and
 mechanical ventilation. A number of factors can trigger bronchospasms, including
 a foreign body in the airway and stimulation of an endotracheal tube in patients
-with reactive disease @cite Woodworth2012anesthesia . The %BioGears
+with reactive disease @cite Woodworth2012anesthesia . The 
 %Respiratory Model accounts for this respiratory distress by adjusting the
 resistance of the bronchi units. The increase in bronchial airway resistance results in a
 decrease in gas flow in and out of the alveoli, which in turn affects the gas
@@ -1100,7 +1099,7 @@ be hyperinflated, predisposing to overdistension and barotrauma @cite divatia200
 
 Right mainstem intubation is the common complication of endotracheal intubation
 because of the shallower angle that the right mainstem bronchus makes with the
-trachea, though %BioGears includes the ability to simulate left mainstem intubation as well. The %BioGears %Respiratory Model attempts to simulate this incidence by
+trachea, though the engine includes the ability to simulate left mainstem intubation as well. The %Respiratory Model attempts to simulate this incidence by
 manipulating the resistance representing the opposite bronchus functional unit of
 the %Respiratory System. A numerically large resistance is selected for this
 circuit element for complete blockage of flow into the lung. The model then
@@ -1111,7 +1110,7 @@ evaluates the physiological responses arising from the incidence.
 Another complication of endotracheal intubation is esophageal
 intubation, an incident where the endotracheal tube is inadvertently placed in
 the esophagus. When such an incidence occurs, the lung does not receive air. The
-%BioGears %Respiratory System models esophageal intubation by opening
+%Respiratory System models esophageal intubation by opening
 the airflow path leading to the esophagus and closing the flow path leading to
 the trachea compartment. This is accomplished in the model by assigning
 a numerically large value for the tracheal resistance and assigning a small
@@ -1131,7 +1130,7 @@ nontraumatic or spontaneous based on their cause. Pneuomothoraces are
 classified as open (sucking chest wound) or closed (intact thoracic cage)
 pnumothoraces @cite sharma2008principles .
 
-The %BioGears %Respiratory Model is capable of simulating traumatic tension
+The %Respiratory Model is capable of simulating traumatic tension
 pneumothorax. Tension pneumothorax is a life-threatening condition that occurs
 when air escapes into the pleural space on inspiration, but cannot return on
 expiration due to a one-way valve effect of the injury. This causes a
@@ -1146,26 +1145,26 @@ from the lung into the plural space as in laceration of the lung following blunt
 trauma. The model evaluates the physiological responses arising from increased
 intrapleural pressure and leakage in the airflow of the respiratory circuit.
 
-<img src="./images/Respiratory/PneumoCirucit.png" width="550">
+<img src="./Images/Respiratory/PneumoCirucit.png" width="550">
 <center>
 <i>Figure 23. Both lungs in the engine have elements to mimic the effects of open and closed tension pneumothorax insults as well as chest occlusive dressing (for open) and needle decompression (for both) interventions. The red boxes denote these additional elements.</i>
 </center><br>
 
-<img src="./images/Respiratory/PneumoLeakResistance.png" width="550">
+<img src="./Images/Respiratory/PneumoLeakResistance.png" width="550">
 <center>
 <i>Figure 24. An exponential function is used to map pnemothorax action severity to leak resistance.  This same function is used for both the open and the closed tension pneumothorax.</i>
 </center><br>
 
 #### Acute Asthma
 
-Asthma is a common inflammatory disease of the airways (bronchi and bronchioles) where air flow into the lungs is partially obstructed. Acute asthma is an exacerbation of asthma that does not respond to standard treatments. Symptoms include elevated respiration rate, labored breathing, and a reduction in oxygen saturation, among others.  It is generally considered a life-threatening obstruction of the airway requiring immediate medical attention. During an acute asthma attack, airflow is partially obstructed during exhalation, and flow resistance is 5 to 15 times normal @cite papiris2002asthma . %BioGears simulates this by increasing the airway flow resistance in the circuit model. The function used to determine the airway flow resistance multiplier is shown in the figure below. The asthma attack severity is governed by a specified severity value. The higher the severity, the more severe the asthma attack, and the higher the resistance values are set.
+Asthma is a common inflammatory disease of the airways (bronchi and bronchioles) where air flow into the lungs is partially obstructed. Acute asthma is an exacerbation of asthma that does not respond to standard treatments. Symptoms include elevated respiration rate, labored breathing, and a reduction in oxygen saturation, among others.  It is generally considered a life-threatening obstruction of the airway requiring immediate medical attention. During an acute asthma attack, airflow is partially obstructed during exhalation, and flow resistance is 5 to 15 times normal @cite papiris2002asthma . The engine simulates this by increasing the airway flow resistance in the circuit model. The function used to determine the airway flow resistance multiplier is shown in the figure below. The asthma attack severity is governed by a specified severity value. The higher the severity, the more severe the asthma attack, and the higher the resistance values are set.
 
-Additionally, the inspiratory/expiratory (IE) ratio decreases during an acute asthma attack. It takes a noticeably longer time to exhale than inhale @cite papiris2002asthma .  In %BioGears, the normal IE ratio is scaled using a multiplier based on severity to model decreased IE ratio during an acute asthma attack.
+Additionally, the inspiratory/expiratory (IE) ratio decreases during an acute asthma attack. It takes a noticeably longer time to exhale than inhale @cite papiris2002asthma .  In the engine, the normal IE ratio is scaled using a multiplier based on severity to model decreased IE ratio during an acute asthma attack.
 
 <table border="0">
 <tr>
-    <td><img src="./images/Respiratory/Respiratory_Figure25_AirwayResistance.png" width="550"></td>
-    <td><img src="./images/Respiratory/Respiratory_Figure26_IERatio_Asthma.png" width="550"></td>
+    <td><img src="./Images/Respiratory/Respiratory_Figure25_AirwayResistance.png" width="550"></td>
+    <td><img src="./Images/Respiratory/Respiratory_Figure26_IERatio_Asthma.png" width="550"></td>
 </tr>
 <tr>
     <td><center><i>Figure 25. Airway flow resistance multiplier as a function of asthma severity. Airway flow resistance increases (during exhalation) with increasing asthma severity.</i></center></td>
@@ -1178,33 +1177,33 @@ Additionally, the inspiratory/expiratory (IE) ratio decreases during an acute as
 
 #### Occlusive Dressing
 
-The management of an open tension pneumothorax requires sealing the open chest wound with an occlusive dressing. Such intervention slows the progression of tension pneumothorax and may ensure recovery if timely intervention takes place. The %BioGears %Respiratory Model simulates occlusive dressing by assigning large flow resistance across the element that serves as an electrical analogue open switch for the path linking the pleural cavity to the environment. Based on this implementation, the model calculates the physiological responses arising from numerical equivalent occlusive dressing.
+The management of an open tension pneumothorax requires sealing the open chest wound with an occlusive dressing. Such intervention slows the progression of tension pneumothorax and may ensure recovery if timely intervention takes place. The %Respiratory Model simulates occlusive dressing by assigning large flow resistance across the element that serves as an electrical analogue open switch for the path linking the pleural cavity to the environment. Based on this implementation, the model calculates the physiological responses arising from numerical equivalent occlusive dressing.
 
 #### Needle Decompression
 
-Tension pneumothorax is a life-threatening condition that requires immediate intervention to relieve the air trapped in the pleural space and reduce the intrapleural pressure to the subatmospheric level. Needle decompression is a procedure that allows air to escape from the pleural space into the environment. This procedure relieves the accumulated air, allowing full expansion of the affected lung. The %BioGears %Respiratory Model is capable of simulating needle decompression by incorporating a circuit element that permits airflow based on pressure differential between the pleural space and the environment. The model then evaluates physiological responses to the intervention.
+Tension pneumothorax is a life-threatening condition that requires immediate intervention to relieve the air trapped in the pleural space and reduce the intrapleural pressure to the subatmospheric level. Needle decompression is a procedure that allows air to escape from the pleural space into the environment. This procedure relieves the accumulated air, allowing full expansion of the affected lung. The %Respiratory Model is capable of simulating needle decompression by incorporating a circuit element that permits airflow based on pressure differential between the pleural space and the environment. The model then evaluates physiological responses to the intervention.
 
 ### Conscious Respiration 
 
-Conscious respiration consists of a set of commands that model forced exhalation, forced inhalation, holding breath, and inhaler actuation. Collectively, they allow %BioGears to model coordinated use of an inhaler.  It should be noted that the conscious respiration action begins immediately when called, and will continue until completed while the simulation continues.  Users will likely want to advance time for the duration of the conscious respiration command before attempting other actions or completing a scenario.  The following commands can be used in any order and will wait until the completion of the previous command to begin:
+Conscious respiration consists of a set of commands that model forced exhalation, forced inhalation, holding breath, and inhaler actuation. Collectively, they allow the engine to model coordinated use of an inhaler.  It should be noted that the conscious respiration action begins immediately when called, and will continue until completed while the simulation continues.  Users will likely want to advance time for the duration of the conscious respiration command before attempting other actions or completing a scenario.  The following commands can be used in any order and will wait until the completion of the previous command to begin:
 
 - <b>Forced Exhale</b>: The "depth" or "shallowness" of the exhalation is determined by the expiratory reserve volume fraction, which specifies what portion of the expiratory reserve volume to exhale. If set to 1.0, the patient exhales his or her entire expiratory reserve volume, leaving only the residual volume in the lungs. The time period over which to execute the exhale is determined by the period. 
 - <b>Forced Inhale</b>: The "depth" or "shallowness" of the inhalation is determined by the inspiratory capacity fraction, which specifies what portion of the inspiratory capacity to inhale. If set to 1.0, the patient inhales his or her entire inspiratory capacity, completely filling the lungs. The time period over which to execute the inhale is determined by the period. 
 - <b>Breath Hold</b>: The time period to hold breath is determined by the period. 
 - <b>Use %Inhaler</b>: The %Inhaler command is interpreted by the inhaler equipment (@ref InhalerMethodology).
 
-Conscious respiration has any number of potential applications and is likely to be implemented to attain proper breathing while using an inhaler, generate a spirometry curve, or simulate coughing.  Figure 27 shows the %BioGears results for a cough scenario that leverages the conscious respiration action compared to empirical data.
+Conscious respiration has any number of potential applications and is likely to be implemented to attain proper breathing while using an inhaler, generate a spirometry curve, or simulate coughing.  Figure 27 shows the results for a cough scenario that leverages the conscious respiration action compared to empirical data.
 
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/BioGears_Cough_Flow.jpg" width="550"></td>
+    <td><img src="./plots/Respiratory/Engine_Cough_Flow.jpg" width="550"></td>
     <td><img src="./plots/Respiratory/Experimental_Cough_Flow.jpg" width="550"></td>
 </tr>
 </table>
 </center>
 <center>
-<i>Figure 27. The airflow curve of a simulated cough in %BioGears generated from a conscious respiration with quick forced inhale and exhale in series. For comparison, the figure includes a plot reproduced from 
+<i>Figure 27. The airflow curve of a simulated cough in engine generated from a conscious respiration with quick forced inhale and exhale in series. For comparison, the figure includes a plot reproduced from 
 literature determined by a voluntary cough immediately following office-based vocal fold medialization injections @cite ruddy2014improved.</i>
 </center><br>
 
@@ -1218,15 +1217,15 @@ Events
 
 ### Maximum Pulmonary Ventilation Rate
 
-The %BioGears %Respiratory system triggers Maximum Pulmonary Ventilation Rate event to alert the user when the patient pulmonary ventilation exceeds maximum value.
+The %Respiratory system triggers Maximum Pulmonary Ventilation Rate event to alert the user when the patient pulmonary ventilation exceeds maximum value.
 
 ### Bradypnea
 
-Bradypnea is defined as an abnormally low breathing rate. Normal breathing rates for healthy adults are relatively standard, but can vary based upon condition. Low breathing rates can decrease total ventilation if not compensated for, which can lead to hypercapnia or hypoxia. In the %BioGears Engine, bradypnea occurs when the respiratory rate falls below 10 breaths per minute @cite overdyk2007continuous and returns to normal when it rises back above 10.5 breaths per minute.
+Bradypnea is defined as an abnormally low breathing rate. Normal breathing rates for healthy adults are relatively standard, but can vary based upon condition. Low breathing rates can decrease total ventilation if not compensated for, which can lead to hypercapnia or hypoxia. In the engine, bradypnea occurs when the respiratory rate falls below 10 breaths per minute @cite overdyk2007continuous and returns to normal when it rises back above 10.5 breaths per minute.
 
 ### Tachypnea
 
-Tachypnea is defined as high breathing rate. Normal respiration rate in an adult ranges 12 - 20 breaths per minute. Tachypnea occurs when breathing rate rises above 20 breaths per minute. The  %BioGears Engine engine outputs a tachypnea event when the patient's respiration rate is above 20 breaths per minute. 
+Tachypnea is defined as high breathing rate. Normal respiration rate in an adult ranges 12 - 20 breaths per minute. Tachypnea occurs when breathing rate rises above 20 breaths per minute. The engine outputs a tachypnea event when the patient's respiration rate is above 20 breaths per minute. 
 
 ### %Respiratory Acidosis
 
@@ -1252,22 +1251,22 @@ The pulmonary function test allows the user to request a collection of respirato
 Results and Conclusions
 =======================
 
-The %BioGears %Respiratory System was validated quantitatively and qualitatively under resting physiological conditions and transient (action-induced) conditions. The validation is specified with a color coding system, with green indicating good agreement with trends/values, yellow indicating moderate agreement with trends/values, and red indicating poor agreement with trends/values.
+The %Respiratory System was validated quantitatively and qualitatively under resting physiological conditions and transient (action-induced) conditions. The validation is specified with a color coding system, with green indicating good agreement with trends/values, yellow indicating moderate agreement with trends/values, and red indicating poor agreement with trends/values.
 
 @anchor respiratory-validation
 Validation - Resting Physiologic State
 --------------------------------------
 
-The %BioGears %Respiratory Model outputs a number of system-level and compartment-level resting physiologic parameters. The tables below compare the values of system- and compartment-level parameters obtained from the model with referenced values. The outputs from the model correspond to the system- and compartment-level respiratory related values of the standard patient (77kg adult male)  under resting physiologic conditions. As shown in Table 3, the majority of the physiological variables show a good match with the literature. The outputs for the major respiratory variables, such as respiration rate, tidal volume, and pulmonary ventilation specifically match well with the reference data. 
+The %Respiratory Model outputs a number of system-level and compartment-level resting physiologic parameters. The tables below compare the values of system- and compartment-level parameters obtained from the model with referenced values. The outputs from the model correspond to the system- and compartment-level respiratory related values of the standard patient (77kg adult male)  under resting physiologic conditions. As shown in Table 3, the majority of the physiological variables show a good match with the literature. The outputs for the major respiratory variables, such as respiration rate, tidal volume, and pulmonary ventilation specifically match well with the reference data. 
 
 <center>
-<i>Table 3. Validation of the resting physiologic state of the %Respiratory System. The table shows comparison of system-level outputs from %BioGears to referenced values. System-level outputs show favorable agreement with validation data. The deviations in end tidal carbon dioxide fraction and transpulmonary pressure can be attributed to the tuned parameters used in the model that are selected to meet the major system level physiological parameters.</i>
+<i>Table 3. Validation of the resting physiologic state of the %Respiratory System. The table shows comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data. The deviations in end tidal carbon dioxide fraction and transpulmonary pressure can be attributed to the tuned parameters used in the model that are selected to meet the major system level physiological parameters.</i>
 </center><br>
 
 @insert ./test_results/tables/RespiratoryValidationTable.md
 
 <center>
-<i>Table 4. Validation table for the resting physiologic states. The table shows comparison of compartment-level outputs from %BioGears to referenced values. The majority of the variables show good match with the validation data. There are significant deviations in the carina flow and the dead space volumes. Future versions will address these issues.</i>
+<i>Table 4. Validation table for the resting physiologic states. The table shows comparison of compartment-level outputs from the engine to referenced values. The majority of the variables show good match with the validation data. There are significant deviations in the carina flow and the dead space volumes. Future versions will address these issues.</i>
 </center><br>
 
 @insert ./test_results/tables/RespiratoryCompartmentsValidationTable.md
@@ -1276,7 +1275,7 @@ The %BioGears %Respiratory Model outputs a number of system-level and compartmen
 Scenario Validation
 -------------------
 
-The actions and interventions associated with the %Respiratory System were validated quantitatively where possible and qualitatively elsewhere by comparing the engine output to expected trends and values. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future %BioGears Engine releases.
+The actions and interventions associated with the %Respiratory System were validated quantitatively where possible and qualitatively elsewhere by comparing the engine output to expected trends and values. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future engine releases.
 
 <center><br>
 *Table 5. Cumulative validation results for %Respiratory specific conditions and actions scenarios.*
@@ -1317,7 +1316,7 @@ Validation - Conditions
 The COPD condition was validated against two scenarios. The severe emphysema scenario (Emphysema Severity = 0.7, Bronchitis Severity = 0.5) attempts to model Gold Stage III Emphysema. Here, most metrics show moderate to good agreement with trends, but a few poor results were obtained. We plan to investigate these issues in later versions.
 
 <center><br>
-<i>Table 6. Validation matrix for severe emphysema. This condition corresponds to GOLD Stage III COPD  @cite man2003contemporary  @cite perez2009can . The table shows the %BioGears engine output compared to validation data for respiratory and hemodynamic values.</i>
+<i>Table 6. Validation matrix for severe emphysema. This condition corresponds to GOLD Stage III COPD  @cite man2003contemporary  @cite perez2009can . The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
 </center>
 
 |	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
@@ -1325,7 +1324,7 @@ The COPD condition was validated against two scenarios. The severe emphysema sce
 |	Severe Emphysema: Bronchitis Severity = 0.5 Emphysema Severity = 0.7 Both Lungs 100%	|	GOLD Stage III	|	120	|<span class="success">	< 70% of Normal @cite perez2009can	</span>|<span class="warning">	Increase,  Tachypnea, Dypsnea,  > 30 @cite gunning2003pathophysiology	</span>|<span class="warning">	< 60% of normal @cite gunning2003pathophysiology	</span>|<span class="success">	Increase, Tachycardia	</span>|<span class="danger">	Increase,   Pulmonary Hypertension ,  > 140 mm Hg @cite keller2003pathophysiology, @cite scharf2002hemodynamic	</span>|<span class="warning">	< 90%  @cite man2003contemporary; < 89% @cite keller2003pathophysiology	</span>|<span class="warning">	Decrease,  Hypoxemia @cite keller2003pathophysiology; < 55 mm Hg  @cite man2003contemporary, @cite keller2003pathophysiology	</span>|<span class="warning">	Increase, Hypercapnia, > 55 mmHg @cite keller2003pathophysiology	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
 
 <center><br>
-<i>Table 7. Validation matrix for severe chronic bronchitis. The table shows the %BioGears engine output compared to validation data for respiratory and hemodynamic values.</i>
+<i>Table 7. Validation matrix for severe chronic bronchitis. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
 </center>
 
 |	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
@@ -1334,9 +1333,9 @@ The COPD condition was validated against two scenarios. The severe emphysema sce
 
 ### Lobar Pneumonia
 
-The lobar pneumonia condition was validated against three scenarios; severe pneumonia in the one lobe of the left lung (Severity = 0.7), severe pneumonia in two lobes of the right lung (Severity = 0.7), and moderate pneumonia in both lungs (Severity = 0.2). %Biogears does not model the discrete lobes of each lung, so infected-lobe behavior is modeled by applying pneumonia severity against a fraction of each lung. The fraction approximates the portion of the lung (by volume) that the lobe(s) occupy. In the case of the left lung, there are two lobes. Each lobe constitutes approximately 50% of the whole lung. It is understood that the actual volume distribution is not equal for the two lobes, but we use this as an approximation. The same is true for the right lung, which has three lobes. In all three scenarios, expected general trends are observed for most measures. However, heart rate and blood pressure do not follow expected trends. This is similar to COPD, where heart rate and blood pressure also do not always behave as expected. Additionally, increasing core body temperature is also a symptom of lobar pneumonia that fails to agree with the validation data. However, we expected this disagreement since %BioGears doesn't currently model elevated body temperature in response to infection. This is something we plan to address in subsequent releases. 
+The lobar pneumonia condition was validated against three scenarios; severe pneumonia in the one lobe of the left lung (Severity = 0.7), severe pneumonia in two lobes of the right lung (Severity = 0.7), and moderate pneumonia in both lungs (Severity = 0.2). The engine does not model the discrete lobes of each lung, so infected-lobe behavior is modeled by applying pneumonia severity against a fraction of each lung. The fraction approximates the portion of the lung (by volume) that the lobe(s) occupy. In the case of the left lung, there are two lobes. Each lobe constitutes approximately 50% of the whole lung. It is understood that the actual volume distribution is not equal for the two lobes, but we use this as an approximation. The same is true for the right lung, which has three lobes. In all three scenarios, expected general trends are observed for most measures. However, heart rate and blood pressure do not follow expected trends. This is similar to COPD, where heart rate and blood pressure also do not always behave as expected. Additionally, increasing core body temperature is also a symptom of lobar pneumonia that fails to agree with the validation data. However, we expected this disagreement since the engine doesn't currently model elevated body temperature in response to infection. This is something we plan to address in subsequent releases. 
 <center><br>
-<i>Table 8. Validation matrix for severe lobar pneumonia concentrated in one lobe in the left lung. The table shows the %BioGears engine output compared to validation data for respiratory and hemodynamic values.</i>
+<i>Table 8. Validation matrix for severe lobar pneumonia concentrated in one lobe in the left lung. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
 </center>
 
 |	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|	Core Body Temperature  (Degrees C)	|
@@ -1344,7 +1343,7 @@ The lobar pneumonia condition was validated against three scenarios; severe pneu
 |	Severe Lobar Pneumonia:  Severity = 0.70 Left Lung = 50% Right Lung = 0%	|	Severe Lobar Pneumonia in one lobe in the left lung. Current model does not include metabolic effects.	|	120	|<span class="success">	Increase,  Tachypnea, Dypsnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="warning">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="success">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="warning">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="success">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
 
 <center><br>
-<i>Table 9. Validation matrix for severe lobar pneumonia concentrated in two lobes in the right lung. The table shows the %BioGears engine output compared to validation data for respiratory and hemodynamic values.</i>
+<i>Table 9. Validation matrix for severe lobar pneumonia concentrated in two lobes in the right lung. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
 </center>
 
 |	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|	Core Body Temperature  (Degrees C)	|
@@ -1352,7 +1351,7 @@ The lobar pneumonia condition was validated against three scenarios; severe pneu
 |	Severe Lobar Pneumonia: Right Lung Severity = 0.70 Left Lung = 0% Right Lung  = 67%	|	Severe lobar pneumonia in two lobes of the  right lung. Current model does not include metabolic effects.	|	120	|<span class="success">	Increase,  Tachypnea, Dypsnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="success">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="warning">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="success">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
 
 <center><br>
-<i>Table 10. Validation matrix for moderate lobar pneumonia in both lungs. The table shows the %BioGears engine output compared to validation data for respiratory and hemodynamic values.</i>
+<i>Table 10. Validation matrix for moderate lobar pneumonia in both lungs. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
 </center>
 
 |	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|	Core Body Temperature  (Degrees C)	|
@@ -1367,7 +1366,7 @@ Validation - Actions
 
 The airway obstruction action was validated with a scenario that applies an airway obstruction action with varying severities, 0.3, 0.6, and 1.0. Varying the severity of the obstruction simulates partial obstructions and a complete obstruction. The severity levels logarithmically increase the airway resistance, as shown in Figure 22. 
 
-The resulting outputs from the %BioGears engine are shown in Table 11 for common clinical parameters, such as heart rate, respiratory rate, and oxygen saturation. In the event of complete airway obstruction, a drop in oxygen saturation and respiration rate are expected. In contrast, hemodynamic variables, such as heart rate, are expected to increase. 
+The resulting outputs from the engine are shown in Table 11 for common clinical parameters, such as heart rate, respiratory rate, and oxygen saturation. In the event of complete airway obstruction, a drop in oxygen saturation and respiration rate are expected. In contrast, hemodynamic variables, such as heart rate, are expected to increase. 
 
 <center>
 <table border="0">
@@ -1435,7 +1434,7 @@ The bronchoconstriction action was validated with a scenario that applies a seri
 
 ### Pneumothorax
 
-Three scenarios were used to validate tension pneuomthorax and its associated interventions, occlusive dressing, and needle decompression. Table 13 demonstrates the open tension pneumothorax on the left side of the chest at increasing severities treated with an occlusive dressing and needle decompression. The %BioGears engine output for relevant parameters was compared to the validation data. The blood pressures (systolic, diastolic, and mean arterial pressure) do not show hypotension during the open wound pneumothorax incidence. Other respiratory and cardiovascular outputs show good agreement with published data. Vital signs become more dire the longer the pneumothorax is applied without intervention and as the severity (i.e. hole size) is increased. Evidence suggests that patients have progressive respiratory deterioration with final respiratory arrest @cite leigh2005tension. However, the current model does not include a definition for respiratory arrest and will continue to run until another irreversible state is reached.
+Three scenarios were used to validate tension pneuomthorax and its associated interventions, occlusive dressing, and needle decompression. Table 13 demonstrates the open tension pneumothorax on the left side of the chest at increasing severities treated with an occlusive dressing and needle decompression. The engine output for relevant parameters was compared to the validation data. The blood pressures (systolic, diastolic, and mean arterial pressure) do not show hypotension during the open wound pneumothorax incidence. Other respiratory and cardiovascular outputs show good agreement with published data. Vital signs become more dire the longer the pneumothorax is applied without intervention and as the severity (i.e. hole size) is increased. Evidence suggests that patients have progressive respiratory deterioration with final respiratory arrest @cite leigh2005tension. However, the current model does not include a definition for respiratory arrest and will continue to run until another irreversible state is reached.
 
 After an occlusive dressing is added to seal the hole and needle decompression is applied, the patient's condition improves and vitals begin returning toward normal.  This is as expected compared to the validation data. 
 
@@ -1701,7 +1700,7 @@ Validation - Assessments
 
 ### Pulmonary Function Test
 
-Validation of the pulmonary function test may be concluded from the validation of the resting physiologic quantities. The collection of values produced from the pulmonary function test were validated above. Additional validation comes by comparing the general shape of the produced waveform to an expected waveform. The plot shown in Figure 38 presents a way of representing the %BioGears pulmonary function test visually. There is excellent agreement with the plot produced from the engine and the plot found in the literature @cite Kapwatt2014Lungvolumes.
+Validation of the pulmonary function test may be concluded from the validation of the resting physiologic quantities. The collection of values produced from the pulmonary function test were validated above. Additional validation comes by comparing the general shape of the produced waveform to an expected waveform. The plot shown in Figure 38 presents a way of representing the engine pulmonary function test visually. There is excellent agreement with the plot produced from the engine and the plot found in the literature @cite Kapwatt2014Lungvolumes.
 
 <center><img src="./plots/Respiratory/Pulmonary_Function_Test_Results.jpg" width="1000"></center>
 <center>
@@ -1714,7 +1713,7 @@ Conclusion
 
 Mathematical modeling of the pulmonary physiology dates back to the work of Gray (1945) and others, including Guyton and collaborators @cite milhorn1965mathematical . Since then several mathematical models have been developed that describe aspects of the pulmonary physiology in considerable detail. However, the scope and complexity of the human physiology demands a model that integrates the dynamic respiratory physiology with other systems such as cardiovascular, renal, and others. As a result, there is a need for an integrative modeling environment that serves as a tool for predicting aspects of the human physiology and pathology.
 
-The %BioGears %Respiratory Model provides a system-level computational model that allows for real-time simulation of normal pulmonary physiology and respiratory distresses. The model employs a circuit-based lumped parameter mathematical model that allows for the characterization of patient-specific respiratory mechanics at a relatively low computational burden. The coupling of the %BioGears %Respiratory System with the Circulatory System through gas exchange and respiratory distress modifiers permits robust prediction of respiratory effects on hemodynamic variables. Accordingly, the current version of the %BioGears %Respiratory System is capable of predicting respiratory and hemodynamic responses to various insults like airway obstruction, bronchoconstriction, pneumothorax, and others.
+The %Respiratory Model provides a system-level computational model that allows for real-time simulation of normal pulmonary physiology and respiratory distresses. The model employs a circuit-based lumped parameter mathematical model that allows for the characterization of patient-specific respiratory mechanics at a relatively low computational burden. The coupling of the %Respiratory System with the Circulatory System through gas exchange and respiratory distress modifiers permits robust prediction of respiratory effects on hemodynamic variables. Accordingly, the current version of the %Respiratory System is capable of predicting respiratory and hemodynamic responses to various insults like airway obstruction, bronchoconstriction, pneumothorax, and others.
 
 As part of a modeling tool for various clinical settings, the %Respiratory Model can be hooked up to the anesthesia machine for mechanical ventilation. During positive pressure ventilation, the %Respiratory Model permits the transport of inhaled volatile gases and others from the anesthesia machine to the circulatory system. Such an integrative approach allows for the examination of respiratory and cardiovascular responses to various stimuli and stresses as observed in practical application.
 
@@ -1732,9 +1731,9 @@ Coming Soon
 Recommended Improvements
 ------------------------
 
-The development of an integrative model like the %BioGears %Respiratory System provides opportunities for exploring various pulmonary diseases and distresses. One common pulmonary distress that can be modeled by the %BioGears %Respiratory Model corresponds to the Acute %Respiratory Distress Syndrome (ARDS). This condition compromises alveolar gas transfer and leads to low levels of oxygen in the blood. Future funding may be sought for incorporating and validating ARDS model in the %BioGears %Respiratory System.
+The development of an integrative model like the %Respiratory System provides opportunities for exploring various pulmonary diseases and distresses. One common pulmonary distress that can be modeled by the %Respiratory Model corresponds to the Acute %Respiratory Distress Syndrome (ARDS). This condition compromises alveolar gas transfer and leads to low levels of oxygen in the blood. Future funding may be sought for incorporating and validating ARDS model in the %Respiratory System.
 
-A respiratory control mechanism for rhythmic breathing could be added to the engine. Rhythmic breathing is achieved by the respiratory neurons in the medullary respiratory center that give rise to activity in the efferent nerves ennervating the respiratory muscles. The neural control network that relates the respiratory neuron output to the mechanical airflow is not incorporated in the current version of the %Respiratory Model. The current version of the %BioGears  %Respiratory Model has succeeded in controlling the breathing cycle through parameters that  adjust the spontaneous breathing based on a chemical control feedback mechanism.  While this development allows robust chemical stimuli responses,  incorporation of the neural circuitry model that controls the ventilation process can provide a more accurate implementation of the %Respiratory System that includes behavioral control of breathing.
+A respiratory control mechanism for rhythmic breathing could be added to the engine. Rhythmic breathing is achieved by the respiratory neurons in the medullary respiratory center that give rise to activity in the efferent nerves ennervating the respiratory muscles. The neural control network that relates the respiratory neuron output to the mechanical airflow is not incorporated in the current version of the %Respiratory Model. The current version of the %Respiratory Model has succeeded in controlling the breathing cycle through parameters that  adjust the spontaneous breathing based on a chemical control feedback mechanism.  While this development allows robust chemical stimuli responses,  incorporation of the neural circuitry model that controls the ventilation process can provide a more accurate implementation of the %Respiratory System that includes behavioral control of breathing.
 
 @anchor respiratory-appendices
 Appendices

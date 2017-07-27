@@ -45,7 +45,7 @@ public class DataSetReader
   public static void main(String[] args)
   {
     cfg = new RunConfiguration();
-    loadData(cfg.getDataDirectory()+"/data/BioGears.xlsx");
+    loadData(cfg.getDataDirectory()+"/data/Data.xlsx");
   }
 
   public static void loadData(String xlsFile)

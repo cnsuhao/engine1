@@ -1,7 +1,7 @@
 License {#License}
 =======
 
-# %BioGears
+# Kitware Physiology Engine
 
 <a href="http://www.apache.org/licenses/">Apache License, Version 2.0</a>
 
@@ -182,7 +182,7 @@ License {#License}
 
 # Third Party
 
-%BioGears includes the following third party, open source software.
+The code base includes the following third party, open source software.
 
 ## Eigen
 

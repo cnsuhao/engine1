@@ -8,7 +8,7 @@ Overview
 Abstract
 --------
 
-The %BioGears %Gastrointestinal System models the ingestion of macronutrients and their subsequent digestion and transportation into the %Cardiovascular system. 
+The %Gastrointestinal System models the ingestion of macronutrients and their subsequent digestion and transportation into the %Cardiovascular system. 
 Digestion rates for each macronutrient can be specified along with the amount, and if no rates are supplied, a default configurable rate will be used.
 The macronutrients are then digested by converting the macronutrient into a specific substance from the stomach and 
 incrementing the amount of that substance into the small intestine's chyme. 
@@ -30,7 +30,7 @@ An overview of the digestive tract is shown in Figure 1.
 <center>
 <i>
 Figure 1. The human digestive tract is composed of several distinct sections @cite LadyofHats2006Digestive. 
-Currently, the %BioGears gastrointestinal model replicates the behavior of the stomach and small intestine.
+Currently, the gastrointestinal model replicates the behavior of the stomach and small intestine.
 </i>
 </center><br>
 
@@ -104,7 +104,7 @@ Next, the absorption algorithm will be executed for the provided elapsed time, r
 ### Actions
 
 #### ConsumeNutrients
-Each nutrient is optional in the ConsumeNutrients action. If a nutrient mass is provided with no accompanying digestion rate, the engine will default to the rate specified in the %BioGears configuration. 
+Each nutrient is optional in the ConsumeNutrients action. If a nutrient mass is provided with no accompanying digestion rate, the engine will default to the rate specified in the engine configuration. 
 If a digestion rate is provided for a macronutrient, it will be combined with the current stomach digestion rate for that macronutrient by volume weighting the two rates together.
 
 ### Process
@@ -117,7 +117,7 @@ There is no system specific function for Post Process in %Gastrointestinal.
 There are no system specific assessments in %Gastrointestinal.
 
 <br>
-<img src="./images/GI/GastrointestinalDataFlow.png" width="600">
+<img src="./Images/GI/GastrointestinalDataFlow.png" width="600">
 <center>
 *Figure 2. The data flow for the %Gastrointestinal System consists of a Reset, Conditions, Preprocess, Process, Post Process, and Assessments. 
 Only the Reset, Conditions, and Preprocess have system-specific functionality.*
@@ -137,7 +137,7 @@ Figure 4. The %GI circuit is made up of nodes and paths with elements and is con
 </center><br>
 
 There is a steady secretion of fluid, enzymes, and other substances into the various compartments of the digestive tract.
-The constant secretion of fluid into the digestive tract allows for macronutrients to be slowly digested and eventually absorbed through the intestinal wall @cite hall2011guyton. In %BioGears, these macronutrients are placed into the CV system through the an absorption rate that mirrors that of the human GI tract. The calculated flow rate transports substance from the small instestine C1 node to the CV system's small intestine 1 node @ref GI-circuit. Similar transport connects the tissue and the small inestine and determines wanter balance and secretion rate.
+The constant secretion of fluid into the digestive tract allows for macronutrients to be slowly digested and eventually absorbed through the intestinal wall @cite hall2011guyton. In the engine, these macronutrients are placed into the CV system through the an absorption rate that mirrors that of the human GI tract. The calculated flow rate transports substance from the small instestine C1 node to the CV system's small intestine 1 node @ref GI-circuit. Similar transport connects the tissue and the small inestine and determines wanter balance and secretion rate.
 The digestion rate of macronutrients is heavily dependent on the nature of the source food, as the digestive tract needs to free substances from the rest of the food's molecular structure before it can be absorbed @cite wolever1991glycemic.
 Fats spend several hours being emulsified by the small intestine and are then quickly absorbed once exposed to pancreatic enzymes @cite hall2011guyton. 
 Due to the current lack of a hepatic model, the %Gastrointestinal System breaks protein into urea, simulating the deamination of amino acids in the liver @cite hall2011guyton @cite bean1984regulation @cite haussinger1991hepatocyte. 
@@ -177,7 +177,7 @@ Results and Conclusions
 Validation - Resting Physiologic State
 --------------------------------------
 
-The %BioGears %Gastrointestinal System was validated qualitatively by observing the relative changes in the substance and nutrient masses between the stomach contents
+The %Gastrointestinal System was validated qualitatively by observing the relative changes in the substance and nutrient masses between the stomach contents
 and the gut contents. The transport to the CV system was then shown by demonstrating an increase in substance concentration in the blood.
 Concentrations are not solely a function of GI; other systems are potentially using substances in the blood.
 
@@ -204,7 +204,7 @@ These overall trends meet the expectations of the model performance.
 Conclusions
 -----------
 
-The %BioGears %Gastrointestinal System lays a foundation for future efforts in modeling digestive physiology. The flexible definition of food allows for easy extensibility
+The %Gastrointestinal System lays a foundation for future efforts in modeling digestive physiology. The flexible definition of food allows for easy extensibility
 of the system by creating the ability for users to add to a library of meals. 
 
 @anchor GI-futurework
@@ -219,7 +219,7 @@ The osmolarity of the digested material is not currently measured. Implementing 
 Recommended Improvements
 ------------------------
 
-- More %Substances: By expanding the list of %substances %BioGears works with, the %Gastrointestinal model will inherently gain fidelity as mechanisms
+- More %Substances: By expanding the list of %substances used in the engine, the %Gastrointestinal model will inherently gain fidelity as mechanisms
 	are constructed to properly handle new inputs.
 
 - Defecation: The %Gastrointestinal system should eventually be able to handle undigestible material and the fluid loss due to defecation. This

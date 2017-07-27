@@ -1,7 +1,7 @@
 Third Party Credits {#Credits}
 ===================
 
-%BioGears was developed using the following software tools:
+The engine is developed using the following software tools:
 
 ---
 
@@ -9,7 +9,7 @@ Third Party Credits {#Credits}
 
 Usage: Cross-platform build process using compiler-independent methods.
 
-<img src="./images/Credits/CMake.png" alt="CMake" align="left"> <br> <br> <br> <br> <br> <br>
+<img src="./Images/Credits/CMake.png" alt="CMake" align="left"> <br> <br> <br> <br> <br> <br>
 
 ---
 
@@ -17,7 +17,7 @@ Usage: Cross-platform build process using compiler-independent methods.
 
 Usage: XML data binding compiler to C++.
 
-<img src="./images/Credits/CodeSynthesis.png" alt="CodeSynthesis" align="left"> <br> <br> <br>
+<img src="./Images/Credits/CodeSynthesis.png" alt="CodeSynthesis" align="left"> <br> <br> <br>
 
 ---
 
@@ -25,7 +25,7 @@ Usage: XML data binding compiler to C++.
 
 Usage: Matrix manipulation and linear algebra solver for the circuit solver, substance transporter, and saturation calcuations.
 
-<img src="./images/Credits/Eigen.jpg" alt="Eigen" align="left"> <br> <br> <br> <br> <br> <br> <br> <br>
+<img src="./Images/Credits/Eigen.jpg" alt="Eigen" align="left"> <br> <br> <br> <br> <br> <br> <br> <br>
 
 ---
 
@@ -33,7 +33,7 @@ Usage: Matrix manipulation and linear algebra solver for the circuit solver, sub
 
 Usage: Logging.
 
-<img src="./images/Credits/SourceForge.png" alt="SourceForge" align="left"> <br> <br> <br> <br> <br> <br> <br>
+<img src="./Images/Credits/SourceForge.png" alt="SourceForge" align="left"> <br> <br> <br> <br> <br> <br> <br>
 
 ---
 
@@ -41,7 +41,7 @@ Usage: Logging.
 
 Usage: Creating image plots of output data.
 
-<img src="./images/Credits/SourceForge.png" alt="SourceForge" align="left"> <br> <br> <br> <br> <br> <br> <br>
+<img src="./Images/Credits/SourceForge.png" alt="SourceForge" align="left"> <br> <br> <br> <br> <br> <br> <br>
 
 ---
 
@@ -49,7 +49,7 @@ Usage: Creating image plots of output data.
 
 Usage: Creating realtime plots of output data.
 
-<img src="./images/Credits/SourceForge.png" alt="SourceForge" align="left"> <br> <br> <br> <br> <br> <br> <br>
+<img src="./Images/Credits/SourceForge.png" alt="SourceForge" align="left"> <br> <br> <br> <br> <br> <br> <br>
 
 ---
 
@@ -63,7 +63,7 @@ Usage: Reflectively analyze classes for dynamic GUI generation.
 
 Usage: HTML documentation generation.
 
-<img src="./images/Credits/doxygen.png" alt="Doxygen" align="left"> <br> <br> <br> <br>
+<img src="./Images/Credits/doxygen.png" alt="Doxygen" align="left"> <br> <br> <br> <br>
 
 ---
 
@@ -75,7 +75,7 @@ Tools used on windows for doxygen generation :
 
 Usage: Required by Doxygen for citations and creating a references page.
 
-<img src="./images/Credits/Perl.png" alt="Perl" align="left"> <br> <br> <br> <br> <br>
+<img src="./Images/Credits/Perl.png" alt="Perl" align="left"> <br> <br> <br> <br> <br>
 
 ---
 
@@ -83,13 +83,13 @@ Usage: Required by Doxygen for citations and creating a references page.
 
 Usage: Required by Doxygen for citations and creating a references pages.
 
-<img src="./images/Credits/MiKTeX.png" alt="MiKTeX" align="left"> <br> <br> <br> <br>
+<img src="./Images/Credits/MiKTeX.png" alt="MiKTeX" align="left"> <br> <br> <br> <br>
 
 ---
 ## <a href="https://ghostscript.com/">Ghost Script</a>
 
 Usage: Required by MikeTeX when generating images of equations.
 
-<img src="./images/Credits/MiKTeX.png" alt="GhostScript" align="left"> <br> <br> <br> <br>
+<img src="./Images/Credits/MiKTeX.png" alt="GhostScript" align="left"> <br> <br> <br> <br>
 
 

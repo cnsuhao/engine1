@@ -5,22 +5,9 @@ A C++ based simulation engine for human and animal physiology simulation.
 It is intended to provide accurate and consistent physiology data to medical education, research, and training technologies. 
 The libraries built (*.dll/*.so) can be integrated with standalone applications, hardware simulators and sensor interfaces, and other physiology models of all fidelities.
 
-The high-level objectives for the engine include:
--   Create a publicly available physiology research platform that
-    enables accurate and consistent simulated physiology across training
-    applications
--   Lower the barrier to create medical training content
--   Engage the community to develop and extend physiology models
--   Meet the training needs of the military
--   Expand the body of knowledge regarding the use of simulated
-    physiology for medical education
-
-## Programmatics
-
-The Kitware physiology engine is a fork of the BioGears project began at Applied Research Associates, Inc. (ARA) with oversight from 
-the Telemedicine and Advanced Technology Research Center (TATRC) under award W81XWH-13-2-0068
-
 All files are released under the Apache 2.0 license
+
+For detailed information read our <a href="https://physiology.kitware.com/">documentation</a>
 
 ## Build Environment
 
@@ -52,7 +39,7 @@ Add a JAVA_HOME environment variable to point to the Java installation and add i
 There are many ways to do this, here is a simple walk through to get you going with a JDK.
 
 #### Windows
-- Download the Windows x64 JDK <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">here.
+- Download the Windows x64 JDK <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">here.</a>
 - Run the installer.
 - Goto your Control Panel->System and click Advanced system settings on the left. <br>
 - Click the 'Environment Variables' button and add JAVA_HOME as a new 'System variables'.<br>
@@ -151,12 +138,13 @@ The code base also provides a test harness, written in Java, that will process a
     - Generate a plot image file for each data column of the csv file over the time of the scenario
 
 To run the test driver, change directory in your cmd/bash shell to the build/install/bin directory and execute the run.cmake in the following way :
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 cmake -DTYPE:STRING=[option] -P run.cmake 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Where [option] can be one of the following :
-- genData - Generate xml files from data in the ../data/BioGears.xlxs file (Patients, Substances, etc.)
+- genData - Generate xml files from data in the ../data/Data.xlxs file (Patients, Substances, etc.)
 - genStates - Generate state file for every patient at the point where the patient completed stabilization (Simulation time 0s)
 - Any of the testing configurations found in ../test/config without the suffix
   - For Example : DebugRun, CDMUnitTests, ValidationSystems, VerificationScenarios, etc.

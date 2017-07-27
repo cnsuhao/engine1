@@ -28,7 +28,7 @@ in Healthcare](https://simtk.org/projects/cpms/ "CPMS") webinar.
 
 ## Are there any publications related to the models that you have developed and choose to implement in the Physiology Engine.
 A list of publications and presentations about the Physiology Engine can be found on the @ref published "Publications" page. 
-Many of the physiology models in %BioGears are adapted or implemented directly from models described in literature. 
+Many of the physiology models in the engine are adapted or implemented directly from models described in literature. 
 The implementation methodology is described in detail in the @ref SystemMethodology and sub-system documentation, and 
 all of the source publications are cited in the methodology reports and listed in the Bibliography.
 
@@ -36,12 +36,12 @@ all of the source publications are cited in the methodology reports and listed i
 We have not performed a systematic forward propagation or inverse quantification of model uncertainty, 
 nor do we have the resources to conduct a formal sensitivity analysis. However, we can quantify the numerical 
 uncertainty introduced in solving the lumped-parameter fluid dynamics of the two foundation sub-models 
-(@ref CardiovascularMethodology "Cardiovascular" and @ref RespiratoryMethodology "Respiratory"). BioGears currently uses a bi-conjugate 
+(@ref CardiovascularMethodology "Cardiovascular" and @ref RespiratoryMethodology "Respiratory"). The engine currently uses a bi-conjugate 
 gradient method specific for sparse square systems (using the Eigen third party packages). This is an 
 iterative method and we use the default tolerance for their solver, which is as close to zero as reasonable (around 1e-16). 
 
 ## Who is developing the Physiology Engine?
-The community at large is contributing to the advancement of this version of the code, with oversight being provided by <a href="https://www.kitware.com/">Kitware, Inc.</a>.  The Kitware physiology engine is a fork of the BioGears project began at Applied Research Associates, Inc. (ARA) with oversight from the Telemedicine and Advanced Technology Research Center (TATRC) under award W81XWH-13-2-0068.  
+The community at large is contributing to the advancement of this version of the code, with oversight being provided by <a href="https://www.kitware.com/">Kitware, Inc.</a>.  
 
 ## Can I contact the Physiology Engine team to work on my current or upcoming project?
 Absolutely. We always welcome new and challenging opportunities to 
@@ -54,7 +54,7 @@ work with research partners and sponsors. Please email us at physiology@kitware.
 Our team's goal is to first and foremost develop the most advanced, 
 open source, whole-body physiology engine created to date. Following this,
 our team plans to work with the user community and stakeholders to ensure 
-%BioGears becomes the standard in physiology modeling.
+the engine becomes the standard in physiology modeling.
 
 During the first year of the project, our team made many important decisions 
 regarding system architecture and the open source @ref License structure to ensure 
@@ -77,14 +77,14 @@ with an external interface or extending system models, email us at physiology@ki
 No, it is a physiology engine that can power immersive 
 learning and serious games for medical training. The Physiology 
 Engine can provide a realistic training experience by producing real-time 
-results to trauma and treatment. %BioGears can enhance the user experience of applications 
+results to trauma and treatment. A physiology engine can enhance the user experience of applications 
 by providing a comprehensive physiological response to insults and interventions.
 
 ## What are some possible Physiology Engine applications?
-There is a wide range of potential applications for %BioGears. A few include:
+There is a wide range of potential applications, a few include:
 - Powering serious games for medical education and training
 - Producing responsive physiology in real time for manikin training
-- Integrating a single-system model into %BioGears to understand full-body physiologic response
+- Integrating a single-system model into the engine to understand full-body physiologic response
 - Providing inputs and outputs for sensor systems
 - Teaching and education
 	
@@ -102,7 +102,7 @@ community-initiated improvements for the duration of the project.
 These Showcase Scenarios are driven by the original goals of the project. 
 It is important to note that Showcase Scenarios are not being used only as 
 validation use cases, but also as examples to demonstrate the capabilities 
-of the physics-based %BioGears Engine.
+of the physics-based engine.
 
 To see the scenario outputs from the engine, check out our interactive graphing 
 tool on our website.
@@ -128,19 +128,4 @@ then you could strip features by modifying the source code in the same way that 
 ## Do you plan to provide support for interpreter-level model input, for example with the Python language?
 We do not have any immediate plans to provide support for those languages. 
 We do have support for Java. We are working towards creating a C# interface on top of our C++ interface.
-
- 
-
-
-
-
-
-
-
- 
-
-
-
-
-
 

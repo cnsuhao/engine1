@@ -7,22 +7,22 @@ Overview
 
 Abstract
 --------
-The %BioGears&reg; %Environment system contains and controls everything external to the patient and equipment (e.g. @ref AnesthesiaMachineMethodology). It sets the ambient boundary conditions for both fluid and thermal systems. The %Environment system provides a means to add airborne substance values, and calculates the heat transfer due to convection (natural and forced), radiation, and evaporation.
+The %Environment system contains and controls everything external to the patient and equipment (e.g. @ref AnesthesiaMachineMethodology). It sets the ambient boundary conditions for both fluid and thermal systems. The %Environment system provides a means to add airborne substance values, and calculates the heat transfer due to convection (natural and forced), radiation, and evaporation.
 
 @anchor environment-intro
 Introduction
 ------------
-The %BioGears %Environment system defines the ambient conditions for the %BioGears body. The %Environment system controls everything from the phase of the environmental fluid (i.e. gas when is a room or liquid when submerged in water) to the volume fractions of constituent gases in the environmental fluid when that fluid is a gas. The %Environment system also computes heat exchange between the body and the environment as well as and substance delivery to the body-environment interfaces.
+The %Environment system defines the ambient conditions for the body. The %Environment system controls everything from the phase of the environmental fluid (i.e. gas when is a room or liquid when submerged in water) to the volume fractions of constituent gases in the environmental fluid when that fluid is a gas. The %Environment system also computes heat exchange between the body and the environment as well as and substance delivery to the body-environment interfaces.
 
 @anchor environment-system-design
 System Design
 =============
 Background and Scope
 --------------------
-The many physiological functions within the human body depend heavily on the conditions of the environment within which the body is located. Thus, the %BioGears %Environment system is required to determine patient boundary conditions to enable a generic, extensible approach to modeling physiology within the body. Though the @ref CDM (CDM), the %Environment system interacts with and informs other %BioGears systems, particularly the [Respiratory](@ref RespiratoryMethodology), [Cardiovascular](@ref CardiovascularMethodology), and [Energy](@ref EnergyMethodology) systems, and the %Environment system was developed to include hooks for future integration into various applications such as games and sensor systems.
+The many physiological functions within the human body depend heavily on the conditions of the environment within which the body is located. Thus, the %Environment system is required to determine patient boundary conditions to enable a generic, extensible approach to modeling physiology within the body. Though the @ref CDM (CDM), the %Environment system interacts with and informs other systems, particularly the [Respiratory](@ref RespiratoryMethodology), [Cardiovascular](@ref CardiovascularMethodology), and [Energy](@ref EnergyMethodology) systems, and the %Environment system was developed to include hooks for future integration into various applications such as games and sensor systems.
 
 ### Requirements
-The %Environment system is used to meet the following requirements in %BioGears:
+The %Environment system is used to meet the following requirements:
 - Meteorological effects
 - Surrounding atmospheric gas properties, including pulmonary agent exposure
 - Altitude effects
@@ -36,10 +36,10 @@ The %Environment system is used to meet the following requirements in %BioGears:
 - Active heating and cooling
 
 ### Existing Research
-One of the most comprehensive analysis of human interaction with typical thermal environments is contained within the American Society of Heating, Refrigerating, and Air-Conditioning Engineers (ASHRAE) Handbook - specifically the Thermal Comfort chapter @cite handbook2013fundamentals. The International Organization for Standardization (ISO) standard 7730:2005: Ergonomics of the Thermal %Environment contains additional data and analyses @cite ISOPDF. Both of these publications are focused on occupant thermal comfort for indoor environment planning and thus make assumptions that are not valid for some of the extreme environments required for %BioGears. Data and analyses from these publications were heavily leveraged during development of the %BioGears environment system. Other existing research includes the high-level heat transfer analysis focused on medical and biological applications reported in Ref. @cite shitzer1985heat, as well as experimental and computational explorations of thermoregulation @cite mccutchan1951respiratory @cite oliveira2008measuring @cite de1997convective @cite fiala1999computer.
+One of the most comprehensive analysis of human interaction with typical thermal environments is contained within the American Society of Heating, Refrigerating, and Air-Conditioning Engineers (ASHRAE) Handbook - specifically the Thermal Comfort chapter @cite handbook2013fundamentals. The International Organization for Standardization (ISO) standard 7730:2005: Ergonomics of the Thermal %Environment contains additional data and analyses @cite ISOPDF. Both of these publications are focused on occupant thermal comfort for indoor environment planning and thus make assumptions that are not valid for some of the extreme environments required by the engine. Data and analyses from these publications were heavily leveraged during development of the environment system. Other existing research includes the high-level heat transfer analysis focused on medical and biological applications reported in Ref. @cite shitzer1985heat, as well as experimental and computational explorations of thermoregulation @cite mccutchan1951respiratory @cite oliveira2008measuring @cite de1997convective @cite fiala1999computer.
 
 ### Approach
-The %Environment system was designed with as few assumptions and parameter bounds as possible to allow simulations of both standard and extreme environments. The system is dynamic. By leveraging the@ref CDM and the generic [circuit](@ref CircuitMethodology) and [convective transport](@ref SubstanceTransportMethodology) solvers, the %BioGears body will react differently to varying initial environments and to changes in the environment during simulation.  %Environment parameters can be changed through specifying a separate environment file, or by manually updating the parameters through the environment state change action (for more details see the @ref SDK). Table 1 shows these inputs, which set the substance, fluid, and thermal properties external to the patient.
+The %Environment system was designed with as few assumptions and parameter bounds as possible to allow simulations of both standard and extreme environments. The system is dynamic. By leveraging the@ref CDM and the generic [circuit](@ref CircuitMethodology) and [convective transport](@ref SubstanceTransportMethodology) solvers, the engine will react differently to varying initial environments and to changes in the environment during simulation.  %Environment parameters can be changed through specifying a separate environment file, or by manually updating the parameters through the environment state change action (for more details see the @ref SDK). Table 1 shows these inputs, which set the substance, fluid, and thermal properties external to the patient.
 
 <br><center>
 <i>Table 1. The parameters that can be set using the %Environment condition.  Note that air density is a calculated value inside the class.</i>
@@ -103,13 +103,13 @@ Preprocess uses feedback to calculate thermal properties and circuit element val
 
 ### Process
 
-The generic circuit methodology developed for the %BioGears Engine is used to solve for the pressure, flow, and volume at each node or path. For more details, see the @ref CircuitMethodology.
+The generic circuit methodology developed for the engine is used to solve for the pressure, flow, and volume at each node or path. For more details, see the @ref CircuitMethodology.
 
 ### Post Process
 
 The Post Process step moves everything calculated in Process from the next time step calculation to the current time step calculation. This allows all other systems access to the information when completing their Preprocess analysis for the next time step.
 
-<center><img src="./images/Environment/EnvironmentFlow.png" width="900"></center>
+<center><img src="./Images/Environment/EnvironmentFlow.png" width="900"></center>
 <center>
 <i>Figure 2. The data flow for the %Environment System consists of Preprocess, Process, and Post Process. Preprocess determines the circuit element values based on feedback mechanisms and engine actions. Preprocess also updates system-level quantities via the Calculate.  Process uses generic circuit methodology to solve the %Environment thermal circuit for temperatures and heat flows along the paths and on nodes. Post Process updates these quantities to the next time step and then begins advancing time, which causes the loop to repeat.</i>
 </center><br>
@@ -197,11 +197,11 @@ The clothing thermal insulation/resistance in this model is an average lumped va
 
 @anchor environment-aerosol
 ### Aerosol
-An aerosol is a colloidal suspension of either solid or liquid droplet particles suspended in a gas (typically the surrounding air). Real aerosols can be monodispersed but are more often polydispersed, having a range of particle diameters. Particle deposition and retention in the lung depends on a number of, factors including particle aerodynamic diameter @cite carvalho2011influence @cite newman1985aerosol. Other deposition factors, including inhalation flow rate and tidal volume @cite kolanjiyil2016computationally, are accounted for by the breathing patterns simulated by the %BioGears engine. In order to avoid the computational cost of tracking millions of individual particles or many groups of particles in a distribution throughout the respiratory tract and into the body, %BioGears aerosols are modeled as a single concentration in the environment. The location of deposition and the deposition efficiency at each location is determined by first computing a particle-size-independent deposition efficiency for each compartment from a defined size-distribution histogram. The size-independent deposition efficiencies are computed from the deposition fractions which are determined for each compartment from the particle diameter using the equations fit by Hinds to the ICRP66 simulation results @cite hinds1999aerosol, as described by @cite rostami2009computational. The deposition fraction equations from @cite rostami2009computational are plotted in Fig. 4, and example mean depositions fractions for a particular histogram are shown. For the %BioGears implementation it is assumed that all particles are spherical, thus diameter is the aerodynamic diameter.
+An aerosol is a colloidal suspension of either solid or liquid droplet particles suspended in a gas (typically the surrounding air). Real aerosols can be monodispersed but are more often polydispersed, having a range of particle diameters. Particle deposition and retention in the lung depends on a number of, factors including particle aerodynamic diameter @cite carvalho2011influence @cite newman1985aerosol. Other deposition factors, including inhalation flow rate and tidal volume @cite kolanjiyil2016computationally, are accounted for by the breathing patterns simulated by the engine. In order to avoid the computational cost of tracking millions of individual particles or many groups of particles in a distribution throughout the respiratory tract and into the body, aerosols are modeled as a single concentration in the environment. The location of deposition and the deposition efficiency at each location is determined by first computing a particle-size-independent deposition efficiency for each compartment from a defined size-distribution histogram. The size-independent deposition efficiencies are computed from the deposition fractions which are determined for each compartment from the particle diameter using the equations fit by Hinds to the ICRP66 simulation results @cite hinds1999aerosol, as described by @cite rostami2009computational. The deposition fraction equations from @cite rostami2009computational are plotted in Fig. 4, and example mean depositions fractions for a particular histogram are shown. For the model implementation it is assumed that all particles are spherical, thus diameter is the aerodynamic diameter.
 
 @image html depositionfractions.png
 <center>
-<i>Figure 4. The deposition fraction in each compartment is computed as a function of particle size, and the deposition fraction for a collection of particles within a histogram bin is computed from the mean deposition fraction within the boundaries of the bin. An 8 bin partition is shown in the figure for illustration purposes. %BioGears supports histograms with an arbitrary number of bins.</i>
+<i>Figure 4. The deposition fraction in each compartment is computed as a function of particle size, and the deposition fraction for a collection of particles within a histogram bin is computed from the mean deposition fraction within the boundaries of the bin. An 8 bin partition is shown in the figure for illustration purposes. The CDM supports histograms with an arbitrary number of bins.</i>
 </center><br>
 
 The size-independent deposition efficiencies are computed from the deposition fractions using Equation 31.
@@ -249,18 +249,18 @@ The total mass of particles that deposit in compartment *B* is some fraction of 
 
 Rearranging Equation 7 and combining with Equation 6 yields [Equation 1](@ref SIDE), the size-independent deposition efficiency coefficient for compartment *B*.
 
-The mass deposited in each compartment is computed by multiplying the size-independent deposition efficiency coefficient by the mass in the compartment at each time step. Once an aerosol substance deposits in a respiratory compartment it stays in the respiratory compartment. In other words, coughing is not productive in %BioGears. The direct effect of a deposited substance depends on the mass deposited and the value of the inflammation coefficient that is defined in the substance file. The inflammation coefficient defines the amount of damage, by any mode, that the substance does to the respiratory tissue. Figure 5 visually describes the direct effects of an aerosol on the %BioGears %Respiratory system.
+The mass deposited in each compartment is computed by multiplying the size-independent deposition efficiency coefficient by the mass in the compartment at each time step. Once an aerosol substance deposits in a respiratory compartment it stays in the respiratory compartment. In other words, coughing is not productive in the engine. The direct effect of a deposited substance depends on the mass deposited and the value of the inflammation coefficient that is defined in the substance file. The inflammation coefficient defines the amount of damage, by any mode, that the substance does to the respiratory tissue. Figure 5 visually describes the direct effects of an aerosol on the %Respiratory system.
 
-<img src="./images/Environment/AerosolEffects.png" width="700">
+<img src="./Images/Environment/AerosolEffects.png" width="700">
 <center>
 <i>Figure 5. Diagram describing aerosol transport into the respiratory compartments and the associated effects.</i>
 </center><br>
 
 In addition to the direct effects, deposited aerosol substances can also have indirect effects. After liquid aerosol substances deposit they can diffuse into the surrounding tissue and then into the blood stream. If the liquid aerosol has pharmacodynamic properties defined, it's effects will be realized when it enters the blood and the plasma concentration becomes non-zero.
 
-Currently, Albuterol and smoke particulate have histogram data and are modeled as polydisperse aerosols in the environment with the former being delivered via an inhaler and the latter being a concentration in the ambient environment. Smoke in %BioGears is modeled as a solid aerosol.
+Currently, Albuterol and smoke particulate have histogram data and are modeled as polydisperse aerosols in the environment with the former being delivered via an inhaler and the latter being a concentration in the ambient environment. Smoke is modeled as a solid aerosol.
 
-The solid smoke particulate in %BioGears is a model of the particulate generated through the combustion of organic material in a forest fire. We assume that the fire is well evolved in time to mitigate the bi-modal behavior seen during the initial ignition and smoldering @cite zhang2012chemical. This allows us to model the size distribution as a lognormal curve. The forest fire smoke particle size distribution histogram is given in table 4.
+The solid smoke particulate in the engine is a model of the particulate generated through the combustion of organic material in a forest fire. We assume that the fire is well evolved in time to mitigate the bi-modal behavior seen during the initial ignition and smoldering @cite zhang2012chemical. This allows us to model the size distribution as a lognormal curve. The forest fire smoke particle size distribution histogram is given in table 4.
 
 <br><center>
 <i>Table 4. Histogram for wood smoke particulate in the environment. </i>
@@ -274,8 +274,8 @@ The solid smoke particulate in %BioGears is a model of the particulate generated
 | 0.015 | 1.0-1.0e1       |
 | 0     | 1.0e1 - 1.0 e2  |
 
-Figure 6 summarizes the fate and effects of liquid and smoke aerosols in %BioGears.
-<img src="./images/Environment/AerosolFate.png" width="700">
+Figure 6 summarizes the fate and effects of liquid and smoke aerosols in the engine.
+<img src="./Images/Environment/AerosolFate.png" width="700">
 <center>
 <i>Figure 6. Diagram summarizing the transport into the respiratory compartments, effects, and the fate of liquid and solid particle aerosols.</i>
 </center><br>
@@ -284,7 +284,7 @@ Figure 6 summarizes the fate and effects of liquid and smoke aerosols in %BioGea
 ### Carbon Monoxide
 Carbon monoxide (CO) is a toxic gas that is odorless, colorless, and tasteless. Carbon monoxide binds to the ferrous-heme site of the hemoglobin molecule in the same way that oxygen does (it also cannot bind to the oxidized methemoglobin sites), thus the maximal oxygen capacity falls to the extent that CO is bound. The subunits of the hemoglobin molecule are collectively in a tense state (T) or a relaxed state (R). All four subunits are always in the same state. The hemoglobin molecule is in the tense state when less oxygen is bound and it has a lower affinity for oxygen in the T state. When enough oxygen is bound, all subunits snap into the R state whether or not they are bound to oxygen, and the hemoglobin molecule has ~150 times the affinity for oxygen. It is this snapping that creates the steep portion of the binding curve and allows for the reversible carriage of oxygen by the blood. Like oxygen, as carbon monoxide binds to hemoglobin it can push the molecule from the relaxed to the tensed state, thus increasing the affinity for oxygen and reducing the amount of oxygen released from the hemoglobin molecule when it enters the oxygen depleted systemic capillaries. Additionally, carbon monoxide binds competitively to hemoglobin. For every molecule of CO bound to a heme site, there is one less site for oxygen to bind. The net result of these two phenomena, but predominately due to the former, is that there is less oxygen delivery to the tissues when CO is present in the blood.
 
-There are three components to the %BioGears carbon monoxide model: transfer across the alveolar membrane, binding to hemoglobin, and the effects of binding on the oxygen binding curve. Obviously these three components are interrelated. As CO binds to hemoglobin in the pulmonary capillaries, less CO is dissolved in fluid and therefore the partial pressure gradient between the alveoli and the pulmonary capillary blood is higher, driving an increase in Fick's law diffusion resulting in more carbon monoxide in the blood. As more CO enters the blood, more binds to hemoglobin and the oxygen-hemoglobin saturation curve shifts to the left. The alveolar transfer of carbon monoxide is simulated in %BioGears by assuming that the membrane diffusivity of CO is similar to oxygen and then by leveraging the alveolar exchange model described in the @ref TissueMethodology report. Models for the binding of CO to hemoglobin and the effects on the oxygen saturation curve are discussed separately below.
+There are three components to the carbon monoxide model: transfer across the alveolar membrane, binding to hemoglobin, and the effects of binding on the oxygen binding curve. Obviously these three components are interrelated. As CO binds to hemoglobin in the pulmonary capillaries, less CO is dissolved in fluid and therefore the partial pressure gradient between the alveoli and the pulmonary capillary blood is higher, driving an increase in Fick's law diffusion resulting in more carbon monoxide in the blood. As more CO enters the blood, more binds to hemoglobin and the oxygen-hemoglobin saturation curve shifts to the left. The alveolar transfer of carbon monoxide is simulated by assuming that the membrane diffusivity of CO is similar to oxygen and then by leveraging the alveolar exchange model described in the @ref TissueMethodology report. Models for the binding of CO to hemoglobin and the effects on the oxygen saturation curve are discussed separately below.
 
 #### Carbon Monoxide Binding
 The distribution of carbon monoxide species (dissolved and bound to hemoglobin) in each vascular compartment is computed from the conservation of mass and the Haldane relationship described in @cite bruce2003multicompartment. Canservation of mass is described by Equation 8.
@@ -300,7 +300,7 @@ where *T<sub>CO</sub>* is the total carbon monoxide in the blood, *CO<sub>Hb</su
 The model is implemented by first totaling the carbon monoxide in a compartment post diffusion, then computing the partial pressure of carbon monoxide, and finally computing the carboxyhemoglobin in the compartment. After the target distribution is calculated, the hemoglobin species (unbound, oxyhemoglobin, carboxyhemoglobin, carbaminohemoglobin, and oxycarbaminohemoglobin) amounts are updated by assuming that unbound hemoglobin is consumed first followed by oxyhemoglobin then oxycarbaminohemoglobin and finally carbaminohemoglobin. If all hemoglobin is converted to carboxyhemoglobin before the necessary adjustment is made to conserve CO mass, then the remaining CO is distributed back to the dissolved species. This acts as an automatic negative feedback device to ensure that the perfusion contribution to the diffusing capacity is saturated when the hemoglobin becomes saturated. See the [C++ code](@ref CalculateCarbonMonoxideSpeciesDistribution) for more details.
 
 #### Carbon Monoxide Effects on Oxygen Saturation Curve
-The oxygen saturation curve effects model implemented in %BioGears is adapted from the regression model described by @ref bruce2003multicompartment. We have simplified the model by assuming a linear relationship between carboxyhemoglobin and both the Hill coefficient and the 50% saturation shaping parameter. We then applied the linear relationship to the Dash and Bassingthwaithe oxygen saturation model already implemented in %BioGears (see the [Tissue Methodology](@ref tissue-approach)). Equations 10 and 11 describe the adjustments made to the oxygen saturation curve in the presence of carboxyhemoglobin, and Figure 7 shows the shift in the curve at various carboxyhemoglobin concentrations. In the equations, *&eta;* is the Hill coefficient, *S<sub>CO</sub>* is the fraction of carboxyhemoglobin to total hemoglobin (i.e. CO saturation), and *P<sub>50</sub>* is the standard partial pressure of oxygen at 50% oxygen saturation.
+The oxygen saturation curve effects model implemented is adapted from the regression model described by @ref bruce2003multicompartment. We have simplified the model by assuming a linear relationship between carboxyhemoglobin and both the Hill coefficient and the 50% saturation shaping parameter. We then applied the linear relationship to the Dash and Bassingthwaithe oxygen saturation model already implemented in the engine (see the [Tissue Methodology](@ref tissue-approach)). Equations 10 and 11 describe the adjustments made to the oxygen saturation curve in the presence of carboxyhemoglobin, and Figure 7 shows the shift in the curve at various carboxyhemoglobin concentrations. In the equations, *&eta;* is the Hill coefficient, *S<sub>CO</sub>* is the fraction of carboxyhemoglobin to total hemoglobin (i.e. CO saturation), and *P<sub>50</sub>* is the standard partial pressure of oxygen at 50% oxygen saturation.
 <center>
 \f[\eta = 1.7 - 1.1 \cdot S_{CO} \f]
 *Equation 10.*
@@ -642,7 +642,7 @@ Results and Conclusions
 %Verification
 --------------------------------------
 
-Results using the equations from ISO 7730:2005 were used to compare to %BioGears %Environment outputs.  The standard focuses mostly on two thermal comfort metrics, Predictive Mean Vote and Predictive Percentage Dissatisfied @cite ISOPDF.  Although it is intended for the ergonomics of thermal environments, intermediate values can be extracted for the values shown in Table 6.  The connection points that connect to the %Energy system are replaced with a heat source equal to the metabolic rate, shown in Figure 15.  The other circuit elements are set to match the Inputs columns in Table 6.  The static circuit is run until everything balances and steady state is reached.  The clothing surface temperature is collected directly from the clothing node and system heat loss values are collected directly from the flow in the appropriate paths.
+Results using the equations from ISO 7730:2005 were used to compare to %Environment outputs.  The standard focuses mostly on two thermal comfort metrics, Predictive Mean Vote and Predictive Percentage Dissatisfied @cite ISOPDF.  Although it is intended for the ergonomics of thermal environments, intermediate values can be extracted for the values shown in Table 6.  The connection points that connect to the %Energy system are replaced with a heat source equal to the metabolic rate, shown in Figure 15.  The other circuit elements are set to match the Inputs columns in Table 6.  The static circuit is run until everything balances and steady state is reached.  The clothing surface temperature is collected directly from the clothing node and system heat loss values are collected directly from the flow in the appropriate paths.
 
 The following assumptions are made for this verification test:
 - Complete conservation of thermal energy with none stored
@@ -654,13 +654,13 @@ The following assumptions are made for this verification test:
 <i>Figure 15. The %Energy system is replaced for the %Environment unit test by a single heat source to represent the metabolic rate.  None of the energy is stored, but instead directly affects the %Environment.</i>
 </center><br>
 
-The results in Table 6 have the skin temperatures calculated by %BioGears significantly higher than that by the ISO standard code.  However, the individual heat loss values seem reasonable and show the correct trends based on the inputs.  The %Environment model conserves energy as seen in the last column with the difference in heat produced by the metabolic rate to the sum of the heat loss by all four means.  The ISO standard does not conserve energy in the same way, and makes several looser assumptions that the %Environment system does not.  This could explain many of the discrepancies.  The requirement for the %Environment system to be able to handle extreme environments with feedback from other systems requires it to more strictly adhere to a rigorous physics based modeling approach.
+The results in Table 6 show the skin temperatures calculated significantly higher than that by the ISO standard code.  However, the individual heat loss values seem reasonable and show the correct trends based on the inputs.  The %Environment model conserves energy as seen in the last column with the difference in heat produced by the metabolic rate to the sum of the heat loss by all four means.  The ISO standard does not conserve energy in the same way, and makes several looser assumptions that the %Environment system does not.  This could explain many of the discrepancies.  The requirement for the %Environment system to be able to handle extreme environments with feedback from other systems requires it to more strictly adhere to a rigorous physics based modeling approach.
 
 <br><center>
 <i>Table 6. The published ISO 7730:2005 Appendix D: Computer Program for Calculation PMV and PPD
-Written in BASIC code @cite ISOPDF was used to verify the %BioGears %Environment calculations are reasonable.  Deviations can be explained by the fact that %BioGears successfully conserves energy, while the ISO 7730:2005 outputs do not.</i>
+Written in BASIC code @cite ISOPDF was used to verify the %Environment calculations are reasonable.  Deviations can be explained by the fact that the engine successfully conserves energy, while the ISO 7730:2005 outputs do not.</i>
 </center>
-<center><img src="./images/Environment/EnvironmentVerification.png" width="1100"></center>
+<center><img src="./Images/Environment/EnvironmentVerification.png" width="1100"></center>
 
 Validation
 ----------
@@ -693,7 +693,7 @@ Table 7.
 |	PFT administered before and after exposure to forest fire	|	Validation is computed against pre-exposed patient data	|	5 and 310	|	310	|<span class="success">	Decrease by 1% @cite betchley1997pulmonary	</span>|<span class="warning">	Decrease 3% @cite betchley1997pulmonary	</span>|<span class="success">	Decrease 6% @cite betchley1997pulmonary	</span>|
 
 ###Carbon Monoxide
-There are two scenarios used to validate carbon monoxide poisoning. The first is an exposure to CO at 200 ppm, which is the National Institute for Occupational Safety and Health ceiling @ref osha_co. The second is an exposure to CO at 5000 ppm, which is an extreme exposure that should result in death. Because the many of the symptoms of CO poisoning are not modeled in %BioGears (e.g. head ache, nausea, syncope), validation is conducted by comparing the carboxyhemoglobin kinetics to the Coburn-Forster-Kane equation @ref coburn1965considerations and to data presented in @ref stewart1975effect.
+There are two scenarios used to validate carbon monoxide poisoning. The first is an exposure to CO at 200 ppm, which is the National Institute for Occupational Safety and Health ceiling @ref osha_co. The second is an exposure to CO at 5000 ppm, which is an extreme exposure that should result in death. Because the many of the symptoms of CO poisoning are not modeled (e.g. head ache, nausea, syncope), validation is conducted by comparing the carboxyhemoglobin kinetics to the Coburn-Forster-Kane equation @ref coburn1965considerations and to data presented in @ref stewart1975effect.
 
 <center>
 <i>
@@ -767,7 +767,7 @@ The variables presented in Table 10 are used throughout this document.
 <br><center>
 <i>Table 10. There are many parameters used to determine the %Environment&rsquo;s thermal state.</i>
 </center>
-<center><img src="./images/Environment/EnvironmentVariables.png" width="1100"></center>
+<center><img src="./Images/Environment/EnvironmentVariables.png" width="1100"></center>
 
 Data Model Implementation
 -------------------------
