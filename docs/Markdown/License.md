@@ -1,7 +1,7 @@
 License {#License}
 =======
 
-# Kitware Physiology Engine
+# Physiology Engine
 
 <a href="http://www.apache.org/licenses/">Apache License, Version 2.0</a>
 

@@ -1,5 +1,9 @@
 Publications {#published}
 =======
+
+Note that many of these publications focus on the physiology engine precursor, %BioGears.
+The authors Clipp, Webb, and Bray are now at Kitware focusing their efforts to further expand the physiology engine.
+
 Team Publications:
 1. Potter, Lucas, Arikatla, Sreekanth, Bray, Aaron, Webb, Jeff, and Enquobahrie, Andinet. "Physiology informed virtual surgical planning: a case study with a virtual airway surgical planner and BioGears." SPIE Medical Imaging Conference on Image-Guided Procedures, Robotic Interventions, and Modeling. Orlando, FL. 2017.
 2. Metoyer, Rodney, Carter, Jenn, Bergeron, Bryan, Baird, Austin, Bray, Aaron, Clipp, Rachel B., Thames, M. Cameron, Webb, Jeff. "A Framework for Multiscale Physiology: Towards Individualized Computer Simulation."  VPH2016, book of abstracts, A.G. Hoekstra (Editor), University of Amsterdam, (Amsterdam), ISBN 978-90-826254-0-0, 2016.

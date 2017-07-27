@@ -1,10 +1,9 @@
-## What is the Kitware Physiology Engine?
+## What is the physiology engine?
 
-The Physiology Engine is a C++ based, open source, multi-platform (Windows, Mac, and Linux), comprehensive human physiology
-engine that will drive medical education, research, and training technologies. 
-The Physiology Engine enables accurate and consistent physiology simulation across the medical community. 
+The physiology engine is a C++ based, open source, multi-platform (Windows, Mac, and Linux), comprehensive human physiology
+simulator that will drive medical education, research, and training technologies. 
+The engine enables accurate and consistent physiology simulation across the medical community. 
 The engine can be used as a standalone application or integrated with simulators, sensor interfaces, and models of all fidelities.
-This engine is a fork of the %BioGears physiology engine, maintained by its original authors, now at Kitware.
 
 High-level objectives include:
 -   Create a publicly available physiology research platform that
@@ -16,11 +15,21 @@ High-level objectives include:
     physiology for medical education
 -   Meet the training needs of the military
 
-## How do I get The Physiology Engine?
+## What is your relationship with %BioGears?
+This physiology engine is a fork of the %BioGears project, version 6.1.1, began at Applied Research Associates, Inc. (ARA) 
+with oversight from the Telemedicine and Advanced Technology Research Center (TATRC) under award W81XWH-13-2-0068. 
 
-The Physiology Engine lives in a GitLab public repository <a href="https://gitlab.kitware.com/physiology/engine">here</a>.
+The %BioGears original core technical team is now at Kitware and is leveraging the company's expertise in medical computing
+and its history of maintaining and caring for open-source projects. We are working to create a stable environment for the engine
+to thrive and be active. With our fork, the code bases has diverged quickly from the %BioGears codebase to support our current
+architectural plan. We hope to continue collaborating with %BioGears.
+
+
+## How do I get the physiology engine?
+
+The physiology engine lives in a GitLab public repository <a href="https://gitlab.kitware.com/physiology/engine">here</a>.
 	
-## What can the Physiology Engine do?
+## What can the physiology engine do?
 
 An instance of an engine models a single patient's physiology.
 - The patient is defined by parameters, such as height, weight, systolic and diastolic pressure.
@@ -29,9 +38,9 @@ An instance of an engine models a single patient's physiology.
 - You can apply various actions (acute insults/injuries, interventions, conscious breathing, exercise, etc.) to be applied to the patient.
 - The patient can also interact with equipment models, such as an Anesthesia and/or an %ECG Machine as well as an %Inhaler via actions.
 
-## What kind of data can I get from the Physiology Engine?
+## What kind of data can I get from the physiology engine?
 
-Available data is defined within the Physiology Engine in three major ways:
+Available data is defined within the engine in three major ways:
 -	System data, such as %Cardiovascular, %Respiratory, etc.
 	-	Analogous to system vitals
 	  -	Examples: heart rate, oxygen consumption, mean arterial pressure, etc.
@@ -46,7 +55,7 @@ Available data is defined within the Physiology Engine in three major ways:
     
 ## What are your models and how did you validate them?
 
-The Physiology Engine is a closed loop total body physiology model that combines physics-based lumped parameter models 
+The engine is a closed loop total body physiology model that combines physics-based lumped parameter models 
 and control system feedback mechanisms to model real-time system-level 
 physiologic behaviors. Lumped parameter models use electrical circuit analogs 
 to represent the major physiologic systems. 
@@ -63,7 +72,7 @@ For that reason, we do not have the resources to perform a rigorous sensitivity 
 tools associated with a general validation protocol. We are not aware of any existing third-party validation effort. 
 We would welcome and support, in as much as we are able, any validation or uncertainty quantification effort by the community.
 
-We provide reports for each @ref SystemMethodology included in the Physiology Engine.
+We provide reports for each @ref SystemMethodology included in the physiology engine.
 <br>  
 These documents cover the design, implementation, assumptions, limitations, and validation of each model. 
 
@@ -93,23 +102,23 @@ These documents cover the design, implementation, assumptions, limitations, and 
  @refitem SubstanceTransportMethodology "Substance Transport"
 @endsecreflist 
 
-## How do I code with the Physiology Engine?
+## How do I code with the physiology engine?
 
-The Physiology Engine has developed a modular architecture to reduce costs for applications that need a physiology engine as well as want to develop or extend a physiology model.
+The engine has developed a modular architecture to reduce costs for applications that need a physiology engine as well as want to develop or extend a physiology model.
 
 This architecture contains :
 - A @ref CDM containing set of classes and generic algorithms for lumped parameter physiology modeling 
 - A standard @ref physeng for controlling a physiology engine via these CDM objects
 
 We created a @ref SDK (SDK) to help developers integrate
-the Physiology Engine into software applications. This SDK provides
+the engine into software applications. This SDK provides
 pre-built libraries and headers, as well as examples of how to programmatically
 using the provided interfaces. The provided application programming
 interfaces (APIs) provide full control over the engine to execute
 various actions and retrieve a range of calculated physiological
 outputs.
 
-## How can I modify the Physiology Engine, or integrate my model?
+## How can I modify the physiology engine, or integrate my model?
 
 The engine uses an extensible architecture to promote integration with external
 models with varying levels of fidelity. System-level model fidelity can be 
@@ -121,7 +130,7 @@ The deliberate identification of data requirements must precede any model modifi
 if an extension of the Common Data Model is required. If the existing data model is sufficient to meet your modeling needs, 
 you may be able to implement changes satisfactorily just by modifying the source code for the physiologic system 
 of interest. If a Common Data Model extension is necessary, modification of the source code becomes more complicated. The 
-quickest and easiest way to modify the physiology engine to meet your needs is to work with Kitware - email: physiology@kitware.com.
+quickest and easiest way to modify the engine to meet your needs is to work with Kitware - email: physiology@kitware.com.
 
 We can help with requirements definition, provide development support, and/or make modifications for you.
 
@@ -134,6 +143,6 @@ Any new result that is over 2% error is marked as a failure.
 This data is used extensively to validate each system individually, as well as the combined effects of insults and interventions. See the Methodology Reports for more details.  
 The scenarios output requests match the columns in the results file; we recommend that these scenarios remain unmodified.
 
-## How can I contribute to the Physiology Engine?
+## How can I contribute to the physiology engine?
 
 Take a look at our <a href="https://gitlab.kitware.com/physiology/engine/blob/master/CONTRIBUTING.md">Contribution Guide</a>.

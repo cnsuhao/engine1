@@ -1,25 +1,25 @@
 
-# Welcome to the Kitware Physiology Engine
+# A Phsyiology Simulation Engine
+
+This project uses the Apache License 2.0 @ref License
 
 @insert ./docs/markdown/MainPageFAQ.md
 
 ## Have more questions?
 
-See the @ref ExtraFAQ for any other questions you may have.
-
-- - -
-
-## Programmatics
-
-The Kitware Physiology Engines are released under this @ref License.
+Check out the @ref ExtraFAQ for more insight.
 
 There are @ref published papers and abstracts on several systems and clinical scenarios. 
+
+If you have any questions or concerns email: physiology@kitware.com
+
+Visit and post an <a href="https://gitlab.kitware.com/physiology/engine/issues">issue</a> at the repository if you have any trouble or other questions.
 
 - - -
 
 ## Updates
 
-The latest deployment includes the following notable updates:
+The latest code base includes the following notable updates:
 - Fixed multiplatform compiling bugs
 - Moved from an in-source to out-of-source build
   - src tree is treated as read only
@@ -46,12 +46,14 @@ The latest deployment includes the following notable updates:
 ## Planned Improvements
 
 Near Term:
-- Updates to ensure no 3rd party software license compliance issues for certain commercial applications
+- Optimizations to the data model with google protocol buffers
 - C# interface support
-- Utilize external data configurations to pull the large verification data set
+- Integration with CTest
+- Utilize external data configurations to manage the large verification data set
+- Updates to ensure no 3rd party software license compliance issues for certain commercial applications
 
 Long Term:
-- Public Continuous Build Server and CDash Server for improved verification and validation
+- Public Continuous Integration Server and CDash Server for improved verification and validation
 - Pull/Merge request process for methodology changes
 - Modularity improvements for model swapping
 
