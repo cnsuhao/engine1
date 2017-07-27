@@ -27,7 +27,7 @@ SEAppliedTemperature::SEAppliedTemperature(Logger* logger) : Loggable(logger)
   m_Temperature = nullptr;
   m_SurfaceArea = nullptr;
   m_SurfaceAreaFraction = nullptr;
-  m_State = CDM::enumOnOff::On;
+  m_State = cdm::eSwitch::On;
 }
 
 SEAppliedTemperature::~SEAppliedTemperature()
@@ -40,7 +40,7 @@ void SEAppliedTemperature::Clear()
   SAFE_DELETE(m_Temperature);
   SAFE_DELETE(m_SurfaceArea);
   SAFE_DELETE(m_SurfaceAreaFraction);
-  m_State = CDM::enumOnOff::On;
+  m_State = cdm::eSwitch::On;
 }
 
 const SEScalar* SEAppliedTemperature::GetScalar(const std::string& name)
@@ -136,11 +136,11 @@ double SEAppliedTemperature::GetSurfaceAreaFraction() const
   return m_SurfaceAreaFraction->GetValue();
 }
 
-CDM::enumOnOff::value SEAppliedTemperature::GetState() const
+cdm::eSwitch SEAppliedTemperature::GetState() const
 {
   return m_State;
 }
-void SEAppliedTemperature::SetState(CDM::enumOnOff::value onOff)
+void SEAppliedTemperature::SetState(cdm::eSwitch onOff)
 {
   m_State = onOff;
 }

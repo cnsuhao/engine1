@@ -13,14 +13,11 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "substance/SESubstance.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/ScalarMassPerVolumeData.hxx"
-#include "bind/ScalarTimeData.hxx"
 
 SESubstanceBolus::SESubstanceBolus(const SESubstance& substance) : SESubstanceAdministration(), m_Substance(substance)
 {
-  m_AdminRoute=(CDM::enumBolusAdministration::value)-1;
+  m_AdminRoute=(cdm::SubstanceBolusData_eAdministrationRoute)-1;
   m_Dose=nullptr;
   m_Concentration=nullptr;
 }
@@ -34,7 +31,7 @@ SESubstanceBolus::~SESubstanceBolus()
 void SESubstanceBolus::Clear()
 {
   SESubstanceAdministration::Clear();
-  m_AdminRoute=(CDM::enumBolusAdministration::value)-1;
+  m_AdminRoute=(cdm::SubstanceBolusData_eAdministrationRoute)-1;
   SAFE_DELETE(m_Dose);
   SAFE_DELETE(m_Concentration);
   // m_Substance=nullptr; Keeping mapping!!
@@ -50,49 +47,53 @@ bool SESubstanceBolus::IsActive() const
   return IsValid();
 }
 
-bool SESubstanceBolus::Load(const CDM::SubstanceBolusData& in)
+void SESubstanceBolus::Load(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst)
 {
-  SESubstanceAdministration::Load(in);
-  GetDose().Load(in.Dose());
-  GetConcentration().Load(in.Concentration());
-  m_AdminRoute=in.AdminRoute();
-  return true;
+  SESubstanceBolus::Serialize(src, dst);
+}
+void SESubstanceBolus::Serialize(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst)
+{
+  dst.Clear();
+  dst.SetAdminRoute(src.administrationroute());
+  if (src.has_dose())
+    SEScalarVolume::Load(src.dose(), dst.GetDose());
+  if (src.has_concentration())
+    SEScalarMassPerVolume::Load(src.concentration(), dst.GetConcentration());
+  //jbw - Anything with substance?
 }
 
-CDM::SubstanceBolusData* SESubstanceBolus::Unload() const
+cdm::SubstanceBolusData* SESubstanceBolus::Unload(const SESubstanceBolus& src)
 {
-  CDM::SubstanceBolusData*data(new CDM::SubstanceBolusData());
-  Unload(*data);
-  return data;
+  cdm::SubstanceBolusData* dst = new cdm::SubstanceBolusData();
+  SESubstanceBolus::Serialize(src, *dst);
+  return dst;
+}
+void SESubstanceBolus::Serialize(const SESubstanceBolus& src, cdm::SubstanceBolusData& dst)
+{
+  if (src.HasAdminRoute())
+    dst.set_administrationroute(src.m_AdminRoute);
+  if(src.HasDose())
+    dst.set_allocated_dose(SEScalarVolume::Unload(*src.m_Dose));
+  if (src.HasConcentration())
+    dst.set_allocated_concentration(SEScalarMassPerVolume::Unload(*src.m_Concentration));
+  //jbw - Anything with substance?
 }
 
-void SESubstanceBolus::Unload(CDM::SubstanceBolusData& data) const
-{
-  SESubstanceAdministration::Unload(data);
-  if(m_Dose!=nullptr)
-    data.Dose(std::unique_ptr<CDM::ScalarVolumeData>(m_Dose->Unload()));
-  if(m_Concentration!=nullptr)
-    data.Concentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_Concentration->Unload()));
-  if(HasAdminRoute())
-    data.AdminRoute(m_AdminRoute);
-  data.Substance(m_Substance.GetName());
-}
-
-CDM::enumBolusAdministration::value SESubstanceBolus::GetAdminRoute() const
+cdm::SubstanceBolusData_eAdministrationRoute SESubstanceBolus::GetAdminRoute() const
 {
   return m_AdminRoute;
 }
-void SESubstanceBolus::SetAdminRoute(CDM::enumBolusAdministration::value route)
+void SESubstanceBolus::SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute route)
 {
   m_AdminRoute = route;
 }
 bool SESubstanceBolus::HasAdminRoute() const
 {
-  return m_AdminRoute==((CDM::enumBolusAdministration::value)-1)?false:true;
+  return m_AdminRoute==((cdm::SubstanceBolusData_eAdministrationRoute)-1)?false:true;
 }
 void SESubstanceBolus::InvalidateAdminRoute()
 {
-  m_AdminRoute = (CDM::enumBolusAdministration::value)-1;
+  m_AdminRoute = (cdm::SubstanceBolusData_eAdministrationRoute)-1;
 }
 
 bool SESubstanceBolus::HasDose() const
@@ -144,21 +145,29 @@ SESubstanceBolusState::~SESubstanceBolusState()
 {
 
 }
-bool SESubstanceBolusState::Load(const CDM::SubstanceBolusStateData& in)
+
+void SESubstanceBolusState::Load(const cdm::SubstanceBolusData_StateData& src, SESubstanceBolusState& dst)
 {
-  m_elapsedTime.Load(in.ElapsedTime());
-  m_administeredDose.Load(in.AdministeredDose());
-  return true;
+  SESubstanceBolusState::Serialize(src, dst);
 }
-CDM::SubstanceBolusStateData* SESubstanceBolusState::Unload() const
+
+void SESubstanceBolusState::Serialize(const cdm::SubstanceBolusData_StateData& src, SESubstanceBolusState& dst)
 {
-  CDM::SubstanceBolusStateData* data = new CDM::SubstanceBolusStateData();
-  Unload(*data);
-  return data;
+  if (src.has_elapsedtime())
+    SEScalarTime::Load(src.elapsedtime(), dst.GetElapsedTime());
+  if (src.has_administereddose())
+    SEScalarMassPerVolume::Load(src.administereddose(), dst.GetAdministeredDose());
 }
-void SESubstanceBolusState::Unload(CDM::SubstanceBolusStateData& data) const
+
+cdm::SubstanceBolusData_StateData* SESubstanceBolusState::Unload(const SESubstanceBolusState& src)
 {
-  data.Substance(m_substance.GetName());
-  data.ElapsedTime(std::unique_ptr<CDM::ScalarTimeData>(m_elapsedTime.Unload()));
-  data.AdministeredDose(std::unique_ptr<CDM::ScalarVolumeData>(m_administeredDose.Unload()));
+
+}
+
+void SESubstanceBolusState::Serialize(const SESubstanceBolusState& src, cdm::SubstanceBolusData_StateData& dst)
+{
+  //jbw - How do we do substance?
+  //src.m_substance
+  dst.set_allocated_elapsedtime(SEScalarTime::Unload(src.m_elapsedTime));
+  dst.set_allocated_administereddose(SEScalarVolume::Unload(src.m_administeredDose));
 }

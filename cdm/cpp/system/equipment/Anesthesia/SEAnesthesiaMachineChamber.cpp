@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 
 SEAnesthesiaMachineChamber::SEAnesthesiaMachineChamber(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
-  m_State = (CDM::enumOnOff::value)-1;
+  m_State = (cdm::eSwitch)-1;
   m_SubstanceFraction = nullptr;
   m_Substance = nullptr;
 }
@@ -32,7 +32,7 @@ SEAnesthesiaMachineChamber::~SEAnesthesiaMachineChamber()
 
 void SEAnesthesiaMachineChamber::Clear()
 {
-  m_State = (CDM::enumOnOff::value)-1;
+  m_State = (cdm::eSwitch)-1;
   SAFE_DELETE(m_SubstanceFraction);
   m_Substance=nullptr;
 }
@@ -104,21 +104,21 @@ const SEScalar* SEAnesthesiaMachineChamber::GetScalar(const std::string& name)
   return nullptr;
 }
 
-CDM::enumOnOff::value SEAnesthesiaMachineChamber::GetState() const
+cdm::eSwitch SEAnesthesiaMachineChamber::GetState() const
 {
   return m_State;
 }
-void SEAnesthesiaMachineChamber::SetState(CDM::enumOnOff::value state)
+void SEAnesthesiaMachineChamber::SetState(cdm::eSwitch state)
 {
   m_State = state;
 }
 bool SEAnesthesiaMachineChamber::HasState() const
 {
-  return m_State==((CDM::enumOnOff::value)-1)?false:true;
+  return m_State==((cdm::eSwitch)-1)?false:true;
 }
 void SEAnesthesiaMachineChamber::InvalidateState()
 {
-  m_State = (CDM::enumOnOff::value)-1;
+  m_State = (cdm::eSwitch)-1;
 }
 
 bool SEAnesthesiaMachineChamber::HasSubstanceFraction() const

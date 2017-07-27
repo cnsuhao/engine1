@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SESubstanceAdministration.h"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 
 SESubstanceAdministration::SESubstanceAdministration() : SEPatientAction()
 {

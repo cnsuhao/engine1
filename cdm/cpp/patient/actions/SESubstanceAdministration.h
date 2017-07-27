@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/SubstanceAdministrationData.hxx"
 
 class DLL_DECL SESubstanceAdministration : public SEPatientAction
 {
@@ -26,6 +25,7 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
+  //jbw - How do I do this one?
   virtual bool Load(const CDM::SubstanceAdministrationData& in);
 protected:
   virtual void Unload(CDM::SubstanceAdministrationData& data) const;

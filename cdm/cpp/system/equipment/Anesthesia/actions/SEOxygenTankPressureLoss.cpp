@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 
 SEOxygenTankPressureLoss::SEOxygenTankPressureLoss() : SEAnesthesiaMachineAction()
 {
-  m_State = CDM::enumOnOff::Off;
+  m_State = cdm::eSwitch::Off;
 }
 
 SEOxygenTankPressureLoss::~SEOxygenTankPressureLoss()
@@ -27,7 +27,7 @@ SEOxygenTankPressureLoss::~SEOxygenTankPressureLoss()
 void SEOxygenTankPressureLoss::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  m_State = (CDM::enumOnOff::value)-1;
+  m_State = (cdm::eSwitch)-1;
 }
 
 bool SEOxygenTankPressureLoss::IsValid() const
@@ -36,17 +36,17 @@ bool SEOxygenTankPressureLoss::IsValid() const
 }
 bool SEOxygenTankPressureLoss::IsActive() const
 {
-  return m_State == CDM::enumOnOff::On;
+  return m_State == cdm::eSwitch::On;
 }
 void SEOxygenTankPressureLoss::SetActive(bool b)
 {
-  m_State = b ? CDM::enumOnOff::On : CDM::enumOnOff::Off;
+  m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
 }
 
 bool SEOxygenTankPressureLoss::Load(const CDM::OxygenTankPressureLossData& in)
 {
   SEAnesthesiaMachineAction::Load(in);
-  SetActive(in.State()==CDM::enumOnOff::On?true:false);
+  SetActive(in.State()==cdm::eSwitch::On?true:false);
   return true;
 }
 
@@ -60,7 +60,7 @@ CDM::OxygenTankPressureLossData* SEOxygenTankPressureLoss::Unload() const
 void SEOxygenTankPressureLoss::Unload(CDM::OxygenTankPressureLossData& data) const
 {
   SEAnesthesiaMachineAction::Unload(data);
-  data.State(IsActive() ? CDM::enumOnOff::On : CDM::enumOnOff::Off);
+  data.State(IsActive() ? cdm::eSwitch::On : cdm::eSwitch::Off);
 }
 
 void SEOxygenTankPressureLoss::ToString(std::ostream &str) const

@@ -331,7 +331,7 @@ void HowToMechanicalVentilation()
   //Mechanical Ventilation
   // Create an SEMechanicalVentilation object
   SEMechanicalVentilation mechVent;
-  mechVent.SetState(CDM::enumOnOff::On);// Turn it on
+  mechVent.SetState(cdm::eSwitch::On);// Turn it on
                       // Grab the substance fractions so we can quickly modify them
   SESubstanceFraction& O2frac = mechVent.GetGasFraction(*bg->GetSubstanceManager().GetSubstance("Oxygen"));
   SESubstanceFraction& CO2frac = mechVent.GetGasFraction(*bg->GetSubstanceManager().GetSubstance("CarbonDioxide"));

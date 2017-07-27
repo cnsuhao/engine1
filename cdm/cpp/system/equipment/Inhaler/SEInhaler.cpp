@@ -28,7 +28,7 @@ specific language governing permissions and limitations under the License.
 
 SEInhaler::SEInhaler(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {
-  m_State = CDM::enumOnOff::value(-1);
+  m_State = cdm::eSwitch(-1);
   m_MeteredDose = nullptr;
   m_NozzleLoss = nullptr;
   m_SpacerVolume = nullptr;
@@ -44,7 +44,7 @@ void SEInhaler::Clear()
 {
   SESystem::Clear();
 
-  m_State = CDM::enumOnOff::value(-1);
+  m_State = cdm::eSwitch(-1);
   SAFE_DELETE(m_MeteredDose);
   SAFE_DELETE(m_NozzleLoss);
   SAFE_DELETE(m_SpacerVolume);
@@ -150,21 +150,21 @@ bool SEInhaler::LoadFile(const std::string& file)
   return Load(*pData);
 }
 
-CDM::enumOnOff::value SEInhaler::GetState() const
+cdm::eSwitch SEInhaler::GetState() const
 {
   return m_State;
 }
-void SEInhaler::SetState(CDM::enumOnOff::value state)
+void SEInhaler::SetState(cdm::eSwitch state)
 {
   m_State = state;
 }
 bool SEInhaler::HasState() const
 {
-  return m_State == ((CDM::enumOnOff::value)-1) ? false : true;
+  return m_State == ((cdm::eSwitch)-1) ? false : true;
 }
 void SEInhaler::InvalidateState()
 {
-  m_State = (CDM::enumOnOff::value) - 1;
+  m_State = (cdm::eSwitch) - 1;
 }
 
 bool SEInhaler::HasMeteredDose() const

@@ -12,10 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/TensionPneumothoraxData.hxx"
-#include "bind/enumPneumothoraxType.hxx"
-#include "bind/enumSide.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SETensionPneumothorax : public SEPatientAction
 {
@@ -29,19 +25,21 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::TensionPneumothoraxData& in);
-  virtual CDM::TensionPneumothoraxData* Unload() const;
+  static void Load(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst);
+  static cdm::TensionPneumothoraxData* Unload(const SETensionPneumothorax& src);
 protected:
-  virtual void Unload(CDM::TensionPneumothoraxData& data) const;
+  static void Serialize(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst);
+  static void Serialize(const SETensionPneumothorax& src, cdm::TensionPneumothoraxData& dst);
+
 public:
 
-  virtual CDM::enumPneumothoraxType::value GetType() const;
-  virtual void SetType(CDM::enumPneumothoraxType::value name);
+  virtual cdm::eGate GetType() const;
+  virtual void SetType(cdm::eGate name);
   virtual bool HasType() const;
   virtual void InvalidateType();
   
-  virtual CDM::enumSide::value GetSide() const;
-  virtual void SetSide(CDM::enumSide::value name);
+  virtual cdm::eSide GetSide() const;
+  virtual void SetSide(cdm::eSide name);
   virtual bool HasSide() const;
   virtual void InvalidateSide();
 
@@ -51,9 +49,9 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  CDM::enumPneumothoraxType::value m_Type;
-  CDM::enumSide::value m_Side;
+  cdm::eGate m_Type;
+  cdm::eSide m_Side;
   SEScalar0To1*    m_Severity;
-  CDM::enumOnOff::value m_State;
+  cdm::eSwitch m_State;
   
 };    

@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/actions/SEHemorrhage.h"
-#include "bind/HemorrhageData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 
 SEHemorrhage::SEHemorrhage() : SEPatientAction()
 {
@@ -44,28 +42,30 @@ bool SEHemorrhage::IsActive() const
   return IsValid() ? !m_Rate->IsZero() : false;
 }
 
-bool SEHemorrhage::Load(const CDM::HemorrhageData& in)
+void SEHemorrhage::Load(const cdm::HemorrhageData& src, SEHemorrhage& dst)
 {
-  SEPatientAction::Load(in);
-  GetRate().Load(in.Rate());
-  m_Compartment=in.Compartment();
-  return true;
+  SEHemorrhage::Serialize(src, dst);
+}
+void SEHemorrhage::Serialize(const cdm::HemorrhageData& src, SEHemorrhage& dst)
+{
+  dst.Clear();
+  if (src.has_rate())
+    SEScalarVolumePerTime::Load(src.rate(), dst.GetRate());
+  dst.m_Compartment = src.compartment();
 }
 
-CDM::HemorrhageData* SEHemorrhage::Unload() const
+cdm::HemorrhageData* SEHemorrhage::Unload(const SEHemorrhage& src)
 {
-  CDM::HemorrhageData*data(new CDM::HemorrhageData());
-  Unload(*data);
-  return data;
+  cdm::HemorrhageData* dst = new cdm::HemorrhageData();
+  SEHemorrhage::Serialize(src, *dst);
+  return dst;
 }
-
-void SEHemorrhage::Unload(CDM::HemorrhageData& data) const
+void SEHemorrhage::Serialize(const SEHemorrhage& src, cdm::HemorrhageData& dst)
 {
-  SEPatientAction::Unload(data);
-  if(m_Rate!=nullptr)
-    data.Rate(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_Rate->Unload()));
-  if(HasCompartment())
-    data.Compartment(m_Compartment);
+  if (src.HasRate())
+    dst.set_allocated_rate(SEScalarVolumePerTime::Unload(*src.m_Rate));
+  if (src.HasCompartment())
+    dst.set_compartment(src.m_Compartment);
 }
 
 std::string SEHemorrhage::GetCompartment() const

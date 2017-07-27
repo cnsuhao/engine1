@@ -175,9 +175,9 @@ void AnesthesiaMachine::SetUp()
 
 void AnesthesiaMachine::StateChange()
 {
-  if (HasLeftChamber() && GetLeftChamber().GetState() == CDM::enumOnOff::On && GetLeftChamber().HasSubstance())
+  if (HasLeftChamber() && GetLeftChamber().GetState() == cdm::eSwitch::On && GetLeftChamber().HasSubstance())
     m_Substances.AddActiveSubstance(*m_LeftChamber->GetSubstance());
-  if (HasRightChamber() && GetRightChamber().GetState() == CDM::enumOnOff::On && GetRightChamber().HasSubstance())
+  if (HasRightChamber() && GetRightChamber().GetState() == cdm::eSwitch::On && GetRightChamber().HasSubstance())
     m_Substances.AddActiveSubstance(*m_RightChamber->GetSubstance());
 }
 
@@ -199,19 +199,19 @@ void AnesthesiaMachine::SetConnection(CDM::enumAnesthesiaMachineConnection::valu
     return; // No Change
   // Update the BioGears airway mode when this changes
   SEAnesthesiaMachine::SetConnection(c);
-  if (c == CDM::enumAnesthesiaMachineConnection::Mask && m_data.GetIntubation() == CDM::enumOnOff::Off)
+  if (c == CDM::enumAnesthesiaMachineConnection::Mask && m_data.GetIntubation() == cdm::eSwitch::Off)
   {
     m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::AnesthesiaMachine);
     return;
   }
-  else if (c == CDM::enumAnesthesiaMachineConnection::Tube && m_data.GetIntubation() == CDM::enumOnOff::On)
+  else if (c == CDM::enumAnesthesiaMachineConnection::Tube && m_data.GetIntubation() == cdm::eSwitch::On)
   {
     m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::AnesthesiaMachine);
     return;
   }
-  else if (c == CDM::enumAnesthesiaMachineConnection::Mask && m_data.GetIntubation() == CDM::enumOnOff::On)
+  else if (c == CDM::enumAnesthesiaMachineConnection::Mask && m_data.GetIntubation() == cdm::eSwitch::On)
     Error("Connection failed : Cannot apply anesthesia machine mask if patient is intubated.");
-  else if (c == CDM::enumAnesthesiaMachineConnection::Tube && m_data.GetIntubation() == CDM::enumOnOff::Off)
+  else if (c == CDM::enumAnesthesiaMachineConnection::Tube && m_data.GetIntubation() == cdm::eSwitch::Off)
     Error("Connection failed : Cannot apply anesthesia machine to tube if patient is not intubated.");
   // Make sure we are active to make sure we go back to free
   m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
@@ -252,7 +252,7 @@ void AnesthesiaMachine::SetConnection()
   case CDM::enumBioGearsAirwayMode::AnesthesiaMachine:
     if (m_Connection == CDM::enumAnesthesiaMachineConnection::Mask)
     {
-      if (m_data.GetIntubation() == CDM::enumOnOff::On)// Somebody intubated while we had the mask on
+      if (m_data.GetIntubation() == cdm::eSwitch::On)// Somebody intubated while we had the mask on
       {
         Info("Anesthesia Machine has been disconnected due to an intubation.");
         m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
@@ -264,7 +264,7 @@ void AnesthesiaMachine::SetConnection()
     }
     else if (m_Connection == CDM::enumAnesthesiaMachineConnection::Tube)
     {
-      if (m_data.GetIntubation() == CDM::enumOnOff::Off)// Somebody removed intubated while we were connected to it
+      if (m_data.GetIntubation() == cdm::eSwitch::Off)// Somebody removed intubated while we were connected to it
       {
         Info("Anesthesia Machine has been disconnected removal of intubation.");
         m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
@@ -400,14 +400,14 @@ void AnesthesiaMachine::CalculateGasSource()
   {
     VaporizerFailureSeverity = m_data.GetActions().GetAnesthesiaMachineActions().GetVaporizerFailure()->GetSeverity().GetValue();
   }
-  if(GetLeftChamber().GetState() == CDM::enumOnOff::On && GetLeftChamber().HasSubstance())
+  if(GetLeftChamber().GetState() == cdm::eSwitch::On && GetLeftChamber().HasSubstance())
   {
     SEGasSubstanceQuantity* gasSrcSubQ = m_gasSource->GetSubstanceQuantity(*GetLeftChamber().GetSubstance());
     LeftInhaledAgentVolumeFraction = GetLeftChamber().GetSubstanceFraction().GetValue();
     LeftInhaledAgentVolumeFraction = LeftInhaledAgentVolumeFraction * (1-VaporizerFailureSeverity);
     gasSrcSubQ->GetVolumeFraction().SetValue(LeftInhaledAgentVolumeFraction);
   }
-  if(GetRightChamber().GetState() == CDM::enumOnOff::On && GetRightChamber().HasSubstance())
+  if(GetRightChamber().GetState() == cdm::eSwitch::On && GetRightChamber().HasSubstance())
   {
     SEGasSubstanceQuantity* gasSrcSubQ = m_gasSource->GetSubstanceQuantity(*GetRightChamber().GetSubstance());
     RightInhaledAgentVolumeFraction = GetRightChamber().GetSubstanceFraction().GetValue();

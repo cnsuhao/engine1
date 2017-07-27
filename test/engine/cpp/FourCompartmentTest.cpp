@@ -87,8 +87,8 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
   Tissue& tsu = (Tissue&)bg.GetTissue();
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
+  bg.m_Config->EnableRenal(cdm::eSwitch::Off);
+  bg.m_Config->EnableTissue(cdm::eSwitch::Off);
   bg.CreateCircuitsAndCompartments();
   bg.GetSubstances().InitializeGasCompartments();
 

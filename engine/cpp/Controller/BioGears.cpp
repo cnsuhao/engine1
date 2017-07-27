@@ -162,7 +162,7 @@ bool BioGears::Initialize(const PhysiologyEngineConfiguration* config)
   CreateCircuitsAndCompartments();
 
   m_AirwayMode = CDM::enumBioGearsAirwayMode::Free;
-  m_Intubation = CDM::enumOnOff::Off;
+  m_Intubation = cdm::eSwitch::Off;
   m_CurrentTime->SetValue(0, TimeUnit::s);
   m_SimulationTime->SetValue(0, TimeUnit::s);
   m_Logger->SetLogTime(m_SimulationTime.get());
@@ -206,7 +206,7 @@ void BioGears::SetAirwayMode(CDM::enumBioGearsAirwayMode::value mode)
   ss << "Airway Mode : " << m_AirwayMode;
   Info(ss);
 }
-void BioGears::SetIntubation(CDM::enumOnOff::value s)
+void BioGears::SetIntubation(cdm::eSwitch s)
 {
   if (m_Intubation == s)
     return;// do nazing!

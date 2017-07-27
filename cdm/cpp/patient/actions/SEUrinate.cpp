@@ -38,22 +38,24 @@ bool SEUrinate::IsActive() const
   return IsValid();
 }
 
-bool SEUrinate::Load(const CDM::UrinateData& in)
+void SEUrinate::Load(const cdm::UrinateData& src, SEUrinate& dst)
 {
-  SEPatientAction::Load(in);
-  return true;
+  SEUrinate::Serialize(src, dst);
+}
+void SEUrinate::Serialize(const cdm::UrinateData& src, SEUrinate& dst)
+{
+  dst.Clear();
 }
 
-CDM::UrinateData* SEUrinate::Unload() const
+cdm::UrinateData* SEUrinate::Unload(const SEUrinate& src)
 {
-  CDM::UrinateData*data(new CDM::UrinateData());
-  Unload(*data);
-  return data;
+  cdm::UrinateData* dst = new cdm::UrinateData();
+  SEUrinate::Serialize(src, *dst);
+  return dst;
 }
-
-void SEUrinate::Unload(CDM::UrinateData& data) const
+void SEUrinate::Serialize(const SEUrinate& src, cdm::UrinateData& dst)
 {
-  SEPatientAction::Unload(data);
+
 }
 
 void SEUrinate::ToString(std::ostream &str) const

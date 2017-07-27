@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 
 SEOxygenWallPortPressureLoss::SEOxygenWallPortPressureLoss() : SEAnesthesiaMachineAction()
 {
-  m_State = CDM::enumOnOff::Off;
+  m_State = cdm::eSwitch::Off;
 }
 
 SEOxygenWallPortPressureLoss::~SEOxygenWallPortPressureLoss()
@@ -27,7 +27,7 @@ SEOxygenWallPortPressureLoss::~SEOxygenWallPortPressureLoss()
 void SEOxygenWallPortPressureLoss::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  m_State = (CDM::enumOnOff::value)-1;
+  m_State = (cdm::eSwitch)-1;
 }
 
 bool SEOxygenWallPortPressureLoss::IsValid() const
@@ -36,17 +36,17 @@ bool SEOxygenWallPortPressureLoss::IsValid() const
 }
 bool SEOxygenWallPortPressureLoss::IsActive() const
 {
-  return m_State == CDM::enumOnOff::On;
+  return m_State == cdm::eSwitch::On;
 }
 void SEOxygenWallPortPressureLoss::SetActive(bool b)
 {
-  m_State = b ? CDM::enumOnOff::On : CDM::enumOnOff::Off;
+  m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
 }
 
 bool SEOxygenWallPortPressureLoss::Load(const CDM::OxygenWallPortPressureLossData& in)
 {
   SEAnesthesiaMachineAction::Load(in);
-  SetActive(in.State() == CDM::enumOnOff::On ? true : false);
+  SetActive(in.State() == cdm::eSwitch::On ? true : false);
   return true;
 }
 
@@ -60,7 +60,7 @@ CDM::OxygenWallPortPressureLossData* SEOxygenWallPortPressureLoss::Unload() cons
 void SEOxygenWallPortPressureLoss::Unload(CDM::OxygenWallPortPressureLossData& data) const
 {
   SEAnesthesiaMachineAction::Unload(data);
-  data.State(IsActive() ? CDM::enumOnOff::On : CDM::enumOnOff::Off);
+  data.State(IsActive() ? cdm::eSwitch::On : cdm::eSwitch::Off);
 }
 
 void SEOxygenWallPortPressureLoss::ToString(std::ostream &str) const

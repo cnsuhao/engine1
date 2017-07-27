@@ -259,11 +259,11 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
               serializationTime_s = 0;
               serializationFileName.str("");
               serializationFileName << serializationFileNameBase;
-              if (serialization->GetPeriodTimeStamps() == CDM::enumOnOff::On)
+              if (serialization->GetPeriodTimeStamps() == cdm::eSwitch::On)
                 serializationFileName << "@" << m_Engine.GetSimulationTime(TimeUnit::s);              
               serializationFileName << ".xml";
               std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()));
-              if (serialization->GetReloadState() == CDM::enumOnOff::On)
+              if (serialization->GetReloadState() == cdm::eSwitch::On)
               {
                 m_Engine.LoadState(*state);
                 std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()+".Reloaded.xml"));
@@ -276,7 +276,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
             serializationFileName.str("");
             serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".xml";
             std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()));
-            if (serialization->GetReloadState() == CDM::enumOnOff::On)
+            if (serialization->GetReloadState() == cdm::eSwitch::On)
             {
               m_Engine.LoadState(*state);
               std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()+".Reloaded.xml"));
@@ -316,7 +316,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
       break;
     }
     
-    if (serialization != nullptr && serialization->GetAfterActions()==CDM::enumOnOff::On)
+    if (serialization != nullptr && serialization->GetAfterActions()==cdm::eSwitch::On)
     {// If we are testing force serialization after any action with this
      // Pull out the action type/name for file naming
       m_ss << *a;
@@ -328,7 +328,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
       serializationFileName.str("");
       serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".xml";
       std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()));
-      if (serialization->GetReloadState() == CDM::enumOnOff::On)
+      if (serialization->GetReloadState() == cdm::eSwitch::On)
       {
         m_Engine.LoadState(*state);
         std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()+".Reloaded.xml"));

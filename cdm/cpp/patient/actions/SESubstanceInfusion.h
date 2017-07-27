@@ -28,10 +28,11 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::SubstanceInfusionData& in);
-  virtual CDM::SubstanceInfusionData* Unload() const;
+  static void Load(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst);
+  static cdm::SubstanceInfusionData* Unload(const SESubstanceInfusion& src);
 protected:
-  virtual void Unload(CDM::SubstanceInfusionData& data) const;
+  static void Serialize(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst);
+  static void Serialize(const SESubstanceInfusion& src, cdm::SubstanceInfusionData& dst);
 
 public:
 

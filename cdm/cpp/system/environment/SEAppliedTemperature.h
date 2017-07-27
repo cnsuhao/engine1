@@ -45,8 +45,8 @@ public:
   virtual SEScalar0To1& GetSurfaceAreaFraction();
   virtual double GetSurfaceAreaFraction() const;
 
-  virtual CDM::enumOnOff::value GetState() const;
-  virtual void SetState(CDM::enumOnOff::value onOff);
+  virtual cdm::eSwitch GetState() const;
+  virtual void SetState(cdm::eSwitch onOff);
 
   virtual void ToString(std::ostream &str) const;
 
@@ -55,5 +55,5 @@ protected:
   SEScalarTemperature*   m_Temperature;
   SEScalarArea*           m_SurfaceArea;
   SEScalar0To1*      m_SurfaceAreaFraction;
-  CDM::enumOnOff::value  m_State;
+  cdm::eSwitch  m_State;
 };

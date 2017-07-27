@@ -14,9 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/actions/SESubstanceCompoundInfusion.h"
 #include "substance/SESubstanceCompound.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 
 SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompound& compound) : SESubstanceAdministration(), m_Compound(compound)
 {
@@ -37,14 +35,6 @@ void SESubstanceCompoundInfusion::Clear()
   // m_Compound=nullptr; Keeping mapping!!
 }
 
-bool SESubstanceCompoundInfusion::Load(const CDM::SubstanceCompoundInfusionData& in)
-{
-  SESubstanceAdministration::Load(in);
-  GetRate().Load(in.Rate());
-  GetBagVolume().Load(in.BagVolume());
-  return true;
-}
-
 bool SESubstanceCompoundInfusion::IsValid() const
 {
   return SESubstanceAdministration::IsValid() && HasRate() && HasBagVolume();
@@ -55,21 +45,35 @@ bool SESubstanceCompoundInfusion::IsActive() const
   return IsValid() ? !m_Rate->IsZero() : false;
 }
 
-CDM::SubstanceCompoundInfusionData* SESubstanceCompoundInfusion::Unload() const
+void SESubstanceCompoundInfusion::Load(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
 {
-  CDM::SubstanceCompoundInfusionData*data(new CDM::SubstanceCompoundInfusionData());
-  Unload(*data);
-  return data;
+  SESubstanceCompoundInfusion::Serialize(src, dst);
+}
+void SESubstanceCompoundInfusion::Serialize(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
+{
+  dst.Clear();
+  if (src.has_rate())
+    SEScalarVolumePerTime::Load(src.rate(), dst.GetRate());
+  if (src.has_bagvolume())
+    SEScalarVolume::Load(src.bagvolume(), dst.GetBagVolume());
+  //jbw - How do I do this?
+  //CDM::SubstanceCompoundInfusionData*data(new CDM::SubstanceCompoundInfusionData());
 }
 
-void SESubstanceCompoundInfusion::Unload(CDM::SubstanceCompoundInfusionData& data) const
+cdm::SubstanceCompoundInfusionData* SESubstanceCompoundInfusion::Unload(const SESubstanceCompoundInfusion& src)
 {
-  SESubstanceAdministration::Unload(data);
-  if(m_Rate!=nullptr)
-    data.Rate(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_Rate->Unload()));
-  if(m_BagVolume!=nullptr)
-    data.BagVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_BagVolume->Unload()));
-  data.SubstanceCompound(m_Compound.GetName());
+  cdm::SubstanceCompoundInfusionData* dst = new cdm::SubstanceCompoundInfusionData();
+  SESubstanceCompoundInfusion::Serialize(src, *dst);
+  return dst;
+}
+void SESubstanceCompoundInfusion::Serialize(const SESubstanceCompoundInfusion& src, cdm::SubstanceCompoundInfusionData& dst)
+{
+  if (src.HasRate())
+    dst.set_allocated_rate(src.m_Rate);
+  if (src.HasBagVolume())
+    dst.set_allocated_bagvolume(SEScalarVolume::Unload(*src.m_BagVolume));
+  //jbw - How do I do this?
+  //data.SubstanceCompound(m_Compound.GetName());
 }
 
 bool SESubstanceCompoundInfusion::HasRate() const

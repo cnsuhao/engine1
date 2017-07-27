@@ -37,18 +37,18 @@ public:
   virtual double GetPeriod(const TimeUnit& unit) const;
 
   virtual bool HasPeriodTimeStamps() const;
-  virtual CDM::enumOnOff::value GetPeriodTimeStamps() const;
-  virtual void SetPeriodTimeStamps(CDM::enumOnOff::value v);
+  virtual cdm::eSwitch GetPeriodTimeStamps() const;
+  virtual void SetPeriodTimeStamps(cdm::eSwitch v);
   virtual void InvalidatePeriodTimeStamps();
 
   virtual bool HasAfterActions() const;
-  virtual CDM::enumOnOff::value GetAfterActions() const;
-  virtual void SetAfterActions(CDM::enumOnOff::value v);
+  virtual cdm::eSwitch GetAfterActions() const;
+  virtual void SetAfterActions(cdm::eSwitch v);
   virtual void InvalidateAfterActions();
 
   virtual bool HasReloadState() const;
-  virtual CDM::enumOnOff::value GetReloadState() const;
-  virtual void SetReloadState(CDM::enumOnOff::value v);
+  virtual cdm::eSwitch GetReloadState() const;
+  virtual void SetReloadState(cdm::eSwitch v);
   virtual void InvalidateReloadState();
 
   virtual bool HasDirectory() const;
@@ -65,9 +65,9 @@ public:
 protected:
 
   SEScalarTime*         m_Period;
-  CDM::enumOnOff::value m_PeriodTimeStamps;
-  CDM::enumOnOff::value m_AfterActions;
-  CDM::enumOnOff::value m_ReloadState;
+  cdm::eSwitch m_PeriodTimeStamps;
+  cdm::eSwitch m_AfterActions;
+  cdm::eSwitch m_ReloadState;
   std::string           m_Directory;
   std::string           m_FileName;
 };

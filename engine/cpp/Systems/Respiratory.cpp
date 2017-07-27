@@ -1221,7 +1221,7 @@ void Respiratory::Intubation()
 
   if (m_PatientActions->HasIntubation())
   {
-    m_data.SetIntubation(CDM::enumOnOff::On);
+    m_data.SetIntubation(cdm::eSwitch::On);
     SEIntubation* intubation = m_PatientActions->GetIntubation();
     switch (intubation->GetType())
     {
@@ -1254,7 +1254,7 @@ void Respiratory::Intubation()
   }
   else
   {
-    m_data.SetIntubation(CDM::enumOnOff::Off);
+    m_data.SetIntubation(cdm::eSwitch::Off);
   }
 }
 

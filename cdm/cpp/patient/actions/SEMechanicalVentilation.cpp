@@ -12,22 +12,18 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/actions/SEMechanicalVentilation.h"
-#include "Serializer.h"
 
 #include "properties/SEScalarPressure.h"
-#include "bind/ScalarPressureData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 #include "properties/SEScalar0To1.h"
 
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceFraction.h"
-#include "bind/SubstanceFractionData.hxx"
 #include "substance/SESubstanceManager.h"
 
 SEMechanicalVentilation::SEMechanicalVentilation() : SEPatientAction()
 {
-  m_State = CDM::enumOnOff::value(-1);
+  m_State = cdm::eSwitch(-1);
   m_Flow = nullptr;
   m_Pressure = nullptr;
 }
@@ -41,7 +37,7 @@ void SEMechanicalVentilation::Clear()
 {
   SEPatientAction::Clear();
 
-  m_State = CDM::enumOnOff::value(-1);
+  m_State = cdm::eSwitch(-1);
   SAFE_DELETE(m_Flow);
   SAFE_DELETE(m_Pressure);
 
@@ -56,7 +52,7 @@ bool SEMechanicalVentilation::IsValid() const
     Error("Mechanical Ventilation must have state.");
     return false;
   }
-  if (GetState() == CDM::enumOnOff::Off)
+  if (GetState() == cdm::eSwitch::Off)
     return true;
   else
   {
@@ -86,84 +82,80 @@ bool SEMechanicalVentilation::IsActive() const
 {
   if (!HasState())
     return false;
-  return GetState() == CDM::enumOnOff::On;  
+  return GetState() == cdm::eSwitch::On;  
 }
 
-bool SEMechanicalVentilation::Load(const CDM::MechanicalVentilationData& in, const SESubstanceManager& subMgr)
+void SEMechanicalVentilation::Load(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
 {
-  SEPatientAction::Clear();
-  SetState(in.State());
-  if (in.Flow().present())
-    GetFlow().Load(in.Flow().get());
-  else
-    GetFlow().Invalidate();
-  if (in.Pressure().present())
-    GetPressure().Load(in.Pressure().get());
-  else 
-    GetPressure().Invalidate();
+  SEMechanicalVentilation::Serialize(src, dst, subMgr);
+}
+void SEMechanicalVentilation::Serialize(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
+{
+  dst.Clear();
+  dst.SetState(src.state());
+  if (src.has_flow())
+    SEScalarVolumePerTime::Load(src.flow(), dst.GetFlow());
+  if (src.has_pressure())
+    SEScalarPressure::Load(src.pressure(), dst.GetPressure());
 
-  m_GasFractions.clear();
-  m_cGasFractions.clear();
+  dst.m_GasFractions.clear();
+  dst.m_cGasFractions.clear();
   SESubstance* sub;
-  for (const CDM::SubstanceFractionData& sfData : in.GasFraction())
+  for (const cdm::SubstanceData_FractionAmountData& sfData : src.gasfraction())
   {
-    sub = subMgr.GetSubstance(sfData.Name());
+    sub = subMgr.GetSubstance(sfData.name());
     if (sub == nullptr)
     {
-      Error("Substance not found : " + sfData.Name());
-      return false;
+      dst.Error("Substance not found : " + sfData.name());
     }
-    if (sub->GetState() != CDM::enumSubstanceState::Gas)
+    if (sub->GetState() != cdm::SubstanceData_eState_Gas)      
     {
-      Error("Substance not gas : " + sfData.Name());
-      return false;
+      dst.Error("Substance not gas : " + sfData.name());
     }
     SESubstanceFraction* sf = new SESubstanceFraction(*sub);
-    sf->Load(sfData);
-    m_GasFractions.push_back(sf);
-    m_cGasFractions.push_back(sf);
+    sf->Load(sfData, dst.GetGasFraction(*sub));
+    dst.m_GasFractions.push_back(sf);
+    dst.m_cGasFractions.push_back(sf);
   }
-
-  return IsValid();
 }
 
-CDM::MechanicalVentilationData*  SEMechanicalVentilation::Unload() const
+cdm::MechanicalVentilationData* SEMechanicalVentilation::Unload(const SEMechanicalVentilation& src)
 {
-  CDM::MechanicalVentilationData* data = new CDM::MechanicalVentilationData();
-  Unload(*data);
-  return data;
+  cdm::MechanicalVentilationData* dst = new cdm::MechanicalVentilationData();
+  SEMechanicalVentilation::Serialize(src, *dst);
+  return dst;
 }
-
-void SEMechanicalVentilation::Unload(CDM::MechanicalVentilationData& data) const
+void SEMechanicalVentilation::Serialize(const SEMechanicalVentilation& src, cdm::MechanicalVentilationData& dst)
 {
-  SEPatientAction::Unload(data);
-  if (HasState())
-    data.State(m_State);
-  if (HasFlow())
-    data.Flow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_Flow->Unload()));
-  if (HasPressure())
-    data.Pressure(std::unique_ptr<CDM::ScalarPressureData>(m_Pressure->Unload()));
-
-  for (SESubstanceFraction *sf : m_GasFractions)
-    data.GasFraction().push_back(std::unique_ptr<CDM::SubstanceFractionData>(sf->Unload()));
-
+    if (src.HasState())
+      dst.set_state(src.m_State);
+    if (src.HasFlow())
+      dst.set_allocated_flow(SEScalarVolumePerTime::Unload(*src.m_Flow));
+    if (src.HasPressure())
+      dst.set_allocated_pressure(SEScalarPressure::Unload(*src.m_Pressure));
+  
+    for (SESubstanceFraction *sf : src.m_GasFractions)
+    {
+      //jbw - How???
+      //dst.gasfraction().push_back(std::unique_ptr<cdm::SubstanceFractionData>(sf->Unload()));
+    }
 }
 
-CDM::enumOnOff::value SEMechanicalVentilation::GetState() const
+cdm::eSwitch SEMechanicalVentilation::GetState() const
 {
   return m_State;
 }
-void SEMechanicalVentilation::SetState(CDM::enumOnOff::value state)
+void SEMechanicalVentilation::SetState(cdm::eSwitch state)
 {
   m_State = state;
 }
 bool SEMechanicalVentilation::HasState() const
 {
-  return m_State == ((CDM::enumOnOff::value)-1) ? false : true;
+  return m_State == ((cdm::eSwitch)-1) ? false : true;
 }
 void SEMechanicalVentilation::InvalidateState()
 {
-  m_State = (CDM::enumOnOff::value) - 1;
+  m_State = (cdm::eSwitch) - 1;
 }
 
 bool SEMechanicalVentilation::HasFlow() const

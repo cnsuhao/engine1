@@ -13,9 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SEForcedExhale.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 #include "properties/SEScalarTime.h"
-#include "bind/ScalarTimeData.hxx"
 
 SEForcedExhale::SEForcedExhale() : SEConsciousRespirationCommand()
 {
@@ -45,28 +43,31 @@ bool SEForcedExhale::IsActive() const
   return SEConsciousRespirationCommand::IsActive();
 }
 
-bool SEForcedExhale::Load(const CDM::ForcedExhaleData& in)
+void SEForcedExhale::Load(const cdm::ConsciousRespirationData_ForcedExhaleData& src, SEForcedExhale& dst)
 {
-  SEConsciousRespirationCommand::Load(in);
-  GetExpiratoryReserveVolumeFraction().Load(in.ExpiratoryReserveVolumeFraction());
-  GetPeriod().Load(in.Period());
-  return true;
+  SEForcedExhale::Serialize(src, dst);
+}
+void SEForcedExhale::Serialize(const cdm::ConsciousRespirationData_ForcedExhaleData& src, SEForcedExhale& dst)
+{
+  dst.Clear();
+  if(src.has_expiratoryreservevolumefraction())
+    SEScalar0To1::Load(src.expiratoryreservevolumefraction(), dst.GetExpiratoryReserveVolumeFraction());
+  if (src.has_period())
+    SEScalarTime::Load(src.period(), dst.GetPeriod());
 }
 
-CDM::ForcedExhaleData* SEForcedExhale::Unload() const
+cdm::ConsciousRespirationData_ForcedExhaleData* SEForcedExhale::Unload(const SEForcedExhale& src)
 {
-  CDM::ForcedExhaleData*data(new CDM::ForcedExhaleData());
-  Unload(*data);
-  return data;
+  cdm::ConsciousRespirationData_ForcedExhaleData* dst = new cdm::ConsciousRespirationData_ForcedExhaleData();
+  SEForcedExhale::Serialize(src, *dst);
+  return dst;
 }
-
-void SEForcedExhale::Unload(CDM::ForcedExhaleData& data) const
+void SEForcedExhale::Serialize(const SEForcedExhale& src, cdm::ConsciousRespirationData_ForcedExhaleData& dst)
 {
-  SEConsciousRespirationCommand::Unload(data);
-  if (m_ExpiratoryReserveVolumeFraction != nullptr)
-    data.ExpiratoryReserveVolumeFraction(std::unique_ptr<CDM::Scalar0To1Data>(m_ExpiratoryReserveVolumeFraction->Unload()));
-  if (m_Period != nullptr)
-    data.Period(std::unique_ptr<CDM::ScalarTimeData>(m_Period->Unload()));
+  if (src.HasExpiratoryReserveVolumeFraction())
+    dst.set_allocated_expiratoryreservevolumefraction(SEScalar0To1::Unload(*src.m_ExpiratoryReserveVolumeFraction));
+  if (src.HasPeriod())
+    dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
 }
 
 bool SEForcedExhale::HasExpiratoryReserveVolumeFraction() const

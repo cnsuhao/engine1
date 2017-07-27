@@ -12,9 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/NeedleDecompressionData.hxx"
-#include "bind/enumSide.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SENeedleDecompression : public SEPatientAction
 {
@@ -29,22 +26,28 @@ public:
   virtual bool IsActive() const;
   virtual void SetActive(bool b);
 
-  virtual bool Load(const CDM::NeedleDecompressionData& in);
-  virtual CDM::NeedleDecompressionData* Unload() const;
+  static void Load(const cdm::NeedleDecompressionData& src, SENeedleDecompression& dst);
+  static cdm::NeedleDecompressionData* Unload(const SENeedleDecompression& src);
 protected:
-  virtual void Unload(CDM::NeedleDecompressionData& data) const;
+  static void Serialize(const cdm::NeedleDecompressionData& src, SENeedleDecompression& dst);
+  static void Serialize(const SENeedleDecompression& src, cdm::NeedleDecompressionData& dst);
 
 public:
 
-  virtual CDM::enumSide::value GetSide() const;
-  virtual void SetSide(CDM::enumSide::value LeftOrRight);
+  virtual cdm::eSwitch GetState() const;
+  virtual void SetState(cdm::eSwitch name);
+  virtual bool HasState() const;
+  virtual void InvalidateState();
+
+  virtual cdm::eSide GetSide() const;
+  virtual void SetSide(cdm::eSide LeftOrRight);
   virtual bool HasSide() const;
   virtual void InvalidateSide();
   
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  CDM::enumSide::value m_Side;
-  CDM::enumOnOff::value m_State;
+  cdm::eSide m_Side;
+  cdm::eSwitch m_State;
   
 };    

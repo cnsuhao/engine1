@@ -14,11 +14,8 @@ specific language governing permissions and limitations under the License.
 #include "patient/actions/SESubstanceInfusion.h"
 #include "substance/SESubstance.h"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/ScalarMassPerVolumeData.hxx"
 
 SESubstanceInfusion::SESubstanceInfusion(const SESubstance& substance) : SESubstanceAdministration(), m_Substance(substance)
 {
@@ -50,29 +47,34 @@ bool SESubstanceInfusion::IsActive() const
   return IsValid() ? !m_Rate->IsZero() : false;
 }
 
-bool SESubstanceInfusion::Load(const CDM::SubstanceInfusionData& in)
+void SESubstanceInfusion::Load(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst)
 {
-  SESubstanceAdministration::Load(in);
-  GetRate().Load(in.Rate());
-  GetConcentration().Load(in.Concentration());
-  return true;
+  SESubstanceInfusion::Serialize(src, dst);
+}
+void SESubstanceInfusion::Serialize(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst)
+{
+  dst.Clear();
+  if (src.has_rate())
+    SEScalarVolumePerTime::Load(src.rate(), dst.GetRate());
+  if (src.has_concentration())
+    SEScalarMassPerVolume::Load(src.concentration(), dst.GetConcentration());
+  //jbw - Anything with substance?
 }
 
-CDM::SubstanceInfusionData* SESubstanceInfusion::Unload() const
+cdm::SubstanceInfusionData* SESubstanceInfusion::Unload(const SESubstanceInfusion& src)
 {
-  CDM::SubstanceInfusionData*data(new CDM::SubstanceInfusionData());
-  Unload(*data);
-  return data;
+  cdm::SubstanceInfusionData* dst = new cdm::SubstanceInfusionData();
+  SESubstanceInfusion::Serialize(src, *dst);
+  return dst;
 }
-
-void SESubstanceInfusion::Unload(CDM::SubstanceInfusionData& data) const
+void SESubstanceInfusion::Serialize(const SESubstanceInfusion& src, cdm::SubstanceInfusionData& dst)
 {
-  SESubstanceAdministration::Unload(data);
-  if(m_Rate!=nullptr)
-    data.Rate(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_Rate->Unload()));
-  if(m_Concentration!=nullptr)
-    data.Concentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_Concentration->Unload()));
-  data.Substance(m_Substance.GetName());
+  if (src.HasRate())
+    dst.set_allocated_rate(SEScalarVolumePerTime::Unload(*src.m_Rate));
+  if (src.HasConcentration())
+    dst.set_allocated_concentration(SEScalarMassPerVolume::Unload(*src.m_Concentration));
+  //jbw - What do I do with substance?
+  //data.Substance(m_Substance.GetName());
 }
 
 bool SESubstanceInfusion::HasRate() const

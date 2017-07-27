@@ -16,13 +16,9 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceManager.h"
 
 #include "patient/actions/SEBreathHold.h"
-#include "bind/BreathHoldData.hxx"
 #include "patient/actions/SEForcedExhale.h"
-#include "bind/ForcedExhaleData.hxx"
 #include "patient/actions/SEForcedInhale.h"
-#include "bind/ForcedInhaleData.hxx"
 #include "patient/actions/SEUseInhaler.h"
-#include "bind/UseInhalerData.hxx"
 
 SEConsciousRespiration::SEConsciousRespiration() : SEPatientAction()
 {
@@ -51,61 +47,64 @@ bool SEConsciousRespiration::IsActive() const
   return SEPatientAction::IsActive();
 }
 
-bool SEConsciousRespiration::Load(const CDM::ConsciousRespirationData& in, const SESubstanceManager& substances)
+void SEConsciousRespiration::Load(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst)
 {
-  // Set this before our super class tells us to Clear if the action wants us to keep our current data
-  m_ClearCommands = !in.AppendToPrevious();
-  SEPatientAction::Load(in);
-  m_ClearCommands = true;
-  CDM::ConsciousRespirationCommandData* command;
-  for (unsigned int i = 0; i<in.Command().size(); i++)
-  {
-    command = (CDM::ConsciousRespirationCommandData*)&in.Command()[i];
+  SEConsciousRespiration::Serialize(src, dst);
+}
+void SEConsciousRespiration::Serialize(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst)
+{
+  dst.Clear();
 
-    CDM::BreathHoldData* bh = dynamic_cast<CDM::BreathHoldData*>(command);
+  dst.m_ClearCommands = true;
+  cdm::ConsciousRespirationData_AnyCommandData* command;
+  for (unsigned int i = 0; i < src.command().size(); i++)
+  {
+    command = (cdm::ConsciousRespirationData_AnyCommandData*)&src.command()[i];
+
+    cdm::ConsciousRespirationData_BreathHoldData* bh = dynamic_cast<cdm::ConsciousRespirationData_BreathHoldData*>(command);
     if (bh != nullptr)
     {
-      AddBreathHold().Load(*bh);
+      SEBreathHold::Load(*bh, dst.AddBreathHold());
       continue;
     }
 
-    CDM::ForcedInhaleData* fi = dynamic_cast<CDM::ForcedInhaleData*>(command);
+    cdm::ConsciousRespirationData_ForcedInhaleData* fi = dynamic_cast<cdm::ConsciousRespirationData_ForcedInhaleData*>(command);
     if (fi != nullptr)
     {
-      AddForcedInhale().Load(*fi);
+      SEForcedInhale::Load(*fi, dst.AddForcedInhale());
       continue;
     }
 
-    CDM::ForcedExhaleData* fe = dynamic_cast<CDM::ForcedExhaleData*>(command);
+    cdm::ConsciousRespirationData_ForcedExhaleData* fe = dynamic_cast<cdm::ConsciousRespirationData_ForcedExhaleData*>(command);
     if (fe != nullptr)
     {
-      AddForcedExhale().Load(*fe);
+      SEForcedExhale::Load(*fe, dst.AddForcedExhale());
       continue;
     }
 
-    CDM::UseInhalerData* si = dynamic_cast<CDM::UseInhalerData*>(command);
+    cdm::ConsciousRespirationData_UseInhalerData* si = dynamic_cast<cdm::ConsciousRespirationData_UseInhalerData*>(command);
     if (si != nullptr)
     {
-      AddUseInhaler().Load(*si);
+      SEUseInhaler::Load(*si, dst.AddUseInhaler());
       continue;
     }
   }
-  return true;
 }
 
-CDM::ConsciousRespirationData* SEConsciousRespiration::Unload() const
+cdm::ConsciousRespirationData* SEConsciousRespiration::Unload(const SEConsciousRespiration& src)
 {
-  CDM::ConsciousRespirationData*data(new CDM::ConsciousRespirationData());
-  Unload(*data);
-  return data;
+  cdm::ConsciousRespirationData* dst = new cdm::ConsciousRespirationData();
+  SEConsciousRespiration::Serialize(src, *dst);
+  return dst;
 }
-
-void SEConsciousRespiration::Unload(CDM::ConsciousRespirationData& data) const
+void SEConsciousRespiration::Serialize(const SEConsciousRespiration& src, cdm::ConsciousRespirationData& dst)
 {
-  SEPatientAction::Unload(data);
-  data.AppendToPrevious(false);
-  for (SEConsciousRespirationCommand* cmd : m_Commands)
-    data.Command().push_back(std::unique_ptr<CDM::ConsciousRespirationCommandData>(cmd->Unload()));
+  dst.appendtoprevious();
+  for (SEConsciousRespirationCommand* cmd : src.m_Commands)
+  {
+    //jbw - How do you do this crap?
+    //dst.command().push_back(std::unique_ptr<cdm::ConsciousRespirationData_AnyCommandData>(cmd->Unload()));
+  }
 }
 
 SEConsciousRespirationCommand* SEConsciousRespiration::GetActiveCommand()

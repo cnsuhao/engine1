@@ -44,8 +44,8 @@ void BioGearsEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfigura
   BioGears bg(sTestDirectory + "\\RespiratoryCircuitAndTransportTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off); 
+  bg.m_Config->EnableRenal(cdm::eSwitch::Off);
+  bg.m_Config->EnableTissue(cdm::eSwitch::Off); 
   bg.CreateCircuitsAndCompartments();
   bg.GetSubstances().InitializeGasCompartments();
   SEEnvironmentalConditions& env = bg.GetEnvironment().GetConditions();
@@ -191,8 +191,8 @@ void BioGearsEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory
   BioGears bg(sTestDirectory + "\\RespiratoryDriverTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
+  bg.m_Config->EnableRenal(cdm::eSwitch::Off);
+  bg.m_Config->EnableTissue(cdm::eSwitch::Off);
   bg.CreateCircuitsAndCompartments();
   SEEnvironmentalConditions env(bg.GetSubstances());
   env.LoadFile("./environments/Standard.xml");

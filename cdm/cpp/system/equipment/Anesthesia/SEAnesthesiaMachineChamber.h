@@ -38,8 +38,8 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual CDM::enumOnOff::value GetState() const;
-  virtual void SetState(CDM::enumOnOff::value name);
+  virtual cdm::eSwitch GetState() const;
+  virtual void SetState(cdm::eSwitch name);
   virtual bool HasState() const;
   virtual void InvalidateState();
 
@@ -56,7 +56,7 @@ public:
 
 protected:
 
-  CDM::enumOnOff::value m_State;
+  cdm::eSwitch m_State;
   const SESubstance*    m_Substance;
   SEScalar0To1*     m_SubstanceFraction;
 

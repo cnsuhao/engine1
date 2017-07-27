@@ -12,11 +12,10 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/actions/SEIntubation.h"
-#include "bind/IntubationData.hxx"
 
 SEIntubation::SEIntubation() : SEPatientAction()
 {
-  m_Type = (CDM::enumIntubationType::value) - 1;
+  m_Type = (cdm::IntubationData_eType) - 1;
 }
 
 SEIntubation::~SEIntubation()
@@ -27,7 +26,7 @@ SEIntubation::~SEIntubation()
 void SEIntubation::Clear()
 {
   SEPatientAction::Clear();
-  m_Type = (CDM::enumIntubationType::value) - 1;
+  m_Type = (cdm::IntubationData_eType) - 1;
 }
 
 bool SEIntubation::IsValid() const
@@ -37,45 +36,46 @@ bool SEIntubation::IsValid() const
 
 bool SEIntubation::IsActive() const
 {
-  return HasType() && GetType() != CDM::enumIntubationType::Off;
+  return HasType() && GetType() != cdm::IntubationData_eType_Off;
 }
 
-bool SEIntubation::Load(const CDM::IntubationData& in)
+void SEIntubation::Load(const cdm::IntubationData& src, SEIntubation& dst)
 {
-  SEPatientAction::Load(in);
-  m_Type = in.Type();
-  return true;
+  SEIntubation::Serialize(src, dst);
 }
-
-CDM::IntubationData* SEIntubation::Unload() const
+void SEIntubation::Serialize(const cdm::IntubationData& src, SEIntubation& dst)
 {
-  CDM::IntubationData*data(new CDM::IntubationData());
-  Unload(*data);
-  return data;
+  dst.Clear();
+  dst.SetType(src.type());
 }
 
-void SEIntubation::Unload(CDM::IntubationData& data) const
+cdm::IntubationData* SEIntubation::Unload(const SEIntubation& src)
 {
-  SEPatientAction::Unload(data);
-  if(HasType())
-    data.Type(m_Type);
+  cdm::IntubationData* dst = new cdm::IntubationData();
+  SEIntubation::Serialize(src, *dst);
+  return dst;
+}
+void SEIntubation::Serialize(const SEIntubation& src, cdm::IntubationData& dst)
+{
+  if (src.HasType())
+    dst.set_type(src.m_Type);
 }
 
-CDM::enumIntubationType::value SEIntubation::GetType() const
+cdm::IntubationData_eType SEIntubation::GetType() const
 {
   return m_Type;
 }
-void SEIntubation::SetType(CDM::enumIntubationType::value Type)
+void SEIntubation::SetType(cdm::IntubationData_eType Type)
 {
   m_Type = Type;
 }
 bool SEIntubation::HasType() const
 {
-  return m_Type == ((CDM::enumIntubationType::value) - 1) ? false : true;
+  return m_Type == ((cdm::IntubationData_eType) - 1) ? false : true;
 }
 void SEIntubation::InvalidateType()
 {
-  m_Type = (CDM::enumIntubationType::value) - 1;
+  m_Type = (cdm::IntubationData_eType) - 1;
 }
 
 

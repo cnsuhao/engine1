@@ -36,5 +36,5 @@ public:
 
 protected:
   
-  CDM::enumOnOff::value m_State;
+  cdm::eSwitch m_State;
 };  

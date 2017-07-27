@@ -13,12 +13,11 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "patient/actions/SETensionPneumothorax.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SETensionPneumothorax::SETensionPneumothorax() : SEPatientAction()
 {
-  m_Type=(CDM::enumPneumothoraxType::value)-1;
-  m_Side=(CDM::enumSide::value)-1;
+  m_Type=(cdm::eGate)-1;
+  m_Side=(cdm::eSide)-1;
   m_Severity=nullptr;
 }
 
@@ -30,36 +29,38 @@ SETensionPneumothorax::~SETensionPneumothorax()
 void SETensionPneumothorax::Clear()
 {
   SEPatientAction::Clear();
-  m_Type=(CDM::enumPneumothoraxType::value)-1;
-  m_Side=(CDM::enumSide::value)-1;
+  m_Type=(cdm::eGate)-1;
+  m_Side=(cdm::eSide)-1;
   SAFE_DELETE(m_Severity);
 }
 
-bool SETensionPneumothorax::Load(const CDM::TensionPneumothoraxData& in)
+void SETensionPneumothorax::Load(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
 {
-  SEPatientAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  m_Type=in.Type();
-  m_Side=in.Side();
-  return true;
+  SETensionPneumothorax::Serialize(src, dst);
+}
+void SETensionPneumothorax::Serialize(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
+{
+  dst.Clear();
+  dst.SetType(src.type());
+  dst.SetSide(src.side());
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::TensionPneumothoraxData* SETensionPneumothorax::Unload() const
+cdm::TensionPneumothoraxData* SETensionPneumothorax::Unload(const SETensionPneumothorax& src)
 {
-  CDM::TensionPneumothoraxData*data(new CDM::TensionPneumothoraxData());
-  Unload(*data);
-  return data;
+  cdm::TensionPneumothoraxData* dst = new cdm::TensionPneumothoraxData();
+  SETensionPneumothorax::Serialize(src, *dst);
+  return dst;
 }
-
-void SETensionPneumothorax::Unload(CDM::TensionPneumothoraxData& data) const
+void SETensionPneumothorax::Serialize(const SETensionPneumothorax& src, cdm::TensionPneumothoraxData& dst)
 {
-  SEPatientAction::Unload(data);
-  if(m_Severity!=nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
-  if(HasType())
-    data.Type(m_Type);
-  if(HasSide())
-    data.Side(m_Side);
+  if (src.HasType())
+    dst.set_type(src.m_Type);
+  if (src.HasSide())
+    dst.set_side(src.m_Side);
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SETensionPneumothorax::IsValid() const
@@ -72,38 +73,38 @@ bool SETensionPneumothorax::IsActive() const
   return IsValid() ? !m_Severity->IsZero() : false;
 }
 
-CDM::enumPneumothoraxType::value SETensionPneumothorax::GetType() const
+cdm::eGate SETensionPneumothorax::GetType() const
 {
   return m_Type;
 }
-void SETensionPneumothorax::SetType(CDM::enumPneumothoraxType::value Type)
+void SETensionPneumothorax::SetType(cdm::eGate Type)
 {
   m_Type = Type;
 }
 bool SETensionPneumothorax::HasType() const
 {
-  return m_Type==((CDM::enumPneumothoraxType::value)-1)?false:true;
+  return m_Type==((cdm::eGate)-1)?false:true;
 }
 void SETensionPneumothorax::InvalidateType()
 {
-  m_Type = (CDM::enumPneumothoraxType::value)-1;
+  m_Type = (cdm::eGate)-1;
 }
 
-CDM::enumSide::value SETensionPneumothorax::GetSide() const
+cdm::eSide SETensionPneumothorax::GetSide() const
 {
   return m_Side;
 }
-void SETensionPneumothorax::SetSide(CDM::enumSide::value Side)
+void SETensionPneumothorax::SetSide(cdm::eSide Side)
 {
   m_Side = Side;
 }
 bool SETensionPneumothorax::HasSide() const
 {
-  return m_Side==((CDM::enumSide::value)-1)?false:true;
+  return m_Side==((cdm::eSide)-1)?false:true;
 }
 void SETensionPneumothorax::InvalidateSide()
 {
-  m_Side = (CDM::enumSide::value)-1;
+  m_Side = (cdm::eSide)-1;
 }
 
 bool SETensionPneumothorax::HasSeverity() const

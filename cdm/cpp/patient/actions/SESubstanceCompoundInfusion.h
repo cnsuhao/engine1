@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SESubstanceAdministration.h"
-#include "bind/enumOnOff.hxx"
 class SESubstanceCompound;
-#include "bind/SubstanceCompoundInfusionData.hxx"
 
 class DLL_DECL SESubstanceCompoundInfusion : public SESubstanceAdministration
 {
@@ -28,10 +26,11 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::SubstanceCompoundInfusionData& in);
-  virtual CDM::SubstanceCompoundInfusionData* Unload() const;
+  static void Load(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst);
+  static cdm::SubstanceCompoundInfusionData* Unload(const SESubstanceCompoundInfusion& src);
 protected:
-  virtual void Unload(CDM::SubstanceCompoundInfusionData& data) const;
+  static void Serialize(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst);
+  static void Serialize(const SESubstanceCompoundInfusion& src, cdm::SubstanceCompoundInfusionData& dst);
 
 public:
 

@@ -13,8 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/actions/SEPatientAction.h"
 
-#include "bind/PericardialEffusionData.hxx"
-
 class DLL_DECL SEPericardialEffusion : public SEPatientAction
 {
 public:
@@ -27,10 +25,11 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::PericardialEffusionData& in);
-  virtual CDM::PericardialEffusionData* Unload() const;
+  static void Load(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst);
+  static cdm::PericardialEffusionData* Unload(const SEPericardialEffusion& src);
 protected:
-  virtual void Unload(CDM::PericardialEffusionData& data) const;
+  static void Serialize(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst);
+  static void Serialize(const SEPericardialEffusion& src, cdm::PericardialEffusionData& dst);
 
 public:
 

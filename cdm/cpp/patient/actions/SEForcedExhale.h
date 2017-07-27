@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEConsciousRespirationCommand.h"
-#include "bind/ForcedExhaleData.hxx"
 
 class DLL_DECL SEForcedExhale : public SEConsciousRespirationCommand
 {
@@ -27,10 +26,11 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::ForcedExhaleData& in);
-  virtual CDM::ForcedExhaleData* Unload() const;
+  static void Load(const cdm::ConsciousRespirationData_ForcedExhaleData& src, SEForcedExhale& dst);
+  static cdm::ConsciousRespirationData_ForcedExhaleData* Unload(const SEForcedExhale& src);
 protected:
-  virtual void Unload(CDM::ForcedExhaleData& data) const;
+  static void Serialize(const cdm::ConsciousRespirationData_ForcedExhaleData& src, SEForcedExhale& dst);
+  static void Serialize(const SEForcedExhale& src, cdm::ConsciousRespirationData_ForcedExhaleData& dst);
 
 public:
 

@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/PatientAssessmentRequestData.hxx"
-#include "bind/enumPatientAssessment.hxx"
 
 class DLL_DECL SEPatientAssessmentRequest : public SEPatientAction
 {
@@ -27,15 +25,16 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::PatientAssessmentRequestData& in);
-  virtual CDM::PatientAssessmentRequestData* Unload() const;
+  static void Load(const cdm::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst);
+  static cdm::PatientAssessmentRequestData* Unload(const SEPatientAssessmentRequest& src);
 protected:
-  virtual void Unload(CDM::PatientAssessmentRequestData& data) const;
+  static void Serialize(const cdm::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst);
+  static void Serialize(const SEPatientAssessmentRequest& src, cdm::PatientAssessmentRequestData& dst);
 
 public:
 
-  virtual CDM::enumPatientAssessment::value GetType() const;
-  virtual void SetType(CDM::enumPatientAssessment::value type);
+  virtual cdm::PatientAssessmentRequestData_eAssessmentType GetType() const;
+  virtual void SetType(cdm::PatientAssessmentRequestData_eAssessmentType type);
   virtual bool HasType() const;
   virtual void InvalidateType();
 
@@ -43,5 +42,5 @@ public:
   
 protected:
 
-  CDM::enumPatientAssessment::value m_Type;
+  cdm::PatientAssessmentRequestData_eAssessmentType m_Type;
 }; 

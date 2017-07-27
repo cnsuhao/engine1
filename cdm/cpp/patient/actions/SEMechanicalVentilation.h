@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/MechanicalVentilationData.hxx"
-#include "bind/enumOnOff.hxx"
 class Serializer;
 class SESubstance;
 class SESubstanceFraction;
@@ -33,15 +31,16 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::MechanicalVentilationData& in, const SESubstanceManager& subMgr);
-  virtual CDM::MechanicalVentilationData* Unload() const;
+  static void Load(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr);
+  static cdm::MechanicalVentilationData* Unload(const SEMechanicalVentilation& src);
 protected:
-  virtual void Unload(CDM::MechanicalVentilationData& data) const;
+  static void Serialize(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const SEMechanicalVentilation& src, cdm::MechanicalVentilationData& dst);
 
 public:
 
-  virtual CDM::enumOnOff::value GetState() const;
-  virtual void SetState(CDM::enumOnOff::value name);
+  virtual cdm::eSwitch GetState() const;
+  virtual void SetState(cdm::eSwitch name);
   virtual bool HasState() const;
   virtual void InvalidateState();
 
@@ -67,7 +66,7 @@ protected:
 
   std::stringstream    m_ss;
 
-  CDM::enumOnOff::value   m_State;
+  cdm::eSwitch            m_State;
   SEScalarVolumePerTime*  m_Flow;
   SEScalarPressure*       m_Pressure;
 

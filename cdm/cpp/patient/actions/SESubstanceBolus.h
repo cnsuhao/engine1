@@ -13,9 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/actions/SESubstanceAdministration.h"
 class SESubstance;
-#include "bind/SubstanceBolusData.hxx"
-#include "bind/SubstanceBolusStateData.hxx"
-#include "bind/enumBolusAdministration.hxx"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarTime.h"
 
@@ -31,15 +28,16 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::SubstanceBolusData& in);
-  virtual CDM::SubstanceBolusData* Unload() const;
+  static void Load(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst);
+  static cdm::SubstanceBolusData* Unload(const SESubstanceBolus& src);
 protected:
-  virtual void Unload(CDM::SubstanceBolusData& data) const;
+  static void Serialize(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst);
+  static void Serialize(const SESubstanceBolus& src, cdm::SubstanceBolusData& dst);
 
 public:
 
-  virtual CDM::enumBolusAdministration::value GetAdminRoute() const;
-  virtual void SetAdminRoute(CDM::enumBolusAdministration::value name);
+  virtual cdm::SubstanceBolusData_eAdministrationRoute GetAdminRoute() const;
+  virtual void SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute name);
   virtual bool HasAdminRoute() const;
   virtual void InvalidateAdminRoute();
 
@@ -54,7 +52,7 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  CDM::enumBolusAdministration::value m_AdminRoute;
+  cdm::SubstanceBolusData_eAdministrationRoute m_AdminRoute;
   SEScalarMassPerVolume*              m_Concentration;
   SEScalarVolume*                     m_Dose;
   const SESubstance&                  m_Substance;
@@ -67,10 +65,11 @@ public:
   SESubstanceBolusState(const SESubstance& sub);
   ~SESubstanceBolusState();
 
-  virtual bool Load(const CDM::SubstanceBolusStateData& in);
-  virtual CDM::SubstanceBolusStateData* Unload() const;
+  static void Load(const cdm::SubstanceBolusData_StateData& src, SESubstanceBolusState& dst);
+  static cdm::SubstanceBolusData_StateData* Unload(const SESubstanceBolusState& src);
 protected:
-  virtual void Unload(CDM::SubstanceBolusStateData& data) const;
+  static void Serialize(const cdm::SubstanceBolusData_StateData& src, SESubstanceBolusState& dst);
+  static void Serialize(const SESubstanceBolusState& src, cdm::SubstanceBolusData_StateData& dst);
 
 public:
   SEScalarTime& GetElapsedTime() { return m_elapsedTime; }

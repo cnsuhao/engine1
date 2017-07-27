@@ -14,9 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/actions/SEUseInhaler.h"
 #include "substance/SESubstance.h"
 #include "properties/SEScalarMass.h"
-#include "bind/ScalarMassData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 
 SEUseInhaler::SEUseInhaler() : SEConsciousRespirationCommand()
 {
@@ -43,24 +41,25 @@ bool SEUseInhaler::IsActive() const
   return SEConsciousRespirationCommand::IsActive();
 }
 
-bool SEUseInhaler::Load(const CDM::UseInhalerData& in)
+void SEUseInhaler::Load(const cdm::ConsciousRespirationData_UseInhalerData& src, SEUseInhaler& dst)
 {
-  SEConsciousRespirationCommand::Load(in);
-  return true;
+  SEUseInhaler::Serialize(src, dst);
+}
+void SEUseInhaler::Serialize(const cdm::ConsciousRespirationData_UseInhalerData& src, SEUseInhaler& dst)
+{
+  dst.Clear();
 }
 
-CDM::UseInhalerData* SEUseInhaler::Unload() const
+cdm::ConsciousRespirationData_UseInhalerData* SEUseInhaler::Unload(const SEUseInhaler& src)
 {
-  CDM::UseInhalerData*data(new CDM::UseInhalerData());
-  Unload(*data);
-  return data;
+  cdm::ConsciousRespirationData_UseInhalerData* dst = new cdm::ConsciousRespirationData_UseInhalerData();
+  SEUseInhaler::Serialize(src, *dst);
+  return dst;
 }
-
-void SEUseInhaler::Unload(CDM::UseInhalerData& data) const
+void SEUseInhaler::Serialize(const SEUseInhaler& src, cdm::ConsciousRespirationData_UseInhalerData& dst)
 {
-  SEConsciousRespirationCommand::Unload(data);
-}
 
+}
 
 void SEUseInhaler::ToString(std::ostream &str) const
 {

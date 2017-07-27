@@ -139,7 +139,7 @@ BioGearsConfiguration::BioGearsConfiguration(SESubstanceManager& substances) : P
   m_UniversalGasConstant = nullptr;
 
   // Drugs 
-  m_PDEnabled = CDM::enumOnOff::value(-1);
+  m_PDEnabled = cdm::eSwitch(-1);
 
   // Energy
   m_BodySpecificHeat = nullptr;
@@ -176,7 +176,7 @@ BioGearsConfiguration::BioGearsConfiguration(SESubstanceManager& substances) : P
   m_PupilDiameterBaseline = nullptr;
   
   // Renal
-  m_RenalEnabled = CDM::enumOnOff::value(-1);
+  m_RenalEnabled = cdm::eSwitch(-1);
   m_PlasmaSodiumConcentrationSetPoint = nullptr;
   m_PeritubularPotassiumConcentrationSetPoint = nullptr;
   m_LeftGlomerularFluidPermeabilityBaseline = nullptr;
@@ -203,7 +203,7 @@ BioGearsConfiguration::BioGearsConfiguration(SESubstanceManager& substances) : P
   m_VentilatoryOcclusionPressure = nullptr;
 
   // Tissue
-  m_TissueEnabled = CDM::enumOnOff::value(-1);
+  m_TissueEnabled = cdm::eSwitch(-1);
 }
 
 BioGearsConfiguration::~BioGearsConfiguration()
@@ -264,7 +264,7 @@ void BioGearsConfiguration::Clear()
   SAFE_DELETE(m_UniversalGasConstant);
 
   // Drugs
-  m_PDEnabled = CDM::enumOnOff::value(-1);
+  m_PDEnabled = cdm::eSwitch(-1);
 
   // Energy
   SAFE_DELETE(m_BodySpecificHeat);
@@ -301,7 +301,7 @@ void BioGearsConfiguration::Clear()
   SAFE_DELETE(m_PupilDiameterBaseline);
 
   // Renal
-  m_RenalEnabled = CDM::enumOnOff::value(-1);
+  m_RenalEnabled = cdm::eSwitch(-1);
   SAFE_DELETE(m_PlasmaSodiumConcentrationSetPoint);
   SAFE_DELETE(m_PeritubularPotassiumConcentrationSetPoint);
   SAFE_DELETE(m_LeftGlomerularFluidPermeabilityBaseline);
@@ -327,14 +327,14 @@ void BioGearsConfiguration::Clear()
   SAFE_DELETE(m_VentilatoryOcclusionPressure);
 
   //Tissue
-  m_TissueEnabled = CDM::enumOnOff::value(-1);
+  m_TissueEnabled = cdm::eSwitch(-1);
 }
 
 
 void BioGearsConfiguration::Initialize()
 {
   Clear();
-  m_WritePatientBaselineFile = CDM::enumOnOff::Off;
+  m_WritePatientBaselineFile = cdm::eSwitch::Off;
 
   // Reset to default values
   GetECGInterpolator().LoadWaveforms("./ecg/StandardECG.xml");
@@ -392,7 +392,7 @@ void BioGearsConfiguration::Initialize()
   GetUniversalGasConstant().SetValue(8.3144621, HeatCapacitancePerAmountUnit::J_Per_K_mol); //http://physics.nist.gov/cuu/Constants/
 
   // Drugs 
-  m_PDEnabled = CDM::enumOnOff::On;
+  m_PDEnabled = cdm::eSwitch::On;
 
   // Energy
   GetBodySpecificHeat().SetValue(0.83, HeatCapacitancePerMassUnit::kcal_Per_K_kg);
@@ -430,7 +430,7 @@ void BioGearsConfiguration::Initialize()
   GetPupilDiameterBaseline().SetValue(4, LengthUnit::mm);
 
   // Renal
-  m_RenalEnabled = CDM::enumOnOff::On;
+  m_RenalEnabled = cdm::eSwitch::On;
   GetPlasmaSodiumConcentrationSetPoint().SetValue(3.23, MassPerVolumeUnit::mg_Per_mL);
   GetPeritubularPotassiumConcentrationSetPoint().SetValue(0.0185, MassPerVolumeUnit::g_Per_dL);
   GetLeftGlomerularFluidPermeabilityBaseline().SetValue(3.67647, VolumePerTimePressureAreaUnit::mL_Per_min_mmHg_m2);
@@ -457,7 +457,7 @@ void BioGearsConfiguration::Initialize()
   GetVentilatoryOcclusionPressure().SetValue(0.75, PressureUnit::cmH2O); //This increases the absolute max driver pressure
 
   // Tissue
-  m_TissueEnabled = CDM::enumOnOff::On;
+  m_TissueEnabled = cdm::eSwitch::On;
 }
 
 void BioGearsConfiguration::Merge(const PhysiologyEngineConfiguration& from)

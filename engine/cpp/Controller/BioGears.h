@@ -113,8 +113,8 @@ public:
   CDM::enumBioGearsAirwayMode::value      GetAirwayMode() { return m_AirwayMode; }
   void                                    SetAirwayMode(CDM::enumBioGearsAirwayMode::value mode);
 
-  CDM::enumOnOff::value                   GetIntubation() { return m_Intubation; }
-  void                                    SetIntubation(CDM::enumOnOff::value s);
+  cdm::eSwitch                   GetIntubation() { return m_Intubation; }
+  void                                    SetIntubation(cdm::eSwitch s);
 
   bool CreateCircuitsAndCompartments();
 protected:
@@ -145,7 +145,7 @@ protected:
   std::unique_ptr<SEScalarTime>                                 m_CurrentTime;
   std::unique_ptr<SEScalarTime>                                 m_SimulationTime;
   CDM::enumBioGearsAirwayMode::value                            m_AirwayMode;
-  CDM::enumOnOff::value                                         m_Intubation;
+  cdm::eSwitch                                         m_Intubation;
 
   std::unique_ptr<BioGearsConfiguration>                        m_Config;
   std::unique_ptr<SaturationCalculator>                         m_SaturationCalculator;
