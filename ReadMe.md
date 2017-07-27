@@ -168,7 +168,7 @@ To generate the documentation, perform the following steps:
 - Install MiKTeX, which can be found <a href="https://miktex.org/download">here</a>
 - Execute SystemValidation and PatientValidation as described above
 - Execute the doxygen tool using build/install/bin/run.cmake in your cmd/bash shell in the following way :
-- 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 cmake -DTYPE:STRING=doxygen -P run.cmake 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
