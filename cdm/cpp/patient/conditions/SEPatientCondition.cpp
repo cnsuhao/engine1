@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "SEPatientCondition.h"
-#include "bind/PatientConditionData.hxx"
 
 SEPatientCondition::SEPatientCondition() : SECondition()
 {
@@ -34,13 +33,22 @@ bool SEPatientCondition::IsValid() const
   return SECondition::IsValid();
 }
 
-bool SEPatientCondition::Load(const CDM::PatientConditionData& in)
+void SEPatientCondition::Load(const cdm::PatientConditionData& src, SEPatientCondition& dst)
 {
-  SECondition::Load(in);
-  return true;
+  SEPatientCondition::Serialize(src, dst);
+}
+void SEPatientCondition::Serialize(const cdm::PatientConditionData& src, SEPatientCondition& dst)
+{
+  dst.Clear();
 }
 
-void SEPatientCondition::Unload(CDM::PatientConditionData& data) const
+cdm::PatientConditionData* SEPatientCondition::Unload(const SEPatientCondition& src)
 {
-  SECondition::Unload(data);
+  cdm::PatientConditionData* dst = new cdm::PatientConditionData();
+  SEPatientCondition::Serialize(src, *dst);
+  return dst;
+}
+void SEPatientCondition::Serialize(const SEPatientCondition& src, cdm::PatientConditionData& dst)
+{
+
 }

@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "scenario/SECondition.h"
-#include "bind/PatientConditionData.hxx"
+#include "bind/cdm/PatientConditions.pb.h"
 
 class DLL_DECL SEPatientCondition : public SECondition
 {
@@ -25,9 +25,11 @@ public:
 
   virtual bool IsValid() const = 0;
 
-  virtual bool Load(const CDM::PatientConditionData& in);
+  static void Load(const cdm::PatientConditionData& src, SEPatientCondition& dst);
+  static cdm::PatientConditionData* Unload(const SEPatientCondition& src);
 protected:
-  virtual void Unload(CDM::PatientConditionData& data) const;
+  static void Serialize(const cdm::PatientConditionData& src, SEPatientCondition& dst);
+  static void Serialize(const SEPatientCondition& src, cdm::PatientConditionData& dst);
 
 public:
   virtual void ToString(std::ostream &str) const = 0;

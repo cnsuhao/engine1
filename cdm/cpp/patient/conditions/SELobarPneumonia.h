@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
-#include "bind/LobarPneumoniaData.hxx"
-#include "bind/enumSide.hxx"
 
 class DLL_DECL SELobarPneumonia : public SEPatientCondition
 {
@@ -26,10 +24,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::LobarPneumoniaData& in);
-  virtual CDM::LobarPneumoniaData* Unload() const;
+  static void Load(const cdm::LobarPneumoniaData& src, SELobarPneumonia& dst);
+  static cdm::LobarPneumoniaData* Unload(const SELobarPneumonia& src);
 protected:
-  virtual void Unload(CDM::LobarPneumoniaData& data) const;
+  static void Serialize(const cdm::LobarPneumoniaData& src, SELobarPneumonia& dst);
+  static void Serialize(const SELobarPneumonia& src, cdm::LobarPneumoniaData& dst);
 
 public:
   virtual std::string GetName() const { return "LobarPneumonia"; }

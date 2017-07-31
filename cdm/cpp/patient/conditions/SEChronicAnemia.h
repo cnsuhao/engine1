@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
-#include "bind/ChronicAnemiaData.hxx"
 
 class DLL_DECL SEChronicAnemia : public SEPatientCondition
 {
@@ -25,10 +24,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::ChronicAnemiaData& in);
-  virtual CDM::ChronicAnemiaData* Unload() const;
+  static void Load(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst);
+  static cdm::ChronicAnemiaData* Unload(const SEChronicAnemia& src);
 protected:
-  virtual void Unload(CDM::ChronicAnemiaData& data) const;
+  static void Serialize(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst);
+  static void Serialize(const SEChronicAnemia& src, cdm::ChronicAnemiaData& dst);
 
 public:
   virtual std::string GetName() const{ return "ChronicAnemia"; }

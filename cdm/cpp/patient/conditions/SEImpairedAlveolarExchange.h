@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
-#include "bind/ImpairedAlveolarExchangeData.hxx"
 
 class DLL_DECL SEImpairedAlveolarExchange : public SEPatientCondition
 {
@@ -24,10 +23,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::ImpairedAlveolarExchangeData& in);
-  virtual CDM::ImpairedAlveolarExchangeData* Unload() const;
+  static void Load(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst);
+  static cdm::ImpairedAlveolarExchangeData* Unload(const SEImpairedAlveolarExchange& src);
 protected:
-  virtual void Unload(CDM::ImpairedAlveolarExchangeData& data) const;
+  static void Serialize(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst);
+  static void Serialize(const SEImpairedAlveolarExchange& src, cdm::ImpairedAlveolarExchangeData& dst);
 
 public:
   virtual std::string GetName() const { return "ImpairedAlveolarExchange"; }

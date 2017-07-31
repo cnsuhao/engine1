@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
 #include "patient/SEMeal.h"
-#include "bind/ConsumeMealData.hxx"
 
 class DLL_DECL SEConsumeMeal : public SEPatientCondition
 {
@@ -26,10 +25,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::ConsumeMealData& in);
-  virtual CDM::ConsumeMealData* Unload() const;
+  static void Load(const cdm::ConsumeMealData& src, SEConsumeMeal& dst);
+  static cdm::ConsumeMealData* Unload(const SEConsumeMeal& src);
 protected:
-  virtual void Unload(CDM::ConsumeMealData& data) const;
+  static void Serialize(const cdm::ConsumeMealData& src, SEConsumeMeal& dst);
+  static void Serialize(const SEConsumeMeal& src, cdm::ConsumeMealData& dst);
 
 public:
   virtual std::string GetName() const { return "ConsumeMeal"; }

@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "SEConsumeMeal.h"
-#include "bind/ConsumeMealData.hxx"
-#include "bind/MealData.hxx"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolume.h"
@@ -41,30 +39,31 @@ bool SEConsumeMeal::IsValid() const
   return SEPatientCondition::IsValid() && (HasMeal() || HasMealFile());
 }
 
-bool SEConsumeMeal::Load(const CDM::ConsumeMealData& in)
+void SEConsumeMeal::Load(const cdm::ConsumeMealData& src, SEConsumeMeal& dst)
 {
-  SEPatientCondition::Load(in);
-  if (in.Meal().present())
-    GetMeal().Load(in.Meal().get());
-  else if (in.MealFile().present())
-    SetMealFile(in.MealFile().get());
-  return true;
+  SEConsumeMeal::Serialize(src, dst);
+}
+void SEConsumeMeal::Serialize(const cdm::ConsumeMealData& src, SEConsumeMeal& dst)
+{
+  dst.Clear();
+  if (src.has_meal())
+    SEMeal::Load(src.meal(), dst.GetMeal());
+  if(src.has_mealfile())
+    dst.SetMealFile(src.mealfile());
 }
 
-CDM::ConsumeMealData* SEConsumeMeal::Unload() const
+cdm::ConsumeMealData* SEConsumeMeal::Unload(const SEConsumeMeal& src)
 {
-  CDM::ConsumeMealData*data(new CDM::ConsumeMealData());
-  Unload(*data);
-  return data;
+  cdm::ConsumeMealData* dst = new cdm::ConsumeMealData();
+  SEConsumeMeal::Serialize(src, *dst);
+  return dst;
 }
-
-void SEConsumeMeal::Unload(CDM::ConsumeMealData& data) const
+void SEConsumeMeal::Serialize(const SEConsumeMeal& src, cdm::ConsumeMealData& dst)
 {
-  SEPatientCondition::Unload(data);
-  if (HasMeal())
-    data.Meal(std::unique_ptr<CDM::MealData>(m_Meal->Unload()));
-  if (HasMealFile())
-    data.MealFile(m_MealFile);
+  if (src.HasMeal())
+    dst.set_allocated_meal(SEMeal::Unload(*src.m_Meal));
+  if (src.HasMealFile())
+    dst.set_mealfile(src.m_MealFile);
 }
 
 bool SEConsumeMeal::HasMeal() const
