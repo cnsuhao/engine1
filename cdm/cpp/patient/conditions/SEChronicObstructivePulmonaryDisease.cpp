@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "bind/ChronicObstructivePulmonaryDiseaseData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 
 SEChronicObstructivePulmonaryDisease::SEChronicObstructivePulmonaryDisease() : SEPatientCondition()
@@ -40,28 +38,31 @@ bool SEChronicObstructivePulmonaryDisease::IsValid() const
   return SEPatientCondition::IsValid() && HasBronchitisSeverity() && HasEmphysemaSeverity();
 }
 
-bool SEChronicObstructivePulmonaryDisease::Load(const CDM::ChronicObstructivePulmonaryDiseaseData& in)
+void SEChronicObstructivePulmonaryDisease::Load(const cdm::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst)
 {
-  SEPatientCondition::Load(in);
-  GetBronchitisSeverity().Load(in.BronchitisSeverity());
-  GetEmphysemaSeverity().Load(in.EmphysemaSeverity());
-  return true;
+  SEChronicObstructivePulmonaryDisease::Serialize(src, dst);
+}
+void SEChronicObstructivePulmonaryDisease::Serialize(const cdm::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst)
+{
+  dst.Clear();
+  if (src.has_bronchitisseverity())
+    SEScalar0To1::Load(src.bronchitisseverity(), dst.GetBronchitisSeverity());
+  if (src.has_emphysemaseverity())
+    SEScalar0To1::Load(src.emphysemaseverity(), dst.GetEmphysemaSeverity());
 }
 
-CDM::ChronicObstructivePulmonaryDiseaseData* SEChronicObstructivePulmonaryDisease::Unload() const
+cdm::ChronicObstructivePulmonaryDiseaseData* SEChronicObstructivePulmonaryDisease::Unload(const SEChronicObstructivePulmonaryDisease& src)
 {
-  CDM::ChronicObstructivePulmonaryDiseaseData*data(new CDM::ChronicObstructivePulmonaryDiseaseData());
-  Unload(*data);
-  return data;
+  cdm::ChronicObstructivePulmonaryDiseaseData* dst = new cdm::ChronicObstructivePulmonaryDiseaseData();
+  SEChronicObstructivePulmonaryDisease::Serialize(src, *dst);
+  return dst;
 }
-
-void SEChronicObstructivePulmonaryDisease::Unload(CDM::ChronicObstructivePulmonaryDiseaseData& data) const
+void SEChronicObstructivePulmonaryDisease::Serialize(const SEChronicObstructivePulmonaryDisease& src, cdm::ChronicObstructivePulmonaryDiseaseData& dst)
 {
-  SEPatientCondition::Unload(data);
-  if (m_BronchitisSeverity != nullptr)
-    data.BronchitisSeverity(std::unique_ptr<CDM::Scalar0To1Data>(m_BronchitisSeverity->Unload()));
-  if (m_EmphysemaSeverity != nullptr)
-    data.EmphysemaSeverity(std::unique_ptr<CDM::Scalar0To1Data>(m_EmphysemaSeverity->Unload()));
+  if (src.HasBronchitisSeverity())
+    dst.set_allocated_bronchitisseverity(SEScalar0To1::Unload(*src.m_BronchitisSeverity));
+  if (src.HasEmphysemaSeverity())
+    dst.set_allocated_emphysemaseverity(SEScalar0To1::Unload(*src.m_EmphysemaSeverity));
 }
 
 bool SEChronicObstructivePulmonaryDisease::HasBronchitisSeverity() const

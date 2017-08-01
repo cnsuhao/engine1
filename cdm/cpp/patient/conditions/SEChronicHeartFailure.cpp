@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicHeartFailure.h"
-#include "bind/ChronicHeartFailureData.hxx"
 
 SEChronicHeartFailure::SEChronicHeartFailure() : SEPatientCondition()
 {
@@ -33,20 +32,23 @@ bool SEChronicHeartFailure::IsValid() const
   return SEPatientCondition::IsValid();
 }
 
-bool SEChronicHeartFailure::Load(const CDM::ChronicHeartFailureData& in)
+void SEChronicHeartFailure::Load(const cdm::ChronicHeartFailureData& src, SEChronicHeartFailure& dst)
 {
-  SEPatientCondition::Load(in);
-  return true;
+  SEChronicHeartFailure::Serialize(src, dst);
+}
+void SEChronicHeartFailure::Serialize(const cdm::ChronicHeartFailureData& src, SEChronicHeartFailure& dst)
+{
+  dst.Clear();
 }
 
-CDM::ChronicHeartFailureData* SEChronicHeartFailure::Unload() const
+cdm::ChronicHeartFailureData* SEChronicHeartFailure::Unload(const SEChronicHeartFailure& src)
 {
-  CDM::ChronicHeartFailureData*data(new CDM::ChronicHeartFailureData());
-  Unload(*data);
-  return data;
+  cdm::ChronicHeartFailureData* dst = new cdm::ChronicHeartFailureData();
+  SEChronicHeartFailure::Serialize(src, *dst);
+  return dst;
+}
+void SEChronicHeartFailure::Serialize(const SEChronicHeartFailure& src, cdm::ChronicHeartFailureData& dst)
+{
+
 }
 
-void SEChronicHeartFailure::Unload(CDM::ChronicHeartFailureData& data) const
-{
-  SEPatientCondition::Unload(data);
-}

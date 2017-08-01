@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
-#include "bind/ChronicVentricularSystolicDysfunctionData.hxx"
 
 SEChronicVentricularSystolicDysfunction::SEChronicVentricularSystolicDysfunction() : SEChronicHeartFailure()
 {
@@ -33,24 +32,25 @@ bool SEChronicVentricularSystolicDysfunction::IsValid() const
   return SEChronicHeartFailure::IsValid();
 }
 
-bool SEChronicVentricularSystolicDysfunction::Load(const CDM::ChronicVentricularSystolicDysfunctionData& in)
+void SEChronicVentricularSystolicDysfunction::Load(const cdm::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst)
 {
-  SEChronicHeartFailure::Load(in);
-  return true;
+  SEChronicVentricularSystolicDysfunction::Serialize(src, dst);
+}
+void SEChronicVentricularSystolicDysfunction::Serialize(const cdm::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst)
+{
+  dst.Clear();
 }
 
-CDM::ChronicVentricularSystolicDysfunctionData* SEChronicVentricularSystolicDysfunction::Unload() const
+cdm::ChronicVentricularSystolicDysfunctionData* SEChronicVentricularSystolicDysfunction::Unload(const SEChronicVentricularSystolicDysfunction& src)
 {
-  CDM::ChronicVentricularSystolicDysfunctionData*data(new CDM::ChronicVentricularSystolicDysfunctionData());
-  Unload(*data);
-  return data;
+  cdm::ChronicVentricularSystolicDysfunctionData* dst = new cdm::ChronicVentricularSystolicDysfunctionData();
+  SEChronicVentricularSystolicDysfunction::Serialize(src, *dst);
+  return dst;
 }
-
-void SEChronicVentricularSystolicDysfunction::Unload(CDM::ChronicVentricularSystolicDysfunctionData& data) const
+void SEChronicVentricularSystolicDysfunction::Serialize(const SEChronicVentricularSystolicDysfunction& src, cdm::ChronicVentricularSystolicDysfunctionData& dst)
 {
-  SEChronicHeartFailure::Unload(data);
-}
 
+}
 
 void SEChronicVentricularSystolicDysfunction::ToString(std::ostream &str) const
 {

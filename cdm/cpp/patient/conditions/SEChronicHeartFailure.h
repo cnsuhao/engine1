@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
-#include "bind/ChronicHeartFailureData.hxx"
 
 class DLL_DECL SEChronicHeartFailure : public SEPatientCondition
 {
@@ -25,10 +24,12 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::ChronicHeartFailureData& in);
-  virtual CDM::ChronicHeartFailureData* Unload() const;
+  //jbw - It looks like Heart Failure is missing
+  static void Load(const cdm::ChronicHeartFailureData& src, SEChronicHeartFailure& dst);
+  static cdm::ChronicHeartFailureData* Unload(const SEChronicHeartFailure& src);
 protected:
-  virtual void Unload(CDM::ChronicHeartFailureData& data) const;
+  static void Serialize(const cdm::ChronicHeartFailureData& src, SEChronicHeartFailure& dst);
+  static void Serialize(const SEChronicHeartFailure& src, cdm::ChronicHeartFailureData& dst);
 
 public:
   virtual void ToString(std::ostream &str) const = 0;

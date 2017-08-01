@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
 class SEBloodChemistrySystem;
-#include "bind/CompleteBloodCountData.hxx"
 
 class DLL_DECL SECompleteBloodCount : public SEPatientAssessment
 {
@@ -25,10 +24,12 @@ public:
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::CompleteBloodCountData& in);
-  virtual CDM::CompleteBloodCountData* Unload();
+  static void Load(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst);
+  static cdm::CompleteBloodCountData* Unload(const SECompleteBloodCount& src);
 protected:
-  virtual void Unload(CDM::CompleteBloodCountData& data);
+  static void Serialize(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst);
+  static void Serialize(const SECompleteBloodCount& src, cdm::CompleteBloodCountData& dst);
+
 public:
   
   virtual bool HasHematocrit();

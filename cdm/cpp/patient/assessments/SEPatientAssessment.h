@@ -11,7 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(PatientAssessmentData)
+#include "bind/cdm/PatientAssessments.pb.h"
+
 /**
  * @brief
  * Data formed at a level of a clinicians report. 
@@ -28,10 +29,11 @@ public:
   virtual void Reset(); 
   virtual void Clear();
 
-  virtual bool Load(const CDM::PatientAssessmentData& in);
-  virtual CDM::PatientAssessmentData* Unload();
+  static void Load(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst);
+  static cdm::PatientAssessmentData* Unload(const SEPatientAssessment& src);
 protected:
-  virtual void Unload(CDM::PatientAssessmentData& data);
+  static void Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst);
+  static void Serialize(const SEPatientAssessment& src, cdm::PatientAssessmentData& dst);
 
 public:
   

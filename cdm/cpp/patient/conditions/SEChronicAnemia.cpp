@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicAnemia.h"
-#include "bind/ChronicAnemiaData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEChronicAnemia::SEChronicAnemia() : SEPatientCondition()
 {
@@ -37,25 +35,27 @@ bool SEChronicAnemia::IsValid() const
   return SEPatientCondition::IsValid() && HasReductionFactor();
 }
 
-bool SEChronicAnemia::Load(const CDM::ChronicAnemiaData& in)
+void SEChronicAnemia::Load(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst)
 {
-  SEPatientCondition::Load(in);
-  GetReductionFactor().Load(in.ReductionFactor());
-  return true;
+  SEChronicAnemia::Serialize(src, dst);
+}
+void SEChronicAnemia::Serialize(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst)
+{
+  dst.Clear();
+  if (src.has_reductionfactor())
+    SEScalar0To1::Load(src.reductionfactor(), dst.GetReductionFactor());
 }
 
-CDM::ChronicAnemiaData* SEChronicAnemia::Unload() const
+cdm::ChronicAnemiaData* SEChronicAnemia::Unload(const SEChronicAnemia& src)
 {
-  CDM::ChronicAnemiaData*data(new CDM::ChronicAnemiaData());
-  Unload(*data);
-  return data;
+  cdm::ChronicAnemiaData* dst = new cdm::ChronicAnemiaData();
+  SEChronicAnemia::Serialize(src, *dst);
+  return dst;
 }
-
-void SEChronicAnemia::Unload(CDM::ChronicAnemiaData& data) const
+void SEChronicAnemia::Serialize(const SEChronicAnemia& src, cdm::ChronicAnemiaData& dst)
 {
-  SEPatientCondition::Unload(data);
-  if(m_ReductionFactor!=nullptr)
-    data.ReductionFactor(std::unique_ptr<CDM::Scalar0To1Data>(m_ReductionFactor->Unload()));
+  if (src.HasReductionFactor())
+    dst.set_allocated_reductionfactor(SEScalar0To1::Unload(*src.m_ReductionFactor));
 }
 
 bool SEChronicAnemia::HasReductionFactor() const

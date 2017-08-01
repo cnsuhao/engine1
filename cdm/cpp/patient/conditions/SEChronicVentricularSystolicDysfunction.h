@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/conditions/SEChronicHeartFailure.h"
-#include "bind/ChronicVentricularSystolicDysfunctionData.hxx"
 
 class DLL_DECL SEChronicVentricularSystolicDysfunction : public SEChronicHeartFailure
 {
@@ -25,10 +24,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::ChronicVentricularSystolicDysfunctionData& in);
-  virtual CDM::ChronicVentricularSystolicDysfunctionData* Unload() const;
+  static void Load(const cdm::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst);
+  static cdm::ChronicVentricularSystolicDysfunctionData* Unload(const SEChronicVentricularSystolicDysfunction& src);
 protected:
-  virtual void Unload(CDM::ChronicVentricularSystolicDysfunctionData& data) const;
+  static void Serialize(const cdm::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst);
+  static void Serialize(const SEChronicVentricularSystolicDysfunction& src, cdm::ChronicVentricularSystolicDysfunctionData& dst);
 
 public:
   virtual std::string GetName() const { return "ChronicVentricularSystolicDysfunction"; }

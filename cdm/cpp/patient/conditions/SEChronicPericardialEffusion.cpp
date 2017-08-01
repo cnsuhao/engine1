@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "bind/ChronicPericardialEffusionData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 
 SEChronicPericardialEffusion::SEChronicPericardialEffusion() : SEPatientCondition()
 {
@@ -37,25 +35,27 @@ bool SEChronicPericardialEffusion::IsValid() const
   return SEPatientCondition::IsValid() && HasAccumulatedVolume();
 }
 
-bool SEChronicPericardialEffusion::Load(const CDM::ChronicPericardialEffusionData& in)
+void SEChronicPericardialEffusion::Load(const cdm::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst)
 {
-  SEPatientCondition::Load(in);
-  GetAccumulatedVolume().Load(in.AccumulatedVolume());
-  return true;
+  SEChronicPericardialEffusion::Serialize(src, dst);
+}
+void SEChronicPericardialEffusion::Serialize(const cdm::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst)
+{
+  dst.Clear();
+  if (src.has_accumulatedvolume())
+    SEScalarVolume::Load(src.accumulatedvolume(), dst.GetAccumulatedVolume());
 }
 
-CDM::ChronicPericardialEffusionData* SEChronicPericardialEffusion::Unload() const
+cdm::ChronicPericardialEffusionData* SEChronicPericardialEffusion::Unload(const SEChronicPericardialEffusion& src)
 {
-  CDM::ChronicPericardialEffusionData*data(new CDM::ChronicPericardialEffusionData());
-  Unload(*data);
-  return data;
+  cdm::ChronicPericardialEffusionData* dst = new cdm::ChronicPericardialEffusionData();
+  SEChronicPericardialEffusion::Serialize(src, *dst);
+  return dst;
 }
-
-void SEChronicPericardialEffusion::Unload(CDM::ChronicPericardialEffusionData& data) const
+void SEChronicPericardialEffusion::Serialize(const SEChronicPericardialEffusion& src, cdm::ChronicPericardialEffusionData& dst)
 {
-  SEPatientCondition::Unload(data);
-  if (m_AccumulatedVolume != nullptr)
-    data.AccumulatedVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_AccumulatedVolume->Unload()));
+  if (src.HasAccumulatedVolume())
+    dst.set_allocated_accumulatedvolume(SEScalarVolume::Unload(*src.m_AccumulatedVolume));
 }
 
 bool SEChronicPericardialEffusion::HasAccumulatedVolume() const

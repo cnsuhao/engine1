@@ -12,10 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
-#include "bind/enumPresenceIndicator.hxx"
-#include "bind/enumMicroscopicObservationAmount.hxx"
-#include "bind/enumMicroscopicObservationType.hxx"
-#include "bind/UrinalysisMicroscopicData.hxx"
 
 class DLL_DECL SEUrinalysisMicroscopic : public SEPatientAssessment
 {
@@ -27,15 +23,17 @@ public:
   virtual void Reset();
   virtual void Clear();
 
-  virtual bool Load(const CDM::UrinalysisMicroscopicData& in);
-  virtual CDM::UrinalysisMicroscopicData* Unload();
+  static void Load(const cdm::UrinalysisData_UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst);
+  static cdm::UrinalysisData_UrinalysisMicroscopicData* Unload(const SEUrinalysisMicroscopic& src);
 protected:
-  virtual void Unload(CDM::UrinalysisMicroscopicData& data);
+  static void Serialize(const cdm::UrinalysisData_UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst);
+  static void Serialize(const SEUrinalysisMicroscopic& src, cdm::UrinalysisData_UrinalysisMicroscopicData& dst);
+
 public:
 
-  virtual bool HasObservationType() const;
-  virtual CDM::enumMicroscopicObservationType::value GetObservationType() const;
-  virtual void SetObservationType(CDM::enumMicroscopicObservationType::value p);
+  virtual bool HasObservationType() const;  
+  virtual cdm::UrinalysisData_eMicroscopicObservationType GetObservationType() const;
+  virtual void SetObservationType(cdm::UrinalysisData_eMicroscopicObservationType p);
   virtual void InvalidateObservationType();
 
   virtual bool HasRedBloodCellsResult() const;
@@ -45,42 +43,42 @@ public:
   virtual SEScalarAmount& GetWhiteBloodCellsResult();
 
   virtual bool HasEpithelialCellsResult() const;
-  virtual CDM::enumMicroscopicObservationAmount::value GetEpithelialCellsResult() const;
-  virtual void SetEpithelialCellsResult(CDM::enumMicroscopicObservationAmount::value p);
+  virtual cdm::UrinalysisData_eMicroscopicObservationAmount GetEpithelialCellsResult() const;
+  virtual void SetEpithelialCellsResult(cdm::UrinalysisData_eMicroscopicObservationAmount p);
   virtual void InvalidateEpithelialCellsResult();
 
   virtual bool HasCastsResult() const;
   virtual SEScalarAmount& GetCastsResult();
 
   virtual bool HasCrystalsResult() const;
-  virtual CDM::enumMicroscopicObservationAmount::value GetCrystalsResult() const;
-  virtual void SetCrystalsResult(CDM::enumMicroscopicObservationAmount::value p);
+  virtual cdm::UrinalysisData_eMicroscopicObservationAmount GetCrystalsResult() const;
+  virtual void SetCrystalsResult(cdm::UrinalysisData_eMicroscopicObservationAmount p);
   virtual void InvalidateCrystalsResult();
 
   virtual bool HasBacteriaResult() const;
-  virtual CDM::enumMicroscopicObservationAmount::value GetBacteriaResult() const;
-  virtual void SetBacteriaResult(CDM::enumMicroscopicObservationAmount::value p);
+  virtual cdm::UrinalysisData_eMicroscopicObservationAmount GetBacteriaResult() const;
+  virtual void SetBacteriaResult(cdm::UrinalysisData_eMicroscopicObservationAmount p);
   virtual void InvalidateBacteriaResult();
 
   virtual bool HasTrichomonadsResult() const;
-  virtual CDM::enumMicroscopicObservationAmount::value GetTrichomonadsResult() const;
-  virtual void SetTrichomonadsResult(CDM::enumMicroscopicObservationAmount::value p);
+  virtual cdm::UrinalysisData_eMicroscopicObservationAmount GetTrichomonadsResult() const;
+  virtual void SetTrichomonadsResult(cdm::UrinalysisData_eMicroscopicObservationAmount p);
   virtual void InvalidateTrichomonadsResult();
 
   virtual bool HasYeastResult() const;
-  virtual CDM::enumMicroscopicObservationAmount::value GetYeastResult() const;
-  virtual void SetYeastResult(CDM::enumMicroscopicObservationAmount::value p);
+  virtual cdm::UrinalysisData_eMicroscopicObservationAmount GetYeastResult() const;
+  virtual void SetYeastResult(cdm::UrinalysisData_eMicroscopicObservationAmount p);
   virtual void InvalidateYeastResult();
 
 protected:
 
-  CDM::enumMicroscopicObservationType::value   m_ObservationType;
+  cdm::UrinalysisData_eMicroscopicObservationType   m_ObservationType;
   SEScalarAmount*                           m_RedBloodCells;
   SEScalarAmount*                           m_WhiteBloodCells;
-  CDM::enumMicroscopicObservationAmount::value m_EpithelialCells;
+  cdm::UrinalysisData_eMicroscopicObservationAmount m_EpithelialCells;
   SEScalarAmount*                           m_Casts;
-  CDM::enumMicroscopicObservationAmount::value m_Crystals;
-  CDM::enumMicroscopicObservationAmount::value m_Bacteria;
-  CDM::enumMicroscopicObservationAmount::value m_Trichomonads;
-  CDM::enumMicroscopicObservationAmount::value m_Yeast;
+  cdm::UrinalysisData_eMicroscopicObservationAmount m_Crystals;
+  cdm::UrinalysisData_eMicroscopicObservationAmount m_Bacteria;
+  cdm::UrinalysisData_eMicroscopicObservationAmount m_Trichomonads;
+  cdm::UrinalysisData_eMicroscopicObservationAmount m_Yeast;
 };  

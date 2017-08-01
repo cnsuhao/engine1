@@ -11,11 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "stdafx.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
-#include "bind/ImpairedAlveolarExchangeData.hxx"
 #include "properties/SEScalarArea.h"
-#include "bind/ScalarAreaData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEImpairedAlveolarExchange::SEImpairedAlveolarExchange() : SEPatientCondition()
 {
@@ -39,27 +36,31 @@ bool SEImpairedAlveolarExchange::IsValid() const
   return HasImpairedFraction() || HasImpairedSurfaceArea();
 }
 
-bool SEImpairedAlveolarExchange::Load(const CDM::ImpairedAlveolarExchangeData& in)
+void SEImpairedAlveolarExchange::Load(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst)
 {
-  if (in.ImpairedSurfaceArea().present())
-    GetImpairedSurfaceArea().Load(in.ImpairedSurfaceArea().get());
-  if (in.ImpairedFraction().present())
-    GetImpairedFraction().Load(in.ImpairedFraction().get());
-  return true;
+  SEImpairedAlveolarExchange::Serialize(src, dst);
+}
+void SEImpairedAlveolarExchange::Serialize(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst)
+{
+  dst.Clear();
+  if (src.has_impairedfraction())
+    SEScalar0To1::Load(src.impairedfraction(), dst.GetImpairedFraction());
+  if (src.has_impairedsurfacearea())
+    SEScalarArea::Load(src.impairedsurfacearea(), dst.GetImpairedSurfaceArea());
 }
 
-CDM::ImpairedAlveolarExchangeData* SEImpairedAlveolarExchange::Unload() const
+cdm::ImpairedAlveolarExchangeData* SEImpairedAlveolarExchange::Unload(const SEImpairedAlveolarExchange& src)
 {
-  CDM::ImpairedAlveolarExchangeData* data = new CDM::ImpairedAlveolarExchangeData();
-  Unload(*data);
-  return data;
+  cdm::ImpairedAlveolarExchangeData* dst = new cdm::ImpairedAlveolarExchangeData();
+  SEImpairedAlveolarExchange::Serialize(src, *dst);
+  return dst;
 }
-void SEImpairedAlveolarExchange::Unload(CDM::ImpairedAlveolarExchangeData& data) const
+void SEImpairedAlveolarExchange::Serialize(const SEImpairedAlveolarExchange& src, cdm::ImpairedAlveolarExchangeData& dst)
 {
-  if (HasImpairedSurfaceArea())
-    data.ImpairedSurfaceArea(std::unique_ptr<CDM::ScalarAreaData>(m_ImpairedSurfaceArea->Unload()));
-  if (HasImpairedFraction())
-    data.ImpairedFraction(std::unique_ptr<CDM::Scalar0To1Data>(m_ImpairedFraction->Unload()));
+  if (src.HasImpairedFraction())
+    dst.set_allocated_impairedfraction(SEScalar0To1::Unload(*src.m_ImpairedFraction));
+  if (src.HasImpairedSurfaceArea())
+    dst.set_allocated_impairedsurfacearea(SEScalarArea::Unload(*src.m_ImpairedSurfaceArea));
 }
 
 bool SEImpairedAlveolarExchange::HasImpairedSurfaceArea() const

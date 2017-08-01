@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicRenalStenosis.h"
-#include "bind/ChronicRenalStenosisData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEChronicRenalStenosis::SEChronicRenalStenosis() : SEPatientCondition()
 {
@@ -39,30 +37,31 @@ bool SEChronicRenalStenosis::IsValid() const
   return SEPatientCondition::IsValid() && (HasLeftKidneySeverity() || HasRightKidneySeverity());
 }
 
-bool SEChronicRenalStenosis::Load(const CDM::ChronicRenalStenosisData& in)
+void SEChronicRenalStenosis::Load(const cdm::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst)
 {
-  SEPatientCondition::Load(in);
-  if (in.LeftKidneySeverity().present())
-    GetLeftKidneySeverity().Load(in.LeftKidneySeverity().get());
-  if (in.RightKidneySeverity().present())
-    GetRightKidneySeverity().Load(in.RightKidneySeverity().get());
-  return true;
+  SEChronicRenalStenosis::Serialize(src, dst);
+}
+void SEChronicRenalStenosis::Serialize(const cdm::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst)
+{
+  dst.Clear();
+  if (src.has_leftkidneyseverity())
+    SEScalar0To1::Load(src.leftkidneyseverity(), dst.GetLeftKidneySeverity());
+  if (src.has_rightkidneyseverity())
+    SEScalar0To1::Load(src.rightkidneyseverity(), dst.GetRightKidneySeverity());
 }
 
-CDM::ChronicRenalStenosisData* SEChronicRenalStenosis::Unload() const
+cdm::ChronicRenalStenosisData* SEChronicRenalStenosis::Unload(const SEChronicRenalStenosis& src)
 {
-  CDM::ChronicRenalStenosisData*data(new CDM::ChronicRenalStenosisData());
-  Unload(*data);
-  return data;
+  cdm::ChronicRenalStenosisData* dst = new cdm::ChronicRenalStenosisData();
+  SEChronicRenalStenosis::Serialize(src, *dst);
+  return dst;
 }
-
-void SEChronicRenalStenosis::Unload(CDM::ChronicRenalStenosisData& data) const
+void SEChronicRenalStenosis::Serialize(const SEChronicRenalStenosis& src, cdm::ChronicRenalStenosisData& dst)
 {
-  SEPatientCondition::Unload(data);
-  if (HasLeftKidneySeverity())
-    data.LeftKidneySeverity(std::unique_ptr<CDM::Scalar0To1Data>(m_LeftKidneySeverity->Unload()));
-  if (HasRightKidneySeverity())
-    data.RightKidneySeverity(std::unique_ptr<CDM::Scalar0To1Data>(m_RightKidneySeverity->Unload()));
+  if (src.HasLeftKidneySeverity())
+    dst.set_allocated_leftkidneyseverity(SEScalar0To1::Unload(*src.m_LeftKidneySeverity));
+  if (src.HasRightKidneySeverity())
+    dst.set_allocated_rightkidneyseverity(SEScalar0To1::Unload(*src.m_RightKidneySeverity));
 }
 
 bool SEChronicRenalStenosis::HasLeftKidneySeverity() const
