@@ -24,7 +24,6 @@ public:
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-  virtual void SetActive(bool b);
 
   static void Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst);
   static cdm::CardiacArrestData* Unload(const SECardiacArrest& src);
@@ -33,6 +32,9 @@ protected:
   static void Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst);
 
 public:
+
+  virtual cdm::eSwitch GetState() const { return m_State; }
+  virtual void SetState(cdm::eSwitch s) { m_State = s; }
 
   virtual void ToString(std::ostream &str) const;
 

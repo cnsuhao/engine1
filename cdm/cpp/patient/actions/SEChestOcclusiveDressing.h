@@ -24,7 +24,6 @@ public:
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-  virtual void SetActive(bool b);
 
   static void Load(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst);
   static cdm::ChestOcclusiveDressingData* Unload(const SEChestOcclusiveDressing& src);
@@ -33,6 +32,9 @@ protected:
   static void Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst);
 
 public:
+
+  virtual cdm::eSwitch GetState() const { return m_State; }
+  virtual void SetState(cdm::eSwitch s) { m_State = s; }
 
   virtual cdm::eSide GetSide() const;
   virtual void SetSide(cdm::eSide LeftOrRight);

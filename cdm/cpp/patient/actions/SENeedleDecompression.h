@@ -49,5 +49,4 @@ public:
 protected:
   cdm::eSide m_Side;
   cdm::eSwitch m_State;
-  
 };    

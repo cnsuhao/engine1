@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/actions/SESubstanceAdministration.h"
-#include "properties/SEScalarVolume.h"
 
 SESubstanceAdministration::SESubstanceAdministration() : SEPatientAction()
 {
@@ -36,15 +35,4 @@ bool SESubstanceAdministration::IsValid() const
 bool SESubstanceAdministration::IsActive() const
 {
   return IsValid();
-}
-
-bool SESubstanceAdministration::Load(const CDM::SubstanceAdministrationData& in)
-{
-  SEPatientAction::Load(in);
-  return true;
-}
-
-void SESubstanceAdministration::Unload(CDM::SubstanceAdministrationData& data) const
-{
-  SEPatientAction::Unload(data);
 }

@@ -44,7 +44,7 @@ void SEUrinate::Load(const cdm::UrinateData& src, SEUrinate& dst)
 }
 void SEUrinate::Serialize(const cdm::UrinateData& src, SEUrinate& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
 }
 
 cdm::UrinateData* SEUrinate::Unload(const SEUrinate& src)
@@ -55,7 +55,7 @@ cdm::UrinateData* SEUrinate::Unload(const SEUrinate& src)
 }
 void SEUrinate::Serialize(const SEUrinate& src, cdm::UrinateData& dst)
 {
-
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
 }
 
 void SEUrinate::ToString(std::ostream &str) const

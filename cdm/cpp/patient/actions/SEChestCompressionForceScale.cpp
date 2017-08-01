@@ -49,7 +49,7 @@ void SEChestCompressionForceScale::Load(const cdm::ChestCompressionForceScaleDat
 }
 void SEChestCompressionForceScale::Serialize(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_forcescale())
     SEScalar0To1::Load(src.forcescale(), dst.GetForceScale());
   if (src.has_forceperiod())
@@ -64,6 +64,7 @@ cdm::ChestCompressionForceScaleData* SEChestCompressionForceScale::Unload(const 
 }
 void SEChestCompressionForceScale::Serialize(const SEChestCompressionForceScale& src, cdm::ChestCompressionForceScaleData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasForceScale())
     dst.set_allocated_forcescale(SEScalar0To1::Unload(*src.m_ForceScale));
   if (src.HasForcePeriod())

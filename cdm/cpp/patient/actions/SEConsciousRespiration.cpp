@@ -53,41 +53,32 @@ void SEConsciousRespiration::Load(const cdm::ConsciousRespirationData& src, SECo
 }
 void SEConsciousRespiration::Serialize(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst)
 {
-  dst.Clear();
-
+  SEPatientAction::Serialize(src.patientaction(), dst);
   dst.m_ClearCommands = true;
-  cdm::ConsciousRespirationData_AnyCommandData* command;
-  for (unsigned int i = 0; i < src.command().size(); i++)
+  ;
+  for (int i = 0; i < src.command().size(); i++)
   {
-    command = (cdm::ConsciousRespirationData_AnyCommandData*)&src.command()[i];
+    const cdm::ConsciousRespirationData_AnyCommandData& command = src.command()[i];
 
-    cdm::ConsciousRespirationData_BreathHoldData* bh = dynamic_cast<cdm::ConsciousRespirationData_BreathHoldData*>(command);
-    if (bh != nullptr)
+    switch (command.Command_case())
     {
-      SEBreathHold::Load(*bh, dst.AddBreathHold());
+    case cdm::ConsciousRespirationData_AnyCommandData::CommandCase::kBreathHold:
+      SEBreathHold::Load(command.breathhold(), dst.AddBreathHold());
+      break;
+    case cdm::ConsciousRespirationData_AnyCommandData::CommandCase::kForcedExhale:
+      SEForcedExhale::Load(command.forcedexhale(), dst.AddForcedExhale());
+      break;
+    case cdm::ConsciousRespirationData_AnyCommandData::CommandCase::kForcedInhale:
+      SEForcedInhale::Load(command.forcedinhale(), dst.AddForcedInhale());
+      break;
+    case cdm::ConsciousRespirationData_AnyCommandData::CommandCase::kUseInhaler:
+      SEUseInhaler::Load(command.useinhaler(), dst.AddUseInhaler());
+      break;
+    default:
+      dst.Warning("Ignoring unknown Conscious Respiration Command : " + command.Command_case());
       continue;
     }
-
-    cdm::ConsciousRespirationData_ForcedInhaleData* fi = dynamic_cast<cdm::ConsciousRespirationData_ForcedInhaleData*>(command);
-    if (fi != nullptr)
-    {
-      SEForcedInhale::Load(*fi, dst.AddForcedInhale());
-      continue;
-    }
-
-    cdm::ConsciousRespirationData_ForcedExhaleData* fe = dynamic_cast<cdm::ConsciousRespirationData_ForcedExhaleData*>(command);
-    if (fe != nullptr)
-    {
-      SEForcedExhale::Load(*fe, dst.AddForcedExhale());
-      continue;
-    }
-
-    cdm::ConsciousRespirationData_UseInhalerData* si = dynamic_cast<cdm::ConsciousRespirationData_UseInhalerData*>(command);
-    if (si != nullptr)
-    {
-      SEUseInhaler::Load(*si, dst.AddUseInhaler());
-      continue;
-    }
+    dst.m_Commands.back()->SetComment(command.comment());
   }
 }
 
@@ -99,11 +90,37 @@ cdm::ConsciousRespirationData* SEConsciousRespiration::Unload(const SEConsciousR
 }
 void SEConsciousRespiration::Serialize(const SEConsciousRespiration& src, cdm::ConsciousRespirationData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.appendtoprevious();
   for (SEConsciousRespirationCommand* cmd : src.m_Commands)
   {
-    //jbw - How do you do this crap?
-    //dst.command().push_back(std::unique_ptr<cdm::ConsciousRespirationData_AnyCommandData>(cmd->Unload()));
+    cdm::ConsciousRespirationData_AnyCommandData* cmdData = dst.add_command();
+    cmdData->set_comment(cmd->GetComment());
+    SEBreathHold* bh = dynamic_cast<SEBreathHold*>(cmd);
+    if (bh != nullptr)
+    {
+      cmdData->set_allocated_breathhold(SEBreathHold::Unload(*bh));      
+      continue;
+    }
+    SEForcedExhale* fe = dynamic_cast<SEForcedExhale*>(cmd);
+    if (fe != nullptr)
+    {
+      cmdData->set_allocated_forcedexhale(SEForcedExhale::Unload(*fe));
+      continue;
+    }
+    SEForcedInhale* fi = dynamic_cast<SEForcedInhale*>(cmd);
+    if (fi != nullptr)
+    {
+      cmdData->set_allocated_forcedinhale(SEForcedInhale::Unload(*fi));
+      continue;
+    }
+    SEUseInhaler* ui = dynamic_cast<SEUseInhaler*>(cmd);
+    if (ui != nullptr)
+    {
+      cmdData->set_allocated_useinhaler(SEUseInhaler::Unload(*ui));
+      continue;
+    }
+    src.Warning("The unmapped respiration command in SEConsciousRespiration::Serialize");
   }
 }
 

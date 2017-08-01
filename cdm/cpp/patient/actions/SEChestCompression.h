@@ -25,11 +25,6 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  //jbw - How do I do this generically without Force or ForceScale?
-  virtual bool Load(const CDM::ChestCompressionData& in);
-protected:
-  virtual void Unload(CDM::ChestCompressionData& data) const;
-
 public:
 
   virtual void ToString(std::ostream &str) const = 0;

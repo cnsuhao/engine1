@@ -48,7 +48,7 @@ void SEHemorrhage::Load(const cdm::HemorrhageData& src, SEHemorrhage& dst)
 }
 void SEHemorrhage::Serialize(const cdm::HemorrhageData& src, SEHemorrhage& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_rate())
     SEScalarVolumePerTime::Load(src.rate(), dst.GetRate());
   dst.m_Compartment = src.compartment();
@@ -62,6 +62,7 @@ cdm::HemorrhageData* SEHemorrhage::Unload(const SEHemorrhage& src)
 }
 void SEHemorrhage::Serialize(const SEHemorrhage& src, cdm::HemorrhageData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasRate())
     dst.set_allocated_rate(SEScalarVolumePerTime::Unload(*src.m_Rate));
   if (src.HasCompartment())

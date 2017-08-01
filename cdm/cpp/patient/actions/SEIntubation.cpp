@@ -45,7 +45,7 @@ void SEIntubation::Load(const cdm::IntubationData& src, SEIntubation& dst)
 }
 void SEIntubation::Serialize(const cdm::IntubationData& src, SEIntubation& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   dst.SetType(src.type());
 }
 
@@ -57,6 +57,7 @@ cdm::IntubationData* SEIntubation::Unload(const SEIntubation& src)
 }
 void SEIntubation::Serialize(const SEIntubation& src, cdm::IntubationData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasType())
     dst.set_type(src.m_Type);
 }

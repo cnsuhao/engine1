@@ -49,7 +49,7 @@ void SEBrainInjury::Load(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
 }
 void SEBrainInjury::Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     SEScalar0To1::Load(src.severity(), dst.GetSeverity());
   dst.SetType(src.type());
@@ -63,6 +63,7 @@ cdm::BrainInjuryData* SEBrainInjury::Unload(const SEBrainInjury& src)
 }
 void SEBrainInjury::Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
   if (src.HasType())

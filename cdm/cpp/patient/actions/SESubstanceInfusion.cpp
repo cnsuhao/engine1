@@ -53,12 +53,11 @@ void SESubstanceInfusion::Load(const cdm::SubstanceInfusionData& src, SESubstanc
 }
 void SESubstanceInfusion::Serialize(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_rate())
     SEScalarVolumePerTime::Load(src.rate(), dst.GetRate());
   if (src.has_concentration())
     SEScalarMassPerVolume::Load(src.concentration(), dst.GetConcentration());
-  //jbw - Anything with substance?
 }
 
 cdm::SubstanceInfusionData* SESubstanceInfusion::Unload(const SESubstanceInfusion& src)
@@ -69,12 +68,12 @@ cdm::SubstanceInfusionData* SESubstanceInfusion::Unload(const SESubstanceInfusio
 }
 void SESubstanceInfusion::Serialize(const SESubstanceInfusion& src, cdm::SubstanceInfusionData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_substance(src.m_Substance.GetName());
   if (src.HasRate())
     dst.set_allocated_rate(SEScalarVolumePerTime::Unload(*src.m_Rate));
   if (src.HasConcentration())
     dst.set_allocated_concentration(SEScalarMassPerVolume::Unload(*src.m_Concentration));
-  //jbw - What do I do with substance?
-  //data.Substance(m_Substance.GetName());
 }
 
 bool SESubstanceInfusion::HasRate() const

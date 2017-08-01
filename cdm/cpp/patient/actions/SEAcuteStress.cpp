@@ -48,7 +48,7 @@ void SEAcuteStress::Load(const cdm::AcuteStressData& src, SEAcuteStress& dst)
 }
 void SEAcuteStress::Serialize(const cdm::AcuteStressData& src, SEAcuteStress& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(),dst);
   if (src.has_severity())
     SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
@@ -61,6 +61,7 @@ cdm::AcuteStressData* SEAcuteStress::Unload(const SEAcuteStress& src)
 }
 void SEAcuteStress::Serialize(const SEAcuteStress& src, cdm::AcuteStressData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
