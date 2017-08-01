@@ -14,18 +14,11 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "properties/SEScalarAmountPerVolume.h"
-#include "bind/ScalarAmountPerVolumeData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarMass.h"
-#include "bind/ScalarMassData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarMassPerAmount.h"
-#include "bind/ScalarMassPerAmountData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/ScalarMassPerVolumeData.hxx"
-
 
 SECompleteBloodCount::SECompleteBloodCount(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -71,39 +64,55 @@ void SECompleteBloodCount::Reset()
 
 }
 
-bool SECompleteBloodCount::Load(const CDM::CompleteBloodCountData& in)
+void SECompleteBloodCount::Load(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst)
 {
-  SEPatientAssessment::Load(in);
-  // TODO
-  return true;
+  SECompleteBloodCount::Serialize(src, dst);
+}
+void SECompleteBloodCount::Serialize(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst)
+{
+  dst.Clear();
+  if (src.has_hematocrit())
+    SEScalar0To1::Load(src.hematocrit(), dst.GetHematocrit());
+  if (src.has_hemoglobin())
+    SEScalarMassPerVolume::Load(src.hemoglobin(), dst.GetHemoglobin());
+  if (src.has_plateletcount())
+    SEScalarAmountPerVolume::Load(src.plateletcount(), dst.GetPlateletCount());
+  if (src.has_meancorpuscularhemoglobin())
+    SEScalarMassPerAmount::Load(src.meancorpuscularhemoglobin(), dst.GetMeanCorpuscularHemoglobin());
+  if (src.has_meancorpuscularhemoglobinconcentration())
+    SEScalarMassPerVolume::Load(src.meancorpuscularhemoglobinconcentration(), dst.GetMeanCorpuscularHemoglobinConcentration());
+  if (src.has_meancorpuscularvolume())
+    SEScalarVolume::Load(src.meancorpuscularvolume(), dst.GetMeanCorpuscularVolume());
+  if (src.has_redbloodcellcount())
+    SEScalarAmountPerVolume::Load(src.redbloodcellcount(), dst.GetRedBloodCellCount());
+  if (src.has_whitebloodcellcount())
+    SEScalarAmountPerVolume::Load(src.whitebloodcellcount(), dst.GetWhiteBloodCellCount());
 }
 
-CDM::CompleteBloodCountData* SECompleteBloodCount::Unload()
+cdm::CompleteBloodCountData* SECompleteBloodCount::Unload(const SECompleteBloodCount& src)
 {
-  CDM::CompleteBloodCountData* data = new CDM::CompleteBloodCountData();
-  Unload(*data);
-  return data;
+  cdm::CompleteBloodCountData* dst = new cdm::CompleteBloodCountData();
+  SECompleteBloodCount::Serialize(src, *dst);
+  return dst;
 }
-
-void SECompleteBloodCount::Unload(CDM::CompleteBloodCountData& data)
+void SECompleteBloodCount::Serialize(const SECompleteBloodCount& src, cdm::CompleteBloodCountData& dst)
 {
-  SEPatientAssessment::Unload(data);
-  if (HasHematocrit())
-    data.Hematocrit(std::unique_ptr<CDM::ScalarFractionData>(m_Hematocrit->Unload()));
-  if (HasHemoglobin())
-    data.Hemoglobin(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_Hemoglobin->Unload()));
-  if (HasPlateletCount())
-    data.PlateletCount(std::unique_ptr<CDM::ScalarAmountPerVolumeData>(m_PlateletCount->Unload()));
-  if (HasMeanCorpuscularHemoglobin())
-    data.MeanCorpuscularHemoglobin(std::unique_ptr<CDM::ScalarMassPerAmountData>(m_MeanCorpuscularHemoglobin->Unload()));
-  if (HasMeanCorpuscularHemoglobinConcentration())
-    data.MeanCorpuscularHemoglobinConcentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_MeanCorpuscularHemoglobinConcentration->Unload()));
-  if (HasMeanCorpuscularVolume())
-    data.MeanCorpuscularVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_MeanCorpuscularVolume->Unload()));
-  if (HasRedBloodCellCount())
-    data.RedBloodCellCount(std::unique_ptr<CDM::ScalarAmountPerVolumeData>(m_RedBloodCellCount->Unload()));
-  if (HasWhiteBloodCellCount())
-    data.WhiteBloodCellCount(std::unique_ptr<CDM::ScalarAmountPerVolumeData>(m_WhiteBloodCellCount->Unload()));
+  if (src.HasHematocrit())
+    dst.set_allocated_hematocrit(SEScalar0To1::Unload(*src.m_Hematocrit());
+  if (src.HasHemoglobin())
+    dst.set_allocated_hemoglobin(SEScalarMassPerVolume::Unload(*src.m_Hemoglobin());
+  if (src.HasPlateletCount())
+    dst.set_allocated_plateletcount(SEScalarAmountPerVolume::Unload(*src.m_PlateletCount());
+  if (src.HasMeanCorpuscularHemoglobin())
+    dst.set_allocated_meancorpuscularhemoglobin(SEScalarMassPerAmount::Unload(*src.m_MeanCorpuscularHemoglobin());
+  if (src.HasMeanCorpuscularHemoglobinConcentration())
+    dst.set_allocated_meancorpuscularhemoglobinconcentration(SEScalarMassPerVolume::Unload(*src.m_MeanCorpuscularHemoglobinConcentration());
+  if (src.HasMeanCorpuscularVolume())
+    dst.set_allocated_meancorpuscularvolume(SEScalarVolume::Unload(*src.m_MeanCorpuscularVolume());
+  if (src.HasRedBloodCellCount())
+    dst.set_allocated_redbloodcellcount(SEScalarAmountPerVolume::Unload(*src.m_RedBloodCellCount());
+  if (src.HasWhiteBloodCellCount())
+    dst.set_allocated_whitebloodcellcount(SEScalarAmountPerVolume::Unload(*src.m_WhiteBloodCellCount());
 }
 
 bool SECompleteBloodCount::HasHematocrit()

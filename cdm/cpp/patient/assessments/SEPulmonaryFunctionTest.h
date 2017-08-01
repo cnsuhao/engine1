@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SEPatientAssessment.h"
 class SEPatient;
 class SERespiratorySystem;
-#include "bind/PulmonaryFunctionTestData.hxx"
 
 class DLL_DECL SEPulmonaryFunctionTest : public SEPatientAssessment
 {
@@ -26,10 +25,12 @@ public:
   virtual void Reset();
   virtual void Clear();
 
-  virtual bool Load(const CDM::PulmonaryFunctionTestData& in);
-  virtual CDM::PulmonaryFunctionTestData* Unload();
+  static void Load(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst);
+  static cdm::PulmonaryFunctionTestData* Unload(const SEPulmonaryFunctionTest& src);
 protected:
-  virtual void Unload(CDM::PulmonaryFunctionTestData& data);
+  static void Serialize(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst);
+  static void Serialize(const SEPulmonaryFunctionTest& src, cdm::PulmonaryFunctionTestData& dst);
+
 public:
 
   virtual int GetNumberOfPlotPoints(){ return m_NumberOfPlotPoints; }

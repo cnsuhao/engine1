@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
 class SEBloodChemistrySystem;
-#include "bind/ComprehensiveMetabolicPanelData.hxx"
 
 class DLL_DECL SEComprehensiveMetabolicPanel : public SEPatientAssessment
 {
@@ -25,10 +24,12 @@ public:
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::ComprehensiveMetabolicPanelData& in);
-  virtual CDM::ComprehensiveMetabolicPanelData* Unload();
+  static void Load(const cdm::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst);
+  static cdm::ComprehensiveMetabolicPanelData* Unload(const SEComprehensiveMetabolicPanel& src);
 protected:
-  virtual void Unload(CDM::ComprehensiveMetabolicPanelData& data);
+  static void Serialize(const cdm::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst);
+  static void Serialize(const SEComprehensiveMetabolicPanel& src, cdm::ComprehensiveMetabolicPanelData& dst);
+
 public:
   bool HasAlbumin();
   SEScalarMassPerVolume& GetAlbumin();

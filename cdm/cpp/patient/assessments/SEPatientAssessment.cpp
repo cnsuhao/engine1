@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/assessments/SEPatientAssessment.h"
-#include "bind/PatientAssessmentData.hxx"
 
 SEPatientAssessment::SEPatientAssessment(Logger* logger) : Loggable(logger)
 {
@@ -34,20 +33,22 @@ void SEPatientAssessment::Reset()
 
 }
 
-bool SEPatientAssessment::Load(const CDM::PatientAssessmentData& in)
+void SEPatientAssessment::Load(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst)
 {
-  return true;
+  SEPatientAssessment::Serialize(src, dst);
+}
+void SEPatientAssessment::Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst)
+{
+  dst.Clear();
 }
 
-CDM::PatientAssessmentData* SEPatientAssessment::Unload()
+cdm::PatientAssessmentData* SEPatientAssessment::Unload(const SEPatientAssessment& src)
 {
-  CDM::PatientAssessmentData* data = new CDM::PatientAssessmentData();
-  Unload(*data);
-  return data;
+  cdm::PatientAssessmentData* dst = new cdm::PatientAssessmentData();
+  SEPatientAssessment::Serialize(src, *dst);
+  return dst;
 }
-
-void SEPatientAssessment::Unload(CDM::PatientAssessmentData& data)
+void SEPatientAssessment::Serialize(const SEPatientAssessment& src, cdm::PatientAssessmentData& dst)
 {
 
 }
-
