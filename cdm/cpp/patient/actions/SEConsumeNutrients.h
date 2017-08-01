@@ -15,8 +15,6 @@ specific language governing permissions and limitations under the License.
 #include "patient/actions/SEPatientAction.h"
 #include "patient/SENutrition.h"
 
-#include "bind/ConsumeNutrientsData.hxx"
-
 class DLL_DECL SEConsumeNutrients : public SEPatientAction
 {
 public:
@@ -29,10 +27,11 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::ConsumeNutrientsData& in);
-  virtual CDM::ConsumeNutrientsData* Unload() const;
+  static void Load(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst);
+  static cdm::ConsumeNutrientsData* Unload(const SEConsumeNutrients& src);
 protected:
-  virtual void Unload(CDM::ConsumeNutrientsData& data) const;
+  static void Serialize(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst);
+  static void Serialize(const SEConsumeNutrients& src, cdm::ConsumeNutrientsData& dst);
 
 public:
 

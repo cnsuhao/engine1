@@ -91,7 +91,7 @@ void SEUrinalysis::Load(const cdm::UrinalysisData& src, SEUrinalysis& dst)
 }
 void SEUrinalysis::Serialize(const cdm::UrinalysisData& src, SEUrinalysis& dst)
 {
-  dst.Clear();
+  SEPatientAssessment::Serialize(src.patientassessment(), dst);
   dst.SetColorResult(src.color());
   dst.SetAppearanceResult(src.appearance());
   dst.SetGlucoseResult(src.glucose());
@@ -120,6 +120,7 @@ cdm::UrinalysisData* SEUrinalysis::Unload(const SEUrinalysis& src)
 }
 void SEUrinalysis::Serialize(const SEUrinalysis& src, cdm::UrinalysisData& dst)
 {
+  SEPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
   if (src.HasColorResult())
     dst.set_color(src.m_Color);
   if (src.HasAppearanceResult())

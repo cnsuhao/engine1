@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "patient/actions/SEExercise.h"
-#include "bind/ExerciseData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEExercise::SEExercise() : SEPatientAction()
 {
@@ -44,25 +42,28 @@ bool SEExercise::IsActive() const
   return false;  
 }
 
-bool SEExercise::Load(const CDM::ExerciseData& in)
+void SEExercise::Load(const cdm::ExerciseData& src, SEExercise& dst)
 {
-  SEPatientAction::Load(in);
-  GetIntensity().Load(in.Intensity());
-  return true;
+  SEExercise::Serialize(src, dst);
+}
+void SEExercise::Serialize(const cdm::ExerciseData& src, SEExercise& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_intensity())
+    SEScalar0To1::Load(src.intensity(), dst.GetIntensity());
 }
 
-CDM::ExerciseData* SEExercise::Unload() const
+cdm::ExerciseData* SEExercise::Unload(const SEExercise& src)
 {
-  CDM::ExerciseData*data(new CDM::ExerciseData());
-  Unload(*data);
-  return data;
+  cdm::ExerciseData* dst = new cdm::ExerciseData();
+  SEExercise::Serialize(src, *dst);
+  return dst;
 }
-
-void SEExercise::Unload(CDM::ExerciseData& data) const
+void SEExercise::Serialize(const SEExercise& src, cdm::ExerciseData& dst)
 {
-  SEPatientAction::Unload(data);
-  if (m_Intensity != nullptr)
-    data.Intensity(std::unique_ptr<CDM::Scalar0To1Data>(m_Intensity->Unload()));
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasIntensity())
+    dst.set_allocated_intensity(SEScalar0To1::Unload(*src.m_Intensity));
 }
 
 bool SEExercise::HasIntensity() const

@@ -92,7 +92,7 @@ void SEPulmonaryFunctionTest::Load(const cdm::PulmonaryFunctionTestData& src, SE
 }
 void SEPulmonaryFunctionTest::Serialize(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst)
 {
-  dst.Clear();
+  SEPatientAssessment::Serialize(src.patientassessment(), dst);
   if (src.has_expiratoryreservevolume())
     SEScalarVolume::Load(src.expiratoryreservevolume(), dst.GetExpiratoryReserveVolume());
   if (src.has_forcedvitalcapacity())
@@ -129,6 +129,7 @@ cdm::PulmonaryFunctionTestData* SEPulmonaryFunctionTest::Unload(const SEPulmonar
 }
 void SEPulmonaryFunctionTest::Serialize(const SEPulmonaryFunctionTest& src, cdm::PulmonaryFunctionTestData& dst)
 {
+  SEPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
   if (src.HasExpiratoryReserveVolume())
     dst.set_allocated_expiratoryreservevolume(SEScalarVolume::Unload(*src.m_ExpiratoryReserveVolume));
   if (src.HasForcedVitalCapacity())

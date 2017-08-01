@@ -87,7 +87,7 @@ void SEComprehensiveMetabolicPanel::Load(const cdm::ComprehensiveMetabolicPanelD
 }
 void SEComprehensiveMetabolicPanel::Serialize(const cdm::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst)
 {
-  dst.Clear();
+  SEPatientAssessment::Serialize(src.patientassessment(), dst);
   if (src.has_albumin())
     SEScalarMassPerVolume::Load(src.albumin(), dst.GetAlbumin());
   if (src.has_alp())
@@ -126,6 +126,7 @@ cdm::ComprehensiveMetabolicPanelData* SEComprehensiveMetabolicPanel::Unload(cons
 }
 void SEComprehensiveMetabolicPanel::Serialize(const SEComprehensiveMetabolicPanel& src, cdm::ComprehensiveMetabolicPanelData& dst)
 {
+  SEPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
   if (src.HasAlbumin())
     dst.set_allocated_albumin(SEScalarMassPerVolume::Unload(*src.m_Albumin));
   if (src.HasALP())

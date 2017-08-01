@@ -66,7 +66,7 @@ void SEUrinalysisMicroscopic::Load(const cdm::UrinalysisData_UrinalysisMicroscop
 }
 void SEUrinalysisMicroscopic::Serialize(const cdm::UrinalysisData_UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst)
 {
-  dst.Clear();
+  SEPatientAssessment::Serialize(src.patientassessment(), dst);
   dst.SetObservationType(src.observationtype());
   dst.SetEpithelialCellsResult(src.epithelialcells());
   dst.SetCrystalsResult(src.crystals());
@@ -89,6 +89,7 @@ cdm::UrinalysisData_UrinalysisMicroscopicData* SEUrinalysisMicroscopic::Unload(c
 }
 void SEUrinalysisMicroscopic::Serialize(const SEUrinalysisMicroscopic& src, cdm::UrinalysisData_UrinalysisMicroscopicData& dst)
 {
+  SEPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
   if (src.HasObservationType())
     dst.set_observationtype(src.m_ObservationType);
   if (src.HasEpithelialCellsResult())
