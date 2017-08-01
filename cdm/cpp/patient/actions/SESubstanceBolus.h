@@ -72,11 +72,11 @@ protected:
   static void Serialize(const SESubstanceBolusState& src, cdm::SubstanceBolusData_StateData& dst);
 
 public:
-  SEScalarTime& GetElapsedTime() { return m_elapsedTime; }
-  SEScalarVolume& GetAdministeredDose() { return m_administeredDose; }
+  SEScalarTime& GetElapsedTime() { return m_ElapsedTime; }
+  SEScalarVolume& GetAdministeredDose() { return m_AdministeredDose; }
 
 protected:
-  const SESubstance&   m_substance;
-  SEScalarTime         m_elapsedTime;
-  SEScalarVolume       m_administeredDose;
+  const SESubstance&   m_Substance;
+  SEScalarTime         m_ElapsedTime;
+  SEScalarVolume       m_AdministeredDose;
 };

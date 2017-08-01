@@ -46,7 +46,7 @@ void SEChestCompressionForce::Load(const cdm::ChestCompressionForceData& src, SE
 }
 void SEChestCompressionForce::Serialize(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_force())
     SEScalarForce::Load(src.force(), dst.GetForce());
 }
@@ -59,6 +59,7 @@ cdm::ChestCompressionForceData* SEChestCompressionForce::Unload(const SEChestCom
 }
 void SEChestCompressionForce::Serialize(const SEChestCompressionForce& src, cdm::ChestCompressionForceData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasForce())
     dst.set_allocated_force(SEScalarForce::Unload(*src.m_Force));
 }

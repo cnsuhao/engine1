@@ -39,20 +39,14 @@ bool SECardiacArrest::IsActive() const
   return IsValid() && m_State == cdm::eSwitch::On;
 }
 
-void SECardiacArrest::SetActive(bool b)
-{
-  m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
-}
-
 void SECardiacArrest::Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
 {
   SECardiacArrest::Serialize(src, dst);
 }
 void SECardiacArrest::Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
 {
-  dst.Clear();
-  //dst.SetState(src.state());
-  //jbw - where are states?
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetState(src.state());
 }
 
 cdm::CardiacArrestData* SECardiacArrest::Unload(const SECardiacArrest& src)
@@ -63,9 +57,8 @@ cdm::CardiacArrestData* SECardiacArrest::Unload(const SECardiacArrest& src)
 }
 void SECardiacArrest::Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst)
 {
-  //if (src.HasState())
-  //  dst.set_state(src.m_State);
-  //jbw - where are states?
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_state(src.m_State);
 }
 
 void SECardiacArrest::ToString(std::ostream &str) const
@@ -73,6 +66,6 @@ void SECardiacArrest::ToString(std::ostream &str) const
   str << "Patient Action : Cardiac Arrest";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tState: " << IsActive();
+  str << "\n\tState: " << m_State;
   str << std::flush;
 }

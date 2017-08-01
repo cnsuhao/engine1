@@ -58,16 +58,16 @@ bool SEMechanicalVentilation::IsValid() const
   {
     if (HasGasFraction())
     {
-    double total = 0;
-    for (const SESubstanceFraction* sf : m_cGasFractions)
-    {
-      total += sf->GetFractionAmount();
-    }
-    if (!SEScalar::IsValue(1, total))
-    {
-      Error("Mechanical Ventilation Gas fractions do not sum to 1");
-      return false;
-    }
+      double total = 0;
+      for (const SESubstanceFraction* sf : m_cGasFractions)
+      {
+        total += sf->GetFractionAmount();
+      }
+      if (!SEScalar::IsValue(1, total))
+      {
+        Error("Mechanical Ventilation Gas fractions do not sum to 1");
+        return false;
+      }
     }
   }
   if (!HasPressure() && !HasFlow())
@@ -82,7 +82,7 @@ bool SEMechanicalVentilation::IsActive() const
 {
   if (!HasState())
     return false;
-  return GetState() == cdm::eSwitch::On;  
+  return GetState() == cdm::eSwitch::On;
 }
 
 void SEMechanicalVentilation::Load(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
@@ -91,7 +91,7 @@ void SEMechanicalVentilation::Load(const cdm::MechanicalVentilationData& src, SE
 }
 void SEMechanicalVentilation::Serialize(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   dst.SetState(src.state());
   if (src.has_flow())
     SEScalarVolumePerTime::Load(src.flow(), dst.GetFlow());
@@ -101,21 +101,21 @@ void SEMechanicalVentilation::Serialize(const cdm::MechanicalVentilationData& sr
   dst.m_GasFractions.clear();
   dst.m_cGasFractions.clear();
   SESubstance* sub;
-  for (const cdm::SubstanceData_FractionAmountData& sfData : src.gasfraction())
+  for (int i = 0; i < src.gasfraction_size(); i++)
   {
+    const cdm::SubstanceData_FractionAmountData& sfData = src.gasfraction()[i];
     sub = subMgr.GetSubstance(sfData.name());
     if (sub == nullptr)
     {
-      dst.Error("Substance not found : " + sfData.name());
+      dst.Error("MechanicalVentilation substance not found : " + sfData.name());
+      continue;
     }
-    if (sub->GetState() != cdm::SubstanceData_eState_Gas)      
+    if (sub->GetState() != cdm::SubstanceData_eState_Gas)
     {
-      dst.Error("Substance not gas : " + sfData.name());
+      dst.Error("MechanicalVentilation substance not gas : " + sfData.name());
+      continue;
     }
-    SESubstanceFraction* sf = new SESubstanceFraction(*sub);
-    sf->Load(sfData, dst.GetGasFraction(*sub));
-    dst.m_GasFractions.push_back(sf);
-    dst.m_cGasFractions.push_back(sf);
+    SESubstanceFraction::Load(sfData, dst.GetGasFraction(*sub));
   }
 }
 
@@ -127,18 +127,15 @@ cdm::MechanicalVentilationData* SEMechanicalVentilation::Unload(const SEMechanic
 }
 void SEMechanicalVentilation::Serialize(const SEMechanicalVentilation& src, cdm::MechanicalVentilationData& dst)
 {
-    if (src.HasState())
-      dst.set_state(src.m_State);
-    if (src.HasFlow())
-      dst.set_allocated_flow(SEScalarVolumePerTime::Unload(*src.m_Flow));
-    if (src.HasPressure())
-      dst.set_allocated_pressure(SEScalarPressure::Unload(*src.m_Pressure));
-  
-    for (SESubstanceFraction *sf : src.m_GasFractions)
-    {
-      //jbw - How???
-      //dst.gasfraction().push_back(std::unique_ptr<cdm::SubstanceFractionData>(sf->Unload()));
-    }
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasState())
+    dst.set_state(src.m_State);
+  if (src.HasFlow())
+    dst.set_allocated_flow(SEScalarVolumePerTime::Unload(*src.m_Flow));
+  if (src.HasPressure())
+    dst.set_allocated_pressure(SEScalarPressure::Unload(*src.m_Pressure));
+  for (SESubstanceFraction *sf : src.m_GasFractions)
+    dst.mutable_gasfraction()->AddAllocated(SESubstanceFraction::Unload(*sf));
 }
 
 cdm::eSwitch SEMechanicalVentilation::GetState() const
@@ -151,7 +148,7 @@ void SEMechanicalVentilation::SetState(cdm::eSwitch state)
 }
 bool SEMechanicalVentilation::HasState() const
 {
-  return m_State == ((cdm::eSwitch)-1) ? false : true;
+  return m_State == ((cdm::eSwitch) - 1) ? false : true;
 }
 void SEMechanicalVentilation::InvalidateState()
 {
@@ -229,7 +226,7 @@ SESubstanceFraction& SEMechanicalVentilation::GetGasFraction(SESubstance& s)
 const SESubstanceFraction* SEMechanicalVentilation::GetGasFraction(const SESubstance& s) const
 {
   const SESubstanceFraction* sf = nullptr;
-  for (unsigned int i = 0; i<m_GasFractions.size(); i++)
+  for (unsigned int i = 0; i < m_GasFractions.size(); i++)
   {
     sf = m_GasFractions[i];
     if (&s == &sf->GetSubstance())
@@ -240,7 +237,7 @@ const SESubstanceFraction* SEMechanicalVentilation::GetGasFraction(const SESubst
 void SEMechanicalVentilation::RemoveGasFraction(const SESubstance& s)
 {
   const SESubstanceFraction* sf;
-  for (unsigned int i = 0; i<m_GasFractions.size(); i++)
+  for (unsigned int i = 0; i < m_GasFractions.size(); i++)
   {
     sf = m_GasFractions[i];
     if (&s == &sf->GetSubstance())
@@ -262,7 +259,7 @@ void SEMechanicalVentilation::ToString(std::ostream &str) const
   str << "Patient Action : Mechanical Ventilation";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  
+
   str << "\n\tState: "; HasState() ? str << GetState() : str << "Not Set";
   str << "\n\tFlow: ";  HasFlow() ? str << *m_Flow : str << "Not Set";
   str << "\n\tPressure: "; HasPressure() ? str << *m_Pressure : str << "Not Set";
@@ -272,6 +269,6 @@ void SEMechanicalVentilation::ToString(std::ostream &str) const
     {
       str << "\n\tSubstance : " << sf->GetSubstance().GetName() << " Fraction Amount " << sf->GetFractionAmount();
     }
-  }  
+  }
   str << std::flush;
 }

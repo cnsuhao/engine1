@@ -46,7 +46,7 @@ void SEPericardialEffusion::Load(const cdm::PericardialEffusionData& src, SEPeri
 }
 void SEPericardialEffusion::Serialize(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_effusionrate())
     SEScalarVolumePerTime::Load(src.effusionrate(), dst.GetEffusionRate());
 }
@@ -59,6 +59,7 @@ cdm::PericardialEffusionData* SEPericardialEffusion::Unload(const SEPericardialE
 }
 void SEPericardialEffusion::Serialize(const SEPericardialEffusion& src, cdm::PericardialEffusionData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasEffusionRate())
     dst.set_allocated_effusionrate(SEScalarVolumePerTime::Unload(*src.m_EffusionRate));
 }

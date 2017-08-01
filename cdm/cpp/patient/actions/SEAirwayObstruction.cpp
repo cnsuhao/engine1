@@ -48,7 +48,7 @@ void SEAirwayObstruction::Load(const cdm::AirwayObstructionData& src, SEAirwayOb
 }
 void SEAirwayObstruction::Serialize(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
@@ -61,6 +61,7 @@ cdm::AirwayObstructionData* SEAirwayObstruction::Unload(const SEAirwayObstructio
 }
 void SEAirwayObstruction::Serialize(const SEAirwayObstruction& src, cdm::AirwayObstructionData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }

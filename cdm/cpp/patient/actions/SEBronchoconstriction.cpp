@@ -46,7 +46,7 @@ void SEBronchoconstriction::Load(const cdm::BronchoconstrictionData& src, SEBron
 }
 void SEBronchoconstriction::Serialize(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
@@ -59,6 +59,7 @@ cdm::BronchoconstrictionData* SEBronchoconstriction::Unload(const SEBronchoconst
 }
 void SEBronchoconstriction::Serialize(const SEBronchoconstriction& src, cdm::BronchoconstrictionData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }

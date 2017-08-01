@@ -46,7 +46,7 @@ void SEAsthmaAttack::Load(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
 }
 void SEAsthmaAttack::Serialize(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
@@ -59,6 +59,7 @@ cdm::AsthmaAttackData* SEAsthmaAttack::Unload(const SEAsthmaAttack& src)
 }
 void SEAsthmaAttack::Serialize(const SEAsthmaAttack& src, cdm::AsthmaAttackData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }

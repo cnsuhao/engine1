@@ -164,13 +164,15 @@ message ConsciousRespirationData
   }
   message AnyCommandData
   {
+    string                                  Comment                         = 1;
     oneof Command
     {
-      ForcedInhaleData                      ForcedInhale                    = 1;
-      ForcedExhaleData                      ForcedExhale                    = 2;
-      BreathHoldData                        BreathHold                      = 3;
-      UseInhalerData                        UseInhaler                      = 4;
+      ForcedInhaleData                      ForcedInhale                    = 2;
+      ForcedExhaleData                      ForcedExhale                    = 3;
+      BreathHoldData                        BreathHold                      = 4;
+      UseInhalerData                        UseInhaler                      = 5;
     }
+    
   }
   PatientActionData                         PatientAction                   = 1;
   bool                                      AppendToPrevious                = 2;
@@ -262,8 +264,9 @@ message SubstanceBolusData
   }
   message StateData
   {
-    ScalarTimeData                          ElapsedTime                     = 1;
-    ScalarVolumeData                        AdministeredDose                = 2;
+    string                                  Substance                       = 1;
+    ScalarTimeData                          ElapsedTime                     = 2;
+    ScalarVolumeData                        AdministeredDose                = 3;
   }
  
   PatientActionData                         PatientAction                   = 1;

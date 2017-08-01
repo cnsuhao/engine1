@@ -52,7 +52,7 @@ void SENeedleDecompression::Load(const cdm::NeedleDecompressionData& src, SENeed
 }
 void SENeedleDecompression::Serialize(const cdm::NeedleDecompressionData& src, SENeedleDecompression& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   dst.SetSide(src.side());
   dst.SetState(src.state());
 }
@@ -65,6 +65,7 @@ cdm::NeedleDecompressionData* SENeedleDecompression::Unload(const SENeedleDecomp
 }
 void SENeedleDecompression::Serialize(const SENeedleDecompression& src, cdm::NeedleDecompressionData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSide())
     dst.set_side(src.m_Side);
   if (src.HasState())

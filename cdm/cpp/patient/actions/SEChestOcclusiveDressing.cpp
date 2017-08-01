@@ -41,20 +41,15 @@ bool SEChestOcclusiveDressing::IsActive() const
   return IsValid() && m_State == cdm::eSwitch::On;
 }
 
-void SEChestOcclusiveDressing::SetActive(bool b)
-{
-  m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
-}
-
 void SEChestOcclusiveDressing::Load(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
 {
   SEChestOcclusiveDressing::Serialize(src, dst);
 }
 void SEChestOcclusiveDressing::Serialize(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   dst.SetSide(src.side());
-  //jbw - How to do state?
+  dst.SetState(src.state());
 }
 
 cdm::ChestOcclusiveDressingData* SEChestOcclusiveDressing::Unload(const SEChestOcclusiveDressing& src)
@@ -65,9 +60,10 @@ cdm::ChestOcclusiveDressingData* SEChestOcclusiveDressing::Unload(const SEChestO
 }
 void SEChestOcclusiveDressing::Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_state(src.m_State);
   if (src.HasSide())
     dst.set_side(src.m_Side);
-  //jbw - How to do state?
 }
 
 cdm::eSide SEChestOcclusiveDressing::GetSide() const
@@ -92,7 +88,7 @@ void SEChestOcclusiveDressing::ToString(std::ostream &str) const
   str << "Patient Action : Chest Occlusive Dressing"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tState: " << IsActive();
+  str << "\n\tState: " << m_State;
   str << "\n\tSide: "; HasSide()? str << GetSide() : str << "Not Set"; 
   str<<std::flush;
 }

@@ -13,8 +13,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/actions/SESubstanceAdministration.h"
 class SESubstance;
-#include "bind/SubstanceInfusionData.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SESubstanceInfusion : public SESubstanceAdministration
 {

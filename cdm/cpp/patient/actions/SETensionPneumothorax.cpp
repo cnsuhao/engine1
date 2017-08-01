@@ -40,7 +40,7 @@ void SETensionPneumothorax::Load(const cdm::TensionPneumothoraxData& src, SETens
 }
 void SETensionPneumothorax::Serialize(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   dst.SetType(src.type());
   dst.SetSide(src.side());
   if (src.has_severity())
@@ -55,6 +55,7 @@ cdm::TensionPneumothoraxData* SETensionPneumothorax::Unload(const SETensionPneum
 }
 void SETensionPneumothorax::Serialize(const SETensionPneumothorax& src, cdm::TensionPneumothoraxData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasType())
     dst.set_type(src.m_Type);
   if (src.HasSide())

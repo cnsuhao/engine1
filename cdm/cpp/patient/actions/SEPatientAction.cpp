@@ -33,21 +33,11 @@ bool SEPatientAction::IsValid() const
   return SEAction::IsValid();
 }
 
-void SEPatientAction::Load(const cdm::PatientActionData& src, SEPatientAction& dst)
-{
-  SEPatientAction::Serialize(src, dst);
-}
 void SEPatientAction::Serialize(const cdm::PatientActionData& src, SEPatientAction& dst)
 {
   dst.Clear();
 }
 
-cdm::PatientActionData* SEPatientAction::Unload(const SEPatientAction& src)
-{
-  cdm::PatientActionData* dst = new cdm::PatientActionData();
-  SEPatientAction::Serialize(src, *dst);
-  return dst;
-}
 void SEPatientAction::Serialize(const SEPatientAction& src, cdm::PatientActionData& dst)
 {
   

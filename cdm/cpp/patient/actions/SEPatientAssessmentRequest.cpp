@@ -45,7 +45,7 @@ void SEPatientAssessmentRequest::Load(const cdm::PatientAssessmentRequestData& s
 }
 void SEPatientAssessmentRequest::Serialize(const cdm::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   dst.SetType(src.type());
 }
 
@@ -57,6 +57,7 @@ cdm::PatientAssessmentRequestData* SEPatientAssessmentRequest::Unload(const SEPa
 }
 void SEPatientAssessmentRequest::Serialize(const SEPatientAssessmentRequest& src, cdm::PatientAssessmentRequestData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasType())
     dst.set_type(src.m_Type);
 }

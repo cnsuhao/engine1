@@ -25,21 +25,13 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::ConsciousRespirationData_AnyCommandData& src, SEConsciousRespirationCommand& dst);
-  static cdm::ConsciousRespirationData_AnyCommandData* Unload(const SEConsciousRespirationCommand& src);
-protected:
-  static void Serialize(const cdm::ConsciousRespirationData_AnyCommandData& src, SEConsciousRespirationCommand& dst);
-  static void Serialize(const SEConsciousRespirationCommand& src, cdm::ConsciousRespirationData_AnyCommandData& dst);
-
-public:
-
   virtual std::string GetComment() const;
   virtual void SetComment(const std::string& comment);
   virtual bool HasComment() const;
   virtual void InvalidateComment();
 
-
   virtual void ToString(std::ostream &str) const = 0;
+
 protected:
 
   std::string                               m_Comment;

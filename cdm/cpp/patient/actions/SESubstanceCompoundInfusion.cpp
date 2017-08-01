@@ -51,13 +51,11 @@ void SESubstanceCompoundInfusion::Load(const cdm::SubstanceCompoundInfusionData&
 }
 void SESubstanceCompoundInfusion::Serialize(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
 {
-  dst.Clear();
+  SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_rate())
     SEScalarVolumePerTime::Load(src.rate(), dst.GetRate());
   if (src.has_bagvolume())
     SEScalarVolume::Load(src.bagvolume(), dst.GetBagVolume());
-  //jbw - How do I do this?
-  //CDM::SubstanceCompoundInfusionData*data(new CDM::SubstanceCompoundInfusionData());
 }
 
 cdm::SubstanceCompoundInfusionData* SESubstanceCompoundInfusion::Unload(const SESubstanceCompoundInfusion& src)
@@ -68,12 +66,12 @@ cdm::SubstanceCompoundInfusionData* SESubstanceCompoundInfusion::Unload(const SE
 }
 void SESubstanceCompoundInfusion::Serialize(const SESubstanceCompoundInfusion& src, cdm::SubstanceCompoundInfusionData& dst)
 {
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_substancecompound(src.m_Compound.GetName());
   if (src.HasRate())
-    dst.set_allocated_rate(src.m_Rate);
+    dst.set_allocated_rate(SEScalarVolumePerTime::Unload(*src.m_Rate));
   if (src.HasBagVolume())
     dst.set_allocated_bagvolume(SEScalarVolume::Unload(*src.m_BagVolume));
-  //jbw - How do I do this?
-  //data.SubstanceCompound(m_Compound.GetName());
 }
 
 bool SESubstanceCompoundInfusion::HasRate() const

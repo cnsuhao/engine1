@@ -25,12 +25,4 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  //jbw - How do I do this one?
-  virtual bool Load(const CDM::SubstanceAdministrationData& in);
-protected:
-  virtual void Unload(CDM::SubstanceAdministrationData& data) const;
-
-public:
-
-protected:
-};               
+};
