@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "stdafx.h"
 #include "SEInitialEnvironment.h"
-#include "bind/EnvironmentalConditionsData.hxx"
 #include "substance/SESubstanceFraction.h"
 
 #include "properties/SEScalar0To1.h"
@@ -51,29 +50,32 @@ bool SEInitialEnvironment::IsValid() const
   return SEEnvironmentCondition::IsValid() && (HasConditions() || HasConditionsFile());
 }
 
-bool SEInitialEnvironment::Load(const CDM::InitialEnvironmentData& in)
+void SEInitialEnvironment::Load(const cdm::InitialEnvironmentConfigurationData& src, SEInitialEnvironment& dst)
 {
-  SEEnvironmentCondition::Load(in);
-  if (in.ConditionsFile().present())
-    SetConditionsFile(in.ConditionsFile().get());
-  if (in.Conditions().present())
-    GetConditions().Load(in.Conditions().get());
-  return true;
+  SEInitialEnvironment::Serialize(src, dst);
+}
+void SEInitialEnvironment::Serialize(const cdm::InitialEnvironmentConfigurationData& src, SEInitialEnvironment& dst)
+{
+  SEEnvironmentCondition::Serialize(src.environmentcondition(), dst);
+  if (src.has_conditions())
+    SEEnvironmentalConditions::Load(src.conditions(), dst.GetConditions());
+  if (src.has_conditionsfile())
+    SEEnvironmentalConditions::Load(src.conditionsfile(), dst.GetConditionsFile());
 }
 
-CDM::InitialEnvironmentData* SEInitialEnvironment::Unload() const
+cdm::InitialEnvironmentConfigurationData* SEInitialEnvironment::Unload(const SEInitialEnvironment& src)
 {
-  CDM::InitialEnvironmentData* data = new CDM::InitialEnvironmentData();
-  Unload(*data);
-  return data;
+  cdm::InitialEnvironmentConfigurationData* dst = new cdm::InitialEnvironmentConfigurationData();
+  SEInitialEnvironment::Serialize(src, *dst);
+  return dst;
 }
-void SEInitialEnvironment::Unload(CDM::InitialEnvironmentData& data) const
+void SEInitialEnvironment::Serialize(const SEInitialEnvironment& src, cdm::InitialEnvironmentConfigurationData& dst)
 {
-  SEEnvironmentCondition::Unload(data);
-  if (HasConditions())
-    data.Conditions(std::unique_ptr<CDM::EnvironmentalConditionsData>(m_Conditions->Unload()));
-  else if (HasConditionsFile())
-    data.ConditionsFile(m_ConditionsFile);
+  SEEnvironmentCondition::Serialize(src, *dst.mutable_environmentcondition());
+  if (src.HasConditions())
+    dst.set_allocated_conditions(SEEnvironmentalConditions::Unload(*src.m_Conditions));
+  if (src.HasConditionsFile())
+    dst.set_allocated_conditionsfile(SEEnvironmentalConditions::Unload(*src.m_ConditionsFile));
 }
 
 bool SEInitialEnvironment::HasConditions() const

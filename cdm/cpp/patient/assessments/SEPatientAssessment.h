@@ -26,7 +26,6 @@ public:
   SEPatientAssessment(Logger* logger);
   virtual ~SEPatientAssessment();
 
-  virtual void Reset(); 
   virtual void Clear();
 
 protected:

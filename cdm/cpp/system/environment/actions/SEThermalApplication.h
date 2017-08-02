@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/environment/actions/SEEnvironmentAction.h"
-#include "bind/ThermalApplicationData.hxx"
 class SEActiveHeating;
 class SEActiveCooling;
 class SEAppliedTemperature;
@@ -28,10 +27,11 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::ThermalApplicationData& in);
-  virtual CDM::ThermalApplicationData* Unload() const;
+  static void Load(const cdm::ThermalApplicationData& src, SEThermalApplication& dst);
+  static cdm::ThermalApplicationData* Unload(const SEThermalApplication& src);
 protected:
-  virtual void Unload(CDM::ThermalApplicationData& data) const;
+  static void Serialize(const cdm::ThermalApplicationData& src, SEThermalApplication& dst);
+  static void Serialize(const SEThermalApplication& src, cdm::ThermalApplicationData& dst);
 
 public:
 

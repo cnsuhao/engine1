@@ -10,7 +10,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
-#include "bind/InitialEnvironmentData.hxx"
 #include "../SEEnvironmentalConditions.h"
 #include "SEEnvironmentCondition.h"
 
@@ -25,10 +24,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::InitialEnvironmentData& in);
-  virtual CDM::InitialEnvironmentData* Unload() const;
+  static void Load(const cdm::InitialEnvironmentConfigurationData& src, SEInitialEnvironment& dst);
+  static cdm::InitialEnvironmentConfigurationData* Unload(const SEInitialEnvironment& src);
 protected:
-  virtual void Unload(CDM::InitialEnvironmentData& data) const;
+  static void Serialize(const cdm::InitialEnvironmentConfigurationData& src, SEInitialEnvironment& dst);
+  static void Serialize(const SEInitialEnvironment& src, cdm::InitialEnvironmentConfigurationData& dst);
 
 public:
   virtual std::string GetName() const{ return "InitialEnvironment"; }

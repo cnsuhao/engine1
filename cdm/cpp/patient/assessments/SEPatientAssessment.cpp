@@ -28,11 +28,6 @@ void SEPatientAssessment::Clear()
   
 }
 
-void SEPatientAssessment::Reset()
-{
-
-}
-
 void SEPatientAssessment::Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst)
 {
   dst.Clear();

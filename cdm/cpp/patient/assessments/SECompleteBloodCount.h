@@ -21,7 +21,6 @@ public:
   SECompleteBloodCount(Logger* logger);
   virtual ~SECompleteBloodCount();
 
-  virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
 
   static void Load(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst);
@@ -32,38 +31,46 @@ protected:
 
 public:
   
-  virtual bool HasHematocrit();
+  virtual bool HasHematocrit() const;
   virtual SEScalar0To1& GetHematocrit(); 
+  virtual double GetHematocrit() const;
 
-  virtual bool HasHemoglobin();
+  virtual bool HasHemoglobin() const;
   virtual SEScalarMassPerVolume& GetHemoglobin();
+  virtual double GetHemoglobin(const MassPerVolumeUnit& unit) const;
 
-  virtual bool HasPlateletCount();
+  virtual bool HasPlateletCount() const;
   virtual SEScalarAmountPerVolume& GetPlateletCount();
+  virtual double GetPlateletCount(const AmountPerVolumeUnit& unit) const;
 
-  virtual bool HasMeanCorpuscularHemoglobin();
+  virtual bool HasMeanCorpuscularHemoglobin() const;
   virtual SEScalarMassPerAmount& GetMeanCorpuscularHemoglobin();
+  virtual double GetMeanCorpuscularHemoglobin(const MassPerAmountUnit& unit) const;
 
-  virtual bool HasMeanCorpuscularHemoglobinConcentration();
+  virtual bool HasMeanCorpuscularHemoglobinConcentration() const;
   virtual SEScalarMassPerVolume& GetMeanCorpuscularHemoglobinConcentration();
+  virtual double GetMeanCorpuscularHemoglobinConcentration(const MassPerVolumeUnit& unit) const;
 
-  virtual bool HasMeanCorpuscularVolume();
+  virtual bool HasMeanCorpuscularVolume() const;
   virtual SEScalarVolume& GetMeanCorpuscularVolume();
+  virtual double GetMeanCorpuscularVolume(const VolumeUnit& unit) const;
   
-  virtual bool HasRedBloodCellCount();
+  virtual bool HasRedBloodCellCount() const;
   virtual SEScalarAmountPerVolume& GetRedBloodCellCount();
+  virtual double GetRedBloodCellCount(const AmountPerVolumeUnit& unit) const;
 
-  virtual bool HasWhiteBloodCellCount();
+  virtual bool HasWhiteBloodCellCount() const;
   virtual SEScalarAmountPerVolume& GetWhiteBloodCellCount();
+  virtual double GetWhiteBloodCellCount(const AmountPerVolumeUnit& unit) const;
 
 protected:
 
-  SEScalar0To1*        m_Hematocrit;
-  SEScalarMassPerVolume*        m_Hemoglobin;
-  SEScalarAmountPerVolume*      m_PlateletCount;
-  SEScalarMassPerAmount*          m_MeanCorpuscularHemoglobin;
-  SEScalarMassPerVolume*          m_MeanCorpuscularHemoglobinConcentration;
-  SEScalarVolume*                  m_MeanCorpuscularVolume;
+  SEScalar0To1*               m_Hematocrit;
+  SEScalarMassPerVolume*      m_Hemoglobin;
+  SEScalarAmountPerVolume*    m_PlateletCount;
+  SEScalarMassPerAmount*      m_MeanCorpuscularHemoglobin;
+  SEScalarMassPerVolume*      m_MeanCorpuscularHemoglobinConcentration;
+  SEScalarVolume*             m_MeanCorpuscularVolume;
   SEScalarAmountPerVolume*    m_RedBloodCellCount;
   SEScalarAmountPerVolume*    m_WhiteBloodCellCount;
 
