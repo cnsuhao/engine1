@@ -53,7 +53,8 @@ void SEConsumeNutrients::Serialize(const cdm::ConsumeNutrientsData& src, SEConsu
   SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_nutrition())
     SENutrition::Load(src.nutrition(), dst.GetNutrition());
-  dst.SetNutritionFile(src.nutritionfile());
+  else
+    dst.SetNutritionFile(src.nutritionfile());
 }
 
 cdm::ConsumeNutrientsData* SEConsumeNutrients::Unload(const SEConsumeNutrients& src)
@@ -67,36 +68,8 @@ void SEConsumeNutrients::Serialize(const SEConsumeNutrients& src, cdm::ConsumeNu
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasNutrition())
     dst.set_allocated_nutrition(SENutrition::Unload(*src.m_Nutrition));
-  if (src.HasNutritionFile())
-    dst.set_allocated_nutritionfile(src.m_NutritionFile);
-}
-
-
-
-bool SEConsumeNutrients::Load(const CDM::ConsumeNutrientsData& in)
-{
-  SEPatientAction::Load(in);
-  if (in.Nutrition().present())
-    GetNutrition().Load(in.Nutrition().get());
-  else if (in.NutritionFile().present())
-    SetNutritionFile(in.NutritionFile().get());
-  return true;
-}
-
-CDM::ConsumeNutrientsData* SEConsumeNutrients::Unload() const
-{
-  CDM::ConsumeNutrientsData*data(new CDM::ConsumeNutrientsData());
-  Unload(*data);
-  return data;
-}
-
-void SEConsumeNutrients::Unload(CDM::ConsumeNutrientsData& data) const
-{
-  SEPatientAction::Unload(data);
-  if (HasNutrition())
-    data.Nutrition(std::unique_ptr<CDM::NutritionData>(m_Nutrition->Unload()));
-  if (HasNutritionFile())
-    data.NutritionFile(m_NutritionFile);
+  else if (src.HasNutritionFile())
+    dst.set_nutritionfile(src.m_NutritionFile);
 }
 
 bool SEConsumeNutrients::HasNutrition() const

@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
 #include "properties/SEScalarAmount.h"
 
-SEUrinalysisMicroscopic::SEUrinalysisMicroscopic(Logger* logger) : SEPatientAssessment(logger)
+SEUrinalysisMicroscopic::SEUrinalysisMicroscopic(Logger* logger) : Loggable(logger)
 {
   m_ObservationType = cdm::UrinalysisData_eMicroscopicObservationType(-1);
   m_RedBloodCells = nullptr;
@@ -34,26 +34,11 @@ SEUrinalysisMicroscopic::~SEUrinalysisMicroscopic()
 
 void SEUrinalysisMicroscopic::Clear()
 {
-  SEPatientAssessment::Clear();
   m_ObservationType = cdm::UrinalysisData_eMicroscopicObservationType(-1);
   SAFE_DELETE(m_RedBloodCells);
   SAFE_DELETE(m_WhiteBloodCells);
   m_EpithelialCells = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
   SAFE_DELETE(m_Casts);
-  m_Crystals = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  m_Bacteria = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  m_Trichomonads = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  m_Yeast = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-}
-
-void SEUrinalysisMicroscopic::Reset()
-{
-  SEPatientAssessment::Reset();
-  m_ObservationType = cdm::UrinalysisData_eMicroscopicObservationType(-1);
-  INVALIDATE_PROPERTY(m_RedBloodCells);
-  INVALIDATE_PROPERTY(m_WhiteBloodCells);
-  m_EpithelialCells = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  INVALIDATE_PROPERTY(m_Casts);
   m_Crystals = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
   m_Bacteria = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
   m_Trichomonads = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
@@ -66,7 +51,7 @@ void SEUrinalysisMicroscopic::Load(const cdm::UrinalysisData_UrinalysisMicroscop
 }
 void SEUrinalysisMicroscopic::Serialize(const cdm::UrinalysisData_UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst)
 {
-  SEPatientAssessment::Serialize(src.patientassessment(), dst);
+  dst.Clear();
   dst.SetObservationType(src.observationtype());
   dst.SetEpithelialCellsResult(src.epithelialcells());
   dst.SetCrystalsResult(src.crystals());
@@ -89,7 +74,6 @@ cdm::UrinalysisData_UrinalysisMicroscopicData* SEUrinalysisMicroscopic::Unload(c
 }
 void SEUrinalysisMicroscopic::Serialize(const SEUrinalysisMicroscopic& src, cdm::UrinalysisData_UrinalysisMicroscopicData& dst)
 {
-  SEPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
   if (src.HasObservationType())
     dst.set_observationtype(src.m_ObservationType);
   if (src.HasEpithelialCellsResult())
@@ -120,6 +104,12 @@ SEScalarAmount& SEUrinalysisMicroscopic::GetRedBloodCellsResult()
     m_RedBloodCells = new SEScalarAmount();
   return *m_RedBloodCells;
 }
+double SEUrinalysisMicroscopic::GetRedBloodCellsResult(const AmountUnit& unit) const
+{
+  if (!HasRedBloodCellsResult())
+    return SEScalar::dNaN();
+  return m_RedBloodCells->GetValue(unit);
+}
 
 bool SEUrinalysisMicroscopic::HasObservationType() const
 {
@@ -148,6 +138,12 @@ SEScalarAmount& SEUrinalysisMicroscopic::GetWhiteBloodCellsResult()
     m_WhiteBloodCells = new SEScalarAmount();
   return *m_WhiteBloodCells;
 }
+double SEUrinalysisMicroscopic::GetWhiteBloodCellsResult(const AmountUnit& unit) const
+{
+  if (!HasWhiteBloodCellsResult())
+    return SEScalar::dNaN();
+  return m_WhiteBloodCells->GetValue(unit);
+}
 
 bool SEUrinalysisMicroscopic::HasEpithelialCellsResult() const
 {
@@ -175,6 +171,12 @@ SEScalarAmount& SEUrinalysisMicroscopic::GetCastsResult()
   if (m_Casts == nullptr)
     m_Casts = new SEScalarAmount();
   return *m_Casts;
+}
+double SEUrinalysisMicroscopic::GetCastsResult(const AmountUnit& unit) const
+{
+  if (!HasCastsResult())
+    return SEScalar::dNaN();
+  return m_Casts->GetValue(unit);
 }
 
 bool SEUrinalysisMicroscopic::HasCrystalsResult() const

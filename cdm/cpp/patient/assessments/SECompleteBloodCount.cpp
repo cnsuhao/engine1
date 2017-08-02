@@ -50,20 +50,6 @@ void SECompleteBloodCount::Clear()
   SAFE_DELETE(m_WhiteBloodCellCount);
 }
 
-void SECompleteBloodCount::Reset()
-{
-  SEPatientAssessment::Reset();
-  INVALIDATE_PROPERTY(m_Hematocrit);
-  INVALIDATE_PROPERTY(m_Hemoglobin);
-  INVALIDATE_PROPERTY(m_PlateletCount);
-  INVALIDATE_PROPERTY(m_MeanCorpuscularHemoglobin);
-  INVALIDATE_PROPERTY(m_MeanCorpuscularHemoglobinConcentration);
-  INVALIDATE_PROPERTY(m_MeanCorpuscularVolume);
-  INVALIDATE_PROPERTY(m_RedBloodCellCount);
-  INVALIDATE_PROPERTY(m_WhiteBloodCellCount);
-
-}
-
 void SECompleteBloodCount::Load(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst)
 {
   SECompleteBloodCount::Serialize(src, dst);
@@ -116,7 +102,7 @@ void SECompleteBloodCount::Serialize(const SECompleteBloodCount& src, cdm::Compl
     dst.set_allocated_whitebloodcellcount(SEScalarAmountPerVolume::Unload(*src.m_WhiteBloodCellCount));
 }
 
-bool SECompleteBloodCount::HasHematocrit()
+bool SECompleteBloodCount::HasHematocrit() const
 {
   return m_Hematocrit == nullptr ? false : m_Hematocrit->IsValid();
 }
@@ -126,8 +112,14 @@ SEScalar0To1& SECompleteBloodCount::GetHematocrit()
     m_Hematocrit = new SEScalar0To1();
   return *m_Hematocrit;
 }
+double SECompleteBloodCount::GetHematocrit() const
+{
+  if (!HasHematocrit())
+    return SEScalar::dNaN();
+  return m_Hematocrit->GetValue();
+}
 
-bool SECompleteBloodCount::HasHemoglobin()
+bool SECompleteBloodCount::HasHemoglobin() const
 {
   return m_Hemoglobin == nullptr ? false : m_Hemoglobin->IsValid();
 }
@@ -137,8 +129,14 @@ SEScalarMassPerVolume& SECompleteBloodCount::GetHemoglobin()
     m_Hemoglobin = new SEScalarMassPerVolume();
   return *m_Hemoglobin;
 }
+double SECompleteBloodCount::GetHemoglobin(const MassPerVolumeUnit& unit) const
+{
+  if (!HasHemoglobin())
+    return SEScalar::dNaN();
+  return m_Hemoglobin->GetValue(unit);
+}
 
-bool SECompleteBloodCount::HasPlateletCount()
+bool SECompleteBloodCount::HasPlateletCount() const
 {
   return m_PlateletCount == nullptr ? false : m_PlateletCount->IsValid();
 }
@@ -148,8 +146,14 @@ SEScalarAmountPerVolume& SECompleteBloodCount::GetPlateletCount()
     m_PlateletCount = new SEScalarAmountPerVolume();
   return *m_PlateletCount;
 }
+double SECompleteBloodCount::GetPlateletCount(const AmountPerVolumeUnit& unit) const
+{
+  if (!HasPlateletCount())
+    return SEScalar::dNaN();
+  return m_PlateletCount->GetValue(unit);
+}
 
-bool SECompleteBloodCount::HasMeanCorpuscularHemoglobin()
+bool SECompleteBloodCount::HasMeanCorpuscularHemoglobin() const
 {
   return m_MeanCorpuscularHemoglobin == nullptr ? false : m_MeanCorpuscularHemoglobin->IsValid();
 }
@@ -159,8 +163,14 @@ SEScalarMassPerAmount& SECompleteBloodCount::GetMeanCorpuscularHemoglobin()
     m_MeanCorpuscularHemoglobin = new SEScalarMassPerAmount();
   return *m_MeanCorpuscularHemoglobin;
 }
+double SECompleteBloodCount::GetMeanCorpuscularHemoglobin(const MassPerAmountUnit& unit) const
+{
+  if (!HasMeanCorpuscularHemoglobin())
+    return SEScalar::dNaN();
+  return m_MeanCorpuscularHemoglobin->GetValue(unit);
+}
 
-bool SECompleteBloodCount::HasMeanCorpuscularHemoglobinConcentration()
+bool SECompleteBloodCount::HasMeanCorpuscularHemoglobinConcentration() const
 {
   return m_MeanCorpuscularHemoglobinConcentration == nullptr ? false : m_MeanCorpuscularHemoglobinConcentration->IsValid();
 }
@@ -170,8 +180,14 @@ SEScalarMassPerVolume& SECompleteBloodCount::GetMeanCorpuscularHemoglobinConcent
     m_MeanCorpuscularHemoglobinConcentration = new SEScalarMassPerVolume();
   return *m_MeanCorpuscularHemoglobinConcentration;
 }
+double SECompleteBloodCount::GetMeanCorpuscularHemoglobinConcentration(const MassPerVolumeUnit& unit) const
+{
+  if (!HasMeanCorpuscularHemoglobinConcentration())
+    return SEScalar::dNaN();
+  return m_MeanCorpuscularHemoglobinConcentration->GetValue(unit);
+}
 
-bool SECompleteBloodCount::HasMeanCorpuscularVolume()
+bool SECompleteBloodCount::HasMeanCorpuscularVolume() const
 {
   return m_MeanCorpuscularVolume == nullptr ? false : m_MeanCorpuscularVolume->IsValid();
 }
@@ -181,8 +197,14 @@ SEScalarVolume& SECompleteBloodCount::GetMeanCorpuscularVolume()
     m_MeanCorpuscularVolume = new SEScalarVolume();
   return *m_MeanCorpuscularVolume;
 }
+double SECompleteBloodCount::GetMeanCorpuscularVolume(const VolumeUnit& unit) const
+{
+  if (!HasMeanCorpuscularVolume())
+    return SEScalar::dNaN();
+  return m_MeanCorpuscularVolume->GetValue(unit);
+}
 
-bool SECompleteBloodCount::HasRedBloodCellCount()
+bool SECompleteBloodCount::HasRedBloodCellCount() const
 {
   return m_RedBloodCellCount == nullptr ? false : m_RedBloodCellCount->IsValid();
 }
@@ -192,8 +214,14 @@ SEScalarAmountPerVolume& SECompleteBloodCount::GetRedBloodCellCount()
     m_RedBloodCellCount = new SEScalarAmountPerVolume();
   return *m_RedBloodCellCount;
 }
+double SECompleteBloodCount::GetRedBloodCellCount(const AmountPerVolumeUnit& unit) const
+{
+  if (!HasRedBloodCellCount())
+    return SEScalar::dNaN();
+  return m_RedBloodCellCount->GetValue(unit);
+}
 
-bool SECompleteBloodCount::HasWhiteBloodCellCount()
+bool SECompleteBloodCount::HasWhiteBloodCellCount() const
 {
   return m_WhiteBloodCellCount == nullptr ? false : m_WhiteBloodCellCount->IsValid();
 }
@@ -202,4 +230,10 @@ SEScalarAmountPerVolume& SECompleteBloodCount::GetWhiteBloodCellCount()
   if (m_WhiteBloodCellCount == nullptr)
     m_WhiteBloodCellCount = new SEScalarAmountPerVolume();
   return *m_WhiteBloodCellCount;
+}
+double SECompleteBloodCount::GetWhiteBloodCellCount(const AmountPerVolumeUnit& unit) const
+{
+  if (!HasWhiteBloodCellCount())
+    return SEScalar::dNaN();
+  return m_WhiteBloodCellCount->GetValue(unit);
 }

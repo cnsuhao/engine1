@@ -26,7 +26,6 @@ public:
   SEUrinalysis(Logger* logger);
   virtual ~SEUrinalysis();
 
-  virtual void Reset();
   virtual void Clear();
 
   static void Load(const cdm::UrinalysisData& src, SEUrinalysis& dst);
@@ -59,9 +58,11 @@ public:
   
   virtual bool HasBilirubinResult() const;
   virtual SEScalar& GetBilirubinResult();
+  virtual double GetBilirubinResult() const;
 
   virtual bool HasSpecificGravityResult() const;
   virtual SEScalar& GetSpecificGravityResult();
+  virtual double GetSpecificGravityResult() const;
 
   virtual bool HasBloodResult() const;
   virtual cdm::UrinalysisData_ePresenceIndicator GetBloodResult() const;
@@ -70,6 +71,7 @@ public:
 
   virtual bool HasPHResult() const;
   virtual SEScalar& GetPHResult();
+  virtual double GetPHResult() const;
 
   virtual bool HasProteinResult() const;
   virtual cdm::UrinalysisData_ePresenceIndicator GetProteinResult() const;
@@ -78,6 +80,7 @@ public:
 
   virtual bool HasUrobilinogenResult() const;
   virtual SEScalarMassPerVolume& GetUrobilinogenResult();
+  virtual double GetUrobilinogenResult(const MassPerVolumeUnit& unit) const;
 
   virtual bool HasNitriteResult() const;
   virtual cdm::UrinalysisData_ePresenceIndicator GetNitriteResult() const;
@@ -91,6 +94,7 @@ public:
 
   virtual bool HasMicroscopicResult() const;
   virtual SEUrinalysisMicroscopic& GetMicroscopicResult();
+  virtual const SEUrinalysisMicroscopic* GetMicroscopicResult() const;
   virtual void RemoveMicroscopicResult();
   
 protected:
@@ -99,14 +103,14 @@ protected:
   cdm::UrinalysisData_eClarityIndicator  m_Appearance;
   cdm::UrinalysisData_ePresenceIndicator m_Glucose;
   cdm::UrinalysisData_ePresenceIndicator m_Ketone;
-  SEScalar*                         m_Bilirubin;
-  SEScalar*                         m_SpecificGravity;
+  SEScalar*                              m_Bilirubin;
+  SEScalar*                              m_SpecificGravity;
   cdm::UrinalysisData_ePresenceIndicator m_Blood;
-  SEScalar*                         m_pH;
+  SEScalar*                              m_pH;
   cdm::UrinalysisData_ePresenceIndicator m_Protein;
-  SEScalarMassPerVolume*            m_Urobilinogen;
+  SEScalarMassPerVolume*                 m_Urobilinogen;
   cdm::UrinalysisData_ePresenceIndicator m_Nitrite;
   cdm::UrinalysisData_ePresenceIndicator m_LeukocyteEsterase;
 
-  SEUrinalysisMicroscopic*          m_Microscopic;
+  SEUrinalysisMicroscopic*               m_Microscopic;
 };  

@@ -62,25 +62,6 @@ void SEComprehensiveMetabolicPanel::Clear()
   SAFE_DELETE(m_TotalProtein);
 }
 
-void SEComprehensiveMetabolicPanel::Reset()
-{
-  SEPatientAssessment::Reset();
-  INVALIDATE_PROPERTY(m_Albumin);
-  INVALIDATE_PROPERTY(m_ALP);
-  INVALIDATE_PROPERTY(m_ALT);
-  INVALIDATE_PROPERTY(m_AST);
-  INVALIDATE_PROPERTY(m_BUN);
-  INVALIDATE_PROPERTY(m_Calcium);
-  INVALIDATE_PROPERTY(m_Chloride);
-  INVALIDATE_PROPERTY(m_CO2);
-  INVALIDATE_PROPERTY(m_Creatinine);
-  INVALIDATE_PROPERTY(m_Glucose);
-  INVALIDATE_PROPERTY(m_Potassium);
-  INVALIDATE_PROPERTY(m_Sodium);
-  INVALIDATE_PROPERTY(m_TotalBilirubin);
-  INVALIDATE_PROPERTY(m_TotalProtein);
-}
-
 void SEComprehensiveMetabolicPanel::Load(const cdm::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst)
 {
   SEComprehensiveMetabolicPanel::Serialize(src, dst);
@@ -157,7 +138,7 @@ void SEComprehensiveMetabolicPanel::Serialize(const SEComprehensiveMetabolicPane
     dst.set_allocated_totalprotein(SEScalarMassPerVolume::Unload(*src.m_TotalProtein));
 }
 
-bool SEComprehensiveMetabolicPanel::HasAlbumin()
+bool SEComprehensiveMetabolicPanel::HasAlbumin() const
 {
   return m_Albumin == nullptr ? false : m_Albumin->IsValid();
 }
@@ -167,8 +148,14 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetAlbumin()
     m_Albumin = new SEScalarMassPerVolume();
   return *m_Albumin;
 }
+double SEComprehensiveMetabolicPanel::GetAlbumin(const MassPerVolumeUnit& unit) const
+{
+  if (!HasAlbumin())
+    return SEScalar::dNaN();
+  return m_Albumin->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasALP()
+bool SEComprehensiveMetabolicPanel::HasALP() const
 {
   return m_ALP == nullptr ? false : m_ALP->IsValid();
 }
@@ -178,8 +165,14 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetALP()
     m_ALP = new SEScalarMassPerVolume();
   return *m_ALP;
 }
+double SEComprehensiveMetabolicPanel::GetALP(const MassPerVolumeUnit& unit) const
+{
+  if (!HasALP())
+    return SEScalar::dNaN();
+  return m_ALP->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasALT()
+bool SEComprehensiveMetabolicPanel::HasALT() const
 {
   return m_ALT == nullptr ? false : m_ALT->IsValid();
 }
@@ -189,8 +182,14 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetALT()
     m_ALT = new SEScalarMassPerVolume();
   return *m_ALT;
 }
+double SEComprehensiveMetabolicPanel::GetALT(const MassPerVolumeUnit& unit) const
+{
+  if (!HasALT())
+    return SEScalar::dNaN();
+  return m_ALT->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasAST()
+bool SEComprehensiveMetabolicPanel::HasAST() const
 {
   return m_AST == nullptr ? false : m_AST->IsValid();
 }
@@ -200,8 +199,14 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetAST()
     m_AST = new SEScalarMassPerVolume();
   return *m_AST;
 }
+double SEComprehensiveMetabolicPanel::GetAST(const MassPerVolumeUnit& unit) const
+{
+  if (!HasAST())
+    return SEScalar::dNaN();
+  return m_AST->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasBUN()
+bool SEComprehensiveMetabolicPanel::HasBUN() const
 {
   return m_BUN == nullptr ? false : m_BUN->IsValid();
 }
@@ -211,8 +216,14 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetBUN()
     m_BUN = new SEScalarMassPerVolume();
   return *m_BUN;
 }
+double SEComprehensiveMetabolicPanel::GetBUN(const MassPerVolumeUnit& unit) const
+{
+  if (!HasBUN())
+    return SEScalar::dNaN();
+  return m_BUN->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasCalcium()
+bool SEComprehensiveMetabolicPanel::HasCalcium() const
 {
   return m_Calcium == nullptr ? false : m_Calcium->IsValid();
 }
@@ -222,8 +233,14 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetCalcium()
     m_Calcium = new SEScalarMassPerVolume();
   return *m_Calcium;
 }
+double SEComprehensiveMetabolicPanel::GetCalcium(const MassPerVolumeUnit& unit) const
+{
+  if (!HasCalcium())
+    return SEScalar::dNaN();
+  return m_Calcium->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasChloride()
+bool SEComprehensiveMetabolicPanel::HasChloride() const
 {
   return m_Chloride == nullptr ? false : m_Chloride->IsValid();
 }
@@ -233,8 +250,14 @@ SEScalarAmountPerVolume& SEComprehensiveMetabolicPanel::GetChloride()
     m_Chloride = new SEScalarAmountPerVolume();
   return *m_Chloride;
 }
+double SEComprehensiveMetabolicPanel::GetChloride(const AmountPerVolumeUnit& unit) const
+{
+  if (!HasChloride())
+    return SEScalar::dNaN();
+  return m_Chloride->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasCO2()
+bool SEComprehensiveMetabolicPanel::HasCO2() const
 {
   return m_CO2 == nullptr ? false : m_CO2->IsValid();
 }
@@ -244,8 +267,14 @@ SEScalarAmountPerVolume& SEComprehensiveMetabolicPanel::GetCO2()
     m_CO2 = new SEScalarAmountPerVolume();
   return *m_CO2;
 }
+double SEComprehensiveMetabolicPanel::GetCO2(const AmountPerVolumeUnit& unit) const
+{
+  if (!HasCO2())
+    return SEScalar::dNaN();
+  return m_CO2->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasCreatinine()
+bool SEComprehensiveMetabolicPanel::HasCreatinine() const
 {
   return m_Creatinine == nullptr ? false : m_Creatinine->IsValid();
 }
@@ -255,8 +284,14 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetCreatinine()
     m_Creatinine = new SEScalarMassPerVolume();
   return *m_Creatinine;
 }
+double SEComprehensiveMetabolicPanel::GetCreatinine(const MassPerVolumeUnit& unit) const
+{
+  if (!HasCreatinine())
+    return SEScalar::dNaN();
+  return m_Creatinine->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasGlucose()
+bool SEComprehensiveMetabolicPanel::HasGlucose() const
 {
   return m_Glucose == nullptr ? false : m_Glucose->IsValid();
 }
@@ -266,8 +301,14 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetGlucose()
     m_Glucose = new SEScalarMassPerVolume();
   return *m_Glucose;
 }
+double SEComprehensiveMetabolicPanel::GetGlucose(const MassPerVolumeUnit& unit) const
+{
+  if (!HasGlucose())
+    return SEScalar::dNaN();
+  return m_Glucose->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasPotassium()
+bool SEComprehensiveMetabolicPanel::HasPotassium() const
 {
   return m_Potassium == nullptr ? false : m_Potassium->IsValid();
 }
@@ -277,8 +318,14 @@ SEScalarAmountPerVolume& SEComprehensiveMetabolicPanel::GetPotassium()
     m_Potassium = new SEScalarAmountPerVolume();
   return *m_Potassium;
 }
+double SEComprehensiveMetabolicPanel::GetPotassium(const AmountPerVolumeUnit& unit) const
+{
+  if (!HasPotassium())
+    return SEScalar::dNaN();
+  return m_Potassium->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasSodium()
+bool SEComprehensiveMetabolicPanel::HasSodium() const
 {
   return m_Sodium == nullptr ? false : m_Sodium->IsValid();
 }
@@ -288,8 +335,14 @@ SEScalarAmountPerVolume& SEComprehensiveMetabolicPanel::GetSodium()
     m_Sodium = new SEScalarAmountPerVolume();
   return *m_Sodium;
 }
+double SEComprehensiveMetabolicPanel::GetSodium(const AmountPerVolumeUnit& unit) const
+{
+  if (!HasSodium())
+    return SEScalar::dNaN();
+  return m_Sodium->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasTotalBilirubin()
+bool SEComprehensiveMetabolicPanel::HasTotalBilirubin() const
 {
   return m_TotalBilirubin == nullptr ? false : m_TotalBilirubin->IsValid();
 }
@@ -299,8 +352,14 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetTotalBilirubin()
     m_TotalBilirubin = new SEScalarMassPerVolume();
   return *m_TotalBilirubin;
 }
+double SEComprehensiveMetabolicPanel::GetTotalBilirubin(const MassPerVolumeUnit& unit) const
+{
+  if (!HasTotalBilirubin())
+    return SEScalar::dNaN();
+  return m_TotalBilirubin->GetValue(unit);
+}
 
-bool SEComprehensiveMetabolicPanel::HasTotalProtein()
+bool SEComprehensiveMetabolicPanel::HasTotalProtein() const
 {
   return m_TotalProtein == nullptr ? false : m_TotalProtein->IsValid();
 }
@@ -309,4 +368,10 @@ SEScalarMassPerVolume& SEComprehensiveMetabolicPanel::GetTotalProtein()
   if (m_TotalProtein == nullptr)
     m_TotalProtein = new SEScalarMassPerVolume();
   return *m_TotalProtein;
+}
+double SEComprehensiveMetabolicPanel::GetTotalProtein(const MassPerVolumeUnit& unit) const
+{
+  if (!HasTotalProtein())
+    return SEScalar::dNaN();
+  return m_TotalProtein->GetValue(unit);
 }
