@@ -33,21 +33,11 @@ void SEPatientAssessment::Reset()
 
 }
 
-void SEPatientAssessment::Load(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst)
-{
-  SEPatientAssessment::Serialize(src, dst);
-}
 void SEPatientAssessment::Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst)
 {
   dst.Clear();
 }
 
-cdm::PatientAssessmentData* SEPatientAssessment::Unload(const SEPatientAssessment& src)
-{
-  cdm::PatientAssessmentData* dst = new cdm::PatientAssessmentData();
-  SEPatientAssessment::Serialize(src, *dst);
-  return dst;
-}
 void SEPatientAssessment::Serialize(const SEPatientAssessment& src, cdm::PatientAssessmentData& dst)
 {
 

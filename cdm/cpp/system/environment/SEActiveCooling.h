@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/environment/actions/SEEnvironmentAction.h"
-CDM_BIND_DECL(ActiveCoolingData)
 
 class DLL_DECL SEActiveCooling : public Loggable
 {
@@ -23,10 +22,11 @@ public:
   virtual void Clear();
   virtual void Reset();
 
-  virtual bool Load(const CDM::ActiveCoolingData& in);
-  virtual CDM::ActiveCoolingData* Unload() const;
+  static void Load(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveCooling& dst);
+  static cdm::EnvironmentData_ActiveConditioningData* Unload(const SEActiveCooling& src);
 protected:
-  virtual void Unload(CDM::ActiveCoolingData& data) const;
+  static void Serialize(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveCooling& dst);
+  static void Serialize(const SEActiveCooling& src, cdm::EnvironmentData_ActiveConditioningData& dst);
 
 public:
 

@@ -29,8 +29,6 @@ public:
   virtual void Reset(); 
   virtual void Clear();
 
-  static void Load(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst);
-  static cdm::PatientAssessmentData* Unload(const SEPatientAssessment& src);
 protected:
   static void Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst);
   static void Serialize(const SEPatientAssessment& src, cdm::PatientAssessmentData& dst);

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "system/environment/SEEnvironmentalConditions.h"
-#include "Serializer.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"
 #include "properties/SEScalarHeatResistanceArea.h"
@@ -262,26 +261,27 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
 
 bool SEEnvironmentalConditions::LoadFile(const std::string& environmentFile)
 {
-  CDM::EnvironmentalConditionsData* eData;
-  std::unique_ptr<CDM::ObjectData> data;
+  cdm::EnvironmentConditionData* eData;
+  //jbw - How do you load a file?
+  //std::unique_ptr<CDM::ObjectData> data;
 
-  std::string eFile = environmentFile;
-  if (eFile.find("/environments") == std::string::npos)
-  {
-    eFile = "./environments/";
-    eFile += environmentFile;
-  }
-  data = Serializer::ReadFile(eFile, GetLogger());
-  eData = dynamic_cast<CDM::EnvironmentalConditionsData*>(data.get());
-  if (eData == nullptr)
-  {
-    std::stringstream ss;
-    ss << "Environmental Conditions file could not be read : " << environmentFile << std::endl;
-    Error(ss);
-    return false;
-  }
-  if (!Load(*eData))
-    return false;
+  //std::string eFile = environmentFile;
+  //if (eFile.find("/environments") == std::string::npos)
+  //{
+  //  eFile = "./environments/";
+  //  eFile += environmentFile;
+  //}
+  //data = Serializer::ReadFile(eFile, GetLogger());
+  //eData = dynamic_cast<CDM::EnvironmentalConditionsData*>(data.get());
+  //if (eData == nullptr)
+  //{
+  //  std::stringstream ss;
+  //  ss << "Environmental Conditions file could not be read : " << environmentFile << std::endl;
+  //  Error(ss);
+  //  return false;
+  //}
+  //if (!Load(*eData))
+  //  return false;
 
   return true;
 }

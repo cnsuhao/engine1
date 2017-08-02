@@ -12,15 +12,10 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/environment/SEActiveHeating.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/ActiveHeatingData.hxx"
 #include "properties/SEScalarArea.h"
-#include "bind/ScalarAreaData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarPower.h"
-#include "bind/ScalarPowerData.hxx"
 #include "properties/SEScalarTemperature.h"
-#include "bind/ScalarTemperatureData.hxx"
 
 SEActiveHeating::SEActiveHeating(Logger* logger) : Loggable(logger)
 {
@@ -57,29 +52,37 @@ const SEScalar* SEActiveHeating::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEActiveHeating::Load(const CDM::ActiveHeatingData& in)
+void SEActiveHeating::Load(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveHeating& dst)
 {
-  GetPower().Load(in.Power());
-  if (in.SurfaceArea().present())
-    GetSurfaceArea().Load(in.SurfaceArea().get());
-  if (in.SurfaceAreaFraction().present())
-    GetSurfaceAreaFraction().Load(in.SurfaceAreaFraction().get());
-  return true;
+  SEActiveHeating::Serialize(src, dst);
+}
+void SEActiveHeating::Serialize(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveHeating& dst)
+{
+  SEActiveHeating::Serialize(src.activeHeating(), dst);
+  dst.Clear();
+  if (src.has_power())
+    SEScalarPower::Load(src.power(), dst.GetPower());
+  if (src.has_surfacearea())
+    SEScalarArea::Load(src.surfacearea(), dst.GetSurfaceArea());
+  if (src.has_surfaceareafraction())
+    SEScalar0To1::Load(src.surfaceareafraction(), dst.GetSurfaceAreaFraction());
 }
 
-CDM::ActiveHeatingData* SEActiveHeating::Unload() const
+cdm::EnvironmentData_ActiveConditioningData* SEActiveHeating::Unload(const SEActiveHeating& src)
 {
-  CDM::ActiveHeatingData* data = new CDM::ActiveHeatingData();
-  Unload(*data);
-  return data;
+  cdm::EnvironmentData_ActiveConditioningData* dst = new cdm::EnvironmentData_ActiveConditioningData();
+  SEActiveHeating::Serialize(src, *dst);
+  return dst;
 }
-void SEActiveHeating::Unload(CDM::ActiveHeatingData& data) const
+void SEActiveHeating::Serialize(const SEActiveHeating& src, cdm::EnvironmentData_ActiveConditioningData& dst)
 {
-  data.Power(std::unique_ptr<CDM::ScalarPowerData>(m_Power->Unload()));
-  if (HasSurfaceArea())
-    data.SurfaceArea(std::unique_ptr<CDM::ScalarAreaData>(m_SurfaceArea->Unload()));
-  if (HasSurfaceAreaFraction())
-    data.SurfaceAreaFraction(std::unique_ptr<CDM::ScalarFractionData>(m_SurfaceAreaFraction->Unload()));
+  SEActiveHeating::Serialize(src, *dst.mutable_activeHeating());
+  if (src.HasPower())
+    dst.set_allocated_power(SEScalarPower::Unload(*src.m_Power));
+  if (src.HasSurfaceArea())
+    dst.set_allocated_surfacearea(SEScalarArea::Unload(*src.m_SurfaceArea));
+  if (src.HasSurfaceAreaFraction())
+    dst.set_allocated_surfaceareafraction(SEScalar0To1::Unload(*src.m_SurfaceAreaFraction));
 }
 
 bool SEActiveHeating::HasPower() const

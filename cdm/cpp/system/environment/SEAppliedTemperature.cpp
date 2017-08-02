@@ -12,15 +12,10 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/environment/SEAppliedTemperature.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/AppliedTemperatureData.hxx"
 #include "properties/SEScalarArea.h"
-#include "bind/ScalarAreaData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarPower.h"
-#include "bind/ScalarPowerData.hxx"
 #include "properties/SEScalarTemperature.h"
-#include "bind/ScalarTemperatureData.hxx"
 
 SEAppliedTemperature::SEAppliedTemperature(Logger* logger) : Loggable(logger)
 {
@@ -54,35 +49,37 @@ const SEScalar* SEAppliedTemperature::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEAppliedTemperature::Load(const CDM::AppliedTemperatureData& in)
+void SEAppliedTemperature::Load(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst)
 {
-  Clear();
-  if (in.State().present())
-    m_State = in.State().get();
-  if (in.Temperature().present())
-    GetTemperature().Load(in.Temperature().get());
-  if (in.SurfaceArea().present())
-    GetSurfaceArea().Load(in.SurfaceArea().get());
-  if (in.SurfaceAreaFraction().present())
-    GetSurfaceAreaFraction().Load(in.SurfaceAreaFraction().get());
-  return true;
+  SEAppliedTemperature::Serialize(src, dst);
+}
+void SEAppliedTemperature::Serialize(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst)
+{
+  SEAppliedTemperature::Serialize(src.AppliedTemperature(), dst);
+  dst.Clear();
+  if (src.has_temperature())
+    SEScalarTemperature::Load(src.temperature(), dst.GetTemperature());
+  if (src.has_surfacearea())
+    SEScalarArea::Load(src.surfacearea(), dst.GetSurfaceArea());
+  if (src.has_surfaceareafraction())
+    SEScalar0To1::Load(src.surfaceareafraction(), dst.GetSurfaceAreaFraction());
 }
 
-CDM::AppliedTemperatureData* SEAppliedTemperature::Unload() const
+cdm::EnvironmentData_AppliedTemperatureData* SEAppliedTemperature::Unload(const SEAppliedTemperature& src)
 {
-  CDM::AppliedTemperatureData* data = new CDM::AppliedTemperatureData();
-  Unload(*data);
-  return data;
+  cdm::EnvironmentData_AppliedTemperatureData* dst = new cdm::EnvironmentData_AppliedTemperatureData();
+  SEAppliedTemperature::Serialize(src, *dst);
+  return dst;
 }
-void SEAppliedTemperature::Unload(CDM::AppliedTemperatureData& data) const
+void SEAppliedTemperature::Serialize(const SEAppliedTemperature& src, cdm::EnvironmentData_AppliedTemperatureData& dst)
 {
-  if (HasTemperature())
-    data.Temperature(std::unique_ptr<CDM::ScalarTemperatureData>(m_Temperature->Unload()));
-  if (HasSurfaceArea())
-    data.SurfaceArea(std::unique_ptr<CDM::ScalarAreaData>(m_SurfaceArea->Unload()));
-  if (HasSurfaceAreaFraction())
-    data.SurfaceAreaFraction(std::unique_ptr<CDM::ScalarFractionData>(m_SurfaceAreaFraction->Unload()));
-  data.State(m_State);
+  SEAppliedTemperature::Serialize(src, *dst.mutable_AppliedTemperature());
+  if (src.HasTemperature())
+    dst.set_allocated_temperature(SEScalarTemperature::Unload(*src.m_Temperature));
+  if (src.HasSurfaceArea())
+    dst.set_allocated_surfacearea(SEScalarArea::Unload(*src.m_SurfaceArea));
+  if (src.HasSurfaceAreaFraction())
+    dst.set_allocated_surfaceareafraction(SEScalar0To1::Unload(*src.m_SurfaceAreaFraction));
 }
 
 bool SEAppliedTemperature::HasTemperature() const
