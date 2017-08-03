@@ -13,15 +13,11 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "system/SESystem.h"
 #include "bind/cdm/Environment.pb.h"
-class SESubstance;
-class SESubstanceFraction;
-class SESubstanceManager;
-class SEEnvironmentalConditions;
-class SEEnvironmentChange;
-class SEInitialEnvironment;
-class SEActiveHeating;
-class SEActiveCooling;
-class SEAppliedTemperature;
+#include "system/environment/SEActiveConditioning.h"
+#include "system/environment/SEAppliedTemperature.h"
+#include "system/environment/SEEnvironmentalConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 
 class DLL_DECL SEEnvironment : public SESystem
 {
@@ -41,12 +37,12 @@ protected:
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Action
   */
-  virtual bool ProcessChange(const SEEnvironmentChange& action);
+  virtual bool ProcessChange(const SEChangeEnvironmentConditions& action);
 
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Condition
   */
-  virtual bool ProcessChange(const SEInitialEnvironment& change);
+  virtual bool ProcessChange(const SEInitialEnvironmentConditions& change);
 
   /** @name StateChange
   *   @brief - This method is called when ever there is a state change
@@ -59,13 +55,13 @@ public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual bool HasActiveHeating() const;
-  virtual SEActiveHeating& GetActiveHeating();
-  virtual const SEActiveHeating* GetActiveHeating() const;
+  virtual SEActiveConditioning& GetActiveHeating();
+  virtual const SEActiveConditioning* GetActiveHeating() const;
   virtual void RemoveActiveHeating();
 
   virtual bool HasActiveCooling() const;
-  virtual SEActiveCooling& GetActiveCooling();
-  virtual const SEActiveCooling* GetActiveCooling() const;
+  virtual SEActiveConditioning& GetActiveCooling();
+  virtual const SEActiveConditioning* GetActiveCooling() const;
   virtual void RemoveActiveCooling();
 
   virtual bool HasAppliedTemperature() const;
@@ -121,8 +117,8 @@ protected:
   SEScalarPower*                    m_RespirationHeatLoss;
   SEScalarPower*                    m_SkinHeatLoss;
 
-  SEActiveHeating*                  m_ActiveHeating;
-  SEActiveCooling*                  m_ActiveCooling;
+  SEActiveConditioning*             m_ActiveHeating;
+  SEActiveConditioning*             m_ActiveCooling;
   SEAppliedTemperature*             m_AppliedTemperature;
   SEEnvironmentalConditions*        m_Conditions;
 

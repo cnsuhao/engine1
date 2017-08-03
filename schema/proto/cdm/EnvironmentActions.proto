@@ -9,7 +9,7 @@ message AnyEnvironmentActionData
 {
   oneof Action
   {
-    EnvironmentConfigurationData         Configuration      = 1;
+    ChangeEnvironmentConditionsData      Conditions         = 1;
     ThermalApplicationData               ThermalApplication = 2;
   }
 }
@@ -19,8 +19,8 @@ message EnvironmentActionData
   ActionData                             Action                  = 1;
 }
 
-/** @brief The configuration of the environment to use. */
-message EnvironmentConfigurationData
+/** @brief The environment conditions to change. */
+message ChangeEnvironmentConditionsData
 {
   EnvironmentActionData                  EnvironmentAction        = 1;
   oneof Option

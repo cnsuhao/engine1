@@ -43,29 +43,33 @@ bool SEInhalerConfiguration::IsValid() const
   return SEInhalerAction::IsValid() && (HasConfiguration() || HasConfigurationFile());
 }
 
-bool SEInhalerConfiguration::Load(const CDM::InhalerConfigurationData& in)
+
+void SEInhalerConfiguration::Load(const cdm::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
 {
-  SEInhalerAction::Load(in);
-  if (in.ConfigurationFile().present())
-    SetConfigurationFile(in.ConfigurationFile().get());
-  if (in.Configuration().present())
-    GetConfiguration().Load(in.Configuration().get());
-  return true;
+  SEInhalerConfiguration::Serialize(src, dst);
+}
+void SEInhalerConfiguration::Serialize(const cdm::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
+{
+  SEInhalerAction::Serialize(src.inhaleraction(), dst);
+  if (src.has_configuration())
+    SEInhaler::Load(src.configuration(), dst.GetConfiguration());
+  else
+    dst.SetConfigurationFile(src.configurationfile());
 }
 
-CDM::InhalerConfigurationData* SEInhalerConfiguration::Unload() const
+cdm::InhalerConfigurationData* SEInhalerConfiguration::Unload(const SEInhalerConfiguration& src)
 {
-  CDM::InhalerConfigurationData* data = new CDM::InhalerConfigurationData();
-  Unload(*data);
-  return data;
+  cdm::InhalerConfigurationData* dst = new cdm::InhalerConfigurationData();
+  SEInhalerConfiguration::Serialize(src, *dst);
+  return dst;
 }
-void SEInhalerConfiguration::Unload(CDM::InhalerConfigurationData& data) const
+void SEInhalerConfiguration::Serialize(const SEInhalerConfiguration& src, cdm::InhalerConfigurationData& dst)
 {
-  SEInhalerAction::Unload(data);
-  if (HasConfiguration())
-    data.Configuration(std::unique_ptr<CDM::InhalerData>(m_Configuration->Unload()));
-  else if (HasConfigurationFile())
-    data.ConfigurationFile(m_ConfigurationFile);
+  SEInhalerAction::Serialize(src, *dst.mutable_inhaleraction());
+  if (src.HasConfiguration())
+    dst.set_allocated_configuration(SEInhaler::Unload(*src.m_Configuration));
+  else if (src.HasConfigurationFile())
+    dst.set_configurationfile(src.m_ConfigurationFile);
 }
 
 bool SEInhalerConfiguration::HasConfiguration() const

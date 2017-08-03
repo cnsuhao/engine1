@@ -10,43 +10,37 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "stdafx.h"
-#include "system/environment/SEActiveHeating.h"
-#include "substance/SESubstanceManager.h"
-#include "bind/ActiveHeatingData.hxx"
+#include "system/environment/SEActiveConditioning.h"
 #include "properties/SEScalarArea.h"
-#include "bind/ScalarAreaData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarPower.h"
-#include "bind/ScalarPowerData.hxx"
 #include "properties/SEScalarTemperature.h"
-#include "bind/ScalarTemperatureData.hxx"
 
-SEActiveHeating::SEActiveHeating(Logger* logger) : Loggable(logger)
+SEActiveConditioning::SEActiveConditioning(Logger* logger) : Loggable(logger)
 {
   m_Power = nullptr;
   m_SurfaceArea = nullptr;
   m_SurfaceAreaFraction = nullptr;
 }
 
-SEActiveHeating::~SEActiveHeating()
+SEActiveConditioning::~SEActiveConditioning()
 {
   Clear();
 }
 
-void SEActiveHeating::Clear()
+void SEActiveConditioning::Clear()
 {
   SAFE_DELETE(m_Power);
   SAFE_DELETE(m_SurfaceArea);
   SAFE_DELETE(m_SurfaceAreaFraction);
 }
 
-void SEActiveHeating::Reset()
+void SEActiveConditioning::Reset()
 {
   Clear();
 }
 
-const SEScalar* SEActiveHeating::GetScalar(const std::string& name)
+const SEScalar* SEActiveConditioning::GetScalar(const std::string& name)
 {
   if (name.compare("Power") == 0)
     return &GetPower();
@@ -57,85 +51,90 @@ const SEScalar* SEActiveHeating::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEActiveHeating::Load(const CDM::ActiveHeatingData& in)
+void SEActiveConditioning::Load(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveConditioning& dst)
 {
-  GetPower().Load(in.Power());
-  if (in.SurfaceArea().present())
-    GetSurfaceArea().Load(in.SurfaceArea().get());
-  if (in.SurfaceAreaFraction().present())
-    GetSurfaceAreaFraction().Load(in.SurfaceAreaFraction().get());
-  return true;
+  SEActiveConditioning::Serialize(src, dst);
+}
+void SEActiveConditioning::Serialize(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveConditioning& dst)
+{
+  dst.Clear();
+  if(src.has_power())
+    SEScalarPower::Load(src.power(),dst.GetPower());
+  if (src.has_surfacearea())
+    SEScalarArea::Load(src.surfacearea(),dst.GetSurfaceArea());
+  if (src.has_surfaceareafraction())
+    SEScalar0To1::Load(src.surfaceareafraction(),dst.GetSurfaceAreaFraction());
+}
+cdm::EnvironmentData_ActiveConditioningData* SEActiveConditioning::Unload(const SEActiveConditioning& src)
+{
+  cdm::EnvironmentData_ActiveConditioningData* dst = new cdm::EnvironmentData_ActiveConditioningData();
+  SEActiveConditioning::Serialize(src,*dst);
+  return dst;
+}
+void SEActiveConditioning::Serialize(const SEActiveConditioning& src, cdm::EnvironmentData_ActiveConditioningData& dst)
+{
+  if(src.HasPower())
+   dst.set_allocated_power(SEScalarPower::Unload(*src.m_Power));
+  if (src.HasSurfaceArea())
+    dst.set_allocated_surfacearea(SEScalarArea::Unload(*src.m_SurfaceArea));
+  if (src.HasSurfaceAreaFraction())
+    dst.set_allocated_surfaceareafraction(SEScalar0To1::Unload(*src.m_SurfaceAreaFraction));
 }
 
-CDM::ActiveHeatingData* SEActiveHeating::Unload() const
-{
-  CDM::ActiveHeatingData* data = new CDM::ActiveHeatingData();
-  Unload(*data);
-  return data;
-}
-void SEActiveHeating::Unload(CDM::ActiveHeatingData& data) const
-{
-  data.Power(std::unique_ptr<CDM::ScalarPowerData>(m_Power->Unload()));
-  if (HasSurfaceArea())
-    data.SurfaceArea(std::unique_ptr<CDM::ScalarAreaData>(m_SurfaceArea->Unload()));
-  if (HasSurfaceAreaFraction())
-    data.SurfaceAreaFraction(std::unique_ptr<CDM::ScalarFractionData>(m_SurfaceAreaFraction->Unload()));
-}
-
-bool SEActiveHeating::HasPower() const
+bool SEActiveConditioning::HasPower() const
 {
   return m_Power == nullptr ? false : m_Power->IsValid();
 }
-SEScalarPower& SEActiveHeating::GetPower()
+SEScalarPower& SEActiveConditioning::GetPower()
 {
   if (m_Power == nullptr)
     m_Power = new SEScalarPower();
   return *m_Power;
 }
-double SEActiveHeating::GetPower(const PowerUnit& unit) const
+double SEActiveConditioning::GetPower(const PowerUnit& unit) const
 {
   if (m_Power == nullptr)
     return SEScalar::dNaN();
   return m_Power->GetValue(unit);
 }
 
-bool SEActiveHeating::HasSurfaceArea() const
+bool SEActiveConditioning::HasSurfaceArea() const
 {
   return m_SurfaceArea == nullptr ? false : m_SurfaceArea->IsValid();
 }
-SEScalarArea& SEActiveHeating::GetSurfaceArea()
+SEScalarArea& SEActiveConditioning::GetSurfaceArea()
 {
   if (m_SurfaceArea == nullptr)
     m_SurfaceArea = new SEScalarArea();
   return *m_SurfaceArea;
 }
-double SEActiveHeating::GetSurfaceArea(const AreaUnit& unit) const
+double SEActiveConditioning::GetSurfaceArea(const AreaUnit& unit) const
 {
   if (m_SurfaceArea == nullptr)
     return SEScalar::dNaN();
   return m_SurfaceArea->GetValue(unit);
 }
 
-bool SEActiveHeating::HasSurfaceAreaFraction() const
+bool SEActiveConditioning::HasSurfaceAreaFraction() const
 {
   return m_SurfaceAreaFraction == nullptr ? false : m_SurfaceAreaFraction->IsValid();
 }
-SEScalar0To1& SEActiveHeating::GetSurfaceAreaFraction()
+SEScalar0To1& SEActiveConditioning::GetSurfaceAreaFraction()
 {
   if (m_SurfaceAreaFraction == nullptr)
     m_SurfaceAreaFraction = new SEScalar0To1();
   return *m_SurfaceAreaFraction;
 }
-double SEActiveHeating::GetSurfaceAreaFraction() const
+double SEActiveConditioning::GetSurfaceAreaFraction() const
 {
   if (m_SurfaceAreaFraction == nullptr)
     return SEScalar::dNaN();
   return m_SurfaceAreaFraction->GetValue();
 }
 
-void SEActiveHeating::ToString(std::ostream &str) const
+void SEActiveConditioning::ToString(std::ostream &str) const
 {
-  str << "Active Heating :";
+  str << "Active Conditioning :";
   str << "\n\tPower :";                HasPower() ? str << *m_Power : str << "NaN";
   str << "\n\tSurfaceArea :";          HasSurfaceArea() ? str << *m_SurfaceArea : str << "NaN";
   str << "\n\tSurfaceAreaFraction :";  HasSurfaceAreaFraction() ? str << *m_SurfaceAreaFraction : str << "NaN";

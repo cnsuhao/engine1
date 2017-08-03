@@ -11,10 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/environment/actions/SEEnvironmentAction.h"
-#include "bind/ThermalApplicationData.hxx"
-class SEActiveHeating;
-class SEActiveCooling;
-class SEAppliedTemperature;
+#include "system/environment/SEActiveConditioning.h"
+#include "system/environment/SEAppliedTemperature.h"
 
 class DLL_DECL SEThermalApplication : public SEEnvironmentAction
 {
@@ -28,19 +26,20 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::ThermalApplicationData& in);
-  virtual CDM::ThermalApplicationData* Unload() const;
+  static void Load(const cdm::ThermalApplicationData& src, SEThermalApplication& dst);
+  static cdm::ThermalApplicationData* Unload(const SEThermalApplication& src);
 protected:
-  virtual void Unload(CDM::ThermalApplicationData& data) const;
+  static void Serialize(const cdm::ThermalApplicationData& src, SEThermalApplication& dst);
+  static void Serialize(const SEThermalApplication& src, cdm::ThermalApplicationData& dst);
 
 public:
 
   virtual bool HasActiveHeating() const;
-  virtual SEActiveHeating& GetActiveHeating();
+  virtual SEActiveConditioning& GetActiveHeating();
   virtual void RemoveActiveHeating();
 
   virtual bool HasActiveCooling() const;
-  virtual SEActiveCooling& GetActiveCooling();
+  virtual SEActiveConditioning& GetActiveCooling();
   virtual void RemoveActiveCooling();
 
   virtual bool HasAppliedTemperature() const;
@@ -51,7 +50,7 @@ public:
 
 protected:
   bool                   m_ClearContents;
-  SEActiveHeating*       m_ActiveHeating;
-  SEActiveCooling*       m_ActiveCooling;
+  SEActiveConditioning*  m_ActiveHeating;
+  SEActiveConditioning*  m_ActiveCooling;
   SEAppliedTemperature*  m_AppliedTemperature;
 };

@@ -12,9 +12,6 @@ specific language governing permissions and limitations under the License.
 #pragma once
 
 #include "SEInhalerAction.h"
-#include "bind/InhalerData.hxx"
-#include "bind/InhalerConfigurationData.hxx"
-
 class SEInhaler;
 class SESubstanceManager;
 
@@ -29,10 +26,12 @@ public:
   
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::InhalerConfigurationData& in);
-  virtual CDM::InhalerConfigurationData* Unload() const;
+  static void Load(const cdm::InhalerConfigurationData& src, SEInhalerConfiguration& dst);
+  static cdm::InhalerConfigurationData* Unload(const SEInhalerConfiguration& src);
 protected:
-  virtual void Unload(CDM::InhalerConfigurationData& data) const;
+  static void Serialize(const cdm::InhalerConfigurationData& src, SEInhalerConfiguration& dst);
+  static void Serialize(const SEInhalerConfiguration& src, cdm::InhalerConfigurationData& dst);
+
 public:
 
   bool HasConfiguration() const;

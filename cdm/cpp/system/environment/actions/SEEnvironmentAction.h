@@ -24,11 +24,9 @@ public:
 
   virtual bool IsValid() const;
 
-  static void Load(const cdm::EnvironmentData& src, SEEnvironmentAction& dst);
-  static cdm::EnvironmentData* Unload(const SEEnvironmentAction& src);
 protected:
-  static void Serialize(const cdm::EnvironmentData& src, SEEnvironmentAction& dst);
-  static void Serialize(const SEEnvironmentAction& src, cdm::EnvironmentData& dst);
+  static void Serialize(const cdm::EnvironmentActionData& src, SEEnvironmentAction& dst);
+  static void Serialize(const SEEnvironmentAction& src, cdm::EnvironmentActionData& dst);
 
 public:
   virtual void ToString(std::ostream &str) const = 0;

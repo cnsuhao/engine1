@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-class SESubstance;
-class SESubstanceCompound;
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceCompound.h"
 #include "bind/cdm/Substance.pb.h"
 
 class DLL_DECL SESubstanceManager : public Loggable

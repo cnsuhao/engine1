@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 #include "system/equipment/ElectroCardioGram/SEElectroCardioGram.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarElectricPotential.h"
-#include "bind/ScalarElectricPotentialData.hxx"
 
 SEElectroCardioGram::SEElectroCardioGram(Logger* logger) : SESystem(logger)
 {
@@ -53,68 +52,70 @@ void SEElectroCardioGram::Clear()
   SAFE_DELETE(m_Lead12ElectricPotential);
 }
 
-bool SEElectroCardioGram::Load(const CDM::ElectroCardioGramData& in)
+void SEElectroCardioGram::Load(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst)
 {
-  if(in.Lead1ElectricPotential().present())
-    GetLead1ElectricPotential().Load(in.Lead1ElectricPotential().get());
-  if (in.Lead2ElectricPotential().present())
-    GetLead2ElectricPotential().Load(in.Lead2ElectricPotential().get());
-  if (in.Lead3ElectricPotential().present())
-    GetLead3ElectricPotential().Load(in.Lead3ElectricPotential().get());
-  if (in.Lead4ElectricPotential().present())
-    GetLead4ElectricPotential().Load(in.Lead4ElectricPotential().get());
-  if (in.Lead5ElectricPotential().present())
-    GetLead5ElectricPotential().Load(in.Lead5ElectricPotential().get());
-  if (in.Lead6ElectricPotential().present())
-    GetLead6ElectricPotential().Load(in.Lead6ElectricPotential().get());
-  if (in.Lead7ElectricPotential().present())
-    GetLead7ElectricPotential().Load(in.Lead7ElectricPotential().get());
-  if (in.Lead8ElectricPotential().present())
-    GetLead8ElectricPotential().Load(in.Lead8ElectricPotential().get());
-  if (in.Lead9ElectricPotential().present())
-    GetLead9ElectricPotential().Load(in.Lead9ElectricPotential().get());
-  if (in.Lead10ElectricPotential().present())
-    GetLead10ElectricPotential().Load(in.Lead10ElectricPotential().get());
-  if (in.Lead11ElectricPotential().present())
-    GetLead11ElectricPotential().Load(in.Lead11ElectricPotential().get());
-  if (in.Lead12ElectricPotential().present())
-    GetLead12ElectricPotential().Load(in.Lead12ElectricPotential().get());
-  return true;
+  SEElectroCardioGram::Serialize(src, dst);
+}
+void SEElectroCardioGram::Serialize(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst)
+{
+  if (src.has_lead1electricpotential())
+    SEScalarElectricPotential::Load(src.lead1electricpotential(), dst.GetLead1ElectricPotential());
+  if (src.has_lead2electricpotential())
+    SEScalarElectricPotential::Load(src.lead2electricpotential(), dst.GetLead2ElectricPotential());
+  if (src.has_lead3electricpotential())
+    SEScalarElectricPotential::Load(src.lead3electricpotential(), dst.GetLead3ElectricPotential());
+  if (src.has_lead4electricpotential())
+    SEScalarElectricPotential::Load(src.lead4electricpotential(), dst.GetLead4ElectricPotential());
+  if (src.has_lead5electricpotential())
+    SEScalarElectricPotential::Load(src.lead5electricpotential(), dst.GetLead5ElectricPotential());
+  if (src.has_lead6electricpotential())
+    SEScalarElectricPotential::Load(src.lead6electricpotential(), dst.GetLead6ElectricPotential());
+  if (src.has_lead7electricpotential())
+    SEScalarElectricPotential::Load(src.lead7electricpotential(), dst.GetLead7ElectricPotential());
+  if (src.has_lead8electricpotential())
+    SEScalarElectricPotential::Load(src.lead8electricpotential(), dst.GetLead8ElectricPotential());
+  if (src.has_lead9electricpotential())
+    SEScalarElectricPotential::Load(src.lead9electricpotential(), dst.GetLead9ElectricPotential());
+  if (src.has_lead10electricpotential())
+    SEScalarElectricPotential::Load(src.lead10electricpotential(), dst.GetLead10ElectricPotential());
+  if (src.has_lead11electricpotential())
+    SEScalarElectricPotential::Load(src.lead11electricpotential(), dst.GetLead11ElectricPotential());
+  if (src.has_lead12electricpotential())
+    SEScalarElectricPotential::Load(src.lead12electricpotential(), dst.GetLead12ElectricPotential());
 }
 
-CDM::ElectroCardioGramData*  SEElectroCardioGram::Unload() const
+cdm::ElectroCardioGramData* SEElectroCardioGram::Unload(const SEElectroCardioGram& src)
 {
-  CDM::ElectroCardioGramData* data = new CDM::ElectroCardioGramData();
-  Unload(*data);
-  return data;
+  cdm::ElectroCardioGramData* dst = new cdm::ElectroCardioGramData();
+  SEElectroCardioGram::Serialize(src,*dst);
+  return dst;
 }
-
-void SEElectroCardioGram::Unload(CDM::ElectroCardioGramData& data) const
+void SEElectroCardioGram::Serialize(const SEElectroCardioGram& src, cdm::ElectroCardioGramData& dst)
 {
-  if (m_Lead1ElectricPotential != nullptr)
-    data.Lead1ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead1ElectricPotential->Unload()));
-  if (m_Lead2ElectricPotential != nullptr)
-    data.Lead2ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead2ElectricPotential->Unload()));
-  if (m_Lead3ElectricPotential != nullptr)
-    data.Lead3ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead3ElectricPotential->Unload()));
-  if (m_Lead4ElectricPotential != nullptr)
-    data.Lead4ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead4ElectricPotential->Unload()));
-  if (m_Lead5ElectricPotential != nullptr)
-    data.Lead5ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead5ElectricPotential->Unload()));
-  if (m_Lead6ElectricPotential != nullptr)
-    data.Lead6ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead6ElectricPotential->Unload()));
-  if (m_Lead7ElectricPotential != nullptr)
-    data.Lead7ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead7ElectricPotential->Unload()));
-  if (m_Lead8ElectricPotential != nullptr)
-    data.Lead8ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead8ElectricPotential->Unload()));
-  if (m_Lead9ElectricPotential != nullptr)
-    data.Lead9ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead9ElectricPotential->Unload()));
-  if (m_Lead10ElectricPotential != nullptr)
-    data.Lead10ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead10ElectricPotential->Unload()));
-  if (m_Lead11ElectricPotential != nullptr)
-    data.Lead11ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead11ElectricPotential->Unload()));
-  if (m_Lead12ElectricPotential != nullptr)
-    data.Lead12ElectricPotential(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_Lead12ElectricPotential->Unload()));
+  if (src.HasLead1ElectricPotential())
+    dst.set_allocated_lead1electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead1ElectricPotential));
+  if (src.HasLead3ElectricPotential())
+    dst.set_allocated_lead2electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead2ElectricPotential));
+  if (src.HasLead3ElectricPotential())
+    dst.set_allocated_lead3electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead3ElectricPotential));
+  if (src.HasLead4ElectricPotential())
+    dst.set_allocated_lead4electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead4ElectricPotential));
+  if (src.HasLead5ElectricPotential())
+    dst.set_allocated_lead5electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead5ElectricPotential));
+  if (src.HasLead6ElectricPotential())
+    dst.set_allocated_lead6electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead6ElectricPotential));
+  if (src.HasLead7ElectricPotential())
+    dst.set_allocated_lead7electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead7ElectricPotential));
+  if (src.HasLead8ElectricPotential())
+    dst.set_allocated_lead8electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead8ElectricPotential));
+  if (src.HasLead9ElectricPotential())
+    dst.set_allocated_lead9electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead9ElectricPotential));
+  if (src.HasLead10ElectricPotential())
+    dst.set_allocated_lead10electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead10ElectricPotential));
+  if (src.HasLead11ElectricPotential())
+    dst.set_allocated_lead11electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead11ElectricPotential));
+  if (src.HasLead12ElectricPotential())
+    dst.set_allocated_lead12electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead12ElectricPotential));
 }
 
 const SEScalar* SEElectroCardioGram::GetScalar(const std::string& name)

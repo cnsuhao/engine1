@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "scenario/SECondition.h"
-#include "bind/EnvironmentConditionData.hxx"
+#include "bind/cdm/EnvironmentConditions.pb.h"
 
 class DLL_DECL SEEnvironmentCondition : public SECondition
 {
@@ -24,10 +24,8 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::EnvironmentConditionData& in);
-  virtual CDM::EnvironmentConditionData* Unload() const;
-protected:
-  virtual void Unload(CDM::EnvironmentConditionData& data) const;
+  static void Serialize(const cdm::EnvironmentConditionData& src, SEEnvironmentCondition& dst);
+  static void Serialize(const SEEnvironmentCondition& src, cdm::EnvironmentConditionData& dst);
 
 public:
   virtual void ToString(std::ostream &str) const = 0;

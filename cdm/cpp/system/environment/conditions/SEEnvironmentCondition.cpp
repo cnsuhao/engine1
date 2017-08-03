@@ -32,20 +32,12 @@ bool SEEnvironmentCondition::IsValid() const
   return SECondition::IsValid();
 }
 
-bool SEEnvironmentCondition::Load(const CDM::EnvironmentConditionData& in)
+void SEEnvironmentCondition::Serialize(const cdm::EnvironmentConditionData& src, SEEnvironmentCondition& dst)
 {
-  SECondition::Load(in);
-  return true;
+  SECondition::Serialize(src.condition(), dst);
 }
 
-CDM::EnvironmentConditionData* SEEnvironmentCondition::Unload() const
+void SEEnvironmentCondition::Serialize(const SEEnvironmentCondition& src, cdm::EnvironmentConditionData& dst)
 {
-  CDM::EnvironmentConditionData* data = new CDM::EnvironmentConditionData();
-  Unload(*data);
-  return data;
-}
-
-void SEEnvironmentCondition::Unload(CDM::EnvironmentConditionData& data) const
-{
-  SECondition::Unload(data);
+  SECondition::Serialize(src, *dst.mutable_condition());
 }

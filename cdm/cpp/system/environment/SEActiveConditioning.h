@@ -10,23 +10,23 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
-#include "system/environment/actions/SEEnvironmentAction.h"
-CDM_BIND_DECL(ActiveHeatingData)
+#include "bind/cdm/Environment.pb.h"
 
-class DLL_DECL SEActiveHeating : public Loggable
+class DLL_DECL SEActiveConditioning : public Loggable
 {
 public:
 
-  SEActiveHeating(Logger* logger);
-  virtual ~SEActiveHeating();
+  SEActiveConditioning(Logger* logger);
+  virtual ~SEActiveConditioning();
 
   virtual void Clear();
   virtual void Reset();
 
-  virtual bool Load(const CDM::ActiveHeatingData& in);
-  virtual CDM::ActiveHeatingData* Unload() const;
+  static void Load(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveConditioning& dst);
+  static cdm::EnvironmentData_ActiveConditioningData* Unload(const SEActiveConditioning& src);
 protected:
-  virtual void Unload(CDM::ActiveHeatingData& data) const;
+  static void Serialize(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveConditioning& dst);
+  static void Serialize(const SEActiveConditioning& src, cdm::EnvironmentData_ActiveConditioningData& dst);
 
 public:
 
@@ -47,7 +47,7 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  SEScalarPower*         m_Power;
-  SEScalarArea*           m_SurfaceArea;
+  SEScalarPower*     m_Power;
+  SEScalarArea*      m_SurfaceArea;
   SEScalar0To1*      m_SurfaceAreaFraction;
 };

@@ -11,20 +11,10 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "stdafx.h"
 #include "system/environment/actions/SEThermalApplication.h"
-#include "system/environment/SEActiveHeating.h"
-#include "bind/ActiveHeatingData.hxx"
-#include "system/environment/SEActiveCooling.h"
-#include "bind/ActiveCoolingData.hxx"
-#include "system/environment/SEAppliedTemperature.h"
-#include "bind/AppliedTemperatureData.hxx"
 #include "properties/SEScalarArea.h"
-#include "bind/ScalarAreaData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarPower.h"
-#include "bind/ScalarPowerData.hxx"
 #include "properties/SEScalarTemperature.h"
-#include "bind/ScalarTemperatureData.hxx"
 
 SEThermalApplication::SEThermalApplication() : SEEnvironmentAction()
 {
@@ -66,47 +56,49 @@ bool SEThermalApplication::IsActive() const
   return false;
 }
 
-bool SEThermalApplication::Load(const CDM::ThermalApplicationData& in)
+void SEThermalApplication::Load(const cdm::ThermalApplicationData& src, SEThermalApplication& dst)
+{
+  SEThermalApplication::Serialize(src, dst);
+}
+void SEThermalApplication::Serialize(const cdm::ThermalApplicationData& src, SEThermalApplication& dst)
 {
   // Set this before our super class tells us to Clear if the action wants us to keep our current data
-  m_ClearContents = !in.AppendToPrevious();
-  SEEnvironmentAction::Load(in);
-  m_ClearContents = true;
-  if (in.ActiveHeating().present())
-    GetActiveHeating().Load(in.ActiveHeating().get());
-  if (in.ActiveCooling().present())
-    GetActiveCooling().Load(in.ActiveCooling().get());
-  if (in.AppliedTemperature().present())
-    GetAppliedTemperature().Load(in.AppliedTemperature().get());
-  
-  return true;
+  dst.m_ClearContents = !src.appendtoprevious();
+  SEEnvironmentAction::Serialize(src.environmentaction(), dst);
+  if (src.has_activecooling())
+    SEActiveConditioning::Load(src.activecooling(), dst.GetActiveCooling());
+  if (src.has_activeheating())
+    SEActiveConditioning::Load(src.activeheating(), dst.GetActiveHeating());
+  if (src.has_appliedtemperature())
+    SEAppliedTemperature::Load(src.appliedtemperature(), dst.GetAppliedTemperature());
+  dst.m_ClearContents = true;
 }
 
-CDM::ThermalApplicationData* SEThermalApplication::Unload() const
+cdm::ThermalApplicationData* SEThermalApplication::Unload(const SEThermalApplication& src)
 {
-  CDM::ThermalApplicationData* data = new CDM::ThermalApplicationData();
-  Unload(*data);
-  return data;
+  cdm::ThermalApplicationData* dst = new cdm::ThermalApplicationData();
+  SEThermalApplication::Serialize(src, *dst);
+  return dst;
 }
-void SEThermalApplication::Unload(CDM::ThermalApplicationData& data) const
+void SEThermalApplication::Serialize(const SEThermalApplication& src, cdm::ThermalApplicationData& dst)
 {
-  SEEnvironmentAction::Unload(data);
-  if (HasActiveHeating())
-    data.ActiveHeating(std::unique_ptr<CDM::ActiveHeatingData>(m_ActiveHeating->Unload()));
-  if (HasActiveCooling())
-    data.ActiveCooling(std::unique_ptr<CDM::ActiveCoolingData>(m_ActiveCooling->Unload()));
-  if (HasAppliedTemperature())
-    data.AppliedTemperature(std::unique_ptr<CDM::AppliedTemperatureData>(m_AppliedTemperature->Unload()));
+  SEEnvironmentAction::Serialize(src,*dst.mutable_environmentaction());
+  if (src.HasActiveHeating())
+    dst.set_allocated_activeheating(SEActiveConditioning::Unload(*src.m_ActiveHeating));
+  if (src.HasActiveCooling())
+    dst.set_allocated_activecooling(SEActiveConditioning::Unload(*src.m_ActiveCooling));
+  if (src.HasAppliedTemperature())
+    dst.set_allocated_appliedtemperature(SEAppliedTemperature::Unload(*src.m_AppliedTemperature));
 }
 
 bool SEThermalApplication::HasActiveHeating() const
 {
   return m_ActiveHeating != nullptr;
 }
-SEActiveHeating& SEThermalApplication::GetActiveHeating()
+SEActiveConditioning& SEThermalApplication::GetActiveHeating()
 {
   if (m_ActiveHeating == nullptr)
-    m_ActiveHeating = new SEActiveHeating(GetLogger());
+    m_ActiveHeating = new SEActiveConditioning(GetLogger());
   return *m_ActiveHeating;
 }
 void SEThermalApplication::RemoveActiveHeating()
@@ -118,10 +110,10 @@ bool SEThermalApplication::HasActiveCooling() const
 {
   return m_ActiveCooling != nullptr;
 }
-SEActiveCooling& SEThermalApplication::GetActiveCooling()
+SEActiveConditioning& SEThermalApplication::GetActiveCooling()
 {
   if (m_ActiveCooling == nullptr)
-    m_ActiveCooling = new SEActiveCooling(GetLogger());
+    m_ActiveCooling = new SEActiveConditioning(GetLogger());
   return *m_ActiveCooling;
 }
 void SEThermalApplication::RemoveActiveCooling()

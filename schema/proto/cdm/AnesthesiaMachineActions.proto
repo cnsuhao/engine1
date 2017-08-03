@@ -38,8 +38,8 @@ message AnesthesiaMachineConfigurationData
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   oneof Option
   {
-    AnesthesiaMachineData                  AnesthesiaMachine           = 2;/**<< @brief An anesthesia machine object with properties to set in the system anesthesia machine. */
-    string                                 AnesthesiaMachineFile       = 3;/**<< @brief File containing an anesthesia machine objet with properties to set in the system anesthesia machine. */
+    AnesthesiaMachineData                  Configuration               = 2;/**<< @brief An anesthesia machine object with properties to set in the system anesthesia machine. */
+    string                                 ConfigurationFile           = 3;/**<< @brief File containing an anesthesia machine objet with properties to set in the system anesthesia machine. */
   }
 }
 

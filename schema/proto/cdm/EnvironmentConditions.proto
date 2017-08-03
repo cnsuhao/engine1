@@ -9,7 +9,7 @@ message AnyEnvironmentConditionData
 {
   oneof Condition
   {
-    InitialEnvironmentConfigurationData InitialEnvironmentConfiguration = 1;
+    InitialEnvironmentConditionsData    InitialEnvironmentConditions = 1;
   }
 }
 
@@ -19,7 +19,7 @@ message EnvironmentConditionData
 }
 
 /** @brief The configuration of the environment to use during stabilization. */
-message InitialEnvironmentConfigurationData
+message InitialEnvironmentConditionsData
 {
   EnvironmentConditionData              EnvironmentCondition            = 1;
   oneof Option

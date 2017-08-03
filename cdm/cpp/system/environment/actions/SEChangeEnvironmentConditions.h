@@ -13,22 +13,22 @@ specific language governing permissions and limitations under the License.
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
 
-class DLL_DECL SEEnvironmentChange : public SEEnvironmentAction
+class DLL_DECL SEChangeEnvironmentConditions : public SEEnvironmentAction
 {
 public:
 
-  SEEnvironmentChange(SESubstanceManager& substances);
-  virtual ~SEEnvironmentChange();
+  SEChangeEnvironmentConditions(SESubstanceManager& substances);
+  virtual ~SEChangeEnvironmentConditions();
 
   virtual void Clear();
 
   virtual bool IsValid() const;
 
-  static void Load(const cdm::EnvironmentData& src, SEEnvironmentChange& dst);
-  static cdm::EnvironmentData* Unload(const SEEnvironmentChange& src);
+  static void Load(const cdm::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst);
+  static cdm::ChangeEnvironmentConditionsData* Unload(const SEChangeEnvironmentConditions& src);
 protected:
-  static void Serialize(const cdm::EnvironmentData& src, SEEnvironmentChange& dst);
-  static void Serialize(const SEEnvironmentChange& src, cdm::EnvironmentData& dst);
+  static void Serialize(const cdm::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst);
+  static void Serialize(const SEChangeEnvironmentConditions& src, cdm::ChangeEnvironmentConditionsData& dst);
 
 public:
   

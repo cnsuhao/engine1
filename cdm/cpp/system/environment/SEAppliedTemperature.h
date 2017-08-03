@@ -10,9 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
-#include "system/environment/actions/SEEnvironmentAction.h"
-CDM_BIND_DECL(AppliedTemperatureData)
-#include "bind/enumOnOff.hxx"
+#include "bind/cdm/Environment.pb.h"
 
 class DLL_DECL SEAppliedTemperature : public Loggable
 {
@@ -24,10 +22,11 @@ public:
   
   virtual void Clear();
 
-  virtual bool Load(const CDM::AppliedTemperatureData& in);
-  virtual CDM::AppliedTemperatureData* Unload() const;
+  static void Load(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst);
+  static cdm::EnvironmentData_AppliedTemperatureData* Unload(const SEAppliedTemperature& src);
 protected:
-  virtual void Unload(CDM::AppliedTemperatureData& data) const;
+  static void Serialize(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst);
+  static void Serialize(const SEAppliedTemperature& src, cdm::EnvironmentData_AppliedTemperatureData& dst);
 
 public:
 

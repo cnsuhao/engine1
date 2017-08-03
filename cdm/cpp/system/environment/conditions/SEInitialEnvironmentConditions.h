@@ -10,25 +10,25 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
-#include "bind/InitialEnvironmentData.hxx"
-#include "../SEEnvironmentalConditions.h"
+#include "system/environment/SEEnvironmentalConditions.h"
 #include "SEEnvironmentCondition.h"
 
-class DLL_DECL SEInitialEnvironment : public SEEnvironmentCondition
+class DLL_DECL SEInitialEnvironmentConditions : public SEEnvironmentCondition
 {
 public:
 
-  SEInitialEnvironment(SESubstanceManager& substances);
-  virtual ~SEInitialEnvironment();
+  SEInitialEnvironmentConditions(SESubstanceManager& substances);
+  virtual ~SEInitialEnvironmentConditions();
 
   virtual void Clear();
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::InitialEnvironmentData& in);
-  virtual CDM::InitialEnvironmentData* Unload() const;
+  static void Load(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst);
+  static cdm::InitialEnvironmentConditionsData* Unload(const SEInitialEnvironmentConditions& src);
 protected:
-  virtual void Unload(CDM::InitialEnvironmentData& data) const;
+  static void Serialize(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst);
+  static void Serialize(const SEInitialEnvironmentConditions& src, cdm::InitialEnvironmentConditionsData& dst);
 
 public:
   virtual std::string GetName() const{ return "InitialEnvironment"; }

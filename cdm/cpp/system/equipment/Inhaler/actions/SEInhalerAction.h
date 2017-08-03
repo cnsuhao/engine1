@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "scenario/SEAction.h"
-#include "bind/InhalerActionData.hxx"
+#include "bind/cdm/InhalerActions.pb.h"
 
 class DLL_DECL SEInhalerAction : public SEAction
 {
@@ -24,11 +24,10 @@ public:
   
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::InhalerActionData& in);
-  virtual CDM::InhalerActionData* Unload() const;
-
 protected:
-  virtual void Unload(CDM::InhalerActionData& data) const;
+  static void Serialize(const cdm::InhalerActionData& src, SEInhalerAction& dst);
+  static void Serialize(const SEInhalerAction& src, cdm::InhalerActionData& dst);
+
 public:
   virtual void ToString(std::ostream &str) const = 0;
 };  

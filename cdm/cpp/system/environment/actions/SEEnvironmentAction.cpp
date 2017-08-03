@@ -32,22 +32,12 @@ bool SEEnvironmentAction::IsValid() const
   return SEAction::IsValid();
 }
 
-void SEEnvironmentAction::Load(const cdm::EnvironmentData& src, SEEnvironmentAction& dst)
+void SEEnvironmentAction::Serialize(const cdm::EnvironmentActionData& src, SEEnvironmentAction& dst)
 {
-  SEEnvironmentAction::Serialize(src, dst);
-}
-void SEEnvironmentAction::Serialize(const cdm::EnvironmentData& src, SEEnvironmentAction& dst)
-{
-  dst.Clear();
+  SEAction::Serialize(src.action(), dst);
 }
 
-cdm::EnvironmentData* SEEnvironmentAction::Unload(const SEEnvironmentAction& src)
-{
-  cdm::EnvironmentData* dst = new cdm::EnvironmentData();
-  SEEnvironmentAction::Serialize(src, *dst);
-  return dst;
-}
 void SEEnvironmentAction::Serialize(const SEEnvironmentAction& src, cdm::EnvironmentActionData& dst)
 {
-
+  SEAction::Serialize(src, *dst.mutable_action());
 }

@@ -10,9 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "stdafx.h"
-#include "SEInitialEnvironment.h"
-#include "bind/EnvironmentalConditionsData.hxx"
-#include "substance/SESubstanceFraction.h"
+#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"
@@ -23,98 +21,96 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarHeatResistanceArea.h"
 
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceFraction.h"
-#include "substance/SESubstanceConcentration.h"
-#include "substance/SESubstanceManager.h"
-
-SEInitialEnvironment::SEInitialEnvironment(SESubstanceManager& substances) : SEEnvironmentCondition(), m_Substances(substances)
+SEInitialEnvironmentConditions::SEInitialEnvironmentConditions(SESubstanceManager& substances) : SEEnvironmentCondition(), m_Substances(substances)
 {
   m_Conditions = nullptr;
   InvalidateConditionsFile();  
 }
 
-SEInitialEnvironment::~SEInitialEnvironment()
+SEInitialEnvironmentConditions::~SEInitialEnvironmentConditions()
 {
   Clear();
 }
 
-void SEInitialEnvironment::Clear()
+void SEInitialEnvironmentConditions::Clear()
 {
   SEEnvironmentCondition::Clear();
   InvalidateConditionsFile();
   SAFE_DELETE(m_Conditions);
 }
 
-bool SEInitialEnvironment::IsValid() const
+bool SEInitialEnvironmentConditions::IsValid() const
 {
   return SEEnvironmentCondition::IsValid() && (HasConditions() || HasConditionsFile());
 }
 
-bool SEInitialEnvironment::Load(const CDM::InitialEnvironmentData& in)
+void SEInitialEnvironmentConditions::Load(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst)
 {
-  SEEnvironmentCondition::Load(in);
-  if (in.ConditionsFile().present())
-    SetConditionsFile(in.ConditionsFile().get());
-  if (in.Conditions().present())
-    GetConditions().Load(in.Conditions().get());
-  return true;
+  SEInitialEnvironmentConditions::Serialize(src, dst);
+}
+void SEInitialEnvironmentConditions::Serialize(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst)
+{
+  SEEnvironmentCondition::Serialize(src.environmentcondition(), dst);
+  if (src.has_conditions())
+    SEEnvironmentalConditions::Load(src.conditions(), dst.GetConditions());
+  else
+    dst.SetConditionsFile(src.conditionsfile());
 }
 
-CDM::InitialEnvironmentData* SEInitialEnvironment::Unload() const
+cdm::InitialEnvironmentConditionsData* SEInitialEnvironmentConditions::Unload(const SEInitialEnvironmentConditions& src)
 {
-  CDM::InitialEnvironmentData* data = new CDM::InitialEnvironmentData();
-  Unload(*data);
-  return data;
+  cdm::InitialEnvironmentConditionsData* dst = new cdm::InitialEnvironmentConditionsData();
+  SEInitialEnvironmentConditions::Serialize(src, *dst);
+  return dst;
 }
-void SEInitialEnvironment::Unload(CDM::InitialEnvironmentData& data) const
+void SEInitialEnvironmentConditions::Serialize(const SEInitialEnvironmentConditions& src, cdm::InitialEnvironmentConditionsData& dst)
 {
-  SEEnvironmentCondition::Unload(data);
-  if (HasConditions())
-    data.Conditions(std::unique_ptr<CDM::EnvironmentalConditionsData>(m_Conditions->Unload()));
-  else if (HasConditionsFile())
-    data.ConditionsFile(m_ConditionsFile);
+  SEEnvironmentCondition::Serialize(src, *dst.mutable_environmentcondition());
+  if (src.HasConditions())
+    dst.set_allocated_conditions(SEEnvironmentalConditions::Unload(*src.m_Conditions));
+  else if (src.HasConditionsFile())
+    dst.set_conditionsfile(src.m_ConditionsFile);
 }
 
-bool SEInitialEnvironment::HasConditions() const
+bool SEInitialEnvironmentConditions::HasConditions() const
 {
   return m_Conditions != nullptr;
 }
-SEEnvironmentalConditions& SEInitialEnvironment::GetConditions()
+SEEnvironmentalConditions& SEInitialEnvironmentConditions::GetConditions()
 {
   m_ConditionsFile = "";
   if (m_Conditions == nullptr)
     m_Conditions = new SEEnvironmentalConditions(m_Substances);
   return *m_Conditions;
 }
-const SEEnvironmentalConditions* SEInitialEnvironment::GetConditions() const
+const SEEnvironmentalConditions* SEInitialEnvironmentConditions::GetConditions() const
 {
   return m_Conditions;
 }
 
-std::string SEInitialEnvironment::GetConditionsFile() const
+std::string SEInitialEnvironmentConditions::GetConditionsFile() const
 {
   return m_ConditionsFile;
 }
-void SEInitialEnvironment::SetConditionsFile(const std::string& fileName)
+void SEInitialEnvironmentConditions::SetConditionsFile(const std::string& fileName)
 {
   if (m_Conditions != nullptr)
     SAFE_DELETE(m_Conditions);
   m_ConditionsFile = fileName;
 }
-bool SEInitialEnvironment::HasConditionsFile() const
+bool SEInitialEnvironmentConditions::HasConditionsFile() const
 {
   return m_ConditionsFile.empty() ? false : true;
 }
-void SEInitialEnvironment::InvalidateConditionsFile()
+void SEInitialEnvironmentConditions::InvalidateConditionsFile()
 {
   m_ConditionsFile = "";
 }
 
 
-void SEInitialEnvironment::ToString(std::ostream &str) const
+void SEInitialEnvironmentConditions::ToString(std::ostream &str) const
 {
-  str << "Environment Change"; 
+  str << "Environment Initial"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   if (HasConditionsFile())
