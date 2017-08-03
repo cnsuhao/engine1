@@ -177,7 +177,7 @@ void SEAnesthesiaMachine::Serialize(const cdm::AnesthesiaMachineData& src, SEAne
     dst.m_EventDuration_s[e.event()] = time.GetValue(TimeUnit::s);
   }
 
-  StateChange();
+  dst.StateChange();
 }
 
 cdm::AnesthesiaMachineData* SEAnesthesiaMachine::Unload(const SEAnesthesiaMachine& src)

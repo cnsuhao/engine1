@@ -139,7 +139,7 @@ void SEEnvironment::Serialize(const cdm::EnvironmentData& src, SEEnvironment& ds
   if (src.has_skinheatloss())
     SEScalarPower::Load(src.skinheatloss(), dst.GetSkinHeatLoss());
 
-  StateChange();
+  dst.StateChange();
 }
 
 cdm::EnvironmentData* SEEnvironment::Unload(const SEEnvironment& src)
