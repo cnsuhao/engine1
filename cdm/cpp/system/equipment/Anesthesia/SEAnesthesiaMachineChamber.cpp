@@ -51,9 +51,7 @@ void SEAnesthesiaMachineChamber::Serialize(const cdm::AnesthesiaMachineData_Cham
     dst.m_Substance = dst.m_Substances.GetSubstance(src.substance());
     if (dst.m_Substance == nullptr)
     {
-      std::stringstream ss;
-      ss << "Do not have substance : " << src.substance();
-      dst.Error(ss);
+      dst.Error("Do not have substance : " + src.substance(),"SEAnesthesiaMachineChamber::Serialize");
     }
   }
 }
@@ -70,7 +68,7 @@ void SEAnesthesiaMachineChamber::Serialize(const SEAnesthesiaMachineChamber& src
     dst.set_state(src.m_State);
   if (src.HasSubstanceFraction())
     dst.set_allocated_substancefraction(SEScalar0To1::Unload(*src.m_SubstanceFraction));
-  dst.set_substance(src.m_Substance.GetName());
+  dst.set_substance(src.m_Substance->GetName());
 }
 
 void SEAnesthesiaMachineChamber::Merge(const SEAnesthesiaMachineChamber& from)

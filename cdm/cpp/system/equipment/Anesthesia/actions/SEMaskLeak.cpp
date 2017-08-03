@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/actions/SEMaskLeak.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEMaskLeak::SEMaskLeak() : SEAnesthesiaMachineAction()
 {

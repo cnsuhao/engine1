@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/actions/SEVentilatorPressureLoss.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEVentilatorPressureLoss::SEVentilatorPressureLoss() : SEAnesthesiaMachineAction()
 {
@@ -40,25 +39,28 @@ bool SEVentilatorPressureLoss::IsActive() const
   return HasSeverity() ? !m_Severity->IsZero() : false;
 }
 
-bool SEVentilatorPressureLoss::Load(const CDM::VentilatorPressureLossData& in)
+void SEVentilatorPressureLoss::Load(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst)
 {
-  SEAnesthesiaMachineAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+  SEVentilatorPressureLoss::Serialize(src, dst);
+}
+void SEVentilatorPressureLoss::Serialize(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::VentilatorPressureLossData* SEVentilatorPressureLoss::Unload() const
+cdm::VentilatorPressureLossData* SEVentilatorPressureLoss::Unload(const SEVentilatorPressureLoss& src)
 {
-  CDM::VentilatorPressureLossData* data = new CDM::VentilatorPressureLossData();
-  Unload(*data);
-  return data;
+  cdm::VentilatorPressureLossData* dst = new cdm::VentilatorPressureLossData();
+  SEVentilatorPressureLoss::Serialize(src, *dst);
+  return dst;
 }
-
-void SEVentilatorPressureLoss::Unload(CDM::VentilatorPressureLossData& data) const
+void SEVentilatorPressureLoss::Serialize(const SEVentilatorPressureLoss& src, cdm::VentilatorPressureLossData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  if (m_Severity != nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEVentilatorPressureLoss::HasSeverity() const

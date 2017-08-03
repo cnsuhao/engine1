@@ -41,7 +41,7 @@ message AnesthesiaMachineData
   message ActiveEventData
   {
     eEvent                 Event                         = 1; /**<< @brief The active event. */
-    ScalarFrequencyData    Duration                      = 2; /**<< @brief The duration since last activated. */
+    ScalarTimeData         Duration                      = 2; /**<< @brief The duration since last activated. */
   }
   
   /** @brief A vaporization chamber that can be filled with a particular substance for inhalation. */
@@ -59,7 +59,7 @@ message AnesthesiaMachineData
   }
 
   eConnection              Connection                    = 1; /**<< @copybrief AnesthesiaMachine_eConnection */
-  ScalarVolumePerTimeData  Inlet_flow                    = 2; /**<< @brief The total fresh gas inlet flow. */      
+  ScalarVolumePerTimeData  InletFlow                     = 2; /**<< @brief The total fresh gas inlet flow. */      
   ScalarData               InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
   Scalar0To1Data           OxygenFraction                = 4; /**<< @brief The fraction of the fresh gas inlet flow that is oxygen. */
   eOxygenSource            OxygenSource                  = 5; /**<< @brief @copybrief AnesthesiaMachine_eOxygenSource */

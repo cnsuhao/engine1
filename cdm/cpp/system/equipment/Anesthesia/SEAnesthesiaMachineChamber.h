@@ -56,9 +56,9 @@ public:
 
 protected:
 
-  cdm::eSwitch m_State;
+  cdm::eSwitch          m_State;
   const SESubstance*    m_Substance;
-  SEScalar0To1*     m_SubstanceFraction;
+  SEScalar0To1*         m_SubstanceFraction;
 
   SESubstanceManager&   m_Substances;
 };

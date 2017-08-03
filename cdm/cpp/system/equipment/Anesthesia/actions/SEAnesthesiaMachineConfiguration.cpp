@@ -53,7 +53,10 @@ void SEAnesthesiaMachineConfiguration::Load(const cdm::AnesthesiaMachineConfigur
 void SEAnesthesiaMachineConfiguration::Serialize(const cdm::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst)
 {
   SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  //jbw - how do I do configuration and file?
+  if (src.has_configuration())
+    SEAnesthesiaMachine::Load(src.configuration(), dst.GetConfiguration());
+  else
+    dst.SetConfigurationFile(src.configurationfile());
 }
 
 cdm::AnesthesiaMachineConfigurationData* SEAnesthesiaMachineConfiguration::Unload(const SEAnesthesiaMachineConfiguration& src)
@@ -65,7 +68,10 @@ cdm::AnesthesiaMachineConfigurationData* SEAnesthesiaMachineConfiguration::Unloa
 void SEAnesthesiaMachineConfiguration::Serialize(const SEAnesthesiaMachineConfiguration& src, cdm::AnesthesiaMachineConfigurationData& dst)
 {
   SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  //jbw - how do I do configuration and file?
+  if (src.HasConfiguration())
+    dst.set_allocated_configuration(SEAnesthesiaMachine::Unload(*src.m_Configuration));
+  else if (src.HasConfigurationFile())
+    dst.set_configurationfile(src.m_ConfigurationFile);
 }
 
 bool SEAnesthesiaMachineConfiguration::HasConfiguration() const

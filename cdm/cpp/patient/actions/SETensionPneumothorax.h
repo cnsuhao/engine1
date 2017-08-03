@@ -49,9 +49,8 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  cdm::eGate m_Type;
-  cdm::eSide m_Side;
-  SEScalar0To1*    m_Severity;
-  cdm::eSwitch m_State;
+  cdm::eGate    m_Type;
+  cdm::eSide    m_Side;
+  SEScalar0To1* m_Severity;
   
 };    

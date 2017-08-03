@@ -135,8 +135,8 @@ void SEAnesthesiaMachine::Serialize(const cdm::AnesthesiaMachineData& src, SEAne
 {
   dst.Clear();
   dst.SetConnection(src.connection());
-  if(src.has_inlet_flow())
-    SEScalarVolumePerTime::Load(src.inlet_flow(), dst.GetInletFlow());
+  if(src.has_inletflow())
+    SEScalarVolumePerTime::Load(src.inletflow(), dst.GetInletFlow());
   if (src.has_inspiratoryexpiratoryratio())
     SEScalar::Load(src.inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
   if (src.has_oxygenfraction())
@@ -191,7 +191,7 @@ void SEAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, cdm::Anesthe
   if (src.HasConnection())
     dst.set_connection(src.m_Connection);
   if (src.HasInletFlow())
-    dst.set_allocated_inlet_flow(SEScalarVolumePerTime::Unload(*src.m_InletFlow));
+    dst.set_allocated_inletflow(SEScalarVolumePerTime::Unload(*src.m_InletFlow));
   if (src.HasInspiratoryExpiratoryRatio())
     dst.set_allocated_inspiratoryexpiratoryratio(SEScalar::Unload(*src.m_InspiratoryExpiratoryRatio));
   if (src.HasOxygenFraction())
