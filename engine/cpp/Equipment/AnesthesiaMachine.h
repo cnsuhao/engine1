@@ -58,7 +58,7 @@ public:
 
   // Extending some functionality to these base class methods
   // We will update the BioGears Airway mode when these are called
-  virtual void SetConnection(CDM::enumAnesthesiaMachineConnection::value c);
+  virtual void SetConnection(cdm::AnesthesiaMachineData_eConnection c);
   virtual void InvalidateConnection();
 
 private:

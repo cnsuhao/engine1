@@ -13,9 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachineOxygenBottle.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/AnesthesiaMachineOxygenBottleData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 
 SEAnesthesiaMachineOxygenBottle::SEAnesthesiaMachineOxygenBottle(Logger* logger) : Loggable(logger)
 {
@@ -32,24 +30,27 @@ void SEAnesthesiaMachineOxygenBottle::Clear()
   SAFE_DELETE(m_Volume);
 }
 
-bool SEAnesthesiaMachineOxygenBottle::Load(const CDM::AnesthesiaMachineOxygenBottleData& in)
+void SEAnesthesiaMachineOxygenBottle::Load(const cdm::AnesthesiaMachineData_OxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst)
 {
-  if(in.Volume().present())
-    GetVolume().Load(in.Volume().get());
-  return true;
+  SEAnesthesiaMachineOxygenBottle::Serialize(src, dst);
+}
+void SEAnesthesiaMachineOxygenBottle::Serialize(const cdm::AnesthesiaMachineData_OxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst)
+{
+  dst.Clear();
+  if (src.has_volume())
+    SEScalarVolume::Load(src.volume(), dst.GetVolume());
 }
 
-CDM::AnesthesiaMachineOxygenBottleData* SEAnesthesiaMachineOxygenBottle::Unload() const
+cdm::AnesthesiaMachineData_OxygenBottleData* SEAnesthesiaMachineOxygenBottle::Unload(const SEAnesthesiaMachineOxygenBottle& src)
 {
-  CDM::AnesthesiaMachineOxygenBottleData* data = new CDM::AnesthesiaMachineOxygenBottleData();
-  Unload(*data);
-  return data;
+  cdm::AnesthesiaMachineData_OxygenBottleData* dst = new cdm::AnesthesiaMachineData_OxygenBottleData();
+  SEAnesthesiaMachineOxygenBottle::Serialize(src, *dst);
+  return dst;
 }
-
-void SEAnesthesiaMachineOxygenBottle::Unload(CDM::AnesthesiaMachineOxygenBottleData& data) const
+void SEAnesthesiaMachineOxygenBottle::Serialize(const SEAnesthesiaMachineOxygenBottle& src, cdm::AnesthesiaMachineData_OxygenBottleData& dst)
 {
-  if (m_Volume != nullptr)
-    data.Volume(std::unique_ptr<CDM::ScalarVolumeData>(m_Volume->Unload()));
+  if (src.HasVolume())
+    dst.set_allocated_volume(SEScalarVolume::Unload(*src.m_Volume));
 }
 
 void SEAnesthesiaMachineOxygenBottle::Merge(const SEAnesthesiaMachineOxygenBottle& from)

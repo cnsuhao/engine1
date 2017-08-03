@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 #include "system/equipment/Anesthesia/SEAnesthesiaMachine.h"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachineChamber.h"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachineOxygenBottle.h"
-#include "bind/AnesthesiaMachineData.hxx"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 
@@ -47,29 +46,26 @@ bool SEAnesthesiaMachineConfiguration::IsValid() const
   return SEAnesthesiaMachineAction::IsValid() && (HasConfiguration() || HasConfigurationFile());
 }
 
-bool SEAnesthesiaMachineConfiguration::Load(const CDM::AnesthesiaMachineConfigurationData& in)
-{ 
-  SEAnesthesiaMachineAction::Load(in);
-  if (in.ConfigurationFile().present())
-    SetConfigurationFile(in.ConfigurationFile().get());
-  if (in.Configuration().present())
-    GetConfiguration().Load(in.Configuration().get());
-  return true;
+void SEAnesthesiaMachineConfiguration::Load(const cdm::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst)
+{
+  SEAnesthesiaMachineConfiguration::Serialize(src, dst);
+}
+void SEAnesthesiaMachineConfiguration::Serialize(const cdm::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  //jbw - how do I do configuration and file?
 }
 
-CDM::AnesthesiaMachineConfigurationData* SEAnesthesiaMachineConfiguration::Unload() const
+cdm::AnesthesiaMachineConfigurationData* SEAnesthesiaMachineConfiguration::Unload(const SEAnesthesiaMachineConfiguration& src)
 {
-  CDM::AnesthesiaMachineConfigurationData* data = new CDM::AnesthesiaMachineConfigurationData();
-  Unload(*data);
-  return data;
+  cdm::AnesthesiaMachineConfigurationData* dst = new cdm::AnesthesiaMachineConfigurationData();
+  SEAnesthesiaMachineConfiguration::Serialize(src, *dst);
+  return dst;
 }
-void SEAnesthesiaMachineConfiguration::Unload(CDM::AnesthesiaMachineConfigurationData& data) const
+void SEAnesthesiaMachineConfiguration::Serialize(const SEAnesthesiaMachineConfiguration& src, cdm::AnesthesiaMachineConfigurationData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  if (HasConfiguration())
-    data.Configuration(std::unique_ptr<CDM::AnesthesiaMachineData>(m_Configuration->Unload()));
-  else if (HasConfigurationFile())
-    data.ConfigurationFile(m_ConfigurationFile);
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  //jbw - how do I do configuration and file?
 }
 
 bool SEAnesthesiaMachineConfiguration::HasConfiguration() const

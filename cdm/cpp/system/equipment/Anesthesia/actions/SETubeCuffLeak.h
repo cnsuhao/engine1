@@ -11,8 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineAction.h"
-#include "bind/TubeCuffLeakData.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SETubeCuffLeak : public SEAnesthesiaMachineAction
 {
@@ -26,10 +24,12 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::TubeCuffLeakData& in);
-  virtual CDM::TubeCuffLeakData* Unload() const;
+  static void Load(const cdm::TubeCuffLeakData& src, SETubeCuffLeak& dst);
+  static cdm::TubeCuffLeakData* Unload(const SETubeCuffLeak& src);
 protected:
-  virtual void Unload(CDM::TubeCuffLeakData& data) const;
+  static void Serialize(const cdm::TubeCuffLeakData& src, SETubeCuffLeak& dst);
+  static void Serialize(const SETubeCuffLeak& src, cdm::TubeCuffLeakData& dst);
+
 public:
   
   virtual bool HasSeverity() const;

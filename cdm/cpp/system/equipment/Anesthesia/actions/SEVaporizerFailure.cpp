@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/actions/SEVaporizerFailure.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEVaporizerFailure::SEVaporizerFailure() : SEAnesthesiaMachineAction()
 {
@@ -40,25 +39,28 @@ bool SEVaporizerFailure::IsActive() const
   return HasSeverity() ? !m_Severity->IsZero() : false;
 }
 
-bool SEVaporizerFailure::Load(const CDM::VaporizerFailureData& in)
+void SEVaporizerFailure::Load(const cdm::VaporizerFailureData& src, SEVaporizerFailure& dst)
 {
-  SEAnesthesiaMachineAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+  SEVaporizerFailure::Serialize(src, dst);
+}
+void SEVaporizerFailure::Serialize(const cdm::VaporizerFailureData& src, SEVaporizerFailure& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::VaporizerFailureData* SEVaporizerFailure::Unload() const
+cdm::VaporizerFailureData* SEVaporizerFailure::Unload(const SEVaporizerFailure& src)
 {
-  CDM::VaporizerFailureData* data = new CDM::VaporizerFailureData();
-  Unload(*data);
-  return data;
+  cdm::VaporizerFailureData* dst = new cdm::VaporizerFailureData();
+  SEVaporizerFailure::Serialize(src, *dst);
+  return dst;
 }
-
-void SEVaporizerFailure::Unload(CDM::VaporizerFailureData& data) const
+void SEVaporizerFailure::Serialize(const SEVaporizerFailure& src, cdm::VaporizerFailureData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  if (m_Severity != nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEVaporizerFailure::HasSeverity() const

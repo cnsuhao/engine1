@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/actions/SEYPieceDisconnect.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEYPieceDisconnect::SEYPieceDisconnect() : SEAnesthesiaMachineAction()
 {
@@ -40,25 +39,28 @@ bool SEYPieceDisconnect::IsActive() const
   return HasSeverity() ? !m_Severity->IsZero() : false;
 }
 
-bool SEYPieceDisconnect::Load(const CDM::YPieceDisconnectData& in)
+void SEYPieceDisconnect::Load(const cdm::YPieceDisconnectData& src, SEYPieceDisconnect& dst)
 {
-  SEAnesthesiaMachineAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+  SEYPieceDisconnect::Serialize(src, dst);
+}
+void SEYPieceDisconnect::Serialize(const cdm::YPieceDisconnectData& src, SEYPieceDisconnect& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::YPieceDisconnectData* SEYPieceDisconnect::Unload() const
+cdm::YPieceDisconnectData* SEYPieceDisconnect::Unload(const SEYPieceDisconnect& src)
 {
-  CDM::YPieceDisconnectData* data = new CDM::YPieceDisconnectData();
-  Unload(*data);
-  return data;
+  cdm::YPieceDisconnectData* dst = new cdm::YPieceDisconnectData();
+  SEYPieceDisconnect::Serialize(src, *dst);
+  return dst;
 }
-
-void SEYPieceDisconnect::Unload(CDM::YPieceDisconnectData& data) const
+void SEYPieceDisconnect::Serialize(const SEYPieceDisconnect& src, cdm::YPieceDisconnectData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  if(m_Severity!=nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEYPieceDisconnect::HasSeverity() const

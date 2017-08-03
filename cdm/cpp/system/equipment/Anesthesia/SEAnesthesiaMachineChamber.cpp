@@ -12,11 +12,9 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachineChamber.h"
-#include "bind/AnesthesiaMachineChamberData.hxx"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/ScalarFractionData.hxx"
 
 SEAnesthesiaMachineChamber::SEAnesthesiaMachineChamber(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
@@ -37,41 +35,42 @@ void SEAnesthesiaMachineChamber::Clear()
   m_Substance=nullptr;
 }
 
-bool SEAnesthesiaMachineChamber::Load(const CDM::AnesthesiaMachineChamberData& in)
+void SEAnesthesiaMachineChamber::Load(const cdm::AnesthesiaMachineData_ChamberData& src, SEAnesthesiaMachineChamber& dst)
 {
-  if(in.State().present())
-    SetState(in.State().get());
-  if(in.SubstanceFraction().present())
-    GetSubstanceFraction().Load(in.SubstanceFraction().get());
-  if(in.Substance().present())
+  SEAnesthesiaMachineChamber::Serialize(src, dst);
+}
+void SEAnesthesiaMachineChamber::Serialize(const cdm::AnesthesiaMachineData_ChamberData& src, SEAnesthesiaMachineChamber& dst)
+{
+  dst.Clear();
+  dst.SetState(src.state());
+  if (src.has_substancefraction())
+    SEScalar0To1::Load(src.substancefraction(), dst.GetSubstanceFraction());
+  
+  if (src.substance() != nullptr)
   {
-    m_Substance = m_Substances.GetSubstance(in.Substance().get());
-    if(m_Substance==nullptr)
+    dst.m_Substance = dst.m_Substances.GetSubstance(src.substance());
+    if (dst.m_Substance == nullptr)
     {
       std::stringstream ss;
-      ss << "Do not have substance : " << in.Substance().get();
-      Error(ss);
-      return false;
+      ss << "Do not have substance : " << src.substance();
+      dst.Error(ss);
     }
   }
-  return true;
 }
 
-CDM::AnesthesiaMachineChamberData* SEAnesthesiaMachineChamber::Unload() const
+cdm::AnesthesiaMachineData_ChamberData* SEAnesthesiaMachineChamber::Unload(const SEAnesthesiaMachineChamber& src)
 {
-  CDM::AnesthesiaMachineChamberData* data = new CDM::AnesthesiaMachineChamberData();
-  Unload(*data);
-  return data;
+  cdm::AnesthesiaMachineData_ChamberData* dst = new cdm::AnesthesiaMachineData_ChamberData();
+  SEAnesthesiaMachineChamber::Serialize(src, *dst);
+  return dst;
 }
-
-void SEAnesthesiaMachineChamber::Unload(CDM::AnesthesiaMachineChamberData& data) const
+void SEAnesthesiaMachineChamber::Serialize(const SEAnesthesiaMachineChamber& src, cdm::AnesthesiaMachineData_ChamberData& dst)
 {
-  if (HasState())
-    data.State(m_State);
-  if (m_SubstanceFraction != nullptr)
-    data.SubstanceFraction(std::unique_ptr<CDM::ScalarFractionData>(m_SubstanceFraction->Unload()));
-  if (HasSubstance())
-    data.Substance(m_Substance->GetName());
+  if (src.HasState())
+    dst.set_state(src.m_State);
+  if (src.HasSubstanceFraction())
+    dst.set_allocated_substancefraction(SEScalar0To1::Unload(*src.m_SubstanceFraction));
+  dst.set_substance(src.m_Substance.GetName());
 }
 
 void SEAnesthesiaMachineChamber::Merge(const SEAnesthesiaMachineChamber& from)

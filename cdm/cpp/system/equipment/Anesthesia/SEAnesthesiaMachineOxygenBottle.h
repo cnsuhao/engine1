@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 class SEAnesthesiaMachine;
 class SESubstanceManager;
-CDM_BIND_DECL(AnesthesiaMachineOxygenBottleData)
+#include "bind/cdm/AnesthesiaMachine.pb.h"
 
 class DLL_DECL SEAnesthesiaMachineOxygenBottle : Loggable
 {
@@ -26,10 +26,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::AnesthesiaMachineOxygenBottleData& in);
-  virtual CDM::AnesthesiaMachineOxygenBottleData* Unload() const;
+  static void Load(const cdm::AnesthesiaMachineData_OxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst);
+  static cdm::AnesthesiaMachineData_OxygenBottleData* Unload(const SEAnesthesiaMachineOxygenBottle& src);
 protected:
-  virtual void Unload(CDM::AnesthesiaMachineOxygenBottleData& data) const;
+  static void Serialize(const cdm::AnesthesiaMachineData_OxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst);
+  static void Serialize(const SEAnesthesiaMachineOxygenBottle& src, cdm::AnesthesiaMachineData_OxygenBottleData& dst);
 
   virtual void Merge(const SEAnesthesiaMachineOxygenBottle& from);
 public:

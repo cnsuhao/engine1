@@ -11,8 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineAction.h"
-#include "bind/ExpiratoryValveObstructionData.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SEExpiratoryValveObstruction : public SEAnesthesiaMachineAction
 {
@@ -26,10 +24,12 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::ExpiratoryValveObstructionData& in);
-  virtual CDM::ExpiratoryValveObstructionData* Unload() const;
+  static void Load(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst);
+  static cdm::ExpiratoryValveObstructionData* Unload(const SEExpiratoryValveObstruction& src);
 protected:
-  virtual void Unload(CDM::ExpiratoryValveObstructionData& data) const;
+  static void Serialize(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst);
+  static void Serialize(const SEExpiratoryValveObstruction& src, cdm::ExpiratoryValveObstructionData& dst);
+
 public:
 
   virtual bool HasSeverity() const;

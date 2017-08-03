@@ -50,6 +50,7 @@ protected:
   *            Engine specific methodology can then update their logic.
   */
   virtual void StateChange() {};
+
 public:
 
   virtual const SEScalar* GetScalar(const std::string& name);

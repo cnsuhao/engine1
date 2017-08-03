@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/actions/SESodaLimeFailure.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SESodaLimeFailure::SESodaLimeFailure() : SEAnesthesiaMachineAction()
 {
@@ -40,25 +39,28 @@ bool SESodaLimeFailure::IsActive() const
   return HasSeverity() ? !m_Severity->IsZero() : false;
 }
 
-bool SESodaLimeFailure::Load(const CDM::SodaLimeFailureData& in)
+void SESodaLimeFailure::Load(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst)
 {
-  SEAnesthesiaMachineAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+  SESodaLimeFailure::Serialize(src, dst);
+}
+void SESodaLimeFailure::Serialize(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::SodaLimeFailureData* SESodaLimeFailure::Unload() const
+cdm::SodaLimeFailureData* SESodaLimeFailure::Unload(const SESodaLimeFailure& src)
 {
-  CDM::SodaLimeFailureData* data = new CDM::SodaLimeFailureData();
-  Unload(*data);
-  return data;
+  cdm::SodaLimeFailureData* dst = new cdm::SodaLimeFailureData();
+  SESodaLimeFailure::Serialize(src, *dst);
+  return dst;
 }
-
-void SESodaLimeFailure::Unload(CDM::SodaLimeFailureData& data) const
+void SESodaLimeFailure::Serialize(const SESodaLimeFailure& src, cdm::SodaLimeFailureData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  if (m_Severity != nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SESodaLimeFailure::HasSeverity() const

@@ -54,7 +54,7 @@ public:
     GetLogger()->Info(std::stringstream() <<"Recieved Patient Event : " << type);
   }
 
-  virtual void HandleAnesthesiaMachineEvent(CDM::enumAnesthesiaMachineEvent::value type, bool active, const SEScalarTime* time) override
+  virtual void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time) override
   {
     GetLogger()->Info(std::stringstream() <<"Recieved Anesthesia Machine Event : " << type);
   }

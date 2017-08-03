@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/actions/SEExpiratoryValveLeak.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEExpiratoryValveLeak::SEExpiratoryValveLeak() : SEAnesthesiaMachineAction()
 {
@@ -40,25 +39,28 @@ bool SEExpiratoryValveLeak::IsActive() const
   return HasSeverity() ? !m_Severity->IsZero() : false;
 }
 
-bool SEExpiratoryValveLeak::Load(const CDM::ExpiratoryValveLeakData& in)
+void SEExpiratoryValveLeak::Load(const cdm::ExpiratoryValveLeakData& src, SEExpiratoryValveLeak& dst)
 {
-  SEAnesthesiaMachineAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+  SEExpiratoryValveLeak::Serialize(src, dst);
+}
+void SEExpiratoryValveLeak::Serialize(const cdm::ExpiratoryValveLeakData& src, SEExpiratoryValveLeak& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::ExpiratoryValveLeakData* SEExpiratoryValveLeak::Unload() const
+cdm::ExpiratoryValveLeakData* SEExpiratoryValveLeak::Unload(const SEExpiratoryValveLeak& src)
 {
-  CDM::ExpiratoryValveLeakData* data = new CDM::ExpiratoryValveLeakData();
-  Unload(*data);
-  return data;
+  cdm::ExpiratoryValveLeakData* dst = new cdm::ExpiratoryValveLeakData();
+  SEExpiratoryValveLeak::Serialize(src, *dst);
+  return dst;
 }
-
-void SEExpiratoryValveLeak::Unload(CDM::ExpiratoryValveLeakData& data) const
+void SEExpiratoryValveLeak::Serialize(const SEExpiratoryValveLeak& src, cdm::ExpiratoryValveLeakData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  if (m_Severity != nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEExpiratoryValveLeak::HasSeverity() const

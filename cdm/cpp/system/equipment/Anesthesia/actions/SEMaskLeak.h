@@ -11,8 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineAction.h"
-#include "bind/MaskLeakData.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SEMaskLeak : public SEAnesthesiaMachineAction
 {
@@ -26,10 +24,12 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::MaskLeakData& in);
-  virtual CDM::MaskLeakData* Unload() const;
+  static void Load(const cdm::MaskLeakData& src, SEMaskLeak& dst);
+  static cdm::MaskLeakData* Unload(const SEMaskLeak& src);
 protected:
-  virtual void Unload(CDM::MaskLeakData& data) const;
+  static void Serialize(const cdm::MaskLeakData& src, SEMaskLeak& dst);
+  static void Serialize(const SEMaskLeak& src, cdm::MaskLeakData& dst);
+
 public:
 
   virtual bool HasSeverity() const;

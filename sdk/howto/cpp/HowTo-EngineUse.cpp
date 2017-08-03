@@ -88,7 +88,7 @@ class MyEventHandler : public SEEventHandler
 public:
   MyEventHandler(Logger *logger) : SEEventHandler(logger) {}
   virtual void HandlePatientEvent(CDM::enumPatientEvent::value type, bool active, const SEScalarTime* time = nullptr) {}
-  virtual void HandleAnesthesiaMachineEvent(CDM::enumAnesthesiaMachineEvent::value type, bool active, const SEScalarTime* time = nullptr) {}
+  virtual void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time = nullptr) {}
 };
 
 //--------------------------------------------------------------------------------------------------

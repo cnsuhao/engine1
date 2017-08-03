@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/actions/SEExpiratoryValveObstruction.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEExpiratoryValveObstruction::SEExpiratoryValveObstruction() : SEAnesthesiaMachineAction()
 {
@@ -40,25 +39,28 @@ bool SEExpiratoryValveObstruction::IsActive() const
   return HasSeverity() ? !m_Severity->IsZero() : false;
 }
 
-bool SEExpiratoryValveObstruction::Load(const CDM::ExpiratoryValveObstructionData& in)
+void SEExpiratoryValveObstruction::Load(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst)
 {
-  SEAnesthesiaMachineAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+  SEExpiratoryValveObstruction::Serialize(src, dst);
+}
+void SEExpiratoryValveObstruction::Serialize(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::ExpiratoryValveObstructionData* SEExpiratoryValveObstruction::Unload() const
+cdm::ExpiratoryValveObstructionData* SEExpiratoryValveObstruction::Unload(const SEExpiratoryValveObstruction& src)
 {
-  CDM::ExpiratoryValveObstructionData* data = new CDM::ExpiratoryValveObstructionData();
-  Unload(*data);
-  return data;
+  cdm::ExpiratoryValveObstructionData* dst = new cdm::ExpiratoryValveObstructionData();
+  SEExpiratoryValveObstruction::Serialize(src, *dst);
+  return dst;
 }
-
-void SEExpiratoryValveObstruction::Unload(CDM::ExpiratoryValveObstructionData& data) const
+void SEExpiratoryValveObstruction::Serialize(const SEExpiratoryValveObstruction& src, cdm::ExpiratoryValveObstructionData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  if (m_Severity != nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEExpiratoryValveObstruction::HasSeverity() const

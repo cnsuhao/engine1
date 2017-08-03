@@ -25,8 +25,6 @@ public:
 
   virtual bool IsValid() const = 0;
 
-  static void Load(const cdm::PatientConditionData& src, SEPatientCondition& dst);
-  static cdm::PatientConditionData* Unload(const SEPatientCondition& src);
 protected:
   static void Serialize(const cdm::PatientConditionData& src, SEPatientCondition& dst);
   static void Serialize(const SEPatientCondition& src, cdm::PatientConditionData& dst);

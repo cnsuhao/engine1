@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/actions/SEOxygenTankPressureLoss.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEOxygenTankPressureLoss::SEOxygenTankPressureLoss() : SEAnesthesiaMachineAction()
 {
@@ -43,24 +42,26 @@ void SEOxygenTankPressureLoss::SetActive(bool b)
   m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
 }
 
-bool SEOxygenTankPressureLoss::Load(const CDM::OxygenTankPressureLossData& in)
+void SEOxygenTankPressureLoss::Load(const cdm::OxygenTankPressureLossData& src, SEOxygenTankPressureLoss& dst)
 {
-  SEAnesthesiaMachineAction::Load(in);
-  SetActive(in.State()==cdm::eSwitch::On?true:false);
-  return true;
+  SEOxygenTankPressureLoss::Serialize(src, dst);
+}
+void SEOxygenTankPressureLoss::Serialize(const cdm::OxygenTankPressureLossData& src, SEOxygenTankPressureLoss& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  dst.SetActive(src.state() == cdm::eSwitch::On ? true : false);
 }
 
-CDM::OxygenTankPressureLossData* SEOxygenTankPressureLoss::Unload() const
+cdm::OxygenTankPressureLossData* SEOxygenTankPressureLoss::Unload(const SEOxygenTankPressureLoss& src)
 {
-  CDM::OxygenTankPressureLossData* data = new CDM::OxygenTankPressureLossData();
-  Unload(*data);
-  return data;
+  cdm::OxygenTankPressureLossData* dst = new cdm::OxygenTankPressureLossData();
+  SEOxygenTankPressureLoss::Serialize(src, *dst);
+  return dst;
 }
-
-void SEOxygenTankPressureLoss::Unload(CDM::OxygenTankPressureLossData& data) const
+void SEOxygenTankPressureLoss::Serialize(const SEOxygenTankPressureLoss& src, cdm::OxygenTankPressureLossData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  data.State(IsActive() ? cdm::eSwitch::On : cdm::eSwitch::Off);
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  dst.set_state(src.IsActive() ? cdm::eSwitch::On : cdm::eSwitch::Off);
 }
 
 void SEOxygenTankPressureLoss::ToString(std::ostream &str) const

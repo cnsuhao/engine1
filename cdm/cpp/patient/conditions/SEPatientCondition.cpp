@@ -33,21 +33,11 @@ bool SEPatientCondition::IsValid() const
   return SECondition::IsValid();
 }
 
-void SEPatientCondition::Load(const cdm::PatientConditionData& src, SEPatientCondition& dst)
-{
-  SEPatientCondition::Serialize(src, dst);
-}
 void SEPatientCondition::Serialize(const cdm::PatientConditionData& src, SEPatientCondition& dst)
 {
   dst.Clear();
 }
 
-cdm::PatientConditionData* SEPatientCondition::Unload(const SEPatientCondition& src)
-{
-  cdm::PatientConditionData* dst = new cdm::PatientConditionData();
-  SEPatientCondition::Serialize(src, *dst);
-  return dst;
-}
 void SEPatientCondition::Serialize(const SEPatientCondition& src, cdm::PatientConditionData& dst)
 {
 

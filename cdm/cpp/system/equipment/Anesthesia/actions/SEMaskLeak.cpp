@@ -40,25 +40,28 @@ bool SEMaskLeak::IsActive() const
   return HasSeverity() ? !m_Severity->IsZero() : false;
 }
 
-bool SEMaskLeak::Load(const CDM::MaskLeakData& in)
+void SEMaskLeak::Load(const cdm::MaskLeakData& src, SEMaskLeak& dst)
 {
-  SEAnesthesiaMachineAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+  SEMaskLeak::Serialize(src, dst);
+}
+void SEMaskLeak::Serialize(const cdm::MaskLeakData& src, SEMaskLeak& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::MaskLeakData* SEMaskLeak::Unload() const
+cdm::MaskLeakData* SEMaskLeak::Unload(const SEMaskLeak& src)
 {
-  CDM::MaskLeakData* data = new CDM::MaskLeakData();
-  Unload(*data);
-  return data;
+  cdm::MaskLeakData* dst = new cdm::MaskLeakData();
+  SEMaskLeak::Serialize(src, *dst);
+  return dst;
 }
-
-void SEMaskLeak::Unload(CDM::MaskLeakData& data) const
+void SEMaskLeak::Serialize(const SEMaskLeak& src, cdm::MaskLeakData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  if (m_Severity != nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEMaskLeak::HasSeverity() const

@@ -11,8 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineAction.h"
-#include "bind/OxygenWallPortPressureLossData.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SEOxygenWallPortPressureLoss : public SEAnesthesiaMachineAction
 {
@@ -26,10 +24,12 @@ public:
   virtual bool IsActive() const;
   virtual void SetActive(bool b);
 
-  virtual bool Load(const CDM::OxygenWallPortPressureLossData& in);
-  virtual CDM::OxygenWallPortPressureLossData* Unload() const;
+  static void Load(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst);
+  static cdm::OxygenWallPortPressureLossData* Unload(const SEOxygenWallPortPressureLoss& src);
 protected:
-  virtual void Unload(CDM::OxygenWallPortPressureLossData& data) const;
+  static void Serialize(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst);
+  static void Serialize(const SEOxygenWallPortPressureLoss& src, cdm::OxygenWallPortPressureLossData& dst);
+
 public:
 
   virtual void ToString(std::ostream &str) const;

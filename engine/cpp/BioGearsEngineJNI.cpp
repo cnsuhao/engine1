@@ -561,7 +561,7 @@ void BioGearsEngineJNI::HandlePatientEvent(CDM::enumPatientEvent::value type, bo
     jniEnv->CallVoidMethod(jniObj, m, 0, type, active, time != nullptr ? time->GetValue(TimeUnit::s) : 0);
   }
 }
-void BioGearsEngineJNI::HandleAnesthesiaMachineEvent(CDM::enumAnesthesiaMachineEvent::value type, bool active, const SEScalarTime* time)
+void BioGearsEngineJNI::HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
