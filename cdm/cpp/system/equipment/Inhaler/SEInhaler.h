@@ -56,7 +56,7 @@ protected:
 
 public:
 
-  bool LoadFile(const std::string& file);
+  bool LoadFile(const std::string& inhalerFile);
 
   virtual cdm::eSwitch GetState() const;
   virtual void SetState(cdm::eSwitch name);

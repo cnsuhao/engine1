@@ -20,6 +20,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
+#include <google/protobuf/text_format.h>
 
 SEInhaler::SEInhaler(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {
@@ -128,21 +129,18 @@ void SEInhaler::ProcessConfiguration(const SEInhalerConfiguration& config)
   StateChange();
 }
 
-bool SEInhaler::LoadFile(const std::string& file)
+bool SEInhaler::LoadFile(const std::string& inhalerFile)
 {
-  CDM::InhalerData* pData;
-  std::unique_ptr<CDM::ObjectData> data;
+  cdm::InhalerData src;
+  std::ifstream file_stream(inhalerFile, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  SEInhaler::Load(src, *this);
+  return true;
 
-  data = Serializer::ReadFile(file,GetLogger());
-  pData = dynamic_cast<CDM::InhalerData*>(data.get());
-  if (pData == nullptr)
-  {
-    std::stringstream ss;
-    ss << "Inhaler file could not be read : " << file << std::endl;
-    Error(ss);
-    return false;
-  }
-  return Load(*pData);
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
 }
 
 cdm::eSwitch SEInhaler::GetState() const
