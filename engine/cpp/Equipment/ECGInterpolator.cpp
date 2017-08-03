@@ -140,7 +140,7 @@ void SEElectroCardioGramInterpolator::Interpolate(SEElectroCardioGramInterpolato
     }
 }
 
-bool SEElectroCardioGramInterpolator::CanInterpolateLeadPotential(CDM::ElectroCardioGramWaveformLeadNumber lead, CDM::enumHeartRhythm::value rhythm) const
+bool SEElectroCardioGramInterpolator::CanInterpolateLeadPotential(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm) const
 {
   if (!HasWaveform(lead, rhythm))
     return false;
@@ -154,7 +154,7 @@ void SEElectroCardioGramInterpolator::SetLeadElectricPotential(CDM::ElectroCardi
   m_Leads[lead] = &ep;
 }
 
-bool SEElectroCardioGramInterpolator::StartNewCycle(CDM::enumHeartRhythm::value rhythm)
+bool SEElectroCardioGramInterpolator::StartNewCycle(cdm::eHeartRhythm rhythm)
 {
   for (auto l2rw : m_Waveforms)
   {
@@ -212,7 +212,7 @@ void SEElectroCardioGramInterpolator::CalculateWaveformsElectricPotential()
     
 }
 
-bool SEElectroCardioGramInterpolator::HasWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, CDM::enumHeartRhythm::value rhythm) const
+bool SEElectroCardioGramInterpolator::HasWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm) const
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())
@@ -222,7 +222,7 @@ bool SEElectroCardioGramInterpolator::HasWaveform(CDM::ElectroCardioGramWaveform
     return false;
   return w->second != nullptr;
 }
-SEElectroCardioGramInterpolatorWaveform& SEElectroCardioGramInterpolator::GetWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, CDM::enumHeartRhythm::value rhythm)
+SEElectroCardioGramInterpolatorWaveform& SEElectroCardioGramInterpolator::GetWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm)
 {
   SEElectroCardioGramInterpolatorWaveform* w = m_Waveforms[lead][rhythm];
   if (w == nullptr)
@@ -232,7 +232,7 @@ SEElectroCardioGramInterpolatorWaveform& SEElectroCardioGramInterpolator::GetWav
   }
   return *w;
 }
-const SEElectroCardioGramInterpolatorWaveform* SEElectroCardioGramInterpolator::GetWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, CDM::enumHeartRhythm::value rhythm) const
+const SEElectroCardioGramInterpolatorWaveform* SEElectroCardioGramInterpolator::GetWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm) const
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())
@@ -242,7 +242,7 @@ const SEElectroCardioGramInterpolatorWaveform* SEElectroCardioGramInterpolator::
     return nullptr;
   return w->second;
 }
-void SEElectroCardioGramInterpolator::RemoveWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, CDM::enumHeartRhythm::value rhythm)
+void SEElectroCardioGramInterpolator::RemoveWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm)
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())

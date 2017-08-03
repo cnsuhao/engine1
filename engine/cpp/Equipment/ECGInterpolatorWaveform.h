@@ -35,8 +35,8 @@ public:
   virtual void SetLeadNumber(CDM::ElectroCardioGramWaveformLeadNumber n);
   virtual void InvalidateLeadNumber();
 
-  virtual CDM::enumHeartRhythm::value GetRhythm() const;
-  virtual void SetRhythm(CDM::enumHeartRhythm::value name);
+  virtual cdm::eHeartRhythm GetRhythm() const;
+  virtual void SetRhythm(cdm::eHeartRhythm name);
   virtual bool HasRhythm() const;
   virtual void InvalidateRhythm();
 
@@ -53,7 +53,7 @@ public:
 protected:
 
   CDM::ElectroCardioGramWaveformLeadNumber m_LeadNumber;
-  CDM::enumHeartRhythm::value              m_Rhythm;
+  cdm::eHeartRhythm              m_Rhythm;
   SEScalarTime*                            m_TimeStep;
   SEFunctionElectricPotentialVsTime*       m_Data;
   std::vector<unsigned int> m_ActiveIndicies;
