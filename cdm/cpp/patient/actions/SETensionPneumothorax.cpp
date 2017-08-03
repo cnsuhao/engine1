@@ -45,6 +45,7 @@ void SETensionPneumothorax::Serialize(const cdm::TensionPneumothoraxData& src, S
   dst.SetSide(src.side());
   if (src.has_severity())
     SEScalar0To1::Load(src.severity(), dst.GetSeverity());
+  //jbw - Shouldn't we do something with state?
 }
 
 cdm::TensionPneumothoraxData* SETensionPneumothorax::Unload(const SETensionPneumothorax& src)
@@ -62,6 +63,7 @@ void SETensionPneumothorax::Serialize(const SETensionPneumothorax& src, cdm::Ten
     dst.set_side(src.m_Side);
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+  //jbw - Shouldn't we do something with state?
 }
 
 bool SETensionPneumothorax::IsValid() const

@@ -11,8 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineAction.h"
-#include "bind/SodaLimeFailureData.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SESodaLimeFailure : public SEAnesthesiaMachineAction
 {
@@ -26,10 +24,12 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::SodaLimeFailureData& in);
-  virtual CDM::SodaLimeFailureData* Unload() const;
+  static void Load(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst);
+  static cdm::SodaLimeFailureData* Unload(const SESodaLimeFailure& src);
 protected:
-  virtual void Unload(CDM::SodaLimeFailureData& data) const;
+  static void Serialize(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst);
+  static void Serialize(const SESodaLimeFailure& src, cdm::SodaLimeFailureData& dst);
+
 public:
   
   virtual bool HasSeverity() const;

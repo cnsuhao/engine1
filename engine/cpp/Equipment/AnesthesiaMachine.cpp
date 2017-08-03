@@ -193,7 +193,7 @@ void AnesthesiaMachine::StateChange()
 /// If the enum is set to tube, then the machine is connected to the tube
 /// If the enum is set to off, the airway mode is set to free.
 //--------------------------------------------------------------------------------------------------
-void AnesthesiaMachine::SetConnection(CDM::enumAnesthesiaMachineConnection::value c)
+void AnesthesiaMachine::SetConnection(cdm::AnesthesiaMachineData_eConnection c)
 {
   if (m_Connection == c)
     return; // No Change
@@ -508,7 +508,7 @@ void AnesthesiaMachine::CalculateSourceStatus()
     else if (dBottle1Volume_L <= 0.0) //Empty
     {
       /// \event %AnesthesiaMachine: Oxygen bottle 1 is exhausted. There is no longer any oxygen to provide via the anesthesia machine.
-      SetEvent(CDM::enumAnesthesiaMachineEvent::OxygenBottle1Exhausted, true, m_data.GetSimulationTime());
+      SetEvent(cdm::AnesthesiaMachineData_eEvent_OxygenBottleOneExhausted, true, m_data.GetSimulationTime());
       dBottle1Volume_L = 0.0;
     }
     GetOxygenBottleOne().GetVolume().SetValue(dBottle1Volume_L, VolumeUnit::L);
@@ -523,7 +523,7 @@ void AnesthesiaMachine::CalculateSourceStatus()
     else if (dBottle2Volume_L <= 0.0)
     {
       /// \event %AnesthesiaMachine: Oxygen bottle 2 is exhausted. There is no longer any oxygen to provide via the anesthesia machine.
-      SetEvent(CDM::enumAnesthesiaMachineEvent::OxygenBottle2Exhausted, true, m_data.GetSimulationTime());
+      SetEvent(cdm::AnesthesiaMachineData_eEvent_OxygenBottleTwoExhausted, true, m_data.GetSimulationTime());
       dBottle2Volume_L = 0.0;
     }
     GetOxygenBottleTwo().GetVolume().SetValue(dBottle2Volume_L, VolumeUnit::L);
@@ -751,14 +751,14 @@ void AnesthesiaMachine::CheckReliefValve()
   m_pEnvironmentToReliefValve->GetNextPressureSource().SetValue(dValvePressure_cmH2O, PressureUnit::cmH2O);
 
   //Check to see if it reached the pressure threshold  
-  if (!IsEventActive(CDM::enumAnesthesiaMachineEvent::ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == CDM::enumOpenClosed::Closed)
+  if (!IsEventActive(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == CDM::enumOpenClosed::Closed)
   {
     /// \event %AnesthesiaMachine: Relief Valve is active. The pressure setting has been exceeded.
-    SetEvent(CDM::enumAnesthesiaMachineEvent::ReliefValveActive, true, m_data.GetSimulationTime());
+    SetEvent(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive, true, m_data.GetSimulationTime());
   }
-  else if (IsEventActive(CDM::enumAnesthesiaMachineEvent::ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == CDM::enumOpenClosed::Open)
+  else if (IsEventActive(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == CDM::enumOpenClosed::Open)
   {
-    SetEvent(CDM::enumAnesthesiaMachineEvent::ReliefValveActive, false, m_data.GetSimulationTime());
+    SetEvent(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive, false, m_data.GetSimulationTime());
   }
 
   //Always try to let it run without the relief valve operational (i.e. closed (i.e. allowing flow)), otherwise it will always stay shorted

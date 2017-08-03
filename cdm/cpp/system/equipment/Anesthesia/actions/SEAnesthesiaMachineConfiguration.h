@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineAction.h"
-#include "bind/AnesthesiaMachineConfigurationData.hxx"
 class SEAnesthesiaMachine;
 class SESubstanceManager;
 
@@ -26,10 +25,11 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::AnesthesiaMachineConfigurationData& in);
-  virtual CDM::AnesthesiaMachineConfigurationData* Unload() const;
+  static void Load(const cdm::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst);
+  static cdm::AnesthesiaMachineConfigurationData* Unload(const SEAnesthesiaMachineConfiguration& src);
 protected:
-  virtual void Unload(CDM::AnesthesiaMachineConfigurationData& data) const;
+  static void Serialize(const cdm::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst);
+  static void Serialize(const SEAnesthesiaMachineConfiguration& src, cdm::AnesthesiaMachineConfigurationData& dst);
 
 public:
 

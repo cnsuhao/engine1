@@ -25,6 +25,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceManager.h"
+#include <google/protobuf/text_format.h>
 
 
 SEEnvironmentalConditions::SEEnvironmentalConditions(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
@@ -261,29 +262,16 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
 
 bool SEEnvironmentalConditions::LoadFile(const std::string& environmentFile)
 {
-  cdm::EnvironmentConditionData* eData;
-  //jbw - How do you load a file?
-  //std::unique_ptr<CDM::ObjectData> data;
-
-  //std::string eFile = environmentFile;
-  //if (eFile.find("/environments") == std::string::npos)
-  //{
-  //  eFile = "./environments/";
-  //  eFile += environmentFile;
-  //}
-  //data = Serializer::ReadFile(eFile, GetLogger());
-  //eData = dynamic_cast<CDM::EnvironmentalConditionsData*>(data.get());
-  //if (eData == nullptr)
-  //{
-  //  std::stringstream ss;
-  //  ss << "Environmental Conditions file could not be read : " << environmentFile << std::endl;
-  //  Error(ss);
-  //  return false;
-  //}
-  //if (!Load(*eData))
-  //  return false;
-
+  cdm::EnvironmentConditionData src;
+  std::ifstream file_stream(environmentFile, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  SEEnvironmentalConditions::Load(src, *this);
   return true;
+
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
 }
 
 cdm::EnvironmentData_eSurroundingType SEEnvironmentalConditions::GetSurroundingType() const

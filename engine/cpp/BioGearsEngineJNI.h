@@ -37,7 +37,7 @@ public:
   void PushData(double time_s);
 
   void HandlePatientEvent(CDM::enumPatientEvent::value type, bool active, const SEScalarTime* time = nullptr);
-  void HandleAnesthesiaMachineEvent(CDM::enumAnesthesiaMachineEvent::value type, bool active, const SEScalarTime* time = nullptr);
+  void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time = nullptr);
 
   JNIEnv*    jniEnv;
   jobject    jniObj;

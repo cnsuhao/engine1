@@ -14,8 +14,7 @@ specific language governing permissions and limitations under the License.
 class SESubstance;
 class SESubstanceManager;
 class SEAnesthesiaMachine;
-CDM_BIND_DECL(AnesthesiaMachineChamberData)
-#include "bind/enumOnOff.hxx"
+#include "bind/cdm/AnesthesiaMachine.pb.h"
 
 class DLL_DECL SEAnesthesiaMachineChamber : Loggable
 {
@@ -28,10 +27,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::AnesthesiaMachineChamberData& in);
-  virtual CDM::AnesthesiaMachineChamberData* Unload() const;
+  static void Load(const cdm::AnesthesiaMachineData_ChamberData& src, SEAnesthesiaMachineChamber& dst);
+  static cdm::AnesthesiaMachineData_ChamberData* Unload(const SEAnesthesiaMachineChamber& src);
 protected:
-  virtual void Unload(CDM::AnesthesiaMachineChamberData& data) const;
+  static void Serialize(const cdm::AnesthesiaMachineData_ChamberData& src, SEAnesthesiaMachineChamber& dst);
+  static void Serialize(const SEAnesthesiaMachineChamber& src, cdm::AnesthesiaMachineData_ChamberData& dst);
 
   virtual void Merge(const SEAnesthesiaMachineChamber& from);
 public:

@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "system/equipment/Anesthesia/actions/SEInspiratoryValveLeak.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEInspiratoryValveLeak::SEInspiratoryValveLeak() : SEAnesthesiaMachineAction()
 {
@@ -40,25 +39,28 @@ bool SEInspiratoryValveLeak::IsActive() const
   return HasSeverity() ? !m_Severity->IsZero() : false;
 }
 
-bool SEInspiratoryValveLeak::Load(const CDM::InspiratoryValveLeakData& in)
+void SEInspiratoryValveLeak::Load(const cdm::InspiratoryValveLeakData& src, SEInspiratoryValveLeak& dst)
 {
-  SEAnesthesiaMachineAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+  SEInspiratoryValveLeak::Serialize(src, dst);
+}
+void SEInspiratoryValveLeak::Serialize(const cdm::InspiratoryValveLeakData& src, SEInspiratoryValveLeak& dst)
+{
+  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::InspiratoryValveLeakData* SEInspiratoryValveLeak::Unload() const
+cdm::InspiratoryValveLeakData* SEInspiratoryValveLeak::Unload(const SEInspiratoryValveLeak& src)
 {
-  CDM::InspiratoryValveLeakData* data = new CDM::InspiratoryValveLeakData();
-  Unload(*data);
-  return data;
+  cdm::InspiratoryValveLeakData* dst = new cdm::InspiratoryValveLeakData();
+  SEInspiratoryValveLeak::Serialize(src, *dst);
+  return dst;
 }
-
-void SEInspiratoryValveLeak::Unload(CDM::InspiratoryValveLeakData& data) const
+void SEInspiratoryValveLeak::Serialize(const SEInspiratoryValveLeak& src, cdm::InspiratoryValveLeakData& dst)
 {
-  SEAnesthesiaMachineAction::Unload(data);
-  if (m_Severity != nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEInspiratoryValveLeak::HasSeverity() const

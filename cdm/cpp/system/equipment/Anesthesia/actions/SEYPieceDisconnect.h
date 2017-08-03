@@ -11,8 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #pragma once
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineAction.h"
-#include "bind/YPieceDisconnectData.hxx"
-#include "bind/enumOnOff.hxx"
 
 class DLL_DECL SEYPieceDisconnect : public SEAnesthesiaMachineAction
 {
@@ -26,10 +24,12 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool Load(const CDM::YPieceDisconnectData& in);
-  virtual CDM::YPieceDisconnectData* Unload() const;
+  static void Load(const cdm::YPieceDisconnectData& src, SEYPieceDisconnect& dst);
+  static cdm::YPieceDisconnectData* Unload(const SEYPieceDisconnect& src);
 protected:
-  virtual void Unload(CDM::YPieceDisconnectData& data) const;
+  static void Serialize(const cdm::YPieceDisconnectData& src, SEYPieceDisconnect& dst);
+  static void Serialize(const SEYPieceDisconnect& src, cdm::YPieceDisconnectData& dst);
+
 public:
 
   virtual bool HasSeverity() const;

@@ -63,6 +63,7 @@ void SEAppliedTemperature::Serialize(const cdm::EnvironmentData_AppliedTemperatu
     SEScalarArea::Load(src.surfacearea(), dst.GetSurfaceArea());
   if (src.has_surfaceareafraction())
     SEScalar0To1::Load(src.surfaceareafraction(), dst.GetSurfaceAreaFraction());
+  dst.SetState(src.state());
 }
 
 cdm::EnvironmentData_AppliedTemperatureData* SEAppliedTemperature::Unload(const SEAppliedTemperature& src)
@@ -80,6 +81,7 @@ void SEAppliedTemperature::Serialize(const SEAppliedTemperature& src, cdm::Envir
     dst.set_allocated_surfacearea(SEScalarArea::Unload(*src.m_SurfaceArea));
   if (src.HasSurfaceAreaFraction())
     dst.set_allocated_surfaceareafraction(SEScalar0To1::Unload(*src.m_SurfaceAreaFraction));
+  dst.set_state(src.m_State);
 }
 
 bool SEAppliedTemperature::HasTemperature() const

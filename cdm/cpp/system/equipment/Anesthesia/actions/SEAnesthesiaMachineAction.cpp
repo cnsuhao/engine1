@@ -32,20 +32,12 @@ bool SEAnesthesiaMachineAction::IsValid() const
   return SEAction::IsValid();
 }
 
-bool SEAnesthesiaMachineAction::Load(const CDM::AnesthesiaMachineActionData& in)
+void SEAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineActionData& src, SEAnesthesiaMachineAction& dst)
 {
-  SEAction::Load(in);
-  return true;
+  dst.Clear();
 }
 
-CDM::AnesthesiaMachineActionData* SEAnesthesiaMachineAction::Unload() const
+void SEAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineAction& src, cdm::AnesthesiaMachineActionData& dst)
 {
-  CDM::AnesthesiaMachineActionData* data = new CDM::AnesthesiaMachineActionData();
-  Unload(*data);
-  return data;
-}
 
-void SEAnesthesiaMachineAction::Unload(CDM::AnesthesiaMachineActionData& data) const
-{
-  SEAction::Unload(data);
 }
