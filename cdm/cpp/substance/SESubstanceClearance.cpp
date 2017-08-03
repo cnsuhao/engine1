@@ -202,7 +202,6 @@ void SESubstanceClearance::Serialize(const SESubstanceClearance& src, cdm::Subst
 {
   if (src.HasSystemicClearance())
   {
-    //jbw - How does this stuff work?    
     cdm::SubstanceData_SystemicClearanceData* sys = new cdm::SubstanceData_SystemicClearanceData();
     dst.set_allocated_systemicclearance(sys);
 

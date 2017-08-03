@@ -482,10 +482,7 @@ void SEAction::Load(const cdm::ActionData& src, SEAction& dst)
 void SEAction::Serialize(const cdm::ActionData& src, SEAction& dst)
 {
   dst.Clear();
-  
-  //jbw - how does this work?
-  if (!src.comment().empty())
-    dst.GetComment().empty();
+  dst.SetComment(src.comment());
 }
 
 cdm::ActionData* SEAction::Unload(const SEAction& src)
@@ -497,9 +494,7 @@ cdm::ActionData* SEAction::Unload(const SEAction& src)
 
 void SEAction::Serialize(const SEAction& src, cdm::ActionData& dst)
 {
-  //jbw - how does this work?
-  //if (HasComment())
-  //  src.GetComment(m_Comment);
+  dst.set_comment(src.m_Comment);
 }
 
 

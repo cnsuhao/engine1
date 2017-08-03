@@ -41,5 +41,4 @@ public:
 
 protected:
   SEScalarForce*           m_Force;
-  //jbw - Why is there no ForcePeriod (like in ForceScale)?
 };
