@@ -42,7 +42,7 @@ void SEImpairedAlveolarExchange::Load(const cdm::ImpairedAlveolarExchangeData& s
 }
 void SEImpairedAlveolarExchange::Serialize(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst)
 {
-  dst.Clear();
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
   if (src.has_impairedfraction())
     SEScalar0To1::Load(src.impairedfraction(), dst.GetImpairedFraction());
   if (src.has_impairedsurfacearea())
@@ -57,6 +57,7 @@ cdm::ImpairedAlveolarExchangeData* SEImpairedAlveolarExchange::Unload(const SEIm
 }
 void SEImpairedAlveolarExchange::Serialize(const SEImpairedAlveolarExchange& src, cdm::ImpairedAlveolarExchangeData& dst)
 {
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
   if (src.HasImpairedFraction())
     dst.set_allocated_impairedfraction(SEScalar0To1::Unload(*src.m_ImpairedFraction));
   if (src.HasImpairedSurfaceArea())

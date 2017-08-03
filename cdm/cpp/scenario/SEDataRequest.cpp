@@ -79,6 +79,8 @@ bool SEDataRequest::IsValid()
         return false;
       return true;
     }
+    default:
+      return true;//??
   }
 }
 
@@ -97,7 +99,7 @@ void SEDataRequest::Serialize(const cdm::DataRequestData& src, SEDataRequest& ds
   SEDecimalFormat::Serialize(src.decimalformat(),dst);
   dst.m_CompartmentName = src.compartmentname();
   dst.m_SubstanceName = src.substancename();
-  dst.m_PropertyName = src.name();
+  dst.m_PropertyName = src.propertyname();
   dst.m_RequestedUnit = src.unit();
 }
 
@@ -116,7 +118,7 @@ void SEDataRequest::Serialize(const SEDataRequest& src, cdm::DataRequestData& ds
   if(src.HasSubstanceName())
     dst.set_substancename(src.m_SubstanceName);
 
-  dst.set_name(src.m_PropertyName);
+  dst.set_propertyname(src.m_PropertyName);
   if (src.HasUnit())
     dst.set_unit(src.m_Unit->GetString());
   else if (src.HasRequestedUnit())

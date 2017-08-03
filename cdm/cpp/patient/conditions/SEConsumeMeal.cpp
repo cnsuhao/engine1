@@ -45,10 +45,10 @@ void SEConsumeMeal::Load(const cdm::ConsumeMealData& src, SEConsumeMeal& dst)
 }
 void SEConsumeMeal::Serialize(const cdm::ConsumeMealData& src, SEConsumeMeal& dst)
 {
-  dst.Clear();
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
   if (src.has_meal())
     SEMeal::Load(src.meal(), dst.GetMeal());
-  if(src.has_mealfile())
+  else
     dst.SetMealFile(src.mealfile());
 }
 
@@ -60,9 +60,10 @@ cdm::ConsumeMealData* SEConsumeMeal::Unload(const SEConsumeMeal& src)
 }
 void SEConsumeMeal::Serialize(const SEConsumeMeal& src, cdm::ConsumeMealData& dst)
 {
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
   if (src.HasMeal())
     dst.set_allocated_meal(SEMeal::Unload(*src.m_Meal));
-  if (src.HasMealFile())
+  else if (src.HasMealFile())
     dst.set_mealfile(src.m_MealFile);
 }
 

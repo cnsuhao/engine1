@@ -45,7 +45,7 @@ void SELobarPneumonia::Load(const cdm::LobarPneumoniaData& src, SELobarPneumonia
 }
 void SELobarPneumonia::Serialize(const cdm::LobarPneumoniaData& src, SELobarPneumonia& dst)
 {
-  dst.Clear();
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
   if (src.has_severity())
     SEScalar0To1::Load(src.severity(), dst.GetSeverity());
   if (src.has_leftlungaffected())
@@ -62,6 +62,7 @@ cdm::LobarPneumoniaData* SELobarPneumonia::Unload(const SELobarPneumonia& src)
 }
 void SELobarPneumonia::Serialize(const SELobarPneumonia& src, cdm::LobarPneumoniaData& dst)
 {
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
   if (src.HasRightLungAffected())

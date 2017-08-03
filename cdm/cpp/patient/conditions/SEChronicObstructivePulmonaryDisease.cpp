@@ -44,7 +44,7 @@ void SEChronicObstructivePulmonaryDisease::Load(const cdm::ChronicObstructivePul
 }
 void SEChronicObstructivePulmonaryDisease::Serialize(const cdm::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst)
 {
-  dst.Clear();
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
   if (src.has_bronchitisseverity())
     SEScalar0To1::Load(src.bronchitisseverity(), dst.GetBronchitisSeverity());
   if (src.has_emphysemaseverity())
@@ -59,6 +59,7 @@ cdm::ChronicObstructivePulmonaryDiseaseData* SEChronicObstructivePulmonaryDiseas
 }
 void SEChronicObstructivePulmonaryDisease::Serialize(const SEChronicObstructivePulmonaryDisease& src, cdm::ChronicObstructivePulmonaryDiseaseData& dst)
 {
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
   if (src.HasBronchitisSeverity())
     dst.set_allocated_bronchitisseverity(SEScalar0To1::Unload(*src.m_BronchitisSeverity));
   if (src.HasEmphysemaSeverity())

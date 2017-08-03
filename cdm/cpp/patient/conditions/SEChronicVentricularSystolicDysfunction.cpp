@@ -38,7 +38,7 @@ void SEChronicVentricularSystolicDysfunction::Load(const cdm::ChronicVentricular
 }
 void SEChronicVentricularSystolicDysfunction::Serialize(const cdm::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst)
 {
-  dst.Clear();
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
 }
 
 cdm::ChronicVentricularSystolicDysfunctionData* SEChronicVentricularSystolicDysfunction::Unload(const SEChronicVentricularSystolicDysfunction& src)
@@ -49,7 +49,7 @@ cdm::ChronicVentricularSystolicDysfunctionData* SEChronicVentricularSystolicDysf
 }
 void SEChronicVentricularSystolicDysfunction::Serialize(const SEChronicVentricularSystolicDysfunction& src, cdm::ChronicVentricularSystolicDysfunctionData& dst)
 {
-
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
 }
 
 void SEChronicVentricularSystolicDysfunction::ToString(std::ostream &str) const

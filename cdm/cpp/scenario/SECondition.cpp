@@ -12,31 +12,20 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "scenario/SECondition.h"
-#include "bind/ConditionData.hxx"
 
 #include "substance/SESubstanceManager.h"
 //Patient Conditions
 #include "patient/conditions/SEChronicAnemia.h"
-#include "bind/ChronicAnemiaData.hxx"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "bind/ChronicObstructivePulmonaryDiseaseData.hxx"
 #include "patient/conditions/SEChronicHeartFailure.h"
-#include "bind/ChronicHeartFailureData.hxx"
 #include "patient/conditions/SEChronicRenalStenosis.h"
-#include "bind/ChronicRenalStenosisData.hxx"
 #include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
-#include "bind/ChronicVentricularSystolicDysfunctionData.hxx"
 #include "patient/conditions/SEConsumeMeal.h"
-#include "bind/ConsumeMealData.hxx"
 #include "patient/conditions/SELobarPneumonia.h"
-#include "bind/LobarPneumoniaData.hxx"
 #include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "bind/ChronicPericardialEffusionData.hxx"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
-#include "bind/ImpairedAlveolarExchangeData.hxx"
 // Environment Conditions
-#include "system/environment/conditions/SEInitialEnvironment.h"
-#include "bind/InitialEnvironmentData.hxx"
+#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 
 SECondition::SECondition() : Loggable()
 {

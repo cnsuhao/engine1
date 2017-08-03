@@ -41,7 +41,7 @@ void SEChronicAnemia::Load(const cdm::ChronicAnemiaData& src, SEChronicAnemia& d
 }
 void SEChronicAnemia::Serialize(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst)
 {
-  dst.Clear();
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
   if (src.has_reductionfactor())
     SEScalar0To1::Load(src.reductionfactor(), dst.GetReductionFactor());
 }
@@ -54,6 +54,7 @@ cdm::ChronicAnemiaData* SEChronicAnemia::Unload(const SEChronicAnemia& src)
 }
 void SEChronicAnemia::Serialize(const SEChronicAnemia& src, cdm::ChronicAnemiaData& dst)
 {
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
   if (src.HasReductionFactor())
     dst.set_allocated_reductionfactor(SEScalar0To1::Unload(*src.m_ReductionFactor));
 }

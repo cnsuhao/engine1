@@ -32,23 +32,4 @@ bool SEChronicHeartFailure::IsValid() const
   return SEPatientCondition::IsValid();
 }
 
-void SEChronicHeartFailure::Load(const cdm::ChronicHeartFailureData& src, SEChronicHeartFailure& dst)
-{
-  SEChronicHeartFailure::Serialize(src, dst);
-}
-void SEChronicHeartFailure::Serialize(const cdm::ChronicHeartFailureData& src, SEChronicHeartFailure& dst)
-{
-  dst.Clear();
-}
-
-cdm::ChronicHeartFailureData* SEChronicHeartFailure::Unload(const SEChronicHeartFailure& src)
-{
-  cdm::ChronicHeartFailureData* dst = new cdm::ChronicHeartFailureData();
-  SEChronicHeartFailure::Serialize(src, *dst);
-  return dst;
-}
-void SEChronicHeartFailure::Serialize(const SEChronicHeartFailure& src, cdm::ChronicHeartFailureData& dst)
-{
-
-}
 

@@ -12,10 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "scenario/SEActionManager.h"
-#include "bind/PatientActionData.hxx"
-#include "bind/EnvironmentActionData.hxx"
-#include "bind/InhalerActionData.hxx"
-#include "bind/AnesthesiaMachineActionData.hxx"
 
 SEActionManager::SEActionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), 
                                                                    m_PatientActions(substances),

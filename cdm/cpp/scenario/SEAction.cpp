@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 
 #include "scenario/SESerializeState.h"
 // Environment Actions
-#include "system/environment/actions/SEEnvironmentChange.h"
+#include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 // Anesthesia Actions
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineConfiguration.h"

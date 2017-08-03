@@ -43,7 +43,7 @@ void SEChronicRenalStenosis::Load(const cdm::ChronicRenalStenosisData& src, SECh
 }
 void SEChronicRenalStenosis::Serialize(const cdm::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst)
 {
-  dst.Clear();
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
   if (src.has_leftkidneyseverity())
     SEScalar0To1::Load(src.leftkidneyseverity(), dst.GetLeftKidneySeverity());
   if (src.has_rightkidneyseverity())
@@ -58,6 +58,7 @@ cdm::ChronicRenalStenosisData* SEChronicRenalStenosis::Unload(const SEChronicRen
 }
 void SEChronicRenalStenosis::Serialize(const SEChronicRenalStenosis& src, cdm::ChronicRenalStenosisData& dst)
 {
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
   if (src.HasLeftKidneySeverity())
     dst.set_allocated_leftkidneyseverity(SEScalar0To1::Unload(*src.m_LeftKidneySeverity));
   if (src.HasRightKidneySeverity())

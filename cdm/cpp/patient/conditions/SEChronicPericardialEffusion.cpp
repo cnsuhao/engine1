@@ -41,7 +41,7 @@ void SEChronicPericardialEffusion::Load(const cdm::ChronicPericardialEffusionDat
 }
 void SEChronicPericardialEffusion::Serialize(const cdm::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst)
 {
-  dst.Clear();
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
   if (src.has_accumulatedvolume())
     SEScalarVolume::Load(src.accumulatedvolume(), dst.GetAccumulatedVolume());
 }
@@ -54,6 +54,7 @@ cdm::ChronicPericardialEffusionData* SEChronicPericardialEffusion::Unload(const 
 }
 void SEChronicPericardialEffusion::Serialize(const SEChronicPericardialEffusion& src, cdm::ChronicPericardialEffusionData& dst)
 {
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
   if (src.HasAccumulatedVolume())
     dst.set_allocated_accumulatedvolume(SEScalarVolume::Unload(*src.m_AccumulatedVolume));
 }
