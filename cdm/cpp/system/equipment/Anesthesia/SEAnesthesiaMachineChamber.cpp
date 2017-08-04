@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 
 SEAnesthesiaMachineChamber::SEAnesthesiaMachineChamber(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
-  m_State = (cdm::eSwitch)-1;
+  m_State = cdm::eSwitch::Off;
   m_SubstanceFraction = nullptr;
   m_Substance = nullptr;
 }
@@ -30,7 +30,7 @@ SEAnesthesiaMachineChamber::~SEAnesthesiaMachineChamber()
 
 void SEAnesthesiaMachineChamber::Clear()
 {
-  m_State = (cdm::eSwitch)-1;
+  m_State = cdm::eSwitch::Off;
   SAFE_DELETE(m_SubstanceFraction);
   m_Substance=nullptr;
 }
@@ -64,8 +64,7 @@ cdm::AnesthesiaMachineData_ChamberData* SEAnesthesiaMachineChamber::Unload(const
 }
 void SEAnesthesiaMachineChamber::Serialize(const SEAnesthesiaMachineChamber& src, cdm::AnesthesiaMachineData_ChamberData& dst)
 {
-  if (src.HasState())
-    dst.set_state(src.m_State);
+  dst.set_state(src.m_State);
   if (src.HasSubstanceFraction())
     dst.set_allocated_substancefraction(SEScalar0To1::Unload(*src.m_SubstanceFraction));
   dst.set_substance(src.m_Substance->GetName());
@@ -73,8 +72,7 @@ void SEAnesthesiaMachineChamber::Serialize(const SEAnesthesiaMachineChamber& src
 
 void SEAnesthesiaMachineChamber::Merge(const SEAnesthesiaMachineChamber& from)
 {
-  if (from.HasState())
-    SetState(from.m_State);
+  SetState(from.m_State);
   if (from.HasSubstanceFraction())
     GetSubstanceFraction().Set(*from.m_SubstanceFraction);
   if (from.m_Substance != nullptr)
@@ -108,14 +106,6 @@ cdm::eSwitch SEAnesthesiaMachineChamber::GetState() const
 void SEAnesthesiaMachineChamber::SetState(cdm::eSwitch state)
 {
   m_State = state;
-}
-bool SEAnesthesiaMachineChamber::HasState() const
-{
-  return m_State==((cdm::eSwitch)-1)?false:true;
-}
-void SEAnesthesiaMachineChamber::InvalidateState()
-{
-  m_State = (cdm::eSwitch)-1;
 }
 
 bool SEAnesthesiaMachineChamber::HasSubstanceFraction() const

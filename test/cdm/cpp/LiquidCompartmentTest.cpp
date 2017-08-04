@@ -74,7 +74,7 @@ void CommonDataModelTest::TestLiquidFlows(SETestSuite& testSuite, SESubstanceMan
   right2middle->GetFlow().SetValue(smallInflow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestLiqiudFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestLiqiudFlows.pba");
   left = cmptMgr.GetLiquidCompartment("Left");
   middle = cmptMgr.GetLiquidCompartment("Middle");
   right = cmptMgr.GetLiquidCompartment("Right");
@@ -238,7 +238,7 @@ void CommonDataModelTest::TestLiquidHierarchyFlows(SETestSuite& testSuite, SESub
   L1C1->AddChild(*L2C3);
   cmptMgr.StateChange();// Call this, AFTER YOU SET UP YOUR HIERARCHY, to ensure all parent compartments have their link data
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestLiqiudHierarchyFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestLiqiudHierarchyFlows.pba");
   L0C0 = cmptMgr.GetLiquidCompartment("L0C0");
   L1C0 = cmptMgr.GetLiquidCompartment("L1C0");
   L1C1 = cmptMgr.GetLiquidCompartment("L1C1");
@@ -408,7 +408,7 @@ void CommonDataModelTest::TestLiquidHierarchy(SETestSuite& testSuite, SESubstanc
   L1C1->AddChild(*L2C3);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestGasHierarchy.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestGasHierarchy.pba");
   L0C0 = cmptMgr.GetLiquidCompartment("L0C0");
   L1C0 = cmptMgr.GetLiquidCompartment("L1C0");
   L1C1 = cmptMgr.GetLiquidCompartment("L1C1");
@@ -720,7 +720,7 @@ void CommonDataModelTest::TestLiquidCircuitVolumesPressuresAndFlows(SETestSuite&
   right2middle->MapPath(p4);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestGasCircuitVolumesPressuresAndFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestGasCircuitVolumesPressuresAndFlows.pba");
   left = cmptMgr.GetLiquidCompartment("Left");
   middle = cmptMgr.GetLiquidCompartment("Middle");
   right = cmptMgr.GetLiquidCompartment("Right");
@@ -1379,5 +1379,5 @@ void CommonDataModelTest::LiquidCompartmentTest(const std::string& rptDirectory)
   UpdateLiquidLinks.SetName("UpdateLiquidLinks");
   TestUpdateLiquidLinks(UpdateLiquidLinks, subMgr);
 
-  testReport.WriteFile(rptDirectory + "\\LiquidCompartmentTestReport.xml");
+  testReport.WriteFile(rptDirectory + "\\LiquidCompartmentTestReport.pba");
 }

@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 SENeedleDecompression::SENeedleDecompression() : SEPatientAction()
 {
   m_State=cdm::eSwitch::Off;
-  m_Side=(cdm::eSide)-1;
+  m_Side= cdm::eSide::NullSide;
 }
 
 SENeedleDecompression::~SENeedleDecompression()
@@ -28,7 +28,7 @@ void SENeedleDecompression::Clear()
 {
   SEPatientAction::Clear();
   m_State = cdm::eSwitch::Off;
-  m_Side=(cdm::eSide)-1;
+  m_Side= cdm::eSide::NullSide;
 }
 
 bool SENeedleDecompression::IsValid() const
@@ -68,8 +68,7 @@ void SENeedleDecompression::Serialize(const SENeedleDecompression& src, cdm::Nee
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSide())
     dst.set_side(src.m_Side);
-  if (src.HasState())
-    dst.set_state(src.m_State);
+  dst.set_state(src.m_State);
 }
 
 cdm::eSwitch SENeedleDecompression::GetState() const
@@ -79,14 +78,6 @@ cdm::eSwitch SENeedleDecompression::GetState() const
 void SENeedleDecompression::SetState(cdm::eSwitch state)
 {
   m_State = state;
-}
-bool SENeedleDecompression::HasState() const
-{
-  return m_State == ((cdm::eSwitch) - 1) ? false : true;
-}
-void SENeedleDecompression::InvalidateState()
-{
-  m_State = (cdm::eSwitch) - 1;
 }
 
 cdm::eSide SENeedleDecompression::GetSide() const
@@ -99,11 +90,11 @@ void SENeedleDecompression::SetSide(cdm::eSide Side)
 }
 bool SENeedleDecompression::HasSide() const
 {
-  return m_Side==((cdm::eSide)-1)?false:true;
+  return m_Side== cdm::eSide::NullSide ?false:true;
 }
 void SENeedleDecompression::InvalidateSide()
 {
-  m_Side = (cdm::eSide)-1;
+  m_Side = cdm::eSide::NullSide;
 }
 
 void SENeedleDecompression::ToString(std::ostream &str) const

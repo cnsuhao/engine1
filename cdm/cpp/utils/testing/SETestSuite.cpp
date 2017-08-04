@@ -144,6 +144,6 @@ size_t SETestSuite::GetNumberOfErrors() const
 {
   size_t count = 0;
   for (unsigned int i = 0; i < m_TestCase.size(); i++)
-    count += m_TestCase.at(i)->GetFailures().size();
+    count += m_TestCase.at(i)->GetFailures().size()>0 ? 1 : 0;
   return count;
 }

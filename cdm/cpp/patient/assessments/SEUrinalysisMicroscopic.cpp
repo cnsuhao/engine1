@@ -16,15 +16,15 @@ specific language governing permissions and limitations under the License.
 
 SEUrinalysisMicroscopic::SEUrinalysisMicroscopic(Logger* logger) : Loggable(logger)
 {
-  m_ObservationType = cdm::UrinalysisData_eMicroscopicObservationType(-1);
+  m_ObservationType = cdm::UrinalysisData_eMicroscopicObservationType_NullObservationType;
   m_RedBloodCells = nullptr;
   m_WhiteBloodCells = nullptr;
-  m_EpithelialCells = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  m_EpithelialCells = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
   m_Casts = nullptr;
-  m_Crystals = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  m_Bacteria = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  m_Trichomonads = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  m_Yeast = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  m_Crystals = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
+  m_Bacteria = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
+  m_Trichomonads = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
+  m_Yeast = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 
 SEUrinalysisMicroscopic::~SEUrinalysisMicroscopic()
@@ -34,15 +34,15 @@ SEUrinalysisMicroscopic::~SEUrinalysisMicroscopic()
 
 void SEUrinalysisMicroscopic::Clear()
 {
-  m_ObservationType = cdm::UrinalysisData_eMicroscopicObservationType(-1);
+  m_ObservationType = cdm::UrinalysisData_eMicroscopicObservationType_NullObservationType;
   SAFE_DELETE(m_RedBloodCells);
   SAFE_DELETE(m_WhiteBloodCells);
-  m_EpithelialCells = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  m_EpithelialCells = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
   SAFE_DELETE(m_Casts);
-  m_Crystals = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  m_Bacteria = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  m_Trichomonads = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
-  m_Yeast = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  m_Crystals = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
+  m_Bacteria = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
+  m_Trichomonads = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
+  m_Yeast = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 
 void SEUrinalysisMicroscopic::Load(const cdm::UrinalysisData_UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst)
@@ -113,7 +113,7 @@ double SEUrinalysisMicroscopic::GetRedBloodCellsResult(const AmountUnit& unit) c
 
 bool SEUrinalysisMicroscopic::HasObservationType() const
 {
-  return m_ObservationType != cdm::UrinalysisData_eMicroscopicObservationType(-1);
+  return m_ObservationType != cdm::UrinalysisData_eMicroscopicObservationType_NullObservationType;
 }
 cdm::UrinalysisData_eMicroscopicObservationType SEUrinalysisMicroscopic::GetObservationType() const
 {
@@ -125,7 +125,7 @@ void SEUrinalysisMicroscopic::SetObservationType(cdm::UrinalysisData_eMicroscopi
 }
 void SEUrinalysisMicroscopic::InvalidateObservationType()
 {
-  m_ObservationType = cdm::UrinalysisData_eMicroscopicObservationType(-1);
+  m_ObservationType = cdm::UrinalysisData_eMicroscopicObservationType_NullObservationType;
 }
 
 bool SEUrinalysisMicroscopic::HasWhiteBloodCellsResult() const
@@ -147,7 +147,7 @@ double SEUrinalysisMicroscopic::GetWhiteBloodCellsResult(const AmountUnit& unit)
 
 bool SEUrinalysisMicroscopic::HasEpithelialCellsResult() const
 {
-  return m_EpithelialCells != cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  return m_EpithelialCells != cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 cdm::UrinalysisData_eMicroscopicObservationAmount SEUrinalysisMicroscopic::GetEpithelialCellsResult() const
 {
@@ -159,7 +159,7 @@ void SEUrinalysisMicroscopic::SetEpithelialCellsResult(cdm::UrinalysisData_eMicr
 }
 void SEUrinalysisMicroscopic::InvalidateEpithelialCellsResult()
 {
-  m_EpithelialCells = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  m_EpithelialCells = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 
 bool SEUrinalysisMicroscopic::HasCastsResult() const
@@ -181,7 +181,7 @@ double SEUrinalysisMicroscopic::GetCastsResult(const AmountUnit& unit) const
 
 bool SEUrinalysisMicroscopic::HasCrystalsResult() const
 {
-  return m_Crystals != cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  return m_Crystals != cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 cdm::UrinalysisData_eMicroscopicObservationAmount SEUrinalysisMicroscopic::GetCrystalsResult() const
 {
@@ -193,12 +193,12 @@ void SEUrinalysisMicroscopic::SetCrystalsResult(cdm::UrinalysisData_eMicroscopic
 }
 void SEUrinalysisMicroscopic::InvalidateCrystalsResult()
 {
-  m_Crystals = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  m_Crystals = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 
 bool SEUrinalysisMicroscopic::HasBacteriaResult() const
 {
-  return m_Bacteria != cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  return m_Bacteria != cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 cdm::UrinalysisData_eMicroscopicObservationAmount SEUrinalysisMicroscopic::GetBacteriaResult() const
 {
@@ -210,12 +210,12 @@ void SEUrinalysisMicroscopic::SetBacteriaResult(cdm::UrinalysisData_eMicroscopic
 }
 void SEUrinalysisMicroscopic::InvalidateBacteriaResult()
 {
-  m_Bacteria = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  m_Bacteria = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 
 bool SEUrinalysisMicroscopic::HasTrichomonadsResult() const
 {
-  return m_Trichomonads != cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  return m_Trichomonads != cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 cdm::UrinalysisData_eMicroscopicObservationAmount SEUrinalysisMicroscopic::GetTrichomonadsResult() const
 {
@@ -227,12 +227,12 @@ void SEUrinalysisMicroscopic::SetTrichomonadsResult(cdm::UrinalysisData_eMicrosc
 }
 void SEUrinalysisMicroscopic::InvalidateTrichomonadsResult()
 {
-  m_Trichomonads = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  m_Trichomonads = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 
 bool SEUrinalysisMicroscopic::HasYeastResult() const
 {
-  return m_Yeast != cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  return m_Yeast != cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }
 cdm::UrinalysisData_eMicroscopicObservationAmount SEUrinalysisMicroscopic::GetYeastResult() const
 {
@@ -244,5 +244,5 @@ void SEUrinalysisMicroscopic::SetYeastResult(cdm::UrinalysisData_eMicroscopicObs
 }
 void SEUrinalysisMicroscopic::InvalidateYeastResult()
 {
-  m_Yeast = cdm::UrinalysisData_eMicroscopicObservationAmount(-1);
+  m_Yeast = cdm::UrinalysisData_eMicroscopicObservationAmount_NullObservationAmount;
 }

@@ -71,7 +71,7 @@ void CommonDataModelTest::TestThermalFlows(SETestSuite& testSuite, SESubstanceMa
   right2middle->GetHeatTransferRate().SetValue(smallInflow_kcal_Per_s, PowerUnit::kcal_Per_s);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestThermalFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestThermalFlows.pba");
   left = cmptMgr.GetThermalCompartment("Left");
   middle = cmptMgr.GetThermalCompartment("Middle");
   right = cmptMgr.GetThermalCompartment("Right");
@@ -235,7 +235,7 @@ void CommonDataModelTest::TestThermalFlowHierarchy(SETestSuite& testSuite, SESub
   L1C1->AddChild(*L2C3);
   cmptMgr.StateChange();// Call this, AFTER YOU SET UP YOUR HIERARCHY, to ensure all parent compartments have their link data
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestThermalFlowHierarchy.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestThermalFlowHierarchy.pba");
   L0C0 = cmptMgr.GetThermalCompartment("L0C0");
   L1C0 = cmptMgr.GetThermalCompartment("L1C0");
   L1C1 = cmptMgr.GetThermalCompartment("L1C1");
@@ -355,7 +355,7 @@ void CommonDataModelTest::TestThermalHierarchy(SETestSuite& testSuite, SESubstan
   L1C1->AddChild(*L2C3);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestThermalHierarchy.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestThermalHierarchy.pba");
   L0C0 = cmptMgr.GetThermalCompartment("L0C0");
   L1C0 = cmptMgr.GetThermalCompartment("L1C0");
   L1C1 = cmptMgr.GetThermalCompartment("L1C1");
@@ -508,7 +508,7 @@ void CommonDataModelTest::TestCircuitHeatTemperatureAndFlows(SETestSuite& testSu
   right2middle->MapPath(p4);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestThermalCircuitHeatTemperatureAndFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestThermalCircuitHeatTemperatureAndFlows.pba");
   left = cmptMgr.GetThermalCompartment("Left");
   middle = cmptMgr.GetThermalCompartment("Middle");
   right = cmptMgr.GetThermalCompartment("Right");
@@ -719,5 +719,5 @@ void CommonDataModelTest::ThermalCompartmentTest(const std::string& rptDirectory
   CircuitHeatTemperatureAndFlows.SetName("ThermalCompartmentHeatTemperatureAndFlows");
   TestCircuitHeatTemperatureAndFlows(CircuitHeatTemperatureAndFlows, subMgr);
 
-  testReport.WriteFile(rptDirectory + "\\ThermalCompartmentTestReport.xml");
+  testReport.WriteFile(rptDirectory + "\\ThermalCompartmentTestReport.pba");
 }

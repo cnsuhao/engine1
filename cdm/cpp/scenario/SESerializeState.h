@@ -36,8 +36,6 @@ public:
 
   virtual cdm::SerializeStateData_eSerializationType GetType() const;
   virtual void SetType(cdm::SerializeStateData_eSerializationType t);
-  virtual bool HasType() const;
-  virtual void InvalidateType();
 
   virtual bool HasFilename() const;
   virtual std::string GetFilename() const;

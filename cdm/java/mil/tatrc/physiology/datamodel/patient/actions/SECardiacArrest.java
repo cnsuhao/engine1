@@ -46,7 +46,8 @@ public class SECardiacArrest extends SEPatientAction
   public static void load(CardiacArrestData src, SECardiacArrest dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    dst.state = src.getState();
+    if(src.getState()!=eSwitch.UNRECOGNIZED)
+    	dst.state = src.getState();
   }
   
   public static CardiacArrestData unload(SECardiacArrest src)

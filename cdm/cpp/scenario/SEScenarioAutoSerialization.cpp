@@ -17,9 +17,9 @@ specific language governing permissions and limitations under the License.
 SEScenarioAutoSerialization::SEScenarioAutoSerialization(Logger* logger) : Loggable(logger)
 {
   m_Period = nullptr;
-  m_PeriodTimeStamps = (cdm::eSwitch)-1;
-  m_AfterActions = (cdm::eSwitch)-1;
-  m_ReloadState  = (cdm::eSwitch)-1;
+  m_PeriodTimeStamps = cdm::eSwitch::Off;
+  m_AfterActions = cdm::eSwitch::Off;
+  m_ReloadState  = cdm::eSwitch::Off;
   m_Directory    = "";
   m_FileName     = "";
 }
@@ -32,9 +32,9 @@ SEScenarioAutoSerialization::~SEScenarioAutoSerialization()
 void SEScenarioAutoSerialization::Clear()
 {
   SAFE_DELETE(m_Period);
-  m_PeriodTimeStamps = (cdm::eSwitch)-1;
-  m_AfterActions = (cdm::eSwitch)-1;
-  m_AfterActions = (cdm::eSwitch)-1;
+  m_PeriodTimeStamps = cdm::eSwitch::Off;
+  m_AfterActions = cdm::eSwitch::Off;
+  m_AfterActions = cdm::eSwitch::Off;
   m_Directory = "";
   m_FileName = "";
 }
@@ -44,12 +44,6 @@ bool SEScenarioAutoSerialization::IsValid() const
   if (!HasPeriod())
     return false;
   if (m_Period->IsNegative())
-    return false;
-  if (!HasPeriodTimeStamps())
-    return false;
-  if (!HasAfterActions())
-    return false;
-  if (!HasReloadState())
     return false;
   if (!HasDirectory())
     return false;
@@ -84,12 +78,9 @@ void SEScenarioAutoSerialization::Serialize(const SEScenarioAutoSerialization& s
 {
   if (src.HasPeriod())
     dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
-  if (src.HasPeriodTimeStamps())
-    dst.set_periodtimestamps(src.m_PeriodTimeStamps);
-  if (src.HasAfterActions())
-    dst.set_afteractions(src.m_AfterActions);
-  if (src.HasReloadState())
-    dst.set_reloadstate(src.m_ReloadState);
+  dst.set_periodtimestamps(src.m_PeriodTimeStamps);
+  dst.set_afteractions(src.m_AfterActions);
+  dst.set_reloadstate(src.m_ReloadState);
   if (src.HasDirectory())
     dst.set_directory(src.m_Directory);
   if (src.HasFileName())
@@ -121,14 +112,6 @@ void SEScenarioAutoSerialization::SetPeriodTimeStamps(cdm::eSwitch v)
 {
   m_PeriodTimeStamps = v;
 }
-bool SEScenarioAutoSerialization::HasPeriodTimeStamps() const
-{
-  return m_PeriodTimeStamps == ((cdm::eSwitch)-1) ? false : true;
-}
-void SEScenarioAutoSerialization::InvalidatePeriodTimeStamps()
-{
-  m_PeriodTimeStamps = (cdm::eSwitch)-1;
-}
 
 cdm::eSwitch SEScenarioAutoSerialization::GetAfterActions() const
 {
@@ -138,14 +121,6 @@ void SEScenarioAutoSerialization::SetAfterActions(cdm::eSwitch v)
 {
   m_AfterActions = v;
 }
-bool SEScenarioAutoSerialization::HasAfterActions() const
-{
-  return m_AfterActions == ((cdm::eSwitch) - 1) ? false : true;
-}
-void SEScenarioAutoSerialization::InvalidateAfterActions()
-{
-  m_AfterActions = (cdm::eSwitch) - 1;
-}
 
 cdm::eSwitch SEScenarioAutoSerialization::GetReloadState() const
 {
@@ -154,14 +129,6 @@ cdm::eSwitch SEScenarioAutoSerialization::GetReloadState() const
 void SEScenarioAutoSerialization::SetReloadState(cdm::eSwitch v)
 {
   m_ReloadState = v;
-}
-bool SEScenarioAutoSerialization::HasReloadState() const
-{
-  return m_ReloadState == ((cdm::eSwitch) - 1) ? false : true;
-}
-void SEScenarioAutoSerialization::InvalidateReloadState()
-{
-  m_ReloadState = (cdm::eSwitch) - 1;
 }
 
 std::string SEScenarioAutoSerialization::GetDirectory() const

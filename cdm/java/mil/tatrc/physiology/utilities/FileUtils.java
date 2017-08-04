@@ -48,22 +48,17 @@ public class FileUtils
       FileUtils.zipFiles(new String[]{file}, file.replaceAll(".txt", ".zip"));    
   }
   
-  public static boolean loadLibraries(List<String>  libs)
+  public static boolean loadLibraries(List<String> libs, String location)
   {
     boolean b = true;
     for(String lib : libs)
-      b &= loadLibrary(lib);
+      b &= loadLibrary(lib,location);
     return b;
   }
-  public static boolean loadLibrary(String lib)
-  {    
-    String location = System.getProperty("user.dir")+"/release";//"relwithdebinfo"
-    if (System.getProperty("sun.arch.data.model").equals("32"))
-      location += "32";
-
-    return loadLibrary(lib,location);
+  public static boolean loadLibraries(List<String> libs)
+  {
+    return loadLibraries(libs,System.getProperty("user.dir"));
   }
-
   public static boolean loadLibrary(String libName, String location)
   {
     Log.info("Loading native library : "+location+"/"+libName);

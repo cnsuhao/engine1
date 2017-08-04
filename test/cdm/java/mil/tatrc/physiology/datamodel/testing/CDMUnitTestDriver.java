@@ -12,10 +12,10 @@ specific language governing permissions and limitations under the License.
 package mil.tatrc.physiology.datamodel.testing;
 
 import mil.tatrc.physiology.utilities.Log;
-import mil.tatrc.physiology.testing.TestDriver;
-import mil.tatrc.physiology.testing.TestDriver.TestJob;
+import mil.tatrc.physiology.testing.SETestDriver;
+import mil.tatrc.physiology.testing.SETestDriver.TestJob;
 
-public class CDMUnitTestDriver implements TestDriver.Executor
+public class CDMUnitTestDriver implements SETestDriver.Executor
 {
   protected long nativeObj;
   protected native long nativeAllocate();

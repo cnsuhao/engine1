@@ -74,10 +74,10 @@ void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)
   equipment.push_back(new SEInhaler(subMgr));
 
   std::vector<std::string> files;
-  ListFiles(dir, files, ".xml");
+  ListFiles(dir, files, ".pba");
   for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it)
   {
-    if (it->find("xml") != std::string::npos)
+    if (it->find("pba") != std::string::npos)
     {
       if (it->find("PFT@") != std::string::npos ||
           it->find("CBC@") != std::string::npos ||
@@ -154,5 +154,5 @@ void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)
       testCase.SetName(*it);
     }
   }
-  testReport.WriteFile(rptDirectory + "\\" + testName + "Report.xml");  
+  testReport.WriteFile(rptDirectory + "\\" + testName + "Report.pba");  
 }

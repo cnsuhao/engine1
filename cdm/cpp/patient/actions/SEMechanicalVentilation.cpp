@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
 
 SEMechanicalVentilation::SEMechanicalVentilation() : SEPatientAction()
 {
-  m_State = cdm::eSwitch(-1);
+  m_State = cdm::eSwitch::Off;
   m_Flow = nullptr;
   m_Pressure = nullptr;
 }
@@ -37,7 +37,7 @@ void SEMechanicalVentilation::Clear()
 {
   SEPatientAction::Clear();
 
-  m_State = cdm::eSwitch(-1);
+  m_State = cdm::eSwitch::Off;
   SAFE_DELETE(m_Flow);
   SAFE_DELETE(m_Pressure);
 
@@ -47,11 +47,6 @@ void SEMechanicalVentilation::Clear()
 
 bool SEMechanicalVentilation::IsValid() const
 {
-  if (!HasState())
-  {
-    Error("Mechanical Ventilation must have state.");
-    return false;
-  }
   if (GetState() == cdm::eSwitch::Off)
     return true;
   else
@@ -80,8 +75,6 @@ bool SEMechanicalVentilation::IsValid() const
 
 bool SEMechanicalVentilation::IsActive() const
 {
-  if (!HasState())
-    return false;
   return GetState() == cdm::eSwitch::On;
 }
 
@@ -128,8 +121,7 @@ cdm::MechanicalVentilationData* SEMechanicalVentilation::Unload(const SEMechanic
 void SEMechanicalVentilation::Serialize(const SEMechanicalVentilation& src, cdm::MechanicalVentilationData& dst)
 {
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasState())
-    dst.set_state(src.m_State);
+  dst.set_state(src.m_State);
   if (src.HasFlow())
     dst.set_allocated_flow(SEScalarVolumePerTime::Unload(*src.m_Flow));
   if (src.HasPressure())
@@ -145,14 +137,6 @@ cdm::eSwitch SEMechanicalVentilation::GetState() const
 void SEMechanicalVentilation::SetState(cdm::eSwitch state)
 {
   m_State = state;
-}
-bool SEMechanicalVentilation::HasState() const
-{
-  return m_State == ((cdm::eSwitch) - 1) ? false : true;
-}
-void SEMechanicalVentilation::InvalidateState()
-{
-  m_State = (cdm::eSwitch) - 1;
 }
 
 bool SEMechanicalVentilation::HasFlow() const
@@ -260,7 +244,7 @@ void SEMechanicalVentilation::ToString(std::ostream &str) const
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
 
-  str << "\n\tState: "; HasState() ? str << GetState() : str << "Not Set";
+  str << "\n\tState: " << GetState();
   str << "\n\tFlow: ";  HasFlow() ? str << *m_Flow : str << "Not Set";
   str << "\n\tPressure: "; HasPressure() ? str << *m_Pressure : str << "Not Set";
   if (HasGasFraction())

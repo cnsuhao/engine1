@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 SESerializeState::SESerializeState() : SEAction()
 {
   m_Filename="";
-  m_Type = (cdm::SerializeStateData_eSerializationType)-1;
+  m_Type = cdm::SerializeStateData_eSerializationType_Save;
 }
 
 SESerializeState::~SESerializeState()
@@ -28,12 +28,12 @@ void SESerializeState::Clear()
 {
   SEAction::Clear();
   m_Filename = "";
-  m_Type = (cdm::SerializeStateData_eSerializationType)-1;
+  m_Type = cdm::SerializeStateData_eSerializationType_Save;
 }
 
 bool SESerializeState::IsValid() const
 { 
-  return HasFilename() && HasType();
+  return HasFilename();
 }
 
 void SESerializeState::Load(const cdm::SerializeStateData& src, SESerializeState& dst)
@@ -55,8 +55,7 @@ cdm::SerializeStateData* SESerializeState::Unload(const SESerializeState& src)
 }
 void SESerializeState::Serialize(const SESerializeState& src, cdm::SerializeStateData& dst)
 {
-  if (src.HasType())
-    dst.set_type(src.m_Type);
+  dst.set_type(src.m_Type);
   if (src.HasFilename())
     dst.set_filename(src.m_Filename);
 }
@@ -77,14 +76,6 @@ cdm::SerializeStateData_eSerializationType SESerializeState::GetType() const
 void SESerializeState::SetType(cdm::SerializeStateData_eSerializationType Type)
 {
   m_Type = Type;
-}
-bool SESerializeState::HasType() const
-{
-  return m_Type == ((cdm::SerializeStateData_eSerializationType) - 1) ? false : true;
-}
-void SESerializeState::InvalidateType()
-{
-  m_Type = (cdm::SerializeStateData_eSerializationType) - 1;
 }
 
 bool SESerializeState::HasFilename() const

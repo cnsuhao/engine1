@@ -130,7 +130,7 @@ void CommonDataModelTest::LargeFlowTransportTest(const std::string& sTestDirecto
     if (!serialized && time > 8.0)
     {
       serialized = true;
-      TestCompartmentSerialization(cmptMgr, sTestDirectory + "/LargeTransportCompartments.xml");
+      TestCompartmentSerialization(cmptMgr, sTestDirectory + "/LargeTransportCompartments.pba");
       graph = cmptMgr.GetLiquidGraph("Graph");
     }
   }
@@ -310,7 +310,7 @@ void CommonDataModelTest::LiquidTransportTest(const std::string& rptDirectory)
     if (!serialized && time > 8.0)
     {
       serialized = true;
-      TestCompartmentSerialization(cmptMgr, rptDirectory + "/LiquidTransportTest.xml");
+      TestCompartmentSerialization(cmptMgr, rptDirectory + "/LiquidTransportTest.pba");
       graph = cmptMgr.GetLiquidGraph("Graph");
     }
     
@@ -491,7 +491,7 @@ void CommonDataModelTest::GasTransportTest(const std::string& rptDirectory)
     if (!serialized && time > 8.0)
     {
       serialized = true;
-      TestCompartmentSerialization(cmptMgr, rptDirectory + "/GasTransportTest.xml");
+      TestCompartmentSerialization(cmptMgr, rptDirectory + "/GasTransportTest.pba");
       graph = cmptMgr.GetGasGraph("Graph");
     }
 

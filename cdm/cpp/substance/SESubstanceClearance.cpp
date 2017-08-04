@@ -19,14 +19,14 @@ specific language governing permissions and limitations under the License.
 SESubstanceClearance::SESubstanceClearance(Logger* logger) : Loggable(logger)
 {
   m_hasSystemic = false;
-  m_ChargeInBlood = (cdm::eCharge) - 1;
+  m_ChargeInBlood = cdm::eCharge::NullCharge;
   m_FractionExcretedInFeces = nullptr;
   m_FractionExcretedInUrine = nullptr;
   m_FractionMetabolizedInGut = nullptr;
   m_FractionUnboundInPlasma = nullptr;
   m_GlomerularFilterability = nullptr;
   m_IntrinsicClearance = nullptr;
-  m_RenalDynamic = (RenalDynamic)-1;
+  m_RenalDynamic = RenalDynamic::NullDynamic;
   m_RenalClearance = nullptr;
   m_RenalReabsorptionRatio = nullptr;
   m_RenalTransportMaximum = nullptr;
@@ -44,14 +44,14 @@ SESubstanceClearance::~SESubstanceClearance()
 void SESubstanceClearance::Clear()
 {
   m_hasSystemic = false;
-  m_ChargeInBlood = (cdm::eCharge) - 1;
+  m_ChargeInBlood = cdm::eCharge::NullCharge;
   SAFE_DELETE(m_FractionExcretedInFeces);
   SAFE_DELETE(m_FractionExcretedInUrine);
   SAFE_DELETE(m_FractionMetabolizedInGut);
   SAFE_DELETE(m_FractionUnboundInPlasma);
   SAFE_DELETE(m_GlomerularFilterability);
   SAFE_DELETE(m_IntrinsicClearance);
-  m_RenalDynamic = (RenalDynamic)-1;
+  m_RenalDynamic = RenalDynamic::NullDynamic;
   SAFE_DELETE(m_RenalClearance);
   SAFE_DELETE(m_RenalReabsorptionRatio);
   SAFE_DELETE(m_RenalTransportMaximum);
@@ -142,13 +142,15 @@ void SESubstanceClearance::Serialize(const cdm::SubstanceData_ClearanceData& src
   dst.Clear();
   
   // Make sure dups match
-  if (src.has_systemicclearance() && src.has_renalclearance() &&
-    src.systemicclearance().renalclearance().scalarvolumepertimemass().value() != src.renalclearance().clearance().scalarvolumepertimemass().value())
+  if (src.has_systemicclearance() && src.systemicclearance().has_renalclearance() && src.systemicclearance().renalclearance().has_scalarvolumepertimemass() &&
+      src.has_renalclearance() && src.renalclearance().has_clearance() && src.renalclearance().clearance().has_scalarvolumepertimemass() &&
+      src.systemicclearance().renalclearance().scalarvolumepertimemass().value() != src.renalclearance().clearance().scalarvolumepertimemass().value())
   {// This is assuming the same unit, so make sure that is not your problem - lazy developer
     dst.Fatal("Multiple Renal Clearances specified, but not the same. These must match at this time.");
   }
-  if (src.has_systemicclearance() && src.has_renalclearance() &&
-    src.systemicclearance().fractionunboundinplasma().scalar0to1().value() != src.renalclearance().regulation().fractionunboundinplasma().scalar0to1().value())
+  if (src.has_systemicclearance() && src.systemicclearance().has_fractionunboundinplasma() &&
+      src.has_renalclearance() && src.renalclearance().has_regulation() && src.renalclearance().regulation().has_fractionunboundinplasma() &&
+      src.systemicclearance().fractionunboundinplasma().scalar0to1().value() != src.renalclearance().regulation().fractionunboundinplasma().scalar0to1().value())
   {
     dst.Fatal("Multiple FractionUnboundInPlasma values specified, but not the same. These must match at this time.");
   }
@@ -263,11 +265,11 @@ void SESubstanceClearance::SetChargeInBlood(cdm::eCharge c)
 }
 bool SESubstanceClearance::HasChargeInBlood() const
 {
-  return m_ChargeInBlood == ((cdm::eCharge) - 1) ? false : true;
+  return m_ChargeInBlood == cdm::eCharge::NullCharge ? false : true;
 }
 void SESubstanceClearance::InvalidateChargeInBlood()
 {
-  m_ChargeInBlood = (cdm::eCharge) - 1;
+  m_ChargeInBlood = cdm::eCharge::NullCharge;
 }
 
 bool SESubstanceClearance::HasFractionExcretedInFeces() const
@@ -365,11 +367,11 @@ void SESubstanceClearance::SetRenalDynamic(RenalDynamic d)
 }
 bool SESubstanceClearance::HasRenalDynamic() const
 {
-  return m_RenalDynamic == ((RenalDynamic)-1) ? false : true;
+  return m_RenalDynamic == RenalDynamic::NullDynamic ? false : true;
 }
 void SESubstanceClearance::InvalidateRenalDynamic()
 {
-  m_RenalDynamic = (RenalDynamic)-1;
+  m_RenalDynamic = RenalDynamic::NullDynamic;
 }
 
 bool SESubstanceClearance::HasRenalClearance() const

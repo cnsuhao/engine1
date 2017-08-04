@@ -19,8 +19,8 @@ import mil.tatrc.physiology.datamodel.SEEqualOptions;
 import mil.tatrc.physiology.utilities.*;
 import mil.tatrc.physiology.utilities.csv.*;
 import mil.tatrc.physiology.utilities.csv.plots.*;
-import mil.tatrc.physiology.testing.TestReport;
-import mil.tatrc.physiology.testing.TestSuite;
+import mil.tatrc.physiology.testing.SETestReport;
+import mil.tatrc.physiology.testing.SETestSuite;
 
 /**
  * Compare 2 CSV files and create a report on the differences
@@ -28,7 +28,7 @@ import mil.tatrc.physiology.testing.TestSuite;
  * @author abray
  *
  */
-public class CSVComparison extends TestReport
+public class CSVComparison extends SETestReport
 {
   public double limit=2.0;
   public boolean reportDifferences=false;
@@ -149,9 +149,8 @@ public class CSVComparison extends TestReport
     }
     
     // Create the Test Case
-    TestSuite suite = new TestSuite();
+    SETestSuite suite = createTestSuite();
     suite.setName(this.name);
-    this.addSuite(suite);
     suite.startCase(this.name);
     // Set up the Compare Options
     SEEqualOptions opts = suite.getCaseEqualOptions();
@@ -232,7 +231,7 @@ public class CSVComparison extends TestReport
 
     if(totalErrors>0)
       Log.error(totalErrors+" errors found");
-    if(suite.caseFailed())
+    if(suite.getActiveCase().hasFailures())
       Log.error(computedFilePath +" Comparison failed!!");
     else
       Log.info(computedFilePath + " Comparison SUCCESS!!");

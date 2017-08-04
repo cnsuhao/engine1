@@ -56,7 +56,8 @@ public class SEBrainInjury extends SEPatientAction
   public static void load(BrainInjuryData src, SEBrainInjury dst) 
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    dst.setType(src.getType());
+    if(src.getType()!=eType.UNRECOGNIZED)
+    	dst.setType(src.getType());
     if(src.hasSeverity())
       SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }

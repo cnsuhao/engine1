@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 SEChestOcclusiveDressing::SEChestOcclusiveDressing() : SEPatientAction()
 {
   m_State = cdm::eSwitch::Off;
-  m_Side=(cdm::eSide)-1;
+  m_Side= cdm::eSide::NullSide;
 }
 
 SEChestOcclusiveDressing::~SEChestOcclusiveDressing()
@@ -28,7 +28,7 @@ void SEChestOcclusiveDressing::Clear()
 {
   SEPatientAction::Clear();
   m_State= cdm::eSwitch::Off;
-  m_Side=(cdm::eSide)-1;
+  m_Side= cdm::eSide::NullSide;
 }
 
 bool SEChestOcclusiveDressing::IsValid() const
@@ -76,11 +76,11 @@ void SEChestOcclusiveDressing::SetSide(cdm::eSide Side)
 }
 bool SEChestOcclusiveDressing::HasSide() const
 {
-  return m_Side==((cdm::eSide)-1)?false:true;
+  return m_Side== cdm::eSide::NullSide ?false:true;
 }
 void SEChestOcclusiveDressing::InvalidateSide()
 {
-  m_Side = (cdm::eSide)-1;
+  m_Side = cdm::eSide::NullSide;
 }
 
 void SEChestOcclusiveDressing::ToString(std::ostream &str) const

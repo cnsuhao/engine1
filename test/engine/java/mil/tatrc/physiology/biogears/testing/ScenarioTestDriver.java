@@ -15,10 +15,10 @@ import mil.tatrc.physiology.biogears.engine.*;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
-import mil.tatrc.physiology.testing.TestDriver;
-import mil.tatrc.physiology.testing.TestDriver.TestJob;
+import mil.tatrc.physiology.testing.SETestDriver;
+import mil.tatrc.physiology.testing.SETestDriver.TestJob;
 
-public class ScenarioTestDriver implements TestDriver.Executor
+public class ScenarioTestDriver implements SETestDriver.Executor
 {
   
   // Yes I am manipulating the xml as a string when I have bind classes
@@ -134,6 +134,6 @@ public class ScenarioTestDriver implements TestDriver.Executor
   
   public static void main(String[] args)
   {
-    TestDriver.main(args);
+    SETestDriver.main(args);
   }
 }

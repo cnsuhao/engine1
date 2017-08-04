@@ -163,8 +163,8 @@ void CommonDataModelTest::ElectricalCircuitTest(const std::string& sTestDirector
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\ElectricalCircuit.xml";
-      TestCircuitSerialization(xmlDir);      
+      std::string pbaDir = sTestDirectory + "\\ElectricalCircuit.pba";
+      TestCircuitSerialization(pbaDir);      
       ElectricalCircuit = m_Circuits.GetElectricalCircuit("Electric");
     }
   }
@@ -229,8 +229,8 @@ void CommonDataModelTest::FluidCircuitTest(const std::string& sTestDirectory)
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\FluidCircuit.xml";
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\FluidCircuit.pba";
+      TestCircuitSerialization(pbaDir);
       fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
     }
   }
@@ -307,8 +307,8 @@ void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\ThermalCircuit.xml"; 
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\ThermalCircuit.pba"; 
+      TestCircuitSerialization(pbaDir);
       ThermalCircuit = m_Circuits.GetThermalCircuit("Thermal");
     }
   }
@@ -413,8 +413,8 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\CombinedCircuitTest.xml"; 
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\CombinedCircuitTest.pba"; 
+      TestCircuitSerialization(pbaDir);
       // Loading will create a new circuit, so we need to delete our old ones
       // And hook up to the new ones
       MasterCircuit = m_Circuits.GetFluidCircuit("Master");
@@ -486,8 +486,8 @@ void CommonDataModelTest::InterCircuitComparisonTest(const std::string& sTestDir
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\InterCircuitComparison.xml";
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\InterCircuitComparison.pba";
+      TestCircuitSerialization(pbaDir);
       fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
     }
   }
@@ -570,8 +570,8 @@ void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDir
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\InterCircuitIndividual.xml";
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\InterCircuitIndividual.pba";
+      TestCircuitSerialization(pbaDir);
       fluidCircuit1 = m_Circuits.GetFluidCircuit("Fluid1");
       fluidCircuit2 = m_Circuits.GetFluidCircuit("Fluid2");
     }
@@ -806,8 +806,8 @@ void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTes
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\DynamicallyChangingCircuit.xml";
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\DynamicallyChangingCircuit.pba";
+      TestCircuitSerialization(pbaDir);
       fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
     }
   }
@@ -881,8 +881,8 @@ void CommonDataModelTest::NonZeroReferencePositive(const std::string& sTestDirec
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\NonZeroReferencePositive.xml";
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\NonZeroReferencePositive.pba";
+      TestCircuitSerialization(pbaDir);
       fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
     }
   }
@@ -955,8 +955,8 @@ void CommonDataModelTest::NonZeroReferenceNegative(const std::string& sTestDirec
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\NonZeroReferenceNegative.xml";
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\NonZeroReferenceNegative.pba";
+      TestCircuitSerialization(pbaDir);
       fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
     }
   }
@@ -1034,8 +1034,8 @@ void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirecto
     if (!serialized && currentTime_s > 130)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\NonZeroReferenceNegative.xml";
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\NonZeroReferenceNegative.pba";
+      TestCircuitSerialization(pbaDir);
       fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
     }
   }
@@ -1081,8 +1081,8 @@ void CommonDataModelTest::PreChargeComplianceZeroVolume(const std::string& sTest
     if (!serialized && currentTime_s > 0.8)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\PreChargeComplianceZeroVolume.xml"; 
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\PreChargeComplianceZeroVolume.pba"; 
+      TestCircuitSerialization(pbaDir);
       fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
     }
   }
@@ -1128,8 +1128,8 @@ void CommonDataModelTest::PreChargeComplianceNonZeroVolume(const std::string& sT
     if (!serialized && currentTime_s > 0.8)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\PreChargeComplianceNonZeroVolume.xml"; 
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "\\PreChargeComplianceNonZeroVolume.pba"; 
+      TestCircuitSerialization(pbaDir);
       fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
     }
   }
@@ -1388,8 +1388,8 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     if (i == 0)
     {
       // Serialize and try again
-      std::string xmlDir = sOutputDirectory + "\\CircuitLockingCircuit.xml";
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sOutputDirectory + "\\CircuitLockingCircuit.pba";
+      TestCircuitSerialization(pbaDir);
       fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
       type = " Locked After Serialization";
     }
@@ -1400,7 +1400,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     }
   }
 
-  std::string sOutputFile = sOutputDirectory + "\\CircuitLockingTestReport.xml";
+  std::string sOutputFile = sOutputDirectory + "\\CircuitLockingTestReport.pba";
   testReport.WriteFile(sOutputFile);
   m_Circuits.Clear();
 }

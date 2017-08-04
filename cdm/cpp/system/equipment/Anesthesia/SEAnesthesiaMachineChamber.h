@@ -39,9 +39,7 @@ public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual cdm::eSwitch GetState() const;
-  virtual void SetState(cdm::eSwitch name);
-  virtual bool HasState() const;
-  virtual void InvalidateState();
+  virtual void SetState(cdm::eSwitch s);
 
   virtual bool HasSubstanceFraction() const;
   virtual SEScalar0To1& GetSubstanceFraction();

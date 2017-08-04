@@ -128,7 +128,7 @@ public class SESubstance
     dst.reset();
     if(src.getName()!=null)
       dst.setName(src.getName());
-    if(src.getState()!=null)
+    if(src.getState()!=eState.UNRECOGNIZED)
       dst.setState(src.getState());
     if(src.hasDensity())
       SEScalarMassPerVolume.load(src.getDensity(), dst.getDensity());    
@@ -244,7 +244,7 @@ public class SESubstance
   
   public eState  getState() { return this.state;}
   public void    setState(eState state){this.state=state;}
-  public boolean hasState(){return this.state==null?false:true;}
+  public boolean hasState(){return this.state==null?false:state!=state.NullState;}
   
   public SEScalarMassPerVolume getDensity() 
   { 

@@ -67,8 +67,6 @@ public:
 
   virtual cdm::AnesthesiaMachineData_eConnection GetConnection() const;
   virtual void SetConnection(cdm::AnesthesiaMachineData_eConnection c);
-  virtual bool HasConnection() const;
-  virtual void InvalidateConnection();
 
   virtual bool HasInletFlow() const;
   virtual SEScalarVolumePerTime& GetInletFlow();
@@ -84,8 +82,6 @@ public:
 
   virtual cdm::AnesthesiaMachineData_eOxygenSource GetOxygenSource() const;
   virtual void SetOxygenSource(cdm::AnesthesiaMachineData_eOxygenSource name);
-  virtual bool HasOxygenSource() const;
-  virtual void InvalidateOxygenSource();
 
   virtual bool HasPositiveEndExpiredPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiredPressure();
@@ -93,8 +89,6 @@ public:
   
   virtual cdm::AnesthesiaMachineData_ePrimaryGas GetPrimaryGas() const;
   virtual void SetPrimaryGas(cdm::AnesthesiaMachineData_ePrimaryGas name);
-  virtual bool HasPrimaryGas() const;
-  virtual void InvalidatePrimaryGas();
   
   virtual bool HasRespiratoryRate() const;
   virtual SEScalarFrequency& GetRespiratoryRate();

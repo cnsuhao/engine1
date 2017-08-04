@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 
 SEIntubation::SEIntubation() : SEPatientAction()
 {
-  m_Type = (cdm::IntubationData_eType) - 1;
+  m_Type = cdm::IntubationData_eType_Off;
 }
 
 SEIntubation::~SEIntubation()
@@ -26,17 +26,17 @@ SEIntubation::~SEIntubation()
 void SEIntubation::Clear()
 {
   SEPatientAction::Clear();
-  m_Type = (cdm::IntubationData_eType) - 1;
+  m_Type = cdm::IntubationData_eType_Off;
 }
 
 bool SEIntubation::IsValid() const
 {
-  return HasType();
+  return true;
 }
 
 bool SEIntubation::IsActive() const
 {
-  return HasType() && GetType() != cdm::IntubationData_eType_Off;
+  return GetType() != cdm::IntubationData_eType_Off;
 }
 
 void SEIntubation::Load(const cdm::IntubationData& src, SEIntubation& dst)
@@ -58,8 +58,7 @@ cdm::IntubationData* SEIntubation::Unload(const SEIntubation& src)
 void SEIntubation::Serialize(const SEIntubation& src, cdm::IntubationData& dst)
 {
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasType())
-    dst.set_type(src.m_Type);
+  dst.set_type(src.m_Type);
 }
 
 cdm::IntubationData_eType SEIntubation::GetType() const
@@ -70,21 +69,12 @@ void SEIntubation::SetType(cdm::IntubationData_eType Type)
 {
   m_Type = Type;
 }
-bool SEIntubation::HasType() const
-{
-  return m_Type == ((cdm::IntubationData_eType) - 1) ? false : true;
-}
-void SEIntubation::InvalidateType()
-{
-  m_Type = (cdm::IntubationData_eType) - 1;
-}
-
 
 void SEIntubation::ToString(std::ostream &str) const
 {
   str << "Patient Action : Intubation";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tType: "; HasType() ? str << GetType() : str << "Not Set";
+  str << "\n\tType: " << GetType();
   str << std::flush;
 }

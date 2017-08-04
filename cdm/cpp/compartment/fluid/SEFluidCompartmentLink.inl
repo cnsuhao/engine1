@@ -63,9 +63,12 @@ void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Serialize(const SEFlu
   dst.mutable_link()->set_targetcompartment(src.m_TargetCmpt.GetName());
   if (src.m_Path != nullptr)
     dst.mutable_link()->set_path(src.m_Path->GetName());
+  // Yeah, I know
+  // But, these will only modify member variables if they are being used as temporary variables
   // Even if you have a path, I am unloading everything, this makes the pba actually usefull...
+  SEFluidCompartmentLink& mutable_src = const_cast<SEFluidCompartmentLink&>(src);
   if (src.HasFlow())
-    dst.set_allocated_flow(SEScalarVolumePerTime::Unload(*src.m_Flow));
+    dst.set_allocated_flow(SEScalarVolumePerTime::Unload(mutable_src.GetFlow()));
 }
 
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>

@@ -65,8 +65,6 @@ public:
 
   virtual cdm::PatientData::eSex GetSex() const;
   virtual void SetSex(cdm::PatientData::eSex sex);
-  virtual bool HasSex() const;
-  virtual void InvalidateSex();
   
   virtual bool HasAge() const;
   virtual SEScalarTime& GetAge();

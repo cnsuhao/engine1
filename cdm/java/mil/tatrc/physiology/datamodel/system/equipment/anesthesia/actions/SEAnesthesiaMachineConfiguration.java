@@ -11,6 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
+import org.jfree.util.Log;
+
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
 import com.kitware.physiology.cdm.AnesthesiaMachineActions.AnesthesiaMachineConfigurationData;
 
@@ -20,8 +22,8 @@ import mil.tatrc.physiology.datamodel.system.equipment.anesthesia.SEAnesthesiaMa
 
 public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
 {
-  protected SEAnesthesiaMachine anesthesiaMachine;
-  protected String              anesthesiaMachineFile;
+  protected SEAnesthesiaMachine configuration;
+  protected String              configurationFile;
   
   public SEAnesthesiaMachineConfiguration()
   {
@@ -39,23 +41,23 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
     if(this==other)
       return;
     super.copy(other);
-    this.anesthesiaMachine.copy(other.anesthesiaMachine);
-    this.anesthesiaMachineFile=other.anesthesiaMachineFile;
+    this.configuration.copy(other.configuration);
+    this.configurationFile=other.configurationFile;
   }
   
   public void reset()
   {
     super.reset();
     
-    if (this.anesthesiaMachine != null)
-      this.anesthesiaMachine.reset();
-    if (this.anesthesiaMachineFile != null)
-      this.anesthesiaMachineFile="";
+    if (this.configuration != null)
+      this.configuration.reset();
+    if (this.configurationFile != null)
+      this.configurationFile="";
   }
   
   public boolean isValid()
   {
-    return hasAnesthesiaMachine() || hasAnesthesiaMachineFile();
+    return hasConfiguration() || hasConfigurationFile();
   }
   
   public static void load(AnesthesiaMachineConfigurationData src, SEAnesthesiaMachineConfiguration dst, SESubstanceManager subMgr)
@@ -63,12 +65,14 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
     SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
     switch(src.getOptionCase())
     {
-    case ANESTHESIAMACHINEFILE:
-      dst.anesthesiaMachineFile = src.getAnesthesiaMachineFile();
+    case CONFIGURATIONFILE:
+      dst.configurationFile = src.getConfigurationFile();
       break;
-    case ANESTHESIAMACHINE:
-      SEAnesthesiaMachine.load(src.getAnesthesiaMachine(),dst.getAnesthesiaMachine(),subMgr);
+    case CONFIGURATION:
+      SEAnesthesiaMachine.load(src.getConfiguration(),dst.getConfiguration(),subMgr);
       break;
+    default:
+    	Log.error("Unknown AnesthesiaMachineConfigurationData Option");
     }
   }
   public static AnesthesiaMachineConfigurationData unload(SEAnesthesiaMachineConfiguration src)
@@ -80,45 +84,45 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
   protected static void unload(SEAnesthesiaMachineConfiguration src, AnesthesiaMachineConfigurationData.Builder dst)
   {
     SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
-    if(src.hasAnesthesiaMachine())
-      dst.setAnesthesiaMachine(SEAnesthesiaMachine.unload(src.anesthesiaMachine));
-    else if(src.hasAnesthesiaMachineFile())
-      dst.setAnesthesiaMachineFile(src.anesthesiaMachineFile);
+    if(src.hasConfiguration())
+      dst.setConfiguration(SEAnesthesiaMachine.unload(src.configuration));
+    else if(src.hasConfigurationFile())
+      dst.setConfigurationFile(src.configurationFile);
   }
   
-  public boolean hasAnesthesiaMachine()
+  public boolean hasConfiguration()
   {
-    return this.anesthesiaMachine!=null;
+    return this.configuration!=null;
   }
-  public SEAnesthesiaMachine getAnesthesiaMachine()
+  public SEAnesthesiaMachine getConfiguration()
   {
-    if(this.anesthesiaMachine==null)
-      this.anesthesiaMachine=new SEAnesthesiaMachine();
-    return this.anesthesiaMachine;
+    if(this.configuration==null)
+      this.configuration=new SEAnesthesiaMachine();
+    return this.configuration;
   }
   
-  public boolean hasAnesthesiaMachineFile()
+  public boolean hasConfigurationFile()
   {
-    return this.anesthesiaMachineFile!=null&&!this.anesthesiaMachineFile.isEmpty();
+    return this.configurationFile!=null&&!this.configurationFile.isEmpty();
   }
-  public String getAnesthesiaMachineFile()
+  public String getConfigurationFile()
   {
-    return this.anesthesiaMachineFile;
+    return this.configurationFile;
   }
-  public void setAnesthesiaMachineFile(String s)
+  public void setConfigurationFile(String s)
   {
-    this.anesthesiaMachineFile = s;
+    this.configurationFile = s;
   }
   
   public String toString()
   {
     String str = "Anesthesia Machine Configuration";
-    if(hasAnesthesiaMachine())
+    if(hasConfiguration())
     {
-      str += anesthesiaMachine.toString();
+      str += configuration.toString();
     }
-    if(this.hasAnesthesiaMachineFile())
-      str +="\n\tAnesthesia Machine File: "+this.anesthesiaMachineFile;
+    if(this.hasConfigurationFile())
+      str +="\n\tAnesthesia Machine File: "+this.configurationFile;
     return str;
   }
 }

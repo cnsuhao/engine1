@@ -94,10 +94,14 @@ void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Serialize(const SEFluidCompart
     dst.set_allocated_inflow(SEScalarVolumePerTime::Unload(src.GetInFlow()));
   if (src.HasOutFlow())
     dst.set_allocated_outflow(SEScalarVolumePerTime::Unload(src.GetOutFlow()));
+
+  // Yeah, I know
+  // But, these will only modify member variables if they are being used as temporary variables
+  SEFluidCompartment& mutable_src = const_cast<SEFluidCompartment&>(src);
   if (src.HasPressure())
-    dst.set_allocated_pressure(SEScalarPressure::Unload(*src.m_Pressure));
+    dst.set_allocated_pressure(SEScalarPressure::Unload(mutable_src.GetPressure()));
   if (src.HasVolume())
-    dst.set_allocated_volume(SEScalarVolume::Unload(*src.m_Volume));
+    dst.set_allocated_volume(SEScalarVolume::Unload(mutable_src.GetVolume()));
   }
 
 

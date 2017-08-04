@@ -17,16 +17,18 @@ message AnesthesiaMachineData
   /** @brief An enumeration for the primary gas used by the machine. */
   enum eOxygenSource
   {
-    Wall      = 0;
-    BottleOne = 1;
-    BottleTwo = 2;
+    NoSource  = 0;
+    Wall      = 1;
+    BottleOne = 2;
+    BottleTwo = 3;
   }
 
   /** @brief An enumeration for the primary gas used by the machine. */
   enum ePrimaryGas
   {
-    Air      = 0;
-    Nitrogen = 1;
+    NoGas    = 0;
+    Air      = 1;
+    Nitrogen = 2;
   }
 
   /** @brief An enumeration for the primary gas used by the machine. */

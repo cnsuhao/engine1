@@ -53,8 +53,9 @@ message BloodChemistrySystemData
 
 enum eHeartRhythm
 {
-  Asystole    = 0;
-  NormalSinus = 1;
+  NormalSinus = 0;
+  Asystole    = 1;
+  
 }
 
 /** @brief Provides a representation of the human vasculature.

@@ -15,13 +15,12 @@ specific language governing permissions and limitations under the License.
  */
 package mil.tatrc.physiology.testing;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.TestReportData;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.TestReport.TestReportData;
+import com.kitware.physiology.cdm.TestReport.TestReportData.TestSuiteData;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
@@ -30,25 +29,23 @@ import mil.tatrc.physiology.utilities.Log;
  * @author abray, boday
  *
  */
-public class TestReport
+public class SETestReport
 {  
-  protected String         name;
-  protected String         fileName;
-  protected String         reportDir;
-  protected List<TestSuite>testSuites;
-  protected boolean removeNamespace=false;
-  protected String  dbDirectory="./";
-  protected List<String> knownFailingSuites;
+  protected String            name;
+  protected String            fileName;
+  protected String            reportDir;
+  protected List<SETestSuite> testSuites;
+  protected List<String>      knownFailingSuites;
 
   private class Data
   {
-    public String name;
-    public int runs;
-    public int errors;
-    public double time;
-    public List<String> failures = new ArrayList<String>();
-    public List<String> requirements = new ArrayList<String>();
-    public StringBuilder html=new StringBuilder();
+    public String          name;
+    public int             runs;
+    public int             errors;
+    public double          duration_s;
+    public List<String>    failures = new ArrayList<String>();
+    public List<String>    requirements = new ArrayList<String>();
+    public StringBuilder   html=new StringBuilder();
   }
 
   private class DataComparator implements Comparator<Data>
@@ -59,27 +56,21 @@ public class TestReport
     }
   }
 
-  public TestReport()
+  public SETestReport()
   {
-    setFileName("TestReport.xml");
     this.reportDir="./";
-    testSuites = new ArrayList<TestSuite>();
+    setFileName("TestReport.xml");
+    testSuites = new ArrayList<SETestSuite>();
     knownFailingSuites = new ArrayList<String>();
   }
-
-  /**
-   * Set the directory to look for any external
-   * database/dataset files
-   * @param dbDir
-   */
-  public void setDatabaseDirectory(String dbDir)
+  
+  public void reset()
   {
-    this.dbDirectory=dbDir;
-  }
-
-  public String getDatabaseDirectory()
-  {
-    return dbDirectory;
+  	name="";
+  	fileName="";
+  	reportDir="";
+  	testSuites.clear();
+  	knownFailingSuites.clear();
   }
 
   public void setFullReportPath(String path)
@@ -105,6 +96,14 @@ public class TestReport
     }
   }
 
+  public String getName()          { return this.name;     }
+  public void setName(String name) { this.name = name;     }
+  public String getFileName()      { return this.fileName; }
+  public void setFileName(String name, String extension)
+  {
+    this.name = name;
+    this.fileName=name+extension;
+  }
   public void setFileName(String fileName)
   {
     if(fileName.indexOf(".")>=0)
@@ -117,71 +116,61 @@ public class TestReport
       this.name = fileName;
       this.fileName=fileName+".xml";// make it an xml file
     }
-
-  }
-  public void setFileName(String name, String extension)
-  {
-    this.name = name;
-    this.fileName=name+extension;
-  }
-  public String getFileName()
-  {
-    return this.fileName;
   }
 
-  public String getName()
+  public void readFile(String fileName) throws ParseException
   {
-    return this.name;
+  	TestReportData.Builder builder = TestReportData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    SETestReport.load(builder.build(), this);
   }
-  public void setName(String name)
+  public void writeFile(String fileName)
   {
-    this.name = name;
+    FileUtils.writeFile(fileName, SETestReport.unload(this).toString());
   }
-
-  public void load(TestReportData in)
+  public static void load(TestReportData src, SETestReport dst)
   {
-
+  	dst.reset();
+  	for(TestSuiteData tsd : src.getTestSuiteList())
+  	{
+  		SETestSuite ts = dst.createTestSuite();
+  		SETestSuite.load(tsd, ts);
+  	}
   }
-
-  public TestReportData unload()
+	public static TestReportData unload(SETestReport src)
   {
-    TestReportData testReport = CDMSerializer.objFactory.createTestReportData();
-    for(TestSuite s : this.testSuites)
-    {
-      testReport.getTestSuite().add(s.unload());
-    }
-    return testReport;
+		TestReportData.Builder dst = TestReportData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SETestReport src, TestReportData.Builder dst)
+  {
+    for(SETestSuite ts : src.testSuites)
+    	dst.addTestSuite(SETestSuite.unload(ts));
   }
 
   public int getErrors()
   {
     int errors=0;
-    for(TestSuite suite : this.testSuites)
-      errors+=suite.getErrors();
+    for(SETestSuite suite : this.testSuites)
+      errors+=suite.getNumErrors();
     return errors;
   }
 
-  public TestSuite createTestSuite()
+  public SETestSuite createTestSuite()
   {
-    TestSuite suite = new TestSuite();
-    addSuite(suite);
-    return suite;
+  	SETestSuite ts = new SETestSuite();
+  	this.testSuites.add(ts);
+    return ts;
   }
-
-  public void addSuite(TestSuite suite)
-  {
-    this.testSuites.add(suite);
-  }
-
   public void createErrorSuite(String error)
   {
-    TestSuite testSuite = new TestSuite();
-    testSuite.setTime(0,TimeUnit.s);
-    testSuite.setTests(1);
-    testSuite.setErrors(1);
-    testSuite.setName(error);
-    testSuite.setPerformed(false);
-    this.addSuite(testSuite);
+  	SETestSuite ts = new SETestSuite();
+  	ts.setPerformed(false);
+  	SETestCase  tc = ts.createTestCase();
+  	tc.setName("ErrorSuite");
+  	tc.AddFailure(error);
+    this.testSuites.add(ts);
   }
 
   public void addKnownSuiteFailure(String suiteName)
@@ -189,11 +178,11 @@ public class TestReport
     knownFailingSuites.add(suiteName);
   }
 
-  public void addSummary(TestReport rpt)
+  public void addSummary(SETestReport rpt)
   {
-    for(TestSuite s : rpt.testSuites)
+    for(SETestSuite ts : rpt.testSuites)
     {
-      addSuite(s);
+    	this.testSuites.add(ts);
     }
   }
 
@@ -206,25 +195,7 @@ public class TestReport
   {
     if(toDirectory==null||toDirectory.isEmpty())
       toDirectory="./";
-
-    if(removeNamespace)
-    {
-      try
-      {     
-        String str = CDMSerializer.serialize(unload());
-        str = str.replaceAll("xmlns=\"uri:/mil/dtra/iwmdt/nucs\"", "");
-        String reportName = toDirectory + this.fileName;
-        BufferedWriter out = new BufferedWriter(new FileWriter(reportName));
-        out.write(str);
-        out.close();
-      }
-      catch (IOException e)
-      {
-        Log.error(e);
-      }
-    }
-    else
-      CDMSerializer.writeFile(toDirectory + this.fileName, unload());
+    this.writeFile(toDirectory + this.fileName);
   }
 
   public String toHTML(String title)
@@ -244,10 +215,10 @@ public class TestReport
     // Any Test Suites Not Run?
     buffer.append("<table border=\"1\">");
     buffer.append("<tr><th>Missing Reports</th></tr>");
-    for(TestSuite suite : this.testSuites)
+    for(SETestSuite ts : this.testSuites)
     {
-      if(!suite.isPerformed())
-        buffer.append("<tr bgcolor=\"#FF0000\"><td>"+suite.getName()+"</td></tr>");
+      if(!ts.getPerformed())
+        buffer.append("<tr bgcolor=\"#FF0000\"><td>"+ts.getName()+"</td></tr>");
     }
     buffer.append("</table>");
     // Make a little room
@@ -269,8 +240,8 @@ public class TestReport
     {
       groups = new HashMap<String,List<String>>();
       List<String> all = new ArrayList<String>();
-      for(TestSuite suite : this.testSuites)
-        all.add(suite.getName());
+      for(SETestSuite ts : this.testSuites)
+        all.add(ts.getName());
       groups.put(this.name, all);
     }
 
@@ -296,40 +267,33 @@ public class TestReport
       int runs=0;
       int totalRuns=0;
       int totalErrors=0;
-      double totalTime=0;
-      List<TestReport.Data> errorData = new ArrayList<TestReport.Data>();
-      List<TestReport.Data> passedData = new ArrayList<TestReport.Data>();
+      double totalDuration_s=0;
+      List<SETestReport.Data> errorData = new ArrayList<SETestReport.Data>();
+      List<SETestReport.Data> passedData = new ArrayList<SETestReport.Data>();
 
-      TestReport.Data data;
-      for(TestSuite suite : this.testSuites)
+      SETestReport.Data data;
+      for(SETestSuite ts : this.testSuites)
       { 
-        if(!groupTests.contains(suite.getName()))
+        if(!groupTests.contains(ts.getName()))
             continue;
         
-        totalRuns+=suite.getTests();
-        totalErrors+=suite.getErrors();
-        totalTime+=suite.getTime();
+        totalRuns+=ts.getTestCases().size();
+        totalErrors+=ts.getNumErrors();
+        totalDuration_s+=ts.getDuration(TimeUnit.s);
 
 
-        if(suite.isPerformed())
+        if(ts.getPerformed())
         {
           runs++;
           data=new Data();
-          data.name=suite.getName();
-          data.runs=suite.getTests();
-          data.errors=suite.getErrors();        
-          data.time=suite.getTime();
-          if(suite.getCase()!=null)
-          {
-            for(String failure : suite.getCase().getFailure())
-            {// Only keeping failures with this string pattern: (Could make this an input and more easy to configure)
-              int idx = failure.indexOf("ScenarioResultsCompareTool : Compare Failed for ");
-              if(idx>-1)
-                data.failures.add(failure.substring(48));
-            }
-          }
-          data.requirements.addAll(suite.getRequirements());
-          if(suite.getErrors()>0)
+          data.name=ts.getName();
+          data.runs=ts.getTestCases().size();
+          data.errors=ts.getNumErrors();        
+          data.duration_s=ts.getDuration(TimeUnit.s);
+          for(SETestCase tc : ts.testCases)
+          	data.failures.addAll(tc.failures);
+          data.requirements.addAll(ts.getRequirements());
+          if(ts.getNumErrors()>0)
           {
             errorData.add(data);
             data.html.append("<tr bgcolor=\"#FF0000\">");
@@ -342,7 +306,7 @@ public class TestReport
           data.html.append("<td align=\"left\">"+data.name+"</td>");   
           data.html.append("<td>"+data.errors+"</td>");
           data.html.append("<td>"+data.runs+"</td>");  
-          data.html.append("<td>"+data.time+"</td>");
+          data.html.append("<td>"+data.duration_s+"</td>");
           data.html.append("<td>");
           if(data.failures.size() > 0)
           {
@@ -377,7 +341,7 @@ public class TestReport
       buffer.append("<td align=\"left\">"+"Totals for "+runs+" test suites"+"</td>");   
       buffer.append("<td>"+totalErrors+"</td>");
       buffer.append("<td>"+totalRuns+"</td>");  
-      buffer.append("<td>"+totalTime+"</td>"); 
+      buffer.append("<td>"+totalDuration_s+"</td>"); 
       buffer.append("</tr>");
 
       if(sortResults)

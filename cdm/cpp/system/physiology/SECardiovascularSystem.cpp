@@ -36,7 +36,7 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_DiastolicArterialPressure = nullptr;
   m_HeartEjectionFraction = nullptr;
   m_HeartRate = nullptr;
-  m_HeartRhythm = (cdm::eHeartRhythm) - 1;
+  m_HeartRhythm = cdm::eHeartRhythm::NormalSinus;
   m_HeartStrokeVolume = nullptr; 
   m_IntracranialPressure = nullptr;
   m_MeanArterialPressure = nullptr;
@@ -77,7 +77,7 @@ void SECardiovascularSystem::Clear()
   SAFE_DELETE(m_DiastolicArterialPressure);
   SAFE_DELETE(m_HeartEjectionFraction);
   SAFE_DELETE(m_HeartRate);
-  m_HeartRhythm = (cdm::eHeartRhythm) - 1;
+  m_HeartRhythm = cdm::eHeartRhythm::NormalSinus;
   SAFE_DELETE(m_HeartStrokeVolume);
   SAFE_DELETE(m_IntracranialPressure);
   SAFE_DELETE(m_MeanArterialPressure);
@@ -258,8 +258,7 @@ void SECardiovascularSystem::Serialize(const SECardiovascularSystem& src, cdm::C
     dst.set_allocated_heartejectionfraction(SEScalar0To1::Unload(*src.m_HeartEjectionFraction));
   if (src.HasHeartRate())
     dst.set_allocated_heartrate(SEScalarFrequency::Unload(*src.m_HeartRate));
-  if (src.HasHeartRhythm())
-    dst.set_heartrhythm(src.m_HeartRhythm);
+  dst.set_heartrhythm(src.m_HeartRhythm);
   if (src.HasHeartStrokeVolume())
     dst.set_allocated_heartstrokevolume(SEScalarVolume::Unload(*src.m_HeartStrokeVolume));
   if (src.HasIntracranialPressure())
@@ -477,14 +476,6 @@ cdm::eHeartRhythm SECardiovascularSystem::GetHeartRhythm() const
 void SECardiovascularSystem::SetHeartRhythm(cdm::eHeartRhythm rhythm)
 {
   m_HeartRhythm = rhythm;
-}
-bool SECardiovascularSystem::HasHeartRhythm()const
-{
-  return m_HeartRhythm == ((cdm::eHeartRhythm) - 1) ? false : true;
-}
-void SECardiovascularSystem::InvalidateHeartRhythm()
-{
-  m_HeartRhythm = (cdm::eHeartRhythm) - 1;
 }
 
 bool SECardiovascularSystem::HasHeartStrokeVolume() const

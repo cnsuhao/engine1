@@ -36,8 +36,6 @@ public:
 
   virtual cdm::eSwitch GetState() const;
   virtual void SetState(cdm::eSwitch name);
-  virtual bool HasState() const;
-  virtual void InvalidateState();
 
   virtual cdm::eSide GetSide() const;
   virtual void SetSide(cdm::eSide LeftOrRight);

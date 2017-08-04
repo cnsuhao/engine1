@@ -101,10 +101,14 @@ void SEThermalCompartment::Serialize(const SEThermalCompartment& src, cdm::Therm
     dst.set_allocated_heattransferratein(SEScalarPower::Unload(src.GetHeatTransferRateIn()));
   if (src.HasHeatTransferRateOut())
     dst.set_allocated_heattransferrateout(SEScalarPower::Unload(src.GetHeatTransferRateOut()));
+
+  // Yeah, I know
+  // But, these will only modify member variables if they are being used as temporary variables
+  SEThermalCompartment& mutable_src = const_cast<SEThermalCompartment&>(src);
   if (src.HasHeat())
-    dst.set_allocated_heat(SEScalarEnergy::Unload(*src.m_Heat));
+    dst.set_allocated_heat(SEScalarEnergy::Unload(mutable_src.GetHeat()));
   if (src.HasTemperature())
-    dst.set_allocated_temperature(SEScalarTemperature::Unload(*src.m_Temperature));
+    dst.set_allocated_temperature(SEScalarTemperature::Unload(mutable_src.GetTemperature()));
 }
 
 const SEScalar* SEThermalCompartment::GetScalar(const std::string& name)

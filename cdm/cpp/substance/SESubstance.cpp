@@ -29,7 +29,7 @@ specific language governing permissions and limitations under the License.
 SESubstance::SESubstance(Logger* logger) : Loggable(logger)
 {
   m_Name = "";
-  m_State = (cdm::SubstanceData_eState) - 1;
+  m_State = cdm::SubstanceData_eState_NullState;
   m_Density = nullptr;
   m_MolarMass = nullptr;
 
@@ -65,7 +65,7 @@ SESubstance::~SESubstance()
 void SESubstance::Clear()
 {
   m_Name = "";
-  m_State = (cdm::SubstanceData_eState) - 1;
+  m_State = cdm::SubstanceData_eState_NullState;
   SAFE_DELETE(m_Density); 
   SAFE_DELETE(m_MolarMass);
   
@@ -304,11 +304,11 @@ void SESubstance::SetState(cdm::SubstanceData_eState state)
 }
 bool SESubstance::HasState() const
 {
-  return m_State == ((cdm::SubstanceData_eState) - 1) ? false : true;
+  return m_State == cdm::SubstanceData_eState_NullState ? false : true;
 }
 void SESubstance::InvalidateState()
 {
-  m_State = (cdm::SubstanceData_eState) - 1;
+  m_State = cdm::SubstanceData_eState_NullState;
 }
 
 bool SESubstance::HasDensity() const

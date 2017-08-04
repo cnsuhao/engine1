@@ -74,36 +74,41 @@ message UrinalysisData
 {
   enum ePresenceIndicator
   {
-    Positive        = 0;
-    Negative        = 1;
+    NullPresence    = 0;/**<< @brief Not provided in the assessment */
+    Positive        = 1;
+    Negative        = 2;
   }
 
   enum eClarityIndicator
   {
-    Translucent     = 0;
-    SlightlyCloudy  = 1;
-    Cloudy          = 2;
-    Turbid          = 3;
+    NullClarity     = 0;/**<< @brief Not provided in the assessment */
+    Translucent     = 1;
+    SlightlyCloudy  = 2;
+    Cloudy          = 3;
+    Turbid          = 4;
   }
 
   enum eUrineColor
   {
-    PaleYellow      = 0;
-    Yellow          = 1;
-    DarkYellow      = 2;
+    NullColor       = 0;/**<< @brief Not provided in the assessment */
+    PaleYellow      = 1;
+    Yellow          = 2;
+    DarkYellow      = 3;
   }
 
   enum eMicroscopicObservationType
   {
-    LowPowerField   = 0;
-    HighPowerField  = 1;
+    NullObservationType = 0;/**<< @brief Not provided in the assessment */
+    LowPowerField       = 1;
+    HighPowerField      = 2;
   }
 
   enum eMicroscopicObservationAmount
   {
-    Few             = 0;
-    Moderate        = 1;
-    Many            = 2;
+    NullObservationAmount = 0;/**<< @brief Not provided in the assessment */
+    Few                   = 1;
+    Moderate              = 2;
+    Many                  = 3;
   }
   
   message UrinalysisMicroscopicData

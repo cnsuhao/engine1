@@ -35,11 +35,11 @@ public class SEDataRequest implements Serializable
   
   public void reset()
   {
-    propertyName            = "";
-    unit            = null;
+    propertyName    = "";
+    unit            = "";
     category        = null;
-    compartmentName = null;
-    substanceName   = null;
+    compartmentName = "";
+    substanceName   = "";
     precision       = null;
     format          = null;
   }
@@ -49,7 +49,8 @@ public class SEDataRequest implements Serializable
     dst.reset();    
     dst.propertyName = src.getPropertyName();
     dst.unit = src.getUnit();
-    dst.category = src.getCategory();
+    if(src.getCategory()!=eCategory.UNRECOGNIZED)
+    	dst.category = src.getCategory();
     dst.compartmentName = src.getCompartmentName();
     dst.substanceName = src.getSubstanceName();
     if(src.hasDecimalFormat())

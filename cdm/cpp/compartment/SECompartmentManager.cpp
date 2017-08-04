@@ -67,14 +67,14 @@ void SECompartmentManager::Clear()
   m_TissueName2Compartments.clear();
 }
 
-bool SECompartmentManager::LoadFile(const std::string& filename)
+bool SECompartmentManager::LoadFile(const std::string& filename, SECircuitManager* circuits)
 {
   cdm::CompartmentManagerData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
   if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
     return false;
-  SECompartmentManager::Load(src, *this);
+  SECompartmentManager::Load(src, *this, circuits);
   return true;
 
   // If its a binary string in the file...

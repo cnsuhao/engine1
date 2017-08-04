@@ -35,8 +35,6 @@ public:
     
   virtual cdm::IntubationData_eType GetType() const;
   virtual void SetType(cdm::IntubationData_eType t);
-  virtual bool HasType() const;
-  virtual void InvalidateType();
 
   virtual void ToString(std::ostream &str) const;
 protected:

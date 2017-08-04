@@ -85,7 +85,7 @@ public class SETimedStabilization
       dst.setFeedbackStabilizationTime(SEScalarTime.unload(src.feedbackStabilizationTime));
     for(String name : src.conditionStabilizationTimes.keySet())
     {
-    	dst.getConditionStabilizationMap().put(name, SEScalarTime.unload(src.conditionStabilizationTimes.get(name)));
+    	dst.putConditionStabilization(name, SEScalarTime.unload(src.conditionStabilizationTimes.get(name)));
     }
   }
   

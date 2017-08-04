@@ -17,7 +17,6 @@ class DLL_DECL SEAppliedTemperature : public Loggable
 public:
 
   SEAppliedTemperature(Logger* logger);
-  SEAppliedTemperature(const SEAppliedTemperature& other);
   virtual ~SEAppliedTemperature();
   
   virtual void Clear();

@@ -32,34 +32,29 @@ public class UnitConverter
   /** Loads Unit Conversion DLL */
   static
   {
-//    String UCEDefsPath = System.getProperty("user.dir") + "/UCEDefs.txt";
-//    String UCEDefsHomePath = System.getProperty("user.home") + "/UCEDefs.txt";
+  	String location = System.getProperty("user.dir")+"/debug";
+    if (System.getProperty("sun.arch.data.model").equals("32"))
+      location += "32";
     
-//    try{Files.copy(new File(UCEDefsPath).toPath(), new File(UCEDefsHomePath).toPath(), REPLACE_EXISTING);}
-//    catch (IOException e){}
     List<String>libs = new ArrayList<String>();
     if(System.getProperty("os.name").toLowerCase().startsWith("win"))
     {
-      if(!FileUtils.loadLibrary("xerces-c_3_1"))      // This is for building code synthesis with xcode
-        throw new RuntimeException("Could not find xerces library");    
+      if(!FileUtils.loadLibrary("libprotobufd",location))
+        throw new RuntimeException("Could not find protobuf library");    
       libs.add("log4cpp");
     }
     else if (System.getProperty("os.name").toLowerCase().startsWith("mac"))
     {
-      libs.add("libxerces-c.3.1");
+      libs.add("libprotobufd");
       libs.add("liblog4cpp");
     }
     else
       libs.add("liblog4cpp");
-    libs.add("DataModelBindings");
     libs.add("CommonDataModel");
     libs.add("CommonDataModelUnitTests");
     libs.add("CommonDataModelJNI");          
-    if(!FileUtils.loadLibraries(libs))
+    if(!FileUtils.loadLibraries(libs,location))
       throw new RuntimeException("Could not find all dependent libraries : " + libs);
-    
-//    try{ Files.delete(new File(UCEDefsHomePath).toPath());}
-//    catch (Exception e){}
   }
   
   /**

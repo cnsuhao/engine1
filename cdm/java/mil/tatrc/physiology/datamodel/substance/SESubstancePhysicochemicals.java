@@ -71,13 +71,13 @@ public class SESubstancePhysicochemicals
     dst.reset();
     if(src.hasAcidDissociationConstant())
       SEScalar.load(src.getAcidDissociationConstant(),dst.getAcidDissociationConstant());
-    if(src.getBindingProtein()!=null)
+    if(src.getBindingProtein()!=eBindingProtein.NullBindingProtein)
       dst.setBindingProtein(src.getBindingProtein());
     if(src.hasBloodPlasmaRatio())
       SEScalar.load(src.getBloodPlasmaRatio(),dst.getBloodPlasmaRatio());
     if(src.hasFractionUnboundInPlasma())
       SEScalar0To1.load(src.getFractionUnboundInPlasma(),dst.getFractionUnboundInPlasma());
-    if(src.getIonicState()!=null)
+    if(src.getIonicState()!=eIonicState.NullIonicState)
       dst.setIonicState(src.getIonicState());
     if(src.hasLogP())
       SEScalar.load(src.getLogP(),dst.getLogP());
@@ -120,7 +120,7 @@ public class SESubstancePhysicochemicals
   
   public eBindingProtein getBindingProtein() { return this.bindingProtien;}
   public void            setBindingProtein(eBindingProtein protein){this.bindingProtien=protein;}
-  public boolean         hasBindingProtein(){return this.bindingProtien==null?false:true;}
+  public boolean         hasBindingProtein(){return this.bindingProtien==null?false:bindingProtien!=eBindingProtein.NullBindingProtein;}
   
   public SEScalar getBloodPlasmaRatio() 
   { 
@@ -140,7 +140,7 @@ public class SESubstancePhysicochemicals
   
   public eIonicState  getIonicState() { return this.ionicState;}
   public void         setIonicState(eIonicState state){this.ionicState=state;}
-  public boolean      hasIonicState(){return this.ionicState==null?false:true;}
+  public boolean      hasIonicState(){return this.ionicState==null?false:ionicState!=eIonicState.NullIonicState;}
   
   public SEScalar getLogP() 
   { 

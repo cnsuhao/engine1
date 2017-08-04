@@ -75,8 +75,6 @@ public:
 
   virtual cdm::eHeartRhythm GetHeartRhythm() const;
   virtual void SetHeartRhythm(cdm::eHeartRhythm Rhythm);
-  virtual bool HasHeartRhythm() const;
-  virtual void InvalidateHeartRhythm();
 
   virtual bool HasHeartStrokeVolume() const;
   virtual SEScalarVolume& GetHeartStrokeVolume();

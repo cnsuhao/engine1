@@ -41,8 +41,6 @@ public:
 
   virtual cdm::eSwitch GetState() const;
   virtual void SetState(cdm::eSwitch name);
-  virtual bool HasState() const;
-  virtual void InvalidateState();
 
   virtual bool HasFlow() const;
   virtual SEScalarVolumePerTime& GetFlow();

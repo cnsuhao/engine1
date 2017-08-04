@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 
 SESubstanceBolus::SESubstanceBolus(const SESubstance& substance) : SESubstanceAdministration(), m_Substance(substance)
 {
-  m_AdminRoute=(cdm::SubstanceBolusData_eAdministrationRoute)-1;
+  m_AdminRoute=cdm::SubstanceBolusData_eAdministrationRoute_Intravenous;
   m_Dose=nullptr;
   m_Concentration=nullptr;
 }
@@ -31,7 +31,7 @@ SESubstanceBolus::~SESubstanceBolus()
 void SESubstanceBolus::Clear()
 {
   SESubstanceAdministration::Clear();
-  m_AdminRoute=(cdm::SubstanceBolusData_eAdministrationRoute)-1;
+  m_AdminRoute=cdm::SubstanceBolusData_eAdministrationRoute_Intravenous;
   SAFE_DELETE(m_Dose);
   SAFE_DELETE(m_Concentration);
   // m_Substance=nullptr; Keeping mapping!!
@@ -39,7 +39,7 @@ void SESubstanceBolus::Clear()
 
 bool SESubstanceBolus::IsValid() const
 {
-  return SESubstanceAdministration::IsValid() && HasDose() && HasConcentration() && HasAdminRoute();
+  return SESubstanceAdministration::IsValid() && HasDose() && HasConcentration();
 }
 
 bool SESubstanceBolus::IsActive() const
@@ -71,8 +71,7 @@ void SESubstanceBolus::Serialize(const SESubstanceBolus& src, cdm::SubstanceBolu
 {
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.set_substance(src.m_Substance.GetName());
-  if (src.HasAdminRoute())
-    dst.set_administrationroute(src.m_AdminRoute);
+  dst.set_administrationroute(src.m_AdminRoute);
   if(src.HasDose())
     dst.set_allocated_dose(SEScalarVolume::Unload(*src.m_Dose));
   if (src.HasConcentration())
@@ -86,14 +85,6 @@ cdm::SubstanceBolusData_eAdministrationRoute SESubstanceBolus::GetAdminRoute() c
 void SESubstanceBolus::SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute route)
 {
   m_AdminRoute = route;
-}
-bool SESubstanceBolus::HasAdminRoute() const
-{
-  return m_AdminRoute==((cdm::SubstanceBolusData_eAdministrationRoute)-1)?false:true;
-}
-void SESubstanceBolus::InvalidateAdminRoute()
-{
-  m_AdminRoute = (cdm::SubstanceBolusData_eAdministrationRoute)-1;
 }
 
 bool SESubstanceBolus::HasDose() const
@@ -132,7 +123,7 @@ void SESubstanceBolus::ToString(std::ostream &str) const
   str  << "\n\tDose: "; HasDose()? str << *m_Dose : str << "No Dose Set";
   str  << "\n\tConcentration: "; HasConcentration()? str << *m_Concentration : str << "NaN";
   str << "\n\tSubstance: " << m_Substance.GetName();
-  str  << "\n\tAdministration Route: "; HasAdminRoute()? str << GetAdminRoute() : str << "Not Set";
+  str  << "\n\tAdministration Route: " << GetAdminRoute();
   str << std::flush;
 }
 

@@ -274,12 +274,12 @@ bool SESubstanceManager::LoadSubstanceDirectory()
       ss << workingDirectory << "/substances/" << ent->d_name;
       if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
       {
-        ss.str("");
-        ss << "Reading substance file : ./substances/" << ent->d_name;
-        Debug(ss);
-
         std::ifstream input(ss.str());
         std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+
+        ss.str("");
+        ss << "Reading substance file : ./substances/" << ent->d_name;
+        Info(ss);
 
         try 
         {

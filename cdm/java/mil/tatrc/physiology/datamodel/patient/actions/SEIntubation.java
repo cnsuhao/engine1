@@ -46,7 +46,8 @@ public  class SEIntubation extends SEPatientAction
   public static void load(IntubationData src, SEIntubation dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    dst.type = src.getType();
+    if(src.getType()!=eType.UNRECOGNIZED)
+    	dst.type = src.getType();
   }
   
   public static IntubationData unload(SEIntubation src)

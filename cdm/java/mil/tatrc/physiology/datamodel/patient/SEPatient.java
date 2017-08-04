@@ -143,7 +143,8 @@ public class SEPatient
   {
     dst.reset();
     dst.setName(src.getName());
-    dst.setSex(src.getSex());
+    if(src.getSex()!=eSex.UNRECOGNIZED)
+    	dst.setSex(src.getSex());
     if(src.hasAge())
       SEScalarTime.load(src.getAge(),dst.getAge());
     if(src.hasWeight())

@@ -51,8 +51,10 @@ public class SENeedleDecompression extends SEPatientAction
   public static void load(NeedleDecompressionData src, SENeedleDecompression dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    dst.state = src.getState();
-    dst.side = src.getSide();
+    if(src.getState()!=eSwitch.UNRECOGNIZED)
+    	dst.state = src.getState();
+    if(src.getSide()!=eSide.UNRECOGNIZED)
+    	dst.side = src.getSide();
   }
   
   public static NeedleDecompressionData unload(SENeedleDecompression src)

@@ -17,10 +17,10 @@ import java.util.List;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.UnitConverter;
-import mil.tatrc.physiology.testing.TestDriver;
-import mil.tatrc.physiology.testing.TestDriver.TestJob;
+import mil.tatrc.physiology.testing.SETestDriver;
+import mil.tatrc.physiology.testing.SETestDriver.TestJob;
 
-public class BGEUnitTestDriver implements TestDriver.Executor
+public class BGEUnitTestDriver implements SETestDriver.Executor
 {
   
   static
@@ -57,7 +57,7 @@ public class BGEUnitTestDriver implements TestDriver.Executor
   
   public static void main(String[] args)
   {
-    TestDriver.main(args);
+    SETestDriver.main(args);
   }
 
 }

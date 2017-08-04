@@ -26,7 +26,7 @@ specific language governing permissions and limitations under the License.
 
 SEEnvironmentalConditions::SEEnvironmentalConditions(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
-  m_SurroundingType = cdm::EnvironmentData_eSurroundingType(-1);
+  m_SurroundingType = cdm::EnvironmentData_eSurroundingType_Air;
 
   m_AirDensity=nullptr;
   m_AirVelocity = nullptr;
@@ -46,7 +46,7 @@ SEEnvironmentalConditions::~SEEnvironmentalConditions()
 
 void SEEnvironmentalConditions::Clear()
 {
-  m_SurroundingType = cdm::EnvironmentData_eSurroundingType(-1);
+  m_SurroundingType = cdm::EnvironmentData_eSurroundingType_Air;
   SAFE_DELETE(m_AirDensity);
   SAFE_DELETE(m_AirVelocity);
   SAFE_DELETE(m_AmbientTemperature);
@@ -160,8 +160,7 @@ cdm::EnvironmentData_ConditionsData* SEEnvironmentalConditions::Unload(const SEE
 
 void SEEnvironmentalConditions::Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentData_ConditionsData& dst)
 {
-  if (src.HasSurroundingType())
-    dst.set_surroundingtype(src.m_SurroundingType);
+  dst.set_surroundingtype(src.m_SurroundingType);
   if (src.HasAirDensity())
     dst.set_allocated_airdensity(SEScalarMassPerVolume::Unload(*src.m_AirDensity));
   if (src.HasAirVelocity())
@@ -190,8 +189,7 @@ void SEEnvironmentalConditions::Serialize(const SEEnvironmentalConditions& src, 
 
 void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
 {
-  if (from.HasSurroundingType())
-    SetSurroundingType(from.m_SurroundingType);
+  SetSurroundingType(from.m_SurroundingType);
   COPY_PROPERTY(AirDensity);
   COPY_PROPERTY(AirVelocity);
   COPY_PROPERTY(AmbientTemperature);
@@ -268,14 +266,6 @@ cdm::EnvironmentData_eSurroundingType SEEnvironmentalConditions::GetSurroundingT
 void SEEnvironmentalConditions::SetSurroundingType(cdm::EnvironmentData_eSurroundingType state)
 {
   m_SurroundingType = state;
-}
-bool SEEnvironmentalConditions::HasSurroundingType() const
-{
-  return m_SurroundingType == ((cdm::EnvironmentData_eSurroundingType) - 1) ? false : true;
-}
-void SEEnvironmentalConditions::InvalidateSurroundingType()
-{
-  m_SurroundingType = (cdm::EnvironmentData_eSurroundingType) - 1;
 }
 
 bool SEEnvironmentalConditions::HasAirDensity() const

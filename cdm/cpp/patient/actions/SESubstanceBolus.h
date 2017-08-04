@@ -38,8 +38,6 @@ public:
 
   virtual cdm::SubstanceBolusData_eAdministrationRoute GetAdminRoute() const;
   virtual void SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute name);
-  virtual bool HasAdminRoute() const;
-  virtual void InvalidateAdminRoute();
 
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();

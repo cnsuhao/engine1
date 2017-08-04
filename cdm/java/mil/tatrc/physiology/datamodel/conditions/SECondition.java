@@ -29,7 +29,7 @@ import mil.tatrc.physiology.datamodel.substance.SESubstance;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceCompound;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.datamodel.system.environment.conditions.SEEnvironmentCondition;
-import mil.tatrc.physiology.datamodel.system.environment.conditions.SEInitialEnvironmentConfiguration;
+import mil.tatrc.physiology.datamodel.system.environment.conditions.SEInitialEnvironmentConditions;
 import mil.tatrc.physiology.utilities.Log;
 
 public abstract class SECondition implements Serializable

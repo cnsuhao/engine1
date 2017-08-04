@@ -45,8 +45,6 @@ public:
 
   virtual cdm::EnvironmentData_eSurroundingType GetSurroundingType() const;
   virtual void SetSurroundingType(cdm::EnvironmentData_eSurroundingType name);
-  virtual bool HasSurroundingType() const;
-  virtual void InvalidateSurroundingType();
 
   virtual bool HasAirDensity() const;
   virtual SEScalarMassPerVolume& GetAirDensity();

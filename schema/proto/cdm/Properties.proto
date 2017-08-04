@@ -4,14 +4,16 @@ option java_package = "com.kitware.physiology.cdm";
 
 enum eSide
 {
-  Left  = 0;
-  Right = 1;
+  NullSide = 0;
+  Left     = 1;
+  Right    = 2;
 }
 
 enum eGate
 {
-  Open  = 0;
-  Closed = 1;
+  NullGate = 0;
+  Open     = 1;
+  Closed   = 2;
 }
 
 enum eSwitch
@@ -22,17 +24,19 @@ enum eSwitch
 
 enum eCharge
 {
-  Negative = 0;
-  Neutral  = 1;
-  Positive = 2;
+  NullCharge = 0;/** @brief Not provided */
+  Negative   = 1;
+  Neutral    = 2;
+  Positive   = 3;
 }
 
 message DecimalFormatData
 {
   enum eType
   {
-    FixedMantissa     = 0;
-    SignificantDigits = 1;
+    DefaultFormatting = 0;
+    FixedMantissa     = 1;
+    SignificantDigits = 2;
   }
   eType                            Type                      = 1;
   uint32                           Precision                 = 2;

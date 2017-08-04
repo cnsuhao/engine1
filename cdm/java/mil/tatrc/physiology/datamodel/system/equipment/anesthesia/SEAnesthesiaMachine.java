@@ -288,7 +288,7 @@ public class SEAnesthesiaMachine implements SESystem
   }
   public boolean hasOxygenSource()
   {
-    return oxygenSource == null ? false : true;
+    return oxygenSource == null ? false : oxygenSource!=eOxygenSource.NoSource;
   }
 
   /*
@@ -318,7 +318,7 @@ public class SEAnesthesiaMachine implements SESystem
   }
   public boolean hasPrimaryGas()
   {
-    return primaryGas == null ? false : true;
+    return primaryGas == null ? false : primaryGas!=ePrimaryGas.NoGas;
   }
 
   /*

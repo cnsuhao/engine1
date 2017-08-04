@@ -11,28 +11,30 @@ message SubstanceData
   /** @brief Generic type. */
   enum eState
   {
-    Solid     = 0;
-    Liquid    = 1;
-    Gas       = 2;
-    Molecular = 3;
+    NullState          = 0;
+    Solid              = 1;
+    Liquid             = 2;
+    Gas                = 3;
+    Molecular          = 4;
   }
   
   /** @brief Ionic state. */
   enum eIonicState
   {
-  
-    Acid      = 0;
-    Base      = 1;
-    Neutral   = 2;
-    WeakBase  = 3;
+    NullIonicState     = 0;
+    Acid               = 1;
+    Base               = 2;
+    Neutral            = 3;
+    WeakBase           = 4;
   }
   
   /** @brief Binding protien type. */
   enum eBindingProtein
   {
-    AAG         = 0;
-    Albumin     = 1;
-    Lipoprotein = 2;
+    NullBindingProtein = 0;
+    AAG                = 1;
+    Albumin            = 2;
+    Lipoprotein        = 3;
   }
   
   /**************************************************************************************************

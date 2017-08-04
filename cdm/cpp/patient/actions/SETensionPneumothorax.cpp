@@ -16,8 +16,8 @@ specific language governing permissions and limitations under the License.
 
 SETensionPneumothorax::SETensionPneumothorax() : SEPatientAction()
 {
-  m_Type=(cdm::eGate)-1;
-  m_Side=(cdm::eSide)-1;
+  m_Type=cdm::eGate::NullGate;
+  m_Side=cdm::eSide::NullSide;
   m_Severity=nullptr;
 }
 
@@ -29,8 +29,8 @@ SETensionPneumothorax::~SETensionPneumothorax()
 void SETensionPneumothorax::Clear()
 {
   SEPatientAction::Clear();
-  m_Type=(cdm::eGate)-1;
-  m_Side=(cdm::eSide)-1;
+  m_Type= cdm::eGate::NullGate;
+  m_Side= cdm::eSide::NullSide;
   SAFE_DELETE(m_Severity);
 }
 
@@ -84,11 +84,11 @@ void SETensionPneumothorax::SetType(cdm::eGate Type)
 }
 bool SETensionPneumothorax::HasType() const
 {
-  return m_Type==((cdm::eGate)-1)?false:true;
+  return m_Type== cdm::eGate::NullGate ?false:true;
 }
 void SETensionPneumothorax::InvalidateType()
 {
-  m_Type = (cdm::eGate)-1;
+  m_Type = cdm::eGate::NullGate;
 }
 
 cdm::eSide SETensionPneumothorax::GetSide() const
@@ -101,11 +101,11 @@ void SETensionPneumothorax::SetSide(cdm::eSide Side)
 }
 bool SETensionPneumothorax::HasSide() const
 {
-  return m_Side==((cdm::eSide)-1)?false:true;
+  return m_Side== cdm::eSide::NullSide ?false:true;
 }
 void SETensionPneumothorax::InvalidateSide()
 {
-  m_Side = (cdm::eSide)-1;
+  m_Side = cdm::eSide::NullSide;
 }
 
 bool SETensionPneumothorax::HasSeverity() const

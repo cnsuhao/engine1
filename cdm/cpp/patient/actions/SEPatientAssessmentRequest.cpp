@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 
 SEPatientAssessmentRequest::SEPatientAssessmentRequest() : SEPatientAction()
 {
-  m_Type=(cdm::PatientAssessmentRequestData_eAssessmentType)-1;
+  m_Type=cdm::PatientAssessmentRequestData_eAssessmentType_CompleteBloodCount;
 }
 
 SEPatientAssessmentRequest::~SEPatientAssessmentRequest()
@@ -26,12 +26,12 @@ SEPatientAssessmentRequest::~SEPatientAssessmentRequest()
 void SEPatientAssessmentRequest::Clear()
 {
   SEPatientAction::Clear();
-  m_Type=(cdm::PatientAssessmentRequestData_eAssessmentType)-1;
+  m_Type=cdm::PatientAssessmentRequestData_eAssessmentType_CompleteBloodCount;
 }
 
 bool SEPatientAssessmentRequest::IsValid() const
 {
-  return SEPatientAction::IsValid() && HasType();
+  return SEPatientAction::IsValid();
 }
 
 bool SEPatientAssessmentRequest::IsActive() const
@@ -58,8 +58,7 @@ cdm::PatientAssessmentRequestData* SEPatientAssessmentRequest::Unload(const SEPa
 void SEPatientAssessmentRequest::Serialize(const SEPatientAssessmentRequest& src, cdm::PatientAssessmentRequestData& dst)
 {
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasType())
-    dst.set_type(src.m_Type);
+  dst.set_type(src.m_Type);
 }
 
 cdm::PatientAssessmentRequestData_eAssessmentType SEPatientAssessmentRequest::GetType() const
@@ -70,20 +69,11 @@ void SEPatientAssessmentRequest::SetType(cdm::PatientAssessmentRequestData_eAsse
 {
   m_Type = Type;
 }
-bool SEPatientAssessmentRequest::HasType() const
-{
-  return m_Type==((cdm::PatientAssessmentRequestData_eAssessmentType)-1)?false:true;
-}
-void SEPatientAssessmentRequest::InvalidateType()
-{
-  m_Type = (cdm::PatientAssessmentRequestData_eAssessmentType)-1;
-}
-
 void SEPatientAssessmentRequest::ToString(std::ostream &str) const
 {
   str << "Patient Action : Assessment Request"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str  << "\n\tType: "; HasType()? str << GetType() : str << "Not Set";
-  str << std::flush;
+  str  << "\n\tType: "<<GetType();
+  str  << std::flush;
 }

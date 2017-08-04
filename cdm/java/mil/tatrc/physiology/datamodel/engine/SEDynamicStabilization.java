@@ -83,7 +83,7 @@ public class SEDynamicStabilization
       dst.setFeedbackConvergence(SEDynamicStabilizationEngineConvergence.unload(src.feedbackConvergence));
     for(String name : src.conditionConvergence.keySet())
     {
-    	dst.getConditionConvergenceMap().put(name, SEDynamicStabilizationEngineConvergence.unload(src.conditionConvergence.get(name)));
+    	dst.putConditionConvergence(name, SEDynamicStabilizationEngineConvergence.unload(src.conditionConvergence.get(name)));
     }
   }
   

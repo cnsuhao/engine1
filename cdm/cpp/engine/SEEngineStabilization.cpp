@@ -18,6 +18,7 @@ SEEngineStabilization::SEEngineStabilization(Logger *logger) : Loggable(logger)
 {
   m_StabilizationDuration = nullptr;
   m_currentTime_s = 0;
+  m_TrackingStabilization = cdm::Off;
 }
 
 SEEngineStabilization::~SEEngineStabilization()

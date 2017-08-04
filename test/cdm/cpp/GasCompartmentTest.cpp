@@ -71,7 +71,7 @@ void CommonDataModelTest::TestGasFlows(SETestSuite& testSuite, SESubstanceManage
   right2middle->GetFlow().SetValue(smallInflow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasFlows.pba");
   left = cmptMgr.GetGasCompartment("Left");
   middle = cmptMgr.GetGasCompartment("Middle");
   right = cmptMgr.GetGasCompartment("Right");
@@ -235,7 +235,7 @@ void CommonDataModelTest::TestGasHierarchyFlows(SETestSuite& testSuite, SESubsta
   L1C1->AddChild(*L2C3);
   cmptMgr.StateChange();// Call this, AFTER YOU SET UP YOUR HIERARCHY, to ensure all parent compartments have their link data
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasHierarchyFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasHierarchyFlows.pba");
   L0C0 = cmptMgr.GetGasCompartment("L0C0");
   L1C0 = cmptMgr.GetGasCompartment("L1C0");
   L1C1 = cmptMgr.GetGasCompartment("L1C1");
@@ -412,7 +412,7 @@ void CommonDataModelTest::TestGasHierarchy(SETestSuite& testSuite, SESubstanceMa
   L1C1->AddChild(*L2C3);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasHierarchy.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasHierarchy.pba");
   L0C0 = cmptMgr.GetGasCompartment("L0C0"); 
   L1C0 = cmptMgr.GetGasCompartment("L1C0");
   L1C1 = cmptMgr.GetGasCompartment("L1C1");
@@ -771,7 +771,7 @@ void CommonDataModelTest::TestGasCircuitVolumesPressuresAndFlows(SETestSuite& te
   right2middle->MapPath(p4);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestGasCircuitVolumesPressuresAndFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestGasCircuitVolumesPressuresAndFlows.pba");
   left = cmptMgr.GetGasCompartment("Left");
   middle = cmptMgr.GetGasCompartment("Middle");
   right = cmptMgr.GetGasCompartment("Right");
@@ -1129,5 +1129,5 @@ void CommonDataModelTest::GasCompartmentTest(const std::string& rptDirectory)
   UpdateGasLinks.SetName("UpdateGasLinks");
   TestUpdateGasLinks(UpdateGasLinks, subMgr);
 
-  testReport.WriteFile(rptDirectory + "\\GasCompartmentTestReport.xml");
+  testReport.WriteFile(rptDirectory + "\\GasCompartmentTestReport.pba");
 }

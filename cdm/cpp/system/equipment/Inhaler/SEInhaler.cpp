@@ -25,7 +25,7 @@ specific language governing permissions and limitations under the License.
 
 SEInhaler::SEInhaler(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {
-  m_State = cdm::eSwitch(-1);
+  m_State = cdm::eSwitch::Off;
   m_MeteredDose = nullptr;
   m_NozzleLoss = nullptr;
   m_SpacerVolume = nullptr;
@@ -41,7 +41,7 @@ void SEInhaler::Clear()
 {
   SESystem::Clear();
 
-  m_State = cdm::eSwitch(-1);
+  m_State = cdm::eSwitch::Off;
   SAFE_DELETE(m_MeteredDose);
   SAFE_DELETE(m_NozzleLoss);
   SAFE_DELETE(m_SpacerVolume);
@@ -74,8 +74,7 @@ cdm::InhalerData* SEInhaler::Unload(const SEInhaler& src)
 }
 void SEInhaler::Serialize(const SEInhaler& src, cdm::InhalerData& dst)
 {
-  if (src.HasState())
-    dst.set_state(src.m_State);
+  dst.set_state(src.m_State);
   if (src.HasMeteredDose())
     dst.set_allocated_metereddose(SEScalarMass::Unload(*src.m_MeteredDose));
   if (src.HasNozzleLoss())
@@ -99,8 +98,7 @@ const SEScalar* SEInhaler::GetScalar(const std::string& name)
 
 void SEInhaler::Merge(const SEInhaler& from)
 {
-  if (from.HasState())
-    SetState(from.m_State);
+  SetState(from.m_State);
   COPY_PROPERTY(MeteredDose);
   COPY_PROPERTY(NozzleLoss);
   COPY_PROPERTY(SpacerVolume);
@@ -151,14 +149,6 @@ cdm::eSwitch SEInhaler::GetState() const
 void SEInhaler::SetState(cdm::eSwitch state)
 {
   m_State = state;
-}
-bool SEInhaler::HasState() const
-{
-  return m_State == ((cdm::eSwitch)-1) ? false : true;
-}
-void SEInhaler::InvalidateState()
-{
-  m_State = (cdm::eSwitch) - 1;
 }
 
 bool SEInhaler::HasMeteredDose() const

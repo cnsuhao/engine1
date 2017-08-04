@@ -60,8 +60,6 @@ public:
 
   virtual cdm::eSwitch GetState() const;
   virtual void SetState(cdm::eSwitch name);
-  virtual bool HasState() const;
-  virtual void InvalidateState();
 
   virtual bool HasMeteredDose() const;
   virtual SEScalarMass& GetMeteredDose();

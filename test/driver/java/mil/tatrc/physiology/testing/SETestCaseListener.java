@@ -22,38 +22,38 @@ import mil.tatrc.physiology.utilities.LogListener;
  * Simple class to listen to any status messages
  * from the calculation and add them to the report
  */
-public class TestSuiteListener extends LogListener
+public class SETestCaseListener extends LogListener
 {
-  private TestSuite testSuite=null;
+  private SETestCase testCase=null;
   
-  public TestSuiteListener()
+  public SETestCaseListener()
   {
 
   }
   
-  public void setSuite(TestSuite testSuite)
+  public void reset()
   {
-    this.testSuite=testSuite;
+    this.testCase=null;
   }
   
-  public void clearSuite()
+  public void setTestCase(SETestCase tc)
   {
-    this.testSuite=null;
+    this.testCase=tc;
   }
-  
+
   public void handleError(String msg)
   {
-    if (testSuite != null && testSuite.hasCase())
+    if (testCase != null)
     {
-      testSuite.getCase().getFailure().add(msg);
+    	testCase.AddFailure(msg);
     }
   }
   
   public void handleFatal(String msg)
   {
-    if (testSuite != null && testSuite.hasCase())
+  	if (testCase != null)
     {
-      testSuite.getCase().getFailure().add(msg);
+    	testCase.AddFailure(msg);
     }
   }
 }

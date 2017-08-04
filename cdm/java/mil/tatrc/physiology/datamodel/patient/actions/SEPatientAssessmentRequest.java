@@ -46,7 +46,8 @@ public class SEPatientAssessmentRequest extends SEPatientAction
   public static void load(PatientAssessmentRequestData src, SEPatientAssessmentRequest dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    dst.type = src.getType();
+    if(src.getType()!=eAssessmentType.UNRECOGNIZED)
+    	dst.type = src.getType();
   }
   
   public static PatientAssessmentRequestData unload(SEPatientAssessmentRequest src)

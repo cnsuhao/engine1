@@ -35,7 +35,7 @@ SEPatient::SEPatient(Logger* logger) : Loggable(logger)
   m_EventHandler = nullptr;
 
   m_Name="";
-  m_Sex = (cdm::PatientData::eSex)-1;
+  m_Sex = cdm::PatientData_eSex_Male;
   m_Age=nullptr;
   m_Weight=nullptr;
   m_Height=nullptr;
@@ -90,7 +90,7 @@ void SEPatient::Clear()
   m_EventState.clear();
   m_EventDuration_s.clear();
   m_Name="";
-  m_Sex = (cdm::PatientData::eSex)-1;
+  m_Sex = cdm::PatientData_eSex_Male;
   SAFE_DELETE(m_Age);
   SAFE_DELETE(m_Weight);
   SAFE_DELETE(m_Height);
@@ -270,8 +270,7 @@ void SEPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
 {
   if (src.HasName())
     dst.set_name(src.m_Name);
-  if (src.HasSex())
-    dst.set_sex(src.m_Sex);
+  dst.set_sex(src.m_Sex);
   if (src.HasAge())
     dst.set_allocated_age(SEScalarTime::Unload(*src.m_Age));
   if (src.HasWeight())
@@ -670,14 +669,6 @@ cdm::PatientData::eSex SEPatient::GetSex() const
 void SEPatient::SetSex(cdm::PatientData::eSex sex)
 {
   m_Sex = sex;
-}
-bool SEPatient::HasSex() const
-{
-  return m_Sex==((cdm::PatientData::eSex)-1)?false:true;
-}
-void SEPatient::InvalidateSex()
-{
-  m_Sex = (cdm::PatientData::eSex)-1;
 }
 
 bool SEPatient::HasAge() const

@@ -32,7 +32,7 @@ import mil.tatrc.physiology.testing.csv.CSVComparison;
 import mil.tatrc.physiology.utilities.csv.plots.CSVComparePlotter;
 import mil.tatrc.physiology.utilities.csv.plots.CSVComparePlotter.PlotType;
 
-public class TestDriver
+public class SETestDriver
 {
   static
   {        
@@ -46,7 +46,7 @@ public class TestDriver
 
   public static void main(String[] args)
   {
-    TestDriver me = new TestDriver();
+    SETestDriver me = new SETestDriver();
     RunConfiguration cfg = new RunConfiguration();
     
     if(args.length == 0)
@@ -166,7 +166,7 @@ public class TestDriver
   protected String patientFiles;
 
   protected Map<String,String> macros = new HashMap<String,String>();
-  protected Map<String,Class<TestDriver.Executor>> executors = new HashMap<String,Class<TestDriver.Executor>>();
+  protected Map<String,Class<SETestDriver.Executor>> executors = new HashMap<String,Class<SETestDriver.Executor>>();
   protected List<TestJob> jobs = new ArrayList<TestJob>();  
 
   protected Map<TestJob,String> job2groups = new HashMap<TestJob,String>();
@@ -185,7 +185,7 @@ public class TestDriver
     public boolean      skipExecution = false;
     public boolean      skipPlot = false;
     public boolean      knownFailure = false;
-    public TestDriver.Executor executor = null;
+    public SETestDriver.Executor executor = null;
     public boolean      PlottableResults = false;
     public PlotType     plotType = PlotType.FastPlot;//Only plot every nth data point
     public double       percentDifference;
@@ -313,10 +313,10 @@ public class TestDriver
         }       
         if(key.equalsIgnoreCase("Executor"))
         {
-          Class<TestDriver.Executor> clazz = null;
+          Class<SETestDriver.Executor> clazz = null;
           try
           {
-            clazz = (Class<TestDriver.Executor>)Class.forName(value);             
+            clazz = (Class<SETestDriver.Executor>)Class.forName(value);             
             this.executors.put(clazz.getSimpleName(), clazz);
           } 
           catch(Exception e){Log.error("Could not find Executor "+value);}
@@ -653,7 +653,7 @@ public class TestDriver
   public void createReport()
   {
     List<String> currentGroup;
-    TestReport report = new TestReport();    
+    SETestReport report = new SETestReport();    
     report.setFullReportPath("./test_results/"+this.testName+"Report.xml");    
     for(TestJob job : this.jobs)
     {
@@ -679,23 +679,15 @@ public class TestDriver
           report.createErrorSuite("Unable to find file "+reportFile+" to summarize");
           continue;
         }
-        Object o = CDMSerializer.readFile(reportFile);
-        if(o instanceof TestReportData)
+        SETestReport tRpt = new SETestReport();
+        try
         {
-          TestSuite s;
-          TestReportData summarize = (TestReportData)o;        
-          for(TestReportData.TestSuite suite : summarize.getTestSuite())
-          {
-            s=new TestSuite();
-            s.load(suite);
-            report.addSuite(s);
-            currentGroup.add(s.getName());
-          }
+        	tRpt.readFile(reportFile);
         }
-        else
+        catch(Exception ex)
         {
-          report.createErrorSuite(reportFile);
-          Log.error("Need file with TestReportData object");
+        	report.createErrorSuite(reportFile);
+        	Log.error("Need file with TestReportData object");
         }
       }
     }    

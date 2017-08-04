@@ -22,7 +22,7 @@ SEAppliedTemperature::SEAppliedTemperature(Logger* logger) : Loggable(logger)
   m_Temperature = nullptr;
   m_SurfaceArea = nullptr;
   m_SurfaceAreaFraction = nullptr;
-  m_State = cdm::eSwitch::On;
+  m_State = cdm::eSwitch::Off;
 }
 
 SEAppliedTemperature::~SEAppliedTemperature()
@@ -35,7 +35,7 @@ void SEAppliedTemperature::Clear()
   SAFE_DELETE(m_Temperature);
   SAFE_DELETE(m_SurfaceArea);
   SAFE_DELETE(m_SurfaceAreaFraction);
-  m_State = cdm::eSwitch::On;
+  m_State = cdm::eSwitch::Off;
 }
 
 const SEScalar* SEAppliedTemperature::GetScalar(const std::string& name)

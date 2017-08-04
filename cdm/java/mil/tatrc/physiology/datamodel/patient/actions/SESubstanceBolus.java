@@ -75,7 +75,8 @@ public class SESubstanceBolus extends SEPatientAction
       SEScalarVolume.load(src.getDose(),dst.getDose());
     if(src.hasConcentration())
       SEScalarMassPerVolume.load(src.getConcentration(),dst.getConcentration());
-    dst.adminRoute = src.getAdministrationRoute();
+    if(src.getAdministrationRoute()!=eAdministrationRoute.UNRECOGNIZED)
+    	dst.adminRoute = src.getAdministrationRoute();
   }
   
   public static SubstanceBolusData unload(SESubstanceBolus src)

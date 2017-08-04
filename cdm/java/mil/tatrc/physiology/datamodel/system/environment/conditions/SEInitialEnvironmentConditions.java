@@ -12,27 +12,28 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.environment.conditions;
 
-import com.kitware.physiology.cdm.EnvironmentConditions.InitialEnvironmentConfigurationData;
+import com.kitware.physiology.cdm.EnvironmentConditions.InitialEnvironmentConditionsData;
+
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.datamodel.system.environment.SEEnvironmentalConditions;
 
-public class SEInitialEnvironmentConfiguration extends SEEnvironmentCondition
+public class SEInitialEnvironmentConditions extends SEEnvironmentCondition
 {
   protected SEEnvironmentalConditions conditions;
   protected String                    conditionsFile;
   
-  public SEInitialEnvironmentConfiguration()
+  public SEInitialEnvironmentConditions()
   {
     this.conditions=new SEEnvironmentalConditions();
   }
   
-  public SEInitialEnvironmentConfiguration(SEInitialEnvironmentConfiguration other)
+  public SEInitialEnvironmentConditions(SEInitialEnvironmentConditions other)
   {
     this();
     copy(other);    
   }
   
-  public void copy(SEInitialEnvironmentConfiguration other)
+  public void copy(SEInitialEnvironmentConditions other)
   {
     if(this==other)
       return;
@@ -53,7 +54,7 @@ public class SEInitialEnvironmentConfiguration extends SEEnvironmentCondition
     return hasConditions() || hasConditionsFile();
   }
   
-  public static void load(InitialEnvironmentConfigurationData src, SEInitialEnvironmentConfiguration dst, SESubstanceManager subMgr)
+  public static void load(InitialEnvironmentConditionsData src, SEInitialEnvironmentConditions dst, SESubstanceManager subMgr)
   {
     SEEnvironmentCondition.load(src.getEnvironmentCondition(), dst);
     switch(src.getOptionCase())
@@ -66,13 +67,13 @@ public class SEInitialEnvironmentConfiguration extends SEEnvironmentCondition
       break;
     }
   }
-  public static InitialEnvironmentConfigurationData unload(SEInitialEnvironmentConfiguration src)
+  public static InitialEnvironmentConditionsData unload(SEInitialEnvironmentConditions src)
   {
-    InitialEnvironmentConfigurationData.Builder dst = InitialEnvironmentConfigurationData.newBuilder();
+    InitialEnvironmentConditionsData.Builder dst = InitialEnvironmentConditionsData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEInitialEnvironmentConfiguration src, InitialEnvironmentConfigurationData.Builder dst)
+  protected static void unload(SEInitialEnvironmentConditions src, InitialEnvironmentConditionsData.Builder dst)
   {
     SEEnvironmentCondition.unload(src, dst.getEnvironmentConditionBuilder());
     if(src.hasConditions())

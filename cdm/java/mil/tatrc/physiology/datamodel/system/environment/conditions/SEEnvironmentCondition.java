@@ -53,9 +53,9 @@ public abstract class SEEnvironmentCondition extends SECondition
   {
     switch(c.getConditionCase())
     {
-    case INITIALENVIRONMENTCONFIGURATION:
-      SEInitialEnvironmentConfiguration newC = new SEInitialEnvironmentConfiguration();
-      SEInitialEnvironmentConfiguration.load(c.getInitialEnvironmentConfiguration(), newC, subMgr);
+    case INITIALENVIRONMENTCONDITIONS:
+      SEInitialEnvironmentConditions newC = new SEInitialEnvironmentConditions();
+      SEInitialEnvironmentConditions.load(c.getInitialEnvironmentConditions(), newC, subMgr);
       return newC;
     case CONDITION_NOT_SET:
       Log.warn("AnyEnvironmentConditionData was empty...was that intended?");
@@ -67,9 +67,9 @@ public abstract class SEEnvironmentCondition extends SECondition
   public static AnyEnvironmentConditionData CDM2ANY(SEEnvironmentCondition c)
   {
     AnyEnvironmentConditionData.Builder dst = AnyEnvironmentConditionData.newBuilder();
-    if(c instanceof SEInitialEnvironmentConfiguration)
+    if(c instanceof SEInitialEnvironmentConditions)
     {
-      dst.setInitialEnvironmentConfiguration(SEInitialEnvironmentConfiguration.unload((SEInitialEnvironmentConfiguration)c));    
+      dst.setInitialEnvironmentConditions(SEInitialEnvironmentConditions.unload((SEInitialEnvironmentConditions)c));    
       return dst.build();
     }
     Log.error("Unsupported Environment condition type "+c);

@@ -17,10 +17,10 @@ specific language governing permissions and limitations under the License.
 SESubstancePhysicochemicals::SESubstancePhysicochemicals(Logger* logger) : Loggable(logger)
 {
   m_AcidDissociationConstant = nullptr;
-  m_BindingProtein = (cdm::SubstanceData_eBindingProtein) - 1;
+  m_BindingProtein = cdm::SubstanceData_eBindingProtein_NullBindingProtein;
   m_BloodPlasmaRatio = nullptr;
   m_FractionUnboundInPlasma = nullptr;
-  m_IonicState = (cdm::SubstanceData_eIonicState) -1;
+  m_IonicState = cdm::SubstanceData_eIonicState_NullIonicState;
   m_LogP = nullptr;
   m_OralAbsorptionRateConstant = nullptr;
 }
@@ -33,10 +33,10 @@ SESubstancePhysicochemicals::~SESubstancePhysicochemicals()
 void SESubstancePhysicochemicals::Clear()
 {
   SAFE_DELETE(m_AcidDissociationConstant);
-  m_BindingProtein = (cdm::SubstanceData_eBindingProtein) - 1;
+  m_BindingProtein = cdm::SubstanceData_eBindingProtein_NullBindingProtein;
   SAFE_DELETE(m_BloodPlasmaRatio);
   SAFE_DELETE(m_FractionUnboundInPlasma);
-  m_IonicState = (cdm::SubstanceData_eIonicState) - 1;
+  m_IonicState = cdm::SubstanceData_eIonicState_NullIonicState;
   SAFE_DELETE(m_LogP);
   SAFE_DELETE(m_OralAbsorptionRateConstant);
 }
@@ -148,11 +148,11 @@ void SESubstancePhysicochemicals::SetBindingProtein(cdm::SubstanceData_eBindingP
 }
 bool SESubstancePhysicochemicals::HasBindingProtein() const
 {
-  return m_BindingProtein == ((cdm::SubstanceData_eBindingProtein) - 1) ? false : true;
+  return m_BindingProtein == cdm::SubstanceData_eBindingProtein_NullBindingProtein ? false : true;
 }
 void SESubstancePhysicochemicals::InvalidateBindingProtein()
 {
-  m_BindingProtein = (cdm::SubstanceData_eBindingProtein) - 1;
+  m_BindingProtein = cdm::SubstanceData_eBindingProtein_NullBindingProtein;
 }
 
 bool SESubstancePhysicochemicals::HasBloodPlasmaRatio() const
@@ -200,11 +200,11 @@ void SESubstancePhysicochemicals::SetIonicState(cdm::SubstanceData_eIonicState s
 }
 bool SESubstancePhysicochemicals::HasIonicState() const
 {
-  return m_IonicState == ((cdm::SubstanceData_eIonicState)-1) ? false : true;
+  return m_IonicState == cdm::SubstanceData_eIonicState_NullIonicState ? false : true;
 }
 void SESubstancePhysicochemicals::InvalidateIonicState()
 {
-  m_IonicState = (cdm::SubstanceData_eIonicState)-1;
+  m_IonicState = cdm::SubstanceData_eIonicState_NullIonicState;
 }
 
 bool SESubstancePhysicochemicals::HasLogP() const

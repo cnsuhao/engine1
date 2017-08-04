@@ -251,15 +251,15 @@ message SubstanceBolusData
 {
   enum eAdministrationRoute
   {
-    Epidural                                                                = 0;/** @brief Injection into a epidural space */
-    Intraosseous                                                            = 1;/** @brief Injection into the bone marrow */
-    Intraarterial                                                           = 2;/** @brief Injection into an artery */
-    Intracardiac                                                            = 3;/** @brief Injection into the heart */
-    Intracerebral                                                           = 4;/** @brief Injection into the brain */
-    Intracerebroventricular                                                 = 5;/** @brief Injection into the cerebral ventricles */
-    Intradermal                                                             = 6;/** @brief Injection into the skin */
-    Intramuscular                                                           = 7;/** @brief Injection into the muscle */      
-    Intravenous                                                             = 8;/** @brief Injection into a vein */          
+    Intravenous                                                             = 0;/** @brief Injection into a vein */          
+    Epidural                                                                = 1;/** @brief Injection into a epidural space */
+    Intraosseous                                                            = 2;/** @brief Injection into the bone marrow */
+    Intraarterial                                                           = 3;/** @brief Injection into an artery */
+    Intracardiac                                                            = 4;/** @brief Injection into the heart */
+    Intracerebral                                                           = 5;/** @brief Injection into the brain */
+    Intracerebroventricular                                                 = 6;/** @brief Injection into the cerebral ventricles */
+    Intradermal                                                             = 7;/** @brief Injection into the skin */
+    Intramuscular                                                           = 8;/** @brief Injection into the muscle */      
     Subcutaneous                                                            = 9;/** @brief Injection under the skin */      
   }
   message StateData

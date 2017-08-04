@@ -35,8 +35,6 @@ public:
 
   virtual cdm::PatientAssessmentRequestData_eAssessmentType GetType() const;
   virtual void SetType(cdm::PatientAssessmentRequestData_eAssessmentType type);
-  virtual bool HasType() const;
-  virtual void InvalidateType();
 
   virtual void ToString(std::ostream &str) const;
   

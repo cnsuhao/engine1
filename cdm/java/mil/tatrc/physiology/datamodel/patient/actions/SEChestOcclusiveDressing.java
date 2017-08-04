@@ -51,8 +51,10 @@ public class SEChestOcclusiveDressing extends SEPatientAction
   public static void load(ChestOcclusiveDressingData src, SEChestOcclusiveDressing dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    dst.state = src.getState();
-    dst.side = src.getSide();
+    if(src.getState()!=eSwitch.UNRECOGNIZED)
+    	dst.state = src.getState();
+    if(src.getSide()!=eSide.UNRECOGNIZED)
+    	dst.side = src.getSide();
   }
   
   public static ChestOcclusiveDressingData unload(SEChestOcclusiveDressing src)

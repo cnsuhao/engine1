@@ -18,12 +18,12 @@
 		<link>
 			<name>bind</name>
 			<type>2</type>
-			<location>C:/Programming/physiology/build/x64/InnerBuild/schema/java</location>
+			<location>C:/Programming/physiology/build/protobuf/InnerBuild/schema/java</location>
 		</link>
 		<link>
 			<name>protobuf</name>
 			<type>2</type>
-			<location>C:/Programming/physiology/build/x64/protobuf/src/protobuf/java/core/src/main/java</location>
+			<location>C:/Programming/physiology/build/protobuf/protobuf/src/protobuf/java/core/src/main/java</location>
 		</link>
 	</linkedResources>
 </projectDescription>

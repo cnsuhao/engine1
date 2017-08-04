@@ -69,9 +69,12 @@ void SEThermalCompartmentLink::Serialize(const SEThermalCompartmentLink& src, cd
   dst.mutable_link()->set_targetcompartment(src.m_TargetCmpt.GetName());
   if (src.m_Path != nullptr)
     dst.mutable_link()->set_path(src.m_Path->GetName());
+  // Yeah, I know
+  // But, these will only modify member variables if they are being used as temporary variables
   // Even if you have a path, I am unloading everything, this makes the pba actually usefull...
+  SEThermalCompartmentLink& mutable_src = const_cast<SEThermalCompartmentLink&>(src);
   if (src.HasHeatTransferRate())
-    dst.set_allocated_heattransferrate(SEScalarPower::Unload(*src.m_HeatTransferRate));
+    dst.set_allocated_heattransferrate(SEScalarPower::Unload(mutable_src.GetHeatTransferRate()));
 }
 
 void SEThermalCompartmentLink::Clear()

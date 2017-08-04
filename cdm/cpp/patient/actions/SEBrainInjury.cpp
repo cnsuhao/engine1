@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 SEBrainInjury::SEBrainInjury() : SEPatientAction()
 {
   m_Severity=nullptr;
-  m_Type = (cdm::BrainInjuryData_eType) - 1;
+  m_Type = cdm::BrainInjuryData_eType_Diffuse;
 }
 
 SEBrainInjury::~SEBrainInjury()
@@ -30,7 +30,7 @@ void SEBrainInjury::Clear()
   
   SEPatientAction::Clear();
   SAFE_DELETE(m_Severity);
-  m_Type = (cdm::BrainInjuryData_eType) - 1;
+  m_Type = cdm::BrainInjuryData_eType_Diffuse;
 }
 
 bool SEBrainInjury::IsValid() const
@@ -66,8 +66,7 @@ void SEBrainInjury::Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& ds
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-  if (src.HasType())
-    dst.set_type(src.m_Type);
+  dst.set_type(src.m_Type);
 }
 
 bool SEBrainInjury::HasSeverity() const
@@ -89,21 +88,12 @@ void SEBrainInjury::SetType(cdm::BrainInjuryData_eType Type)
 {
   m_Type = Type;
 }
-bool SEBrainInjury::HasType() const
-{
-  return m_Type == ((cdm::BrainInjuryData_eType) - 1) ? false : true;
-}
-void SEBrainInjury::InvalidateType()
-{
-  m_Type = (cdm::BrainInjuryData_eType) - 1;
-}
-
 void SEBrainInjury::ToString(std::ostream &str) const
 {
   str << "Patient Action : Brain Injury"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << "\n\tType: "; HasType() ? str << GetType() : str << "Not Set";
+  str << "\n\tType: "<< GetType();
   str << std::flush;
 }

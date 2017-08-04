@@ -19,8 +19,9 @@ message SerializeStateData
 {
   enum eSerializationType
   {
-    Load = 0;
-    Save = 1;
+    Save = 0;
+    Load = 1;
+    
   }
   ActionData         Action   = 1;
   eSerializationType Type     = 2;

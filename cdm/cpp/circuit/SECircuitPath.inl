@@ -36,12 +36,12 @@ SECircuitPath<CIRCUIT_PATH_TYPES>::SECircuitPath(SECircuitNode<PotentialScalar,Q
   m_NextPotentialSource = nullptr;
   m_PotentialSourceBaseline = nullptr;
   m_ValveBreakdownPotential = nullptr;
-  m_Switch=(cdm::eGate)-1;
-  m_Valve=(cdm::eGate)-1;
-  m_NextSwitch=(cdm::eGate)-1;
-  m_NextValve=(cdm::eGate)-1;
-  m_NextPolarizedState = (cdm::eGate) - 1;
-  m_PolarizedState = (cdm::eGate) - 1;
+  m_Switch= cdm::eGate::NullGate;
+  m_Valve= cdm::eGate::NullGate;
+  m_NextSwitch= cdm::eGate::NullGate;
+  m_NextValve= cdm::eGate::NullGate;
+  m_NextPolarizedState = cdm::eGate::NullGate;
+  m_PolarizedState = cdm::eGate::NullGate;
 
   m_NumElements = 0;
   m_NumNextElements = 0;
@@ -63,12 +63,12 @@ SECircuitPath<CIRCUIT_PATH_TYPES>::~SECircuitPath()
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::Clear()
 {
-  m_Switch=(cdm::eGate)-1;
-  m_Valve=(cdm::eGate)-1;
-  m_NextSwitch=(cdm::eGate)-1;
-  m_NextValve=(cdm::eGate)-1;
-  m_NextPolarizedState = (cdm::eGate) - 1;
-  m_PolarizedState = (cdm::eGate) - 1;
+  m_Switch= cdm::eGate::NullGate;
+  m_Valve= cdm::eGate::NullGate;
+  m_NextSwitch= cdm::eGate::NullGate;
+  m_NextValve= cdm::eGate::NullGate;
+  m_NextPolarizedState = cdm::eGate::NullGate;
+  m_PolarizedState = cdm::eGate::NullGate;
   SAFE_DELETE(m_Resistance);
   SAFE_DELETE(m_NextResistance);
   SAFE_DELETE(m_ResistanceBaseline);
@@ -228,12 +228,12 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipSwitch()
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasSwitch() const
 {
-  return m_Switch==(cdm::eGate)-1?false:true;
+  return m_Switch== cdm::eGate::NullGate ?false:true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateSwitch()
 {
-  m_Switch = (cdm::eGate)-1;
+  m_Switch = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -254,12 +254,12 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipNextSwitch()
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasNextSwitch() const
 {
-  return m_NextSwitch==(cdm::eGate)-1?false:true;
+  return m_NextSwitch== cdm::eGate::NullGate ?false:true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateNextSwitch()
 {
-  m_NextSwitch = (cdm::eGate)-1;
+  m_NextSwitch = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -280,12 +280,12 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipValve()
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasValve() const
 {
-  return m_Valve==(cdm::eGate)-1?false:true;
+  return m_Valve== cdm::eGate::NullGate ?false:true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateValve()
 {
-  m_Valve = (cdm::eGate)-1;
+  m_Valve = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -306,12 +306,12 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipNextValve()
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasNextValve() const
 {
-  return m_NextValve==(cdm::eGate)-1?false:true;
+  return m_NextValve== cdm::eGate::NullGate ?false:true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateNextValve()
 {
-  m_NextValve = (cdm::eGate)-1;
+  m_NextValve = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -332,12 +332,12 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipNextPolarizedState()
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasNextPolarizedState() const
 {
-  return m_NextPolarizedState == (cdm::eGate) - 1 ? false : true;
+  return m_NextPolarizedState == cdm::eGate::NullGate ? false : true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateNextPolarizedState()
 {
-  m_NextPolarizedState = (cdm::eGate) - 1;
+  m_NextPolarizedState = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -358,12 +358,12 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipPolarizedState()
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasPolarizedState() const
 {
-  return m_PolarizedState == (cdm::eGate) - 1 ? false : true;
+  return m_PolarizedState == cdm::eGate::NullGate ? false : true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidatePolarizedState()
 {
-  m_PolarizedState = (cdm::eGate) - 1;
+  m_PolarizedState = cdm::eGate::NullGate;
 }
 
 

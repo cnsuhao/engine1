@@ -118,7 +118,8 @@ public class SEMechanicalVentilation extends SEPatientAction
   public static void load(MechanicalVentilationData src, SEMechanicalVentilation dst, SESubstanceManager substances)
   {
     SEPatientAction.load(src.getPatientAction(), dst);   
-    dst.setState(src.getState());
+    if(src.getState()!=eSwitch.UNRECOGNIZED)
+    	dst.setState(src.getState());
     if (src.hasFlow())
       SEScalarVolumePerTime.load(src.getFlow(),dst.getFlow());
     if (src.hasPressure())

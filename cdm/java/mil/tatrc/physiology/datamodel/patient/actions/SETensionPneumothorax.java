@@ -63,8 +63,10 @@ public class SETensionPneumothorax extends SEPatientAction
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasSeverity())
       SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
-    dst.type = src.getType();
-    dst.side = src.getSide();
+    if(src.getType()!=eGate.UNRECOGNIZED)
+    	dst.type = src.getType();
+    if(src.getSide()!=eSide.UNRECOGNIZED)
+    	dst.side = src.getSide();
   }
   
   public static TensionPneumothoraxData unload(SETensionPneumothorax src)

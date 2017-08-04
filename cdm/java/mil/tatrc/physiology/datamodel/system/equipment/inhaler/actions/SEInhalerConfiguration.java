@@ -12,6 +12,8 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.equipment.inhaler.actions;
 
+import org.jfree.util.Log;
+
 import com.kitware.physiology.cdm.InhalerActions.InhalerConfigurationData;
 
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
@@ -19,8 +21,8 @@ import mil.tatrc.physiology.datamodel.system.equipment.inhaler.SEInhaler;
 
 public class SEInhalerConfiguration extends SEInhalerAction
 {
-  protected SEInhaler inhaler;
-  protected String    inhalerFile;
+  protected SEInhaler configuration;
+  protected String    configurationFile;
   
   public SEInhalerConfiguration()
   {
@@ -37,23 +39,23 @@ public class SEInhalerConfiguration extends SEInhalerAction
     if(this==other)
       return;
     super.copy(other);
-    this.inhaler.copy(other.inhaler);
-    this.inhalerFile=other.inhalerFile;
+    this.configuration.copy(other.configuration);
+    this.configurationFile=other.configurationFile;
   }
   
   public void reset()
   {
     super.reset();
     
-    if (this.inhaler != null)
-      this.inhaler.reset();
-    if (this.inhalerFile != null)
-      this.inhalerFile="";
+    if (this.configuration != null)
+      this.configuration.reset();
+    if (this.configurationFile != null)
+      this.configurationFile="";
   }
   
   public boolean isValid()
   {
-    return hasInhaler() || hasInhalerFile();
+    return hasConfiguration() || hasConfigurationFile();
   }
   
   public static void load(InhalerConfigurationData src, SEInhalerConfiguration dst, SESubstanceManager subMgr)
@@ -61,12 +63,14 @@ public class SEInhalerConfiguration extends SEInhalerAction
     dst.reset();
     switch(src.getOptionCase())
     {
-    case INHALERFILE:
-      dst.inhalerFile = src.getInhalerFile();
+    case CONFIGURATIONFILE:
+      dst.configurationFile = src.getConfigurationFile();
       break;
-    case INHALER:
-      SEInhaler.load(src.getInhaler(),dst.getInhaler(),subMgr);
+    case CONFIGURATION:
+      SEInhaler.load(src.getConfiguration(),dst.getConfiguration(),subMgr);
       break;
+    default:
+    	Log.error("Unknown InhalerConfiguationData OptionCase");
     }
   }
   public static InhalerConfigurationData unload(SEInhalerConfiguration src)
@@ -77,46 +81,46 @@ public class SEInhalerConfiguration extends SEInhalerAction
   }
   protected static void unload(SEInhalerConfiguration src, InhalerConfigurationData.Builder dst)
   {
-    if(src.hasInhaler())
-      dst.setInhaler(SEInhaler.unload(src.inhaler));
-    else if(src.hasInhalerFile())
-      dst.setInhalerFile(src.inhalerFile);
+    if(src.hasConfiguration())
+      dst.setConfiguration(SEInhaler.unload(src.configuration));
+    else if(src.hasConfigurationFile())
+      dst.setConfigurationFile(src.configurationFile);
   }
   
-  public boolean hasInhaler()
+  public boolean hasConfiguration()
   {
-    return this.inhaler!=null;
+    return this.configuration!=null;
   }
-  public SEInhaler getInhaler()
+  public SEInhaler getConfiguration()
   {
-    if(this.inhaler==null)
-      this.inhaler=new SEInhaler();
-    return this.inhaler;
+    if(this.configuration==null)
+      this.configuration=new SEInhaler();
+    return this.configuration;
   }
   
-  public boolean hasInhalerFile()
+  public boolean hasConfigurationFile()
   {
-    return this.inhalerFile!=null&&!this.inhalerFile.isEmpty();
+    return this.configurationFile!=null&&!this.configurationFile.isEmpty();
   }
-  public String getInhalerFile()
+  public String getConfigurationFile()
   {
-    return this.inhalerFile;
+    return this.configurationFile;
   }
-  public void setInhalerFile(String s)
+  public void setConfigurationFile(String s)
   {
-    this.inhalerFile = s;
+    this.configurationFile = s;
   }
   
   public String toString()
   {
     String str = "Inhaler Configuration";
-    if(hasInhaler())
+    if(hasConfiguration())
     {
-      str += inhaler.toString();
+      str += configuration.toString();
     }
     
-    if(this.hasInhalerFile())
-      str +="\n\tInhaler File: "+this.inhalerFile;
+    if(this.hasConfigurationFile())
+      str +="\n\tInhaler File: "+this.configurationFile;
     
     return str;
   }

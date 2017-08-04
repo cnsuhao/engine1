@@ -150,19 +150,19 @@ public class SEUrinalysis extends SEPatientAssessment
   
   public eUrineColor  getColor() { return this.color;}
   public void    setColor(eUrineColor color){this.color=color;}
-  public boolean hasColor(){return this.color==null?false:true;}
+  public boolean hasColor(){return this.color==null?false:color!=eUrineColor.NullColor;}
   
   public eClarityIndicator  getAppearance() { return this.appearance;}
   public void    setAppearance(eClarityIndicator a){this.appearance=a;}
-  public boolean hasAppearance(){return this.appearance==null?false:true;}
+  public boolean hasAppearance(){return this.appearance==null?false:appearance!=eClarityIndicator.NullClarity;}
   
   public ePresenceIndicator  getGlucose() { return this.glucose;}
   public void    setGlucose(ePresenceIndicator g){this.glucose=g;}
-  public boolean hasGlucose(){return this.glucose==null?false:true;}
+  public boolean hasGlucose(){return this.glucose==null?false:glucose!=ePresenceIndicator.NullPresence;}
   
   public ePresenceIndicator  getKetone() { return this.ketone;}
   public void    setKetone(ePresenceIndicator k){this.ketone=k;}
-  public boolean hasKetone(){return this.ketone==null?false:true;}
+  public boolean hasKetone(){return this.ketone==null?false:ketone!=ePresenceIndicator.NullPresence;}
   
   public boolean hasBilirubin()
   {
@@ -188,7 +188,7 @@ public class SEUrinalysis extends SEPatientAssessment
   
   public ePresenceIndicator  getBlood() { return this.blood;}
   public void    setBlood(ePresenceIndicator b){this.blood=b;}
-  public boolean hasBlood(){return this.blood==null?false:true;}
+  public boolean hasBlood(){return this.blood==null?false:blood!=ePresenceIndicator.NullPresence;}
   
   public boolean hasPH()
   {
@@ -203,7 +203,7 @@ public class SEUrinalysis extends SEPatientAssessment
   
   public ePresenceIndicator  getProtein() { return this.protein;}
   public void    setProtein(ePresenceIndicator p){this.protein=p;}
-  public boolean hasProtein(){return this.protein==null?false:true;}
+  public boolean hasProtein(){return this.protein==null?false:protein!=ePresenceIndicator.NullPresence;}
  
   
   public boolean hasUrobilinogen()
@@ -219,9 +219,9 @@ public class SEUrinalysis extends SEPatientAssessment
   
   public ePresenceIndicator  getNitrite() { return this.nitrite;}
   public void    setNitrite(ePresenceIndicator n){this.nitrite=n;}
-  public boolean hasNitrite(){return this.nitrite==null?false:true;}
+  public boolean hasNitrite(){return this.nitrite==null?false:nitrite!=ePresenceIndicator.NullPresence;}
   
   public ePresenceIndicator  getLeukocyteEsterase() { return this.leukocyteEsterase;}
   public void    setLeukocyteEsterase(ePresenceIndicator l){this.leukocyteEsterase=l;}
-  public boolean hasLeukocyteEsterase(){return this.leukocyteEsterase==null?false:true;}
+  public boolean hasLeukocyteEsterase(){return this.leukocyteEsterase==null?false:leukocyteEsterase!=ePresenceIndicator.NullPresence;}
 }

@@ -48,11 +48,14 @@ public class SEScenarioAutoSerialization
 
     dst.setDirectory(src.getDirectory());
     dst.setFilename(src.getFilename());
-    dst.setAfterActions(src.getAfterActions());
+    if(src.getAfterActions()!=eSwitch.UNRECOGNIZED)
+    	dst.setAfterActions(src.getAfterActions());
     if(src.hasPeriod())
       SEScalarTime.load(src.getPeriod(), dst.getPeriod());
-    dst.setPeriodTimeStamps(src.getPeriodTimeStamps());
-    dst.setReloadState(src.getReloadState());
+    if(src.getPeriodTimeStamps()!=eSwitch.UNRECOGNIZED)
+    	dst.setPeriodTimeStamps(src.getPeriodTimeStamps());
+    if(src.getReloadState()!=eSwitch.UNRECOGNIZED)
+    	dst.setReloadState(src.getReloadState());
   }
   
   public static ScenarioData.AutoSerializationData unload(SEScenarioAutoSerialization src)

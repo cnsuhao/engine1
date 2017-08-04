@@ -12,27 +12,28 @@ specific language governing permissions and limitations under the License.
 
 package mil.tatrc.physiology.datamodel.system.environment.actions;
 
-import com.kitware.physiology.cdm.EnvironmentActions.EnvironmentConfigurationData;
+import com.kitware.physiology.cdm.EnvironmentActions.ChangeEnvironmentConditionsData;
+
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.datamodel.system.environment.SEEnvironmentalConditions;
 
-public class SEEnvironmentConfiguration extends SEEnvironmentAction
+public class SEChangeEnvironmentConditions extends SEEnvironmentAction
 {
   protected SEEnvironmentalConditions conditions;
   protected String                    conditionsFile;
   
-  public SEEnvironmentConfiguration()
+  public SEChangeEnvironmentConditions()
   {
     this.conditions=new SEEnvironmentalConditions();
   }
   
-  public SEEnvironmentConfiguration(SEEnvironmentConfiguration other)
+  public SEChangeEnvironmentConditions(SEChangeEnvironmentConditions other)
   {
     this();
     copy(other);    
   }
   
-  public void copy(SEEnvironmentConfiguration other)
+  public void copy(SEChangeEnvironmentConditions other)
   {
     if(this==other)
       return;
@@ -53,7 +54,7 @@ public class SEEnvironmentConfiguration extends SEEnvironmentAction
     return hasConditions() || hasConditionsFile();
   }
   
-  public static void load(EnvironmentConfigurationData src, SEEnvironmentConfiguration dst, SESubstanceManager subMgr)
+  public static void load(ChangeEnvironmentConditionsData src, SEChangeEnvironmentConditions dst, SESubstanceManager subMgr)
   {
     SEEnvironmentAction.load(src.getEnvironmentAction(), dst);
     switch(src.getOptionCase())
@@ -66,13 +67,13 @@ public class SEEnvironmentConfiguration extends SEEnvironmentAction
       break;
     }
   }
-  public static EnvironmentConfigurationData unload(SEEnvironmentConfiguration src)
+  public static ChangeEnvironmentConditionsData unload(SEChangeEnvironmentConditions src)
   {
-    EnvironmentConfigurationData.Builder dst = EnvironmentConfigurationData.newBuilder();
+    ChangeEnvironmentConditionsData.Builder dst = ChangeEnvironmentConditionsData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEEnvironmentConfiguration src, EnvironmentConfigurationData.Builder dst)
+  protected static void unload(SEChangeEnvironmentConditions src, ChangeEnvironmentConditionsData.Builder dst)
   {
     SEEnvironmentAction.unload(src, dst.getEnvironmentActionBuilder());
     if(src.hasConditions())
