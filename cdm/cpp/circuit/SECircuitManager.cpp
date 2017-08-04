@@ -14,6 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
+#include <google/protobuf/text_format.h>
 
 SECircuitManager::SECircuitManager(Logger* logger) : Loggable(logger)
 {
@@ -29,6 +30,33 @@ void SECircuitManager::Clear()
   m_ElectricalLedger.Clear();
   m_FluidLedger.Clear();
   m_ThermalLedger.Clear();
+}
+
+bool SECircuitManager::LoadFile(const std::string& filename)
+{
+  cdm::CircuitManagerData src;
+  std::ifstream file_stream(filename, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
+  SECircuitManager::Load(src, *this);
+  return true;
+
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(filename, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
+}
+
+void SECircuitManager::SaveFile(const std::string& filename)
+{
+  std::string content;
+  cdm::CircuitManagerData* src = SECircuitManager::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
+  ascii_ostream << content;
+  ascii_ostream.flush();
+  ascii_ostream.close();
+  delete src;
 }
 
 void SECircuitManager::Load(const cdm::CircuitManagerData& src, SECircuitManager& dst)

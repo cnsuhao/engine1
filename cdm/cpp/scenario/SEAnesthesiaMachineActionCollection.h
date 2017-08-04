@@ -30,17 +30,11 @@ specific language governing permissions and limitations under the License.
 
 class DLL_DECL SEAnesthesiaMachineActionCollection : public Loggable
 {
-public:
-
+  friend class SEActionManager;
+protected:
   SEAnesthesiaMachineActionCollection(SESubstanceManager&);
+public:
   ~SEAnesthesiaMachineActionCollection();
-
-  void Clear();
-
-  void Unload(std::vector<CDM::ActionData*>& to);
-
-  bool ProcessAction(const SEAnesthesiaMachineAction& action);
-  bool ProcessAction(const CDM::AnesthesiaMachineActionData& action);
 
   // STATE ACTION
   bool HasConfiguration() const;
@@ -100,7 +94,8 @@ public:
   void RemoveYPieceDisconnect();
   
 protected:
-  bool IsValid(const SEAnesthesiaMachineAction& action);
+  void Clear();
+  bool ProcessAction(const SEAnesthesiaMachineAction& action, cdm::AnyAnesthesiaMachineActionData& any);
 
   SEAnesthesiaMachineConfiguration*           m_Configuration;
   //Anesthesia Machine Incidents
@@ -119,5 +114,4 @@ protected:
   SEYPieceDisconnect*                         m_YPieceDisconnect;
   // General
   SESubstanceManager& m_Substances;
-  std::stringstream m_ss;
 };

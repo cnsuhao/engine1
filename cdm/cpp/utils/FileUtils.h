@@ -14,8 +14,6 @@ specific language governing permissions and limitations under the License.
 
 #include "CommonDataModel.h"
 
-#include <mutex>
-
 #if defined(_MSC_VER) || defined(__MINGW64_VERSION_MAJOR)
 
 #include <windows.h>
@@ -47,20 +45,4 @@ std::string DLL_DECL Replace(const std::string& original, const std::string& rep
 void DLL_DECL ListFiles(const std::string& dir, std::vector<std::string>& files, const std::string& mask = "");
 std::string DLL_DECL GetCurrentWorkingDirectory();
 void DLL_DECL DeleteDirectory(const std::string &dir, bool bDeleteSubdirectories=true);
-
-DLL_DECL extern std::recursive_mutex g_fileSystemMutex;
-
-class DLL_DECL ScopedFileSystemLock
-{
-public:
-    ScopedFileSystemLock();
-    ~ScopedFileSystemLock();
-
-    ScopedFileSystemLock(const ScopedFileSystemLock& other) = delete;
-    ScopedFileSystemLock& operator=(const ScopedFileSystemLock& other) = delete;
-
-    ScopedFileSystemLock(ScopedFileSystemLock&& other) = delete;
-    ScopedFileSystemLock& operator=(ScopedFileSystemLock&& other) = delete;
-};
-
 bool DLL_DECL IsDirectory(struct dirent* ent);

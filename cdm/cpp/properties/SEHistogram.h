@@ -33,8 +33,8 @@ public:
   virtual bool                          IsValid() const;
   virtual void                          Invalidate();
 
-  virtual unsigned int                  NumberOfBins() const;
-  virtual unsigned int                  NumberOfBoundaries() const;
+  virtual size_t                        NumberOfBins() const;
+  virtual size_t                        NumberOfBoundaries() const;
   
   double                                GetDependentValue(unsigned int index) const;
   std::vector<double>&                  GetDependent();      

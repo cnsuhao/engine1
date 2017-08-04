@@ -9,31 +9,23 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-
 #pragma once
 #include "substance/SESubstanceManager.h"
 class SEEnvironment;
 
-#include "system/environment/actions/SEEnvironmentChange.h"
+#include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 
 class DLL_DECL SEEnvironmentActionCollection : public Loggable
 {
-public:
-
+  friend class SEActionManager;
+protected:
   SEEnvironmentActionCollection(SESubstanceManager&);
+public:
   ~SEEnvironmentActionCollection();
 
-  void Clear();
-
-  void Unload(std::vector<CDM::ActionData*>& to);
-
-  bool ProcessAction(const SEEnvironmentAction& action);
-  bool ProcessAction(const CDM::EnvironmentActionData& action);
-
-  // STATE ACTION
   bool HasChange() const;
-  SEEnvironmentChange* GetChange() const;
+  SEChangeEnvironmentConditions* GetChange() const;
   void RemoveChange();
 
   bool HasThermalApplication() const;
@@ -41,11 +33,11 @@ public:
   void RemoveThermalApplication();
 
 protected:
-  bool IsValid(const SEEnvironmentAction& action);
+  void Clear();
+  bool ProcessAction(const SEEnvironmentAction& action, cdm::AnyEnvironmentActionData& any);
   
-  SEEnvironmentChange*  m_Change;
-  SEThermalApplication* m_ThermalApplication;
+  SEChangeEnvironmentConditions*  m_Change;
+  SEThermalApplication*           m_ThermalApplication;
   // General
-  SESubstanceManager&   m_Substances;
-  std::stringstream     m_ss;
+  SESubstanceManager&             m_Substances;
 };

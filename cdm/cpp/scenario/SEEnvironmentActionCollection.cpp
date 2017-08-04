@@ -38,75 +38,48 @@ void SEEnvironmentActionCollection::Clear()
   RemoveThermalApplication();
 }
 
-void SEEnvironmentActionCollection::Unload(std::vector<CDM::ActionData*>& to)
+bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action, cdm::AnyEnvironmentActionData& any)
 {
-  if (HasChange())
-    to.push_back(GetChange()->Unload());
-  if (HasThermalApplication())
-    to.push_back(GetThermalApplication()->Unload());
-}
-
-bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action)
-{
-  if (!IsValid(action))
-    return false;
-  CDM::EnvironmentActionData* bind = action.Unload();
-  bool b = ProcessAction(*bind);
-  delete bind;
-  return b;
-}
-
-bool SEEnvironmentActionCollection::ProcessAction(const CDM::EnvironmentActionData& action)
-{
-  const CDM::EnvironmentChangeData* change = dynamic_cast<const CDM::EnvironmentChangeData*>(&action);
-  if (change != nullptr)
+  const SEChangeEnvironmentConditions* conditions = dynamic_cast<const SEChangeEnvironmentConditions*>(&action);
+  if (conditions != nullptr)
   {
     if (m_Change == nullptr)
-      m_Change = new SEEnvironmentChange(m_Substances);
-    m_Change->Load(*change);   
-    return IsValid(*m_Change);
+      m_Change = new SEChangeEnvironmentConditions(m_Substances);
+    any.set_allocated_conditions(SEChangeEnvironmentConditions::Unload(*conditions));
+    SEChangeEnvironmentConditions::Load(any.conditions(), *m_Change);
+    if (!m_Change->IsActive())
+      RemoveChange();
+    return true;
   }
 
-  const CDM::ThermalApplicationData *thermal = dynamic_cast<const CDM::ThermalApplicationData*>(&action);
+  const SEThermalApplication *thermal = dynamic_cast<const SEThermalApplication*>(&action);
   if (thermal != nullptr)
   {    
     if (m_ThermalApplication == nullptr)
-      m_ThermalApplication = new SEThermalApplication();    
-    m_ThermalApplication->Load(*thermal);
+      m_ThermalApplication = new SEThermalApplication();
+    any.set_allocated_thermalapplication(SEThermalApplication::Unload(*thermal));
+    SEThermalApplication::Load(any.thermalapplication(), *m_ThermalApplication);
     if (!m_ThermalApplication->IsActive())
-    {
-      RemoveThermalApplication();
-      return true;
-    }
-    return IsValid(*m_ThermalApplication);
+      RemoveThermalApplication();     
+    return true;
   }
 
   /// \error Unsupported Action
-  Error("Unsupported Action");
+  Error("Unsupported Environment Action");
   return false;
-}
-
-bool SEEnvironmentActionCollection::IsValid(const SEEnvironmentAction& action)
-{
-  if (!action.IsValid())
-  {
-    Error("Invalid Inhaler Environment Action");
-    return false;
-  }
-  return true;
 }
 
 bool SEEnvironmentActionCollection::HasChange() const
 {
   return m_Change == nullptr ? false : true;
 }
-SEEnvironmentChange* SEEnvironmentActionCollection::GetChange() const
+SEChangeEnvironmentConditions* SEEnvironmentActionCollection::GetChange() const
 {
   return m_Change;
 }
 void SEEnvironmentActionCollection::RemoveChange()
 {
-  m_Change = nullptr;
+  SAFE_DELETE(m_Change);
 }
 
 bool SEEnvironmentActionCollection::HasThermalApplication() const

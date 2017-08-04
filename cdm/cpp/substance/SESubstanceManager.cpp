@@ -255,8 +255,6 @@ bool SESubstanceManager::LoadSubstanceDirectory()
   DIR *dir;
   struct dirent *ent;
 
-  ScopedFileSystemLock lock;
-
   std::string workingDirectory = GetCurrentWorkingDirectory();
 
 #if defined(_WIN32)

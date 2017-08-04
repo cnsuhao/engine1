@@ -15,7 +15,6 @@ specific language governing permissions and limitations under the License.
 class SEAction;
 class SEScenario;
 class PhysiologyEngine;
-CDM_BIND_DECL(ScenarioData)
 
 class DLL_DECL SEScenarioCustomExec
 {

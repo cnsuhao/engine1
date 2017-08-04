@@ -96,7 +96,7 @@ void SEThermalCompartment::Serialize(const SEThermalCompartment& src, cdm::Therm
     dst.mutable_compartment()->add_child(child->GetName());
   for (SEThermalCircuitNode* nodes : src.m_Nodes.GetNodes())
     dst.mutable_compartment()->add_node(nodes->GetName());
-  // Even if you have children or nodes, I am unloading everything, this makes the xml actually usefull...
+  // Even if you have children or nodes, I am unloading everything, this makes the pba actually usefull...
   if (src.HasHeatTransferRateIn())
     dst.set_allocated_heattransferratein(SEScalarPower::Unload(src.GetHeatTransferRateIn()));
   if (src.HasHeatTransferRateOut())

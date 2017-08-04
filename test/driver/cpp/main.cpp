@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 
 #define ENGINE_TESTS
 #ifdef ENGINE_TESTS
-#include "BioGearsEngineTest.h"
+//#include "BioGearsEngineTest.h"
 #endif
 #include "utils/FileUtils.h"
 
@@ -23,9 +23,9 @@ int main(int argc, char* argv[])
   Logger cdmLogger(cdmDir + "\\CDMUnitTests.log");
   CommonDataModelTest cdmTest(&cdmLogger);
 
-  std::string bgDir = ".\\test_results\\unit_tests\\biogears";
-  Logger bgeLogger(bgDir + "\\BioGearsUnitTests.log");
-  BioGearsEngineTest bgeTest(&bgeLogger);
+  //std::string bgDir = ".\\test_results\\unit_tests\\biogears";
+  //Logger bgeLogger(bgDir + "\\BioGearsUnitTests.log");
+  //BioGearsEngineTest bgeTest(&bgeLogger);
 
   if (argc == 1)
   {
@@ -64,14 +64,14 @@ int main(int argc, char* argv[])
       //bgeTest.CombinedInternalAndEnvironmentSkinTempDropCircuitTest(bgDir);
       //bgeTest.EnvironmentISO7730ComparisonTest(bgDir);
 
-      bgeTest.DiffusionClearanceExcretionTests(bgDir);
-      bgeTest.AlveolarOxygenDiffusionTest(bgDir);
-      bgeTest.AlveolarCarbonDioxideDiffusionTest(bgDir);
-      bgeTest.InstantPlusSimpleDiffusionTest(bgDir);
-      bgeTest.SimpleDiffusionTwoCompartmentTest(bgDir);
-      bgeTest.SimpleDiffusionFourCompartmentTest(bgDir);
-      bgeTest.SimpleDiffusionHierarchyTest(bgDir);
-      bgeTest.FacilitatedDiffusionTest(bgDir);
+      //bgeTest.DiffusionClearanceExcretionTests(bgDir);
+      //bgeTest.AlveolarOxygenDiffusionTest(bgDir);
+      //bgeTest.AlveolarCarbonDioxideDiffusionTest(bgDir);
+      //bgeTest.InstantPlusSimpleDiffusionTest(bgDir);
+      //bgeTest.SimpleDiffusionTwoCompartmentTest(bgDir);
+      //bgeTest.SimpleDiffusionFourCompartmentTest(bgDir);
+      //bgeTest.SimpleDiffusionHierarchyTest(bgDir);
+      //bgeTest.FacilitatedDiffusionTest(bgDir);
 
       //bgeTest.BrainInjuryTest(bgDir);
 
@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
       //cdmTest.CircuitLockingTest(cdmDir);
 
       ////Basic Circuit Tests
-      //cdmTest.BasicCircuitTest(cdmDir);
+      cdmTest.BasicCircuitTest(cdmDir);
 
       //cdmTest.SeriesRCDCTest(cdmDir);
       //cdmTest.SeriesRCSINTest(cdmDir);
@@ -313,8 +313,8 @@ int main(int argc, char* argv[])
   {
     if (cdmTest.RunTest(argv[1], ".\\test_results\\unit_tests\\cdm"))
       return 0;
-    if (bgeTest.RunTest(argv[1], ".\\test_results\\unit_tests\\biogears"))
-      return 0;
+    //if (bgeTest.RunTest(argv[1], ".\\test_results\\unit_tests\\biogears"))
+    //  return 0;
   }
   return 1;
 }

@@ -54,9 +54,9 @@ void SEHistogramFractionVsLength::Load(const cdm::HistogramFractionVsLengthData&
 void SEHistogramFractionVsLength::Serialize(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst)
 {
   dst.Clear();
-  for (size_t i = 0; i<src.histogramfractionvslength().histogram().dependent().value_size(); i++)
+  for (int i = 0; i<src.histogramfractionvslength().histogram().dependent().value_size(); i++)
     dst.m_Dependent.push_back(src.histogramfractionvslength().histogram().dependent().value(i));
-  for (size_t i = 0; i<src.histogramfractionvslength().histogram().independent().value_size(); i++)
+  for (int i = 0; i<src.histogramfractionvslength().histogram().independent().value_size(); i++)
     dst.m_Independent.push_back(src.histogramfractionvslength().histogram().independent().value(i));
 }
 

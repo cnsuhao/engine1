@@ -18,17 +18,11 @@ specific language governing permissions and limitations under the License.
 
 class DLL_DECL SEInhalerActionCollection : public Loggable
 {
-public:
-
+  friend class SEActionManager;
+protected:
   SEInhalerActionCollection(SESubstanceManager&);
+public:
   ~SEInhalerActionCollection();
-
-  void Clear();
-
-  void Unload(std::vector<CDM::ActionData*>& to);
-
-  bool ProcessAction(const SEInhalerAction& action);
-  bool ProcessAction(const CDM::InhalerActionData& action);
 
   // STATE ACTION
   bool HasConfiguration() const;
@@ -36,10 +30,10 @@ public:
   void RemoveConfiguration();
   
 protected:
-  bool IsValid(const SEInhalerAction& action);
+  void Clear();
+  bool ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData& any);
 
   SEInhalerConfiguration*   m_Configuration;
   // General
   SESubstanceManager& m_Substances;
-  std::stringstream m_ss;
 };

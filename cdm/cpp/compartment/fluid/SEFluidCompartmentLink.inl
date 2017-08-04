@@ -63,7 +63,7 @@ void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Serialize(const SEFlu
   dst.mutable_link()->set_targetcompartment(src.m_TargetCmpt.GetName());
   if (src.m_Path != nullptr)
     dst.mutable_link()->set_path(src.m_Path->GetName());
-  // Even if you have a path, I am unloading everything, this makes the xml actually usefull...
+  // Even if you have a path, I am unloading everything, this makes the pba actually usefull...
   if (src.HasFlow())
     dst.set_allocated_flow(SEScalarVolumePerTime::Unload(*src.m_Flow));
 }

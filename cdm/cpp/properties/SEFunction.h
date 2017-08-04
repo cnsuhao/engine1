@@ -34,7 +34,7 @@ public:
   virtual bool                          IsValid() const;
   virtual void                          Invalidate();
 
-  virtual unsigned int                  Length();
+  virtual size_t                        Length();
   
   double                                GetDependentValue(unsigned int index);
   std::vector<double>&                  GetDependent();      

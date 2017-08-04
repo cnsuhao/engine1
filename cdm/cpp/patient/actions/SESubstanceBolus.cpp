@@ -167,6 +167,7 @@ cdm::SubstanceBolusData_StateData* SESubstanceBolusState::Unload(const SESubstan
 
 void SESubstanceBolusState::Serialize(const SESubstanceBolusState& src, cdm::SubstanceBolusData_StateData& dst)
 {
+  dst.set_substance(src.m_Substance.GetName());
   dst.set_allocated_elapsedtime(SEScalarTime::Unload(src.m_ElapsedTime));
   dst.set_allocated_administereddose(SEScalarVolume::Unload(src.m_AdministeredDose));
 }

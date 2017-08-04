@@ -16,6 +16,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
+#include <google/protobuf/text_format.h>
 
 SECompartmentManager::SECompartmentManager(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_subMgr(subMgr)
 {
@@ -64,6 +65,33 @@ void SECompartmentManager::Clear()
   DELETE_VECTOR(m_TissueCompartments);
   m_TissueLeafCompartments.clear();
   m_TissueName2Compartments.clear();
+}
+
+bool SECompartmentManager::LoadFile(const std::string& filename)
+{
+  cdm::CompartmentManagerData src;
+  std::ifstream file_stream(filename, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
+  SECompartmentManager::Load(src, *this);
+  return true;
+
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(filename, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
+}
+
+void SECompartmentManager::SaveFile(const std::string& filename)
+{
+  std::string content;
+  cdm::CompartmentManagerData* src = SECompartmentManager::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
+  ascii_ostream << content;
+  ascii_ostream.flush();
+  ascii_ostream.close();
+  delete src;
 }
 
 void SECompartmentManager::Load(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits)

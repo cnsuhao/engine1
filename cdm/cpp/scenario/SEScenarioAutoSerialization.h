@@ -11,12 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-
+#include "bind/cdm/Scenario.pb.h"
 #include "properties/SEScalarTime.h"
-#include "bind/enumOnOff.hxx"
-#include "bind/ScenarioAutoSerializationData.hxx"
 
-CDM_BIND_DECL(ScenarioAutoSerializationData)
 class DLL_DECL SEScenarioAutoSerialization : public Loggable
 {
 public:
@@ -26,10 +23,12 @@ public:
   virtual void Clear();
   virtual bool IsValid() const;
 
-  virtual bool Load(const CDM::ScenarioAutoSerializationData& in);
-  virtual CDM::ScenarioAutoSerializationData* Unload() const;
+  static void Load(const cdm::ScenarioData_AutoSerializationData& src, SEScenarioAutoSerialization& dst);
+  static cdm::ScenarioData_AutoSerializationData* Unload(const SEScenarioAutoSerialization& src);
 protected:
-  virtual void Unload(CDM::ScenarioAutoSerializationData& data) const;
+  static void Serialize(const cdm::ScenarioData_AutoSerializationData& src, SEScenarioAutoSerialization& dst);
+  static void Serialize(const SEScenarioAutoSerialization& src, cdm::ScenarioData_AutoSerializationData& dst);
+
 public:
 
   virtual bool HasPeriod() const;

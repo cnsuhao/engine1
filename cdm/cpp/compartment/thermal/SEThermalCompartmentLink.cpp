@@ -69,7 +69,7 @@ void SEThermalCompartmentLink::Serialize(const SEThermalCompartmentLink& src, cd
   dst.mutable_link()->set_targetcompartment(src.m_TargetCmpt.GetName());
   if (src.m_Path != nullptr)
     dst.mutable_link()->set_path(src.m_Path->GetName());
-  // Even if you have a path, I am unloading everything, this makes the xml actually usefull...
+  // Even if you have a path, I am unloading everything, this makes the pba actually usefull...
   if (src.HasHeatTransferRate())
     dst.set_allocated_heattransferrate(SEScalarPower::Unload(*src.m_HeatTransferRate));
 }

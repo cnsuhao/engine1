@@ -36,7 +36,7 @@ void SEDataRequestManager::Clear()
 
 void SEDataRequestManager::Load(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, SESubstanceManager& subMgr)
 {
-
+  SEDataRequestManager::Serialize(src, dst,subMgr);
 }
 void SEDataRequestManager::Serialize(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, SESubstanceManager& subMgr)
 {
@@ -106,4 +106,11 @@ SEDecimalFormat& SEDataRequestManager::GetOverrideDecimalFormatting()
 void SEDataRequestManager::RemoveOverrideDecimalFormatting()
 {
   SAFE_DELETE(m_OverrideDecimalFormatting);
+}
+
+SEDataRequest& SEDataRequestManager::CreateDataRequest(cdm::DataRequestData_eCategory category, const SEDecimalFormat* dfault)
+{
+  SEDataRequest* dr = new SEDataRequest(category, dfault);
+  m_Requests.push_back(dr);
+  return *dr;
 }

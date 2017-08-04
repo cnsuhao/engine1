@@ -89,7 +89,7 @@ void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Serialize(const SEFluidCompart
     dst.mutable_compartment()->add_child(child->GetName());
   for (SEFluidCircuitNode* nodes : src.m_Nodes.GetNodes())
     dst.mutable_compartment()->add_node(nodes->GetName());
-  // Even if you have children or nodes, I am unloading everything, this makes the xml actually usefull...
+  // Even if you have children or nodes, I am unloading everything, this makes the pba actually usefull...
   if (src.HasInFlow())
     dst.set_allocated_inflow(SEScalarVolumePerTime::Unload(src.GetInFlow()));
   if (src.HasOutFlow())

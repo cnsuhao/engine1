@@ -11,13 +11,12 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-class SESubstanceManager;
-class SEAction;
-class SEDataRequest;
-class SEScenarioInitialParameters;
-class SEScenarioAutoSerialization;
-class SEDecimalFormat;
-#include "scenario/requests/SEDataRequestManager.h"
+#include "scenario/SEAction.h"
+#include "scenario/SECondition.h"
+#include "scenario/SEDataRequestManager.h"
+#include "scenario/SEScenarioInitialParameters.h"
+#include "scenario/SEScenarioAutoSerialization.h"
+#include "substance/SESubstanceManager.h"
 
 class DLL_DECL SEScenario : public Loggable
 {
@@ -28,10 +27,11 @@ public:
   
   virtual void Clear(); //clear memory
 
-  bool Load(const CDM::ScenarioData& in);
-  CDM::ScenarioData* Unload() const;
+  static void Load(const cdm::ScenarioData& src, SEScenario& dst);
+  static cdm::ScenarioData* Unload(const SEScenario& src);
 protected:
-  void Unload(CDM::ScenarioData& data)const;
+  static void Serialize(const cdm::ScenarioData& src, SEScenario& dst);
+  static void Serialize(const SEScenario& src, cdm::ScenarioData& dst);
 
 public:
   bool LoadFile(const std::string& scenarioFile);

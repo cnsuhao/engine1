@@ -69,9 +69,9 @@ void SEHistogram::Load(const cdm::HistogramData& src, SEHistogram& dst)
 void SEHistogram::Serialize(const cdm::HistogramData& src, SEHistogram& dst)
 {
   dst.Clear();
-  for (size_t i = 0; i<src.histogram().dependent().value_size(); i++)
+  for (int i = 0; i<src.histogram().dependent().value_size(); i++)
     dst.m_Dependent.push_back(src.histogram().dependent().value(i));
-  for (size_t i = 0; i<src.histogram().independent().value_size(); i++)
+  for (int i = 0; i<src.histogram().independent().value_size(); i++)
     dst.m_Independent.push_back(src.histogram().independent().value(i));
 }
 
@@ -92,14 +92,14 @@ void SEHistogram::Serialize(const SEHistogram& src, cdm::HistogramData& dst)
   }
 }
 
-unsigned int SEHistogram::NumberOfBins() const
+size_t SEHistogram::NumberOfBins() const
 {
   if(IsValid())
     return m_Dependent.size();
   return 0;
 }
 
-unsigned int SEHistogram::NumberOfBoundaries() const
+size_t SEHistogram::NumberOfBoundaries() const
 {
   if (IsValid())
     return m_Independent.size();

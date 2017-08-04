@@ -31,8 +31,6 @@ public:
 
   virtual Logger* GetLogger() const;
 
-protected:
-
   virtual void Debug(const std::string&  msg, const std::string&  origin = empty) const;
   virtual void Debug(std::stringstream &msg, const std::string&  origin = empty) const;
   virtual void Debug(std::ostream &msg, const std::string&  origin = empty) const;
@@ -54,6 +52,7 @@ protected:
   virtual void Fatal(std::stringstream &msg, const std::string&  origin = empty) const;
   virtual void Fatal(std::ostream &msg, const std::string&  origin = empty) const;
 
+protected:
   Logger* m_Logger;
 };
 

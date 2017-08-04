@@ -30,46 +30,24 @@ void SEInhalerActionCollection::Clear()
   RemoveConfiguration();
 }
 
-void SEInhalerActionCollection::Unload(std::vector<CDM::ActionData*>& to)
-{
-  if (HasConfiguration())
-    to.push_back(GetConfiguration()->Unload());
-}
 
-bool SEInhalerActionCollection::ProcessAction(const SEInhalerAction& action)
+bool SEInhalerActionCollection::ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData& any)
 {
-  if (!IsValid(action))
-    return false;
-  CDM::InhalerActionData* bind = action.Unload();
-  bool b = ProcessAction(*bind);
-  delete bind;
-  return b;
-}
-
-bool SEInhalerActionCollection::ProcessAction(const CDM::InhalerActionData& action)
-{
-  const CDM::InhalerConfigurationData* config = dynamic_cast<const CDM::InhalerConfigurationData*>(&action);
-  if (config!=nullptr)
+  const SEInhalerConfiguration* config = dynamic_cast<const SEInhalerConfiguration*>(&action);
+  if (config != nullptr)
   {
     if (m_Configuration == nullptr)
-      m_Configuration = new SEInhalerConfiguration(m_Substances);    
-    m_Configuration->Load(*config);
-    return IsValid(*m_Configuration);
+      m_Configuration = new SEInhalerConfiguration(m_Substances);
+    any.set_allocated_configuration(SEInhalerConfiguration::Unload(*config));
+    SEInhalerConfiguration::Load(any.configuration(), *m_Configuration);
+    if (!m_Configuration->IsActive())
+      RemoveConfiguration();
+    return true;
   }
 
   /// \error Unsupported Action
   Error("Unsupported Inhaler Action");
   return false;
-}
-
-bool SEInhalerActionCollection::IsValid(const SEInhalerAction& action)
-{
-  if (!action.IsValid())
-  {
-    Error("Invalid Inhaler Action");
-    return false;
-  }
-  return true;
 }
 
 bool SEInhalerActionCollection::HasConfiguration() const

@@ -11,35 +11,34 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(ScenarioInitialParametersData)
-class SEScenario;
-class SEPatient;
-class SECondition;
-class SESubstanceManager;
-class PhysiologyEngineConfiguration;
+#include "bind/cdm/Scenario.pb.h"
+#include "engine/SEEngineConfiguration.h"
+#include "patient/SEPatient.h"
+#include "scenario/SECondition.h"
+#include "substance/SESubstanceManager.h"
 
 class DLL_DECL SEScenarioInitialParameters : public Loggable
 {
+  friend class SEScenario;
 protected:
-  friend SEScenario;
-
   SEScenarioInitialParameters(SESubstanceManager& subMgr);
-  virtual ~SEScenarioInitialParameters();
 public:
+  virtual ~SEScenarioInitialParameters();
   virtual void Clear(); //clear memory
 
-  bool Load(const CDM::ScenarioInitialParametersData& in);
-  CDM::ScenarioInitialParametersData* Unload() const;
+  static void Load(const cdm::ScenarioData_InitialParametersData& src, SEScenarioInitialParameters& dst);
+  static cdm::ScenarioData_InitialParametersData* Unload(const SEScenarioInitialParameters& src);
 protected:
-  void Unload(CDM::ScenarioInitialParametersData& data)const;
+  static void Serialize(const cdm::ScenarioData_InitialParametersData& src, SEScenarioInitialParameters& dst);
+  static void Serialize(const SEScenarioInitialParameters& src, cdm::ScenarioData_InitialParametersData& dst);
 
 public:
 
   virtual bool IsValid()const;
 
-  virtual PhysiologyEngineConfiguration& GetConfiguration();
-  virtual const PhysiologyEngineConfiguration* GetConfiguration() const;
-  virtual void SetConfiguration(const PhysiologyEngineConfiguration& config);
+  virtual SEEngineConfiguration& GetConfiguration();
+  virtual const SEEngineConfiguration* GetConfiguration() const;
+  virtual void CopyConfiguration(const SEEngineConfiguration& config);
   virtual bool HasConfiguration() const;
   virtual void InvalidateConfiguration();
 
@@ -50,16 +49,16 @@ public:
 
   virtual SEPatient& GetPatient();
   virtual const SEPatient* GetPatient() const;
-  virtual void SetPatient(const SEPatient& patient);
+  virtual void CopyPatient(const SEPatient& patient);
   virtual bool HasPatient() const;
   virtual void InvalidatePatient();
 
-  virtual void AddCondition(const SECondition& c);
+  virtual void CopyCondition(const SECondition& c);
   virtual const std::vector<SECondition*>& GetConditions() const;
 
 protected:
   SESubstanceManager&            m_SubMgr;
-  PhysiologyEngineConfiguration* m_Configuration;
+  SEEngineConfiguration*         m_Configuration;
   SEPatient*                     m_Patient;
   std::string                    m_PatientFile;
   std::vector<SECondition*>      m_Conditions;

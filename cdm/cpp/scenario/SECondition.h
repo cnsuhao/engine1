@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 class SESubstanceManager;
 #include "bind/cdm/Conditions.pb.h"
+#include "bind/cdm/Scenario.pb.h"
 
 class DLL_DECL SECondition : public Loggable
 {
@@ -23,10 +24,10 @@ public:
   
   virtual void Clear();// Deletes all members
  
-  static SECondition* newFromBind(const cdm::ConditionData& condition, SESubstanceManager& substances);
-
-  static void Load(const cdm::ConditionData& src, SECondition& dst);
-  static cdm::ConditionData* Unload(const SECondition& src);
+  /** Create a new action based on the binding object, load that data into the new action, and return said action */
+  static SECondition* Load(const cdm::AnyConditionData& condition, SESubstanceManager& subMgr);
+  /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
+  static cdm::AnyConditionData* Unload(const SECondition& condition);
 protected:
   static void Serialize(const cdm::ConditionData& src, SECondition& dst);
   static void Serialize(const SECondition& src, cdm::ConditionData& dst);

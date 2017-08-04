@@ -64,9 +64,9 @@ void SEFunction::Load(const cdm::FunctionData& src, SEFunction& dst)
 void SEFunction::Serialize(const cdm::FunctionData& src, SEFunction& dst)
 {
   dst.Clear();
-  for (size_t i = 0; i<src.dependent().value_size(); i++)
+  for (int i = 0; i<src.dependent().value_size(); i++)
     dst.m_Dependent.push_back(src.dependent().value(i));
-  for (size_t i = 0; i<src.independent().value_size(); i++)
+  for (int i = 0; i<src.independent().value_size(); i++)
     dst.m_Independent.push_back(src.independent().value(i));
 }
 
@@ -87,7 +87,7 @@ void SEFunction::Serialize(const SEFunction& src, cdm::FunctionData& dst)
   }
 }
 
-unsigned int SEFunction::Length()
+size_t SEFunction::Length()
 {
   if(IsValid())
     return m_Independent.size();

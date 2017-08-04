@@ -58,37 +58,42 @@ bool SEScenarioAutoSerialization::IsValid() const
   return true;
 }
 
-bool SEScenarioAutoSerialization::Load(const CDM::ScenarioAutoSerializationData& in)
+void SEScenarioAutoSerialization::Load(const cdm::ScenarioData_AutoSerializationData& src, SEScenarioAutoSerialization& dst)
 {
-  Clear();
-  GetPeriod().Load(in.Period());
-  SetPeriodTimeStamps(in.PeriodTimeStamps());
-  SetAfterActions(in.AfterActions());
-  SetReloadState(in.ReloadState());
-  SetDirectory(in.Directory());
-  SetFileName(in.FileName());
-  return true;
+  SEScenarioAutoSerialization::Serialize(src, dst);
 }
-CDM::ScenarioAutoSerializationData* SEScenarioAutoSerialization::Unload() const
+void SEScenarioAutoSerialization::Serialize(const cdm::ScenarioData_AutoSerializationData& src, SEScenarioAutoSerialization& dst)
 {
-  CDM::ScenarioAutoSerializationData*data(new CDM::ScenarioAutoSerializationData());
-  Unload(*data);
-  return data;
+  dst.Clear();
+  if (src.has_period())
+    SEScalarTime::Load(src.period(), dst.GetPeriod());
+  dst.SetPeriodTimeStamps(src.periodtimestamps());
+  dst.SetAfterActions(src.afteractions());
+  dst.SetReloadState(src.reloadstate());
+  dst.SetDirectory(src.directory());
+  dst.SetFileName(src.filename());
 }
-void SEScenarioAutoSerialization::Unload(CDM::ScenarioAutoSerializationData& data) const
+
+cdm::ScenarioData_AutoSerializationData* SEScenarioAutoSerialization::Unload(const SEScenarioAutoSerialization& src)
 {
-  if (HasPeriod())
-    data.Period(std::unique_ptr<CDM::ScalarTimeData>(m_Period->Unload()));
-  if (HasPeriodTimeStamps())
-    data.PeriodTimeStamps(m_PeriodTimeStamps);
-  if (HasAfterActions())
-    data.AfterActions(m_AfterActions);
-  if (HasReloadState())
-    data.ReloadState(m_ReloadState);
-  if (HasDirectory())
-    data.Directory(m_Directory);
-  if (HasFileName())
-    data.FileName(m_FileName);
+  cdm::ScenarioData_AutoSerializationData *dst = new cdm::ScenarioData_AutoSerializationData();
+  SEScenarioAutoSerialization::Serialize(src,*dst);
+  return dst;
+}
+void SEScenarioAutoSerialization::Serialize(const SEScenarioAutoSerialization& src, cdm::ScenarioData_AutoSerializationData& dst)
+{
+  if (src.HasPeriod())
+    dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
+  if (src.HasPeriodTimeStamps())
+    dst.set_periodtimestamps(src.m_PeriodTimeStamps);
+  if (src.HasAfterActions())
+    dst.set_afteractions(src.m_AfterActions);
+  if (src.HasReloadState())
+    dst.set_reloadstate(src.m_ReloadState);
+  if (src.HasDirectory())
+    dst.set_directory(src.m_Directory);
+  if (src.HasFileName())
+    dst.set_filename(src.m_FileName);
 }
 
 bool SEScenarioAutoSerialization::HasPeriod() const

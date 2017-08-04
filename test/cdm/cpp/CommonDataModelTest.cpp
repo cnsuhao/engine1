@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "CommonDataModelTest.h"
 #include "utils/FileUtils.h"
-#include "Serializer.h"
 #include "compartment/SECompartmentManager.h"
 
 CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger()), m_Circuits(m_Logger)
@@ -259,25 +258,8 @@ void CommonDataModelTest::FillFunctionMap()
 
 }
 
-void CommonDataModelTest::TestCompartmentSerialization(SECompartmentManager& mgr, const std::string& fileName)
+void CommonDataModelTest::TestCompartmentSerialization(SECompartmentManager& mgr, const std::string& filename)
 {
-  ScopedFileSystemLock lock;
-
-  std::ofstream stream(fileName);
-  xml_schema::namespace_infomap map;
-  map[""].name = "uri:/mil/tatrc/physiology/datamodel";
-
-  CDM::CompartmentManager(stream, dynamic_cast<CDM::CompartmentManagerData&>(*mgr.Unload()), map);
-  stream.close();
-  std::unique_ptr<CDM::ObjectData> bind = Serializer::ReadFile(fileName, m_Logger);
-  CDM::CompartmentManagerData* data = dynamic_cast<CDM::CompartmentManagerData*>(bind.get());
-  if (data != nullptr)
-  {
-    if (!mgr.Load(*data, &m_Circuits))
-      Error("Could not load Compartment Manager Data");
-  }
-  else
-  {
-    Error("Could not cast loaded Compartment Manager Data");
-  }
+  mgr.SaveFile(filename);
+  mgr.LoadFile(filename);
 }

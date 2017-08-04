@@ -34,55 +34,43 @@ void SEActionManager::Clear()
   m_AnesthesiaMachineActions.Clear();
   m_EnvironmentActions.Clear();
   m_InhalerActions.Clear();
-  m_ProcessedActions.clear();
-}
-
-bool SEActionManager::ProcessAction(const CDM::ActionData& in)
-{
-  const CDM::PatientActionData* pAction = dynamic_cast<const CDM::PatientActionData*>(&in);
-  if (pAction!=nullptr)
-    return m_PatientActions.ProcessAction(*pAction);
-  const CDM::EnvironmentActionData* eAction = dynamic_cast<const CDM::EnvironmentActionData*>(&in);
-  if (eAction != nullptr)
-    return m_EnvironmentActions.ProcessAction(*eAction);
-  const CDM::AnesthesiaMachineActionData* aAction = dynamic_cast<const CDM::AnesthesiaMachineActionData*>(&in);
-  if (aAction != nullptr)
-    return m_AnesthesiaMachineActions.ProcessAction(*aAction);
-  const CDM::InhalerActionData* iAction = dynamic_cast<const CDM::InhalerActionData*>(&in);
-  if (iAction != nullptr)
-    return m_InhalerActions.ProcessAction(*iAction);
-  Error("Unknown Action Type");
-  return false;
-}
-
-void SEActionManager::Unload(std::vector<CDM::ActionData*>& to)
-{
-  m_PatientActions.Unload(to);
-  m_AnesthesiaMachineActions.Unload(to);
-  m_EnvironmentActions.Unload(to);
-  m_InhalerActions.Unload(to);
+  m_ProcessedActions.Clear();// amb Does this delete?
 }
 
 bool SEActionManager::ProcessAction(const SEAction& action)
 {
-  // Store the action data. This is intended to be able to 
-  // Serialize out all the actions that the engine was asked to perform
-  CDM::ActionData* aData = action.Unload();
-  m_ProcessedActions.push_back(action.Unload());
-
-  if (dynamic_cast<const SEPatientAction*>(&action) != nullptr)
-    return m_PatientActions.ProcessAction(dynamic_cast<const CDM::PatientActionData&>(*aData));
-
-  if (dynamic_cast<const SEAnesthesiaMachineAction*>(&action) != nullptr)
-    return m_AnesthesiaMachineActions.ProcessAction(dynamic_cast<const CDM::AnesthesiaMachineActionData&>(*aData));
-
-  if (dynamic_cast<const SEEnvironmentAction*>(&action) != nullptr)
-    return m_EnvironmentActions.ProcessAction(dynamic_cast<const CDM::EnvironmentActionData&>(*aData));
-
-  if (dynamic_cast<const SEInhalerAction*>(&action) != nullptr)
-    return m_InhalerActions.ProcessAction(dynamic_cast<const CDM::InhalerActionData&>(*aData));
+  if (!action.IsValid())
+  { 
+    m_ss << "Ignoring invalid action : " << action;
+    Error(m_ss);
+    return false;
+  }
+  bool bRet;
+  cdm::AnyActionData* aData = m_ProcessedActions.add_anyaction();
   
-  /// \error Unsupported Action
-  Error("Unsupported Action");
-  return false;
+  const SEPatientAction* pa = dynamic_cast<const SEPatientAction*>(&action);
+  if (pa != nullptr)
+    bRet = m_PatientActions.ProcessAction(*pa,*aData->mutable_patientaction());
+
+  const SEEnvironmentAction* ea = dynamic_cast<const SEEnvironmentAction*>(&action);
+  if (ea != nullptr)
+    bRet = m_EnvironmentActions.ProcessAction(*ea, *aData->mutable_environmentaction());
+
+  const SEAnesthesiaMachineAction* aa = dynamic_cast<const SEAnesthesiaMachineAction*>(&action);
+  if (aa != nullptr)
+    bRet = m_AnesthesiaMachineActions.ProcessAction(*aa, *aData->mutable_anesthesiamachineaction());
+
+  const SEInhalerAction* ia = dynamic_cast<const SEInhalerAction*>(&action);
+  if (ia != nullptr)
+    bRet = m_InhalerActions.ProcessAction(*ia, *aData->mutable_inhaleraction());
+
+  if (!bRet)
+  {
+    m_ss << "Not including action due to processing error : " << action;
+    Error(m_ss);
+    m_ProcessedActions.mutable_anyaction()->RemoveLast();// amb does this delete?
+  }
+  return bRet;
 }
+
+

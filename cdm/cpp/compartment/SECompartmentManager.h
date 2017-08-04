@@ -28,6 +28,9 @@ public:
 
   virtual void Clear(); //clear memory
 
+  bool LoadFile(const std::string& filename);
+  void SaveFile(const std::string& filename);
+
   static void Load(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits = nullptr);
   static cdm::CompartmentManagerData* Unload(const SECompartmentManager& src);
 protected:

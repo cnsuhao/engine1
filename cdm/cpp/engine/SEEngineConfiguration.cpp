@@ -36,7 +36,9 @@ void SEEngineConfiguration::Clear()
 void SEEngineConfiguration::Merge(const SEEngineConfiguration& from)
 {
   m_Merge = true;
-  CDM_COPY((&from), this);
+  cdm::EngineConfigurationData* data = SEEngineConfiguration::Unload(from);
+  SEEngineConfiguration::Load(*data, *this);
+  delete data;
   m_Merge = false;
 }
 

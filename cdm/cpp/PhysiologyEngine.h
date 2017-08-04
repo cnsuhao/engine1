@@ -38,7 +38,7 @@ class SEElectroCardioGram;
 class SECompartmentManager;
 
 class SEEngineTracker;
-class PhysiologyEngineConfiguration;
+class SEEngineConfiguration;
 
 #include <google/protobuf/message.h>
 
@@ -91,14 +91,14 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// locates the xml patient file and reads in the values. 
+  /// locates the pba patient file and reads in the values. 
   ///
   /// This will create an engine that you can send instructions (patient,actions,conditions) to dynamically.
   /// The return value will indicate success failure of the creation of the engine.  
   /// Some combinations of patients and conditions may prevent the engine from stabilizing
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions = nullptr, const PhysiologyEngineConfiguration* config = nullptr) = 0;
+  virtual bool InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -108,7 +108,7 @@ public:
   /// Some combinations of patients and conditions may prevent the engine from stabilizing
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions = nullptr, const PhysiologyEngineConfiguration* config = nullptr) = 0;
+  virtual bool InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
 
   //--------------------------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ public:
   /// \brief
   /// returns the engine configuration.   
   //--------------------------------------------------------------------------------------------------
-  virtual const PhysiologyEngineConfiguration* GetConfiguration() = 0;
+  virtual const SEEngineConfiguration* GetConfiguration() = 0;
   
   //--------------------------------------------------------------------------------------------------
   /// \brief

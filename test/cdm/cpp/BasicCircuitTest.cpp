@@ -5292,21 +5292,6 @@ void CommonDataModelTest::RunTest(const std::string& outputDirectory, const std:
 
 void CommonDataModelTest::TestCircuitSerialization(const std::string& fileName)
 {
-  ScopedFileSystemLock lock;
-
-  std::ofstream stream(fileName);
-  xml_schema::namespace_infomap map;
-  map[""].name = "uri:/mil/tatrc/physiology/datamodel";
-
-  CDM::CircuitManager(stream, dynamic_cast<CDM::CircuitManagerData&>(*m_Circuits.Unload()), map);
-  stream.close();
-  std::unique_ptr<CDM::ObjectData> bind = Serializer::ReadFile(fileName, m_Logger);
-  CDM::CircuitManagerData* data = dynamic_cast<CDM::CircuitManagerData*>(bind.get());
-  if (data != nullptr)
-  {
-    if (!m_Circuits.Load(*data))
-      Error("Could not load Circuit Data");
-  }
-  else
-    Error("Could not cast loaded Circuit Data");
+  m_Circuits.SaveFile(fileName);
+  m_Circuits.LoadFile(fileName);
 }

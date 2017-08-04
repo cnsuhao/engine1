@@ -51,6 +51,9 @@ public:
 
   virtual void Clear(); //clear memory
 
+  bool LoadFile(const std::string& filename);
+  void SaveFile(const std::string& filename);
+
   static void Load(const cdm::CircuitManagerData& src, SECircuitManager& dst);
   static cdm::CircuitManagerData* Unload(const SECircuitManager& src);
 protected:

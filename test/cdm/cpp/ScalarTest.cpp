@@ -38,25 +38,20 @@ specific language governing permissions and limitations under the License.
 void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
 {
   std::ofstream file;
-  SEDecimalFormat dfault;
-  dfault.SetNotation(cdm::DecimalFormatData::Default);
-  dfault.SetPrecision(6);
   SEDecimalFormat fixed;
-  dfault.SetNotation(cdm::DecimalFormatData_eType_FixedMantissa);
-  dfault.SetPrecision(8);
+  fixed.SetNotation(cdm::DecimalFormatData_eType_FixedMantissa);
+  fixed.SetPrecision(8);
   SEDecimalFormat sci;
-  dfault.SetNotation(cdm::DecimalFormatData_eType_SignificantDigits);
-  dfault.SetPrecision(4);
+  sci.SetNotation(cdm::DecimalFormatData_eType_SignificantDigits);
+  sci.SetPrecision(4);
 
   DataTrack track;
-  track.SetFormatting("Default", dfault);
   track.SetFormatting("Fixed", fixed);
   track.SetFormatting("Scientific", sci);
   track.CreateFile("TrackText.txt", file);
   for (int i = 0; i < 10; i++)
   {
     double d = std::sqrt(i)+100;
-    track.Probe("Default", d);
     track.Probe("Fixed", d);
     track.Probe("Scientific", d);
     track.StreamProbesToFile(i, file);
