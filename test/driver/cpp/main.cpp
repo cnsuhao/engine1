@@ -107,15 +107,15 @@ int main(int argc, char* argv[])
       ///////////////
 
       //Compartment Tests
-      cdmTest.GasCompartmentTest(cdmDir);
-      cdmTest.LiquidCompartmentTest(cdmDir);
-      cdmTest.ThermalCompartmentTest(cdmDir);
-      cdmTest.TissueCompartmentTest(cdmDir);
+      //cdmTest.GasCompartmentTest(cdmDir);
+      //cdmTest.LiquidCompartmentTest(cdmDir);
+      //cdmTest.ThermalCompartmentTest(cdmDir);
+      //cdmTest.TissueCompartmentTest(cdmDir);
 
       //Transport Tests
-      cdmTest.LargeFlowTransportTest(cdmDir);
-      cdmTest.LiquidTransportTest(cdmDir);
-      cdmTest.GasTransportTest(cdmDir);
+      //cdmTest.LargeFlowTransportTest(cdmDir);
+      //cdmTest.LiquidTransportTest(cdmDir);
+      //cdmTest.GasTransportTest(cdmDir);
 
       //I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);
@@ -127,173 +127,173 @@ int main(int argc, char* argv[])
       //cdmTest.UnitsTest(cdmDir);
 
       //Advanced Circuit Tests
-      cdmTest.ElectricalCircuitTest(cdmDir);
-      cdmTest.FluidCircuitTest(cdmDir);
-      cdmTest.ThermalCircuitTest(cdmDir);
-      cdmTest.CombinedCircuitTest(cdmDir);
-      cdmTest.InterCircuitComparisonTest(cdmDir);
-      cdmTest.InterCircuitIndividualTest(cdmDir);
-      cdmTest.CircuitErrorTest(cdmDir);
-      cdmTest.DynamicallyChangingCircuitTest(cdmDir);
-      cdmTest.NonZeroReferencePositive(cdmDir);
-      cdmTest.NonZeroReferenceNegative(cdmDir);
-      cdmTest.PolarizedCapacitorTest(cdmDir);
-      cdmTest.PreChargeComplianceZeroVolume(cdmDir);
-      cdmTest.PreChargeComplianceNonZeroVolume(cdmDir);
-      cdmTest.CircuitLockingTest(cdmDir);
+      //cdmTest.ElectricalCircuitTest(cdmDir);
+      //cdmTest.FluidCircuitTest(cdmDir);
+      //cdmTest.ThermalCircuitTest(cdmDir);
+      //cdmTest.CombinedCircuitTest(cdmDir);
+      //cdmTest.InterCircuitComparisonTest(cdmDir);
+      //cdmTest.InterCircuitIndividualTest(cdmDir);
+      //cdmTest.CircuitErrorTest(cdmDir);
+      //cdmTest.DynamicallyChangingCircuitTest(cdmDir);
+      //cdmTest.NonZeroReferencePositive(cdmDir);
+      //cdmTest.NonZeroReferenceNegative(cdmDir);
+      //cdmTest.PolarizedCapacitorTest(cdmDir);
+      //cdmTest.PreChargeComplianceZeroVolume(cdmDir);
+      //cdmTest.PreChargeComplianceNonZeroVolume(cdmDir);
+      //cdmTest.CircuitLockingTest(cdmDir);
 
       ////Basic Circuit Tests
-      cdmTest.BasicCircuitTest(cdmDir);
+      //cdmTest.BasicCircuitTest(cdmDir);
 
-      cdmTest.SeriesRCDCTest(cdmDir);
-      cdmTest.SeriesRCSINTest(cdmDir);
-      cdmTest.SeriesRCPULSETest(cdmDir);
+      //cdmTest.SeriesRCDCTest(cdmDir);
+      //cdmTest.SeriesRCSINTest(cdmDir);
+      //cdmTest.SeriesRCPULSETest(cdmDir);
 
-      cdmTest.SeriesRDCTest(cdmDir);
-      cdmTest.SeriesRSINTest(cdmDir);
-      cdmTest.SeriesRPULSETest(cdmDir);
+      //cdmTest.SeriesRDCTest(cdmDir);
+      //cdmTest.SeriesRSINTest(cdmDir);
+      //cdmTest.SeriesRPULSETest(cdmDir);
 
-      cdmTest.SeriesRLDCTest(cdmDir);
-      cdmTest.SeriesRLSINTest(cdmDir);
-      cdmTest.SeriesRLPULSETest(cdmDir);
+      //cdmTest.SeriesRLDCTest(cdmDir);
+      //cdmTest.SeriesRLSINTest(cdmDir);
+      //cdmTest.SeriesRLPULSETest(cdmDir);
 
-      cdmTest.ParallelRDCTest(cdmDir);
-      cdmTest.ParallelRSINTest(cdmDir);
-      cdmTest.ParallelRPULSETest(cdmDir);
+      //cdmTest.ParallelRDCTest(cdmDir);
+      //cdmTest.ParallelRSINTest(cdmDir);
+      //cdmTest.ParallelRPULSETest(cdmDir);
 
-      cdmTest.ParallelRCDCTest(cdmDir);
-      cdmTest.ParallelRCSINTest(cdmDir);
-      cdmTest.ParallelRCPULSETest(cdmDir);
+      //cdmTest.ParallelRCDCTest(cdmDir);
+      //cdmTest.ParallelRCSINTest(cdmDir);
+      //cdmTest.ParallelRCPULSETest(cdmDir);
 
-      cdmTest.ParallelRLDCTest(cdmDir);
-      cdmTest.ParallelRLSINTest(cdmDir);
-      cdmTest.ParallelRLPULSETest(cdmDir);
-      cdmTest.ParallelRLSINCenteredTest(cdmDir);
+      //cdmTest.ParallelRLDCTest(cdmDir);
+      //cdmTest.ParallelRLSINTest(cdmDir);
+      //cdmTest.ParallelRLPULSETest(cdmDir);
+      //cdmTest.ParallelRLSINCenteredTest(cdmDir);
 
-      cdmTest.SeriesRLCDCTest(cdmDir);
-      cdmTest.SeriesRLCSINTest(cdmDir);
-      cdmTest.SeriesRLCPULSETest(cdmDir);
+      //cdmTest.SeriesRLCDCTest(cdmDir);
+      //cdmTest.SeriesRLCSINTest(cdmDir);
+      //cdmTest.SeriesRLCPULSETest(cdmDir);
 
-      cdmTest.ParallelRLCDCTest(cdmDir);
-      cdmTest.ParallelRLCSINTest(cdmDir);
-      cdmTest.ParallelRLCPULSETest(cdmDir);
+      //cdmTest.ParallelRLCDCTest(cdmDir);
+      //cdmTest.ParallelRLCSINTest(cdmDir);
+      //cdmTest.ParallelRLCPULSETest(cdmDir);
 
-      cdmTest.SwitchRCDCTest(cdmDir);
-      cdmTest.SwitchRCSINTest(cdmDir);
-      cdmTest.SwitchRCPULSETest(cdmDir);
+      //cdmTest.SwitchRCDCTest(cdmDir);
+      //cdmTest.SwitchRCSINTest(cdmDir);
+      //cdmTest.SwitchRCPULSETest(cdmDir);
 
-      cdmTest.Comprehensive1DCTest(cdmDir);
-      cdmTest.Comprehensive1SINTest(cdmDir);
-      cdmTest.Comprehensive1PULSETest(cdmDir);
+      //cdmTest.Comprehensive1DCTest(cdmDir);
+      //cdmTest.Comprehensive1SINTest(cdmDir);
+      //cdmTest.Comprehensive1PULSETest(cdmDir);
 
-      cdmTest.SimpleDiodeDCTest(cdmDir);
-      cdmTest.SimpleDiodeSINTest(cdmDir);
-      cdmTest.SimpleDiodePULSETest(cdmDir);
+      //cdmTest.SimpleDiodeDCTest(cdmDir);
+      //cdmTest.SimpleDiodeSINTest(cdmDir);
+      //cdmTest.SimpleDiodePULSETest(cdmDir);
 
-      cdmTest.SeriesRCDCCurrentTest(cdmDir);
-      cdmTest.SeriesRCSINCurrentTest(cdmDir);
-      cdmTest.SeriesRCPULSECurrentTest(cdmDir);
+      //cdmTest.SeriesRCDCCurrentTest(cdmDir);
+      //cdmTest.SeriesRCSINCurrentTest(cdmDir);
+      //cdmTest.SeriesRCPULSECurrentTest(cdmDir);
 
-      cdmTest.ParallelRCDCCurrentTest(cdmDir);
-      cdmTest.ParallelRCSINCurrentTest(cdmDir);
-      cdmTest.ParallelRCPULSECurrentTest(cdmDir);
+      //cdmTest.ParallelRCDCCurrentTest(cdmDir);
+      //cdmTest.ParallelRCSINCurrentTest(cdmDir);
+      //cdmTest.ParallelRCPULSECurrentTest(cdmDir);
 
-      cdmTest.SeriesCapDCTest(cdmDir);
-      cdmTest.SeriesCapSINTest(cdmDir);
-      cdmTest.SeriesCapPULSETest(cdmDir);
+      //cdmTest.SeriesCapDCTest(cdmDir);
+      //cdmTest.SeriesCapSINTest(cdmDir);
+      //cdmTest.SeriesCapPULSETest(cdmDir);
 
-      cdmTest.ParallelRDCCurrentTest(cdmDir);
-      cdmTest.ParallelRSINCurrentTest(cdmDir);
-      cdmTest.ParallelRPULSECurrentTest(cdmDir);
+      //cdmTest.ParallelRDCCurrentTest(cdmDir);
+      //cdmTest.ParallelRSINCurrentTest(cdmDir);
+      //cdmTest.ParallelRPULSECurrentTest(cdmDir);
 
-      cdmTest.CurrentCompDCTest(cdmDir);
-      cdmTest.CurrentCompSINTest(cdmDir);
-      cdmTest.CurrentCompPULSETest(cdmDir);
+      //cdmTest.CurrentCompDCTest(cdmDir);
+      //cdmTest.CurrentCompSINTest(cdmDir);
+      //cdmTest.CurrentCompPULSETest(cdmDir);
 
-      cdmTest.SeriesRLDCCurrentTest(cdmDir);
-      cdmTest.SeriesRLSINCurrentTest(cdmDir);
-      cdmTest.SeriesRLPULSECurrentTest(cdmDir);
+      //cdmTest.SeriesRLDCCurrentTest(cdmDir);
+      //cdmTest.SeriesRLSINCurrentTest(cdmDir);
+      //cdmTest.SeriesRLPULSECurrentTest(cdmDir);
 
-      cdmTest.ParallelRLDCCurrentTest(cdmDir);
-      cdmTest.ParallelRLSINCurrentTest(cdmDir);
-      cdmTest.ParallelRLPULSECurrentTest(cdmDir);
+      //cdmTest.ParallelRLDCCurrentTest(cdmDir);
+      //cdmTest.ParallelRLSINCurrentTest(cdmDir);
+      //cdmTest.ParallelRLPULSECurrentTest(cdmDir);
 
-      cdmTest.BasicDiodeDCCurrentTest(cdmDir);
-      cdmTest.BasicDiodeSINCurrentTest(cdmDir);
-      cdmTest.BasicDiodePULSECurrentTest(cdmDir);
+      //cdmTest.BasicDiodeDCCurrentTest(cdmDir);
+      //cdmTest.BasicDiodeSINCurrentTest(cdmDir);
+      //cdmTest.BasicDiodePULSECurrentTest(cdmDir);
 
       //NOTE: These next three tests seem to give errors while running, but they produce output...
-      cdmTest.SwitchRCDCCurrentTest(cdmDir);
-      cdmTest.SwitchRCSINCurrentTest(cdmDir);
-      cdmTest.SwitchRCPULSECurrentTest(cdmDir);
+      //cdmTest.SwitchRCDCCurrentTest(cdmDir);
+      //cdmTest.SwitchRCSINCurrentTest(cdmDir);
+      //cdmTest.SwitchRCPULSECurrentTest(cdmDir);
 
-      cdmTest.SeriesRLCDCCurrentTest(cdmDir);
-      cdmTest.SeriesRLCSINCurrentTest(cdmDir);
-      cdmTest.SeriesRLCPULSECurrentTest(cdmDir);
+      //cdmTest.SeriesRLCDCCurrentTest(cdmDir);
+      //cdmTest.SeriesRLCSINCurrentTest(cdmDir);
+      //cdmTest.SeriesRLCPULSECurrentTest(cdmDir);
 
-      cdmTest.ParallelRLCDCCurrentTest(cdmDir);
-      cdmTest.ParallelRLCSINCurrentTest(cdmDir);
-      cdmTest.ParallelRLCPULSECurrentTest(cdmDir);
+      //cdmTest.ParallelRLCDCCurrentTest(cdmDir);
+      //cdmTest.ParallelRLCSINCurrentTest(cdmDir);
+      //cdmTest.ParallelRLCPULSECurrentTest(cdmDir);
 
-      cdmTest.SeriesPressureSourceAdditionDCTest(cdmDir);
-      cdmTest.SeriesPressureSourceAdditionSINTest(cdmDir);
-      cdmTest.SeriesPressureSourceAdditionPULSETest(cdmDir);
+      //cdmTest.SeriesPressureSourceAdditionDCTest(cdmDir);
+      //cdmTest.SeriesPressureSourceAdditionSINTest(cdmDir);
+      //cdmTest.SeriesPressureSourceAdditionPULSETest(cdmDir);
 
       //NOTE: These next six tests seem to give errors while running, but it's intentional
-      cdmTest.SeriesCurrentSourceAdditionDCTest(cdmDir);
-      cdmTest.SeriesCurrentSourceAdditionSINTest(cdmDir);
-      cdmTest.SeriesCurrentSourceAdditionPULSETest(cdmDir);
+      //cdmTest.SeriesCurrentSourceAdditionDCTest(cdmDir);
+      //cdmTest.SeriesCurrentSourceAdditionSINTest(cdmDir);
+      //cdmTest.SeriesCurrentSourceAdditionPULSETest(cdmDir);
 
-      cdmTest.ParallelPressureSourceAdditionDCTest(cdmDir);
-      cdmTest.ParallelPressureSourceAdditionSINTest(cdmDir);
-      cdmTest.ParallelPressureSourceAdditionPULSETest(cdmDir);
+      //cdmTest.ParallelPressureSourceAdditionDCTest(cdmDir);
+      //cdmTest.ParallelPressureSourceAdditionSINTest(cdmDir);
+      //cdmTest.ParallelPressureSourceAdditionPULSETest(cdmDir);
 
-      cdmTest.ParallelCurrentSourceAdditionDCTest(cdmDir);
-      cdmTest.ParallelCurrentSourceAdditionSINTest(cdmDir);
-      cdmTest.ParallelCurrentSourceAdditionPULSETest(cdmDir);
+      //cdmTest.ParallelCurrentSourceAdditionDCTest(cdmDir);
+      //cdmTest.ParallelCurrentSourceAdditionSINTest(cdmDir);
+      //cdmTest.ParallelCurrentSourceAdditionPULSETest(cdmDir);
 
-      cdmTest.SeriesCapDCCurrentTest(cdmDir);
-      cdmTest.SeriesCapSINCurrentTest(cdmDir);
-      cdmTest.SeriesCapPULSECurrentTest(cdmDir);
+      //cdmTest.SeriesCapDCCurrentTest(cdmDir);
+      //cdmTest.SeriesCapSINCurrentTest(cdmDir);
+      //cdmTest.SeriesCapPULSECurrentTest(cdmDir);
 
-      cdmTest.ParallelCapDCTest(cdmDir);
-      cdmTest.ParallelCapSINTest(cdmDir);
-      cdmTest.ParallelCapPULSETest(cdmDir);
+      //cdmTest.ParallelCapDCTest(cdmDir);
+      //cdmTest.ParallelCapSINTest(cdmDir);
+      //cdmTest.ParallelCapPULSETest(cdmDir);
 
-      cdmTest.ParallelCapDCCurrentTest(cdmDir);
-      cdmTest.ParallelCapSINCurrentTest(cdmDir);
-      cdmTest.ParallelCapPULSECurrentTest(cdmDir);
+      //cdmTest.ParallelCapDCCurrentTest(cdmDir);
+      //cdmTest.ParallelCapSINCurrentTest(cdmDir);
+      //cdmTest.ParallelCapPULSECurrentTest(cdmDir);
 
-      cdmTest.SeriesIndDCTest(cdmDir);
-      cdmTest.SeriesIndSINTest(cdmDir);
-      cdmTest.SeriesIndPULSETest(cdmDir);
+      //cdmTest.SeriesIndDCTest(cdmDir);
+      //cdmTest.SeriesIndSINTest(cdmDir);
+      //cdmTest.SeriesIndPULSETest(cdmDir);
 
-      cdmTest.SeriesIndDCCurrentTest(cdmDir);
-      cdmTest.SeriesIndSINCurrentTest(cdmDir);
-      cdmTest.SeriesIndPULSECurrentTest(cdmDir);
+      //cdmTest.SeriesIndDCCurrentTest(cdmDir);
+      //cdmTest.SeriesIndSINCurrentTest(cdmDir);
+      //cdmTest.SeriesIndPULSECurrentTest(cdmDir);
 
-      cdmTest.ParallelIndDCTest(cdmDir);
-      cdmTest.ParallelIndSINTest(cdmDir);
-      cdmTest.ParallelIndPULSETest(cdmDir);
+      //cdmTest.ParallelIndDCTest(cdmDir);
+      //cdmTest.ParallelIndSINTest(cdmDir);
+      //cdmTest.ParallelIndPULSETest(cdmDir);
 
-      cdmTest.ParallelIndDCCurrentTest(cdmDir);
-      cdmTest.ParallelIndSINCurrentTest(cdmDir);
-      cdmTest.ParallelIndPULSECurrentTest(cdmDir);
+      //cdmTest.ParallelIndDCCurrentTest(cdmDir);
+      //cdmTest.ParallelIndSINCurrentTest(cdmDir);
+      //cdmTest.ParallelIndPULSECurrentTest(cdmDir);
 
       //These next three tests intentionally fail
-      cdmTest.BadDiodeDCTest(cdmDir);
-      cdmTest.BadDiodeSINTest(cdmDir);
-      cdmTest.BadDiodePULSETest(cdmDir);
+      //cdmTest.BadDiodeDCTest(cdmDir);
+      //cdmTest.BadDiodeSINTest(cdmDir);
+      //cdmTest.BadDiodePULSETest(cdmDir);
 
-      cdmTest.ValidationComprehensive1DCTest(cdmDir);
-      cdmTest.ValidationComprehensive1SINTest(cdmDir);
-      cdmTest.ValidationComprehensive1PULSETest(cdmDir);
-      cdmTest.ValidationComprehensive1SINCenteredTest(cdmDir);
+      //cdmTest.ValidationComprehensive1DCTest(cdmDir);
+      //cdmTest.ValidationComprehensive1SINTest(cdmDir);
+      //cdmTest.ValidationComprehensive1PULSETest(cdmDir);
+      //cdmTest.ValidationComprehensive1SINCenteredTest(cdmDir);
 
-      cdmTest.ValidationComprehensive2DCTest(cdmDir);
-      cdmTest.ValidationComprehensive2SINTest(cdmDir);
-      cdmTest.ValidationComprehensive2PULSETest(cdmDir);
-      cdmTest.ValidationComprehensive2SINCenteredTest(cdmDir);
+      //cdmTest.ValidationComprehensive2DCTest(cdmDir);
+      //cdmTest.ValidationComprehensive2SINTest(cdmDir);
+      //cdmTest.ValidationComprehensive2PULSETest(cdmDir);
+      //cdmTest.ValidationComprehensive2SINCenteredTest(cdmDir);
     }
     catch (CommonDataModelException& ex)
     {

@@ -95,7 +95,8 @@ bool SEScenario::LoadFile(const std::string& scenarioFile)
   cdm::ScenarioData src;
   std::ifstream file_stream(scenarioFile, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
   SEScenario::Load(src, *this);
   return true;
 

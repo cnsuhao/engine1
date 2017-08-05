@@ -51,7 +51,7 @@ public class SETestCase
     if(src.hasDuration())
     	dst.setDuration(SEScalarTime.unload(src.duration));
     for(String failure : src.failures)
-    	dst.getFailureList().add(failure);
+    	dst.addFailure(failure);
   }
   
   public String  getName() { return this.name;}

@@ -50,7 +50,8 @@ bool SEEngineConfiguration::LoadFile(const std::string& file)
     std::ifstream input(file);
     std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
     cdm::EngineConfigurationData c;
-    google::protobuf::TextFormat::ParseFromString(fmsg, &c);
+    if (!google::protobuf::TextFormat::ParseFromString(fmsg, &c))
+      return false;
     SEEngineConfiguration::Load(c, *this);
     return true;
   }

@@ -250,7 +250,8 @@ bool SEEnvironmentalConditions::LoadFile(const std::string& patientFile)
   cdm::EnvironmentData_ConditionsData src;
   std::ifstream file_stream(patientFile, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
   SEEnvironmentalConditions::Load(src, *this);
   return true;
 

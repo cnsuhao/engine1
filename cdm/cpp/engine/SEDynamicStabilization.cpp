@@ -91,7 +91,8 @@ bool SEDynamicStabilization::LoadFile(const std::string& file)
     std::ifstream input(file);
     std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
     cdm::DynamicStabilizationData ds;
-    google::protobuf::TextFormat::ParseFromString(fmsg, &ds);
+    if (!google::protobuf::TextFormat::ParseFromString(fmsg, &ds))
+      return false;
     SEDynamicStabilization::Load(ds, *this);
     return true;
   }

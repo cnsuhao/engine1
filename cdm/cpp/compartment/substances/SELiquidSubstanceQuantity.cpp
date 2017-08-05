@@ -111,6 +111,8 @@ void SELiquidSubstanceQuantity::Serialize(const cdm::LiquidSubstanceQuantityData
       SEScalarMass::Load(src.massdeposited(), dst.GetMassDeposited());
     if (src.has_massexcreted())
       SEScalarMass::Load(src.massexcreted(), dst.GetMassExcreted());
+    if (src.has_molarity())
+      SEScalarAmountPerVolume::Load(src.molarity(), dst.GetMolarity());
     if (src.has_partialpressure())
       SEScalarPressure::Load(src.partialpressure(), dst.GetPartialPressure());
     if (src.has_saturation())
@@ -138,6 +140,8 @@ void SELiquidSubstanceQuantity::Serialize(const SELiquidSubstanceQuantity& src, 
     dst.set_allocated_massdeposited(SEScalarMass::Unload(*src.m_MassDeposited));
   if (src.HasMassExcreted())
     dst.set_allocated_massexcreted(SEScalarMass::Unload(*src.m_MassExcreted));
+  if (src.HasMolarity())
+    dst.set_allocated_molarity(SEScalarAmountPerVolume::Unload(*src.m_Molarity));
   if (src.HasPartialPressure())
     dst.set_allocated_partialpressure(SEScalarPressure::Unload(*src.m_PartialPressure));
   if (src.HasSaturation())

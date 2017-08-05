@@ -62,7 +62,8 @@ bool SEMeal::LoadFile(const std::string& mealFile)
   cdm::MealData src;
   std::ifstream file_stream(mealFile, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
   SEMeal::Load(src, *this);
   return true;
 

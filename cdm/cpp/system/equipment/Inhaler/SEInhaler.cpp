@@ -133,7 +133,8 @@ bool SEInhaler::LoadFile(const std::string& filename)
   cdm::InhalerData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
   SEInhaler::Load(src, *this);
   return true;
 

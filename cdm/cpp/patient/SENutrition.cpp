@@ -192,7 +192,8 @@ bool SENutrition::LoadFile(const std::string& nutritionFile)
   cdm::NutritionData src;
   std::ifstream file_stream(nutritionFile, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  if(!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
   SENutrition::Load(src,*this);
   return true;
 

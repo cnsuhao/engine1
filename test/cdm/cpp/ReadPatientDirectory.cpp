@@ -37,7 +37,7 @@ void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
   {
     if(it->find("pba")!=std::string::npos)
     {
-      pTimer.Start("Case");
+      pTimer.Start(*it);
       SETestCase& testCase = testSuite.CreateTestCase();
       logger.Info(it->c_str());        
       if(!obj.LoadFile(*it))        

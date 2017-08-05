@@ -9,22 +9,23 @@ import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 
 public class SETestSuite 
 {
-	protected String           name;
-	protected boolean          performed;
-	protected List<String>     requirements = new ArrayList<String>();
-	protected List<SETestCase> testCases = new ArrayList<SETestCase>();
+	protected String             name;
+	protected boolean            performed;
+	protected List<String>       requirements = new ArrayList<String>();
+	protected List<SETestCase>   testCases = new ArrayList<SETestCase>();
 	
-	protected SETestCase       activeCase;
+	protected SETestCase         activeCase;
+	protected SETestCaseListener activeCaseListener = new SETestCaseListener();
 	
 	protected SETestSuite()
 	{
-
+		reset();
 	}
 	
 	public void reset()
 	{
 		this.name=null;
-		this.performed=false;
+		this.performed=true;
 		this.requirements.clear();
 		this.testCases.clear();
 		activeCase = null;
@@ -59,7 +60,7 @@ public class SETestSuite
     dst.setTests(src.testCases.size());
 
     for(String req : src.requirements)
-    	dst.getRequirementList().add(req);
+    	dst.addRequirement(req);
     
     for(SETestCase tc : src.testCases)
     	dst.addTestCase(SETestCase.unload(tc));
@@ -95,6 +96,7 @@ public class SETestSuite
   {
   	activeCase = createTestCase();
   	activeCase.setName(name);
+  	activeCaseListener.setTestCase(activeCase);
   	return activeCase;
   }
   public SETestCase getActiveCase()
@@ -103,7 +105,7 @@ public class SETestSuite
   }
   public void endCase()
   {
-  	
+  	activeCaseListener.reset();
   }
   public int getNumErrors() 
   { 

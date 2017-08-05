@@ -36,7 +36,7 @@ void SETestSuite::Reset()
   {
     m_TestCase.at(i)->Reset();
   }
-  m_Performed = false;
+  m_Performed = true;
   m_Name = "";
 }
 

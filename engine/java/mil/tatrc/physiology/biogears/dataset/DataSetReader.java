@@ -68,7 +68,7 @@ public class DataSetReader
       FileUtils.delete(new File("./ecg/"));
       FileUtils.delete(new File("./config/"));
       // Ok, let's make them again
-      FileUtils.createDirectory("./substances/");
+      FileUtils.createDirectory("./substances/compounds/");
       FileUtils.createDirectory("./patients/");
       FileUtils.createDirectory("./environments/");
       FileUtils.createDirectory("./nutrition/");
@@ -128,7 +128,7 @@ public class DataSetReader
       List<SESubstanceCompound> compounds = readCompounds(xlWBook.getSheet("Compounds"), substances);
       for(SESubstanceCompound c : compounds)
       {
-        String fileName = "./substances/"+c.getName()+".pba";
+        String fileName = "./substances/compounds/"+c.getName()+".pba";
         Log.info("Writing : "+fileName);
         c.writeFile(fileName);  
         SESubstanceCompound check = new SESubstanceCompound();

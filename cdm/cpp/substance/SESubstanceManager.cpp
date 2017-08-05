@@ -251,24 +251,27 @@ bool SESubstanceManager::LoadSubstanceDirectory()
 {
   bool succeed = true;
   Clear();
-  std::stringstream ss;  
-  DIR *dir;
+  std::stringstream ss;
+  DIR *sdir;
+  DIR *cdir;
   struct dirent *ent;
 
   std::string workingDirectory = GetCurrentWorkingDirectory();
 
 #if defined(_WIN32)
-    dir = opendir("./substances/");
+  sdir = opendir("./substances/");
+  cdir = opendir("./substances/compounds");
 #else
-    dir = opendir(std::string(workingDirectory + std::string("/substances/")).c_str());
+  sdir = opendir(std::string(workingDirectory + std::string("/substances/")).c_str());
+  sdir = opendir(std::string(workingDirectory + std::string("/substances/compounds/")).c_str());
 #endif
 
-    cdm::SubstanceData* subData;
-    cdm::SubstanceData_CompoundData* compoundData;
+  cdm::SubstanceData* subData;
+  cdm::SubstanceData_CompoundData* compoundData;
 
-  if(dir != nullptr)
+  if (sdir != nullptr)
   {
-    while ((ent = readdir(dir)) != nullptr)
+    while ((ent = readdir(sdir)) != nullptr)
     {
       ss.str("");
       ss << workingDirectory << "/substances/" << ent->d_name;
@@ -277,56 +280,53 @@ bool SESubstanceManager::LoadSubstanceDirectory()
         std::ifstream input(ss.str());
         std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
 
-        ss.str("");
-        ss << "Reading substance file : ./substances/" << ent->d_name;
-        Info(ss);
+        //Info("Reading substance file : ./substances/" + ent->d_name);
 
-        try 
+        subData = new cdm::SubstanceData();
+        if (!google::protobuf::TextFormat::ParseFromString(fmsg, subData))
         {
-          subData = new cdm::SubstanceData();
-          google::protobuf::TextFormat::ParseFromString(fmsg, subData);
-          SESubstance* sub = new SESubstance(GetLogger());
-          SESubstance::Load(*subData,*sub);
-          AddSubstance(*sub);
-          m_OriginalSubstanceData[sub] = subData;
+          succeed = false;
+          Error("Unable to read substance " + ss.str());
+          delete subData;
           continue;
         }
-        catch (std::exception ex)
-        {// Try and see if it is a compound
-          SAFE_DELETE(subData);
-          try
-          {
-            compoundData = new cdm::SubstanceData_CompoundData();
-            google::protobuf::TextFormat::ParseFromString(fmsg, compoundData);
-            SESubstanceCompound* compound = new SESubstanceCompound(GetLogger());
-            m_OriginalCompoundData[compound] = compoundData;
-            AddCompound(*compound);
-            continue;
-          }
-          catch (std::exception ex2)
-          {
-            SAFE_DELETE(compoundData);
-            Error("Unknown Type");
-            succeed = false;
-          }
-        }
-      }      
-    }// Done with directory search
-    // Ok, now let's load up our compounds
-    for (auto itr : m_OriginalCompoundData)
-      SESubstanceCompound::Load(*itr.second,*itr.first, *this);
-    
-    return succeed;
+        SESubstance* sub = new SESubstance(GetLogger());
+        SESubstance::Load(*subData, *sub);
+        m_OriginalSubstanceData[sub] = subData;
+        AddSubstance(*sub);
+      }
+    }
+  }
+  closedir(sdir);
 
-    closedir(dir);
-    return succeed;
-  }
-  else
+  if (cdir != nullptr)
   {
-    ss << "Unable to read files" << std::ends;
-    Error(ss);
-    succeed = false;
-    return succeed;
+    while ((ent = readdir(cdir)) != nullptr)
+    {
+      ss.str("");
+      ss << workingDirectory << "/substances/compounds/" << ent->d_name;
+      if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
+      {
+        std::ifstream input(ss.str());
+        std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+
+        //Info("Reading compound file : ./substances/compounds/" + ent->d_name);
+        compoundData = new cdm::SubstanceData_CompoundData();
+        if (!google::protobuf::TextFormat::ParseFromString(fmsg, compoundData))
+        {
+          succeed = false;
+          Error("Unable to read compound " + ss.str());
+          delete compoundData;
+          continue;
+        }
+        SESubstanceCompound* compound = new SESubstanceCompound(GetLogger());
+        SESubstanceCompound::Load(*compoundData, *compound, *this);
+        m_OriginalCompoundData[compound] = compoundData;
+        AddCompound(*compound);
+      }
+    }
   }
+  closedir(cdir);
+  return succeed;
 }
 

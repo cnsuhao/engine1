@@ -59,7 +59,7 @@ public class SETestReport
   public SETestReport()
   {
     this.reportDir="./";
-    setFileName("TestReport.xml");
+    setFileName("TestReport.pba");
     testSuites = new ArrayList<SETestSuite>();
     knownFailingSuites = new ArrayList<String>();
   }
@@ -114,7 +114,7 @@ public class SETestReport
     else
     {
       this.name = fileName;
-      this.fileName=fileName+".xml";// make it an xml file
+      this.fileName=fileName+".pba";// make it an pba file
     }
   }
 
@@ -178,12 +178,9 @@ public class SETestReport
     knownFailingSuites.add(suiteName);
   }
 
-  public void addSummary(SETestReport rpt)
+  public void addTestSuite(SETestSuite ts)
   {
-    for(SETestSuite ts : rpt.testSuites)
-    {
-    	this.testSuites.add(ts);
-    }
+    this.testSuites.add(ts);
   }
 
   public void write()
@@ -233,9 +230,6 @@ public class SETestReport
     }
     buffer.append("</table>");
 
-    buffer.append("</body>");
-    buffer.append("</html>");
-
     if(groups == null)
     {
       groups = new HashMap<String,List<String>>();
@@ -244,7 +238,7 @@ public class SETestReport
         all.add(ts.getName());
       groups.put(this.name, all);
     }
-
+    
     for(String group : groups.keySet())
     {
       List<String> groupTests = groups.get(group);
@@ -361,6 +355,8 @@ public class SETestReport
       buffer.append("<br>");
     }
 
+    buffer.append("</body>");
+    buffer.append("</html>");
     return buffer.toString();
   }
 }

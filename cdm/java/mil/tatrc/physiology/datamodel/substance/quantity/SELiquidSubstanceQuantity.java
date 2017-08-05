@@ -35,7 +35,7 @@ public class SELiquidSubstanceQuantity extends SESubstanceQuantity
   protected SEScalarMass            massExcreted;
   protected SEScalarAmountPerVolume molarity;
   protected SEScalarPressure        partialPressure;
-  protected SEScalar0To1        saturation;
+  protected SEScalar0To1            saturation;
 
   public SELiquidSubstanceQuantity(SESubstance s)
   {
@@ -84,6 +84,8 @@ public class SELiquidSubstanceQuantity extends SESubstanceQuantity
       SEScalarMass.load(src.getMassDeposited(),dst.getMassDeposited());
     if (src.hasMassExcreted())
       SEScalarMass.load(src.getMassExcreted(),dst.getMassExcreted());        
+    if (src.hasMolarity())
+    	SEScalarAmountPerVolume.load(src.getMolarity(),dst.getMolarity());        
     if (src.hasPartialPressure()) 
       SEScalarPressure.load(src.getPartialPressure(),dst.getPartialPressure()); 
     if (src.hasSaturation()) 
@@ -108,6 +110,8 @@ public class SELiquidSubstanceQuantity extends SESubstanceQuantity
       dst.setMassDeposited(SEScalarMass.unload(src.massDeposited));
     if (src.hasMassExcreted())
       dst.setMassExcreted(SEScalarMass.unload(src.massExcreted));    
+    if (src.hasMolarity())
+      dst.setMolarity(SEScalarAmountPerVolume.unload(src.molarity));    
     if (src.hasPartialPressure())
       dst.setPartialPressure(SEScalarPressure.unload(src.partialPressure));
     if (src.hasSaturation())

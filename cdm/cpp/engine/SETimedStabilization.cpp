@@ -199,7 +199,8 @@ bool SETimedStabilization::LoadFile(const std::string& file)
     std::ifstream input(file);
     std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
     cdm::TimedStabilizationData ts;
-    google::protobuf::TextFormat::ParseFromString(fmsg, &ts);
+    if (!google::protobuf::TextFormat::ParseFromString(fmsg, &ts))
+      return false;
     SETimedStabilization::Load(ts, *this);
     return true;
   }

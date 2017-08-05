@@ -115,7 +115,8 @@ bool SEAnesthesiaMachine::LoadFile(const std::string& anesthesiaMachineFile)
   cdm::AnesthesiaMachineData src;
   std::ifstream file_stream(anesthesiaMachineFile, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  google::protobuf::TextFormat::ParseFromString(fmsg, &src);
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
   SEAnesthesiaMachine::Load(src, *this);
   return true;
 

@@ -151,11 +151,8 @@ public class SESubstanceManager
 	public void loadSubstanceDirectory()
 	{
 		clear();
-		File dir = new File("./substances").getAbsoluteFile();
-		List<String> compoundFiles = new ArrayList<String>();
-
-
-		for(File sFile : dir.listFiles())
+		File sdir = new File("./substances").getAbsoluteFile();
+		for(File sFile : sdir.listFiles())
 		{
 			if(sFile.getName().endsWith(".pba"))
 			{
@@ -168,22 +165,27 @@ public class SESubstanceManager
 				}
 				catch(ParseException ex)
 				{
-					compoundFiles.add(sFile.getAbsolutePath());
+					Log.error("Unsupport file contents in "+sFile.getAbsolutePath());
 				}      
 			}
 		}
-
-		for(String f : compoundFiles)
+		
+		File cdir = new File("./substances/compounds/").getAbsoluteFile();
+		File[] files = cdir.listFiles();
+		if(files!=null)
 		{
-			try
+			for(File cFile : files)
 			{
-				SESubstanceCompound c = new SESubstanceCompound();
-				c.readFile(f,this);
-				addCompound(c);
-			}
-			catch(ParseException ex)
-			{
-				Log.error("Unsupport file contents in "+f);
+				try
+				{
+					SESubstanceCompound c = new SESubstanceCompound();
+					c.readFile(cFile.getAbsolutePath(),this);
+					addCompound(c);
+				}
+				catch(ParseException ex)
+				{
+					Log.error("Unsupport file contents in "+cFile.getAbsolutePath());
+				}
 			}
 		}
 	}

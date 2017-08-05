@@ -427,7 +427,7 @@ public class SETestDriver
         List<String> patientFileNames;
 
         if(patientFiles.equalsIgnoreCase("all"))
-          patientFileNames = FileUtils.findFiles("./patients", ".xml", true);        
+          patientFileNames = FileUtils.findFiles("./patients", ".pba", true);        
         else
         {
           String[] patientFiles = this.patientFiles.split(",");
@@ -435,8 +435,8 @@ public class SETestDriver
           for(String patientFile : patientFiles)
           {
             patientFile = patientFile.trim();
-            if(!patientFile.endsWith(".xml"))
-              patientFile += ".xml";
+            if(!patientFile.endsWith(".pba"))
+              patientFile += ".pba";
             patientFileNames.add(patientFile);
           }
         }
@@ -459,7 +459,7 @@ public class SETestDriver
             }
             copy = job.clone();                              
             copy.patientFile = pFileName;
-            DeriveScenarioResultNames(copy, copy.name.replaceAll(".xml", "-"+pFileName));  
+            DeriveScenarioResultNames(copy, copy.name.replaceAll(".pba", "-"+pFileName));  
             jobs.add(copy);
           }
         }
@@ -488,7 +488,7 @@ public class SETestDriver
     job.baselineFiles.clear();
     job.computedFiles.clear();
 
-    String[] dirs = baseName.substring(0, baseName.indexOf(".xml")).split("[/\\\\]");
+    String[] dirs = baseName.substring(0, baseName.indexOf(".pba")).split("[/\\\\]");
     String baseline = job.baselineDirectory;
     for(int i=0; i<dirs.length-1; i++)
       baseline+="/"+dirs[i];
@@ -512,21 +512,21 @@ public class SETestDriver
       {
         if(job.PlottableResults)
         {
-          if(job.name.endsWith(".xml"))//This should be a scenario file, different naming convention
+          if(job.name.endsWith(".pba"))//This should be a scenario file, different naming convention
           {
             String[] dirs = toCompute.substring(0,toCompute.indexOf(".txt")).split("[/\\\\]");
-            String report = toCompute.substring(0,toCompute.indexOf(".txt"))+"/"+dirs[dirs.length-1]+"Report.xml";
+            String report = toCompute.substring(0,toCompute.indexOf(".txt"))+"/"+dirs[dirs.length-1]+"Report.pba";
             job.reportFiles.add(report);
           }
           else
           {
             String path = toCompute.substring(0, toCompute.lastIndexOf("."));
-            path = path + path.substring(path.lastIndexOf("/")) + "Report.xml";
+            path = path + path.substring(path.lastIndexOf("/")) + "Report.pba";
             job.reportFiles.add(path);
           }
         }
         else
-          job.reportFiles.add(toCompute.substring(0, toCompute.lastIndexOf("."))+"Report.xml");
+          job.reportFiles.add(toCompute.substring(0, toCompute.lastIndexOf("."))+"Report.pba");
       }
 
       if(!job.skipExecution)
@@ -654,7 +654,7 @@ public class SETestDriver
   {
     List<String> currentGroup;
     SETestReport report = new SETestReport();    
-    report.setFullReportPath("./test_results/"+this.testName+"Report.xml");    
+    report.setFullReportPath("./test_results/"+this.testName+"Report.pba");    
     for(TestJob job : this.jobs)
     {
       String group = job2groups.get(job);
@@ -683,6 +683,11 @@ public class SETestDriver
         try
         {
         	tRpt.readFile(reportFile);
+        	for(SETestSuite ts : tRpt.testSuites)
+          {
+          	report.addTestSuite(ts);
+          	currentGroup.add(ts.getName());
+          }
         }
         catch(Exception ex)
         {
@@ -710,7 +715,7 @@ public class SETestDriver
     // There are lots of various naming conventions, and this should support all of them
 
     // Get rid of any extensions
-    hint = hint.replaceAll(".xml", "");
+    hint = hint.replaceAll(".pba", "");
     hint = hint.replaceAll(".txt", "");
 
     File file;
@@ -726,13 +731,13 @@ public class SETestDriver
       file = new File(hint+".txt");
       FileUtils.delete(file);
 
-      file = new File(hint+".xml");
+      file = new File(hint+".pba");
       FileUtils.delete(file);
 
-      file = new File(hint+"Test.xml");
+      file = new File(hint+"Test.pba");
       FileUtils.delete(file);
 
-      file = new File(hint+"Report.xml");
+      file = new File(hint+"Report.pba");
       FileUtils.delete(file);
 
       file = new File(hint+"Results.txt");
