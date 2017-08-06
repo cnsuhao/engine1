@@ -11,21 +11,20 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SENervousSystem.h"
-#include "bind/BioGearsNervousSystemData.hxx"
 
 /**
  * @brief 
  * The nervous class holds models of the peripheral and central nervous system. Currently, on the baroreceptor reflex is modeled.
  */  
-class BIOGEARS_API Nervous : public SENervousSystem, public BioGearsSystem
+class PULSE_API Nervous : public SENervousSystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Nervous(BioGears& bg);
-  BioGears& m_data;
+  Nervous(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~Nervous();
@@ -35,11 +34,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsNervousSystemData& in);
-  virtual CDM::BioGearsNervousSystemData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsNervousSystemData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseNervousSystemData& in);
+  virtual CDM::PulseNervousSystemData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseNervousSystemData& data) const;
 
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
   void SetUp();

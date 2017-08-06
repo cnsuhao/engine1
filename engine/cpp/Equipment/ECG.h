@@ -15,19 +15,18 @@ specific language governing permissions and limitations under the License.
 
 #include "system/equipment/ElectroCardioGram/SEElectroCardioGram.h"
 #include "system/equipment/ElectroCardioGram/SEElectroCardioGramInterpolator.h"
-#include "bind/BioGearsElectroCardioGramData.hxx"
 
 /**
 * @brief 
 * Generic ECG machine to assess the heart rhythm.
 */
-class BIOGEARS_API ECG : public SEElectroCardioGram, public BioGearsSystem
+class PULSE_API ECG : public SEElectroCardioGram, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  ECG(BioGears& bg);
-  BioGears& m_data;
+  ECG(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~ECG();
@@ -37,11 +36,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsElectroCardioGramData& in);
-  virtual CDM::BioGearsElectroCardioGramData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsElectroCardioGramData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseElectroCardioGramData& in);
+  virtual CDM::PulseElectroCardioGramData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseElectroCardioGramData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

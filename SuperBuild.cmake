@@ -31,7 +31,7 @@ ExternalProject_Add( Eigen
         -DCMAKE_INSTALL_PREFIX:STRING=${Eigen_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${Eigen_INSTALL}/include
 )
-list(APPEND BioGears_DEPENDENCIES Eigen)
+list(APPEND Pulse_DEPENDENCIES Eigen)
 # Install Headers
 install(DIRECTORY ${Eigen_INSTALL}/include
         DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -73,7 +73,7 @@ ExternalProject_Add( log4cpp
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
 )
-list(APPEND BioGears_DEPENDENCIES log4cpp)
+list(APPEND Pulse_DEPENDENCIES log4cpp)
 list(APPEND CMAKE_PREFIX_PATH ${log4cpp_INSTALL})
 
 ###################################################
@@ -112,7 +112,7 @@ ExternalProject_Add( protobuf
     -DADDITIONAL_C_FLAGS:STRING=${ADDITIONAL_C_FLAGS}
     -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
 )
-list(APPEND BioGears_DEPENDENCIES protobuf)
+list(APPEND Pulse_DEPENDENCIES protobuf)
 list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
 
 install(DIRECTORY ${protobuf_INSTALL}/include
@@ -211,7 +211,7 @@ if(WIN32)
           -DINCLUDE_INSTALL_DIR:STRING=${dirent_INSTALL}/include
   )
   message(STATUS "dirent is here : ${dirent_DIR}" )
-  list(APPEND BioGears_DEPENDENCIES dirent)
+  list(APPEND Pulse_DEPENDENCIES dirent)
   list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/dirent/install)
   # Install Headers
   install(DIRECTORY ${dirent_INSTALL}/include
@@ -232,10 +232,10 @@ endif()
 # ExternalProject_Add doesn't like to work with lists: it keeps only the first element
 string(REPLACE ";" "::" CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
 
-# Generate the BioGears project after dependencies have been built
+# Generate the Pulse project after dependencies have been built
 ExternalProject_Add( InnerBuild
     PREFIX InnerBuild
-    DEPENDS Eigen ${BioGears_DEPENDENCIES}
+    DEPENDS Eigen ${Pulse_DEPENDENCIES}
     DOWNLOAD_COMMAND ""
     DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}
     SOURCE_DIR ${CMAKE_SOURCE_DIR}

@@ -11,22 +11,22 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "Controller/Scenario/BioGearsScenarioExec.h"
-#include "Controller/Scenario/BioGearsScenario.h"
+#include "Controller/Scenario/PulseScenarioExec.h"
+#include "Controller/Scenario/PulseScenario.h"
 #include "bind/ScenarioData.hxx"
 #include "Serializer.h"
 
-BioGearsScenarioExec::BioGearsScenarioExec(PhysiologyEngine& engine) : SEScenarioExec(engine)
+PulseScenarioExec::PulseScenarioExec(PhysiologyEngine& engine) : SEScenarioExec(engine)
 {
 
 }
 
-BioGearsScenarioExec::~BioGearsScenarioExec()
+PulseScenarioExec::~PulseScenarioExec()
 {
   
 }
 
-bool BioGearsScenarioExec::Execute(const SEScenario& scenario, const std::string& resultsFile, SEScenarioCustomExec* cExec)
+bool PulseScenarioExec::Execute(const SEScenario& scenario, const std::string& resultsFile, SEScenarioCustomExec* cExec)
 {
   try
   {    
@@ -44,7 +44,7 @@ bool BioGearsScenarioExec::Execute(const SEScenario& scenario, const std::string
   return false;
 }
 
-bool BioGearsScenarioExec::Execute(const std::string& scenarioFile, const std::string& resultsFile, SEScenarioCustomExec* cExec)
+bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::string& resultsFile, SEScenarioCustomExec* cExec)
 {
   try
   {
@@ -67,7 +67,7 @@ bool BioGearsScenarioExec::Execute(const std::string& scenarioFile, const std::s
       Error(m_ss);
       return false;
     }
-    BioGearsScenario scenario(m_Engine.GetSubstanceManager());
+    PulseScenario scenario(m_Engine.GetSubstanceManager());
     scenario.Load(*sceData);
     std::string rFile = resultsFile;
     if (rFile.empty())

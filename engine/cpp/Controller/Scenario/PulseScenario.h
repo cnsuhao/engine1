@@ -11,20 +11,19 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "scenario/SEScenarioExec.h"
+#include "scenario/SEScenario.h"
+#include "Controller/Scenario/PulseScenarioInitialParameters.h"
 
 /**
-* @brief Overloaded scenario exector to run a %BioGears specific scenario
+* @brief A Pulse specific scenario (i.e. holds a %Pulse configuration object)
 */
-class BIOGEARS_API BioGearsScenarioExec : public SEScenarioExec
+class PULSE_API PulseScenario : public SEScenario
 {
 public:
-  BioGearsScenarioExec(PhysiologyEngine& engine);
-  virtual ~BioGearsScenarioExec();
 
-  virtual bool Execute(const std::string& scenarioFile, const std::string& resultsFile, SEScenarioCustomExec* cExec = nullptr);
-  virtual bool Execute(const SEScenario& scenario, const std::string& resultsFile, SEScenarioCustomExec* cExec = nullptr);
-
-protected:
-
+  PulseScenario(SESubstanceManager& subMgr);
+  virtual ~PulseScenario();
+  
+  virtual PulseScenarioInitialParameters& GetInitialParameters();
+  virtual const PulseScenarioInitialParameters* GetInitialParameters() const;
 };

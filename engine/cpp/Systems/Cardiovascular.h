@@ -12,10 +12,9 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
-#include "bind/BioGearsCardiovascularSystemData.hxx"
 
 class SELiquidCompartmentGraph;
 class SEFluidCircuitCalculator;
@@ -32,13 +31,13 @@ class SEFluidCircuitCalculator;
 * with other systems, if alterations are made to the cardiovascular system then the feedback will be felt in the other physiologic systems.
 *
 */
-class BIOGEARS_API Cardiovascular : public SECardiovascularSystem, public BioGearsSystem
+class PULSE_API Cardiovascular : public SECardiovascularSystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Cardiovascular(BioGears& bg);
-  BioGears& m_data;
+  Cardiovascular(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~Cardiovascular();
@@ -48,11 +47,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsCardiovascularSystemData& in);
-  virtual CDM::BioGearsCardiovascularSystemData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsCardiovascularSystemData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseCardiovascularSystemData& in);
+  virtual CDM::PulseCardiovascularSystemData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseCardiovascularSystemData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

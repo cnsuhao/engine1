@@ -12,33 +12,33 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 class SENutrition;
-#include "bind/BioGearsConfigurationData.hxx"
+#include "bind/PulseConfigurationData.hxx"
 #include "engine/PhysiologyEngineConfiguration.h"
 class SEEnvironmentalConditions;
 
 /**
-* @brief %BioGears specific configuration parameters for all systems/equipment
+* @brief %Pulse specific configuration parameters for all systems/equipment
 */
-class BIOGEARS_API BioGearsConfiguration : public PhysiologyEngineConfiguration
+class PULSE_API PulseConfiguration : public PhysiologyEngineConfiguration
 {
 public:
 
-  BioGearsConfiguration(SESubstanceManager& substances);
-  virtual ~BioGearsConfiguration();
+  PulseConfiguration(SESubstanceManager& substances);
+  virtual ~PulseConfiguration();
   
   virtual void Clear();
   virtual void Initialize();
 
   virtual void Merge(const PhysiologyEngineConfiguration& from);
-  virtual void Merge(const BioGearsConfiguration& from);
+  virtual void Merge(const PulseConfiguration& from);
 
   bool LoadFile(const std::string& file);
 
   virtual bool Load(const CDM::PhysiologyEngineConfigurationData& in);
-  virtual bool Load(const CDM::BioGearsConfigurationData& in);
-  virtual CDM::BioGearsConfigurationData* Unload() const;
+  virtual bool Load(const CDM::PulseConfigurationData& in);
+  virtual CDM::PulseConfigurationData* Unload() const;
 protected:
-  virtual void Unload(CDM::BioGearsConfigurationData& data) const;
+  virtual void Unload(CDM::PulseConfigurationData& data) const;
 
   SESubstanceManager& m_Substances;
 

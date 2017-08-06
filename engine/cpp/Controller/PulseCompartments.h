@@ -11,22 +11,22 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-class BioGears;
+class Pulse;
 class SEGasCompartmentGraph;
 class SELiquidCompartmentGraph;
 
 #include "compartment/SECompartmentManager.h"
 
 /**
-* @brief Manages all compartments and graphs associated with all %BioGears systems/equipement
+* @brief Manages all compartments and graphs associated with all %Pulse systems/equipement
 */
-class BIOGEARS_API BioGearsCompartments : public SECompartmentManager
+class PULSE_API PulseCompartments : public SECompartmentManager
 {
-  friend class BioGearsSubstances;
+  friend class PulseSubstances;
 public:
 
-  BioGearsCompartments(BioGears& data);
-  virtual ~BioGearsCompartments();
+  PulseCompartments(Pulse& data);
+  virtual ~PulseCompartments();
 
   void Clear();
 
@@ -91,14 +91,14 @@ public:
   const std::map<SETissueCompartment*, SELiquidCompartment*>& GetIntracellularFluid() { return m_IntracellularFluid; }
 
 protected:
-  // I don't want these exposed in BioGears, you should be calling the Substance manager
+  // I don't want these exposed in Pulse, you should be calling the Substance manager
   virtual void AddGasCompartmentSubstance(SESubstance& sub);
   virtual void AddLiquidCompartmentSubstance(SESubstance& sub);
   
   virtual bool AllowGasSubstance(SESubstance& s, SEGasCompartment& cmpt) const;
   virtual bool AllowLiquidSubstance(SESubstance& s, SELiquidCompartment& cmpt) const;
 
-  BioGears& m_data;
+  Pulse& m_data;
 
   bool m_UpdateActiveAirwayGraph;
   bool m_UpdateActiveAerosolGraph;

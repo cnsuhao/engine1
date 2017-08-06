@@ -1,6 +1,6 @@
 # Files in the project
-add_executable(ScenarioDriver cpp/BioGearsScenarioDriver.cpp
-                                  cpp/BioGearsScenarioDriver.h
+add_executable(ScenarioDriver cpp/PulseScenarioDriver.cpp
+                                  cpp/PulseScenarioDriver.h
                                   cpp/Verification.cpp
                                   cpp/Verification.h)
 
@@ -16,7 +16,7 @@ target_include_directories(ScenarioDriver PRIVATE ${LOG4CPP_INCLUDE_DIR})
 target_include_directories(ScenarioDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 # Dependent Libraries
-target_link_libraries(ScenarioDriver BioGearsEngine)
+target_link_libraries(ScenarioDriver PulseEngine)
 # Generate cxx/hxx files from xsd
 # Copy to the bin
 

@@ -12,9 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "bind/enumBioGearsAirwayMode.hxx"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachine.h"
-#include "bind/BioGearsAnesthesiaMachineData.hxx"
 
 class SEAnesthesiaMachineActionCollection;
 
@@ -22,13 +20,13 @@ class SEAnesthesiaMachineActionCollection;
  * @brief 
  * Generic anesthesia machine for positive pressure ventilation.
  */    
-class BIOGEARS_API AnesthesiaMachine : public SEAnesthesiaMachine, public BioGearsSystem
+class PULSE_API AnesthesiaMachine : public SEAnesthesiaMachine, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  AnesthesiaMachine(BioGears& bg);
-  BioGears& m_data;
+  AnesthesiaMachine(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~AnesthesiaMachine();
@@ -38,11 +36,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsAnesthesiaMachineData& in);
-  virtual CDM::BioGearsAnesthesiaMachineData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsAnesthesiaMachineData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseAnesthesiaMachineData& in);
+  virtual CDM::PulseAnesthesiaMachineData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseAnesthesiaMachineData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
@@ -57,7 +61,7 @@ public:
   void CalculateScrubber();
 
   // Extending some functionality to these base class methods
-  // We will update the BioGears Airway mode when these are called
+  // We will update the Pulse Airway mode when these are called
   virtual void SetConnection(cdm::AnesthesiaMachineData_eConnection c);
   virtual void InvalidateConnection();
 

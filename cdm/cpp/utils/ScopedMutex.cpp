@@ -10,20 +10,21 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#pragma once
-#include "scenario/SEScenario.h"
-#include "Controller/Scenario/BioGearsScenarioInitialParameters.h"
+#include "stdafx.h"
+#include "utils/ScopedMutex.h"
 
-/**
-* @brief A BioGears specific scenario (i.e. holds a %BioGears configuration object)
-*/
-class BIOGEARS_API BioGearsScenario : public SEScenario
+#include <mutex>
+
+static std::recursive_mutex g_rMutex;
+
+ScopedMutex::ScopedMutex()
 {
-public:
+  g_rMutex.lock();
+}
 
-  BioGearsScenario(SESubstanceManager& subMgr);
-  virtual ~BioGearsScenario();
-  
-  virtual BioGearsScenarioInitialParameters& GetInitialParameters();
-  virtual const BioGearsScenarioInitialParameters* GetInitialParameters() const;
-};
+ScopedMutex::~ScopedMutex()
+{
+  g_rMutex.unlock();
+}
+
+

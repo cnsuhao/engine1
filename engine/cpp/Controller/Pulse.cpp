@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "BioGears.h"
+#include "Pulse.h"
 
 #include "substance/SESubstance.h"
 #include "patient/SEPatient.h"
@@ -42,13 +42,13 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarHeatCapacitancePerMass.h"
 #include "properties/SEScalarFlowElastance.h"
 
-BioGears::BioGears(const std::string& logFileName) : BioGears(new Logger(logFileName))
+Pulse::Pulse(const std::string& logFileName) : Pulse(new Logger(logFileName))
 {
   myLogger = true;
   m_DataTrack = nullptr;
 }
 
-BioGears::BioGears(Logger* logger) : Loggable(logger)
+Pulse::Pulse(Logger* logger) : Loggable(logger)
 {
   myLogger = false;
   m_DataTrack = nullptr;
@@ -61,12 +61,12 @@ BioGears::BioGears(Logger* logger) : Loggable(logger)
   m_SimulationTime->SetValue(0, TimeUnit::s);
   m_Logger->SetLogTime(m_SimulationTime.get());
 
-  m_Substances = std::unique_ptr<BioGearsSubstances>(new BioGearsSubstances(*this));
+  m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
   m_Substances->LoadSubstanceDirectory();
 
   m_Patient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
 
-  m_Config = std::unique_ptr<BioGearsConfiguration>(new BioGearsConfiguration(*m_Substances));  
+  m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));  
   m_Config->Initialize();
  
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
@@ -94,19 +94,19 @@ BioGears::BioGears(Logger* logger) : Loggable(logger)
 
   m_Inhaler = std::unique_ptr<Inhaler>(new Inhaler(*this));
 
-  m_Compartments = std::unique_ptr<BioGearsCompartments>(new BioGearsCompartments(*this));
+  m_Compartments = std::unique_ptr<PulseCompartments>(new PulseCompartments(*this));
 
-  m_Circuits = std::unique_ptr<BioGearsCircuits>(new BioGearsCircuits(*this));
+  m_Circuits = std::unique_ptr<PulseCircuits>(new PulseCircuits(*this));
 }
 
-DataTrack& BioGears::GetDataTrack()
+DataTrack& Pulse::GetDataTrack()
 {
   if (m_DataTrack == nullptr)
     m_DataTrack = new DataTrack();
   return *m_DataTrack;
 }
 
-bool BioGears::Initialize(const PhysiologyEngineConfiguration* config)
+bool Pulse::Initialize(const PhysiologyEngineConfiguration* config)
 {
   m_State = EngineState::NotReady;
   Info("Configuring patient");
@@ -130,8 +130,8 @@ bool BioGears::Initialize(const PhysiologyEngineConfiguration* config)
   }
   // Now, Let's see if there is anything to merge into our base configuration
   Info("Merging OnDisk Configuration");
-  BioGearsConfiguration cFile(*m_Substances);
-  cFile.LoadFile("BioGearsConfiguration.xml");
+  PulseConfiguration cFile(*m_Substances);
+  cFile.LoadFile("PulseConfiguration.xml");
   m_Config->Merge(cFile);
 
   // Now we can check the config
@@ -161,7 +161,7 @@ bool BioGears::Initialize(const PhysiologyEngineConfiguration* config)
   Info("Creating Circuits and Compartments");
   CreateCircuitsAndCompartments();
 
-  m_AirwayMode = CDM::enumBioGearsAirwayMode::Free;
+  m_AirwayMode = CDM::enumPulseAirwayMode::Free;
   m_Intubation = cdm::eSwitch::Off;
   m_CurrentTime->SetValue(0, TimeUnit::s);
   m_SimulationTime->SetValue(0, TimeUnit::s);
@@ -189,15 +189,15 @@ bool BioGears::Initialize(const PhysiologyEngineConfiguration* config)
   return true;
 }
 
-void BioGears::SetAirwayMode(CDM::enumBioGearsAirwayMode::value mode)
+void Pulse::SetAirwayMode(CDM::enumPulseAirwayMode::value mode)
 {
   if (mode == m_AirwayMode)
     return;// do nazing!
-  if (mode == CDM::enumBioGearsAirwayMode::Inhaler && m_AirwayMode != CDM::enumBioGearsAirwayMode::Free)
+  if (mode == CDM::enumPulseAirwayMode::Inhaler && m_AirwayMode != CDM::enumPulseAirwayMode::Free)
     throw CommonDataModelException("Can only change airway mode to Inhaler from the Free mode, Disable other equipment first.");
-  if (mode == CDM::enumBioGearsAirwayMode::AnesthesiaMachine && m_AirwayMode != CDM::enumBioGearsAirwayMode::Free)
+  if (mode == CDM::enumPulseAirwayMode::AnesthesiaMachine && m_AirwayMode != CDM::enumPulseAirwayMode::Free)
     throw CommonDataModelException("Can only change airway mode to Anesthesia Machine from the Free mode, Disable other equipment first.");
-  if (mode == CDM::enumBioGearsAirwayMode::MechanicalVentilator && m_AirwayMode != CDM::enumBioGearsAirwayMode::Free)
+  if (mode == CDM::enumPulseAirwayMode::MechanicalVentilator && m_AirwayMode != CDM::enumPulseAirwayMode::Free)
     throw CommonDataModelException("Can only change airway mode to Mechanical Ventilator from the Free mode, Disable other equipment first.");
   if (mode != m_AirwayMode)  
     m_Compartments->UpdateAirwayGraph();
@@ -206,16 +206,16 @@ void BioGears::SetAirwayMode(CDM::enumBioGearsAirwayMode::value mode)
   ss << "Airway Mode : " << m_AirwayMode;
   Info(ss);
 }
-void BioGears::SetIntubation(cdm::eSwitch s)
+void Pulse::SetIntubation(cdm::eSwitch s)
 {
   if (m_Intubation == s)
     return;// do nazing!
-  if (m_AirwayMode == CDM::enumBioGearsAirwayMode::Inhaler)
+  if (m_AirwayMode == CDM::enumPulseAirwayMode::Inhaler)
     throw CommonDataModelException("Cannot intubate if the inhaler is active.");
   m_Intubation = s;
 }
 
-bool BioGears::SetupPatient()
+bool Pulse::SetupPatient()
 {
   bool err = false;
   std::stringstream ss;
@@ -825,7 +825,7 @@ bool BioGears::SetupPatient()
   return true;
 }
 
-BioGears::~BioGears()
+Pulse::~Pulse()
 {
   if (myLogger)
   {
@@ -835,7 +835,7 @@ BioGears::~BioGears()
     m_Logger->SetForward(nullptr);
 }
 
-void BioGears::AtSteadyState(EngineState state)
+void Pulse::AtSteadyState(EngineState state)
 {
   m_State = state;
   m_Environment->AtSteadyState();
@@ -855,7 +855,7 @@ void BioGears::AtSteadyState(EngineState state)
   m_ECG->AtSteadyState();
 }
 
-void BioGears::PreProcess()
+void Pulse::PreProcess()
 {
   m_Environment->PreProcess();
   m_CardiovascularSystem->PreProcess();
@@ -873,7 +873,7 @@ void BioGears::PreProcess()
   m_BloodChemistrySystem->PreProcess();
   m_ECG->PreProcess();
 }
-void BioGears::Process()
+void Pulse::Process()
 {
   m_Environment->Process();
   m_CardiovascularSystem->Process();
@@ -891,7 +891,7 @@ void BioGears::Process()
   m_BloodChemistrySystem->Process();
   m_ECG->Process();
 }
-void BioGears::PostProcess()
+void Pulse::PostProcess()
 {
   m_Environment->PostProcess();
   m_CardiovascularSystem->PostProcess();
@@ -910,7 +910,7 @@ void BioGears::PostProcess()
   m_ECG->PostProcess();
 }
 
-bool BioGears::GetPatientAssessment(SEPatientAssessment& assessment)
+bool Pulse::GetPatientAssessment(SEPatientAssessment& assessment)
 {
   SEPulmonaryFunctionTest* pft = dynamic_cast<SEPulmonaryFunctionTest*>(&assessment);
   if (pft != nullptr)
@@ -934,7 +934,7 @@ bool BioGears::GetPatientAssessment(SEPatientAssessment& assessment)
   return false;
 }
 
-void BioGears::ForwardFatal(const std::string&  msg, const std::string&  origin)
+void Pulse::ForwardFatal(const std::string&  msg, const std::string&  origin)
 {
   std::string err;
   err.append(msg);
@@ -943,7 +943,7 @@ void BioGears::ForwardFatal(const std::string&  msg, const std::string&  origin)
   throw PhysiologyEngineException(err);
 }
 
-bool BioGears::CreateCircuitsAndCompartments()
+bool Pulse::CreateCircuitsAndCompartments()
 {
   m_Circuits->Clear();
   m_Compartments->Clear();
@@ -1007,7 +1007,7 @@ bool BioGears::CreateCircuitsAndCompartments()
   return true;
 }
 
-void BioGears::SetupCardiovascular()
+void Pulse::SetupCardiovascular()
 {
   Info("Setting Up Cardiovascular");
   bool male = m_Patient->GetSex() == CDM::enumSex::Male ? true : false;
@@ -1092,7 +1092,7 @@ void BioGears::SetupCardiovascular()
   double ResistanceSpleen = (systolicPressureTarget_mmHg - VascularPressureTargetSpleen) / VascularFlowTargetSpleen, ResistanceSpleenVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSpleen;
 
   // Portal vein and shunt are just paths - only have resistance
-  double ResistancePortalVein = 0.001; // The portal vein is just a pathway in BioGears. The pressure across this path does not represent portal vein pressure (if it did our patient would always be portal hypertensive)
+  double ResistancePortalVein = 0.001; // The portal vein is just a pathway in Pulse. The pressure across this path does not represent portal vein pressure (if it did our patient would always be portal hypertensive)
   double ResistanceShuntRight = (VascularPressureTargetPulmArtRight - VascularPressureTargetPulmCapRight) / (cardiacOutputTarget_mL_Per_s*pulmonaryShuntFractionFactor);
   double ResistanceShuntLeft = (VascularPressureTargetPulmArtLeft - VascularPressureTargetPulmCapLeft) / (cardiacOutputTarget_mL_Per_s*pulmonaryShuntFractionFactor);
 
@@ -1956,7 +1956,7 @@ void BioGears::SetupCardiovascular()
   gCombinedCardiovascular.StateChange();
 }
 
-void BioGears::SetupRenal()
+void Pulse::SetupRenal()
 {
   Info("Setting Up Renal");
   //////////////////////////
@@ -2717,7 +2717,7 @@ void BioGears::SetupRenal()
   gCombinedCardiovascular.StateChange();  
 }
 
-void BioGears::SetupTissue()
+void Pulse::SetupTissue()
 {
   Info("Setting Up Tissue");
   SEFluidCircuit& cCardiovascular = m_Circuits->GetCardiovascularCircuit();
@@ -3527,7 +3527,7 @@ void BioGears::SetupTissue()
  cCombinedCardiovascular.StateChange();
 }
 
-void BioGears::SetupRespiratory()
+void Pulse::SetupRespiratory()
 {
   Info("Setting Up Respiratory");
   double RightLungRatio = m_Patient->GetRightLungRatio().GetValue();
@@ -3855,7 +3855,7 @@ void BioGears::SetupRespiratory()
   lAerosol.StateChange();
 }
 
-void BioGears::SetupGastrointestinal()
+void Pulse::SetupGastrointestinal()
 {
   Info("Setting Up Gastrointestinal");
   // Circuit
@@ -3896,7 +3896,7 @@ void BioGears::SetupGastrointestinal()
   gCombinedCardiovascular.StateChange();
 }
 
-void BioGears::SetupAnesthesiaMachine()
+void Pulse::SetupAnesthesiaMachine()
 {
   Info("Setting Up Anesthesia Machine");
   /////////////////////// Circuit Interdependencies
@@ -4139,7 +4139,7 @@ void BioGears::SetupAnesthesiaMachine()
   gCombinedRespiratoryAnesthesia.StateChange();
 }
 
-void BioGears::SetupInhaler()
+void Pulse::SetupInhaler()
 {
   Info("Setting Up Inhaler");
   /////////////////////// Circuit Interdependencies
@@ -4223,7 +4223,7 @@ void BioGears::SetupInhaler()
 }
 
 
-void BioGears::SetupMechanicalVentilator()
+void Pulse::SetupMechanicalVentilator()
 {
   Info("Setting Up MechanicalVentilator");
   /////////////////////// Circuit Interdependencies
@@ -4272,7 +4272,7 @@ void BioGears::SetupMechanicalVentilator()
   gCombinedMechanicalVentilator.StateChange();
 }
 
-void BioGears::SetupExternalTemperature()
+void Pulse::SetupExternalTemperature()
 {
   Info("Setting Up External Temperature");
   SEThermalCircuit& exthermal =m_Circuits->GetExternalTemperatureCircuit();
@@ -4364,7 +4364,7 @@ void BioGears::SetupExternalTemperature()
   lExternalSkinToClothing.MapPath(EnvironmentSkinToClothingPath);
 }
 
-void BioGears::SetupInternalTemperature()
+void Pulse::SetupInternalTemperature()
 {  
   Info("Setting Up Internal Temperature");
   SEThermalCircuit& cIntemperature = m_Circuits->GetInternalTemperatureCircuit();

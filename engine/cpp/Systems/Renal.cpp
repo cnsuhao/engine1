@@ -48,7 +48,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SEUrinalysis.h"
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
 
-Renal::Renal(BioGears& bg) : SERenalSystem(bg.GetLogger()), m_data(bg)
+Renal::Renal(Pulse& bg) : SERenalSystem(bg.GetLogger()), m_data(bg)
 {
   Clear();
 }
@@ -165,7 +165,7 @@ void Renal::Clear()
 //--------------------------------------------------------------------------------------------------
 void Renal::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   m_Urinating = false;  
   m_leftAfferentResistance_mmHg_s_Per_mL = m_leftAfferentArteriolePath->GetResistanceBaseline(FlowResistanceUnit::mmHg_s_Per_mL);
@@ -259,7 +259,7 @@ void Renal::Initialize()
   }
 }
 
-bool Renal::Load(const CDM::BioGearsRenalSystemData& in)
+bool Renal::Load(const CDM::PulseRenalSystemData& in)
 {
   if (!SERenalSystem::Load(in))
     return false;
@@ -279,16 +279,16 @@ bool Renal::Load(const CDM::BioGearsRenalSystemData& in)
   m_leftRenalArterialPressure_mmHg_runningAvg.Load(in.LeftRenalArterialPressure_mmHg());
   m_rightRenalArterialPressure_mmHg_runningAvg.Load(in.RightRenalArterialPressure_mmHg());
 
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   return true;
 }
-CDM::BioGearsRenalSystemData* Renal::Unload() const
+CDM::PulseRenalSystemData* Renal::Unload() const
 {
-  CDM::BioGearsRenalSystemData* data = new CDM::BioGearsRenalSystemData();
+  CDM::PulseRenalSystemData* data = new CDM::PulseRenalSystemData();
   Unload(*data);
   return data;
 }
-void Renal::Unload(CDM::BioGearsRenalSystemData& data) const
+void Renal::Unload(CDM::PulseRenalSystemData& data) const
 {
   SERenalSystem::Unload(data);
 
@@ -470,7 +470,7 @@ void Renal::AtSteadyState()
 ///
 /// \details
 /// Renal preprocess prepares the circuit components and the clearance rates. The substance clearance rates
-/// are initialized to the values defined in BioGears.xlsx so all calculations are relative to the initial values.
+/// are initialized to the values defined in Pulse.xlsx so all calculations are relative to the initial values.
 /// Then clearance rate adjustments occur for specific substances. The circuit is adjusted to adjust urine production
 /// rate and to maintain the glomerular pressure, and the urinate function is called in the case of an overfull bladder or
 /// a urinate action.
@@ -768,7 +768,7 @@ void Renal::ProcessActions()
 /// Calls the necessary transport methodology for each substance
 ///
 /// \details
-/// BioGears has two types of renal substance handling, Regulation and Clearance. Clearance is generally
+/// Pulse has two types of renal substance handling, Regulation and Clearance. Clearance is generally
 /// used for drugs, but can be specified for any substance. It does not support calculating filtration,
 /// reabsorption and excretion, but rather determines how much mass should be excreted as urine based on
 /// preset parameters. Regulation is used to model filtration, reabsorption and excretion. This function

@@ -12,25 +12,24 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SEEndocrineSystem.h"
-#include "bind/BioGearsEndocrineSystemData.hxx"
 #include "properties/SEScalarMass.h"
 
 /**
  * @brief @copydoc Physiology_EndocrineSystemData
  * @details
- * The BioGears® endocrine system is a rudimentary system with only one stimulus (increased carbon dioxide partial pressure in the blood stream)
+ * The Pulse® endocrine system is a rudimentary system with only one stimulus (increased carbon dioxide partial pressure in the blood stream)
  * and two hormones (epinephrine and norepinephrine). The release of the hormones in response to the stimuli to represent the response of the sympathetic nervous system.
  * In the future, additional stimuli and additional hormones will be added.
  */  
-class BIOGEARS_API Endocrine : public SEEndocrineSystem, public BioGearsSystem
+class PULSE_API Endocrine : public SEEndocrineSystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Endocrine(BioGears& bg);
-  BioGears& m_data;
+  Endocrine(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~Endocrine();
@@ -40,11 +39,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsEndocrineSystemData& in);
-  virtual CDM::BioGearsEndocrineSystemData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsEndocrineSystemData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseEndocrineSystemData& in);
+  virtual CDM::PulseEndocrineSystemData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseEndocrineSystemData& data) const;
 
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
   void SetUp();

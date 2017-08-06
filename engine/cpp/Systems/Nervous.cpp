@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "Nervous.h"
-#include "bind/BioGearsNervousSystemData.hxx"
+#include "bind/PulseNervousSystemData.hxx"
 #include "patient/SEPatient.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SEPupillaryResponse.h"
@@ -34,7 +34,7 @@ specific language governing permissions and limitations under the License.
 
 // #define VERBOSE
 
-Nervous::Nervous(BioGears& bg) : SENervousSystem(bg.GetLogger()), m_data(bg)
+Nervous::Nervous(Pulse& bg) : SENervousSystem(bg.GetLogger()), m_data(bg)
 {
   Clear();
 }
@@ -55,7 +55,7 @@ void Nervous::Clear()
 //--------------------------------------------------------------------------------------------------
 void Nervous::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
   m_FeedbackActive = false;
   GetBaroreceptorHeartRateScale().SetValue(1.0);
   GetBaroreceptorHeartElastanceScale().SetValue(1.0);
@@ -67,24 +67,24 @@ void Nervous::Initialize()
   GetRightEyePupillaryResponse().GetReactivityModifier().SetValue(0);
 }
 
-bool Nervous::Load(const CDM::BioGearsNervousSystemData& in)
+bool Nervous::Load(const CDM::PulseNervousSystemData& in)
 {
   if (!SENervousSystem::Load(in))
     return false;
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   // We assume state have to be after all stabilization
   m_FeedbackActive = true;
   m_ArterialOxygenSetPoint_mmHg = in.ArterialOxygenSetPoint_mmHg();
   m_ArterialCarbonDioxideSetPoint_mmHg = in.ArterialCarbonDioxideSetPoint_mmHg();
   return true;
 }
-CDM::BioGearsNervousSystemData* Nervous::Unload() const
+CDM::PulseNervousSystemData* Nervous::Unload() const
 {
-  CDM::BioGearsNervousSystemData* data = new CDM::BioGearsNervousSystemData();
+  CDM::PulseNervousSystemData* data = new CDM::PulseNervousSystemData();
   Unload(*data);
   return data;
 }
-void Nervous::Unload(CDM::BioGearsNervousSystemData& data) const
+void Nervous::Unload(CDM::PulseNervousSystemData& data) const
 {
   SENervousSystem::Unload(data);
   data.ArterialOxygenSetPoint_mmHg(m_ArterialOxygenSetPoint_mmHg);

@@ -40,8 +40,8 @@ specific language governing permissions and limitations under the License.
 #pragma warning(disable:4251)
 #pragma warning(disable:4996) // Deprecation
 
-#include "BioGearsPhysiologyEngine.h"
-#include "Controller/BioGearsEngine.h"
+#include "PulsePhysiologyEngine.h"
+#include "Controller/PulseEngine.h"
 
 
 

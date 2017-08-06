@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
-#include "bind/BioGearsRespiratorySystemData.hxx"
 #include "patient/SEPatient.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "utils/RunningAverage.h"
@@ -32,14 +31,14 @@ class SEPulmonaryFunctionTest;
 * of gases in the lungs, and ensures the integration and flow of data between the
 * respiratory system and the anesthesia machine during mechanical ventilation.
 */
-class BIOGEARS_API Respiratory : public SERespiratorySystem, public BioGearsSystem
+class PULSE_API Respiratory : public SERespiratorySystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
 
-  Respiratory(BioGears& bg);
-  BioGears& m_data;
+  Respiratory(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~Respiratory();
@@ -49,11 +48,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsRespiratorySystemData& in);
-  virtual CDM::BioGearsRespiratorySystemData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsRespiratorySystemData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseRespiratorySystemData& in);
+  virtual CDM::PulseRespiratorySystemData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseRespiratorySystemData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

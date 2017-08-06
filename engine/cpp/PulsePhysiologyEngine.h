@@ -14,40 +14,40 @@ specific language governing permissions and limitations under the License.
 
 #include "CommonDataModel.h"
 // CDM Features in use
-#include "engine/PhysiologyEngine.h"
-#include "utils/FileUtils.h"
+#include "PhysiologyEngine.h"
+#include "utils/ScopedMutex.h"
 
 #include <memory>
 
 #if defined(__clang__)
-#define BIOGEARS_API
+#define PULSE_API
 #define BG_EXT
 #elif defined(__gnu_linux__)
-#define BIOGEARS_API __attribute__ ((visibility ("default")))
+#define PULSE_API __attribute__ ((visibility ("default")))
 #define BG_EXT extern
 #else
-#ifdef BIOGEARS_EXPORT
-#define BIOGEARS_API __declspec(dllexport)
+#ifdef PULSE_EXPORT
+#define PULSE_API __declspec(dllexport)
 #define BG_EXT
 #else
-#define BIOGEARS_API __declspec(dllimport)
+#define PULSE_API __declspec(dllimport)
 #define BG_EXT extern
 #endif
 #endif
 
-BIOGEARS_API std::unique_ptr<PhysiologyEngine> CreateBioGearsEngine(const std::string& logfile = "");
-BIOGEARS_API std::unique_ptr<PhysiologyEngine> CreateBioGearsEngine(Logger* logger = nullptr);
+PULSE_API std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile = "");
+PULSE_API std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr);
 
-#define BGE mil::tatrc::physiology::biogears
+#define BGE mil::tatrc::physiology::pulse
 
 // I bet there is a way cool macro you could do for these enums...
 
 namespace mil {
   namespace tatrc {
     namespace physiology {
-      namespace biogears {
+      namespace pulse {
 
-        DEFINE_STATIC_STRING_EX(Version, BioGears_6.1.1_beta);
+        DEFINE_STATIC_STRING_EX(Version, Pulse_6.1.1_beta);
 
         class Graph
         {
@@ -65,7 +65,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(ActiveCardiovascular);
@@ -92,7 +92,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(SmallIntestine);
@@ -110,7 +110,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(SmallIntestineChymeToVasculature);
@@ -145,7 +145,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(Mouth);
@@ -195,7 +195,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(EnvironmentToMouth);
@@ -241,7 +241,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(Bone);
@@ -297,7 +297,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(BoneExtracellular);
@@ -402,7 +402,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(Aorta);
@@ -583,7 +583,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(VenaCavaToRightHeart);
@@ -682,7 +682,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(Ureters);
@@ -710,7 +710,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(LeftTubulesToUreter);
@@ -733,7 +733,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(Lymph);
@@ -765,7 +765,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(BoneTissueToLymph);
@@ -805,7 +805,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(Active);
@@ -848,7 +848,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(ActiveToClothing);
@@ -881,7 +881,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(Ambient);
@@ -909,7 +909,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(AnesthesiaConnection);
@@ -949,7 +949,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(VentilatorToSelector);
@@ -979,7 +979,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(Mouthpiece);
@@ -998,7 +998,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(EnvironmentToMouthpiece);
@@ -1017,7 +1017,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(Connection);
@@ -1035,7 +1035,7 @@ namespace mil {
 
           static const std::vector<std::string>& GetValues()
           {
-            ScopedFileSystemLock lock;
+            ScopedMutex lock;
             if (_values.empty())
             {
               _values.push_back(ConnectionToMouth);

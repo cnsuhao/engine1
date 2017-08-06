@@ -274,6 +274,7 @@ message SubstanceBolusData
   string                                    Substance                       = 3;/**<<@brief */
   ScalarMassPerVolumeData                   Concentration                   = 4;/**<<@brief */
   ScalarVolumeData                          Dose                            = 5;/**<<@brief */
+  StateData                                 State                           = 6;
 }
 
 /** @brief Continuous injection of a compound. */

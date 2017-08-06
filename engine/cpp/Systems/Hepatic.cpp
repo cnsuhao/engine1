@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "Hepatic.h"
 
-Hepatic::Hepatic(BioGears& bg) : SEHepaticSystem(bg.GetLogger()), m_data(bg)
+Hepatic::Hepatic(Pulse& bg) : SEHepaticSystem(bg.GetLogger()), m_data(bg)
 {
   Clear();
 }
@@ -34,25 +34,25 @@ void Hepatic::Clear()
 //--------------------------------------------------------------------------------------------------
 void Hepatic::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
 }
 
-bool Hepatic::Load(const CDM::BioGearsHepaticSystemData& in)
+bool Hepatic::Load(const CDM::PulseHepaticSystemData& in)
 {
   if (!SEHepaticSystem::Load(in))
     return false;
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
 
   return true;
 }
-CDM::BioGearsHepaticSystemData* Hepatic::Unload() const
+CDM::PulseHepaticSystemData* Hepatic::Unload() const
 {
-  CDM::BioGearsHepaticSystemData* data = new CDM::BioGearsHepaticSystemData();
+  CDM::PulseHepaticSystemData* data = new CDM::PulseHepaticSystemData();
   Unload(*data);
   return data;
 }
-void Hepatic::Unload(CDM::BioGearsHepaticSystemData& data) const
+void Hepatic::Unload(CDM::PulseHepaticSystemData& data) const
 {
   SEHepaticSystem::Unload(data);
 }

@@ -62,7 +62,7 @@ specific language governing permissions and limitations under the License.
 //Should be commented out, unless debugging/tuning
 // #define TUNING
 
-Respiratory::Respiratory(BioGears& bg) : SERespiratorySystem(bg.GetLogger()), m_data(bg),
+Respiratory::Respiratory(Pulse& bg) : SERespiratorySystem(bg.GetLogger()), m_data(bg),
 m_Calculator(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, GetLogger()),
 m_GasTransporter(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, GetLogger()),
 m_AerosolTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, GetLogger())
@@ -140,7 +140,7 @@ void Respiratory::Clear()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   //Vital signs
   m_bNotBreathing = false;
@@ -212,7 +212,7 @@ void Respiratory::Initialize()
   TuneCircuit();
 }
 
-bool Respiratory::Load(const CDM::BioGearsRespiratorySystemData& in)
+bool Respiratory::Load(const CDM::PulseRespiratorySystemData& in)
 {
   if (!SERespiratorySystem::Load(in))
     return false;
@@ -258,16 +258,16 @@ bool Respiratory::Load(const CDM::BioGearsRespiratorySystemData& in)
   m_ConsciousStartPressure_cmH2O = in.ConsciousStartPressure_cmH2O();
   m_ConsciousEndPressure_cmH2O = in.ConsciousEndPressure_cmH2O();
 
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   return true;
 }
-CDM::BioGearsRespiratorySystemData* Respiratory::Unload() const
+CDM::PulseRespiratorySystemData* Respiratory::Unload() const
 {
-  CDM::BioGearsRespiratorySystemData* data = new CDM::BioGearsRespiratorySystemData();
+  CDM::PulseRespiratorySystemData* data = new CDM::PulseRespiratorySystemData();
   Unload(*data);
   return data;
 }
-void Respiratory::Unload(CDM::BioGearsRespiratorySystemData& data) const
+void Respiratory::Unload(CDM::PulseRespiratorySystemData& data) const
 {
   SERespiratorySystem::Unload(data);
 
@@ -767,7 +767,7 @@ void Respiratory::MechanicalVentilation()
   {
     SEMechanicalVentilation* mv = m_data.GetActions().GetPatientActions().GetMechanicalVentilation();
     // You only get here if action is On
-    m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::MechanicalVentilator);
+    m_data.SetAirwayMode(CDM::enumPulseAirwayMode::MechanicalVentilator);
     
   //Set the substance volume fractions ********************************************
   std::vector<SESubstanceFraction*> gasFractions = mv->GetGasFractions();
@@ -833,10 +833,10 @@ void Respiratory::MechanicalVentilation()
     m_GroundToConnection->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
   }  
   }
-  else if (m_data.GetAirwayMode() == CDM::enumBioGearsAirwayMode::MechanicalVentilator)
+  else if (m_data.GetAirwayMode() == CDM::enumPulseAirwayMode::MechanicalVentilator)
   {
     // Was just turned off
-    m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
+    m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
   }
 }
 

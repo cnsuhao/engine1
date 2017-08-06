@@ -3,7 +3,6 @@ package cdm;
 option java_package = "com.kitware.physiology.cdm";
 
 import "cdm/Properties.proto";
-import "cdm/Physiology.proto";
 
 /** @brief Generic ECG machine to assess the heart rhythm. */
 message ElectroCardioGramData
@@ -20,19 +19,4 @@ message ElectroCardioGramData
   ScalarElectricPotentialData            Lead10ElectricPotential = 10;/**<< @brief The amount of electric potential given off by lead 10 of the ECG. */
   ScalarElectricPotentialData            Lead11ElectricPotential = 11;/**<< @brief The amount of electric potential given off by lead 11 of the ECG. */
   ScalarElectricPotentialData            Lead12ElectricPotential = 12;/**<< @brief The amount of electric potential given off by lead 12 of the ECG. */
-}
-
-/** @brief A static set of waveform data that gets interpolated by the engine time step. */
-message ElectroCardioGramWaveformInterpolatorData
-{
-  message WaveformData
-  {
-    uint32                               Lead                    = 1;/**<< @brief Lead number of the waveform provided. */
-    eHeartRhythm                         Rhythm                  = 2;/**<< @brief Rhythm type of the waveform provided. */
-    FunctionElectricPotentialVsTimeData  Data                    = 3;/**<< @brief Dataset of a full heart cycle. */
-    ScalarTimeData                       TimeStep                = 4;/**<< @brief Time step of the data provided. */
-    repeated int32                       ActiveIndicies          = 5;/**<< @brief Active indicies of the WaveForm Data used to interpolate the current electric potential. */
-  }
-  
-  repeated WaveformData                  Waveform                = 1;/**<< @brief A waveform for a lead */
 }

@@ -53,7 +53,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
 
-Energy::Energy(BioGears& bg) : SEEnergySystem(bg.GetLogger()), m_data(bg), m_circuitCalculator(GetLogger())
+Energy::Energy(Pulse& bg) : SEEnergySystem(bg.GetLogger()), m_data(bg), m_circuitCalculator(GetLogger())
 {
   Clear();
 }
@@ -87,7 +87,7 @@ void Energy::Clear()
 //--------------------------------------------------------------------------------------------------
 void Energy::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   GetTotalMetabolicRate().Set(m_Patient->GetBasalMetabolicRate());
   //Initialization of other system variables
@@ -114,7 +114,7 @@ void Energy::Initialize()
   m_EnduranceEnergyStore_J = 400000.0;
 }
 
-bool Energy::Load(const CDM::BioGearsEnergySystemData& in)
+bool Energy::Load(const CDM::PulseEnergySystemData& in)
 {
   if (!SEEnergySystem::Load(in))
     return false;
@@ -125,16 +125,16 @@ bool Energy::Load(const CDM::BioGearsEnergySystemData& in)
 
   m_BloodpH.Load(in.BloodpH());
   m_BicarbonateMolarity_mmol_Per_L.Load(in.BicarbonateMolarity_mmol_Per_L());
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   return true;
 }
-CDM::BioGearsEnergySystemData* Energy::Unload() const
+CDM::PulseEnergySystemData* Energy::Unload() const
 {
-  CDM::BioGearsEnergySystemData* data = new CDM::BioGearsEnergySystemData();
+  CDM::PulseEnergySystemData* data = new CDM::PulseEnergySystemData();
   Unload(*data);
   return data;
 }
-void Energy::Unload(CDM::BioGearsEnergySystemData& data) const
+void Energy::Unload(CDM::PulseEnergySystemData& data) const
 {
   SEEnergySystem::Unload(data);
   data.UsableEnergyStore_J(m_UsableEnergyStore_J);
@@ -344,21 +344,21 @@ void Energy::Exercise()
   // The medium power store can be thought of as similar to the glycogen-lactic acid energy system.
   // The endurance energy store can be thought of as similar to the aerobic energy system.
   // The energy store full levels and the maximum work rate are currently hard-coded, but will be a function of physical conditioning,
-  // body composition, and starvation levels. See Future Work section in BioGears Energy documentation.
+  // body composition, and starvation levels. See Future Work section in Pulse Energy documentation.
   double usableEnergyStoreFull_J = 2600.0;
   double peakPowerEnergyStoreFull_J = 4200.0;
   double mediumPowerEnergyStoreFull_J = 35000.0;
   double enduranceEnergyStoreFull_J = 400000.0;
   double maxWorkRate_W = 1200.0;
   // The maximum depletion rates will also scale with the body composition, physical conditioning, and
-  // fed/starvation state of the BioGears body.
+  // fed/starvation state of the Pulse body.
   double maxEnduranceOutRate_W = 240.0;
   double maxPeakOutRate_W = 621.0;
   double maxMediumOutRate_W = 420.0;
 
   // The following rates dictate the fill rate of the endurance energy store.
   // These rates are currently hard-coded, but will be tied to the concentration
-  // of nutrient substances in the blood in the future. See Future Work section in BioGears Energy documentation.
+  // of nutrient substances in the blood in the future. See Future Work section in Pulse Energy documentation.
   double glucoseConstant_W = 10.0;
   double lactateConstant_W = 10.0;
   double tristearinConstant_W = 10.0;
@@ -623,7 +623,7 @@ void Energy::CalculateVitalSigns()
 //--------------------------------------------------------------------------------------------------
 void Energy::CalculateMetabolicHeatGeneration()
 {
-  const BioGearsConfiguration& config = m_data.GetConfiguration();
+  const PulseConfiguration& config = m_data.GetConfiguration();
   double coreTemperature_degC = m_coreNode->GetTemperature(TemperatureUnit::C);
   double coreTemperatureLow_degC = config.GetCoreTemperatureLow(TemperatureUnit::C);
   double coreTemperatureLowDelta_degC = config.GetDeltaCoreTemperatureLow(TemperatureUnit::C);
@@ -674,7 +674,7 @@ void Energy::CalculateMetabolicHeatGeneration()
 //--------------------------------------------------------------------------------------------------
 void Energy::CalculateSweatRate()
 {
-  const BioGearsConfiguration& config = m_data.GetConfiguration();
+  const PulseConfiguration& config = m_data.GetConfiguration();
   double coreTemperature_degC = m_coreNode->GetTemperature(TemperatureUnit::C);
   double coreTemperatureHigh_degC = config.GetCoreTemperatureHigh(TemperatureUnit::C);
   double sweatHeatTranferCoefficient_W_Per_K = config.GetSweatHeatTransfer(HeatConductanceUnit::W_Per_K);

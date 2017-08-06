@@ -11,28 +11,28 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "Controller/Scenario/BioGearsScenarioInitialParameters.h"
+#include "Controller/Scenario/PulseScenarioInitialParameters.h"
 
-BioGearsScenarioInitialParameters::BioGearsScenarioInitialParameters(SESubstanceManager& subMgr) : SEScenarioInitialParameters(subMgr)
+PulseScenarioInitialParameters::PulseScenarioInitialParameters(SESubstanceManager& subMgr) : SEScenarioInitialParameters(subMgr)
 {
 }
 
-BioGearsScenarioInitialParameters::~BioGearsScenarioInitialParameters()
+PulseScenarioInitialParameters::~PulseScenarioInitialParameters()
 {
   
 }
 
-BioGearsConfiguration& BioGearsScenarioInitialParameters::GetConfiguration()
+PulseConfiguration& PulseScenarioInitialParameters::GetConfiguration()
 {
   if (m_Configuration == nullptr)
-    m_Configuration = new BioGearsConfiguration(m_SubMgr);
-  return *((BioGearsConfiguration*)(m_Configuration));
+    m_Configuration = new PulseConfiguration(m_SubMgr);
+  return *((PulseConfiguration*)(m_Configuration));
 }
-const BioGearsConfiguration* BioGearsScenarioInitialParameters::GetConfiguration() const
+const PulseConfiguration* PulseScenarioInitialParameters::GetConfiguration() const
 {
-  return (BioGearsConfiguration*)m_Configuration;
+  return (PulseConfiguration*)m_Configuration;
 }
-void BioGearsScenarioInitialParameters::SetConfiguration(const BioGearsConfiguration& config)
+void PulseScenarioInitialParameters::SetConfiguration(const PulseConfiguration& config)
 {
   CDM_COPY((&config), (&GetConfiguration()));
 }

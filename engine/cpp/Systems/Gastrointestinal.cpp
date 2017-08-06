@@ -37,7 +37,7 @@ specific language governing permissions and limitations under the License.
 
 //#define logMeal
 
-Gastrointestinal::Gastrointestinal(BioGears& bg) : SEGastrointestinalSystem(bg.GetLogger()), m_data(bg)
+Gastrointestinal::Gastrointestinal(Pulse& bg) : SEGastrointestinalSystem(bg.GetLogger()), m_data(bg)
 {
   Clear();
   /* Move to a unit test
@@ -79,7 +79,7 @@ void Gastrointestinal::Clear()
 //--------------------------------------------------------------------------------------------------
 void Gastrointestinal::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   if (m_data.GetConfiguration().HasDefaultStomachContents())
   {
@@ -99,21 +99,21 @@ void Gastrointestinal::Initialize()
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeUrea]       = m_SmallIntestineChymeUrea->GetMass(MassUnit::ug);
 }
 
-bool Gastrointestinal::Load(const CDM::BioGearsGastrointestinalSystemData& in)
+bool Gastrointestinal::Load(const CDM::PulseGastrointestinalSystemData& in)
 {
   if (!SEGastrointestinalSystem::Load(in))
     return false;
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   m_DecrementNutrients = true;
   return true;
 }
-CDM::BioGearsGastrointestinalSystemData* Gastrointestinal::Unload() const
+CDM::PulseGastrointestinalSystemData* Gastrointestinal::Unload() const
 {
-  CDM::BioGearsGastrointestinalSystemData* data = new CDM::BioGearsGastrointestinalSystemData();
+  CDM::PulseGastrointestinalSystemData* data = new CDM::PulseGastrointestinalSystemData();
   Unload(*data);
   return data;
 }
-void Gastrointestinal::Unload(CDM::BioGearsGastrointestinalSystemData& data) const
+void Gastrointestinal::Unload(CDM::PulseGastrointestinalSystemData& data) const
 {
   SEGastrointestinalSystem::Unload(data);
 }
@@ -641,7 +641,7 @@ void Gastrointestinal::AbsorbMeal(double duration_min)
 /// Gastrointestinal Preprocess function
 ///
 /// \details
-/// The current BioGears implementation has no functionality in the process function for Gastrointestinal.
+/// The current Pulse implementation has no functionality in the process function for Gastrointestinal.
 //--------------------------------------------------------------------------------------------------
 void Gastrointestinal::Process()
 {
@@ -653,7 +653,7 @@ void Gastrointestinal::Process()
 /// Gastrointestinal postprocess function
 ///
 /// \details
-/// The current BioGears implementation has no specific postprocess functionality.
+/// The current Pulse implementation has no specific postprocess functionality.
 //--------------------------------------------------------------------------------------------------
 void Gastrointestinal::PostProcess()
 {

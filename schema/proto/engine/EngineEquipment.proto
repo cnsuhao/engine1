@@ -1,3 +1,45 @@
 syntax = "proto3";
-package biogears;
-option java_package = "com.kitware.physiology.biogears";
+package pulse;
+option java_package = "com.kitware.physiology.pulse";
+
+import "cdm/Properties.proto";
+import "cdm/Physiology.proto";
+
+
+message PulseAnesthesiaMachineData
+{
+  bool                                         Inhaling                       = 1;
+  double                                       CurrentBreathingCycleTime_s    = 2;
+  double                                       InspirationTime_s              = 3;
+  double                                       OxygenInletVolumeFraction      = 4;
+  double                                       TotalBreathingCycleTime_s      = 5;
+}
+
+message PulseElectroCardioGramData
+{
+
+  /** @brief A static set of waveform data that gets interpolated by the engine time step. */
+  message InterpolatorData
+  {
+    message WaveformData
+    {
+      uint32                                   Lead                           = 1;/**<< @brief Lead number of the waveform provided. */
+      cdm.eHeartRhythm                         Rhythm                         = 2;/**<< @brief Rhythm type of the waveform provided. */
+      cdm.FunctionElectricPotentialVsTimeData  Data                           = 3;/**<< @brief Dataset of a full heart cycle. */
+      cdm.ScalarTimeData                       TimeStep                       = 4;/**<< @brief Time step of the data provided. */
+      repeated int32                           ActiveIndicies                 = 5;/**<< @brief Active indicies of the WaveForm Data used to interpolate the current electric potential. */
+    }
+    
+    repeated WaveformData                      Waveform                       = 1;/**<< @brief A waveform for a lead */
+  }
+
+  double                                       HeartRythmTime_s               = 1;
+  double                                       HeartRythmPeriod_s             = 2;
+  InterpolatorData                             Waveforms                      = 3;
+}
+
+
+message PulseInhalerData
+{
+  
+}

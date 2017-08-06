@@ -11,32 +11,24 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-class BioGearsEngine;
+
+#include "Controller/PulseConfiguration.h"
+#include "scenario/SEScenarioInitialParameters.h"
+class PulseScenario;
 
 /**
- * @brief Generic class for handling the %BioGears stabilization methodology
- */
-class BIOGEARS_API BioGearsSystem
+* @brief Overloaded scenario that creates a %Pulse configuration as its configuration object
+*/
+class PULSE_API PulseScenarioInitialParameters : public SEScenarioInitialParameters
 {
-  friend BioGearsEngine;
-public:
-  /**
-  * @brief - Default system values to their homeostatic values
-  */
-  virtual void Initialize()
-  {
-    SetUp();
-  }
-  /// Notify systems that steady state has been achieved
-  virtual void AtSteadyState() {};
-  virtual void PreProcess() = 0;
-  virtual void Process() = 0;
-  virtual void PostProcess() = 0;
-
 protected:
-  virtual void SetUp() = 0;
-  virtual void LoadState()
-  {
-    SetUp();
-  }
+  friend PulseScenario;
+
+  PulseScenarioInitialParameters(SESubstanceManager& subMgr);
+  virtual ~PulseScenarioInitialParameters();
+
+  virtual PulseConfiguration& GetConfiguration();
+  virtual const PulseConfiguration* GetConfiguration() const;
+  virtual void SetConfiguration(const PulseConfiguration& config);
+protected:
 };

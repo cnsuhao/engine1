@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 // If anyone else has opinions on this, let me know
 // abray@ara.com
 #pragma warning(disable : 4251)
-#include "BioGears.h"
+#include "Pulse.h"
 #pragma warning(pop)
 
 
@@ -32,13 +32,13 @@ specific language governing permissions and limitations under the License.
 /// calls as well as assessment calls for obtaining the results. During engine execution a log files
 /// is generated containing information, warning and error data.
 //--------------------------------------------------------------------------------------------------
-class BIOGEARS_API BioGearsEngine : public PhysiologyEngine, public BioGears
+class PULSE_API PulseEngine : public PhysiologyEngine, public Pulse
 {
 public:
 
-  BioGearsEngine(Logger* logger);
-  BioGearsEngine(const std::string&);
-  virtual ~BioGearsEngine();
+  PulseEngine(Logger* logger);
+  PulseEngine(const std::string&);
+  virtual ~PulseEngine();
 
   virtual bool LoadState(const std::string& file, const SEScalarTime* simTime = nullptr);
   virtual bool LoadState(const CDM::PhysiologyEngineStateData& state, const SEScalarTime* simTime = nullptr);

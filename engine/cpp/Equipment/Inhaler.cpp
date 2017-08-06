@@ -30,7 +30,7 @@ Constructors
 ========================
 */
 
-Inhaler::Inhaler(BioGears& bg) : SEInhaler(bg.GetSubstances()), m_data(bg)
+Inhaler::Inhaler(Pulse& bg) : SEInhaler(bg.GetSubstances()), m_data(bg)
 {
   Clear();
 }
@@ -55,24 +55,24 @@ void Inhaler::Clear()
 //--------------------------------------------------------------------------------------------------
 void Inhaler::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
   m_InhalerDrug = nullptr;
 }
 
-bool Inhaler::Load(const CDM::BioGearsInhalerData& in)
+bool Inhaler::Load(const CDM::PulseInhalerData& in)
 {
   if (!SEInhaler::Load(in))
     return false;  
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   return true;
 }
-CDM::BioGearsInhalerData* Inhaler::Unload() const
+CDM::PulseInhalerData* Inhaler::Unload() const
 {
-  CDM::BioGearsInhalerData* data = new CDM::BioGearsInhalerData();
+  CDM::PulseInhalerData* data = new CDM::PulseInhalerData();
   Unload(*data);
   return data;
 }
-void Inhaler::Unload(CDM::BioGearsInhalerData& data) const
+void Inhaler::Unload(CDM::PulseInhalerData& data) const
 {
   SEInhaler::Unload(data);
 }
@@ -127,7 +127,7 @@ void Inhaler::PreProcess()
     if (state != m_State)
     {
       m_State = state;
-      Warning("BioGears does not allow you to change inhaler state via the configuration, please use a Conscious Respiration Action. Ignoring the configuration state.");
+      Warning("Pulse does not allow you to change inhaler state via the configuration, please use a Conscious Respiration Action. Ignoring the configuration state.");
     }
   }
   if (m_data.GetActions().GetPatientActions().HasConsciousRespiration())
@@ -153,7 +153,7 @@ void Inhaler::PreProcess()
       Info("Inhaler removed!");
       m_InhalerDrug = nullptr;
       m_State = cdm::eSwitch::Off;
-      m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
+      m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
     }
   }
 }
@@ -191,7 +191,7 @@ void Inhaler::Administer()
   // Alert the user that the inhaler is actuated
   Info("Inhaler actuated!");
   m_State = cdm::eSwitch::On;
-  m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Inhaler);
+  m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Inhaler);
 
   // Initialize pressure in the inhaler node to ambient  
   double dAmbientPressure = m_AmbientEnv->GetPressure(PressureUnit::cmH2O);
@@ -205,7 +205,7 @@ void Inhaler::Administer()
   }
   m_Mouthpiece->Balance(BalanceGasBy::VolumeFraction);
 
-  // Add the dose substance to the list of active substances to be tracked in BioGears
+  // Add the dose substance to the list of active substances to be tracked in Pulse
   m_data.GetSubstances().AddActiveSubstance((SESubstance&)*m_Substance);
 
   // Get the inhaler node volume

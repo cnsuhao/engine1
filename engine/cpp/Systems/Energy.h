@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SEEnergySystem.h"
-#include "bind/BioGearsEnergySystemData.hxx"
 #include "utils/RunningAverage.h"
 #include "circuit/thermal/SEThermalCircuitCalculator.h"
 class SEThermalCircuitCalculator;
@@ -22,13 +21,13 @@ class SEThermalCircuitCalculator;
 /**
  * @brief @copydoc Physiology_EnergySystemData
  */  
-class BIOGEARS_API Energy : public SEEnergySystem, public BioGearsSystem
+class PULSE_API Energy : public SEEnergySystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Energy(BioGears& bg);
-  BioGears& m_data;
+  Energy(Pulse& bg);
+  Pulse& m_data;
 
 public:
   ~Energy(void);
@@ -38,11 +37,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsEnergySystemData& in);
-  virtual CDM::BioGearsEnergySystemData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsEnergySystemData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseEnergySystemData& in);
+  virtual CDM::PulseEnergySystemData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseEnergySystemData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

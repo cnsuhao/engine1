@@ -14,19 +14,18 @@ specific language governing permissions and limitations under the License.
 #pragma once
 
 #include "system/equipment/Inhaler/SEInhaler.h"
-#include "bind/BioGearsInhalerData.hxx"
 
 /**
 * @brief 
 * Generic inhaler for substance administration.
 */
-class BIOGEARS_API Inhaler : public SEInhaler, public BioGearsSystem
+class PULSE_API Inhaler : public SEInhaler, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Inhaler(BioGears& bg);
-  BioGears& m_data;
+  Inhaler(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~Inhaler();
@@ -36,11 +35,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  bool Load(const CDM::BioGearsInhalerData& in);
-  CDM::BioGearsInhalerData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  void Unload(CDM::BioGearsInhalerData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  bool Load(const CDM::PulseInhalerData& in);
+  CDM::PulseInhalerData* Unload() const;
+protected:
+  void Unload(CDM::PulseInhalerData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

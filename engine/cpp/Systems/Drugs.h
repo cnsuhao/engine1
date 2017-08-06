@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SEDrugSystem.h"
-#include "bind/BioGearsDrugSystemData.hxx"
 
 /**
  * @brief
@@ -23,13 +22,13 @@ specific language governing permissions and limitations under the License.
  * Drug transvascular transport is modeled with a physiologically-based pharmacokinetic (PBPK) model,
  * and the physiologic effects on the body are modeled with a low-fidelity pharmacodynamic (PD) model.
  */  
-class BIOGEARS_API Drugs : public SEDrugSystem, public BioGearsSystem
+class PULSE_API Drugs : public SEDrugSystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Drugs(BioGears& bg);
-  BioGears& m_data;
+  Drugs(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~Drugs();
@@ -39,11 +38,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsDrugSystemData& in);
-  virtual CDM::BioGearsDrugSystemData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsDrugSystemData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseDrugSystemData& in);
+  virtual CDM::PulseDrugSystemData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseDrugSystemData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

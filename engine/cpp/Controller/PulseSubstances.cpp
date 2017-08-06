@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "system/environment/SEEnvironment.h"
-#include "BioGearsSubstances.h"
-#include "BioGears.h"
+#include "PulseSubstances.h"
+#include "Pulse.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
@@ -27,12 +27,12 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEHistogramFractionVsLength.h"
 
-BioGearsSubstances::BioGearsSubstances(BioGears& data) : SESubstanceManager(data.GetLogger()), m_data(data)
+PulseSubstances::PulseSubstances(Pulse& data) : SESubstanceManager(data.GetLogger()), m_data(data)
 {
   m_isCOActive = false;
 }
 
-void BioGearsSubstances::Clear()
+void PulseSubstances::Clear()
 {
   SESubstanceManager::Clear();
   m_O2 = nullptr;
@@ -62,10 +62,10 @@ void BioGearsSubstances::Clear()
   m_urea = nullptr;
 }
 
-void BioGearsSubstances::InitializeSubstances()
+void PulseSubstances::InitializeSubstances()
 {  
   // NOTE!!
-  // The way BioGears sets up,
+  // The way Pulse sets up,
   // Substance initialization relies on environmental state,
   // so the environment will read the environment file associated
   // with this engine instance, and it will call AddActiveSubstance
@@ -106,7 +106,7 @@ void BioGearsSubstances::InitializeSubstances()
   InitializeLiquidCompartmentNonGases();
 }
 
-void BioGearsSubstances::InitializeGasCompartments()
+void PulseSubstances::InitializeGasCompartments()
 {
   SEGasCompartment* Ambient = m_data.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
   double AmbientO2VF = Ambient->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().GetValue();
@@ -180,9 +180,9 @@ void BioGearsSubstances::InitializeGasCompartments()
   }
 }
 
-void BioGearsSubstances::InitializeLiquidCompartmentGases()
+void PulseSubstances::InitializeLiquidCompartmentGases()
 {
-  BioGearsCompartments& cmpts = m_data.GetCompartments();
+  PulseCompartments& cmpts = m_data.GetCompartments();
 
   SEScalarMassPerVolume   albuminConcentration;
   SEScalar0To1        hematocrit;
@@ -275,7 +275,7 @@ void BioGearsSubstances::InitializeLiquidCompartmentGases()
   concentration.SetValue(0.146448, MassPerVolumeUnit::g_Per_dL);
   SetSubstanceConcentration(*m_HCO3, cmpts.GetUrineLeafCompartments(), concentration);    
 }
-void BioGearsSubstances::InitializeBloodGases(SELiquidCompartment& cmpt, double Hb_total_mM, double O2_sat, double O2_mmol_Per_L, double CO2_sat, double CO2_mmol_Per_L, double HCO3_mmol_Per_L, double pH, bool distribute)
+void PulseSubstances::InitializeBloodGases(SELiquidCompartment& cmpt, double Hb_total_mM, double O2_sat, double O2_mmol_Per_L, double CO2_sat, double CO2_mmol_Per_L, double HCO3_mmol_Per_L, double pH, bool distribute)
 {
   // N2 is inert
   SEGasCompartment* Ambient = m_data.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
@@ -362,7 +362,7 @@ void BioGearsSubstances::InitializeBloodGases(SELiquidCompartment& cmpt, double 
   std::cout << cmpt.GetName() << " HCO3 Molarity " << HCO3->GetMolarity() << std::endl;
   std::cout << " " << std::endl;*/
 }
-void BioGearsSubstances::InitializeBloodGases(SETissueCompartment& tissue, SELiquidCompartment& vascular)
+void PulseSubstances::InitializeBloodGases(SETissueCompartment& tissue, SELiquidCompartment& vascular)
 {
   SELiquidCompartment& extracellular = m_data.GetCompartments().GetExtracellularFluid(tissue);
   extracellular.GetSubstanceQuantity(*m_N2)->GetMolarity().Set(vascular.GetSubstanceQuantity(*m_N2)->GetMolarity());
@@ -377,7 +377,7 @@ void BioGearsSubstances::InitializeBloodGases(SETissueCompartment& tissue, SELiq
   intracellular.Balance(BalanceLiquidBy::Molarity);
 }
 
-void BioGearsSubstances::WriteBloodGases()
+void PulseSubstances::WriteBloodGases()
 {
   std::stringstream ss;
   for (SELiquidCompartment* cmpt : m_data.GetCompartments().GetVascularLeafCompartments())
@@ -397,7 +397,7 @@ void BioGearsSubstances::WriteBloodGases()
     }
   }
 }
-void BioGearsSubstances::WritePulmonaryGases()
+void PulseSubstances::WritePulmonaryGases()
 {
   std::stringstream ss;
   std::vector<SEGasCompartment*> cmpts;
@@ -421,7 +421,7 @@ void BioGearsSubstances::WritePulmonaryGases()
   }
 }
 
-void BioGearsSubstances::InitializeLiquidCompartmentNonGases()
+void PulseSubstances::InitializeLiquidCompartmentNonGases()
 {
   const std::vector<SELiquidCompartment*>& urine = m_data.GetCompartments().GetUrineLeafCompartments();
   const std::vector<SELiquidCompartment*>& vascular = m_data.GetCompartments().GetVascularLeafCompartments();
@@ -713,7 +713,7 @@ void BioGearsSubstances::InitializeLiquidCompartmentNonGases()
   SetSubstanceMolarity(*m_urea, tissue, molarity1);
 }
 
-bool BioGearsSubstances::LoadSubstanceDirectory()
+bool PulseSubstances::LoadSubstanceDirectory()
 {
   if (!SESubstanceManager::LoadSubstanceDirectory())
     return false;
@@ -817,7 +817,7 @@ bool BioGearsSubstances::LoadSubstanceDirectory()
   return true;
 }
 
-void BioGearsSubstances::AddActiveSubstance(SESubstance& substance)
+void PulseSubstances::AddActiveSubstance(SESubstance& substance)
 {
   if (IsActive(substance))
     return;// If its already active, don't do anything
@@ -834,7 +834,7 @@ void BioGearsSubstances::AddActiveSubstance(SESubstance& substance)
   }
 }
 
-bool BioGearsSubstances::IsActive(const SESubstance& sub) const
+bool PulseSubstances::IsActive(const SESubstance& sub) const
 {
   if (&sub == m_CO)
     return m_isCOActive;
@@ -851,7 +851,7 @@ bool BioGearsSubstances::IsActive(const SESubstance& sub) const
 /// The volume cleared, the compartment, and the substance are provided to clear the mass of the substance
 /// from the node. This generic methodology can be used by other systems to calculate the mass cleared.
 //--------------------------------------------------------------------------------------------------
-void BioGearsSubstances::CalculateGenericClearance(double volumeCleared_mL, SELiquidCompartment& cmpt, SESubstance& sub, SEScalarMass* cleared)
+void PulseSubstances::CalculateGenericClearance(double volumeCleared_mL, SELiquidCompartment& cmpt, SESubstance& sub, SEScalarMass* cleared)
 {
   SELiquidSubstanceQuantity* subQ = cmpt.GetSubstanceQuantity(sub);
   if (subQ == nullptr)
@@ -891,7 +891,7 @@ void BioGearsSubstances::CalculateGenericClearance(double volumeCleared_mL, SELi
 /// The volume cleared, the compartment, and the substance are provided to clear the mass of the substance
 /// from the node. This generic methodology can be used by other systems to calculate the mass cleared.
 //--------------------------------------------------------------------------------------------------
-void BioGearsSubstances::CalculateGenericClearance(double VolumeCleared_mL, SETissueCompartment& tissue, SESubstance& sub, SEScalarMass* cleared)
+void PulseSubstances::CalculateGenericClearance(double VolumeCleared_mL, SETissueCompartment& tissue, SESubstance& sub, SEScalarMass* cleared)
 {
   SELiquidSubstanceQuantity* subQ = m_data.GetCompartments().GetIntracellularFluid(tissue).GetSubstanceQuantity(sub);
   if (subQ == nullptr)
@@ -935,7 +935,7 @@ void BioGearsSubstances::CalculateGenericClearance(double VolumeCleared_mL, SETi
 /// The volume cleared, the compartment, and the substance are provided to clear the mass of the substance
 /// from the node. This generic methodology can be used by other systems to calculate the mass excreted.
 //--------------------------------------------------------------------------------------------------
-void BioGearsSubstances::CalculateGenericExcretion(double VascularFlow_mL_Per_s, SETissueCompartment& tissue, SESubstance& sub, double FractionExcreted, double timestep_s, SEScalarMass* excreted)
+void PulseSubstances::CalculateGenericExcretion(double VascularFlow_mL_Per_s, SETissueCompartment& tissue, SESubstance& sub, double FractionExcreted, double timestep_s, SEScalarMass* excreted)
 {
   SELiquidSubstanceQuantity* subQ = m_data.GetCompartments().GetIntracellularFluid(tissue).GetSubstanceQuantity(sub);
   if (subQ == nullptr)
@@ -967,7 +967,7 @@ void BioGearsSubstances::CalculateGenericExcretion(double VascularFlow_mL_Per_s,
     excreted->SetValue(MassExcreted_ug, MassUnit::ug);
 }
 
-void BioGearsSubstances::ProbeBloodGases(SELiquidCompartment& cmpt, const std::string& prefix)
+void PulseSubstances::ProbeBloodGases(SELiquidCompartment& cmpt, const std::string& prefix)
 {
   SELiquidSubstanceQuantity* O2 = cmpt.GetSubstanceQuantity(*m_O2);
   SELiquidSubstanceQuantity* Hb = cmpt.GetSubstanceQuantity(*m_Hb);
@@ -1002,7 +1002,7 @@ void BioGearsSubstances::ProbeBloodGases(SELiquidCompartment& cmpt, const std::s
   m_data.GetDataTrack().Probe(cmpt.GetName() + prefix + "_TotalMass_mmol_per_L", O2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L) + CO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L) + HCO3->GetMolarity(AmountPerVolumeUnit::mmol_Per_L) + Hb->GetMolarity(AmountPerVolumeUnit::mmol_Per_L) + HbO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L) + HbCO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L) + HbO2CO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L));
 }
 
-double BioGearsSubstances::GetSubstanceMass(SESubstance& sub, const std::vector<SELiquidCompartment*>& cmpts, const MassUnit& unit)
+double PulseSubstances::GetSubstanceMass(SESubstance& sub, const std::vector<SELiquidCompartment*>& cmpts, const MassUnit& unit)
 {
   double mass = 0;
   SELiquidSubstanceQuantity* subQ;
@@ -1013,7 +1013,7 @@ double BioGearsSubstances::GetSubstanceMass(SESubstance& sub, const std::vector<
   }
   return mass;
 }
-double BioGearsSubstances::GetSubstanceMass(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const MassUnit& unit)
+double PulseSubstances::GetSubstanceMass(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const MassUnit& unit)
 {
   double mass = 0;
   SELiquidSubstanceQuantity* subQ;
@@ -1030,7 +1030,7 @@ double BioGearsSubstances::GetSubstanceMass(SESubstance& sub, const std::vector<
   return mass;
 }
 
-void BioGearsSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vector<SELiquidCompartment*>& cmpts, const SEScalarMassPerVolume& concentration)
+void PulseSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vector<SELiquidCompartment*>& cmpts, const SEScalarMassPerVolume& concentration)
 {
   SELiquidSubstanceQuantity* subQ;
   for (SELiquidCompartment* cmpt : cmpts)
@@ -1040,7 +1040,7 @@ void BioGearsSubstances::SetSubstanceConcentration(SESubstance& sub, const std::
     subQ->Balance(BalanceLiquidBy::Concentration);
   }
 }
-void BioGearsSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarMassPerVolume& concentration)
+void PulseSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarMassPerVolume& concentration)
 {
   SELiquidSubstanceQuantity* subQ;
   for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
@@ -1056,7 +1056,7 @@ void BioGearsSubstances::SetSubstanceConcentration(SESubstance& sub, const std::
     subQ->Balance(BalanceLiquidBy::Concentration);
   }
 }
-void BioGearsSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarMassPerVolume& extracellular, const SEScalarMassPerVolume& intracellular)
+void PulseSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarMassPerVolume& extracellular, const SEScalarMassPerVolume& intracellular)
 {
   SELiquidSubstanceQuantity* subQ;
   for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
@@ -1073,7 +1073,7 @@ void BioGearsSubstances::SetSubstanceConcentration(SESubstance& sub, const std::
   }
 }
 
-void BioGearsSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<SELiquidCompartment*>& cmpts, const SEScalarAmountPerVolume& molarity)
+void PulseSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<SELiquidCompartment*>& cmpts, const SEScalarAmountPerVolume& molarity)
 {
   SELiquidSubstanceQuantity* subQ;
   for (SELiquidCompartment* cmpt : cmpts)
@@ -1083,7 +1083,7 @@ void BioGearsSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vecto
     subQ->Balance(BalanceLiquidBy::Molarity);
   }
 }
-void BioGearsSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarAmountPerVolume& molarity)
+void PulseSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarAmountPerVolume& molarity)
 {
   SELiquidSubstanceQuantity* subQ;
   for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
@@ -1099,7 +1099,7 @@ void BioGearsSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vecto
     subQ->Balance(BalanceLiquidBy::Molarity);
   }
 }
-void BioGearsSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarAmountPerVolume& extracellular, const SEScalarAmountPerVolume& intracellular)
+void PulseSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarAmountPerVolume& extracellular, const SEScalarAmountPerVolume& intracellular)
 {
   SELiquidSubstanceQuantity* subQ;
   for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
@@ -1116,7 +1116,7 @@ void BioGearsSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vecto
   }
 }
 
-const SizeIndependentDepositionEfficencyCoefficient& BioGearsSubstances::GetSizeIndependentDepositionEfficencyCoefficient(SESubstance& substance)
+const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeIndependentDepositionEfficencyCoefficient(SESubstance& substance)
 {
   auto itr = m_SIDECoefficients.find(&substance);
   if (itr != m_SIDECoefficients.end())

@@ -6,7 +6,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/CommonDataModel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/DataModelBindings"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/BioGearsEngine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Engine"/>
 	<classpathentry kind="var" path="PHYSIOLOGY_HOME/jar/commons-logging-1.2.jar"/>
 	<classpathentry kind="var" path="PHYSIOLOGY_HOME/jar/guava-11.0.2.jar"/>
 	<classpathentry kind="var" path="PHYSIOLOGY_HOME/jar/jcommon-1.0.16.jar"/>

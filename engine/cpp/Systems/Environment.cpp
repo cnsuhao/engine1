@@ -43,7 +43,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarLength.h"
 
-Environment::Environment(BioGears& bg) : SEEnvironment(bg.GetSubstances()), m_data(bg)
+Environment::Environment(Pulse& bg) : SEEnvironment(bg.GetSubstances()), m_data(bg)
 {
   Clear();
 }
@@ -85,7 +85,7 @@ void Environment::Clear()
 //--------------------------------------------------------------------------------------------------
 void Environment::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   //Initialize all System Data outputs (inputs should be populated elsewhere)
   GetConvectiveHeatLoss().SetValue(0.0, PowerUnit::W);
@@ -105,22 +105,22 @@ void Environment::Initialize()
   m_PatientEquivalentDiameter_m = pow(Convert(patientMass_g / patientDensity_g_Per_mL, VolumeUnit::mL, VolumeUnit::m3) / (pi*patientHeight_m), 0.5);
 }
 
-bool Environment::Load(const CDM::BioGearsEnvironmentData& in)
+bool Environment::Load(const CDM::PulseEnvironmentData& in)
 {
   if (!SEEnvironment::Load(in))
     return false;
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   m_PatientEquivalentDiameter_m = in.PatientEquivalentDiameter_m();
   StateChange();
   return true;
 }
-CDM::BioGearsEnvironmentData* Environment::Unload() const
+CDM::PulseEnvironmentData* Environment::Unload() const
 {
-  CDM::BioGearsEnvironmentData* data = new CDM::BioGearsEnvironmentData();
+  CDM::PulseEnvironmentData* data = new CDM::PulseEnvironmentData();
   Unload(*data);
   return data;
 }
-void Environment::Unload(CDM::BioGearsEnvironmentData& data) const
+void Environment::Unload(CDM::PulseEnvironmentData& data) const
 {
   SEEnvironment::Unload(data);
   data.PatientEquivalentDiameter_m(m_PatientEquivalentDiameter_m);

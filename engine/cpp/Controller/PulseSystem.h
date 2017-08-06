@@ -10,30 +10,33 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "stdafx.h"
-#include "Controller/Scenario/BioGearsScenario.h"
-#include "bind/ScenarioData.hxx"
-#include "bind/ScenarioInitialParametersData.hxx"
+#pragma once
+class PulseEngine;
 
-
-BioGearsScenario::BioGearsScenario(SESubstanceManager& subMgr) : SEScenario(subMgr)
+/**
+ * @brief Generic class for handling the %Pulse stabilization methodology
+ */
+class PULSE_API PulseSystem
 {
-  
-}
+  friend PulseEngine;
+public:
+  /**
+  * @brief - Default system values to their homeostatic values
+  */
+  virtual void Initialize()
+  {
+    SetUp();
+  }
+  /// Notify systems that steady state has been achieved
+  virtual void AtSteadyState() {};
+  virtual void PreProcess() = 0;
+  virtual void Process() = 0;
+  virtual void PostProcess() = 0;
 
-BioGearsScenario::~BioGearsScenario()
-{
-
-}
-
-BioGearsScenarioInitialParameters& BioGearsScenario::GetInitialParameters()
-{
-  InvalidateEngineStateFile();
-  if (m_InitialParameters == nullptr)
-    m_InitialParameters = new BioGearsScenarioInitialParameters(m_SubMgr);
-  return *((BioGearsScenarioInitialParameters*)m_InitialParameters);
-}
-const BioGearsScenarioInitialParameters* BioGearsScenario::GetInitialParameters() const
-{
-  return (BioGearsScenarioInitialParameters*)m_InitialParameters;
-}
+protected:
+  virtual void SetUp() = 0;
+  virtual void LoadState()
+  {
+    SetUp();
+  }
+};

@@ -28,7 +28,7 @@ Constructors
 ========================
 */
 
-ECG::ECG(BioGears& bg) : SEElectroCardioGram(bg.GetLogger()), m_data(bg), m_interpolator(bg.GetLogger())
+ECG::ECG(Pulse& bg) : SEElectroCardioGram(bg.GetLogger()), m_data(bg), m_interpolator(bg.GetLogger())
 {
   Clear();
 }
@@ -59,7 +59,7 @@ void ECG::Clear()
 //--------------------------------------------------------------------------------------------------
 void ECG::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   m_heartRhythmTime.SetValue(0,TimeUnit::s);
   m_heartRhythmPeriod.SetValue(0, TimeUnit::s);
@@ -85,24 +85,24 @@ void ECG::Initialize()
   m_interpolator.SetLeadElectricPotential(3, GetLead3ElectricPotential());
 }
 
-bool ECG::Load(const CDM::BioGearsElectroCardioGramData& in)
+bool ECG::Load(const CDM::PulseElectroCardioGramData& in)
 {
   if (!SEElectroCardioGram::Load(in))
     return false;  
-  BioGearsSystem::LoadState(); 
+  PulseSystem::LoadState(); 
   m_heartRhythmTime.Load(in.HeartRythmTime());
   m_heartRhythmPeriod.Load(in.HeartRythmPeriod());
   m_interpolator.Load(in.Waveforms());
   m_interpolator.SetLeadElectricPotential(3, GetLead3ElectricPotential());
   return true;
 }
-CDM::BioGearsElectroCardioGramData* ECG::Unload() const
+CDM::PulseElectroCardioGramData* ECG::Unload() const
 {
-  CDM::BioGearsElectroCardioGramData* data = new CDM::BioGearsElectroCardioGramData();
+  CDM::PulseElectroCardioGramData* data = new CDM::PulseElectroCardioGramData();
   Unload(*data);
   return data;
 }
-void ECG::Unload(CDM::BioGearsElectroCardioGramData& data) const
+void ECG::Unload(CDM::PulseElectroCardioGramData& data) const
 {
   SEElectroCardioGram::Unload(data);
   data.HeartRythmTime(std::unique_ptr<CDM::ScalarTimeData>(m_heartRhythmTime.Unload()));

@@ -37,7 +37,7 @@ specific language governing permissions and limitations under the License.
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
 
-BloodChemistry::BloodChemistry(BioGears& bg) : SEBloodChemistrySystem(bg.GetLogger()), m_data(bg)
+BloodChemistry::BloodChemistry(Pulse& bg) : SEBloodChemistrySystem(bg.GetLogger()), m_data(bg)
 {
   Clear();
 }
@@ -88,7 +88,7 @@ void BloodChemistry::Clear()
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
   GetBloodDensity().SetValue(1050, MassPerVolumeUnit::kg_Per_m3);
   GetBloodSpecificHeat().SetValue(3617, HeatCapacitancePerMassUnit::J_Per_K_kg);
   GetVolumeFractionNeutralLipidInPlasma().SetValue(0.0023);
@@ -104,22 +104,22 @@ void BloodChemistry::Initialize()
   Process();// Calculate the initial system values
 }
 
-bool BloodChemistry::Load(const CDM::BioGearsBloodChemistrySystemData& in)
+bool BloodChemistry::Load(const CDM::PulseBloodChemistrySystemData& in)
 {
   if (!SEBloodChemistrySystem::Load(in))
     return false;
   m_ArterialOxygen_mmHg.Load(in.ArterialOxygenAverage_mmHg());
   m_ArterialCarbonDioxide_mmHg.Load(in.ArterialCarbonDioxideAverage_mmHg());
-  BioGearsSystem::LoadState(); 
+  PulseSystem::LoadState(); 
   return true;
 }
-CDM::BioGearsBloodChemistrySystemData* BloodChemistry::Unload() const
+CDM::PulseBloodChemistrySystemData* BloodChemistry::Unload() const
 {
-  CDM::BioGearsBloodChemistrySystemData* data = new CDM::BioGearsBloodChemistrySystemData();
+  CDM::PulseBloodChemistrySystemData* data = new CDM::PulseBloodChemistrySystemData();
   Unload(*data);
   return data;
 }
-void BloodChemistry::Unload(CDM::BioGearsBloodChemistrySystemData& data) const
+void BloodChemistry::Unload(CDM::PulseBloodChemistrySystemData& data) const
 {
   SEBloodChemistrySystem::Unload(data);
   data.ArterialOxygenAverage_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_ArterialOxygen_mmHg.Unload()));
@@ -135,7 +135,7 @@ void BloodChemistry::Unload(CDM::BioGearsBloodChemistrySystemData& data) const
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::SetUp()
 {
-  const BioGearsConfiguration& ConfigData = m_data.GetConfiguration();
+  const PulseConfiguration& ConfigData = m_data.GetConfiguration();
   m_redBloodCellVolume_mL = ConfigData.GetMeanCorpuscularVolume(VolumeUnit::mL);
   m_HbPerRedBloodCell_ug_Per_ct = ConfigData.GetMeanCorpuscularHemoglobin(MassPerAmountUnit::ug_Per_ct);
 
@@ -202,7 +202,7 @@ void BloodChemistry::AtSteadyState()
 /// Blood Chemistry Preprocess method
 ///
 /// \details
-/// The current BioGears implementation has no functionality in the preprocess function for blood chemistry.
+/// The current Pulse implementation has no functionality in the preprocess function for blood chemistry.
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::PreProcess()
 {
@@ -326,7 +326,7 @@ void BloodChemistry::Process()
 /// Blood Chemistry postprocess method
 ///
 /// \details
-/// The current BioGears implementation has no specific postprocess functionality.
+/// The current Pulse implementation has no specific postprocess functionality.
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::PostProcess()
 {
@@ -491,7 +491,7 @@ void BloodChemistry::CheckBloodGasLevels()
 ///
 /// \details
 /// Sets data on the metabolic panel object to create the metabolic panel.  
-/// Uses information from the chem 14 substances that are in %BioGears (see @ref bloodchemistry-assessments)
+/// Uses information from the chem 14 substances that are in %Pulse (see @ref bloodchemistry-assessments)
 //--------------------------------------------------------------------------------------------------
 bool BloodChemistry::CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp)
 {

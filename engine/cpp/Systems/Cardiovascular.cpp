@@ -53,7 +53,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/conditions/SEChronicRenalStenosis.h"
 
 
-Cardiovascular::Cardiovascular(BioGears& bg) : SECardiovascularSystem(bg.GetLogger()), m_data(bg),
+Cardiovascular::Cardiovascular(Pulse& bg) : SECardiovascularSystem(bg.GetLogger()), m_data(bg),
 m_circuitCalculator(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, bg.GetLogger()),
 m_transporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, bg.GetLogger())
 {
@@ -144,7 +144,7 @@ void Cardiovascular::Clear()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   m_HeartRhythm = CDM::enumHeartRhythm::NormalSinus;
 
@@ -216,7 +216,7 @@ void Cardiovascular::Initialize()
   m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(FlowElastanceUnit::mmHg_Per_mL);
 }
 
-bool Cardiovascular::Load(const CDM::BioGearsCardiovascularSystemData& in)
+bool Cardiovascular::Load(const CDM::PulseCardiovascularSystemData& in)
 {
   if (!SECardiovascularSystem::Load(in))
     return false;
@@ -256,16 +256,16 @@ bool Cardiovascular::Load(const CDM::BioGearsCardiovascularSystemData& in)
   m_CardiacCycleCentralVenousPressure_mmHg.Load(in.CardiacCycleCentralVenousPressure_mmHg());
   m_CardiacCycleSkinFlow_mL_Per_s.Load(in.CardiacCycleSkinFlow_mL_Per_s());
 
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   return true;
 }
-CDM::BioGearsCardiovascularSystemData* Cardiovascular::Unload() const
+CDM::PulseCardiovascularSystemData* Cardiovascular::Unload() const
 {
-  CDM::BioGearsCardiovascularSystemData* data = new CDM::BioGearsCardiovascularSystemData();
+  CDM::PulseCardiovascularSystemData* data = new CDM::PulseCardiovascularSystemData();
   Unload(*data);
   return data;
 }
-void Cardiovascular::Unload(CDM::BioGearsCardiovascularSystemData& data) const
+void Cardiovascular::Unload(CDM::PulseCardiovascularSystemData& data) const
 {
   SECardiovascularSystem::Unload(data);
 
@@ -481,7 +481,7 @@ void Cardiovascular::ChronicAnemia()
   if (rf > 0.3)
   {
     /// \error if too much hemoglobin is removed, we will no longer meet validation, so set to maximum amount that can be removed.
-    Error("Cannot remove more than 30% of hemoglobin in anemia in the BioGears Engine. Setting value to 30% and continuing.", "Cardiovascular::Anemia");
+    Error("Cannot remove more than 30% of hemoglobin in anemia in the Pulse Engine. Setting value to 30% and continuing.", "Cardiovascular::Anemia");
     rf = 0.3;
   }
   // Empirical resistance modification
@@ -545,7 +545,7 @@ void Cardiovascular::ChronicHeartFailure()
 /// Pericardial effusion can be either chronic (slow) or acute (fast).
 /// Chronic effusion will eventually lead to tamponade, acute effusion leads
 /// immediately to tamponade and imminent death. The chronic effusion parameters 
-/// are set in the BioGears engine so that life-threatening tamponade will occur 
+/// are set in the Pulse engine so that life-threatening tamponade will occur 
 ///  in about 30 minutes after the insult.
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::ChronicPericardialEffusion()
@@ -612,7 +612,7 @@ void Cardiovascular::ChronicRenalStenosis()
     return;
   }
 
-  //Aorta1ToAfferentArteriole paths are equivalent to the renal artery in BioGears. Resistance increases on these paths to represent renal arterial stenosis
+  //Aorta1ToAfferentArteriole paths are equivalent to the renal artery in Pulse. Resistance increases on these paths to represent renal arterial stenosis
   double currentLeftResistance_mmHg_s_Per_mL = m_leftRenalArteryPath->GetResistanceBaseline(FlowResistanceUnit::mmHg_s_Per_mL);
   double currentRightResistance_mmHg_s_Per_mL = m_rightRenalArteryPath->GetResistanceBaseline(FlowResistanceUnit::mmHg_s_Per_mL);
 
@@ -654,8 +654,8 @@ void Cardiovascular::PreProcess()
 /// \details
 /// Modifications to the cardiovascular system are made during the preprocess
 /// step of the cardiovascular and other systems. The new state of the circuit 
-/// is solved using %BioGears @ref CircuitMethodology. Advective substance transport
-/// is computed using the %BioGears @ref SubstanceTransportMethodology.
+/// is solved using %Pulse @ref CircuitMethodology. Advective substance transport
+/// is computed using the %Pulse @ref SubstanceTransportMethodology.
 /// Finally, vitals sign data is computed and system data is populated in the 
 /// CalculateVitalSigns method.
 //--------------------------------------------------------------------------------------------------

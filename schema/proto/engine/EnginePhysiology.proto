@@ -1,3 +1,159 @@
 syntax = "proto3";
-package biogears;
-option java_package = "com.kitware.physiology.biogears";
+package pulse;
+option java_package = "com.kitware.physiology.pulse";
+
+import "cdm/Properties.proto";
+
+
+message PulseBloodChemistrySystemData
+{
+  cdm.RunningAverageData  ArterialOxygenAverage_mmHg                          = 1;
+  cdm.RunningAverageData  ArterialCarbonDioxideAverage_mmHg                   = 2;
+}
+
+message PulseCardiovascularSystemData
+{
+  bool                    StartSystole                                        = 1;
+  bool                    HeartFlowDetected                                   = 2;
+  bool                    EnterCardiacArrest                                  = 3;
+  double                  CardiacCyclePeriod_s                                = 4;
+  double                  CurrentCardiacCycleDuration_s                       = 5;
+  double                  LeftHeartElastanceModifier                          = 6;
+  double                  LeftHeartElastance_mmHg_Per_mL                      = 7;
+  double                  LeftHeartElastanceMax_mmHg_Per_mL                   = 8;
+  double                  LeftHeartElastanceMin_mmHg_Per_mL                   = 9;
+  double                  RightHeartElastance_mmHg_Per_mL                     = 10;
+  double                  RightHeartElastanceMax_mmHg_Per_mL                  = 11;
+  double                  RightHeartElastanceMin_mmHg_Per_mL                  = 12;
+  
+  double                  CompressionTime_s                                   = 13;
+  double                  CompressionRatio                                    = 14;
+  double                  CompressionPeriod_s                                 = 15;
+  
+  double                  CurrentCardiacCycleTime_s                           = 16;
+  double                  CardiacCycleDiastolicVolume_mL                      = 17;
+  double                  CardiacCycleAortaPressureLow_mmHg                   = 18;
+  double                  CardiacCycleAortaPressureHigh_mmHg                  = 19;
+  double                  CardiacCyclePulmonaryArteryPressureLow_mmHg         = 20;
+  double                  CardiacCyclePulmonaryArteryPressureHigh_mmHg        = 21;
+  double                  LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = 22;
+  double                  CardiacCycleStrokeVolume_mL                         = 23;
+  
+  cdm.RunningAverageData  CardiacCycleArterialPressure_mmHg                   = 24;
+  cdm.RunningAverageData  CardiacCycleArterialCO2PartialPressure_mmHg         = 25;
+  cdm.RunningAverageData  CardiacCyclePulmonaryCapillariesWedgePressure_mmHg  = 26;
+  cdm.RunningAverageData  CardiacCyclePulmonaryCapillariesFlow_mL_Per_s       = 27;
+  cdm.RunningAverageData  CardiacCyclePulmonaryShuntFlow_mL_Per_s             = 28;
+  cdm.RunningAverageData  CardiacCyclePulmonaryArteryPressure_mmHg            = 29;
+  cdm.RunningAverageData  CardiacCycleCentralVenousPressure_mmHg              = 30;
+  cdm.RunningAverageData  CardiacCycleSkinFlow_mL_Per_s                       = 31;
+}
+
+message PulseDrugSystemData
+{
+  
+}
+
+message PulseEndocrineSystemData
+{
+
+}
+
+message PulseEnergySystemData
+{
+  double                  EnduranceEnergyStore_J                              = 1;
+  double                  MediumPowerEnergyStore_J                            = 2;
+  double                  PeakPowerEnergyStore_J                              = 3;
+  double                  UsableEnergyStore_J                                 = 4;
+  
+  cdm.RunningAverageData  BloodpH                                             = 5;
+  cdm.RunningAverageData  BicarbonateMolarity_mmol_Per_L                      = 6;
+}
+
+message PulseGastrointestinalSystemData
+{
+
+}
+
+message PulseHepaticSystemData
+{
+
+}
+
+message PulseNervousSystemData
+{
+  double                  ArterialOxygenSetPoint_mmHg                         = 1;
+  double                  ArterialCarbonDioxideSetPoint_mmHg                  = 2;
+}
+
+message PulseRenalSystemData
+{
+  bool                    Urinating                                           = 1;
+  double                  LeftAfferentResistance_mmHg_s_Per_mL                = 2;
+  double                  RightAfferentResistance_mmHg_s_Per_mL               = 3;
+  double                  LeftSodiumFlowSetPoint_mg_Per_s                     = 4;
+  double                  RightSodiumFlowSetPoint_mg_Per_s                    = 5;
+  
+  cdm.RunningAverageData  UrineProductionRate_mL_Per_min                      = 6;
+  cdm.RunningAverageData  UrineOsmolarity_mOsm_Per_L                          = 7;
+  cdm.RunningAverageData  SodiumConcentration_mg_Per_mL                       = 8;
+  cdm.RunningAverageData  SodiumExcretionRate_mg_Per_min                      = 9;
+  cdm.RunningAverageData  LeftSodiumFlow_mg_Per_s                             = 10;
+  cdm.RunningAverageData  RightSodiumFlow_mg_Per_s                            = 11;
+  cdm.RunningAverageData  LeftRenalArterialPressure_mmHg                      = 12;
+  cdm.RunningAverageData  RightRenalArterialPressure_mmHg                     = 13;
+}
+
+message PulseRespiratorySystemData
+{
+  double                  InitialExpiratoryReserveVolume_L                         = 1;
+  double                  InitialFunctionalResidualCapacity_L                      = 2;
+  double                  InitialInspiratoryCapacity_L                             = 3;
+  double                  InitialResidualVolume_L                                  = 4;
+  
+  bool                    NotBreathing                                             = 5;
+  double                  TopBreathTotalVolume_L                                   = 6;
+  double                  TopBreathAlveoliVolume_L                                 = 7;
+  double                  TopBreathDeadSpaceVolume_L                               = 8;
+  double                  TopBreathPleuralPressure_cmH2O                           = 9;
+  double                  LastCardiacCycleBloodPH                                  = 10;
+  double                  PreviousTotalLungVolume_L                                = 11;
+  cdm.RunningAverageData  BloodPHRunningAverage                                    = 12;
+  
+  bool                    BreathingCycle                                           = 13;
+  double                  ArterialO2PartialPressure_mmHg                           = 14;
+  double                  ArterialCO2PartialPressure_mmHg                          = 15;
+  double                  BreathingCycleTime_s                                     = 16;
+  double                  BreathTimeExhale_min                                     = 17;
+  double                  DefaultDrivePressure_cmH2O                               = 18;
+  double                  DriverPressure_cmH2O                                     = 19;
+  double                  DriverPressureMin_cmH2O                                  = 20;
+  double                  ElapsedBreathingCycleTime_min                            = 21;
+  double                  IEscaleFactor                                            = 22;
+  double                  InstantaneousFunctionalResidualCapacity_L                = 23;
+  double                  MaxDriverPressure_cmH2O                                  = 24;
+  double                  PeakRespiratoryDrivePressure_cmH2O                       = 25;
+  double                  PreviousTargetAlveolarVentilation_L_Per_min              = 26;
+  double                  VentilationFrequency_Per_min                             = 27;
+  double                  VentilationToTidalVolumeSlope                            = 28;
+  cdm.RunningAverageData  ArterialO2RunningAverage_mmHg                            = 29;
+  cdm.RunningAverageData  ArterialCO2RunningAverage_mmHg                           = 30;
+  
+  bool                    ConsciousBreathing                                       = 31;
+  double                  ConsciousRespirationPeriod_s                             = 32;
+  double                  ConsciousRespirationRemainingPeriod_s                    = 33;
+  double                  ExpiratoryReserveVolumeFraction                          = 34;
+  double                  InspiratoryCapacityFraction                              = 35;
+  double                  ConsciousStartPressure_cmH2O                             = 36;
+  double                  ConsciousEndPressure_cmH2O                               = 37;
+}
+
+message PulseTissueSystemData
+{
+  double                  RestingTissueGlucose_g                                   = 1;
+  double                  RestingBloodGlucose_g_Per_L                              = 2;
+  double                  RestingBloodLipid_g_Per_L                                = 3;
+  double                  RestingBloodInsulin_g_Per_L                              = 4;
+  double                  RestingPatientMass_kg                                    = 5;
+  double                  RestingFluidMass_kg                                      = 6;
+}

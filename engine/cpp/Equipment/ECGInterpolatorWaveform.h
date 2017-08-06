@@ -11,9 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-CDM_BIND_DECL(ElectroCardioGramInterpolationWaveformData)
-#include "bind/enumHeartRhythm.hxx"
-#include "bind/ElectroCardioGramWaveformLeadNumber.hxx"
 
 class DLL_DECL SEElectroCardioGramInterpolatorWaveform : public Loggable
 {
@@ -23,6 +20,12 @@ public:
   virtual ~SEElectroCardioGramInterpolatorWaveform();
 
   virtual void Clear();// Deletes all members
+
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
+protected:
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
 
   virtual bool Load(const CDM::ElectroCardioGramInterpolationWaveformData& in);
   virtual CDM::ElectroCardioGramInterpolationWaveformData* Unload() const;

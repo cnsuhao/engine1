@@ -12,22 +12,21 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SEGastrointestinalSystem.h"
-#include "bind/BioGearsGastrointestinalSystemData.hxx"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolumePerTime.h"
 
 /**
 * @brief @copydoc Physiology_GastrointestinalSystemData
 */
-class BIOGEARS_API Gastrointestinal : public SEGastrointestinalSystem, public BioGearsSystem
+class PULSE_API Gastrointestinal : public SEGastrointestinalSystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Gastrointestinal(BioGears& bg);
-  BioGears& m_data;
+  Gastrointestinal(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~Gastrointestinal();
@@ -37,11 +36,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsGastrointestinalSystemData& in);
-  virtual CDM::BioGearsGastrointestinalSystemData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsGastrointestinalSystemData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseGastrointestinalSystemData& in);
+  virtual CDM::PulseGastrointestinalSystemData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseGastrointestinalSystemData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

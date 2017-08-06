@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalar0To1.h"
 
 
-Endocrine::Endocrine(BioGears& bg) : SEEndocrineSystem(bg.GetLogger()), m_data(bg)
+Endocrine::Endocrine(Pulse& bg) : SEEndocrineSystem(bg.GetLogger()), m_data(bg)
 {
   Clear();
 }
@@ -55,23 +55,23 @@ void Endocrine::Clear()
 //--------------------------------------------------------------------------------------------------
 void Endocrine::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 }
 
-bool Endocrine::Load(const CDM::BioGearsEndocrineSystemData& in)
+bool Endocrine::Load(const CDM::PulseEndocrineSystemData& in)
 {
   if (!SEEndocrineSystem::Load(in))
     return false;
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   return true;
 }
-CDM::BioGearsEndocrineSystemData* Endocrine::Unload() const
+CDM::PulseEndocrineSystemData* Endocrine::Unload() const
 {
-  CDM::BioGearsEndocrineSystemData* data = new CDM::BioGearsEndocrineSystemData();
+  CDM::PulseEndocrineSystemData* data = new CDM::PulseEndocrineSystemData();
   Unload(*data);
   return data;
 }
-void Endocrine::Unload(CDM::BioGearsEndocrineSystemData& data) const
+void Endocrine::Unload(CDM::PulseEndocrineSystemData& data) const
 {
   SEEndocrineSystem::Unload(data);
 }
@@ -101,7 +101,7 @@ void Endocrine::AtSteadyState()
 /// Endocrine process function
 ///
 /// \details
-/// Currently, only two hormones exists in the BioGears system: epinephrine and insulin. If the metabolic rate 
+/// Currently, only two hormones exists in the Pulse system: epinephrine and insulin. If the metabolic rate 
 /// rises above the basal rate, epinephrine is released. This is meant to simulate a sympathetic 
 /// nervous system response. The masses of the hormones are increased in the kidneys' efferent arterioles. 
 /// The hormones will then circulate using the transport and substances methodology.

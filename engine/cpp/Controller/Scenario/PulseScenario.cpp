@@ -10,25 +10,30 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#pragma once
+#include "stdafx.h"
+#include "Controller/Scenario/PulseScenario.h"
+#include "bind/ScenarioData.hxx"
+#include "bind/ScenarioInitialParametersData.hxx"
 
-#include "Controller/BioGearsConfiguration.h"
-#include "scenario/SEScenarioInitialParameters.h"
-class BioGearsScenario;
 
-/**
-* @brief Overloaded scenario that creates a %BioGears configuration as its configuration object
-*/
-class BIOGEARS_API BioGearsScenarioInitialParameters : public SEScenarioInitialParameters
+PulseScenario::PulseScenario(SESubstanceManager& subMgr) : SEScenario(subMgr)
 {
-protected:
-  friend BioGearsScenario;
+  
+}
 
-  BioGearsScenarioInitialParameters(SESubstanceManager& subMgr);
-  virtual ~BioGearsScenarioInitialParameters();
+PulseScenario::~PulseScenario()
+{
 
-  virtual BioGearsConfiguration& GetConfiguration();
-  virtual const BioGearsConfiguration* GetConfiguration() const;
-  virtual void SetConfiguration(const BioGearsConfiguration& config);
-protected:
-};
+}
+
+PulseScenarioInitialParameters& PulseScenario::GetInitialParameters()
+{
+  InvalidateEngineStateFile();
+  if (m_InitialParameters == nullptr)
+    m_InitialParameters = new PulseScenarioInitialParameters(m_SubMgr);
+  return *((PulseScenarioInitialParameters*)m_InitialParameters);
+}
+const PulseScenarioInitialParameters* PulseScenario::GetInitialParameters() const
+{
+  return (PulseScenarioInitialParameters*)m_InitialParameters;
+}

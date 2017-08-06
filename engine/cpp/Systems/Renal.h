@@ -11,9 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SERenalSystem.h"
-#include "bind/BioGearsRenalSystemData.hxx"
 #include "properties/SEScalarMass.h"
 
 class SEUrinalysis;
@@ -23,13 +22,13 @@ class SEUrinalysis;
 /**
  * @brief @copydoc Physiology_RenalSystemData
  */  
-class BIOGEARS_API Renal : public SERenalSystem, public BioGearsSystem
+class PULSE_API Renal : public SERenalSystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Renal(BioGears& bg);
-  BioGears& m_data;
+  Renal(Pulse& bg);
+  Pulse& m_data;
 
   double m_dt;
   
@@ -41,12 +40,18 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
+protected:
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
   // Load a state
-  virtual bool Load(const CDM::BioGearsRenalSystemData& in);
-  virtual CDM::BioGearsRenalSystemData* Unload() const;
+  virtual bool Load(const CDM::PulseRenalSystemData& in);
+  virtual CDM::PulseRenalSystemData* Unload() const;
 
 protected:
-  virtual void Unload(CDM::BioGearsRenalSystemData& data) const;
+  virtual void Unload(CDM::PulseRenalSystemData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

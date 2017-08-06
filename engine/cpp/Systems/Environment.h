@@ -12,20 +12,19 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/environment/SEEnvironment.h"
-#include "bind/BioGearsEnvironmentData.hxx"
 
 /**
  * @brief The %Environment class characterizes the environment and manages interactions between the body its surroundings.
  */  
-class BIOGEARS_API Environment : public SEEnvironment, public BioGearsSystem
+class PULSE_API Environment : public SEEnvironment, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Environment(BioGears& bg);
-  BioGears& m_data;
+  Environment(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~Environment();
@@ -35,11 +34,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsEnvironmentData& in);
-  virtual CDM::BioGearsEnvironmentData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsEnvironmentData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseEnvironmentData& in);
+  virtual CDM::PulseEnvironmentData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseEnvironmentData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

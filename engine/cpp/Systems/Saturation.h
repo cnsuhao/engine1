@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SETissueSystem.h"
 struct error_functor;
 
@@ -19,15 +19,15 @@ struct error_functor;
 * @brief
 * The %SaturationCalculator class holds the blood gas distribution model.
 */
-class BIOGEARS_API SaturationCalculator : public Loggable
+class PULSE_API SaturationCalculator : public Loggable
 {
 protected:
   friend error_functor;
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 
-  SaturationCalculator(BioGears& bg);
-  BioGears& m_data;
+  SaturationCalculator(Pulse& bg);
+  Pulse& m_data;
 public:
   virtual ~SaturationCalculator();
 

@@ -12,20 +12,19 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "../Controller/BioGearsSystem.h"
+#include "../Controller/PulseSystem.h"
 #include "system/physiology/SEHepaticSystem.h"
-#include "bind/BioGearsHepaticSystemData.hxx"
 
 /**
  * @copydoc Physiology_HepaticystemData
  */  
-class BIOGEARS_API Hepatic : public SEHepaticSystem, public BioGearsSystem
+class PULSE_API Hepatic : public SEHepaticSystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend Pulse;
+  friend class PulseEngineTest;
 protected:
-  Hepatic(BioGears& bg);
-  BioGears& m_data;
+  Hepatic(Pulse& bg);
+  Pulse& m_data;
 
 public:
   virtual ~Hepatic();
@@ -35,11 +34,17 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsHepaticSystemData& in);
-  virtual CDM::BioGearsHepaticSystemData* Unload() const;
+  static void Load(const cdm::PatientData& src, SEPatient& dst);
+  static cdm::PatientData* Unload(const SEPatient& src);
 protected:
-  virtual void Unload(CDM::BioGearsHepaticSystemData& data) const;
+  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+
+  // Load a state
+  virtual bool Load(const CDM::PulseHepaticSystemData& in);
+  virtual CDM::PulseHepaticSystemData* Unload() const;
+protected:
+  virtual void Unload(CDM::PulseHepaticSystemData& data) const;
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

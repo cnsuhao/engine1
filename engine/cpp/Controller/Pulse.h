@@ -11,12 +11,12 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "Controller/BioGearsCircuits.h"
-#include "Controller/BioGearsCompartments.h"
-#include "Controller/BioGearsConfiguration.h"
-#include "Controller/BioGearsSubstances.h"
+#include "Controller/PulseCircuits.h"
+#include "Controller/PulseCompartments.h"
+#include "Controller/PulseConfiguration.h"
+#include "Controller/PulseSubstances.h"
 
-#include "bind/enumBioGearsAirwayMode.hxx"
+#include "bind/enumPulseAirwayMode.hxx"
 // CDM 
 #include "scenario/SEActionManager.h"
 #include "scenario/SEConditionManager.h"
@@ -25,7 +25,7 @@ specific language governing permissions and limitations under the License.
 #include "utils/DataTrack.h"
 #include "engine/PhysiologyEngineTrack.h"
 
-// BioGears
+// Pulse
 #include "Systems/BloodChemistry.h"
 #include "Systems/Cardiovascular.h"
 #include "Systems/Endocrine.h"
@@ -45,24 +45,24 @@ specific language governing permissions and limitations under the License.
 
 #include "Systems/Saturation.h"
 
-class BioGearsScenarioExec;
+class PulseScenarioExec;
 enum class EngineState { NotReady=0, Initialization, InitialStabilization, AtInitialStableState, SecondaryStabilization, AtSecondaryStableState, Active };
 
 /**
-* @brief Manages and controls execution of all data/systems in %BioGears
+* @brief Manages and controls execution of all data/systems in %Pulse
 */
-class BIOGEARS_API BioGears : public Loggable, protected LoggerForward
+class PULSE_API Pulse : public Loggable, protected LoggerForward
 {
-  friend class BioGearsEngineTest;
-  friend class BioGearsScenarioExec;
+  friend class PulseEngineTest;
+  friend class PulseScenarioExec;
 protected:
   EngineState m_State;
 public:
   
 
-  BioGears(Logger* logger);
-  BioGears(const std::string& logfileName);
-  virtual ~BioGears();
+  Pulse(Logger* logger);
+  Pulse(const std::string& logfileName);
+  virtual ~Pulse();
 
  
   EngineState                             GetState() { return m_State; }
@@ -70,7 +70,7 @@ public:
   DataTrack&                              GetDataTrack();
   SaturationCalculator&                   GetSaturationCalculator() { return *m_SaturationCalculator; }
 
-  BioGearsSubstances&                     GetSubstances() { return *m_Substances; }
+  PulseSubstances&                     GetSubstances() { return *m_Substances; }
 
   SEPatient&                              GetPatient() { return *m_Patient; }
   bool                                    GetPatientAssessment(SEPatientAssessment& assessment);
@@ -99,19 +99,19 @@ public:
 
   SEConditionManager&                     GetConditions() { return *m_Conditions; }
 
-  BioGearsCircuits&                       GetCircuits() { return *m_Circuits; }
+  PulseCircuits&                       GetCircuits() { return *m_Circuits; }
 
 
-  BioGearsCompartments&                   GetCompartments() { return *m_Compartments; }
+  PulseCompartments&                   GetCompartments() { return *m_Compartments; }
 
-  const BioGearsConfiguration&            GetConfiguration() { return *m_Config; }
+  const PulseConfiguration&            GetConfiguration() { return *m_Config; }
 
   const SEScalarTime&                     GetEngineTime() { return *m_CurrentTime; }
   const SEScalarTime&                     GetSimulationTime() { return *m_SimulationTime; }
   const SEScalarTime&                     GetTimeStep() { return m_Config->GetTimeStep(); }
 
-  CDM::enumBioGearsAirwayMode::value      GetAirwayMode() { return m_AirwayMode; }
-  void                                    SetAirwayMode(CDM::enumBioGearsAirwayMode::value mode);
+  CDM::enumPulseAirwayMode::value      GetAirwayMode() { return m_AirwayMode; }
+  void                                    SetAirwayMode(CDM::enumPulseAirwayMode::value mode);
 
   cdm::eSwitch                   GetIntubation() { return m_Intubation; }
   void                                    SetIntubation(cdm::eSwitch s);
@@ -144,18 +144,18 @@ protected:
 
   std::unique_ptr<SEScalarTime>                                 m_CurrentTime;
   std::unique_ptr<SEScalarTime>                                 m_SimulationTime;
-  CDM::enumBioGearsAirwayMode::value                            m_AirwayMode;
+  CDM::enumPulseAirwayMode::value                            m_AirwayMode;
   cdm::eSwitch                                         m_Intubation;
 
-  std::unique_ptr<BioGearsConfiguration>                        m_Config;
+  std::unique_ptr<PulseConfiguration>                        m_Config;
   std::unique_ptr<SaturationCalculator>                         m_SaturationCalculator;
 
-  std::unique_ptr<BioGearsSubstances>                           m_Substances;
+  std::unique_ptr<PulseSubstances>                           m_Substances;
 
   std::unique_ptr<SEActionManager>                              m_Actions;
   std::unique_ptr<SEConditionManager>                           m_Conditions;
-  std::unique_ptr<BioGearsCircuits>                             m_Circuits;
-  std::unique_ptr<BioGearsCompartments>                         m_Compartments;
+  std::unique_ptr<PulseCircuits>                             m_Circuits;
+  std::unique_ptr<PulseCompartments>                         m_Compartments;
 
   std::unique_ptr<Environment>                                  m_Environment;
 

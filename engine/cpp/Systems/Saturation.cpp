@@ -121,7 +121,7 @@ public:
   }
 };
 
-SaturationCalculator::SaturationCalculator(BioGears& bg) : Loggable(bg.GetLogger()), m_data(bg)
+SaturationCalculator::SaturationCalculator(Pulse& bg) : Loggable(bg.GetLogger()), m_data(bg)
 {
   Initialize(bg.GetSubstances());
 }
@@ -213,8 +213,8 @@ void SaturationCalculator::CalculateCarbonMonoxideSpeciesDistribution(SELiquidCo
   // First we need to know the total amount of carbon monoxide (CO) in the compartment
   double dissolvedCO_mM = m_subCOQ->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
   
-  // Recall that in %BioGears when a gas binds to hemoglobin it binds to all four sites, i.e. 4 moles CO per mole Hb.
-  // Note that fractions of hemoglobin are possible in %BioGears, so in practice the actual number of sites bound is an abstraction.
+  // Recall that in %Pulse when a gas binds to hemoglobin it binds to all four sites, i.e. 4 moles CO per mole Hb.
+  // Note that fractions of hemoglobin are possible in %Pulse, so in practice the actual number of sites bound is an abstraction.
   double totalCO_mM = dissolvedCO_mM + 4.0 * HbCO_mM;
 
   // Now we need to know the distribution of oxygen species in order to compute the distribution 

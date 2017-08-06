@@ -44,7 +44,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarNegative1To1.h"
 
-Drugs::Drugs(BioGears& bg) : SEDrugSystem(bg.GetLogger()), m_data(bg)
+Drugs::Drugs(Pulse& bg) : SEDrugSystem(bg.GetLogger()), m_data(bg)
 {
   Clear();
 }
@@ -72,7 +72,7 @@ void Drugs::Clear()
 //--------------------------------------------------------------------------------------------------
 void Drugs::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   GetBronchodilationLevel().SetValue(0.0);
   GetHeartRateChange().SetValue(0.0, FrequencyUnit::Per_min);
@@ -87,11 +87,11 @@ void Drugs::Initialize()
   GetTubularPermeabilityChange().SetValue(0);
 }
 
-bool Drugs::Load(const CDM::BioGearsDrugSystemData& in)
+bool Drugs::Load(const CDM::PulseDrugSystemData& in)
 {
   if (!SEDrugSystem::Load(in))
     return false;
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   for (const CDM::SubstanceBolusStateData& bData : in.BolusAdministration())
   {
     SESubstance* sub = m_data.GetSubstances().GetSubstance(bData.Substance());
@@ -108,13 +108,13 @@ bool Drugs::Load(const CDM::BioGearsDrugSystemData& in)
   }
   return true;
 }
-CDM::BioGearsDrugSystemData* Drugs::Unload() const
+CDM::PulseDrugSystemData* Drugs::Unload() const
 {
-  CDM::BioGearsDrugSystemData* data = new CDM::BioGearsDrugSystemData();
+  CDM::PulseDrugSystemData* data = new CDM::PulseDrugSystemData();
   Unload(*data);
   return data;
 }
-void Drugs::Unload(CDM::BioGearsDrugSystemData& data) const
+void Drugs::Unload(CDM::PulseDrugSystemData& data) const
 {
   SEDrugSystem::Unload(data);
   for (auto itr : m_BolusAdministrations)

@@ -28,7 +28,8 @@ public class SETestSuite
 		this.performed=true;
 		this.requirements.clear();
 		this.testCases.clear();
-		activeCase = null;
+		this.activeCase = null;
+		this.activeCaseListener.reset();
 	}
 	
 	public static void load(TestSuiteData src, SETestSuite dst)

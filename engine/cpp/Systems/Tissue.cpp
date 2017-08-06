@@ -58,7 +58,7 @@ specific language governing permissions and limitations under the License.
 #define GAS_ONLY_PRODCOM
 #define ZERO_APPROX 1e-10
 
-Tissue::Tissue(BioGears& bg) : SETissueSystem(bg.GetLogger()), m_data(bg)
+Tissue::Tissue(Pulse& bg) : SETissueSystem(bg.GetLogger()), m_data(bg)
 {
   Clear();
 }
@@ -111,7 +111,7 @@ void Tissue::Clear()
 //--------------------------------------------------------------------------------------------------
 void Tissue::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   /*Tissue System*/
   // Get total tissue resting values for substances
@@ -142,7 +142,7 @@ void Tissue::Initialize()
   GetRespiratoryExchangeRatio().SetValue(0.8);
 }
 
-bool Tissue::Load(const CDM::BioGearsTissueSystemData& in)
+bool Tissue::Load(const CDM::PulseTissueSystemData& in)
 {
   if (!SETissueSystem::Load(in))
     return false;
@@ -154,16 +154,16 @@ bool Tissue::Load(const CDM::BioGearsTissueSystemData& in)
   m_RestingPatientMass_kg = in.RestingPatientMass_kg();
   m_RestingFluidMass_kg = in.RestingFluidMass_kg();
 
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   return true;
 }
-CDM::BioGearsTissueSystemData* Tissue::Unload() const
+CDM::PulseTissueSystemData* Tissue::Unload() const
 {
-  CDM::BioGearsTissueSystemData* data = new CDM::BioGearsTissueSystemData();
+  CDM::PulseTissueSystemData* data = new CDM::PulseTissueSystemData();
   Unload(*data);
   return data;
 }
-void Tissue::Unload(CDM::BioGearsTissueSystemData& data) const
+void Tissue::Unload(CDM::PulseTissueSystemData& data) const
 {
   SETissueSystem::Unload(data);
 
@@ -499,7 +499,7 @@ void Tissue::CalculateDiffusion()
         moved_ug = MoveMassBySimpleDiffusion(extracellular, intracellular, *sub, ECtoICPermeabilityFactor*vToECpermeabilityCoefficient_mL_Per_s, m_Dt_s);
 
         // --- Third facilitated diffusion ---
-          // In BioGears, only glucose moves by facilitated diffusion, and it is assumed that all glucose that gets to the 
+          // In Pulse, only glucose moves by facilitated diffusion, and it is assumed that all glucose that gets to the 
           // intracellular space is used for energy or converted to glycogen for storage. So no facilitated diffusion between EC and IC.
           /// \todo Decrement glucose from EC for energy and decrement/increment from EC for conversions (glycogen, gluconeogenesis, etc).
 
@@ -549,7 +549,7 @@ void Tissue::CalculateDiffusion()
 void Tissue::CalculatePulmonaryCapillarySubstanceTransfer()
 {
   SEPatient& Patient = m_data.GetPatient();
-  const BioGearsConfiguration& Configuration = m_data.GetConfiguration();
+  const PulseConfiguration& Configuration = m_data.GetConfiguration();
 
 
   double AlveoliSurfaceArea_cm2 = Patient.GetAlveoliSurfaceArea(AreaUnit::cm2);
@@ -623,7 +623,7 @@ void Tissue::ProduceAlbumin(double duration_s)
 void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
 {
   bool gasOnly = false; // To easily disable non-gas substance production and consumption
-  const BioGearsConfiguration& config = m_data.GetConfiguration();
+  const PulseConfiguration& config = m_data.GetConfiguration();
   double TMR_kcal_Per_s = m_data.GetEnergy().GetTotalMetabolicRate(PowerUnit::kcal_Per_s);
   double BMR_kcal_Per_s = m_data.GetPatient().GetBasalMetabolicRate(PowerUnit::kcal_Per_s);
   double ATPUseRate_mol_Per_s = TMR_kcal_Per_s / config.GetEnergyPerATP(EnergyPerAmountUnit::kcal_Per_mol);
@@ -647,7 +647,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
   double FractionOfAcetoacetateToATP = 0.041666667; // Ratio of acetoacetate required to ATP produced. = 1.0 / 24.0;
   double FractionOfLactateToATP = 0.027777778;      // Ratio of lactate required to ATP produced. = 1.0 / 36.0;
   double FractionOfLipidToATP = 0.002604167;        // Ratio of of lipid required to ATP produced. = 2.0 / 768.0;  
-  double FractionLipidsAsTristearin = 0.256;        // This is an empirically determined value specific to the BioGears implementation
+  double FractionLipidsAsTristearin = 0.256;        // This is an empirically determined value specific to the Pulse implementation
 
   double exerciseTuningFactor = 1.0; // 2.036237;           // A tuning factor to adjust production and consumption during exercise
 

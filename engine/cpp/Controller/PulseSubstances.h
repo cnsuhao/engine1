@@ -16,9 +16,9 @@ specific language governing permissions and limitations under the License.
 class SELiquidCompartment;
 class SETissueCompartment;
 
-class BIOGEARS_API SizeIndependentDepositionEfficencyCoefficient
+class PULSE_API SizeIndependentDepositionEfficencyCoefficient
 {
-  friend class BioGearsSubstances;
+  friend class PulseSubstances;
  public:
    SizeIndependentDepositionEfficencyCoefficient() {};
   ~SizeIndependentDepositionEfficencyCoefficient() {}
@@ -36,14 +36,14 @@ protected:
 };
 
 /**
-* @brief Manages and initializes all systems with substances needed by %BioGears
+* @brief Manages and initializes all systems with substances needed by %Pulse
 */
-class BIOGEARS_API BioGearsSubstances : public SESubstanceManager
+class PULSE_API PulseSubstances : public SESubstanceManager
 {
-  friend class BioGearsEngineTest;
+  friend class PulseEngineTest;
 public:
-  BioGearsSubstances(BioGears& data);
-  virtual ~BioGearsSubstances() = default;
+  PulseSubstances(Pulse& data);
+  virtual ~PulseSubstances() = default;
 
   virtual void Clear();
 
@@ -141,6 +141,6 @@ protected:
 
   std::map<SESubstance*, SizeIndependentDepositionEfficencyCoefficient*> m_SIDECoefficients;
 
-  BioGears&     m_data;
+  Pulse&     m_data;
 };
 

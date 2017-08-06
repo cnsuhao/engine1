@@ -33,7 +33,7 @@ specific language governing permissions and limitations under the License.
 ========================
 */
 
-AnesthesiaMachine::AnesthesiaMachine(BioGears& bg) : SEAnesthesiaMachine(bg.GetSubstances()), m_data(bg)
+AnesthesiaMachine::AnesthesiaMachine(Pulse& bg) : SEAnesthesiaMachine(bg.GetSubstances()), m_data(bg)
 {
   Clear();
 }
@@ -74,7 +74,7 @@ void AnesthesiaMachine::Clear()
 //--------------------------------------------------------------------------------------------------
 void AnesthesiaMachine::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   SetConnection(CDM::enumAnesthesiaMachineConnection::Off);
   GetInletFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
@@ -98,11 +98,11 @@ void AnesthesiaMachine::Initialize()
   StateChange();
 }
 
-bool AnesthesiaMachine::Load(const CDM::BioGearsAnesthesiaMachineData& in)
+bool AnesthesiaMachine::Load(const CDM::PulseAnesthesiaMachineData& in)
 {
   if (!SEAnesthesiaMachine::Load(in))
     return false;
-  BioGearsSystem::LoadState();
+  PulseSystem::LoadState();
   m_inhaling = in.Inhaling();
   m_currentbreathingCycleTime.Load(in.CurrentBreathingCycleTime());
   m_inspirationTime.Load(in.InspirationTime());
@@ -110,13 +110,13 @@ bool AnesthesiaMachine::Load(const CDM::BioGearsAnesthesiaMachineData& in)
   m_totalBreathingCycleTime.Load(in.TotalBreathingCycleTime());
   return true;
 }
-CDM::BioGearsAnesthesiaMachineData* AnesthesiaMachine::Unload() const
+CDM::PulseAnesthesiaMachineData* AnesthesiaMachine::Unload() const
 {
-  CDM::BioGearsAnesthesiaMachineData* data = new CDM::BioGearsAnesthesiaMachineData();
+  CDM::PulseAnesthesiaMachineData* data = new CDM::PulseAnesthesiaMachineData();
   Unload(*data);
   return data;
 }
-void AnesthesiaMachine::Unload(CDM::BioGearsAnesthesiaMachineData& data) const
+void AnesthesiaMachine::Unload(CDM::PulseAnesthesiaMachineData& data) const
 {
   SEAnesthesiaMachine::Unload(data);
   data.Inhaling(m_inhaling);
@@ -197,16 +197,16 @@ void AnesthesiaMachine::SetConnection(cdm::AnesthesiaMachineData_eConnection c)
 {
   if (m_Connection == c)
     return; // No Change
-  // Update the BioGears airway mode when this changes
+  // Update the Pulse airway mode when this changes
   SEAnesthesiaMachine::SetConnection(c);
   if (c == CDM::enumAnesthesiaMachineConnection::Mask && m_data.GetIntubation() == cdm::eSwitch::Off)
   {
-    m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::AnesthesiaMachine);
+    m_data.SetAirwayMode(CDM::enumPulseAirwayMode::AnesthesiaMachine);
     return;
   }
   else if (c == CDM::enumAnesthesiaMachineConnection::Tube && m_data.GetIntubation() == cdm::eSwitch::On)
   {
-    m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::AnesthesiaMachine);
+    m_data.SetAirwayMode(CDM::enumPulseAirwayMode::AnesthesiaMachine);
     return;
   }
   else if (c == CDM::enumAnesthesiaMachineConnection::Mask && m_data.GetIntubation() == cdm::eSwitch::On)
@@ -214,7 +214,7 @@ void AnesthesiaMachine::SetConnection(cdm::AnesthesiaMachineData_eConnection c)
   else if (c == CDM::enumAnesthesiaMachineConnection::Tube && m_data.GetIntubation() == cdm::eSwitch::Off)
     Error("Connection failed : Cannot apply anesthesia machine to tube if patient is not intubated.");
   // Make sure we are active to make sure we go back to free
-  m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
+  m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -228,7 +228,7 @@ void AnesthesiaMachine::SetConnection(cdm::AnesthesiaMachineData_eConnection c)
 void AnesthesiaMachine::InvalidateConnection()
 {
   // Set airway mode to free
-  m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
+  m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
   // THEN invalidate
   SEAnesthesiaMachine::InvalidateConnection();
 }
@@ -245,17 +245,17 @@ void AnesthesiaMachine::SetConnection()
 {
   switch (m_data.GetAirwayMode())
   {
-  case CDM::enumBioGearsAirwayMode::Free:
+  case CDM::enumPulseAirwayMode::Free:
     //Basically a full leak to ground
     m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(m_dSwitchClosedResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
     break;
-  case CDM::enumBioGearsAirwayMode::AnesthesiaMachine:
+  case CDM::enumPulseAirwayMode::AnesthesiaMachine:
     if (m_Connection == CDM::enumAnesthesiaMachineConnection::Mask)
     {
       if (m_data.GetIntubation() == cdm::eSwitch::On)// Somebody intubated while we had the mask on
       {
         Info("Anesthesia Machine has been disconnected due to an intubation.");
-        m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
+        m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
         return;
       }
 
@@ -267,7 +267,7 @@ void AnesthesiaMachine::SetConnection()
       if (m_data.GetIntubation() == cdm::eSwitch::Off)// Somebody removed intubated while we were connected to it
       {
         Info("Anesthesia Machine has been disconnected removal of intubation.");
-        m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
+        m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
         return;
       }
 
@@ -321,7 +321,7 @@ void AnesthesiaMachine::PreProcess()
 /// Anesthesia machine process function
 ///
 /// \details
-/// The current BioGears implementation has no specific process functionality for the anesthesia machine.
+/// The current Pulse implementation has no specific process functionality for the anesthesia machine.
 /// Anesthesia machine processing is currently done in the Respiratory System with the combined circuit methodology.
 //--------------------------------------------------------------------------------------------------
 void AnesthesiaMachine::Process()
@@ -544,11 +544,11 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
 {
   //Note: You should be able to stack failures, if you're so inclined
   
-  if (m_data.GetAirwayMode() == CDM::enumBioGearsAirwayMode::Free)
+  if (m_data.GetAirwayMode() == CDM::enumPulseAirwayMode::Free)
   {
     return;
   }
-  else if (m_data.GetAirwayMode() == CDM::enumBioGearsAirwayMode::AnesthesiaMachine)
+  else if (m_data.GetAirwayMode() == CDM::enumPulseAirwayMode::AnesthesiaMachine)
   {
     if (m_Connection == CDM::enumAnesthesiaMachineConnection::Tube)
     {

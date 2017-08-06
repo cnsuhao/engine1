@@ -11,21 +11,21 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-class BioGears;
+class Pulse;
 
 #include "circuit/SECircuitManager.h"
 
 #include "bind/enumOnOff.hxx"
 
 /**
-* @brief Manages all circuits associated with all %BioGears systems/equipement
+* @brief Manages all circuits associated with all %Pulse systems/equipement
 */
-class BIOGEARS_API BioGearsCircuits : public SECircuitManager
+class PULSE_API PulseCircuits : public SECircuitManager
 {
 public:
 
-  BioGearsCircuits(BioGears& data);
-  virtual ~BioGearsCircuits();
+  PulseCircuits(Pulse& data);
+  virtual ~PulseCircuits();
   void Clear();
 
   virtual bool Load(const CDM::CircuitManagerData& in);
@@ -51,7 +51,7 @@ public:
 
 protected:
 
-  BioGears& m_data;
+  Pulse& m_data;
 
   // Note, I am not making a tissue or inhaler standalone circuit
   // this are super simple circuits and can't be tested by themselves 
