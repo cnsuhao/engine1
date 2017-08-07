@@ -15,7 +15,7 @@ import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.Engine.EngineConfigurationData;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
-import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveformInterpolator;
+import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveformList;
 import mil.tatrc.physiology.utilities.Log;
 
 public class SEEngineConfiguration

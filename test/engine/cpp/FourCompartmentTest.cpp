@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "CommonDataModel.h"
 
 #include "substance/SESubstanceManager.h"
@@ -51,7 +51,7 @@ double TotalHbMols(SELiquidCompartmentGraph& Graph, SESubstance& Hb, SESubstance
   return totalHb_g / Hb_g_Per_mol + totalHbO2_g / HbO2_g_Per_mol + totalHbCO2_g / HbCO2_g_Per_mol + totalHBO2CO2_g / HbO2CO2_g_Per_mol;
 }
 
-void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProductionConsumption, bool usingDiffusion, const std::string& rptDirectory)
+void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProductionConsumption, bool usingDiffusion, const std::string& rptDirectory)
 {
   DataTrack trk;
   std::string outputName;
@@ -83,7 +83,7 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
   std::ofstream file;
   SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, m_Logger);
   SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, m_Logger);
-  BioGears bg(m_Logger);
+  Pulse bg(m_Logger);
   Tissue& tsu = (Tissue&)bg.GetTissue();
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
@@ -431,27 +431,27 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
   file.close();
 }
 
-void BioGearsEngineTest::FourCompartmentTestSimple(const std::string& sOutputDirectory)
+void PulseEngineTest::FourCompartmentTestSimple(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(false, false, false, sOutputDirectory);
 }
-void BioGearsEngineTest::AcidBaseFourCompartmentTest(const std::string& sOutputDirectory)
+void PulseEngineTest::AcidBaseFourCompartmentTest(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(true, false, false, sOutputDirectory);
 }
-void BioGearsEngineTest::FiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory)
+void PulseEngineTest::FiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(false, false, true, sOutputDirectory);
 }
-void BioGearsEngineTest::AcidBaseFourCompartmentTestWithProductionConsumption(const std::string& sOutputDirectory)
+void PulseEngineTest::AcidBaseFourCompartmentTestWithProductionConsumption(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(true, true, false, sOutputDirectory);
 }
-void BioGearsEngineTest::AcidBaseFiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory)
+void PulseEngineTest::AcidBaseFiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(true, false, true, sOutputDirectory);
 }
-void BioGearsEngineTest::AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(const std::string& sOutputDirectory)
+void PulseEngineTest::AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(true, true, true, sOutputDirectory);
 }

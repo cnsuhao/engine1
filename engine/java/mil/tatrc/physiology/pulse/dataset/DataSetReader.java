@@ -11,7 +11,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
  **************************************************************************************/
 
-package mil.tatrc.physiology.biogears.dataset;
+package mil.tatrc.physiology.pulse.dataset;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData.eLead;
 import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
 import com.kitware.physiology.cdm.Properties.eCharge;
@@ -36,7 +37,7 @@ import mil.tatrc.physiology.datamodel.engine.SEDynamicStabilizationEngineConverg
 import mil.tatrc.physiology.datamodel.engine.SETimedStabilization;
 import mil.tatrc.physiology.datamodel.system.environment.SEEnvironmentalConditions;
 import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveform;
-import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveformInterpolator;
+import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.SEElectroCardioGramWaveformList;
 import mil.tatrc.physiology.datamodel.patient.*;
 import mil.tatrc.physiology.datamodel.patient.nutrition.SENutrition;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
@@ -194,20 +195,20 @@ public class DataSetReader
           throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for dynamic stabilization");
       }
       
-      Map<String,SEElectroCardioGramWaveformInterpolator> ecg = readECG(xlWBook.getSheet("ECG"));
+      Map<String,SEElectroCardioGramWaveformList> ecg = readECG(xlWBook.getSheet("ECG"));
       if(ecg!=null)
       {
         for(String name : ecg.keySet())
         {
-          SEElectroCardioGramWaveformInterpolator i = ecg.get(name);
+          SEElectroCardioGramWaveformList i = ecg.get(name);
           String fileName = "./ecg/"+name+".pba";
           Log.info("Writing : "+fileName);
           i.writeFile(fileName);
-          SEElectroCardioGramWaveformInterpolator check = new SEElectroCardioGramWaveformInterpolator();
+          SEElectroCardioGramWaveformList check = new SEElectroCardioGramWaveformList();
           check.readFile(fileName);
           Log.info("Checking : "+fileName);
 
-          if(!SEElectroCardioGramWaveformInterpolator.unload(i).toString().equals(SEElectroCardioGramWaveformInterpolator.unload(check).toString()))
+          if(!SEElectroCardioGramWaveformList.unload(i).toString().equals(SEElectroCardioGramWaveformList.unload(check).toString()))
             throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for ECG Interpolator");
         }
       }
@@ -1366,7 +1367,7 @@ public class DataSetReader
     return true;
   }
   
-  protected static Map<String,SEElectroCardioGramWaveformInterpolator> readECG(XSSFSheet xlSheet)
+  protected static Map<String,SEElectroCardioGramWaveformList> readECG(XSSFSheet xlSheet)
   {
     int split;
     // Fields are expected data we must have
@@ -1377,11 +1378,11 @@ public class DataSetReader
     fields.add("ElectricPotential");
     fields.add("Time");
     String property,value,unit,cellValue;
-    int lead=3;
+    eLead lead=eLead.NullLead;
     eHeartRhythm rhythm=eHeartRhythm.NormalSinus;
        
-    SEElectroCardioGramWaveformInterpolator ecg=null;
-    Map<String,SEElectroCardioGramWaveformInterpolator> map = new HashMap<String,SEElectroCardioGramWaveformInterpolator>();
+    SEElectroCardioGramWaveformList ecg=null;
+    Map<String,SEElectroCardioGramWaveformList> map = new HashMap<String,SEElectroCardioGramWaveformList>();
     try
     {
       int rows = xlSheet.getPhysicalNumberOfRows();     
@@ -1395,13 +1396,13 @@ public class DataSetReader
           continue;
         if(!fields.contains(property))
         {
-          ecg = new SEElectroCardioGramWaveformInterpolator();
+          ecg = new SEElectroCardioGramWaveformList();
           map.put(property, ecg);
           continue;
         }         
         else if(property.equals("Lead"))
         {          
-          lead = (int)(row.getCell(1).getNumericCellValue());
+          lead = eLead.valueOf((row.getCell(1).getStringCellValue()));
         }
         else if(property.equals("Rhythm"))
         {

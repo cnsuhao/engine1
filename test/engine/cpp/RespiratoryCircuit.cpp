@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #define _USE_MATH_DEFINES
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "substance/SESubstanceFraction.h"
 #include "compartment/SECompartmentManager.h"
@@ -29,7 +29,7 @@ specific language governing permissions and limitations under the License.
 #include "utils/DataTrack.h"
 #include <math.h>
 
-void BioGearsEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory)
+void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory)
 {
   TimingProfile tmr;
   tmr.Start("Test");
@@ -41,7 +41,7 @@ void BioGearsEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfigura
   std::ofstream fileGraph;
   std::ofstream fAerosolGraph;
 
-  BioGears bg(sTestDirectory + "\\RespiratoryCircuitAndTransportTest.log");
+  Pulse bg(sTestDirectory + "\\RespiratoryCircuitAndTransportTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -169,26 +169,26 @@ void BioGearsEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfigura
   bg.GetLogger()->Info(ss.str(), "RespiratoryCircuitAndTransportTest");
 }
 
-void BioGearsEngineTest::RespiratoryCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::RespiratoryCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   RespiratoryCircuitAndTransportTest(RespiratorySolo, sTestDirectory);
 }
 
-void BioGearsEngineTest::RespiratoryWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::RespiratoryWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   RespiratoryCircuitAndTransportTest(RespiratoryWithInhaler, sTestDirectory);
 }
 
-void BioGearsEngineTest::RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   RespiratoryCircuitAndTransportTest(RespiratoryWithMechanicalVentilator, sTestDirectory);
 }
 
-void BioGearsEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
+void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
 {
   TimingProfile tmr;
   tmr.Start("Test");
-  BioGears bg(sTestDirectory + "\\RespiratoryDriverTest.log");
+  Pulse bg(sTestDirectory + "\\RespiratoryDriverTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);

@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 
 #include "utils/TaskRunner/TaskRunner.h"
 #include "utils/TaskRunner/Task.h"
@@ -75,19 +75,19 @@ void RunScenarioTask::Run()
   remove(dataFile.c_str());
 
     ms_initializationMutex.lock();
-  std::unique_ptr<PhysiologyEngine> bioGears = CreateBioGearsEngine(logFile.c_str());
+  std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine(logFile.c_str());
     ms_initializationMutex.unlock();
         
-    if (!bioGears)
+    if (!Pulse)
   {
-    std::cerr << "Unable to create BioGearsEngine" << std::endl;
+    std::cerr << "Unable to create PulseEngine" << std::endl;
     return;
   }
-  SEScenarioExec exec(*bioGears);
+  SEScenarioExec exec(*Pulse);
   exec.Execute(m_scenarioFile.c_str(), dataFile.c_str(), NULL);
 }
 
-void BioGearsEngineTest::MultiEngineTest(const std::string& sTestDirectory)
+void PulseEngineTest::MultiEngineTest(const std::string& sTestDirectory)
 {
     double singleThreadTime = 0.0;
     double multiThreadTime = 0.0;

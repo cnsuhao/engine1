@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
@@ -33,7 +33,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarLength.h"
 
-void BioGearsEngineTest::AerosolTest(const std::string& sOutputDirectory)
+void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
 {
   m_Logger->ResetLogFile(sOutputDirectory + "\\AerosolTest.log");
 
@@ -202,7 +202,7 @@ void BioGearsEngineTest::AerosolTest(const std::string& sOutputDirectory)
   testReport.WriteFile(sOutputDirectory + "\\AerosolTestReport.xml");
 }
 
-void BioGearsEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestSuite& suite, SESubstance& substance, 
+void PulseEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestSuite& suite, SESubstance& substance, 
                                                                             double expectedMouthCoeff, double expectedCarinaCoeff, double expectedDeadSpaceCoeff, double expectedAlveoliCoeff)
 {  
   double PercentTolerance = 0.1;
@@ -212,7 +212,7 @@ void BioGearsEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETe
   SETestCase& tc1 = suite.CreateTestCase();
   tc1.SetName(substance.GetName()+"SIDECo");
   
-  BioGears bg(m_Logger);
+  Pulse bg(m_Logger);
   const SizeIndependentDepositionEfficencyCoefficient& SIDECoeff =  bg.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
   m_ss << "Mouth: " << SIDECoeff.GetMouth();
   Info(m_ss);
@@ -245,7 +245,7 @@ void BioGearsEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETe
   tc1.GetDuration().SetValue(pTimer.GetElapsedTime_s("Test"), TimeUnit::s); 
 }
 
-void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& substance,
+void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& substance,
   double expectedMouthDepFrac, double expectedCarinaDepFrac, double expectedDeadSpaceDepFrac, double expectedAlveoliDepFrac)
 {
   TimingProfile pTimer;
@@ -254,7 +254,7 @@ void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance&
   SETestCase& tc = suite.CreateTestCase();
   tc.SetName(substance.GetName()+"DepositionFraction");
 
-  BioGears bg(m_Logger);
+  Pulse bg(m_Logger);
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -443,7 +443,7 @@ void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance&
     trk.Track("RightAlveoliParticulateDeposited_ug", time, rightAlveoliParticulate == nullptr ? 0 : rightAlveoliParticulate->GetMassDeposited(MassUnit::ug));
 
     if (i == 0)
-      trk.CreateFile(std::string(".\\test_results\\unit_tests\\biogears\\"+substance.GetName()+"DepositionFraction.txt").c_str(), file);
+      trk.CreateFile(std::string(".\\test_results\\unit_tests\\Pulse\\"+substance.GetName()+"DepositionFraction.txt").c_str(), file);
     trk.StreamTrackToFile(file);
     
     time += deltaT_s;

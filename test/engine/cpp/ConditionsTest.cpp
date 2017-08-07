@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "CommonDataModel.h"
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalar0To1.h"
 
-void BioGearsEngineTest::ConditionCombinations(const std::string& rptDirectory)
+void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
 {
   Logger log("ConditionsPermutationsReport.log");
   std::vector<SECondition*> testConditions;
@@ -60,7 +60,7 @@ void BioGearsEngineTest::ConditionCombinations(const std::string& rptDirectory)
          ss << "NoConditions";
       SETestCase& testCase = testSuite.CreateTestCase();
       log.Info(ss);
-      std::unique_ptr<PhysiologyEngine> physEng = CreateBioGearsEngine(&log);
+      std::unique_ptr<PhysiologyEngine> physEng = CreatePulseEngine(&log);
       if (!physEng->InitializeEngine("StandardMale.xml",&sceConditions))
       {
         testCase.AddFailure("Unable to stabilize condition permutation");

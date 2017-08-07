@@ -13,8 +13,6 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "Controller/Scenario/PulseScenarioExec.h"
 #include "Controller/Scenario/PulseScenario.h"
-#include "bind/ScenarioData.hxx"
-#include "Serializer.h"
 
 PulseScenarioExec::PulseScenarioExec(PhysiologyEngine& engine) : SEScenarioExec(engine)
 {

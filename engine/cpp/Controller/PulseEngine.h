@@ -26,7 +26,7 @@ specific language governing permissions and limitations under the License.
 
 //--------------------------------------------------------------------------------------------------
 /// @brief  
-/// This is the implementation of the PhysiologyEngine interface for the biogears engines.
+/// This is the implementation of the PhysiologyEngine interface for the this engines.
 /// @details
 /// It contains the necessary execution calls, patient customization calls, insult and intervention 
 /// calls as well as assessment calls for obtaining the results. During engine execution a log files
@@ -41,16 +41,16 @@ public:
   virtual ~PulseEngine();
 
   virtual bool LoadState(const std::string& file, const SEScalarTime* simTime = nullptr);
-  virtual bool LoadState(const CDM::PhysiologyEngineStateData& state, const SEScalarTime* simTime = nullptr);
-  virtual std::unique_ptr<CDM::PhysiologyEngineStateData> SaveState(const std::string& file = "");
+  virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr);
+  virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& file = "");
 
   virtual Logger* GetLogger();
-  virtual PhysiologyEngineTrack* GetEngineTrack();
+  virtual SEEngineTracker* GetEngineTrack();
 
-  virtual bool InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions = nullptr, const PhysiologyEngineConfiguration* config = nullptr);
-  virtual bool InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions = nullptr, const PhysiologyEngineConfiguration* config = nullptr);
+  virtual bool InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);
+  virtual bool InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);
 
-  virtual const PhysiologyEngineConfiguration* GetConfiguration();
+  virtual const SEEngineConfiguration* GetConfiguration();
 
   virtual double GetTimeStep(const TimeUnit& unit);
   virtual double GetSimulationTime(const TimeUnit& unit);
@@ -85,9 +85,9 @@ public:
 protected:
 
   virtual bool IsReady();
-  virtual bool InitializeEngine(const std::vector<const SECondition*>* conditions = nullptr, const PhysiologyEngineConfiguration* config = nullptr);
+  virtual bool InitializeEngine(const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);
 
   SEEventHandler*                                 m_EventHandler;
-  PhysiologyEngineTrack                           m_EngineTrack;
+  SEEngineTracker                                 m_EngineTrack;
   std::stringstream                               m_ss;
 };

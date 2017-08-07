@@ -16,7 +16,6 @@ specific language governing permissions and limitations under the License.
 #include "Environment.h"
 #include "Cardiovascular.h"
 #include "BloodChemistry.h"
-#include "bind/RunningAverageData.hxx"
 
 #include "patient/SEPatient.h"
 #include "patient/SEMeal.h"
@@ -114,36 +113,38 @@ void Energy::Initialize()
   m_EnduranceEnergyStore_J = 400000.0;
 }
 
-bool Energy::Load(const CDM::PulseEnergySystemData& in)
+void Energy::Load(const pulse::EnergySystemData& src, Energy& dst)
 {
-  if (!SEEnergySystem::Load(in))
-    return false;
-  m_UsableEnergyStore_J = in.UsableEnergyStore_J();
-  m_PeakPowerEnergyStore_J = in.PeakPowerEnergyStore_J();
-  m_MediumPowerEnergyStore_J = in.MediumPowerEnergyStore_J();
-  m_EnduranceEnergyStore_J = in.EnduranceEnergyStore_J();
-
-  m_BloodpH.Load(in.BloodpH());
-  m_BicarbonateMolarity_mmol_Per_L.Load(in.BicarbonateMolarity_mmol_Per_L());
-  PulseSystem::LoadState();
-  return true;
+  Energy::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseEnergySystemData* Energy::Unload() const
+void Energy::Serialize(const pulse::EnergySystemData& src, Energy& dst)
 {
-  CDM::PulseEnergySystemData* data = new CDM::PulseEnergySystemData();
-  Unload(*data);
-  return data;
-}
-void Energy::Unload(CDM::PulseEnergySystemData& data) const
-{
-  SEEnergySystem::Unload(data);
-  data.UsableEnergyStore_J(m_UsableEnergyStore_J);
-  data.PeakPowerEnergyStore_J(m_PeakPowerEnergyStore_J);
-  data.MediumPowerEnergyStore_J(m_MediumPowerEnergyStore_J);
-  data.EnduranceEnergyStore_J(m_EnduranceEnergyStore_J);
+  dst.m_UsableEnergyStore_J = src.usableenergystore_j();
+  dst.m_PeakPowerEnergyStore_J = src.peakpowerenergystore_j();
+  dst.m_MediumPowerEnergyStore_J = src.mediumpowerenergystore_j();
+  dst.m_EnduranceEnergyStore_J = src.enduranceenergystore_j();
 
-  data.BloodpH(std::unique_ptr<CDM::RunningAverageData>(m_BloodpH.Unload()));
-  data.BicarbonateMolarity_mmol_Per_L(std::unique_ptr<CDM::RunningAverageData>(m_BicarbonateMolarity_mmol_Per_L.Unload()));
+  RunningAverage::Load(src.bloodph(),dst.m_BloodpH);
+  RunningAverage::Load(src.bicarbonatemolarity_mmol_per_l(), dst.m_BicarbonateMolarity_mmol_Per_L);
+}
+
+pulse::EnergySystemData* Energy::Unload(const Energy& src)
+{
+
+  pulse::EnergySystemData* dst = new pulse::EnergySystemData();
+  Energy::Serialize(src, *dst);
+  return dst;
+}
+void Energy::Serialize(const Energy& src, pulse::EnergySystemData& dst)
+{
+  dst.set_usableenergystore_j(src.m_UsableEnergyStore_J);
+  dst.set_peakpowerenergystore_j(src.m_PeakPowerEnergyStore_J);
+  dst.set_mediumpowerenergystore_j(src.m_MediumPowerEnergyStore_J);
+  dst.set_enduranceenergystore_j(src.m_EnduranceEnergyStore_J);
+
+  dst.set_allocated_bloodph(RunningAverage::Unload(src.m_BloodpH));
+  dst.set_allocated_bicarbonatemolarity_mmol_per_l(RunningAverage::Unload(src.m_BicarbonateMolarity_mmol_Per_L));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -309,7 +310,7 @@ void Energy::Exercise()
   // Any exercise action will reduce energy stores and induce some fatigue, setting the fatigue event.
   // While the fatigue event is active, the exercise method will execute even if there is no exercise action.
   // This allows the energy stores to refill post-exercise.
-  if (!m_PatientActions->HasExercise() && !m_Patient->IsEventActive(CDM::enumPatientEvent::Fatigue))
+  if (!m_PatientActions->HasExercise() && !m_Patient->IsEventActive(cdm::PatientData_eEvent_Fatigue))
     return;
 
   double exerciseIntensity = 0.0;
@@ -447,10 +448,10 @@ void Energy::Exercise()
   double fatigue = (normalizedEnduranceEnergyDeficit + normalizedMediumEnergyDeficit + normalizedPeakEnergyDeficit + normalizedUsableEnergyDeficit) / 4.0;
   /// \event Patient: Fatigue - Energy stores are sub-maximal.
   if (fatigue > 0.0){
-    m_Patient->SetEvent(CDM::enumPatientEvent::Fatigue, true, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::PatientData_eEvent_Fatigue, true, m_data.GetSimulationTime());
   }
   else {
-    m_Patient->SetEvent(CDM::enumPatientEvent::Fatigue, false, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::PatientData_eEvent_Fatigue, false, m_data.GetSimulationTime());
   }
   GetFatigueLevel().SetValue(fatigue);
 
@@ -531,30 +532,30 @@ void Energy::CalculateVitalSigns()
   if (coreTemperature_degC < 35.0) /// \cite mallet2001hypothermia
   {
     /// \event Patient: Core temperature has fallen below 35 degrees Celsius. Patient is hypothermic.
-    m_Patient->SetEvent(CDM::enumPatientEvent::Hypothermia, true, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::PatientData_eEvent_Hypothermia, true, m_data.GetSimulationTime());
 
     /// \irreversible State: Core temperature has fallen below 20 degrees Celsius.
     if (coreTemperature_degC < coreTempIrreversible_degC)
     {
       ss << "Core temperature is " << coreTemperature_degC << ". This is below 20 degrees C, patient is experiencing extreme hypothermia and is in an irreversible state.";
       Warning(ss);
-      m_Patient->SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+      m_Patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
     }
 
   }
-  else if (m_Patient->IsEventActive(CDM::enumPatientEvent::Hypothermia) && coreTemperature_degC>35.2)
+  else if (m_Patient->IsEventActive(cdm::PatientData_eEvent_Hypothermia) && coreTemperature_degC>35.2)
   {
-    m_Patient->SetEvent(CDM::enumPatientEvent::Hypothermia, false, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::PatientData_eEvent_Hypothermia, false, m_data.GetSimulationTime());
   }
   //Hyperthermia check
   if (coreTemperature_degC > 38.8) /// \cite mallet2001hypothermia
   {
     /// \event Patient: Core temperature has exceeded 38.3 degrees Celsius. Patient is hyperthermic.
-    m_Patient->SetEvent(CDM::enumPatientEvent::Hyperthermia, true, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::PatientData_eEvent_Hyperthermia, true, m_data.GetSimulationTime());
   }
-  else if (m_Patient->IsEventActive(CDM::enumPatientEvent::Hyperthermia) && coreTemperature_degC < 38.0)
+  else if (m_Patient->IsEventActive(cdm::PatientData_eEvent_Hyperthermia) && coreTemperature_degC < 38.0)
   {
-    m_Patient->SetEvent(CDM::enumPatientEvent::Hyperthermia, false, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::PatientData_eEvent_Hyperthermia, false, m_data.GetSimulationTime());
   }
 
   /// \todo Move to blood chemistry
@@ -567,7 +568,7 @@ void Energy::CalculateVitalSigns()
   m_BloodpH.Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
   m_BicarbonateMolarity_mmol_Per_L.Sample(m_AortaHCO3->GetMolarity(AmountPerVolumeUnit::mmol_Per_L));
   //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 
-  if (m_Patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
   {
     double bloodPH = m_BloodpH.Value();
     double bloodBicarbonate_mmol_Per_L = m_BicarbonateMolarity_mmol_Per_L.Value();
@@ -576,34 +577,34 @@ void Energy::CalculateVitalSigns()
     {// Don't throw events if we are initializing
       if (bloodPH < 7.35 && bloodBicarbonate_mmol_Per_L < 22.0)
         /// \event The patient is in a state of metabolic acidosis
-        m_Patient->SetEvent(CDM::enumPatientEvent::MetabolicAcidosis, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MetabolicAcidosis, true, m_data.GetSimulationTime());
 
       /// \irreversible State: arterial blood pH has dropped below 6.5.
       if (bloodPH < lowPh)
       {
         ss << " Arterial blood PH is " << bloodPH << ". This is below 6.5, patient is experiencing extreme metabolic acidosis and is in an irreversible state.";
         Warning(ss);
-        m_Patient->SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
       }
       else if (bloodPH > 7.38 && bloodBicarbonate_mmol_Per_L > 23.0)
         /// \event The patient has exited the state state of metabolic acidosis
-        m_Patient->SetEvent(CDM::enumPatientEvent::MetabolicAcidosis, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MetabolicAcidosis, false, m_data.GetSimulationTime());
 
       if (bloodPH > 7.45 && bloodBicarbonate_mmol_Per_L > 26.0)
         /// \event The patient is in a state of metabolic alkalosis
-        m_Patient->SetEvent(CDM::enumPatientEvent::MetabolicAlkalosis, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MetabolicAlkalosis, true, m_data.GetSimulationTime());
 
       /// \irreversible State: arterial blood pH has increased above 8.5.
       if (bloodPH > highPh)
       {
         ss << " Arterial blood PH is " << bloodPH << ". This is above 8.5, patient is experiencing extreme metabolic Alkalosis and is in an irreversible state.";
         Warning(ss);
-        m_Patient->SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
       }
 
       else if (bloodPH < 7.42 && bloodBicarbonate_mmol_Per_L < 25.0)
         /// \event The patient has exited the state of metabolic alkalosis
-        m_Patient->SetEvent(CDM::enumPatientEvent::MetabolicAlkalosis, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MetabolicAlkalosis, false, m_data.GetSimulationTime());
     }
     // Reset the running averages. Why do we need running averages here? Does the aorta pH fluctuate that much? 
     m_BloodpH.Reset();
@@ -746,7 +747,7 @@ void Energy::CalculateBasalMetabolicRate()
   //The basal metabolic rate is determined from the Harris-Benedict formula, with differences dependent on sex, age, height and mass
   /// \cite roza1984metabolic
   double patientBMR_kcal_Per_day = 0.0;
-  if (patient.GetSex() == CDM::enumSex::Male)
+  if (patient.GetSex() == cdm::PatientData_eSex_Male)
     patientBMR_kcal_Per_day = 88.632 + 13.397*PatientMass_kg + 4.799*PatientHeight_cm - 5.677*PatientAge_yr;
   else
     patientBMR_kcal_Per_day = 447.593 + 9.247*PatientMass_kg + 3.098*PatientHeight_cm - 4.330*PatientAge_yr;

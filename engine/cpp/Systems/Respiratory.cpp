@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "Respiratory.h"
-#include "bind/RunningAverageData.hxx"
 
 #include "circuit/fluid/SEFluidCircuit.h"
 // Properties
@@ -212,105 +211,104 @@ void Respiratory::Initialize()
   TuneCircuit();
 }
 
-bool Respiratory::Load(const CDM::PulseRespiratorySystemData& in)
+void Respiratory::Load(const pulse::RespiratorySystemData& src, Respiratory& dst)
 {
-  if (!SERespiratorySystem::Load(in))
-    return false;
-
-  m_InitialExpiratoryReserveVolume_L = in.InitialExpiratoryReserveVolume_L();
-  m_InitialFunctionalResidualCapacity_L = in.InitialFunctionalResidualCapacity_L();
-  m_InitialInspiratoryCapacity_L = in.InitialInspiratoryCapacity_L();
-  m_InitialResidualVolume_L = in.InitialResidualVolume_L();
-
-  m_bNotBreathing = in.NotBreathing();
-  m_TopBreathTotalVolume_L = in.TopBreathTotalVolume_L();
-  m_TopBreathAlveoliVolume_L = in.TopBreathAlveoliVolume_L();
-  m_TopBreathDeadSpaceVolume_L = in.TopBreathDeadSpaceVolume_L();
-  m_TopBreathPleuralPressure_cmH2O = in.TopBreathPleuralPressure_cmH2O();
-  m_LastCardiacCycleBloodPH = in.LastCardiacCycleBloodPH();
-  m_PreviousTotalLungVolume_L = in.PreviousTotalLungVolume_L();
-  m_BloodPHRunningAverage.Load(in.BloodPHRunningAverage());
-
-  m_BreathingCycle = in.BreathingCycle();
-  m_ArterialO2PartialPressure_mmHg = in.ArterialO2PartialPressure_mmHg();
-  m_ArterialCO2PartialPressure_mmHg = in.ArterialCO2PartialPressure_mmHg();
-  m_BreathingCycleTime_s = in.BreathingCycleTime_s();
-  m_BreathTimeExhale_min = in.BreathTimeExhale_min();
-  m_DefaultDrivePressure_cmH2O = in.DefaultDrivePressure_cmH2O();
-  m_DriverPressure_cmH2O = in.DriverPressure_cmH2O();
-  m_DriverPressureMin_cmH2O = in.DriverPressureMin_cmH2O();
-  m_ElapsedBreathingCycleTime_min = in.ElapsedBreathingCycleTime_min();
-  m_IEscaleFactor = in.IEscaleFactor();
-  m_InstantaneousFunctionalResidualCapacity_L = in.InstantaneousFunctionalResidualCapacity_L();
-  m_MaxDriverPressure_cmH2O = in.MaxDriverPressure_cmH2O();
-  m_PeakRespiratoryDrivePressure_cmH2O = in.PeakRespiratoryDrivePressure_cmH2O();
-  m_PreviousTargetAlveolarVentilation_L_Per_min = in.PreviousTargetAlveolarVentilation_L_Per_min();
-  m_VentilationFrequency_Per_min = in.VentilationFrequency_Per_min();
-  m_VentilationToTidalVolumeSlope = in.VentilationToTidalVolumeSlope();
-  m_ArterialO2RunningAverage_mmHg.Load(in.ArterialO2RunningAverage_mmHg());
-  m_ArterialCO2RunningAverage_mmHg.Load(in.ArterialCO2RunningAverage_mmHg());
-
-  m_ConsciousBreathing = in.ConsciousBreathing();
-  m_ConsciousRespirationPeriod_s = in.ConsciousRespirationPeriod_s();
-  m_ConsciousRespirationRemainingPeriod_s = in.ConsciousRespirationRemainingPeriod_s();
-  m_ExpiratoryReserveVolumeFraction = in.ExpiratoryReserveVolumeFraction();
-  m_InspiratoryCapacityFraction = in.InspiratoryCapacityFraction();
-  m_ConsciousStartPressure_cmH2O = in.ConsciousStartPressure_cmH2O();
-  m_ConsciousEndPressure_cmH2O = in.ConsciousEndPressure_cmH2O();
-
-  PulseSystem::LoadState();
-  return true;
+  Respiratory::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseRespiratorySystemData* Respiratory::Unload() const
+void Respiratory::Serialize(const pulse::RespiratorySystemData& src, Respiratory& dst)
 {
-  CDM::PulseRespiratorySystemData* data = new CDM::PulseRespiratorySystemData();
-  Unload(*data);
-  return data;
+  dst.m_InitialExpiratoryReserveVolume_L = src.initialexpiratoryreservevolume_l();
+  dst.m_InitialFunctionalResidualCapacity_L = src.initialfunctionalresidualcapacity_l();
+  dst.m_InitialInspiratoryCapacity_L = src.initialinspiratorycapacity_l();
+  dst.m_InitialResidualVolume_L = src.initialresidualvolume_l();
+
+  dst.m_bNotBreathing = src.notbreathing();
+  dst.m_TopBreathTotalVolume_L = src.topbreathtotalvolume_l();
+  dst.m_TopBreathAlveoliVolume_L = src.topbreathalveolivolume_l();
+  dst.m_TopBreathDeadSpaceVolume_L = src.topbreathdeadspacevolume_l();
+  dst.m_TopBreathPleuralPressure_cmH2O = src.topbreathpleuralpressure_cmh2o();
+  dst.m_LastCardiacCycleBloodPH = src.lastcardiaccyclebloodph();
+  dst.m_PreviousTotalLungVolume_L = src.previoustotallungvolume_l();
+  RunningAverage::Load(src.bloodphrunningaverage(),dst.m_BloodPHRunningAverage);
+
+  dst.m_BreathingCycle = src.breathingcycle();
+  dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
+  dst.m_ArterialCO2PartialPressure_mmHg = src.arterialco2partialpressure_mmhg();
+  dst.m_BreathingCycleTime_s = src.breathingcycletime_s();
+  dst.m_BreathTimeExhale_min = src.breathtimeexhale_min();
+  dst.m_DefaultDrivePressure_cmH2O = src.defaultdrivepressure_cmh2o();
+  dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
+  dst.m_DriverPressureMin_cmH2O = src.driverpressuremin_cmh2o();
+  dst.m_ElapsedBreathingCycleTime_min = src.elapsedbreathingcycletime_min();
+  dst.m_IEscaleFactor = src.iescalefactor();
+  dst.m_InstantaneousFunctionalResidualCapacity_L = src.instantaneousfunctionalresidualcapacity_l();
+  dst.m_MaxDriverPressure_cmH2O = src.maxdriverpressure_cmh2o();
+  dst.m_PeakRespiratoryDrivePressure_cmH2O = src.peakrespiratorydrivepressure_cmh2o();
+  dst.m_PreviousTargetAlveolarVentilation_L_Per_min = src.previoustargetalveolarventilation_l_per_min();
+  dst.m_VentilationFrequency_Per_min = src.ventilationfrequency_per_min();
+  dst.m_VentilationToTidalVolumeSlope = src.ventilationtotidalvolumeslope();
+   RunningAverage::Load(src.arterialo2runningaverage_mmhg(), dst.m_ArterialO2RunningAverage_mmHg);
+   RunningAverage::Load(src.arterialco2runningaverage_mmhg(), dst.m_ArterialCO2RunningAverage_mmHg);
+
+  dst.m_ConsciousBreathing = src.consciousbreathing();
+  dst.m_ConsciousRespirationPeriod_s = src.consciousrespirationperiod_s();
+  dst.m_ConsciousRespirationRemainingPeriod_s = src.consciousrespirationremainingperiod_s();
+  dst.m_ExpiratoryReserveVolumeFraction = src.expiratoryreservevolumefraction();
+  dst.m_InspiratoryCapacityFraction = src.inspiratorycapacityfraction();
+  dst.m_ConsciousStartPressure_cmH2O = src.consciousstartpressure_cmh2o();
+  dst.m_ConsciousEndPressure_cmH2O = src.consciousendpressure_cmh2o();
 }
-void Respiratory::Unload(CDM::PulseRespiratorySystemData& data) const
+
+pulse::RespiratorySystemData* Respiratory::Unload(const Respiratory& src)
 {
-  SERespiratorySystem::Unload(data);
 
-  data.InitialExpiratoryReserveVolume_L(m_InitialExpiratoryReserveVolume_L);
-  data.InitialFunctionalResidualCapacity_L(m_InitialFunctionalResidualCapacity_L);
-  data.InitialInspiratoryCapacity_L(m_InitialInspiratoryCapacity_L);
-  data.InitialResidualVolume_L(m_InitialResidualVolume_L);
+  pulse::RespiratorySystemData* dst = new pulse::RespiratorySystemData();
+  Respiratory::Serialize(src, *dst);
+  return dst;
+}
+void Respiratory::Serialize(const Respiratory& src, pulse::RespiratorySystemData& dst)
+{
+  dst.set_initialexpiratoryreservevolume_l(src.m_InitialExpiratoryReserveVolume_L);
+  dst.set_initialfunctionalresidualcapacity_l(src.m_InitialFunctionalResidualCapacity_L);
+  dst.set_initialinspiratorycapacity_l(src.m_InitialInspiratoryCapacity_L);
+  dst.set_initialresidualvolume_l(src.m_InitialResidualVolume_L);
 
-  data.NotBreathing(m_bNotBreathing);
-  data.TopBreathTotalVolume_L(m_TopBreathTotalVolume_L);
-  data.TopBreathAlveoliVolume_L(m_TopBreathAlveoliVolume_L);
-  data.TopBreathDeadSpaceVolume_L(m_TopBreathDeadSpaceVolume_L);
-  data.TopBreathPleuralPressure_cmH2O(m_TopBreathPleuralPressure_cmH2O);
-  data.LastCardiacCycleBloodPH(m_LastCardiacCycleBloodPH);
-  data.PreviousTotalLungVolume_L(m_PreviousTotalLungVolume_L);
-  data.BloodPHRunningAverage(std::unique_ptr<CDM::RunningAverageData>(m_BloodPHRunningAverage.Unload()));
+  dst.set_notbreathing(src.m_bNotBreathing);
+  dst.set_topbreathtotalvolume_l(src.m_TopBreathTotalVolume_L);
+  dst.set_topbreathalveolivolume_l(src.m_TopBreathAlveoliVolume_L);
+  dst.set_topbreathdeadspacevolume_l(src.m_TopBreathDeadSpaceVolume_L);
+  dst.set_topbreathpleuralpressure_cmh2o(src.m_TopBreathPleuralPressure_cmH2O);
+  dst.set_lastcardiaccyclebloodph(src.m_LastCardiacCycleBloodPH);
+  dst.set_previoustotallungvolume_l(src.m_PreviousTotalLungVolume_L);
+  dst.set_allocated_bloodphrunningaverage(RunningAverage::Unload(src.m_BloodPHRunningAverage));
 
-  data.BreathingCycle(m_BreathingCycle);
-  data.ArterialO2PartialPressure_mmHg(m_ArterialO2PartialPressure_mmHg);
-  data.ArterialCO2PartialPressure_mmHg(m_ArterialCO2PartialPressure_mmHg);
-  data.BreathingCycleTime_s(m_BreathingCycleTime_s);
-  data.BreathTimeExhale_min(m_BreathTimeExhale_min);
-  data.DefaultDrivePressure_cmH2O(m_DefaultDrivePressure_cmH2O);
-  data.DriverPressure_cmH2O(m_DriverPressure_cmH2O);
-  data.DriverPressureMin_cmH2O(m_DriverPressureMin_cmH2O);
-  data.ElapsedBreathingCycleTime_min(m_ElapsedBreathingCycleTime_min);
-  data.IEscaleFactor(m_IEscaleFactor);
-  data.InstantaneousFunctionalResidualCapacity_L(m_InstantaneousFunctionalResidualCapacity_L);
-  data.MaxDriverPressure_cmH2O(m_MaxDriverPressure_cmH2O);
-  data.PeakRespiratoryDrivePressure_cmH2O(m_PeakRespiratoryDrivePressure_cmH2O);
-  data.PreviousTargetAlveolarVentilation_L_Per_min(m_PreviousTargetAlveolarVentilation_L_Per_min);
-  data.VentilationFrequency_Per_min(m_VentilationFrequency_Per_min);
-  data.VentilationToTidalVolumeSlope(m_VentilationToTidalVolumeSlope);
-  data.ArterialO2RunningAverage_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_ArterialO2RunningAverage_mmHg.Unload()));
-  data.ArterialCO2RunningAverage_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_ArterialCO2RunningAverage_mmHg.Unload()));
+  dst.set_breathingcycle(src.m_BreathingCycle);
+  dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);
+  dst.set_arterialco2partialpressure_mmhg(src.m_ArterialCO2PartialPressure_mmHg);
+  dst.set_breathingcycletime_s(src.m_BreathingCycleTime_s);
+  dst.set_breathtimeexhale_min(src.m_BreathTimeExhale_min);
+  dst.set_defaultdrivepressure_cmh2o(src.m_DefaultDrivePressure_cmH2O);
+  dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
+  dst.set_driverpressuremin_cmh2o(src.m_DriverPressureMin_cmH2O);
+  dst.set_elapsedbreathingcycletime_min(src.m_ElapsedBreathingCycleTime_min);
+  dst.set_iescalefactor(src.m_IEscaleFactor);
+  dst.set_instantaneousfunctionalresidualcapacity_l(src.m_InstantaneousFunctionalResidualCapacity_L);
+  dst.set_maxdriverpressure_cmh2o(src.m_MaxDriverPressure_cmH2O);
+  dst.set_peakrespiratorydrivepressure_cmh2o(src.m_PeakRespiratoryDrivePressure_cmH2O);
+  dst.set_previoustargetalveolarventilation_l_per_min(src.m_PreviousTargetAlveolarVentilation_L_Per_min);
+  dst.set_ventilationfrequency_per_min(src.m_VentilationFrequency_Per_min);
+  dst.set_ventilationtotidalvolumeslope(src.m_VentilationToTidalVolumeSlope);
+  dst.set_allocated_arterialo2runningaverage_mmhg(RunningAverage::Unload(src.m_ArterialO2RunningAverage_mmHg));
+  dst.set_allocated_arterialco2runningaverage_mmhg(RunningAverage::Unload(src.m_ArterialCO2RunningAverage_mmHg));
 
-  data.ConsciousBreathing(m_ConsciousBreathing);
-  data.ConsciousRespirationPeriod_s(m_ConsciousRespirationPeriod_s);
-  data.ConsciousRespirationRemainingPeriod_s(m_ConsciousRespirationRemainingPeriod_s);
-  data.ExpiratoryReserveVolumeFraction(m_ExpiratoryReserveVolumeFraction);
-  data.InspiratoryCapacityFraction(m_InspiratoryCapacityFraction);
-  data.ConsciousStartPressure_cmH2O(m_ConsciousStartPressure_cmH2O);
-  data.ConsciousEndPressure_cmH2O(m_ConsciousEndPressure_cmH2O);
+  dst.set_consciousbreathing(src.m_ConsciousBreathing);
+  dst.set_consciousrespirationperiod_s(src.m_ConsciousRespirationPeriod_s);
+  dst.set_consciousrespirationremainingperiod_s(src.m_ConsciousRespirationRemainingPeriod_s);
+  dst.set_expiratoryreservevolumefraction(src.m_ExpiratoryReserveVolumeFraction);
+  dst.set_inspiratorycapacityfraction(src.m_InspiratoryCapacityFraction);
+  dst.set_consciousstartpressure_cmh2o(src.m_ConsciousStartPressure_cmH2O);
+  dst.set_consciousendpressure_cmh2o(src.m_ConsciousEndPressure_cmH2O);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -706,7 +704,7 @@ void Respiratory::ProcessAerosolSubstances()
     
     // Apply the BronchileModifier dilation effect
     // This is all just tuned to Albuterol - it'll work for other substances, and can be tuned using the other parameters (especially BronchioleModifier)
-    if (subQ->GetSubstance().GetState() == CDM::enumSubstanceState::Liquid)
+    if (subQ->GetSubstance().GetState() == cdm::SubstanceData_eState_Liquid)
     {
       // Sum the Bronchiole Effects
       // Must be positive
@@ -767,7 +765,7 @@ void Respiratory::MechanicalVentilation()
   {
     SEMechanicalVentilation* mv = m_data.GetActions().GetPatientActions().GetMechanicalVentilation();
     // You only get here if action is On
-    m_data.SetAirwayMode(CDM::enumPulseAirwayMode::MechanicalVentilator);
+    m_data.SetAirwayMode(pulse::eAirwayMode::MechanicalVentilator);
     
   //Set the substance volume fractions ********************************************
   std::vector<SESubstanceFraction*> gasFractions = mv->GetGasFractions();
@@ -833,10 +831,10 @@ void Respiratory::MechanicalVentilation()
     m_GroundToConnection->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
   }  
   }
-  else if (m_data.GetAirwayMode() == CDM::enumPulseAirwayMode::MechanicalVentilator)
+  else if (m_data.GetAirwayMode() == pulse::eAirwayMode::MechanicalVentilator)
   {
     // Was just turned off
-    m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
+    m_data.SetAirwayMode(pulse::eAirwayMode::Free);
   }
 }
 
@@ -859,7 +857,7 @@ void Respiratory::RespiratoryDriver()
   m_ArterialO2RunningAverage_mmHg.Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
   m_ArterialCO2RunningAverage_mmHg.Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
   //Reset at start of cardiac cycle 
-  if (m_Patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
   {
     m_ArterialO2PartialPressure_mmHg = m_ArterialO2RunningAverage_mmHg.Value();
     m_ArterialCO2PartialPressure_mmHg = m_ArterialCO2RunningAverage_mmHg.Value();
@@ -921,7 +919,7 @@ void Respiratory::RespiratoryDriver()
       // Make a cardicArrestEffect that is 1.0 unless cardiac arrest is true
       double cardiacArrestEffect = 1.0;
       // If the cv system parameter is true, then make the cardicArrestEffect = 0
-      if (m_Patient->IsEventActive(CDM::enumPatientEvent::CardiacArrest))
+      if (m_Patient->IsEventActive(cdm::PatientData_eEvent_CardiacArrest))
       {
         cardiacArrestEffect = 0.0;
       }
@@ -1000,12 +998,12 @@ void Respiratory::RespiratoryDriver()
       if (dTargetPulmonaryVentilation_L_Per_min > dMaximumPulmonaryVentilationRate)
       {
         dTargetPulmonaryVentilation_L_Per_min = dMaximumPulmonaryVentilationRate;
-        m_Patient->SetEvent(CDM::enumPatientEvent::MaximumPulmonaryVentilationRate, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MaximumPulmonaryVentilationRate, true, m_data.GetSimulationTime());
       }
 
-      if (dTargetPulmonaryVentilation_L_Per_min < dMaximumPulmonaryVentilationRate && m_Patient->IsEventActive(CDM::enumPatientEvent::MaximumPulmonaryVentilationRate))
+      if (dTargetPulmonaryVentilation_L_Per_min < dMaximumPulmonaryVentilationRate && m_Patient->IsEventActive(cdm::PatientData_eEvent_MaximumPulmonaryVentilationRate))
       {
-        m_Patient->SetEvent(CDM::enumPatientEvent::MaximumPulmonaryVentilationRate, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MaximumPulmonaryVentilationRate, false, m_data.GetSimulationTime());
       }
 
       //Calculate the target Tidal Volume based on the calculated target pulmonary ventilation, plot slope (determined during initialization), and x-intercept
@@ -1225,12 +1223,12 @@ void Respiratory::Intubation()
     SEIntubation* intubation = m_PatientActions->GetIntubation();
     switch (intubation->GetType())
     {
-      case CDM::enumIntubationType::Tracheal:
+      case cdm::IntubationData_eType_Tracheal:
       {// The proper way to intubate
         // Airway mode handles this case by default
         break;
       }
-      case CDM::enumIntubationType::Esophageal:
+      case cdm::IntubationData_eType_Esophageal:
       {        
         // Allow air flow between Airway and Stomach
         ///\todo Make this a modifier (i.e. multiplier), instead of setting it directly
@@ -1240,12 +1238,12 @@ void Respiratory::Intubation()
         m_MouthToCarina->GetNextResistance().SetValue(m_dDefaultOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
       }      
-      case CDM::enumIntubationType::RightMainstem:
+      case cdm::IntubationData_eType_RightMainstem:
       {
         m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(m_dRespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
       }
-      case CDM::enumIntubationType::LeftMainstem:
+      case cdm::IntubationData_eType_LeftMainstem:
       {
         m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(m_dRespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
@@ -1743,10 +1741,10 @@ void Respiratory::CalculateVitalSigns()
   GetAlveolarArterialGradient().SetValue(avgAlveoliO2PP_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
 
   /// \event Patient: Start of exhale/inhale
-  if (m_Patient->IsEventActive(CDM::enumPatientEvent::StartOfExhale))
-    m_Patient->SetEvent(CDM::enumPatientEvent::StartOfExhale, false, m_data.GetSimulationTime());
-  if (m_Patient->IsEventActive(CDM::enumPatientEvent::StartOfInhale))
-    m_Patient->SetEvent(CDM::enumPatientEvent::StartOfInhale, false, m_data.GetSimulationTime());
+  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfExhale))
+    m_Patient->SetEvent(cdm::PatientData_eEvent_StartOfExhale, false, m_data.GetSimulationTime());
+  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfInhale))
+    m_Patient->SetEvent(cdm::PatientData_eEvent_StartOfInhale, false, m_data.GetSimulationTime());
 
   //Record values at the breathing inflection points (i.e. switch between inhale and exhale)  
   // Temporal tolerance to avoid accidental entry in the the inhalation and exhalation code blocks 
@@ -1757,7 +1755,7 @@ void Respiratory::CalculateVitalSigns()
   if (m_BreathingCycle && ((GetTotalLungVolume(VolumeUnit::L) - m_PreviousTotalLungVolume_L) > ZERO_APPROX)
     && (m_ElapsedBreathingCycleTime_min > dTimeTol))
   {
-    m_Patient->SetEvent(CDM::enumPatientEvent::StartOfInhale, true, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::PatientData_eEvent_StartOfInhale, true, m_data.GetSimulationTime());
     // Calculate Respiration Rate and track time and update cycle flag
     double RespirationRate_Per_min = 1.0 / m_ElapsedBreathingCycleTime_min;
     GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
@@ -1806,7 +1804,7 @@ void Respiratory::CalculateVitalSigns()
     && (m_PreviousTotalLungVolume_L - GetTotalLungVolume(VolumeUnit::L) > ZERO_APPROX)
     && (m_ElapsedBreathingCycleTime_min > dTimeTol))
   {
-    m_Patient->SetEvent(CDM::enumPatientEvent::StartOfExhale, true, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::PatientData_eEvent_StartOfExhale, true, m_data.GetSimulationTime());
     m_BreathTimeExhale_min = m_ElapsedBreathingCycleTime_min;
     m_BreathingCycle = true;
     m_TopBreathTotalVolume_L = GetTotalLungVolume(VolumeUnit::L);
@@ -1823,30 +1821,30 @@ void Respiratory::CalculateVitalSigns()
       if (GetCarricoIndex().GetValue(PressureUnit::mmHg) < 100.0)
       {
         /// \event Patient: Severe ARDS: Carrico Index is below 100 mmHg
-        m_Patient->SetEvent(CDM::enumPatientEvent::SevereAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
-        m_Patient->SetEvent(CDM::enumPatientEvent::ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-        m_Patient->SetEvent(CDM::enumPatientEvent::MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
+        m_Patient->SetEvent(cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
       }
       else if (GetCarricoIndex().GetValue(PressureUnit::mmHg) < 200.0)
       {
         /// \event Patient: Moderate ARDS: Carrico Index is below 200 mmHg
-        m_Patient->SetEvent(CDM::enumPatientEvent::ModerateAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
-        m_Patient->SetEvent(CDM::enumPatientEvent::SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-        m_Patient->SetEvent(CDM::enumPatientEvent::MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
+        m_Patient->SetEvent(cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
       }
       else if (GetCarricoIndex().GetValue(PressureUnit::mmHg) < 300.0)
       {
         /// \event Patient: Mild ARDS: Carrico Index is below 300 mmHg
-        m_Patient->SetEvent(CDM::enumPatientEvent::MildAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
-        m_Patient->SetEvent(CDM::enumPatientEvent::SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-        m_Patient->SetEvent(CDM::enumPatientEvent::ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MildAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
+        m_Patient->SetEvent(cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
       }
       else
       {
         /// \event Patient: End ARDS: Carrico Index is above 305 mmHg
-        m_Patient->SetEvent(CDM::enumPatientEvent::SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-        m_Patient->SetEvent(CDM::enumPatientEvent::ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-        m_Patient->SetEvent(CDM::enumPatientEvent::MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
       }
     }
   }
@@ -1868,7 +1866,7 @@ void Respiratory::CalculateVitalSigns()
   //Keep a running average of the pH
   m_BloodPHRunningAverage.Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
   //Reset at start of cardiac cycle 
-  if (m_Patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
   {
     m_LastCardiacCycleBloodPH = m_BloodPHRunningAverage.Value();
     m_BloodPHRunningAverage.Reset();
@@ -1882,13 +1880,13 @@ void Respiratory::CalculateVitalSigns()
     {
       /// \event Patient: Bradypnea: Respiration rate is below 10 breaths per minute
       /// The patient has bradypnea.
-      m_Patient->SetEvent(CDM::enumPatientEvent::Bradypnea, true, m_data.GetSimulationTime());  /// \cite overdyk2007continuous
+      m_Patient->SetEvent(cdm::PatientData_eEvent_Bradypnea, true, m_data.GetSimulationTime());  /// \cite overdyk2007continuous
     }
     else if (GetRespirationRate().GetValue(FrequencyUnit::Per_min) >= 10.5)  // offset by .5 
     {
       /// \event Patient: End Bradypnea Event. The respiration rate has risen above 10. 
       /// The patient is no longer considered to have bradypnea.
-      m_Patient->SetEvent(CDM::enumPatientEvent::Bradypnea, false, m_data.GetSimulationTime());
+      m_Patient->SetEvent(cdm::PatientData_eEvent_Bradypnea, false, m_data.GetSimulationTime());
     }
 
     //Tachypnea
@@ -1896,13 +1894,13 @@ void Respiratory::CalculateVitalSigns()
     {
       /// \event Patient: Tachypnea: Respiration rate is above 20 breaths per minute.
       /// The patient has tachypnea.
-      m_Patient->SetEvent(CDM::enumPatientEvent::Tachypnea, true, m_data.GetSimulationTime());  /// \cite 
+      m_Patient->SetEvent(cdm::PatientData_eEvent_Tachypnea, true, m_data.GetSimulationTime());  /// \cite 
     }
     else if (GetRespirationRate().GetValue(FrequencyUnit::Per_min) <= 19.5) // offset by .5 
     {
       /// \event Patient: End Tachypnea Event. The respiration rate has fallen below 19.5. 
       /// The patient is no longer considered to have tachypnea.
-      m_Patient->SetEvent(CDM::enumPatientEvent::Tachypnea, false, m_data.GetSimulationTime());
+      m_Patient->SetEvent(cdm::PatientData_eEvent_Tachypnea, false, m_data.GetSimulationTime());
     }
 
     double highPh = 8.5;
@@ -1912,7 +1910,7 @@ void Respiratory::CalculateVitalSigns()
     {
       /// \event Patient: Respiratory Acidosis: event is triggered when blood pH is below 7.36
       /// The patient has respiratory acidosis.
-      m_Patient->SetEvent(CDM::enumPatientEvent::RespiratoryAcidosis, true, m_data.GetSimulationTime());
+      m_Patient->SetEvent(cdm::PatientData_eEvent_RespiratoryAcidosis, true, m_data.GetSimulationTime());
 
       /// \event Patient: arterial blood ph has dropped below 6.5.
       if (m_LastCardiacCycleBloodPH < lowPh)
@@ -1920,14 +1918,14 @@ void Respiratory::CalculateVitalSigns()
         ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is below 6.5, Patient is experiencing extreme respiratory Acidosis and is in an irreversible state.";
         Warning(ss);
         /// \irreversible Extreme respiratory Acidosis: blood pH below 6.5.
-        m_Patient->SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else if (m_LastCardiacCycleBloodPH >= 7.38 && m_ArterialCO2PartialPressure_mmHg < 44.0)
     {
       /// \event Patient: End Respiratory Acidosis Event. The pH value has risen above 7.38. 
       /// The patient is no longer considered to have respiratory acidosis.
-      m_Patient->SetEvent(CDM::enumPatientEvent::RespiratoryAcidosis, false, m_data.GetSimulationTime());
+      m_Patient->SetEvent(cdm::PatientData_eEvent_RespiratoryAcidosis, false, m_data.GetSimulationTime());
     }
 
     ////Respiratory Alkalosis
@@ -1935,7 +1933,7 @@ void Respiratory::CalculateVitalSigns()
     {
       /// \event Patient: Respiratory Alkalosis: event is triggered when blood pH is above 7.45
       /// The patient has respiratory alkalosis.
-      m_Patient->SetEvent(CDM::enumPatientEvent::RespiratoryAlkalosis, true, m_data.GetSimulationTime());
+      m_Patient->SetEvent(cdm::PatientData_eEvent_RespiratoryAlkalosis, true, m_data.GetSimulationTime());
 
       /// \event Patient: arterial blood ph has gotten above 8.5.
       if (m_LastCardiacCycleBloodPH > highPh)
@@ -1943,14 +1941,14 @@ void Respiratory::CalculateVitalSigns()
         ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is above 8.5, Patient is experiencing extreme respiratory Alkalosis and is in an irreversible state.";
         Warning(ss);
         /// \irreversible Extreme respiratory Alkalosis: blood pH above 8.5.
-        m_Patient->SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else if (m_LastCardiacCycleBloodPH <= 7.43 && m_ArterialCO2PartialPressure_mmHg > 39.0)
     {
       /// \event Patient: End Respiratory Alkalosis Event. The pH value has has fallen below 7.45. 
       /// The patient is no longer considered to have respiratory alkalosis.
-      m_Patient->SetEvent(CDM::enumPatientEvent::RespiratoryAlkalosis, false, m_data.GetSimulationTime());
+      m_Patient->SetEvent(cdm::PatientData_eEvent_RespiratoryAlkalosis, false, m_data.GetSimulationTime());
     }
   }
 
@@ -2176,7 +2174,7 @@ double Respiratory::VolumeToDriverPressure(double TargetVolume_L)
 //--------------------------------------------------------------------------------------------------
 bool Respiratory::CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft)
 {
-  pft.Reset();
+  pft.Clear();
   pft.GetExpiratoryReserveVolume().Set(m_Patient->GetExpiratoryReserveVolume());
   pft.GetFunctionalResidualCapacity().Set(m_Patient->GetFunctionalResidualCapacity());
   pft.GetInspiratoryCapacity().Set(m_Patient->GetInspiratoryCapacity());

@@ -11,47 +11,22 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "stdafx.h"
 #include "PulsePhysiologyEngine.h"
-#include "bind/Pulse.hxx"
-#include "bind/PulseStateData.hxx"
 #include "patient/SEPatient.h"
 #include "circuit/SECircuit.h"
-#include "compartment//SECompartmentManager.h"
-#include "engine/PhysiologyEngineStabilization.h"
+#include "compartment/SECompartmentManager.h"
+#include "engine/SEEngineStabilization.h"
 #include "scenario/SEScenario.h"
 #include "scenario/SECondition.h"
-#include "bind/ConditionData.hxx"
 
 #include "utils/FileUtils.h"
 
 #include "scenario/SESerializeState.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
-#include "bind/PatientAssessments.hxx"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "patient/assessments/SEUrinalysis.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "bind/PatientData.hxx"
-#include "bind/Patient.hxx"
-#include "bind/PulseConfigurationData.hxx"
 #include "substance/SESubstanceCompound.h"
-
-#include "bind/PulseBloodChemistrySystemData.hxx"
-#include "bind/PulseCardiovascularSystemData.hxx"
-#include "bind/PulseDrugSystemData.hxx"
-#include "bind/PulseEndocrineSystemData.hxx"
-#include "bind/PulseEnergySystemData.hxx"
-#include "bind/PulseGastrointestinalSystemData.hxx"
-#include "bind/PulseHepaticSystemData.hxx"
-#include "bind/PulseNervousSystemData.hxx"
-#include "bind/PulseRenalSystemData.hxx"
-#include "bind/PulseRespiratorySystemData.hxx"
-#include "bind/PulseTissueSystemData.hxx"
-#include "bind/PulseEnvironmentData.hxx"
-#include "bind/PulseAnesthesiaMachineData.hxx"
-#include "bind/PulseElectroCardioGramData.hxx"
-#include "bind/PulseInhalerData.hxx"
-
-#include "Serializer.h"
 
 #include <memory>
 
@@ -89,7 +64,7 @@ Logger* PulseEngine::GetLogger()
   return Loggable::GetLogger();
 }
 
-PhysiologyEngineTrack* PulseEngine::GetEngineTrack()
+SEEngineTracker* PulseEngine::GetEngineTracker()
 {
   return &m_EngineTrack;
 }
@@ -443,7 +418,7 @@ std::unique_ptr<CDM::PhysiologyEngineStateData> PulseEngine::SaveState(const std
   // Compartments
   state->CompartmentManager(std::unique_ptr<CDM::CompartmentManagerData>(m_Compartments->Unload()));
   // Configuration
-  state->Configuration(std::unique_ptr<CDM::PhysiologyEngineConfigurationData>(m_Config->Unload()));
+  state->Configuration(std::unique_ptr<CDM::SEEngineConfigurationData>(m_Config->Unload()));
   // Circuitsk
   state->CircuitManager(std::unique_ptr<CDM::CircuitManagerData>(m_Circuits->Unload()));
 
@@ -469,7 +444,7 @@ std::unique_ptr<CDM::PhysiologyEngineStateData> PulseEngine::SaveState(const std
   return state;
 }
 
-bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions, const PhysiologyEngineConfiguration* config)
+bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
 {
   std::string pFile = patientFile;
   if (pFile.find("/patients") == std::string::npos)
@@ -482,7 +457,7 @@ bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::ve
   return InitializeEngine(conditions,config);
 }
 
-bool PulseEngine::InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions, const PhysiologyEngineConfiguration* config)
+bool PulseEngine::InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
 { 
   CDM_COPY((&patient), m_Patient);
   // We need logic here that makes sure we have what we need
@@ -490,7 +465,7 @@ bool PulseEngine::InitializeEngine(const SEPatient& patient, const std::vector<c
   return InitializeEngine(conditions,config);
 }
 
-bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* conditions, const PhysiologyEngineConfiguration* config)
+bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
 {
   m_EngineTrack.ResetFile();
   m_State = EngineState::Initialization;
@@ -575,7 +550,7 @@ void PulseEngine::AdvanceModelTime()
 {
   if (!IsReady())
     return;  
-  if(m_Patient->IsEventActive(CDM::enumPatientEvent::IrreversibleState))
+  if(m_Patient->IsEventActive(cdm::PatientData_eEvent_IrreversibleState))
     return;  
 
   PreProcess();
@@ -758,7 +733,7 @@ void PulseEngine::SetEventHandler(SEEventHandler* handler)
   m_AnesthesiaMachine->ForwardEvents(m_EventHandler);
 }
 
-const PhysiologyEngineConfiguration* PulseEngine::GetConfiguration()
+const SEEngineConfiguration* PulseEngine::GetConfiguration()
 {
   return &Pulse::GetConfiguration();
 }

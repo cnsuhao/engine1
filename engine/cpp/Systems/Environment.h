@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-
+#include "bind/engine/EngineEnvironment.pb.h"
 #include "../Controller/PulseSystem.h"
 #include "system/environment/SEEnvironment.h"
 
@@ -34,17 +34,11 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  static void Load(const cdm::PatientData& src, SEPatient& dst);
-  static cdm::PatientData* Unload(const SEPatient& src);
+  static void Load(const pulse::EnvironmentData& src, Environment& dst);
+  static pulse::EnvironmentData* Unload(const Environment& src);
 protected:
-  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
-  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
-
-  // Load a state
-  virtual bool Load(const CDM::PulseEnvironmentData& in);
-  virtual CDM::PulseEnvironmentData* Unload() const;
-protected:
-  virtual void Unload(CDM::PulseEnvironmentData& data) const;
+  static void Serialize(const pulse::EnvironmentData& src, Environment& dst);
+  static void Serialize(const Environment& src, pulse::EnvironmentData& dst);
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

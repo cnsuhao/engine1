@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #define _USE_MATH_DEFINES
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include <math.h>
 #include "Systems/Renal.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -25,9 +25,8 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarVolumePerTimePressureArea.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/enumOnOff.hxx"
 
-void BioGearsEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   TimingProfile tmr;
   tmr.Start("Test");
@@ -37,7 +36,7 @@ void BioGearsEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDi
   DataTrack     graphTrk;
   std::ofstream graphFile;
 
-  BioGears bg(sTestDirectory + "\\RenalCircuitAndTransportTest.log");
+  Pulse bg(sTestDirectory + "\\RenalCircuitAndTransportTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::On);
@@ -158,12 +157,12 @@ void BioGearsEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDi
 }
 
 // runs renal system at constant MAP to test TGF feedback function
-// Resistance values at 80 & 180 mmHg are used for the resistance bounds in BioGears Circuits
-void BioGearsEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::string& sTestDirectory, const std::string& sTestName)
+// Resistance values at 80 & 180 mmHg are used for the resistance bounds in Pulse Circuits
+void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::string& sTestDirectory, const std::string& sTestName)
 {
   TimingProfile tmr;
   tmr.Start("Test");
-  BioGears bg(sTestDirectory + "\\RenalFeedbackTest.log");
+  Pulse bg(sTestDirectory + "\\RenalFeedbackTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::On);
@@ -309,7 +308,7 @@ void BioGearsEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::st
     for (unsigned int i = 0; i < 3e6; i++)
     {
       //Flag beginning of cardiac cycle - this will make it just use the current value instead of a running average
-      patient->SetEvent(CDM::enumPatientEvent::StartOfCardiacCycle, true, eventTime);
+      patient->SetEvent(cdm::PatientData_eEvent_StartOfCardiacCycle, true, eventTime);
 
       GFRSteady = false;
       RBFSteady = false;
@@ -455,11 +454,11 @@ void BioGearsEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::st
   bg.GetLogger()->Info(ss.str(), "RenalFeedbackTest");
 }
 
-void BioGearsEngineTest::RenalTGFFeedbackTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalTGFFeedbackTest(const std::string& sTestDirectory)
 {
   RenalFeedbackTest(TGF, sTestDirectory, "RenalTGFFeedbackOutput");
 }
-void BioGearsEngineTest::RenalTGFandUPRFeedbackTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalTGFandUPRFeedbackTest(const std::string& sTestDirectory)
 {
   RenalFeedbackTest(TGFandUPR, sTestDirectory, "RenalTGFandUPRFeedbackOutput");
 }
@@ -473,12 +472,12 @@ void BioGearsEngineTest::RenalTGFandUPRFeedbackTest(const std::string& sTestDire
 /// seconds. After stabilization time has run compute osmolarity/lality
 /// output potassium blood concentration levels and osmolarity/lality, check against data.
 //--------------------------------------------------------------------------------------------------
-void BioGearsEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string& sTestDirectory, const std::string& sTestName)
+void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string& sTestDirectory, const std::string& sTestName)
 {
 
   TimingProfile tmr;
   tmr.Start("Test");
-  BioGears bg(sTestDirectory + "\\RenalSystemTest.log");
+  Pulse bg(sTestDirectory + "\\RenalSystemTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::On);
@@ -692,11 +691,11 @@ void BioGearsEngineTest::RenalSystemTest(RenalSystems systemtest, const std::str
   bg.GetLogger()->Info(ss.str(), "RenalSystemTest");
 }
 
-void BioGearsEngineTest::RenalSecretionTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalSecretionTest(const std::string& sTestDirectory)
 {
   RenalSystemTest(Secretion, sTestDirectory, "RenalSecretionOutput");
 }
-void BioGearsEngineTest::RenalUrinateTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalUrinateTest(const std::string& sTestDirectory)
 {
   RenalSystemTest(Urinating, sTestDirectory, "RenalUrinateOutput");
 }

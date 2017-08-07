@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 #define _USE_MATH_DEFINES
 
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
@@ -38,7 +38,7 @@ specific language governing permissions and limitations under the License.
 /// and variable values for the circuit elements.The outputs are the resultant flows and pressures
 /// on the circuit nodes and paths. These are then stored in a file in sTestDirectory
 //--------------------------------------------------------------------------------------------------
-void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, const std::string&  sTestDirectory)
+void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, const std::string&  sTestDirectory)
 {
   TimingProfile tmr;
   tmr.Start("Test");
@@ -48,7 +48,7 @@ void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryCon
   std::ofstream fileCircuit;
   std::ofstream fileGraph;
   
-  BioGears bg(sTestDirectory + "\\AnesthesiaMachineCircuitAndTransportTest.log");
+  Pulse bg(sTestDirectory + "\\AnesthesiaMachineCircuitAndTransportTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -168,12 +168,12 @@ void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryCon
   bg.GetLogger()->Info(ss.str(), "AnesthesiaMachineCircuitAndTransportTest");
 }
 
-void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   AnesthesiaMachineCircuitAndTransportTest(AnesthesiaMachineSolo, sTestDirectory);
 }
 
-void BioGearsEngineTest::RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   AnesthesiaMachineCircuitAndTransportTest(RespiratoryWithAnesthesiaMachine, sTestDirectory);
 }

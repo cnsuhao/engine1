@@ -17,7 +17,6 @@ specific language governing permissions and limitations under the License.
 #include "Energy.h"
 #include "Renal.h"
 #include "Nervous.h"
-#include "bind/RunningAverageData.hxx"
 
 #include "patient/SEPatient.h"
 #include "circuit/fluid/SEFluidCircuit.h"
@@ -146,7 +145,7 @@ void Cardiovascular::Initialize()
 {
   PulseSystem::Initialize();
 
-  m_HeartRhythm = CDM::enumHeartRhythm::NormalSinus;
+  m_HeartRhythm = cdm::eHeartRhythm::NormalSinus;
 
   m_StartSystole = true;
   m_HeartFlowDetected = false;
@@ -216,93 +215,92 @@ void Cardiovascular::Initialize()
   m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(FlowElastanceUnit::mmHg_Per_mL);
 }
 
-bool Cardiovascular::Load(const CDM::PulseCardiovascularSystemData& in)
+void Cardiovascular::Load(const pulse::CardiovascularSystemData& src, Cardiovascular& dst)
 {
-  if (!SECardiovascularSystem::Load(in))
-    return false;
-
-  m_StartSystole = in.StartSystole();
-  m_HeartFlowDetected = in.HeartFlowDetected();
-  m_EnterCardiacArrest = in.EnterCardiacArrest();
-  m_CardiacCyclePeriod_s = in.CardiacCyclePeriod_s();
-  m_CurrentCardiacCycleDuration_s = in.CurrentCardiacCycleDuration_s();
-  m_LeftHeartElastanceModifier = in.LeftHeartElastanceModifier();
-  m_LeftHeartElastance_mmHg_Per_mL = in.LeftHeartElastance_mmHg_Per_mL();
-  m_LeftHeartElastanceMax_mmHg_Per_mL = in.LeftHeartElastanceMax_mmHg_Per_mL();
-  m_LeftHeartElastanceMin_mmHg_Per_mL = in.LeftHeartElastanceMin_mmHg_Per_mL();
-  m_RightHeartElastance_mmHg_Per_mL = in.RightHeartElastance_mmHg_Per_mL();
-  m_RightHeartElastanceMax_mmHg_Per_mL = in.RightHeartElastanceMax_mmHg_Per_mL();
-  m_RightHeartElastanceMin_mmHg_Per_mL = in.RightHeartElastanceMin_mmHg_Per_mL();
-
-  m_CompressionTime_s = in.CompressionTime_s();
-  m_CompressionRatio = in.CompressionRatio();
-  m_CompressionPeriod_s = in.CompressionPeriod_s();
-
-  m_CurrentCardiacCycleTime_s = in.CurrentCardiacCycleTime_s();
-  m_CardiacCycleDiastolicVolume_mL = in.CardiacCycleDiastolicVolume_mL();
-  m_CardiacCycleAortaPressureLow_mmHg = in.CardiacCycleAortaPressureLow_mmHg();
-  m_CardiacCycleAortaPressureHigh_mmHg = in.CardiacCycleAortaPressureHigh_mmHg();
-  m_CardiacCyclePulmonaryArteryPressureLow_mmHg = in.CardiacCyclePulmonaryArteryPressureLow_mmHg();
-  m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = in.CardiacCyclePulmonaryArteryPressureHigh_mmHg();
-  m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = in.LastCardiacCycleMeanArterialCO2PartialPressure_mmHg();
-  m_CardiacCycleStrokeVolume_mL = in.CardiacCycleStrokeVolume_mL();
-
-  m_CardiacCycleArterialPressure_mmHg.Load(in.CardiacCycleArterialPressure_mmHg());
-  m_CardiacCycleArterialCO2PartialPressure_mmHg.Load(in.CardiacCycleArterialCO2PartialPressure_mmHg());
-  m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg.Load(in.CardiacCyclePulmonaryCapillariesWedgePressure_mmHg());
-  m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s.Load(in.CardiacCyclePulmonaryCapillariesFlow_mL_Per_s());
-  m_CardiacCyclePulmonaryShuntFlow_mL_Per_s.Load(in.CardiacCyclePulmonaryShuntFlow_mL_Per_s());
-  m_CardiacCyclePulmonaryArteryPressure_mmHg.Load(in.CardiacCyclePulmonaryArteryPressure_mmHg());
-  m_CardiacCycleCentralVenousPressure_mmHg.Load(in.CardiacCycleCentralVenousPressure_mmHg());
-  m_CardiacCycleSkinFlow_mL_Per_s.Load(in.CardiacCycleSkinFlow_mL_Per_s());
-
-  PulseSystem::LoadState();
-  return true;
+  Cardiovascular::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseCardiovascularSystemData* Cardiovascular::Unload() const
+void Cardiovascular::Serialize(const pulse::CardiovascularSystemData& src, Cardiovascular& dst)
 {
-  CDM::PulseCardiovascularSystemData* data = new CDM::PulseCardiovascularSystemData();
-  Unload(*data);
-  return data;
+  dst.m_StartSystole = src.startsystole();
+  dst.m_HeartFlowDetected = src.heartflowdetected();
+  dst.m_EnterCardiacArrest = src.entercardiacarrest();
+  dst.m_CardiacCyclePeriod_s = src.cardiaccycleperiod_s();
+  dst.m_CurrentCardiacCycleDuration_s = src.currentcardiaccycleduration_s();
+  dst.m_LeftHeartElastanceModifier = src.leftheartelastancemodifier();
+  dst.m_LeftHeartElastance_mmHg_Per_mL = src.leftheartelastance_mmhg_per_ml();
+  dst.m_LeftHeartElastanceMax_mmHg_Per_mL = src.leftheartelastancemax_mmhg_per_ml();
+  dst.m_LeftHeartElastanceMin_mmHg_Per_mL = src.leftheartelastancemin_mmhg_per_ml();
+  dst.m_RightHeartElastance_mmHg_Per_mL = src.rightheartelastance_mmhg_per_ml();
+  dst.m_RightHeartElastanceMax_mmHg_Per_mL = src.rightheartelastancemax_mmhg_per_ml();
+  dst.m_RightHeartElastanceMin_mmHg_Per_mL = src.rightheartelastancemin_mmhg_per_ml();
+
+  dst.m_CompressionTime_s = src.compressiontime_s();
+  dst.m_CompressionRatio = src.compressionratio();
+  dst.m_CompressionPeriod_s = src.compressionperiod_s();
+
+  dst.m_CurrentCardiacCycleTime_s = src.currentcardiaccycletime_s();
+  dst.m_CardiacCycleDiastolicVolume_mL = src.cardiaccyclediastolicvolume_ml();
+  dst.m_CardiacCycleAortaPressureLow_mmHg = src.cardiaccycleaortapressurelow_mmhg();
+  dst.m_CardiacCycleAortaPressureHigh_mmHg = src.cardiaccycleaortapressurehigh_mmhg();
+  dst.m_CardiacCyclePulmonaryArteryPressureLow_mmHg = src.cardiaccyclepulmonaryarterypressurelow_mmhg();
+  dst.m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = src.cardiaccyclepulmonaryarterypressurehigh_mmhg();
+  dst.m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = src.lastcardiaccyclemeanarterialco2partialpressure_mmhg();
+  dst.m_CardiacCycleStrokeVolume_mL = src.cardiaccyclestrokevolume_ml();
+
+  RunningAverage::Load(src.cardiaccyclearterialpressure_mmhg(),dst.m_CardiacCycleArterialPressure_mmHg);
+  RunningAverage::Load(src.cardiaccyclearterialco2partialpressure_mmhg(), dst.m_CardiacCycleArterialCO2PartialPressure_mmHg);
+  RunningAverage::Load(src.cardiaccyclepulmonarycapillarieswedgepressure_mmhg(), dst.m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg);
+  RunningAverage::Load(src.cardiaccyclepulmonarycapillariesflow_ml_per_s(), dst.m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s);
+  RunningAverage::Load(src.cardiaccyclepulmonaryshuntflow_ml_per_s(), dst.m_CardiacCyclePulmonaryShuntFlow_mL_Per_s);
+  RunningAverage::Load(src.cardiaccyclepulmonaryarterypressure_mmhg(), dst.m_CardiacCyclePulmonaryArteryPressure_mmHg);
+  RunningAverage::Load(src.cardiaccyclecentralvenouspressure_mmhg(), dst.m_CardiacCycleCentralVenousPressure_mmHg);
+  RunningAverage::Load(src.cardiaccycleskinflow_ml_per_s(), dst.m_CardiacCycleSkinFlow_mL_Per_s);
 }
-void Cardiovascular::Unload(CDM::PulseCardiovascularSystemData& data) const
+
+pulse::CardiovascularSystemData* Cardiovascular::Unload(const Cardiovascular& src)
 {
-  SECardiovascularSystem::Unload(data);
 
-  data.StartSystole(m_StartSystole);
-  data.HeartFlowDetected(m_HeartFlowDetected);
-  data.EnterCardiacArrest(m_EnterCardiacArrest);
-  data.CardiacCyclePeriod_s(m_CardiacCyclePeriod_s); 
-  data.CurrentCardiacCycleDuration_s(m_CurrentCardiacCycleDuration_s);
-  data.LeftHeartElastance_mmHg_Per_mL(m_LeftHeartElastance_mmHg_Per_mL);
-  data.LeftHeartElastanceModifier(m_LeftHeartElastanceModifier);
-  data.LeftHeartElastanceMax_mmHg_Per_mL(m_LeftHeartElastanceMax_mmHg_Per_mL);
-  data.LeftHeartElastanceMin_mmHg_Per_mL(m_LeftHeartElastanceMin_mmHg_Per_mL);
-  data.RightHeartElastance_mmHg_Per_mL(m_RightHeartElastance_mmHg_Per_mL);
-  data.RightHeartElastanceMax_mmHg_Per_mL(m_RightHeartElastanceMax_mmHg_Per_mL);
-  data.RightHeartElastanceMin_mmHg_Per_mL(m_RightHeartElastanceMin_mmHg_Per_mL);
+  pulse::CardiovascularSystemData* dst = new pulse::CardiovascularSystemData();
+  Cardiovascular::Serialize(src, *dst);
+  return dst;
+}
+void Cardiovascular::Serialize(const Cardiovascular& src, pulse::CardiovascularSystemData& dst)
+{
+  dst.set_startsystole(src.m_StartSystole);
+  dst.set_heartflowdetected(src.m_HeartFlowDetected);
+  dst.set_entercardiacarrest(src.m_EnterCardiacArrest);
+  dst.set_cardiaccycleperiod_s(src.m_CardiacCyclePeriod_s);
+  dst.set_currentcardiaccycleduration_s(src.m_CurrentCardiacCycleDuration_s);
+  dst.set_leftheartelastance_mmhg_per_ml(src.m_LeftHeartElastance_mmHg_Per_mL);
+  dst.set_leftheartelastancemodifier(src.m_LeftHeartElastanceModifier);
+  dst.set_leftheartelastancemax_mmhg_per_ml(src.m_LeftHeartElastanceMax_mmHg_Per_mL);
+  dst.set_leftheartelastancemin_mmhg_per_ml(src.m_LeftHeartElastanceMin_mmHg_Per_mL);
+  dst.set_rightheartelastance_mmhg_per_ml(src.m_RightHeartElastance_mmHg_Per_mL);
+  dst.set_rightheartelastancemax_mmhg_per_ml(src.m_RightHeartElastanceMax_mmHg_Per_mL);
+  dst.set_rightheartelastancemin_mmhg_per_ml(src.m_RightHeartElastanceMin_mmHg_Per_mL);
 
-  data.CompressionTime_s(m_CompressionTime_s);
-  data.CompressionRatio(m_CompressionRatio);
-  data.CompressionPeriod_s(m_CompressionPeriod_s);
+  dst.set_compressiontime_s(src.m_CompressionTime_s);
+  dst.set_compressionratio(src.m_CompressionRatio);
+  dst.set_compressionperiod_s(src.m_CompressionPeriod_s);
 
-  data.CurrentCardiacCycleTime_s(m_CurrentCardiacCycleTime_s);
-  data.CardiacCycleDiastolicVolume_mL(m_CardiacCycleDiastolicVolume_mL);
-  data.CardiacCycleAortaPressureLow_mmHg(m_CardiacCycleAortaPressureLow_mmHg);
-  data.CardiacCycleAortaPressureHigh_mmHg(m_CardiacCycleAortaPressureHigh_mmHg);
-  data.CardiacCyclePulmonaryArteryPressureLow_mmHg(m_CardiacCyclePulmonaryArteryPressureLow_mmHg);
-  data.CardiacCyclePulmonaryArteryPressureHigh_mmHg(m_CardiacCyclePulmonaryArteryPressureHigh_mmHg);
-  data.LastCardiacCycleMeanArterialCO2PartialPressure_mmHg(m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg);
-  data.CardiacCycleStrokeVolume_mL(m_CardiacCycleStrokeVolume_mL);
+  dst.set_currentcardiaccycletime_s(src.m_CurrentCardiacCycleTime_s);
+  dst.set_cardiaccyclediastolicvolume_ml(src.m_CardiacCycleDiastolicVolume_mL);
+  dst.set_cardiaccycleaortapressurelow_mmhg(src.m_CardiacCycleAortaPressureLow_mmHg);
+  dst.set_cardiaccycleaortapressurehigh_mmhg(src.m_CardiacCycleAortaPressureHigh_mmHg);
+  dst.set_cardiaccyclepulmonaryarterypressurelow_mmhg(src.m_CardiacCyclePulmonaryArteryPressureLow_mmHg);
+  dst.set_cardiaccyclepulmonaryarterypressurehigh_mmhg(src.m_CardiacCyclePulmonaryArteryPressureHigh_mmHg);
+  dst.set_lastcardiaccyclemeanarterialco2partialpressure_mmhg(src.m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg);
+  dst.set_cardiaccyclestrokevolume_ml(src.m_CardiacCycleStrokeVolume_mL);
 
-  data.CardiacCycleArterialPressure_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_CardiacCycleArterialPressure_mmHg.Unload()));
-  data.CardiacCycleArterialCO2PartialPressure_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_CardiacCycleArterialCO2PartialPressure_mmHg.Unload()));
-  data.CardiacCyclePulmonaryCapillariesWedgePressure_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg.Unload()));
-  data.CardiacCyclePulmonaryCapillariesFlow_mL_Per_s(std::unique_ptr<CDM::RunningAverageData>(m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s.Unload()));
-  data.CardiacCyclePulmonaryShuntFlow_mL_Per_s(std::unique_ptr<CDM::RunningAverageData>(m_CardiacCyclePulmonaryShuntFlow_mL_Per_s.Unload()));
-  data.CardiacCyclePulmonaryArteryPressure_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_CardiacCyclePulmonaryArteryPressure_mmHg.Unload()));
-  data.CardiacCycleCentralVenousPressure_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_CardiacCycleCentralVenousPressure_mmHg.Unload()));
-  data.CardiacCycleSkinFlow_mL_Per_s(std::unique_ptr<CDM::RunningAverageData>(m_CardiacCycleSkinFlow_mL_Per_s.Unload()));
+  dst.set_allocated_cardiaccyclearterialpressure_mmhg(RunningAverage::Unload(src.m_CardiacCycleArterialPressure_mmHg));
+  dst.set_allocated_cardiaccyclearterialco2partialpressure_mmhg(RunningAverage::Unload(src.m_CardiacCycleArterialCO2PartialPressure_mmHg));
+  dst.set_allocated_cardiaccyclepulmonarycapillarieswedgepressure_mmhg(RunningAverage::Unload(src.m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg));
+  dst.set_allocated_cardiaccyclepulmonarycapillariesflow_ml_per_s(RunningAverage::Unload(src.m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s));
+  dst.set_allocated_cardiaccyclepulmonaryshuntflow_ml_per_s(RunningAverage::Unload(src.m_CardiacCyclePulmonaryShuntFlow_mL_Per_s));
+  dst.set_allocated_cardiaccyclepulmonaryarterypressure_mmhg(RunningAverage::Unload(src.m_CardiacCyclePulmonaryArteryPressure_mmHg));
+  dst.set_allocated_cardiaccyclecentralvenouspressure_mmhg(RunningAverage::Unload(src.m_CardiacCycleCentralVenousPressure_mmHg));
+  dst.set_allocated_cardiaccycleskinflow_ml_per_s(RunningAverage::Unload(src.m_CardiacCycleSkinFlow_mL_Per_s));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -788,7 +786,7 @@ void Cardiovascular::CalculateVitalSigns()
   /// \event Patient: Hypovolemic Shock: blood volume below 65% of its normal value
     if (GetBloodVolume().GetValue(VolumeUnit::mL) <= (m_data.GetConfiguration().GetMinimumBloodVolumeFraction()*m_patient->GetBloodVolumeBaseline(VolumeUnit::mL)))
     {
-      m_patient->SetEvent(CDM::enumPatientEvent::HypovolemicShock, true, m_data.GetSimulationTime());
+      m_patient->SetEvent(cdm::PatientData_eEvent_HypovolemicShock, true, m_data.GetSimulationTime());
 
       /// \event Patient: blood loss below 50%, irreversible state enacted 
       // @cite Gutierrez2004HemorrhagicShock
@@ -798,12 +796,12 @@ void Cardiovascular::CalculateVitalSigns()
         m_ss << "Over half the patients blood volume has been lost. The patient is now in an irreversible state.";
         Warning(m_ss);
         /// \irreversible Over half the patients blood volume has been lost.
-        m_patient->SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else
     {
-      m_patient->SetEvent(CDM::enumPatientEvent::HypovolemicShock, false, m_data.GetSimulationTime());
+      m_patient->SetEvent(cdm::PatientData_eEvent_HypovolemicShock, false, m_data.GetSimulationTime());
     }
 
     //Check for cardiogenic shock
@@ -813,52 +811,52 @@ void Cardiovascular::CalculateVitalSigns()
     {
       /// \event Patient: Cardiogenic Shock: Cardiac Index has fallen below 2.2 L/min-m^2, Systolic Arterial Pressure is below 90 mmHg, and Pulmonary Capillary Wedge Pressure is above 15.0.
       /// \cite dhakam2008review
-      m_patient->SetEvent(CDM::enumPatientEvent::CardiogenicShock, true, m_data.GetSimulationTime());
+      m_patient->SetEvent(cdm::PatientData_eEvent_CardiogenicShock, true, m_data.GetSimulationTime());
     }
     else
     {
-      m_patient->SetEvent(CDM::enumPatientEvent::CardiogenicShock, false, m_data.GetSimulationTime());
+      m_patient->SetEvent(cdm::PatientData_eEvent_CardiogenicShock, false, m_data.GetSimulationTime());
     }
 
     //Check for Tachycardia, Bradycardia, and asystole
     /// \event Patient: Tachycardia: heart rate exceeds 100 beats per minute.  This state is alleviated if it decreases below 90.
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 90)
-      m_patient->SetEvent(CDM::enumPatientEvent::Tachycardia, false, m_data.GetSimulationTime());
+      m_patient->SetEvent(cdm::PatientData_eEvent_Tachycardia, false, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 100)
-      m_patient->SetEvent(CDM::enumPatientEvent::Tachycardia, true, m_data.GetSimulationTime());
+      m_patient->SetEvent(cdm::PatientData_eEvent_Tachycardia, true, m_data.GetSimulationTime());
     /// \event Patient: Bradycardia: heart rate falls below 60 beats per minute.  This state is alleviated if it increases above 65.
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 60)
-      m_patient->SetEvent(CDM::enumPatientEvent::Bradycardia, true, m_data.GetSimulationTime());
+      m_patient->SetEvent(cdm::PatientData_eEvent_Bradycardia, true, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 65)
-      m_patient->SetEvent(CDM::enumPatientEvent::Bradycardia, false, m_data.GetSimulationTime());
+      m_patient->SetEvent(cdm::PatientData_eEvent_Bradycardia, false, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 30)
     {
-      if (GetHeartRhythm() != CDM::enumHeartRhythm::Asystole)
+      if (GetHeartRhythm() != cdm::eHeartRhythm::Asystole)
       {
-        m_patient->SetEvent(CDM::enumPatientEvent::Asystole, false, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_Asystole, false, m_data.GetSimulationTime());
       }
     }
     ///\event Patient: Asystole: Heart Rate has fallen below minimum value and is being set to 0.
     // @cite guinness2005lowest 
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 27)
     {
-      m_patient->SetEvent(CDM::enumPatientEvent::Asystole, true, m_data.GetSimulationTime());
-      SetHeartRhythm(CDM::enumHeartRhythm::Asystole);
+      m_patient->SetEvent(cdm::PatientData_eEvent_Asystole, true, m_data.GetSimulationTime());
+      SetHeartRhythm(cdm::eHeartRhythm::Asystole);
     }
   }
 
   // Irreversible state if asystole persists.
-  if (GetHeartRhythm() == CDM::enumHeartRhythm::Asystole)
+  if (GetHeartRhythm() == cdm::eHeartRhythm::Asystole)
   {
-    m_patient->SetEvent(CDM::enumPatientEvent::Asystole, true, m_data.GetSimulationTime());
+    m_patient->SetEvent(cdm::PatientData_eEvent_Asystole, true, m_data.GetSimulationTime());
 
     /// \event Patient: Irreversible State: heart has been in asystole for over 45 min:
-    if (m_patient->GetEventDuration(CDM::enumPatientEvent::Asystole, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
+    if (m_patient->GetEventDuration(cdm::PatientData_eEvent_Asystole, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
     {
-      m_ss << "Asystole has occurred for " << m_patient->GetEventDuration(CDM::enumPatientEvent::Asystole, TimeUnit::s) << " seconds, patient is in irreversible state.";
+      m_ss << "Asystole has occurred for " << m_patient->GetEventDuration(cdm::PatientData_eEvent_Asystole, TimeUnit::s) << " seconds, patient is in irreversible state.";
       Warning(m_ss);
       /// \irreversible Heart has been in asystole for over 45 min
-      m_patient->SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+      m_patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
     }
   }
 
@@ -1174,7 +1172,7 @@ void Cardiovascular::CPR()
   // Call for chest compression with an effective heart rhythm
   // In the future we may allow compressions on a beating heart, but that will require extensive testing
   // to evaluate the hemodynamic stability.
-  if (!m_patient->IsEventActive(CDM::enumPatientEvent::CardiacArrest))
+  if (!m_patient->IsEventActive(cdm::PatientData_eEvent_CardiacArrest))
   {
     Warning("CPR attempted on beating heart. Action ignored.");
     m_data.GetActions().GetPatientActions().RemoveChestCompression();
@@ -1332,8 +1330,8 @@ void Cardiovascular::PericardialEffusionPressureApplication()
 void Cardiovascular::HeartDriver()
 {
   // Reset start cardiac cycle event if it was activated by BeginCardiacCycle() last time step
-  if (m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
-    m_patient->SetEvent(CDM::enumPatientEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
+  if (m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
+    m_patient->SetEvent(cdm::PatientData_eEvent_StartOfCardiacCycle, false, m_data.GetSimulationTime());
 
   // m_StartSystole is set to true at the end of a cardiac cycle in order to setup the next cardiac cycle.
   // After the next cycle is prepared in BeginCardiacCycle, m_StartSystole is seet back to false.
@@ -1342,10 +1340,10 @@ void Cardiovascular::HeartDriver()
 
   // If any system set the rhythm to asystole (or other rhythms in the future) then trip the cardiac arrest flag so that we can deal with it at the top of the next cardiac cycle
   // This prevents the heart from stopping in the middle of a contraction.
-  if (GetHeartRhythm() == CDM::enumHeartRhythm::Asystole)
+  if (GetHeartRhythm() == cdm::eHeartRhythm::Asystole)
     m_EnterCardiacArrest = true;
  
-  if (!m_patient->IsEventActive(CDM::enumPatientEvent::CardiacArrest))
+  if (!m_patient->IsEventActive(cdm::PatientData_eEvent_CardiacArrest))
   {
     if (m_CurrentCardiacCycleTime_s >= m_CardiacCyclePeriod_s - m_dT_s)
       m_StartSystole = true; // A new cardiac cycle will begin next time step
@@ -1376,7 +1374,7 @@ void Cardiovascular::HeartDriver()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::BeginCardiacCycle()
 {
-  m_patient->SetEvent(CDM::enumPatientEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
+  m_patient->SetEvent(cdm::PatientData_eEvent_StartOfCardiacCycle, true, m_data.GetSimulationTime());
 
   // Changes to the heart rate and other hemodynamic parameters are applied at the top of the cardiac cycle.
   // Parameters cannot change during the cardiac cycle because the heart beat is modeled as a changing compliance.
@@ -1411,7 +1409,7 @@ void Cardiovascular::BeginCardiacCycle()
   // Now set the cardiac cycle period and the cardiac arrest event if applicable
   if (m_EnterCardiacArrest)
   {
-    m_patient->SetEvent(CDM::enumPatientEvent::CardiacArrest, true, m_data.GetSimulationTime());
+    m_patient->SetEvent(cdm::PatientData_eEvent_CardiacArrest, true, m_data.GetSimulationTime());
     m_CardiacCyclePeriod_s = 1.0e9;
     RecordAndResetCardiacCycle();
     GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);

@@ -30,7 +30,7 @@ public:
 
   void Clear();
 
-  virtual bool Load(const CDM::CompartmentManagerData& in, SECircuitManager* circuits = nullptr);
+  virtual bool Load(const cdm::CompartmentManagerData& in, SECircuitManager* circuits = nullptr);
 
   void StateChange();
   void UpdateAirwayGraph() { m_UpdateActiveAirwayGraph = true; m_UpdateActiveAerosolGraph = true; }

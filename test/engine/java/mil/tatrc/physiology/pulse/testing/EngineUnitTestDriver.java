@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-package mil.tatrc.physiology.biogears.testing;
+package mil.tatrc.physiology.pulse.testing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +20,16 @@ import mil.tatrc.physiology.utilities.UnitConverter;
 import mil.tatrc.physiology.testing.SETestDriver;
 import mil.tatrc.physiology.testing.SETestDriver.TestJob;
 
-public class BGEUnitTestDriver implements SETestDriver.Executor
+public class EngineUnitTestDriver implements SETestDriver.Executor
 {
   
   static
   {
     UnitConverter.initialize(System.getProperty("user.dir"));
     List<String> libs = new ArrayList<String>();
-    libs.add("BioGearsEngine");
-    libs.add("BioGearsEngineUnitTests");
-    libs.add("BioGearsEngineJNI");         
+    libs.add("PulseEngine");
+    libs.add("PulseEngineUnitTests");
+    libs.add("PulseEngineJNI");         
     FileUtils.loadLibraries(libs);
   }
   
@@ -38,7 +38,7 @@ public class BGEUnitTestDriver implements SETestDriver.Executor
   protected native void nativeDelete(long nativeObj);
   protected native void nativeExecute(long nativeObj, String testName, String outputDir);
   
-  public BGEUnitTestDriver()
+  public EngineUnitTestDriver()
   {
     this.nativeObj = nativeAllocate();
   }

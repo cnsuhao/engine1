@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-package mil.tatrc.physiology.biogears.testing;
+package mil.tatrc.physiology.pulse.testing;
 
 import mil.tatrc.physiology.biogears.engine.*;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;

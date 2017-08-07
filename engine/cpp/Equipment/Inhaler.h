@@ -12,7 +12,8 @@ specific language governing permissions and limitations under the License.
 
 
 #pragma once
-
+#include "bind/engine/EngineEquipment.pb.h"
+#include "../Controller/PulseSystem.h"
 #include "system/equipment/Inhaler/SEInhaler.h"
 
 /**
@@ -35,17 +36,11 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  static void Load(const cdm::PatientData& src, SEPatient& dst);
-  static cdm::PatientData* Unload(const SEPatient& src);
+  static void Load(const pulse::InhalerData& src, Inhaler& dst);
+  static pulse::InhalerData* Unload(const Inhaler& src);
 protected:
-  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
-  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
-
-  // Load a state
-  bool Load(const CDM::PulseInhalerData& in);
-  CDM::PulseInhalerData* Unload() const;
-protected:
-  void Unload(CDM::PulseInhalerData& data) const;
+  static void Serialize(const pulse::InhalerData& src, Inhaler& dst);
+  static void Serialize(const Inhaler& src, pulse::InhalerData& dst);
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

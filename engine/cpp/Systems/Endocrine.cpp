@@ -58,22 +58,26 @@ void Endocrine::Initialize()
   PulseSystem::Initialize();
 }
 
-bool Endocrine::Load(const CDM::PulseEndocrineSystemData& in)
+void Endocrine::Load(const pulse::EndocrineSystemData& src, Endocrine& dst)
 {
-  if (!SEEndocrineSystem::Load(in))
-    return false;
-  PulseSystem::LoadState();
-  return true;
+  Endocrine::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseEndocrineSystemData* Endocrine::Unload() const
+void Endocrine::Serialize(const pulse::EndocrineSystemData& src, Endocrine& dst)
 {
-  CDM::PulseEndocrineSystemData* data = new CDM::PulseEndocrineSystemData();
-  Unload(*data);
-  return data;
+
 }
-void Endocrine::Unload(CDM::PulseEndocrineSystemData& data) const
+
+pulse::EndocrineSystemData* Endocrine::Unload(const Endocrine& src)
 {
-  SEEndocrineSystem::Unload(data);
+
+  pulse::EndocrineSystemData* dst = new pulse::EndocrineSystemData();
+  Endocrine::Serialize(src, *dst);
+  return dst;
+}
+void Endocrine::Serialize(const Endocrine& src, pulse::EndocrineSystemData& dst)
+{
+
 }
 
 void Endocrine::SetUp()

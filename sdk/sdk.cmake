@@ -1,4 +1,4 @@
-project(BioGearsSDK)
+project(PulseSDK)
 
 
 file(GLOB SRC_FILES
@@ -17,14 +17,14 @@ set_target_properties(HowToDriver PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
 # Dependent Libraries
 if(MSVC)
   set(D_LIB_FILES
-    lib/debug${EX_CONFIG}/BioGearsEngine.lib
+    lib/debug${EX_CONFIG}/PulseEngine.lib
     lib/debug${EX_CONFIG}/CommonDataModel.lib
     lib/debug${EX_CONFIG}/DataModelBindings.lib
     lib/debug${EX_CONFIG}/log4cpp.lib
     lib/debug${EX_CONFIG}/xerces-c.lib
   )
   set(O_LIB_FILES
-    lib/release${EX_CONFIG}/BioGearsEngine.lib
+    lib/release${EX_CONFIG}/PulseEngine.lib
     lib/release${EX_CONFIG}/CommonDataModel.lib
     lib/release${EX_CONFIG}/DataModelBindings.lib
     lib/release${EX_CONFIG}/log4cpp.lib
@@ -32,14 +32,14 @@ if(MSVC)
   )
 elseif(UNIX)  
   set(D_LIB_FILES
-    "lib/debug${EX_CONFIG}/BioGearsEngine.so"
+    "lib/debug${EX_CONFIG}/PulseEngine.so"
     "lib/debug${EX_CONFIG}/CommonDataModel.so"
     "lib/debug${EX_CONFIG}/DataModelBindings.so"
     "lib/debug${EX_CONFIG}/log4cpp.so"
     "lib/debug${EX_CONFIG}/xerces-c.so"
   )
   set(O_LIB_FILES
-    "lib/release${EX_CONFIG}/BioGearsEngine.so"
+    "lib/release${EX_CONFIG}/PulseEngine.so"
     "lib/release${EX_CONFIG}/CommonDataModel.so"
     "lib/release${EX_CONFIG}/DataModelBindings.so"
     "lib/release${EX_CONFIG}/log4cpp.so"
@@ -47,14 +47,14 @@ elseif(UNIX)
   )
 else()
   set(D_LIB_FILES
-    lib/debug/BioGearsEngine.lib
+    lib/debug/PulseEngine.lib
     lib/debug/CommonDataModel.lib
     lib/debug/DataModelBindings.lib
     lib/debug/log4cpp.lib
     lib/debug/xerces-c.lib
   )
   set(O_LIB_FILES
-    lib/release/BioGearsEngine.lib
+    lib/release/PulseEngine.lib
     lib/release/CommonDataModel.lib
     lib/release/DataModelBindings.lib
     lib/release/log4cpp.lib

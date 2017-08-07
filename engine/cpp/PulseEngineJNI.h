@@ -12,19 +12,18 @@ specific language governing permissions and limitations under the License.
 
 #include <jni.h>
 #include <iostream>
-#include "bind/biogears-cdm.hxx"
-#include "BioGearsPhysiologyEngine.h"
-#include "Controller/BioGearsEngine.h"
+#include "PulsePhysiologyEngine.h"
+#include "Controller/PulseEngine.h"
 #include "scenario/SEScenarioExec.h"
 #include "utils/SEEventHandler.h"
 
 #include <memory>
 
-class BioGearsEngineJNI : public LoggerForward, public SEScenarioCustomExec, public SEEventHandler
+class PulseEngineJNI : public LoggerForward, public SEScenarioCustomExec, public SEEventHandler
 {
 public:
-  BioGearsEngineJNI(const std::string& logFile);
-  ~BioGearsEngineJNI();
+  PulseEngineJNI(const std::string& logFile);
+  ~PulseEngineJNI();
 
   void Reset();
 
@@ -36,7 +35,7 @@ public:
   void CustomExec(double time_s, PhysiologyEngine* engine);
   void PushData(double time_s);
 
-  void HandlePatientEvent(CDM::enumPatientEvent::value type, bool active, const SEScalarTime* time = nullptr);
+  void HandlePatientEvent(cdm::PatientData_eEvent type, bool active, const SEScalarTime* time = nullptr);
   void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time = nullptr);
 
   JNIEnv*    jniEnv;

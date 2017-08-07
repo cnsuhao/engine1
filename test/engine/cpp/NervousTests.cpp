@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "properties/SEScalarFlowCompliance.h"
@@ -59,14 +59,14 @@ void CalculateMultipliers(double& dsResistanceMultiplier, double& usResistanceMu
 
 }
 
-void BioGearsEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
+void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 {
   std::string tName = "BrainInjuryTest";
 
   DataTrack outTrk;
   std::ofstream file;
 
-  BioGears bg(sTestDirectory + "\\" + tName + ".log");
+  Pulse bg(sTestDirectory + "\\" + tName + ".log");
   bg.GetLogger()->Info("Running " + tName);
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();

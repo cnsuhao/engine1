@@ -15,16 +15,18 @@ import java.util.*;
 
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
-import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformInterpolatorData;
+import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData;
+import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData.eLead;
+import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformListData;
 import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
 
 import mil.tatrc.physiology.utilities.FileUtils;
 
-public class SEElectroCardioGramWaveformInterpolator
+public class SEElectroCardioGramWaveformList
 {
-  Map<Integer,Map<eHeartRhythm,SEElectroCardioGramWaveform>> waveforms = new HashMap<Integer, Map<eHeartRhythm,SEElectroCardioGramWaveform>>();
+  Map<eLead,Map<eHeartRhythm,SEElectroCardioGramWaveform>> waveforms = new HashMap<eLead, Map<eHeartRhythm,SEElectroCardioGramWaveform>>();
  
-  public SEElectroCardioGramWaveformInterpolator()
+  public SEElectroCardioGramWaveformList()
   {
     reset();
   }
@@ -36,19 +38,19 @@ public class SEElectroCardioGramWaveformInterpolator
   
   public void readFile(String fileName) throws ParseException
   {
-    ElectroCardioGramWaveformInterpolatorData.Builder builder = ElectroCardioGramWaveformInterpolatorData.newBuilder();
+    ElectroCardioGramWaveformListData.Builder builder = ElectroCardioGramWaveformListData.newBuilder();
     TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
-    SEElectroCardioGramWaveformInterpolator.load(builder.build(), this);
+    SEElectroCardioGramWaveformList.load(builder.build(), this);
   }
   public void writeFile(String fileName)
   {
-    FileUtils.writeFile(fileName, SEElectroCardioGramWaveformInterpolator.unload(this).toString());
+    FileUtils.writeFile(fileName, SEElectroCardioGramWaveformList.unload(this).toString());
   }
   
-  public static void load(ElectroCardioGramWaveformInterpolatorData src, SEElectroCardioGramWaveformInterpolator dst)
+  public static void load(ElectroCardioGramWaveformListData src, SEElectroCardioGramWaveformList dst)
   {
     dst.reset();
-    for(ElectroCardioGramWaveformInterpolatorData.WaveformData wData : src.getWaveformList())
+    for(ElectroCardioGramWaveformData wData : src.getWaveformList())
     {
       SEElectroCardioGramWaveform w = new SEElectroCardioGramWaveform();
       SEElectroCardioGramWaveform.load(wData,w);
@@ -61,13 +63,13 @@ public class SEElectroCardioGramWaveformInterpolator
       leads.put(w.getRhythm(), w);
     }
   }
-  public static ElectroCardioGramWaveformInterpolatorData unload(SEElectroCardioGramWaveformInterpolator src)
+  public static ElectroCardioGramWaveformListData unload(SEElectroCardioGramWaveformList src)
   {
-    ElectroCardioGramWaveformInterpolatorData.Builder dst =  ElectroCardioGramWaveformInterpolatorData.newBuilder();
+    ElectroCardioGramWaveformListData.Builder dst =  ElectroCardioGramWaveformListData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEElectroCardioGramWaveformInterpolator src, ElectroCardioGramWaveformInterpolatorData.Builder dst)
+  protected static void unload(SEElectroCardioGramWaveformList src, ElectroCardioGramWaveformListData.Builder dst)
   {
     for(Map<eHeartRhythm, SEElectroCardioGramWaveform> leads : src.waveforms.values())
     {     
@@ -76,7 +78,7 @@ public class SEElectroCardioGramWaveformInterpolator
     }
   }
   
-  public SEElectroCardioGramWaveform getWaveform(int lead, eHeartRhythm rhythm)
+  public SEElectroCardioGramWaveform getWaveform(eLead lead, eHeartRhythm rhythm)
   {
     Map<eHeartRhythm, SEElectroCardioGramWaveform> leads = this.waveforms.get(lead);
     if(leads == null)

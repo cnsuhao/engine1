@@ -19,8 +19,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceConcentration.h"
 
-#include "system/environment/SEActiveCooling.h"
-#include "system/environment/SEActiveHeating.h"
+#include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"
 
 #include "properties/SEScalarVolume.h"
@@ -105,25 +104,26 @@ void Environment::Initialize()
   m_PatientEquivalentDiameter_m = pow(Convert(patientMass_g / patientDensity_g_Per_mL, VolumeUnit::mL, VolumeUnit::m3) / (pi*patientHeight_m), 0.5);
 }
 
-bool Environment::Load(const CDM::PulseEnvironmentData& in)
+void Environment::Load(const pulse::EnvironmentData& src, Environment& dst)
 {
-  if (!SEEnvironment::Load(in))
-    return false;
-  PulseSystem::LoadState();
-  m_PatientEquivalentDiameter_m = in.PatientEquivalentDiameter_m();
-  StateChange();
-  return true;
+  Environment::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseEnvironmentData* Environment::Unload() const
+void Environment::Serialize(const pulse::EnvironmentData& src, Environment& dst)
 {
-  CDM::PulseEnvironmentData* data = new CDM::PulseEnvironmentData();
-  Unload(*data);
-  return data;
+  dst.m_PatientEquivalentDiameter_m = src.patientequivalentdiameter_m();
 }
-void Environment::Unload(CDM::PulseEnvironmentData& data) const
+
+pulse::EnvironmentData* Environment::Unload(const Environment& src)
 {
-  SEEnvironment::Unload(data);
-  data.PatientEquivalentDiameter_m(m_PatientEquivalentDiameter_m);
+
+  pulse::EnvironmentData* dst = new pulse::EnvironmentData();
+  Environment::Serialize(src, *dst);
+  return dst;
+}
+void Environment::Serialize(const Environment& src, pulse::EnvironmentData& dst)
+{
+  dst.set_patientequivalentdiameter_m(src.m_PatientEquivalentDiameter_m);
 }
 
 void Environment::SetUp()
@@ -218,8 +218,8 @@ void Environment::AtSteadyState()
 {
   if (m_data.GetState() == EngineState::AtInitialStableState)
   {
-    if (m_data.GetConditions().HasInitialEnvironment())
-      ProcessChange(*m_data.GetConditions().GetInitialEnvironment());
+    if (m_data.GetConditions().HasInitialEnvironmentConditions())
+      ProcessChange(*m_data.GetConditions().GetInitialEnvironmentConditions());
   }
 }
 
@@ -299,7 +299,7 @@ void Environment::ProcessActions()
   //Set the temperature source to zero
   m_ActiveTemperaturePath->GetNextTemperatureSource().SetValue(0.0, TemperatureUnit::K);
   //Open the switch
-  m_ActiveSwitchPath->SetNextSwitch(CDM::enumOpenClosed::Open);    
+  m_ActiveSwitchPath->SetNextSwitch(cdm::eGate::Open);    
 
   if (!m_EnvironmentActions->HasThermalApplication())
   {
@@ -320,7 +320,7 @@ void Environment::ProcessActions()
 
   if (ta->HasActiveHeating())
   {
-    SEActiveHeating& ah = ta->GetActiveHeating();
+    SEActiveConditioning& ah = ta->GetActiveHeating();
     if (ah.HasSurfaceArea() && ah.HasSurfaceAreaFraction())
     {
       ///\error Warning: SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.
@@ -359,7 +359,7 @@ void Environment::ProcessActions()
   dEffectiveAreaFraction = 0.0;
   if (ta->HasActiveCooling())
   {
-    SEActiveCooling& ac = ta->GetActiveCooling();
+    SEActiveConditioning& ac = ta->GetActiveCooling();
     if (ac.HasSurfaceArea() && ac.HasSurfaceAreaFraction())
     {
       ///\error Warning: SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.
@@ -445,7 +445,7 @@ void Environment::ProcessActions()
     m_ActiveTemperaturePath->GetNextTemperatureSource().SetValue(dAppliedTemperature_K, TemperatureUnit::K);
 
     //Close the switch
-    m_ActiveSwitchPath->SetNextSwitch(CDM::enumOpenClosed::Closed);
+    m_ActiveSwitchPath->SetNextSwitch(cdm::eGate::Closed);
   }
 }
 
@@ -504,7 +504,7 @@ void Environment::CalculateSupplementalValues()
 
 
   //Water convective heat transfer properties
-  if (GetConditions().GetSurroundingType() == CDM::enumSurroundingType::Water)
+  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
   {
     double dWaterTemperature_C = GetConditions().GetAmbientTemperature(TemperatureUnit::C);
     double dT = Convert(dWaterTemperature_C, TemperatureUnit::C, TemperatureUnit::K) / 298.15;
@@ -526,7 +526,7 @@ void Environment::CalculateSupplementalValues()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateRadiation()
 {  
-  if (GetConditions().GetSurroundingType() == CDM::enumSurroundingType::Water)
+  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
   {
     //Submerged - therefore, no radiation
     
@@ -593,7 +593,7 @@ void Environment::CalculateConvection()
 {
   double dConvectiveHeatTransferCoefficient_WPerM2_K = 0.0;
 
-  if (GetConditions().GetSurroundingType() == CDM::enumSurroundingType::Water)
+  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
   {
     //Submerged - therefore, convection is most important
     double dClothingTemperature_K = m_ClothingNode->GetTemperature().GetValue(TemperatureUnit::K);
@@ -657,7 +657,7 @@ void Environment::CalculateConvection()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateEvaporation()
 {  
-  if (GetConditions().GetSurroundingType() == CDM::enumSurroundingType::Water)
+  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
   {
     //Submerged - therefore, no evaporation
 

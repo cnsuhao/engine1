@@ -11,19 +11,19 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
+#include "bind/engine/Engine.pb.h"
 #include "Controller/PulseCircuits.h"
 #include "Controller/PulseCompartments.h"
 #include "Controller/PulseConfiguration.h"
 #include "Controller/PulseSubstances.h"
 
-#include "bind/enumPulseAirwayMode.hxx"
 // CDM 
 #include "scenario/SEActionManager.h"
 #include "scenario/SEConditionManager.h"
 #include "properties/SEScalarTime.h"
 
 #include "utils/DataTrack.h"
-#include "engine/PhysiologyEngineTrack.h"
+#include "engine/SEEngineTracker.h"
 
 // Pulse
 #include "Systems/BloodChemistry.h"
@@ -99,21 +99,21 @@ public:
 
   SEConditionManager&                     GetConditions() { return *m_Conditions; }
 
-  PulseCircuits&                       GetCircuits() { return *m_Circuits; }
+  PulseCircuits&                          GetCircuits() { return *m_Circuits; }
 
 
-  PulseCompartments&                   GetCompartments() { return *m_Compartments; }
+  PulseCompartments&                      GetCompartments() { return *m_Compartments; }
 
-  const PulseConfiguration&            GetConfiguration() { return *m_Config; }
+  const PulseConfiguration&               GetConfiguration() { return *m_Config; }
 
   const SEScalarTime&                     GetEngineTime() { return *m_CurrentTime; }
   const SEScalarTime&                     GetSimulationTime() { return *m_SimulationTime; }
   const SEScalarTime&                     GetTimeStep() { return m_Config->GetTimeStep(); }
 
-  CDM::enumPulseAirwayMode::value      GetAirwayMode() { return m_AirwayMode; }
-  void                                    SetAirwayMode(CDM::enumPulseAirwayMode::value mode);
+  pulse::eAirwayMode                      GetAirwayMode() { return m_AirwayMode; }
+  void                                    SetAirwayMode(pulse::eAirwayMode mode);
 
-  cdm::eSwitch                   GetIntubation() { return m_Intubation; }
+  cdm::eSwitch                            GetIntubation() { return m_Intubation; }
   void                                    SetIntubation(cdm::eSwitch s);
 
   bool CreateCircuitsAndCompartments();
@@ -129,7 +129,7 @@ protected:
   void SetupExternalTemperature();
   void SetupInternalTemperature();
 
-  bool Initialize(const PhysiologyEngineConfiguration* config);
+  bool Initialize(const SEEngineConfiguration* config);
   bool SetupPatient();
 
   // Notify systems that steady state has been achieved
@@ -144,18 +144,18 @@ protected:
 
   std::unique_ptr<SEScalarTime>                                 m_CurrentTime;
   std::unique_ptr<SEScalarTime>                                 m_SimulationTime;
-  CDM::enumPulseAirwayMode::value                            m_AirwayMode;
-  cdm::eSwitch                                         m_Intubation;
+  pulse::eAirwayMode                                            m_AirwayMode;
+  cdm::eSwitch                                                  m_Intubation;
 
-  std::unique_ptr<PulseConfiguration>                        m_Config;
+  std::unique_ptr<PulseConfiguration>                           m_Config;
   std::unique_ptr<SaturationCalculator>                         m_SaturationCalculator;
 
-  std::unique_ptr<PulseSubstances>                           m_Substances;
+  std::unique_ptr<PulseSubstances>                              m_Substances;
 
   std::unique_ptr<SEActionManager>                              m_Actions;
   std::unique_ptr<SEConditionManager>                           m_Conditions;
-  std::unique_ptr<PulseCircuits>                             m_Circuits;
-  std::unique_ptr<PulseCompartments>                         m_Compartments;
+  std::unique_ptr<PulseCircuits>                                m_Circuits;
+  std::unique_ptr<PulseCompartments>                            m_Compartments;
 
   std::unique_ptr<Environment>                                  m_Environment;
 

@@ -12,6 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 class PulseEngine;
+#include "cdm/Patient.pb.h"
+#include "bind/engine/EnginePhysiology.pb.h"
 
 /**
  * @brief Generic class for handling the %Pulse stabilization methodology
@@ -35,8 +37,4 @@ public:
 
 protected:
   virtual void SetUp() = 0;
-  virtual void LoadState()
-  {
-    SetUp();
-  }
 };

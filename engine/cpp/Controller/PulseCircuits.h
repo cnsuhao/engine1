@@ -14,8 +14,7 @@ specific language governing permissions and limitations under the License.
 class Pulse;
 
 #include "circuit/SECircuitManager.h"
-
-#include "bind/enumOnOff.hxx"
+#include "bind/cdm/Circuit.pb.h"
 
 /**
 * @brief Manages all circuits associated with all %Pulse systems/equipement
@@ -28,7 +27,7 @@ public:
   virtual ~PulseCircuits();
   void Clear();
 
-  virtual bool Load(const CDM::CircuitManagerData& in);
+  virtual bool Load(const cdm::CircuitManagerData& in);
 
   virtual void SetReadOnlyFluid(bool b);
 
@@ -38,14 +37,14 @@ public:
   SEFluidCircuit&           GetRenalCircuit();
 
   SEFluidCircuit&           GetActiveRespiratoryCircuit();
-  SEFluidCircuit&            GetRespiratoryCircuit();
-  SEFluidCircuit&            GetRespiratoryAndAnesthesiaMachineCircuit();
-  SEFluidCircuit&            GetRespiratoryAndInhalerCircuit();
-  SEFluidCircuit&            GetRespiratoryAndMechanicalVentilatorCircuit();
+  SEFluidCircuit&           GetRespiratoryCircuit();
+  SEFluidCircuit&           GetRespiratoryAndAnesthesiaMachineCircuit();
+  SEFluidCircuit&           GetRespiratoryAndInhalerCircuit();
+  SEFluidCircuit&           GetRespiratoryAndMechanicalVentilatorCircuit();
 
   SEThermalCircuit&         GetTemperatureCircuit();
-  SEThermalCircuit&          GetExternalTemperatureCircuit();
-  SEThermalCircuit&          GetInternalTemperatureCircuit();
+  SEThermalCircuit&         GetExternalTemperatureCircuit();
+  SEThermalCircuit&         GetInternalTemperatureCircuit();
 
   SEFluidCircuit&            GetAnesthesiaMachineCircuit();
 
@@ -89,7 +88,7 @@ protected:
 namespace mil {
   namespace tatrc {
     namespace physiology {
-      namespace biogears {
+      namespace pulse {
 
         class Circuits
         {

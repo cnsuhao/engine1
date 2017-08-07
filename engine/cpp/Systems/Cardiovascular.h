@@ -47,17 +47,11 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  static void Load(const cdm::PatientData& src, SEPatient& dst);
-  static cdm::PatientData* Unload(const SEPatient& src);
+  static void Load(const pulse::CardiovascularSystemData& src, Cardiovascular& dst);
+  static pulse::CardiovascularSystemData* Unload(const Cardiovascular& src);
 protected:
-  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
-  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
-
-  // Load a state
-  virtual bool Load(const CDM::PulseCardiovascularSystemData& in);
-  virtual CDM::PulseCardiovascularSystemData* Unload() const;
-protected:
-  virtual void Unload(CDM::PulseCardiovascularSystemData& data) const;
+  static void Serialize(const pulse::CardiovascularSystemData& src, Cardiovascular& dst);
+  static void Serialize(const Cardiovascular& src, pulse::CardiovascularSystemData& dst);
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

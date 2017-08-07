@@ -13,14 +13,9 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "ECG.h"
-
 #include "../Systems/Cardiovascular.h"
-
 #include "properties/SEScalarFrequency.h"
-#include "bind/ElectroCardioGramWaveformInterpolatorData.hxx"
-
 #include "properties/SEFunctionElectricPotentialVsTime.h"
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGramInterpolatorWaveform.h"
 
 /*
 ========================
@@ -151,8 +146,8 @@ void ECG::Process()
     m_heartRhythmPeriod.SetValue(1/m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s),TimeUnit::s);  
     // Currently we  have one data set for all currently supported Heart Rhythms
     // Eventually we will support multiple rhythmic data
-    if(m_data.GetCardiovascular().GetHeartRhythm() == CDM::enumHeartRhythm::NormalSinus)
-      m_interpolator.StartNewCycle(CDM::enumHeartRhythm::NormalSinus);
+    if(m_data.GetCardiovascular().GetHeartRhythm() == cdm::eHeartRhythm::NormalSinus)
+      m_interpolator.StartNewCycle(cdm::eHeartRhythm::NormalSinus);
     else
     {
       m_ss << m_data.GetCardiovascular().GetHeartRhythm() << " is not a supported Heart Rhythm for ECG";

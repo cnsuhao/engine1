@@ -312,22 +312,22 @@ SEGasCompartmentGraph& PulseCompartments::GetActiveRespiratoryGraph()
 {
   switch (m_data.GetAirwayMode())
   {
-  case CDM::enumPulseAirwayMode::Free:
+  case pulse::eAirwayMode::Free:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_RespiratoryGraph);
     m_UpdateActiveAirwayGraph = false;
     return *m_RespiratoryGraph;
-  case CDM::enumPulseAirwayMode::AnesthesiaMachine:
+  case pulse::eAirwayMode::AnesthesiaMachine:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryAnesthesiaGraph);
     m_UpdateActiveAirwayGraph = false;
     return *m_CombinedRespiratoryAnesthesiaGraph;
-  case CDM::enumPulseAirwayMode::Inhaler:
+  case pulse::eAirwayMode::Inhaler:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryInhalerGraph);
     m_UpdateActiveAirwayGraph = false;
     return *m_CombinedRespiratoryInhalerGraph;
-  case CDM::enumPulseAirwayMode::MechanicalVentilator:
+  case pulse::eAirwayMode::MechanicalVentilator:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryMechanicalVentilatorGraph);
     m_UpdateActiveAirwayGraph = false;
@@ -365,14 +365,14 @@ SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
 {
   switch (m_data.GetAirwayMode())
   {
-  case CDM::enumPulseAirwayMode::Free:
-  case CDM::enumPulseAirwayMode::AnesthesiaMachine:
-  case CDM::enumPulseAirwayMode::MechanicalVentilator:// Just use the regular graph
+  case pulse::eAirwayMode::Free:
+  case pulse::eAirwayMode::AnesthesiaMachine:
+  case pulse::eAirwayMode::MechanicalVentilator:// Just use the regular graph
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
     m_UpdateActiveAerosolGraph = false;
     return *m_AerosolGraph;
-  case CDM::enumPulseAirwayMode::Inhaler:
+  case pulse::eAirwayMode::Inhaler:
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolInhalerGraph);
     m_UpdateActiveAerosolGraph = true;

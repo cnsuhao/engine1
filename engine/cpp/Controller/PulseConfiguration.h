@@ -12,14 +12,13 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 class SENutrition;
-#include "bind/PulseConfigurationData.hxx"
-#include "engine/PhysiologyEngineConfiguration.h"
+#include "engine/SEEngineConfiguration.h"
 class SEEnvironmentalConditions;
 
 /**
 * @brief %Pulse specific configuration parameters for all systems/equipment
 */
-class PULSE_API PulseConfiguration : public PhysiologyEngineConfiguration
+class PULSE_API PulseConfiguration : public SEEngineConfiguration
 {
 public:
 
@@ -29,30 +28,24 @@ public:
   virtual void Clear();
   virtual void Initialize();
 
-  virtual void Merge(const PhysiologyEngineConfiguration& from);
+  virtual void Merge(const SEEngineConfiguration& from);
   virtual void Merge(const PulseConfiguration& from);
 
   bool LoadFile(const std::string& file);
 
-  virtual bool Load(const CDM::PhysiologyEngineConfigurationData& in);
-  virtual bool Load(const CDM::PulseConfigurationData& in);
-  virtual CDM::PulseConfigurationData* Unload() const;
+  static void Load(const cdm::EngineConfigurationData& src, PulseConfiguration& dst);
+  static cdm::EngineConfigurationData* Unload(const PulseConfiguration& src);
 protected:
-  virtual void Unload(CDM::PulseConfigurationData& data) const;
+  static void Serialize(const cdm::EngineConfigurationData& src, PulseConfiguration& dst);
+  static void Serialize(const PulseConfiguration& src, cdm::EngineConfigurationData& dst);
 
   SESubstanceManager& m_Substances;
 
-  virtual bool HasECGInterpolator() const;
-  virtual SEElectroCardioGramInterpolator& GetECGInterpolator();
-  virtual const SEElectroCardioGramInterpolator* GetECGInterpolator() const;
-  virtual void RemoveECGInterpolator();
-
-  virtual bool HasWritePatientBaselineFile() const { return m_WritePatientBaselineFile != (cdm::eSwitch) - 1; }
-  virtual bool WritePatientBaselineFile() const { return m_WritePatientBaselineFile == cdm::eSwitch::On; }
-  virtual void SetWritePatientBaselineFile(cdm::eSwitch v) { m_WritePatientBaselineFile = v; }
+public:
+  virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == cdm::eSwitch::On; }
+  virtual void EnableWritePatientBaselineFile(cdm::eSwitch s) { m_WritePatientBaselineFile = s; }
 protected:
-  SEElectroCardioGramInterpolator*         m_ECGInterpolator;
-  cdm::eSwitch                    m_WritePatientBaselineFile;
+  cdm::eSwitch m_WritePatientBaselineFile;
 
   ////////////////////
   /** Baroreceptors */
@@ -150,10 +143,10 @@ public:
   virtual SEScalarAreaPerTimePressure& GetStandardOxygenDiffusionCoefficient();
   virtual double GetStandardOxygenDiffusionCoefficient(const AreaPerTimePressureUnit& unit) const;
 protected:
-  SEScalarMassPerAmount*          m_MeanCorpuscularHemoglobin;
+  SEScalarMassPerAmount*           m_MeanCorpuscularHemoglobin;
   SEScalarVolume*                  m_MeanCorpuscularVolume;
   SEScalarLength*                  m_StandardDiffusionDistance;
-  SEScalarAreaPerTimePressure*    m_StandardOxygenDiffusionCoefficient;
+  SEScalarAreaPerTimePressure*     m_StandardOxygenDiffusionCoefficient;
 
   /////////////////////
   /** Cardiovascular */
@@ -185,7 +178,7 @@ public:
 protected:
   SEScalarFlowElastance* m_LeftHeartElastanceMaximum; 
   SEScalarFlowElastance* m_LeftHeartElastanceMinimum; 
-  SEScalar0To1*      m_MinimumBloodVolumeFraction;
+  SEScalar0To1*          m_MinimumBloodVolumeFraction;
   SEScalarFlowElastance* m_RightHeartElastanceMaximum; 
   SEScalarFlowElastance* m_RightHeartElastanceMinimum;
   SEScalar*              m_StandardPulmonaryCapillaryCoverage;
@@ -269,18 +262,28 @@ public:
   virtual double GetUniversalGasConstant(const HeatCapacitancePerAmountUnit& unit) const;
 protected:
   SEScalar*                                    m_OxygenMetabolicConstant;
-  SEScalarPowerPerAreaTemperatureToTheFourth* m_StefanBoltzmann;
+  SEScalarPowerPerAreaTemperatureToTheFourth*  m_StefanBoltzmann;
   SEScalarHeatCapacitancePerAmount*            m_UniversalGasConstant;
 
   ////////////
   /** Drugs */
   ////////////
 public:
-  virtual bool HasUsePDModel() const { return m_PDEnabled != (cdm::eSwitch)-1; }
   virtual bool IsPDEnabled() const { return m_PDEnabled==cdm::eSwitch::On; }
   virtual void UsePDModel(cdm::eSwitch s) { m_PDEnabled = s; }
 protected:
   cdm::eSwitch m_PDEnabled;
+
+  ///////////
+  /** ECG */
+  //////////
+public:
+//  virtual bool HasECGInterpolator() const;
+//  virtual SEElectroCardioGramInterpolator& GetECGInterpolator();
+//  virtual const SEElectroCardioGramInterpolator* GetECGInterpolator() const;
+//  virtual void RemoveECGInterpolator();
+//protected:
+//  SEElectroCardioGramInterpolator*         m_ECGInterpolator;
 
   /////////////
   /** Energy */
@@ -322,8 +325,8 @@ public:
   virtual SEScalarHeatCapacitancePerMass& GetVaporSpecificHeat();
   virtual double GetVaporSpecificHeat(const HeatCapacitancePerMassUnit& unit) const;
 protected:
-  SEScalarHeatCapacitancePerMass*  m_BodySpecificHeat;
-  SEScalar*                        m_CarbondDioxideProductionFromOxygenConsumptionConstant;
+  SEScalarHeatCapacitancePerMass* m_BodySpecificHeat;
+  SEScalar*                       m_CarbondDioxideProductionFromOxygenConsumptionConstant;
   SEScalarTemperature*            m_CoreTemperatureLow;
   SEScalarTemperature*            m_CoreTemperatureHigh;
   SEScalarTemperature*            m_DeltaCoreTemperatureLow;
@@ -361,7 +364,7 @@ public:
   virtual double GetWaterDensity(const MassPerVolumeUnit& unit) const;
 protected:
   SEScalarMassPerVolume*          m_AirDensity;
-  SEScalarHeatCapacitancePerMass*  m_AirSpecificHeat;
+  SEScalarHeatCapacitancePerMass* m_AirSpecificHeat;
   SEScalarMassPerAmount*          m_MolarMassOfDryAir;
   SEScalarMassPerAmount*          m_MolarMassOfWaterVapor;
   SEEnvironmentalConditions*      m_InitialEnvironmentalConditions;
@@ -414,14 +417,14 @@ public:
 protected:
 
   SEScalarMassPerTime*      m_CalciumDigestionRate;
-  SEScalar0To1*         m_CalciumAbsorbtionFraction;
-  SEScalar0To1*         m_CarbohydrateAbsorbtionFraction;
+  SEScalar0To1*             m_CalciumAbsorbtionFraction;
+  SEScalar0To1*             m_CarbohydrateAbsorbtionFraction;
   SEScalarMassPerTime*      m_DefaultCarbohydrateDigestionRate;
   SEScalarMassPerTime*      m_DefaultFatDigestionRate;
   SEScalarMassPerTime*      m_DefaultProteinDigestionRate;
   SENutrition*              m_DefaultStomachContents;
-  SEScalar0To1*         m_FatAbsorbtionFraction;
-  SEScalar0To1*         m_ProteinToUreaFraction;
+  SEScalar0To1*             m_FatAbsorbtionFraction;
+  SEScalar0To1*             m_ProteinToUreaFraction;
   SEScalarVolumePerTime*    m_WaterDigestionRate;
 
   ///////////////
@@ -432,13 +435,12 @@ public:
   virtual SEScalarLength& GetPupilDiameterBaseline();
   virtual double GetPupilDiameterBaseline(const LengthUnit& unit) const;
 protected:
-  SEScalarLength*         m_PupilDiameterBaseline;
+  SEScalarLength*           m_PupilDiameterBaseline;
 
   ////////////
   /** Renal */
   ////////////
 public:
-  virtual bool HasEnableRenal() const { return m_RenalEnabled != (cdm::eSwitch)-1; }
   virtual bool IsRenalEnabled() const { return m_RenalEnabled==cdm::eSwitch::On; }
   virtual void EnableRenal(cdm::eSwitch s) { m_RenalEnabled = s; } 
 
@@ -493,25 +495,25 @@ public:
   virtual bool HasTargetSodiumDelivery();
   virtual SEScalarMassPerTime& GetTargetSodiumDelivery();
 protected:
-  cdm::eSwitch               m_RenalEnabled;
+  cdm::eSwitch                         m_RenalEnabled;
 
-  SEScalarMassPerVolume*              m_PlasmaSodiumConcentrationSetPoint;
-  SEScalarMassPerVolume*              m_PeritubularPotassiumConcentrationSetPoint;
+  SEScalarMassPerVolume*               m_PlasmaSodiumConcentrationSetPoint;
+  SEScalarMassPerVolume*               m_PeritubularPotassiumConcentrationSetPoint;
 
   SEScalarArea*                        m_LeftGlomerularFilteringSurfaceAreaBaseline;
-  SEScalarVolumePerTimePressureArea*  m_LeftGlomerularFluidPermeabilityBaseline;
+  SEScalarVolumePerTimePressureArea*   m_LeftGlomerularFluidPermeabilityBaseline;
   SEScalarArea*                        m_LeftTubularReabsorptionFilteringSurfaceAreaBaseline;
-  SEScalarVolumePerTimePressureArea*  m_LeftTubularReabsorptionFluidPermeabilityBaseline;
+  SEScalarVolumePerTimePressureArea*   m_LeftTubularReabsorptionFluidPermeabilityBaseline;
   
   SEScalarArea*                        m_RightGlomerularFilteringSurfaceAreaBaseline;
-  SEScalarVolumePerTimePressureArea*  m_RightGlomerularFluidPermeabilityBaseline;
+  SEScalarVolumePerTimePressureArea*   m_RightGlomerularFluidPermeabilityBaseline;
   SEScalarArea*                        m_RightTubularReabsorptionFilteringSurfaceAreaBaseline;
-  SEScalarVolumePerTimePressureArea*  m_RightTubularReabsorptionFluidPermeabilityBaseline;
-  
+  SEScalarVolumePerTimePressureArea*   m_RightTubularReabsorptionFluidPermeabilityBaseline;
+   
   SEScalarFlowResistance*              m_MaximumAfferentResistance;
   SEScalarFlowResistance*              m_MinimumAfferentResistance;
   
-  SEScalarMassPerTime*                m_TargetSodiumDelivery;
+  SEScalarMassPerTime*                 m_TargetSodiumDelivery;
 
 
   //////////////////
@@ -550,12 +552,12 @@ public:
   virtual SEScalarPressure& GetVentilatoryOcclusionPressure();
   virtual double GetVentilatoryOcclusionPressure(const PressureUnit& unit) const;
 protected:
-  SEScalarPressure*       m_CentralControllerCO2PressureSetPoint;
+  SEScalarPressure*        m_CentralControllerCO2PressureSetPoint;
   SEScalar*                m_CentralVentilatoryControllerGain;
-  SEScalarPressure*       m_PeripheralControllerCO2PressureSetPoint;
+  SEScalarPressure*        m_PeripheralControllerCO2PressureSetPoint;
   SEScalar*                m_PeripheralVentilatoryControllerGain;
-  SEScalarInverseVolume*  m_PleuralComplianceSensitivity;
-  SEScalarVolumePerTime*  m_PulmonaryVentilationRateMaximum;
+  SEScalarInverseVolume*   m_PleuralComplianceSensitivity;
+  SEScalarVolumePerTime*   m_PulmonaryVentilationRateMaximum;
   SEScalarVolume*          m_VentilationTidalVolumeIntercept;
   SEScalarPressure*        m_VentilatoryOcclusionPressure;
 
@@ -563,7 +565,6 @@ protected:
   /** Tissue */
   /////////////
 public:
-  virtual bool HasEnableTissue() const { return m_TissueEnabled != (cdm::eSwitch)-1; }
   virtual bool IsTissueEnabled() const { return m_TissueEnabled==cdm::eSwitch::On; }
   virtual void EnableTissue(cdm::eSwitch s) { m_TissueEnabled = s; }
 protected:

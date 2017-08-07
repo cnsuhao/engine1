@@ -85,7 +85,9 @@ void Gastrointestinal::Initialize()
   {
     // We are going to initialize the body with 2 meals so we process the default meal twice
     // 1 meal about 5hrs ago, and one meal at the start of the scenario  
-    CDM_COPY((m_data.GetConfiguration().GetDefaultStomachContents()), (&GetStomachContents()));
+    const cdm::NutritionData* dsc = SENutrition::Unload(*m_data.GetConfiguration().GetDefaultStomachContents());
+    SENutrition::Load(*dsc,GetStomachContents());
+    delete dsc;
     m_data.GetPatient().GetWeight().IncrementValue(2 * m_StomachContents->GetWeight(MassUnit::g), MassUnit::g);
     // Now digest the contents
     DigestStomachNutrients(5 * 60 * 60);//hrs to seconds (note decrement is off, so the stomach will stay full)    
@@ -99,23 +101,27 @@ void Gastrointestinal::Initialize()
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeUrea]       = m_SmallIntestineChymeUrea->GetMass(MassUnit::ug);
 }
 
-bool Gastrointestinal::Load(const CDM::PulseGastrointestinalSystemData& in)
+void Gastrointestinal::Load(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst)
 {
-  if (!SEGastrointestinalSystem::Load(in))
-    return false;
-  PulseSystem::LoadState();
-  m_DecrementNutrients = true;
-  return true;
+  Gastrointestinal::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseGastrointestinalSystemData* Gastrointestinal::Unload() const
+void Gastrointestinal::Serialize(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst)
 {
-  CDM::PulseGastrointestinalSystemData* data = new CDM::PulseGastrointestinalSystemData();
-  Unload(*data);
-  return data;
+  // We assume state have to be after all stabilization
+  dst.m_DecrementNutrients = true;
 }
-void Gastrointestinal::Unload(CDM::PulseGastrointestinalSystemData& data) const
+
+pulse::GastrointestinalSystemData* Gastrointestinal::Unload(const Gastrointestinal& src)
 {
-  SEGastrointestinalSystem::Unload(data);
+
+  pulse::GastrointestinalSystemData* dst = new pulse::GastrointestinalSystemData();
+  Gastrointestinal::Serialize(src, *dst);
+  return dst;
+}
+void Gastrointestinal::Serialize(const Gastrointestinal& src, pulse::GastrointestinalSystemData& dst)
+{
+
 }
 
 void Gastrointestinal::SetUp()
@@ -168,7 +174,9 @@ void Gastrointestinal::AtSteadyState()
       // Remove the default meal weight from the patient
       m_data.GetPatient().GetWeight().IncrementValue(-m_StomachContents->GetWeight(MassUnit::g), MassUnit::g);
       // Overwrite meal contents into our stomach
-      CDM_COPY((&meal), (m_StomachContents));
+      const cdm::MealData* m = SEMeal::Unload(meal);
+      SENutrition::Load(m->nutrition(), GetStomachContents());
+      delete m;
       if (!m_StomachContents->HasWater() || m_StomachContents->GetWater().IsZero())
         m_StomachContents->GetWater().SetValue(m_secretionRate_mL_Per_s*m_dT_s, VolumeUnit::mL);//Add a time steps worth of water if empty
       // Increase our weight by the meal

@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "properties/SEScalar0To1.h"
 #include "substance/SESubstanceFraction.h"
@@ -31,7 +31,7 @@ std::chrono::microseconds::rep vectorAverage(std::vector<std::chrono::microsecon
     return INT_MAX;
 }
 
-void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
+void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
 {
   m_Logger->ResetLogFile(rptDirectory + "\\SolverSpeedTest.log");
 
@@ -45,7 +45,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   double deltaT_s = 1.0 / 90.0;
   bool showAllOutput = true; //toggle this to show all Info outputs for all circuits, which will show first-pass solve times and fail rates
 
-  BioGears bg(tsSolverSpeed.GetLogger());
+  Pulse bg(tsSolverSpeed.GetLogger());
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::On);

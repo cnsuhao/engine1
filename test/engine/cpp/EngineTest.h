@@ -12,9 +12,8 @@ specific language governing permissions and limitations under the License.
 
 // The following tests will be exported and runnable
 #include <math.h>
-#include "bind/biogears-cdm.hxx"
-#include "BioGearsPhysiologyEngine.h"
-#include "Controller/BioGearsEngine.h"
+#include "PulsePhysiologyEngine.h"
+#include "Controller/PulseEngine.h"
 
 #if defined(_MSC_VER) || defined(__MINGW64_VERSION_MAJOR)
     #ifdef TEST_EXPORTS
@@ -31,19 +30,19 @@ specific language governing permissions and limitations under the License.
 class SETestSuite;
 class HowToTracker;
 
-class TEST_DECL BioGearsEngineTest : Loggable
+class TEST_DECL PulseEngineTest : Loggable
 {
 public:
-  BioGearsEngineTest();
-  BioGearsEngineTest(Logger* logger);
-  virtual ~BioGearsEngineTest();
+  PulseEngineTest();
+  PulseEngineTest(Logger* logger);
+  virtual ~PulseEngineTest();
 
   bool RunTest(const std::string& testName, const std::string& sOutputDirectory);
   void FillFunctionMap();
 
 protected:
   bool myLogger;
-  typedef void(BioGearsEngineTest::*testFunction)(const std::string&);
+  typedef void(PulseEngineTest::*testFunction)(const std::string&);
   typedef std::map<std::string, testFunction> testMap;
   testMap bgeMap;
   std::stringstream m_ss;
@@ -185,7 +184,7 @@ public:
   void AcidBaseBloodGasTests(const std::string& sOutputDirectory);
 protected:
   enum bloodType { ARTERIAL, VENOUS, CAPILLARY, RESPIRATORY_ACIDOSIS, METABOLIC_ALKALOSIS, METABOLIC_ACIDOSIS, RESPIRATORY_ALKALOSIS, CUSTOM };
-  void AcidBaseBloodGasTest(BioGears& bg, bloodType compartment, SETestSuite& testSuite);
+  void AcidBaseBloodGasTest(Pulse& bg, bloodType compartment, SETestSuite& testSuite);
 
   /////////////////////
   // Aerosol Tests //

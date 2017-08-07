@@ -5,9 +5,9 @@ option java_package = "com.kitware.physiology.pulse";
 import "cdm/Properties.proto";
 import "cdm/Environment.proto";
 import "cdm/PatientNutrition.proto";
-import "engine/EngineEquipment.proto";
+import "cdm/ElectroCardioGram.proto";
 
-message PulseConfigurationData
+message ConfigurationData
 
 {
   message BaroreceptorConfigurationData
@@ -78,7 +78,7 @@ message PulseConfigurationData
     oneof ElectroCardioGramInterpolator
     {
       string                                           InterpolatorFileName                                 = 1;/**<< @brief */
-      PulseElectroCardioGramData.InterpolatorData      Interpolator                                         = 2;/**<< @brief */
+      cdm.ElectroCardioGramWaveformListData            Interpolator                                         = 2;/**<< @brief */
     }
   }
   

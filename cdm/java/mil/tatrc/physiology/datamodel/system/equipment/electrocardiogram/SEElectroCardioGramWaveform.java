@@ -11,7 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram;
 
-import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformInterpolatorData;
+import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData;
+import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData.eLead;
 import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
 
 import mil.tatrc.physiology.datamodel.properties.SEFunctionElectricPotentialVsTime;
@@ -20,7 +21,7 @@ import mil.tatrc.physiology.utilities.Log;
 
 public class SEElectroCardioGramWaveform
 {
-  protected int                               lead;
+  protected eLead                             lead;
   protected eHeartRhythm                      rhythm;
   protected SEFunctionElectricPotentialVsTime data;
   protected SEScalarTime                      timeStep;
@@ -32,33 +33,31 @@ public class SEElectroCardioGramWaveform
   
   public void reset()
   {
-    lead = 0;
+    lead = eLead.NullLead;
     rhythm = null;
     data = null;
     timeStep = null;
   }
   
-  public static void load(ElectroCardioGramWaveformInterpolatorData.WaveformData src, SEElectroCardioGramWaveform dst)
+  public static void load(ElectroCardioGramWaveformData src, SEElectroCardioGramWaveform dst)
   {
     dst.reset();
     if(src.getRhythm()!=eHeartRhythm.UNRECOGNIZED)
       dst.setRhythm(src.getRhythm());
-    if(src.getLead()>0)
-      dst.setLead(src.getLead());
-    if(src.getLead()>12)
-      throw new RuntimeException("ECG Lead cannot be greater than 12");
+    if(src.getLead()!=eLead.UNRECOGNIZED)
+     dst.setLead(src.getLead());
     if(src.hasData())
       SEFunctionElectricPotentialVsTime.load(src.getData(),dst.getData());
     if(src.hasTimeStep())
       SEScalarTime.load(src.getTimeStep(),dst.getTimeStep()); 
   }
-  public static ElectroCardioGramWaveformInterpolatorData.WaveformData unload(SEElectroCardioGramWaveform src)
+  public static ElectroCardioGramWaveformData unload(SEElectroCardioGramWaveform src)
   {
-    ElectroCardioGramWaveformInterpolatorData.WaveformData.Builder dst =  ElectroCardioGramWaveformInterpolatorData.WaveformData.newBuilder();
+    ElectroCardioGramWaveformData.Builder dst =  ElectroCardioGramWaveformData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEElectroCardioGramWaveform src, ElectroCardioGramWaveformInterpolatorData.WaveformData.Builder dst)
+  protected static void unload(SEElectroCardioGramWaveform src, ElectroCardioGramWaveformData.Builder dst)
   {
     if(src.hasLead())
       dst.setLead(src.lead);
@@ -70,23 +69,21 @@ public class SEElectroCardioGramWaveform
       dst.setTimeStep(SEScalarTime.unload(src.timeStep));
   }
   
-  public int getLead()
+  public eLead getLead()
   {
     return lead;
   }
-  public void setLead(int l)
+  public void setLead(eLead l)
   {
-    if(l>0 && l<=12)
-      this.lead = l;
-    Log.error("Lead must be between 1 and 12");
+    this.lead = l;
   }
   public boolean hasLead()
   {
-    return lead != 0;
+    return lead==null ? false : lead != eLead.NullLead;
   }
   public void removeLead()
   {
-    this.lead = 0;
+    this.lead = null;
   }
   
   public eHeartRhythm getRhythm()

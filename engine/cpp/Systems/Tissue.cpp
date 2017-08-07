@@ -142,37 +142,36 @@ void Tissue::Initialize()
   GetRespiratoryExchangeRatio().SetValue(0.8);
 }
 
-bool Tissue::Load(const CDM::PulseTissueSystemData& in)
+void Tissue::Load(const pulse::TissueSystemData& src, Tissue& dst)
 {
-  if (!SETissueSystem::Load(in))
-    return false;
-
-  m_RestingTissueGlucose_g = in.RestingTissueGlucose_g();
-  m_RestingBloodGlucose_g_Per_L = in.RestingBloodGlucose_g_Per_L();
-  m_RestingBloodLipid_g_Per_L = in.RestingBloodLipid_g_Per_L();
-  m_RestingBloodInsulin_g_Per_L = in.RestingBloodInsulin_g_Per_L();
-  m_RestingPatientMass_kg = in.RestingPatientMass_kg();
-  m_RestingFluidMass_kg = in.RestingFluidMass_kg();
-
-  PulseSystem::LoadState();
-  return true;
+  Tissue::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseTissueSystemData* Tissue::Unload() const
+void Tissue::Serialize(const pulse::TissueSystemData& src, Tissue& dst)
 {
-  CDM::PulseTissueSystemData* data = new CDM::PulseTissueSystemData();
-  Unload(*data);
-  return data;
+  dst.m_RestingTissueGlucose_g = src.restingtissueglucose_g();
+  dst.m_RestingBloodGlucose_g_Per_L = src.restingbloodglucose_g_per_l();
+  dst.m_RestingBloodLipid_g_Per_L = src.restingbloodlipid_g_per_l();
+  dst.m_RestingBloodInsulin_g_Per_L = src.restingbloodinsulin_g_per_l();
+  dst.m_RestingPatientMass_kg = src.restingpatientmass_kg();
+  dst.m_RestingFluidMass_kg = src.restingfluidmass_kg();
 }
-void Tissue::Unload(CDM::PulseTissueSystemData& data) const
-{
-  SETissueSystem::Unload(data);
 
-  data.RestingTissueGlucose_g(m_RestingTissueGlucose_g);
-  data.RestingBloodGlucose_g_Per_L(m_RestingBloodGlucose_g_Per_L);
-  data.RestingBloodLipid_g_Per_L(m_RestingBloodLipid_g_Per_L);
-  data.RestingBloodInsulin_g_Per_L(m_RestingBloodInsulin_g_Per_L);
-  data.RestingPatientMass_kg(m_RestingPatientMass_kg);
-  data.RestingFluidMass_kg(m_RestingFluidMass_kg);
+pulse::TissueSystemData* Tissue::Unload(const Tissue& src)
+{
+
+  pulse::TissueSystemData* dst = new pulse::TissueSystemData();
+  Tissue::Serialize(src, *dst);
+  return dst;
+}
+void Tissue::Serialize(const Tissue& src, pulse::TissueSystemData& dst)
+{
+  dst.set_restingtissueglucose_g(src.m_RestingTissueGlucose_g);
+  dst.set_restingbloodglucose_g_per_l(src.m_RestingBloodGlucose_g_Per_L);
+  dst.set_restingbloodlipid_g_per_l(src.m_RestingBloodLipid_g_Per_L);
+  dst.set_restingbloodinsulin_g_per_l(src.m_RestingBloodInsulin_g_Per_L);
+  dst.set_restingpatientmass_kg(src.m_RestingPatientMass_kg);
+  dst.set_restingfluidmass_kg(src.m_RestingFluidMass_kg);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -426,7 +425,7 @@ void Tissue::CalculateDiffusion()
 
         // Currently, only drugs and gases transport across the capillary
         /// \todo Enable non-advective transport for all substances
-        if (sub->GetState() != CDM::enumSubstanceState::Gas)
+        if (sub->GetState() != cdm::SubstanceData_eState_Gas)
         {
           // Sodium is special. We need to diffuse for renal function.
           // We will not treat sodium any differently once diffusion functionality is fully implemented.
@@ -1112,11 +1111,11 @@ void Tissue::CalculateVitals()
   if ((m_RestingFluidMass_kg - currentFluidMass_kg) / m_RestingPatientMass_kg > 0.03)
   {
     /// \event Patient: Patient is dehydrated when 3% of body mass is lost due to fluid reduction
-    m_data.GetPatient().SetEvent(CDM::enumPatientEvent::Dehydration, true, m_data.GetSimulationTime()); /// \cite who2005dehydration
+    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_Dehydration, true, m_data.GetSimulationTime()); /// \cite who2005dehydration
   }
   else if ((m_RestingFluidMass_kg - currentFluidMass_kg) / m_RestingPatientMass_kg < 0.02)
   {
-    m_data.GetPatient().SetEvent(CDM::enumPatientEvent::Dehydration, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_Dehydration, false, m_data.GetSimulationTime());
   }
 
   // Total tissue volume
@@ -1140,11 +1139,11 @@ void Tissue::CalculateVitals()
   /*if (m_Muscleintracellular.GetSubstanceQuantity(*m_Calcium)->GetConcentration(MassPerVolumeUnit::g_Per_L) < 1.0)
   {
     /// \event Patient: Patient is fasciculating due to calcium deficiency
-    m_data.GetPatient().SetEvent(CDM::enumPatientEvent::Fasciculation, true, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_Fasciculation, true, m_data.GetSimulationTime());
   }
   else if (m_Muscleintracellular.GetSubstanceQuantity(*m_Calcium)->GetConcentration(MassPerVolumeUnit::g_Per_L) > 3.0)
   {
-    m_data.GetPatient().SetEvent(CDM::enumPatientEvent::Fasciculation, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_Fasciculation, false, m_data.GetSimulationTime());
   }*/
 }
 

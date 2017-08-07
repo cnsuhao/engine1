@@ -11,84 +11,40 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "bind/PulseConfigurationData.hxx"
-#include "bind/BaroreceptorConfigurationData.hxx"
-#include "bind/BloodChemistryConfigurationData.hxx"
-#include "bind/CardiovascularConfigurationData.hxx"
-#include "bind/CircuitConfigurationData.hxx"
-#include "bind/ConstantsConfigurationData.hxx"
-#include "bind/DrugsConfigurationData.hxx"
-#include "bind/EnergyConfigurationData.hxx"
-#include "bind/EnvironmentConfigurationData.hxx"
-#include "bind/EnvironmentalConditionsData.hxx"
-#include "bind/EnergyConfigurationData.hxx"
-#include "bind/GastrointestinalConfigurationData.hxx"
-#include "bind/NervousConfigurationData.hxx"
-#include "bind/RenalConfigurationData.hxx"
-#include "bind/RespiratoryConfigurationData.hxx"
-#include "bind/TissueConfigurationData.hxx"
 #include "properties/SEScalarMass.h"
-#include "bind/ScalarMassData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/ScalarMassPerVolumeData.hxx"
 #include "properties/SEScalarHeatCapacitancePerAmount.h"
-#include "bind/ScalarHeatCapacitancePerAmountData.hxx"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
-#include "bind/ScalarHeatCapacitancePerMassData.hxx"
 #include "properties/SEScalarHeatConductance.h"
-#include "bind/ScalarHeatConductanceData.hxx"
 #include "properties/SEScalarEnergyPerMass.h"
-#include "bind/ScalarEnergyPerMassData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/ScalarFractionData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarArea.h"
-#include "bind/ScalarAreaData.hxx"
 #include "properties/SEScalarLength.h"
-#include "bind/ScalarLengthData.hxx"
 #include "properties/SEScalarAreaPerTimePressure.h"
-#include "bind/ScalarAreaPerTimePressureData.hxx"
 #include "properties/SEScalarPressure.h"
-#include "bind/ScalarPressureData.hxx"
 #include "properties/SEScalarMassPerAmount.h"
-#include "bind/ScalarMassPerAmountData.hxx"
 #include "properties/SEScalarFlowResistance.h"
-#include "bind/ScalarFlowResistanceData.hxx"
 #include "properties/SEScalarFlowElastance.h"
-#include "bind/ScalarFlowElastanceData.hxx"
 #include "properties/SEScalarHeatResistance.h"
-#include "bind/ScalarHeatResistanceData.hxx"
 #include "properties/SEScalarElectricResistance.h"
-#include "bind/ScalarElectricResistanceData.hxx"
 #include "properties/SEScalarMassPerAmount.h"
-#include "bind/ScalarMassPerAmountData.hxx"
 #include "properties/SEScalarTemperature.h"
-#include "bind/ScalarTemperatureData.hxx"
 #include "properties/SEScalarEnergyPerAmount.h"
-#include "bind/ScalarEnergyPerAmountData.hxx"
 #include "properties/SEScalarTime.h"
-#include "bind/ScalarTimeData.hxx"
 #include "properties/SEScalarMassPerTime.h"
-#include "bind/ScalarMassPerTimeData.hxx"
 #include "properties/SEScalarVolumePerTimeArea.h"
-#include "bind/ScalarVolumePerTimeAreaData.hxx"
 #include "properties/SEScalarVolumePerTimePressureArea.h"
-#include "bind/ScalarVolumePerTimePressureAreaData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 #include "properties/SEScalarInverseVolume.h"
 #include "properties/SEScalarPowerPerAreaTemperatureToTheFourth.h"
-#include "bind/ScalarPowerPerAreaTemperatureToTheFourthData.hxx"
 #include "patient/SENutrition.h"
-#include "bind/PatientNutrition.hxx"
-#include "engine/PhysiologyEngineDynamicStabilization.h"
-#include "engine/PhysiologyEngineTimedStabilization.h"
-#include "Serializer.h"
+#include "engine/SEDynamicStabilization.h"
+#include "engine/SETimedStabilization.h"
 
 
 
-PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : PhysiologyEngineConfiguration(substances.GetLogger()), m_Substances(substances)
+PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngineConfiguration(substances.GetLogger()), m_Substances(substances)
 {
   // Barorecptors
   m_ResponseSlope = nullptr;
@@ -213,7 +169,7 @@ PulseConfiguration::~PulseConfiguration()
 
 void PulseConfiguration::Clear()
 {
-  PhysiologyEngineConfiguration::Clear();
+  SEEngineConfiguration::Clear();
 
   // Barorecptors
   SAFE_DELETE(m_ResponseSlope);
@@ -460,13 +416,13 @@ void PulseConfiguration::Initialize()
   m_TissueEnabled = cdm::eSwitch::On;
 }
 
-void PulseConfiguration::Merge(const PhysiologyEngineConfiguration& from)
+void PulseConfiguration::Merge(const SEEngineConfiguration& from)
 {
   const PulseConfiguration* bgConfig = dynamic_cast<const PulseConfiguration*>(&from);
   if (bgConfig != nullptr)
     Merge(*bgConfig);
   else
-    PhysiologyEngineConfiguration::Merge(from);
+    SEEngineConfiguration::Merge(from);
 }
 
 void PulseConfiguration::Merge(const PulseConfiguration& from)
@@ -495,18 +451,18 @@ bool PulseConfiguration::LoadFile(const std::string& file)
   return Load(*pData);
 }
 
-bool PulseConfiguration::Load(const CDM::PhysiologyEngineConfigurationData& from)
+bool PulseConfiguration::Load(const CDM::SEEngineConfigurationData& from)
 {
   const CDM::PulseConfigurationData* bgConfig = dynamic_cast<const CDM::PulseConfigurationData*>(&from);
   if (bgConfig != nullptr)
     return Load(*bgConfig);
   else
-    return PhysiologyEngineConfiguration::Load(from);
+    return SEEngineConfiguration::Load(from);
 }
 
 bool PulseConfiguration::Load(const CDM::PulseConfigurationData& in)
 {
-  PhysiologyEngineConfiguration::Load(in);
+  SEEngineConfiguration::Load(in);
 
   //Barorecptors
   if (in.BaroreceptorConfiguration().present())
@@ -816,7 +772,7 @@ CDM::PulseConfigurationData* PulseConfiguration::Unload() const
 
 void PulseConfiguration::Unload(CDM::PulseConfigurationData& data) const
 {
-  PhysiologyEngineConfiguration::Unload(data);
+  SEEngineConfiguration::Unload(data);
 
   // Barorecptor
   CDM::BaroreceptorConfigurationData* baro(new CDM::BaroreceptorConfigurationData());
@@ -1046,21 +1002,21 @@ void PulseConfiguration::Unload(CDM::PulseConfigurationData& data) const
 }
 
 
-bool PhysiologyEngineConfiguration::HasECGInterpolator() const
+bool SEEngineConfiguration::HasECGInterpolator() const
 {
   return m_ECGInterpolator != nullptr;
 }
-SEElectroCardioGramInterpolator& PhysiologyEngineConfiguration::GetECGInterpolator()
+SEElectroCardioGramInterpolator& SEEngineConfiguration::GetECGInterpolator()
 {
   if (m_ECGInterpolator == nullptr)
     m_ECGInterpolator = new SEElectroCardioGramInterpolator(GetLogger());
   return *m_ECGInterpolator;
 }
-const SEElectroCardioGramInterpolator* PhysiologyEngineConfiguration::GetECGInterpolator() const
+const SEElectroCardioGramInterpolator* SEEngineConfiguration::GetECGInterpolator() const
 {
   return m_ECGInterpolator;
 }
-void PhysiologyEngineConfiguration::RemoveECGInterpolator()
+void SEEngineConfiguration::RemoveECGInterpolator()
 {
   SAFE_DELETE(m_ECGInterpolator);
 }

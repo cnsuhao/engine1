@@ -76,14 +76,14 @@ void AnesthesiaMachine::Initialize()
 {
   PulseSystem::Initialize();
 
-  SetConnection(CDM::enumAnesthesiaMachineConnection::Off);
+  SetConnection(cdm::AnesthesiaMachineData_eConnection_Off);
   GetInletFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
   GetRespiratoryRate().SetValue(12.0, FrequencyUnit::Per_min);
   GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
   GetInspiratoryExpiratoryRatio().SetValue(0.5);
   GetOxygenFraction().SetValue(0.5);
-  SetOxygenSource(CDM::enumAnesthesiaMachineOxygenSource::Wall);
-  SetPrimaryGas(CDM::enumAnesthesiaMachinePrimaryGas::Nitrogen);
+  SetOxygenSource(cdm::AnesthesiaMachineData_eOxygenSource_Wall);
+  SetPrimaryGas(cdm::AnesthesiaMachineData_ePrimaryGas_Nitrogen);
   GetVentilatorPressure().SetValue(15.0, PressureUnit::cmH2O);
   GetOxygenBottleOne().GetVolume().SetValue(660.0, VolumeUnit::L);
   GetOxygenBottleTwo().GetVolume().SetValue(660.0, VolumeUnit::L);
@@ -98,32 +98,34 @@ void AnesthesiaMachine::Initialize()
   StateChange();
 }
 
-bool AnesthesiaMachine::Load(const CDM::PulseAnesthesiaMachineData& in)
+void AnesthesiaMachine::Load(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
-  if (!SEAnesthesiaMachine::Load(in))
-    return false;
-  PulseSystem::LoadState();
-  m_inhaling = in.Inhaling();
-  m_currentbreathingCycleTime.Load(in.CurrentBreathingCycleTime());
-  m_inspirationTime.Load(in.InspirationTime());
-  m_O2InletVolumeFraction.Load(in.OxygenInletVolumeFraction());
-  m_totalBreathingCycleTime.Load(in.TotalBreathingCycleTime());
-  return true;
+  AnesthesiaMachine::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseAnesthesiaMachineData* AnesthesiaMachine::Unload() const
+void AnesthesiaMachine::Serialize(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
-  CDM::PulseAnesthesiaMachineData* data = new CDM::PulseAnesthesiaMachineData();
-  Unload(*data);
-  return data;
+  dst.m_inhaling = src.inhaling();
+  dst.m_currentbreathingCycleTime.SetValue(src.currentbreathingcycletime_s(),TimeUnit::s);
+  dst.m_inspirationTime.SetValue(src.inspirationtime_s(), TimeUnit::s);
+  dst.m_O2InletVolumeFraction.SetValue(src.oxygeninletvolumefraction());
+  dst.m_totalBreathingCycleTime.SetValue(src.totalbreathingcycletime_s(), TimeUnit::s);
 }
-void AnesthesiaMachine::Unload(CDM::PulseAnesthesiaMachineData& data) const
+
+pulse::AnesthesiaMachineData* AnesthesiaMachine::Unload(const AnesthesiaMachine& src)
 {
-  SEAnesthesiaMachine::Unload(data);
-  data.Inhaling(m_inhaling);
-  data.CurrentBreathingCycleTime(std::unique_ptr<CDM::ScalarTimeData>(m_currentbreathingCycleTime.Unload()));
-  data.InspirationTime(std::unique_ptr<CDM::ScalarTimeData>(m_inspirationTime.Unload()));
-  data.OxygenInletVolumeFraction(std::unique_ptr<CDM::ScalarData>(m_O2InletVolumeFraction.Unload()));
-  data.TotalBreathingCycleTime(std::unique_ptr<CDM::ScalarTimeData>(m_totalBreathingCycleTime.Unload()));
+
+  pulse::AnesthesiaMachineData* dst = new pulse::AnesthesiaMachineData();
+  AnesthesiaMachine::Serialize(src, *dst);
+  return dst;
+}
+void AnesthesiaMachine::Serialize(const AnesthesiaMachine& src, pulse::AnesthesiaMachineData& dst)
+{
+  dst.set_inhaling(src.m_inhaling);
+  dst.set_currentbreathingcycletime_s(src.m_currentbreathingCycleTime.GetValue(TimeUnit::s));
+  dst.set_inspirationtime_s(src.m_inspirationTime.GetValue(TimeUnit::s));
+  dst.set_oxygeninletvolumefraction(src.m_O2InletVolumeFraction.GetValue());
+  dst.set_totalbreathingcycletime_s(src.m_totalBreathingCycleTime.GetValue(TimeUnit::s));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -199,22 +201,22 @@ void AnesthesiaMachine::SetConnection(cdm::AnesthesiaMachineData_eConnection c)
     return; // No Change
   // Update the Pulse airway mode when this changes
   SEAnesthesiaMachine::SetConnection(c);
-  if (c == CDM::enumAnesthesiaMachineConnection::Mask && m_data.GetIntubation() == cdm::eSwitch::Off)
+  if (c == cdm::AnesthesiaMachineData_eConnection_Mask && m_data.GetIntubation() == cdm::eSwitch::Off)
   {
-    m_data.SetAirwayMode(CDM::enumPulseAirwayMode::AnesthesiaMachine);
+    m_data.SetAirwayMode(pulse::eAirwayMode::AnesthesiaMachine);
     return;
   }
-  else if (c == CDM::enumAnesthesiaMachineConnection::Tube && m_data.GetIntubation() == cdm::eSwitch::On)
+  else if (c == cdm::AnesthesiaMachineData_eConnection_Tube && m_data.GetIntubation() == cdm::eSwitch::On)
   {
-    m_data.SetAirwayMode(CDM::enumPulseAirwayMode::AnesthesiaMachine);
+    m_data.SetAirwayMode(pulse::eAirwayMode::AnesthesiaMachine);
     return;
   }
-  else if (c == CDM::enumAnesthesiaMachineConnection::Mask && m_data.GetIntubation() == cdm::eSwitch::On)
+  else if (c == cdm::AnesthesiaMachineData_eConnection_Mask && m_data.GetIntubation() == cdm::eSwitch::On)
     Error("Connection failed : Cannot apply anesthesia machine mask if patient is intubated.");
-  else if (c == CDM::enumAnesthesiaMachineConnection::Tube && m_data.GetIntubation() == cdm::eSwitch::Off)
+  else if (c == cdm::AnesthesiaMachineData_eConnection_Tube && m_data.GetIntubation() == cdm::eSwitch::Off)
     Error("Connection failed : Cannot apply anesthesia machine to tube if patient is not intubated.");
   // Make sure we are active to make sure we go back to free
-  m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
+  m_data.SetAirwayMode(pulse::eAirwayMode::Free);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -228,9 +230,9 @@ void AnesthesiaMachine::SetConnection(cdm::AnesthesiaMachineData_eConnection c)
 void AnesthesiaMachine::InvalidateConnection()
 {
   // Set airway mode to free
-  m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
+  m_data.SetAirwayMode(pulse::eAirwayMode::Free);
   // THEN invalidate
-  SEAnesthesiaMachine::InvalidateConnection();
+  m_Connection = cdm::AnesthesiaMachineData_eConnection_Off;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -245,29 +247,29 @@ void AnesthesiaMachine::SetConnection()
 {
   switch (m_data.GetAirwayMode())
   {
-  case CDM::enumPulseAirwayMode::Free:
+  case pulse::eAirwayMode::Free:
     //Basically a full leak to ground
     m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(m_dSwitchClosedResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
     break;
-  case CDM::enumPulseAirwayMode::AnesthesiaMachine:
-    if (m_Connection == CDM::enumAnesthesiaMachineConnection::Mask)
+  case pulse::eAirwayMode::AnesthesiaMachine:
+    if (m_Connection == cdm::AnesthesiaMachineData_eConnection_Mask)
     {
       if (m_data.GetIntubation() == cdm::eSwitch::On)// Somebody intubated while we had the mask on
       {
         Info("Anesthesia Machine has been disconnected due to an intubation.");
-        m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
+        m_data.SetAirwayMode(pulse::eAirwayMode::Free);
         return;
       }
 
       //Keep the baseline resistance to ground = an open switch
       //Leaks handled later:L);
     }
-    else if (m_Connection == CDM::enumAnesthesiaMachineConnection::Tube)
+    else if (m_Connection == cdm::AnesthesiaMachineData_eConnection_Tube)
     {
       if (m_data.GetIntubation() == cdm::eSwitch::Off)// Somebody removed intubated while we were connected to it
       {
         Info("Anesthesia Machine has been disconnected removal of intubation.");
-        m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
+        m_data.SetAirwayMode(pulse::eAirwayMode::Free);
         return;
       }
 
@@ -299,7 +301,7 @@ void AnesthesiaMachine::PreProcess()
     m_data.GetActions().GetAnesthesiaMachineActions().RemoveConfiguration();
   }
   //Do nothing if the machine is off and not initialized
-  if (GetConnection() == CDM::enumAnesthesiaMachineConnection::Off)
+  if (GetConnection() == cdm::AnesthesiaMachineData_eConnection_Off)
   {
     m_inhaling = true;
     m_currentbreathingCycleTime.SetValue(0.0, TimeUnit::s);
@@ -326,7 +328,7 @@ void AnesthesiaMachine::PreProcess()
 //--------------------------------------------------------------------------------------------------
 void AnesthesiaMachine::Process()
 {
-  if (GetConnection() != CDM::enumAnesthesiaMachineConnection::Off)
+  if (GetConnection() != cdm::AnesthesiaMachineData_eConnection_Off)
   {
     CalculateScrubber();
   }
@@ -419,7 +421,7 @@ void AnesthesiaMachine::CalculateGasSource()
   
   //Check the O2 Source
   //Note: You're only allowed to use one at a time
-  if (GetOxygenSource() ==  CDM::enumAnesthesiaMachineOxygenSource::Wall)
+  if (GetOxygenSource() == cdm::AnesthesiaMachineData_eOxygenSource_Wall)
   {
     if (m_actions->HasOxygenWallPortPressureLoss())
     {    
@@ -430,7 +432,7 @@ void AnesthesiaMachine::CalculateGasSource()
       m_O2InletVolumeFraction.SetValue(RemainingVolumeFraction * GetOxygenFraction().GetValue());
     }
   }
-  else if (GetOxygenSource() == CDM::enumAnesthesiaMachineOxygenSource::BottleOne || GetOxygenSource() == CDM::enumAnesthesiaMachineOxygenSource::BottleTwo)
+  else if (GetOxygenSource() == cdm::AnesthesiaMachineData_eOxygenSource_BottleOne || GetOxygenSource() == cdm::AnesthesiaMachineData_eOxygenSource_BottleTwo)
   {
     if (m_actions->HasOxygenTankPressureLoss())
     {
@@ -443,14 +445,14 @@ void AnesthesiaMachine::CalculateGasSource()
   }
   
   //Check if the inlet bottle is empty
-  if(GetOxygenSource() == CDM::enumAnesthesiaMachineOxygenSource::BottleOne)  
+  if(GetOxygenSource() == cdm::AnesthesiaMachineData_eOxygenSource_BottleOne)  
   {
     if (GetOxygenBottleOne().GetVolume().GetValue(VolumeUnit::L) <= 0.0)
     {
       m_O2InletVolumeFraction.SetValue(0.0);
     }
   }
-  else if(GetOxygenSource() == CDM::enumAnesthesiaMachineOxygenSource::BottleTwo)
+  else if(GetOxygenSource() == cdm::AnesthesiaMachineData_eOxygenSource_BottleTwo)
   {
     if (GetOxygenBottleTwo().GetVolume().GetValue(VolumeUnit::L) <= 0.0)
     {
@@ -463,7 +465,7 @@ void AnesthesiaMachine::CalculateGasSource()
 
   ///\todo: Do this stuff more generically by looping over all substances
 
-  if (GetPrimaryGas() == CDM::enumAnesthesiaMachinePrimaryGas::Air)
+  if (GetPrimaryGas() == cdm::AnesthesiaMachineData_ePrimaryGas_Air)
   {
     dO2VolumeFraction = RemainingVolumeFraction * m_ambientO2->GetVolumeFraction().GetValue();
     dCO2VolumeFraction = RemainingVolumeFraction * m_ambientCO2->GetVolumeFraction().GetValue();
@@ -498,7 +500,7 @@ void AnesthesiaMachine::CalculateSourceStatus()
     dFlow_LPerS = m_pGasSourceToGasInlet->GetFlow(VolumePerTimeUnit::L_Per_s);
   }
 
-  if(GetOxygenSource() == CDM::enumAnesthesiaMachineOxygenSource::BottleOne)
+  if(GetOxygenSource() == cdm::AnesthesiaMachineData_eOxygenSource_BottleOne)
   {    
     double dBottle1Volume_L = GetOxygenBottleOne().GetVolume().GetValue(VolumeUnit::L);
     if (dBottle1Volume_L > 0.0)
@@ -513,7 +515,7 @@ void AnesthesiaMachine::CalculateSourceStatus()
     }
     GetOxygenBottleOne().GetVolume().SetValue(dBottle1Volume_L, VolumeUnit::L);
   }
-  else if(GetOxygenSource() == CDM::enumAnesthesiaMachineOxygenSource::BottleTwo)
+  else if(GetOxygenSource() == cdm::AnesthesiaMachineData_eOxygenSource_BottleTwo)
   {
     double dBottle2Volume_L = GetOxygenBottleTwo().GetVolume().GetValue(VolumeUnit::L);
     if (dBottle2Volume_L > 0.0)
@@ -544,13 +546,13 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
 {
   //Note: You should be able to stack failures, if you're so inclined
   
-  if (m_data.GetAirwayMode() == CDM::enumPulseAirwayMode::Free)
+  if (m_data.GetAirwayMode() == pulse::eAirwayMode::Free)
   {
     return;
   }
-  else if (m_data.GetAirwayMode() == CDM::enumPulseAirwayMode::AnesthesiaMachine)
+  else if (m_data.GetAirwayMode() == pulse::eAirwayMode::AnesthesiaMachine)
   {
-    if (m_Connection == CDM::enumAnesthesiaMachineConnection::Tube)
+    if (m_Connection == cdm::AnesthesiaMachineData_eConnection_Tube)
     {
       if (m_actions->HasTubeCuffLeak() || m_actions->HasYPieceDisconnect())
       {
@@ -578,7 +580,7 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
         m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, FlowResistanceUnit::cmH2O_s_Per_L);
       }
     }
-  else if (m_Connection == CDM::enumAnesthesiaMachineConnection::Mask)
+  else if (m_Connection == cdm::AnesthesiaMachineData_eConnection_Mask)
   {
     if (m_actions->HasMaskLeak() || m_actions->HasYPieceDisconnect())
     {
@@ -751,16 +753,16 @@ void AnesthesiaMachine::CheckReliefValve()
   m_pEnvironmentToReliefValve->GetNextPressureSource().SetValue(dValvePressure_cmH2O, PressureUnit::cmH2O);
 
   //Check to see if it reached the pressure threshold  
-  if (!IsEventActive(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == CDM::enumOpenClosed::Closed)
+  if (!IsEventActive(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == cdm::eGate::Closed)
   {
     /// \event %AnesthesiaMachine: Relief Valve is active. The pressure setting has been exceeded.
     SetEvent(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive, true, m_data.GetSimulationTime());
   }
-  else if (IsEventActive(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == CDM::enumOpenClosed::Open)
+  else if (IsEventActive(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == cdm::eGate::Open)
   {
     SetEvent(cdm::AnesthesiaMachineData_eEvent_ReliefValveActive, false, m_data.GetSimulationTime());
   }
 
   //Always try to let it run without the relief valve operational (i.e. closed (i.e. allowing flow)), otherwise it will always stay shorted
-  m_pSelectorToReliefValve->SetNextValve(CDM::enumOpenClosed::Open);
+  m_pSelectorToReliefValve->SetNextValve(cdm::eGate::Open);
 }

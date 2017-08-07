@@ -12,8 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "Controller/Scenario/PulseScenario.h"
-#include "bind/ScenarioData.hxx"
-#include "bind/ScenarioInitialParametersData.hxx"
 
 
 PulseScenario::PulseScenario(SESubstanceManager& subMgr) : SEScenario(subMgr)

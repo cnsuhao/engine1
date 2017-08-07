@@ -38,23 +38,26 @@ void Hepatic::Initialize()
 
 }
 
-bool Hepatic::Load(const CDM::PulseHepaticSystemData& in)
+void Hepatic::Load(const pulse::HepaticSystemData& src, Hepatic& dst)
 {
-  if (!SEHepaticSystem::Load(in))
-    return false;
-  PulseSystem::LoadState();
+  Hepatic::Serialize(src, dst);
+  dst.SetUp();
+}
+void Hepatic::Serialize(const pulse::HepaticSystemData& src, Hepatic& dst)
+{
 
-  return true;
 }
-CDM::PulseHepaticSystemData* Hepatic::Unload() const
+
+pulse::HepaticSystemData* Hepatic::Unload(const Hepatic& src)
 {
-  CDM::PulseHepaticSystemData* data = new CDM::PulseHepaticSystemData();
-  Unload(*data);
-  return data;
+
+  pulse::HepaticSystemData* dst = new pulse::HepaticSystemData();
+  Hepatic::Serialize(src, *dst);
+  return dst;
 }
-void Hepatic::Unload(CDM::PulseHepaticSystemData& data) const
+void Hepatic::Serialize(const Hepatic& src, pulse::HepaticSystemData& dst)
 {
-  SEHepaticSystem::Unload(data);
+
 }
 
 //--------------------------------------------------------------------------------------------------

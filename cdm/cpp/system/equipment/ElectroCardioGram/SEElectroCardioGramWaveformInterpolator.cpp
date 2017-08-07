@@ -11,28 +11,23 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGramInterpolator.h"
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGramInterpolatorWaveform.h"
-#include "bind/ElectroCardioGramInterpolationWaveformData.hxx"
-#include "bind/ElectroCardioGramWaveformInterpolatorData.hxx"
-#include "Serializer.h"
+#include "system/equipment/ElectroCardioGram/SEElectroCardioGramWaveformInterpolator.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarElectricPotential.h"
 #include "properties/SEFunctionElectricPotentialVsTime.h"
-#include "bind/ArrayTimeData.hxx"
-#include "bind/DoubleArray.hxx"
+#include <google/protobuf/text_format.h>
 
-SEElectroCardioGramInterpolator::SEElectroCardioGramInterpolator(Logger* logger) : Loggable(logger)
+SEElectroCardioGramWaveformInterpolator::SEElectroCardioGramWaveformInterpolator(Logger* logger) : Loggable(logger)
 {
 
 }
 
-SEElectroCardioGramInterpolator::~SEElectroCardioGramInterpolator()
+SEElectroCardioGramWaveformInterpolator::~SEElectroCardioGramWaveformInterpolator()
 {
   Clear();
 }
 
-void SEElectroCardioGramInterpolator::Clear()
+void SEElectroCardioGramWaveformInterpolator::Clear()
 {
   for (auto i : m_Waveforms)
     for (auto j : i.second)
@@ -41,73 +36,62 @@ void SEElectroCardioGramInterpolator::Clear()
   m_Leads.clear();
 }
 
-bool SEElectroCardioGramInterpolator::LoadWaveforms(const std::string& file, const SEScalarTime* timeStep)
+void SEElectroCardioGramWaveformInterpolator::Load(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst)
+{
+  SEElectroCardioGramWaveformInterpolator::Serialize(src, dst);
+}
+void SEElectroCardioGramWaveformInterpolator::Serialize(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst)
+{
+  dst.Clear();
+  for (int i = 0; i<src.waveform_size(); i++)
+  {
+    SEElectroCardioGramWaveform* waveform = new SEElectroCardioGramWaveform(dst.GetLogger());
+    SEElectroCardioGramWaveform::Load(src.waveform()[i], *waveform);
+    dst.m_Waveforms[waveform->GetLeadNumber()][waveform->GetRhythm()] = waveform;
+  }
+}
+
+cdm::ElectroCardioGramWaveformListData* SEElectroCardioGramWaveformInterpolator::Unload(const SEElectroCardioGramWaveformInterpolator& src)
+{
+  cdm::ElectroCardioGramWaveformListData* dst = new cdm::ElectroCardioGramWaveformListData();
+  SEElectroCardioGramWaveformInterpolator::Serialize(src, *dst);
+  return dst;
+}
+void SEElectroCardioGramWaveformInterpolator::Serialize(const SEElectroCardioGramWaveformInterpolator& src, cdm::ElectroCardioGramWaveformListData& dst)
+{
+  for (auto i : src.m_Waveforms)
+    for (auto j : i.second)
+      dst.mutable_waveform()->AddAllocated(SEElectroCardioGramWaveform::Unload(*j.second));
+}
+
+bool SEElectroCardioGramWaveformInterpolator::LoadFile(const std::string& file, const SEScalarTime* timeStep)
 {
   Clear();
-  std::stringstream ss;
-  if (file.empty())
-  {
-    ss << "Waveform file not provided: " << file << std::endl;
-    Error(ss);
+
+  cdm::ElectroCardioGramWaveformListData src;
+  std::ifstream file_stream(file, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
     return false;
-  }
-  Clear();
-  std::unique_ptr<CDM::ObjectData> data = Serializer::ReadFile(file, GetLogger());
-  CDM::ElectroCardioGramWaveformInterpolatorData* pData = dynamic_cast<CDM::ElectroCardioGramWaveformInterpolatorData*>(data.get());
-  if (pData == nullptr)
-  {
-    ss << "Waveform data file could not be read : " << file << std::endl;
-    Error(ss);
-    return false;
-  }
-  if (!Load(*pData))
-  {
-    ss << "Unable to load waveform file: " << file << std::endl;
-    Error(ss);
-    return false;
-  }
+  SEElectroCardioGramWaveformInterpolator::Load(src, *this);
+
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
+
   if (timeStep != nullptr)
     Interpolate(*timeStep);
   return true;
 }
 
-bool SEElectroCardioGramInterpolator::Load(const CDM::ElectroCardioGramWaveformInterpolatorData& in)
-{
-  Clear();
-  for (auto& w : in.Waveform())
-  {
-    SEElectroCardioGramInterpolatorWaveform* waveform = new SEElectroCardioGramInterpolatorWaveform(GetLogger());
-    if (!waveform->Load(w))
-    {
-      Error("Unable to load waveform");
-      return false;
-    }
-    else
-      m_Waveforms[waveform->GetLeadNumber()][waveform->GetRhythm()] = waveform;
-  }
-  return true;
-}
-CDM::ElectroCardioGramWaveformInterpolatorData* SEElectroCardioGramInterpolator::Unload() const
-{
-  CDM::ElectroCardioGramWaveformInterpolatorData* data(new CDM::ElectroCardioGramWaveformInterpolatorData());
-  Unload(*data);
-  return data;
-}
-void SEElectroCardioGramInterpolator::Unload(CDM::ElectroCardioGramWaveformInterpolatorData& data) const
-{
-  for (auto i : m_Waveforms)
-    for (auto j : i.second)
-      data.Waveform().push_back(std::unique_ptr<CDM::ElectroCardioGramInterpolationWaveformData>(j.second->Unload()));
-}
-
-void SEElectroCardioGramInterpolator::Interpolate(const SEScalarTime& timeStep)
+void SEElectroCardioGramWaveformInterpolator::Interpolate(const SEScalarTime& timeStep)
 {
   for (auto& l : m_Waveforms)
     for(auto& w : l.second)
       if (w.second!=nullptr)
         Interpolate(*w.second, timeStep);
 }
-void SEElectroCardioGramInterpolator::Interpolate(SEElectroCardioGramInterpolatorWaveform& w, const SEScalarTime& timeStep)
+void SEElectroCardioGramWaveformInterpolator::Interpolate(SEElectroCardioGramWaveform& w, const SEScalarTime& timeStep)
 {
     SEFunctionElectricPotentialVsTime& data = w.GetData();
     SEScalarTime* waveformTimeStep = nullptr;
@@ -135,12 +119,14 @@ void SEElectroCardioGramInterpolator::Interpolate(SEElectroCardioGramInterpolato
         currentTime_s += timeStep_s;
       }
       SEFunctionElectricPotentialVsTime* iWaveForm = data.InterpolateToTime(iTime, TimeUnit::s); // creates the new waveform data
-      CDM_COPY(iWaveForm, (&data));
+      cdm::FunctionElectricPotentialVsTimeData* wfData = SEFunctionElectricPotentialVsTime::Unload(*iWaveForm);
+      SEFunctionElectricPotentialVsTime::Load(*wfData, data);
+      delete wfData;
       delete iWaveForm;
     }
 }
 
-bool SEElectroCardioGramInterpolator::CanInterpolateLeadPotential(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm) const
+bool SEElectroCardioGramWaveformInterpolator::CanInterpolateLeadPotential(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const
 {
   if (!HasWaveform(lead, rhythm))
     return false;
@@ -149,12 +135,12 @@ bool SEElectroCardioGramInterpolator::CanInterpolateLeadPotential(CDM::ElectroCa
     return false;  
   return l->second != nullptr;
 }
-void SEElectroCardioGramInterpolator::SetLeadElectricPotential(CDM::ElectroCardioGramWaveformLeadNumber lead, SEScalarElectricPotential& ep)
+void SEElectroCardioGramWaveformInterpolator::SetLeadElectricPotential(cdm::ElectroCardioGramWaveformData_eLead lead, SEScalarElectricPotential& ep)
 {
   m_Leads[lead] = &ep;
 }
 
-bool SEElectroCardioGramInterpolator::StartNewCycle(cdm::eHeartRhythm rhythm)
+bool SEElectroCardioGramWaveformInterpolator::StartNewCycle(cdm::eHeartRhythm rhythm)
 {
   for (auto l2rw : m_Waveforms)
   {
@@ -178,7 +164,7 @@ bool SEElectroCardioGramInterpolator::StartNewCycle(cdm::eHeartRhythm rhythm)
 /// CalculateWaveform takes data from all active iterators and sums them together. It also assigns
 /// the unit of millivolts to the output. If there are no active iterators, the output defaults to 0.
 //--------------------------------------------------------------------------------------------------
-void SEElectroCardioGramInterpolator::CalculateWaveformsElectricPotential()
+void SEElectroCardioGramWaveformInterpolator::CalculateWaveformsElectricPotential()
 { 
   // Pull Data from our iterators
   int idx;
@@ -193,7 +179,7 @@ void SEElectroCardioGramInterpolator::CalculateWaveformsElectricPotential()
     for (auto & r2w : m_Waveforms[l2s.first])//rhythm to indecies
     {
       int i = 0;
-      SEElectroCardioGramInterpolatorWaveform* waveform = r2w.second;
+      SEElectroCardioGramWaveform* waveform = r2w.second;
       if (waveform == nullptr)
         continue;
       SEFunctionElectricPotentialVsTime& data = waveform->GetData();
@@ -212,7 +198,7 @@ void SEElectroCardioGramInterpolator::CalculateWaveformsElectricPotential()
     
 }
 
-bool SEElectroCardioGramInterpolator::HasWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm) const
+bool SEElectroCardioGramWaveformInterpolator::HasWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())
@@ -222,17 +208,17 @@ bool SEElectroCardioGramInterpolator::HasWaveform(CDM::ElectroCardioGramWaveform
     return false;
   return w->second != nullptr;
 }
-SEElectroCardioGramInterpolatorWaveform& SEElectroCardioGramInterpolator::GetWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm)
+SEElectroCardioGramWaveform& SEElectroCardioGramWaveformInterpolator::GetWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm)
 {
-  SEElectroCardioGramInterpolatorWaveform* w = m_Waveforms[lead][rhythm];
+  SEElectroCardioGramWaveform* w = m_Waveforms[lead][rhythm];
   if (w == nullptr)
   {
-    w = new SEElectroCardioGramInterpolatorWaveform(GetLogger());
+    w = new SEElectroCardioGramWaveform(GetLogger());
     m_Waveforms[lead][rhythm] = w;
   }
   return *w;
 }
-const SEElectroCardioGramInterpolatorWaveform* SEElectroCardioGramInterpolator::GetWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm) const
+const SEElectroCardioGramWaveform* SEElectroCardioGramWaveformInterpolator::GetWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())
@@ -242,7 +228,7 @@ const SEElectroCardioGramInterpolatorWaveform* SEElectroCardioGramInterpolator::
     return nullptr;
   return w->second;
 }
-void SEElectroCardioGramInterpolator::RemoveWaveform(CDM::ElectroCardioGramWaveformLeadNumber lead, cdm::eHeartRhythm rhythm)
+void SEElectroCardioGramWaveformInterpolator::RemoveWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm)
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())

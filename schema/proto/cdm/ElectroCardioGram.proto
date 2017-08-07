@@ -3,6 +3,7 @@ package cdm;
 option java_package = "com.kitware.physiology.cdm";
 
 import "cdm/Properties.proto";
+import "cdm/Physiology.proto";
 
 /** @brief Generic ECG machine to assess the heart rhythm. */
 message ElectroCardioGramData
@@ -19,4 +20,35 @@ message ElectroCardioGramData
   ScalarElectricPotentialData            Lead10ElectricPotential = 10;/**<< @brief The amount of electric potential given off by lead 10 of the ECG. */
   ScalarElectricPotentialData            Lead11ElectricPotential = 11;/**<< @brief The amount of electric potential given off by lead 11 of the ECG. */
   ScalarElectricPotentialData            Lead12ElectricPotential = 12;/**<< @brief The amount of electric potential given off by lead 12 of the ECG. */
+}
+
+message ElectroCardioGramWaveformData
+{
+  enum eLead
+  {
+    NullLead                                                     = 0;
+    Lead1                                                        = 1;
+    Lead2                                                        = 2;
+    Lead3                                                        = 3;
+    Lead4                                                        = 4;
+    Lead5                                                        = 5;
+    Lead6                                                        = 6;
+    Lead7                                                        = 7;
+    Lead8                                                        = 8;
+    Lead9                                                        = 9;
+    Lead10                                                       = 10;
+    Lead11                                                       = 11;
+    Lead12                                                       = 12;
+  }
+  
+  eLead                                  Lead                    = 1;/**<< @brief Lead number of the waveform provided. */
+  eHeartRhythm                           Rhythm                  = 2;/**<< @brief Rhythm type of the waveform provided. */
+  FunctionElectricPotentialVsTimeData    Data                    = 3;/**<< @brief Dataset of a full heart cycle. */
+  ScalarTimeData                         TimeStep                = 4;/**<< @brief Time step of the data provided. */
+  repeated int32                         ActiveIndicies          = 5;/**<< @brief Active indicies of the WaveForm Data used to interpolate the current electric potential. */
+}
+
+message ElectroCardioGramWaveformListData
+{
+  repeated ElectroCardioGramWaveformData Waveform                = 1;/**<< @brief A waveform for a lead */
 }

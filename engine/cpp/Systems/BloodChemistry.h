@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-
 #include "../Controller/PulseSystem.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "utils/RunningAverage.h"
@@ -42,17 +41,11 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  static void Load(const cdm::PatientData& src, SEPatient& dst);
-  static cdm::PatientData* Unload(const SEPatient& src);
+  static void Load(const pulse::BloodChemistrySystemData& src, BloodChemistry& dst);
+  static pulse::BloodChemistrySystemData* Unload(const BloodChemistry& src);
 protected:
-  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
-  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
-
-  // Load a state
-  bool Load(const CDM::PulseBloodChemistrySystemData& in);                                  
-  CDM::PulseBloodChemistrySystemData* Unload() const;
-protected:
-  void Unload(CDM::PulseBloodChemistrySystemData& data) const;
+  static void Serialize(const pulse::BloodChemistrySystemData& src, BloodChemistry& dst);
+  static void Serialize(const BloodChemistry& src, pulse::BloodChemistrySystemData& dst);
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

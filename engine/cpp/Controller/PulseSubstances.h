@@ -60,7 +60,7 @@ public:
   inline SESubstance&  GetHb()      { return *m_Hb; }
   inline SESubstance&  GetHbO2()    { return *m_HbO2; }
   inline SESubstance&  GetHbCO2()   { return *m_HbCO2; }
-  inline SESubstance&  GetHbCO() { return *m_HbCO; }
+  inline SESubstance&  GetHbCO()    { return *m_HbCO; }
   inline SESubstance&  GetHbO2CO2() { return *m_HbO2CO2; }
   inline SESubstance&  GetHCO3()    { return *m_HCO3; }
   inline SESubstance&  GetEpi()     { return *m_epi; }

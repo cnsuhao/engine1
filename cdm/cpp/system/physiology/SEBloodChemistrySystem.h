@@ -170,14 +170,14 @@ public:
   virtual double GetStrongIonDifference(const AmountPerVolumeUnit& unit) const;
   //@}
 
-  /** @name ShuntFrBloodChemistry
-   *  @brief @copybrief Physiology_BloodChemistrySystemData_ShuntFrBloodChemistry
+  /** @name ShuntFraction
+   *  @brief @copybrief Physiology_BloodChemistrySystemData_ShuntFraction
    *  @{*/
    /// %Test if member has been allocated
-  virtual bool HasShuntFrBloodChemistry() const;
+  virtual bool HasShuntFraction() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalar0To1& GetShuntFrBloodChemistry();
-  virtual double GetShuntFrBloodChemistry() const;
+  virtual SEScalar0To1& GetShuntFraction();
+  virtual double GetShuntFraction() const;
   //@}
 
   /** @name TotalProteinConcentration
@@ -190,24 +190,24 @@ public:
   virtual double GetTotalProteinConcentration(const MassPerVolumeUnit& unit) const;
   //@}
 
-  /** @name VolumeFrBloodChemistryNeutralPhospholipidInPlasma
-  *  @brief @copybrief Physiology_BloodChemistrySystemData_VolumeFrBloodChemistryNeutralPhospholipidInPlasma
+  /** @name VolumeFractionNeutralPhospholipidInPlasma
+  *  @brief @copybrief Physiology_BloodChemistrySystemData_VolumeFractionNeutralPhospholipidInPlasma
   *  @{*/
   /// %Test if member has been allocated
-  virtual bool HasVolumeFrBloodChemistryNeutralPhospholipidInPlasma() const;
+  virtual bool HasVolumeFractionNeutralPhospholipidInPlasma() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalar0To1& GetVolumeFrBloodChemistryNeutralPhospholipidInPlasma();
-  virtual double GetVolumeFrBloodChemistryNeutralPhospholipidInPlasma() const;
+  virtual SEScalar0To1& GetVolumeFractionNeutralPhospholipidInPlasma();
+  virtual double GetVolumeFractionNeutralPhospholipidInPlasma() const;
   //@}
 
-  /** @name VolumeFrBloodChemistryNeutralLipidInPlasma
-  *  @brief @copybrief Physiology_BloodChemistrySystemData_VolumeFrBloodChemistryNeutralLipidInPlasma
+  /** @name VolumeFractionNeutralLipidInPlasma
+  *  @brief @copybrief Physiology_BloodChemistrySystemData_VolumeFractionNeutralLipidInPlasma
   *  @{*/
   /// %Test if member has been allocated
-  virtual bool HasVolumeFrBloodChemistryNeutralLipidInPlasma() const;
+  virtual bool HasVolumeFractionNeutralLipidInPlasma() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalar0To1& GetVolumeFrBloodChemistryNeutralLipidInPlasma();
-  virtual double GetVolumeFrBloodChemistryNeutralLipidInPlasma() const;
+  virtual SEScalar0To1& GetVolumeFractionNeutralLipidInPlasma();
+  virtual double GetVolumeFractionNeutralLipidInPlasma() const;
   //@}
 
   /** @name WhiteBloodCellCount
@@ -315,11 +315,11 @@ protected:
   SEScalarVolume*                 m_PlasmaVolume;
   SEScalar0To1*                   m_PulseOximetry;
   SEScalarAmountPerVolume*        m_RedBloodCellCount;
-  SEScalar0To1*                   m_ShuntFrBloodChemistry;
+  SEScalar0To1*                   m_ShuntFraction;
   SEScalarAmountPerVolume*        m_StrongIonDifference;
   SEScalarMassPerVolume*          m_TotalProteinConcentration;
-  SEScalar0To1*                   m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma;
-  SEScalar0To1*                   m_VolumeFrBloodChemistryNeutralLipidInPlasma;
+  SEScalar0To1*                   m_VolumeFractionNeutralPhospholipidInPlasma;
+  SEScalar0To1*                   m_VolumeFractionNeutralLipidInPlasma;
   SEScalarAmountPerVolume*        m_WhiteBloodCellCount;
   
   SEScalarPressure*               m_ArterialCarbonDioxidePressure;

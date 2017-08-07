@@ -87,6 +87,28 @@ void Drugs::Initialize()
   GetTubularPermeabilityChange().SetValue(0);
 }
 
+void Drugs::Load(const pulse::DrugsSystemData& src, Drugs& dst)
+{
+  Drugs::Serialize(src, dst);
+  dst.SetUp();
+}
+void Drugs::Serialize(const pulse::DrugsSystemData& src, Drugs& dst)
+{
+
+}
+
+pulse::DrugsSystemData* Drugs::Unload(const Drugs& src)
+{
+
+  pulse::DrugsSystemData* dst = new pulse::DrugsSystemData();
+  Drugs::Serialize(src, *dst);
+  return dst;
+}
+void Drugs::Serialize(const Drugs& src, pulse::DrugsSystemData& dst)
+{
+
+}
+
 bool Drugs::Load(const CDM::PulseDrugSystemData& in)
 {
   if (!SEDrugSystem::Load(in))
@@ -239,13 +261,13 @@ void Drugs::AdministerSubstanceBolus()
 
     switch (bolus->GetAdminRoute())
     {
-    case CDM::enumBolusAdministration::Intraarterial:
+    case cdm::SubstanceBolusData_eAdministrationRoute_Intraarterial:
       subQ = m_aortaVascular->GetSubstanceQuantity(*sub);
       break;
-    case CDM::enumBolusAdministration::Intravenous:
+    case cdm::SubstanceBolusData_eAdministrationRoute_Intravenous:
       subQ = m_venaCavaVascular->GetSubstanceQuantity(*sub);
       break;
-    case CDM::enumBolusAdministration::Intramuscular:
+    case cdm::SubstanceBolusData_eAdministrationRoute_Intramuscular:
       subQ = m_muscleIntracellular->GetSubstanceQuantity(*sub);            
       break;
     default:
@@ -442,7 +464,7 @@ void Drugs::CalculatePartitionCoefficients()
         continue;
       
       SESubstancePhysicochemicals& pk = sub->GetPK().GetPhysicochemicals();
-      CDM::enumSubstanceIonicState::value IonicState = pk.GetIonicState();
+      cdm::SubstanceData_eIonicState IonicState = pk.GetIonicState();
       double AcidDissociationConstant = pk.GetAcidDissociationConstant().GetValue();
       double P = exp(log(10) * pk.GetLogP().GetValue()); //Getting P from logP value
       if (tissue == m_fatTissue)
@@ -450,15 +472,15 @@ void Drugs::CalculatePartitionCoefficients()
         P = 1.115 * pk.GetLogP().GetValue() - 1.35;
         P = exp(log(10) * P);
       }
-      if (pk.GetBindingProtein() == CDM::enumSubstanceBindingProtein::AAG)
+      if (pk.GetBindingProtein() == cdm::SubstanceData_eBindingProtein_AAG)
       {
         TissueToPlasmaProteinRatio = tissue->GetTissueToPlasmaAlphaAcidGlycoproteinRatio().GetValue();
       }
-      else if (pk.GetBindingProtein() == CDM::enumSubstanceBindingProtein::Albumin)
+      else if (pk.GetBindingProtein() == cdm::SubstanceData_eBindingProtein_Albumin)
       {
         TissueToPlasmaProteinRatio = tissue->GetTissueToPlasmaAlbuminRatio().GetValue();
       }
-      else if (pk.GetBindingProtein() == CDM::enumSubstanceBindingProtein::Lipoprotein)
+      else if (pk.GetBindingProtein() == cdm::SubstanceData_eBindingProtein_Lipoprotein)
       {
         TissueToPlasmaProteinRatio = tissue->GetTissueToPlasmaLipoproteinRatio().GetValue();
       }
@@ -473,7 +495,7 @@ void Drugs::CalculatePartitionCoefficients()
         Fatal(ss);
       }
       //Based on the ionic state, the partition coefficient equation and/or pH effect equations are varied.
-      if (IonicState == CDM::enumSubstanceIonicState::Base)
+      if (IonicState == cdm::SubstanceData_eIonicState_Base)
       {
         IntracellularPHEffects = pow(10.0, (AcidDissociationConstant - IntracellularPH));
         PHEffectPower = PlasmaPH - AcidDissociationConstant;
@@ -485,14 +507,14 @@ void Drugs::CalculatePartitionCoefficients()
       }
       else
       {
-        if (IonicState == CDM::enumSubstanceIonicState::Acid)
+        if (IonicState == cdm::SubstanceData_eIonicState_Acid)
         {
           PHEffectPower = IntracellularPH - AcidDissociationConstant;
           IntracellularPHEffects = 1.0 + pow(10.0, PHEffectPower);
           PHEffectPower = PlasmaPH - AcidDissociationConstant;
           PlasmaPHEffects = 1.0 + pow(10.0, PHEffectPower);
         }
-        else if (IonicState == CDM::enumSubstanceIonicState::WeakBase)
+        else if (IonicState == cdm::SubstanceData_eIonicState_WeakBase)
         {
           PHEffectPower = AcidDissociationConstant - IntracellularPH;
           IntracellularPHEffects = 1.0 + pow(10.0, PHEffectPower);

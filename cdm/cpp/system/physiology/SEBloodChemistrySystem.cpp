@@ -37,11 +37,11 @@ SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger
   m_PlasmaVolume = nullptr;
   m_PulseOximetry = nullptr;
   m_RedBloodCellCount = nullptr;
-  m_ShuntFrBloodChemistry = nullptr;
+  m_ShuntFraction = nullptr;
   m_StrongIonDifference = nullptr;
   m_TotalProteinConcentration = nullptr;
-  m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma = nullptr;
-  m_VolumeFrBloodChemistryNeutralLipidInPlasma = nullptr;
+  m_VolumeFractionNeutralPhospholipidInPlasma = nullptr;
+  m_VolumeFractionNeutralLipidInPlasma = nullptr;
   m_WhiteBloodCellCount = nullptr;
 
   m_ArterialCarbonDioxidePressure = nullptr;
@@ -76,11 +76,11 @@ void SEBloodChemistrySystem::Clear()
   SAFE_DELETE(m_PlasmaVolume);
   SAFE_DELETE(m_PulseOximetry);
   SAFE_DELETE(m_RedBloodCellCount);
-  SAFE_DELETE(m_ShuntFrBloodChemistry);
+  SAFE_DELETE(m_ShuntFraction);
   SAFE_DELETE(m_StrongIonDifference);
   SAFE_DELETE(m_TotalProteinConcentration);
-  SAFE_DELETE(m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma);
-  SAFE_DELETE(m_VolumeFrBloodChemistryNeutralLipidInPlasma);
+  SAFE_DELETE(m_VolumeFractionNeutralPhospholipidInPlasma);
+  SAFE_DELETE(m_VolumeFractionNeutralLipidInPlasma);
   SAFE_DELETE(m_WhiteBloodCellCount);
 
   SAFE_DELETE(m_PulmonaryVenousOxygenPressure);
@@ -122,15 +122,15 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
   if (name.compare("RedBloodCellCount") == 0)
     return &GetRedBloodCellCount();
   if (name.compare("ShuntFraction") == 0)
-    return &GetShuntFrBloodChemistry();  
+    return &GetShuntFraction();  
   if (name.compare("StrongIonDifference") == 0)
     return &GetStrongIonDifference();
   if (name.compare("TotalProteinConcentration") == 0)
     return &GetTotalProteinConcentration();
   if (name.compare("VolumeFractionNeutralPhospholipidInPlasma") == 0)
-    return &GetVolumeFrBloodChemistryNeutralPhospholipidInPlasma();
+    return &GetVolumeFractionNeutralPhospholipidInPlasma();
   if (name.compare("VolumeFractionNeutralLipidInPlasma") == 0)
-    return &GetVolumeFrBloodChemistryNeutralLipidInPlasma();
+    return &GetVolumeFractionNeutralLipidInPlasma();
   if (name.compare("WhiteBloodCellCount") == 0)
     return &GetWhiteBloodCellCount();  
   if (name.compare("ArterialCarbonDioxidePressure") == 0)
@@ -187,15 +187,15 @@ void SEBloodChemistrySystem::Serialize(const cdm::BloodChemistrySystemData& src,
   if (src.has_redbloodcellcount())
     SEScalarAmountPerVolume::Load(src.redbloodcellcount(), dst.GetRedBloodCellCount());
   if (src.has_shuntfraction())
-    SEScalar0To1::Load(src.shuntfraction(), dst.GetShuntFrBloodChemistry());
+    SEScalar0To1::Load(src.shuntfraction(), dst.GetShuntFraction());
   if (src.has_strongiondifference())
     SEScalarAmountPerVolume::Load(src.strongiondifference(), dst.GetStrongIonDifference());
   if (src.has_totalproteinconcentration())
     SEScalarMassPerVolume::Load(src.totalproteinconcentration(), dst.GetTotalProteinConcentration());
   if (src.has_volumefractionneutralphospholipidinplasma())
-    SEScalar0To1::Load(src.volumefractionneutralphospholipidinplasma(), dst.GetVolumeFrBloodChemistryNeutralPhospholipidInPlasma());
+    SEScalar0To1::Load(src.volumefractionneutralphospholipidinplasma(), dst.GetVolumeFractionNeutralPhospholipidInPlasma());
   if (src.has_volumefractionneutrallipidinplasma())
-    SEScalar0To1::Load(src.volumefractionneutrallipidinplasma(), dst.GetVolumeFrBloodChemistryNeutralLipidInPlasma());
+    SEScalar0To1::Load(src.volumefractionneutrallipidinplasma(), dst.GetVolumeFractionNeutralLipidInPlasma());
   if (src.has_whitebloodcellcount())
     SEScalarAmountPerVolume::Load(src.whitebloodcellcount(), dst.GetWhiteBloodCellCount());
 
@@ -251,16 +251,16 @@ void SEBloodChemistrySystem::Serialize(const SEBloodChemistrySystem& src, cdm::B
     dst.set_allocated_pulseoximetry(SEScalar0To1::Unload(*src.m_PulseOximetry));
   if (src.HasRedBloodCellCount())
     dst.set_allocated_redbloodcellcount(SEScalarAmountPerVolume::Unload(*src.m_RedBloodCellCount));
-  if (src.HasShuntFrBloodChemistry())
-    dst.set_allocated_shuntfraction(SEScalar0To1::Unload(*src.m_ShuntFrBloodChemistry));
+  if (src.HasShuntFraction())
+    dst.set_allocated_shuntfraction(SEScalar0To1::Unload(*src.m_ShuntFraction));
   if (src.HasStrongIonDifference())
     dst.set_allocated_strongiondifference(SEScalarAmountPerVolume::Unload(*src.m_StrongIonDifference));
   if (src.HasTotalProteinConcentration())
     dst.set_allocated_totalproteinconcentration(SEScalarMassPerVolume::Unload(*src.m_TotalProteinConcentration));
-  if (src.HasVolumeFrBloodChemistryNeutralPhospholipidInPlasma())
-    dst.set_allocated_volumefractionneutralphospholipidinplasma(SEScalar0To1::Unload(*src.m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma));
-  if (src.HasVolumeFrBloodChemistryNeutralLipidInPlasma())
-    dst.set_allocated_volumefractionneutrallipidinplasma(SEScalar0To1::Unload(*src.m_VolumeFrBloodChemistryNeutralLipidInPlasma));
+  if (src.HasVolumeFractionNeutralPhospholipidInPlasma())
+    dst.set_allocated_volumefractionneutralphospholipidinplasma(SEScalar0To1::Unload(*src.m_VolumeFractionNeutralPhospholipidInPlasma));
+  if (src.HasVolumeFractionNeutralLipidInPlasma())
+    dst.set_allocated_volumefractionneutrallipidinplasma(SEScalar0To1::Unload(*src.m_VolumeFractionNeutralLipidInPlasma));
   if (src.HasWhiteBloodCellCount())
     dst.set_allocated_whitebloodcellcount(SEScalarAmountPerVolume::Unload(*src.m_WhiteBloodCellCount));
 
@@ -503,21 +503,21 @@ double SEBloodChemistrySystem::GetRedBloodCellCount(const AmountPerVolumeUnit& u
   return m_RedBloodCellCount->GetValue(unit);
 }
 
-bool SEBloodChemistrySystem::HasShuntFrBloodChemistry() const
+bool SEBloodChemistrySystem::HasShuntFraction() const
 {
-  return m_ShuntFrBloodChemistry==nullptr?false:m_ShuntFrBloodChemistry->IsValid();
+  return m_ShuntFraction==nullptr?false:m_ShuntFraction->IsValid();
 }
-SEScalar0To1& SEBloodChemistrySystem::GetShuntFrBloodChemistry()
+SEScalar0To1& SEBloodChemistrySystem::GetShuntFraction()
 {
-  if(m_ShuntFrBloodChemistry==nullptr)
-    m_ShuntFrBloodChemistry=new SEScalar0To1();
-  return *m_ShuntFrBloodChemistry;
+  if(m_ShuntFraction==nullptr)
+    m_ShuntFraction=new SEScalar0To1();
+  return *m_ShuntFraction;
 }
-double SEBloodChemistrySystem::GetShuntFrBloodChemistry() const
+double SEBloodChemistrySystem::GetShuntFraction() const
 {
-  if (m_ShuntFrBloodChemistry == nullptr)
+  if (m_ShuntFraction == nullptr)
     return SEScalar::dNaN();
-  return m_ShuntFrBloodChemistry->GetValue();
+  return m_ShuntFraction->GetValue();
 }
 
 bool SEBloodChemistrySystem::HasStrongIonDifference() const
@@ -554,38 +554,38 @@ double SEBloodChemistrySystem::GetTotalProteinConcentration(const MassPerVolumeU
   return m_TotalProteinConcentration->GetValue(unit);
 }
 
-bool SEBloodChemistrySystem::HasVolumeFrBloodChemistryNeutralPhospholipidInPlasma() const
+bool SEBloodChemistrySystem::HasVolumeFractionNeutralPhospholipidInPlasma() const
 {
-  return m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma == nullptr ? false : m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma->IsValid();
+  return m_VolumeFractionNeutralPhospholipidInPlasma == nullptr ? false : m_VolumeFractionNeutralPhospholipidInPlasma->IsValid();
 }
-SEScalar0To1& SEBloodChemistrySystem::GetVolumeFrBloodChemistryNeutralPhospholipidInPlasma()
+SEScalar0To1& SEBloodChemistrySystem::GetVolumeFractionNeutralPhospholipidInPlasma()
 {
-  if (m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma == nullptr)
-    m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma = new SEScalar0To1();
-  return *m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma;
+  if (m_VolumeFractionNeutralPhospholipidInPlasma == nullptr)
+    m_VolumeFractionNeutralPhospholipidInPlasma = new SEScalar0To1();
+  return *m_VolumeFractionNeutralPhospholipidInPlasma;
 }
-double SEBloodChemistrySystem::GetVolumeFrBloodChemistryNeutralPhospholipidInPlasma() const
+double SEBloodChemistrySystem::GetVolumeFractionNeutralPhospholipidInPlasma() const
 {
-  if (m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma == nullptr)
+  if (m_VolumeFractionNeutralPhospholipidInPlasma == nullptr)
     return SEScalar::dNaN();
-  return m_VolumeFrBloodChemistryNeutralPhospholipidInPlasma->GetValue();
+  return m_VolumeFractionNeutralPhospholipidInPlasma->GetValue();
 }
 
-bool SEBloodChemistrySystem::HasVolumeFrBloodChemistryNeutralLipidInPlasma() const
+bool SEBloodChemistrySystem::HasVolumeFractionNeutralLipidInPlasma() const
 {
-  return m_VolumeFrBloodChemistryNeutralLipidInPlasma == nullptr ? false : m_VolumeFrBloodChemistryNeutralLipidInPlasma->IsValid();
+  return m_VolumeFractionNeutralLipidInPlasma == nullptr ? false : m_VolumeFractionNeutralLipidInPlasma->IsValid();
 }
-SEScalar0To1& SEBloodChemistrySystem::GetVolumeFrBloodChemistryNeutralLipidInPlasma()
+SEScalar0To1& SEBloodChemistrySystem::GetVolumeFractionNeutralLipidInPlasma()
 {
-  if (m_VolumeFrBloodChemistryNeutralLipidInPlasma == nullptr)
-    m_VolumeFrBloodChemistryNeutralLipidInPlasma = new SEScalar0To1();
-  return *m_VolumeFrBloodChemistryNeutralLipidInPlasma;
+  if (m_VolumeFractionNeutralLipidInPlasma == nullptr)
+    m_VolumeFractionNeutralLipidInPlasma = new SEScalar0To1();
+  return *m_VolumeFractionNeutralLipidInPlasma;
 }
-double SEBloodChemistrySystem::GetVolumeFrBloodChemistryNeutralLipidInPlasma() const
+double SEBloodChemistrySystem::GetVolumeFractionNeutralLipidInPlasma() const
 {
-  if (m_VolumeFrBloodChemistryNeutralLipidInPlasma == nullptr)
+  if (m_VolumeFractionNeutralLipidInPlasma == nullptr)
     return SEScalar::dNaN();
-  return m_VolumeFrBloodChemistryNeutralLipidInPlasma->GetValue();
+  return m_VolumeFractionNeutralLipidInPlasma->GetValue();
 }
 
 bool SEBloodChemistrySystem::HasWhiteBloodCellCount() const

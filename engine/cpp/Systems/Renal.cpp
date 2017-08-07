@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "Renal.h"
-#include "bind/RunningAverageData.hxx"
 #include "Drugs.h"
 
 #include "circuit/SECircuit.h"
@@ -259,53 +258,52 @@ void Renal::Initialize()
   }
 }
 
-bool Renal::Load(const CDM::PulseRenalSystemData& in)
+void Renal::Load(const pulse::RenalSystemData& src, Renal& dst)
 {
-  if (!SERenalSystem::Load(in))
-    return false;
-
-  m_Urinating = in.Urinating();
-  m_leftAfferentResistance_mmHg_s_Per_mL = in.LeftAfferentResistance_mmHg_s_Per_mL();
-  m_rightAfferentResistance_mmHg_s_Per_mL = in.RightAfferentResistance_mmHg_s_Per_mL();
-  m_leftSodiumFlowSetPoint_mg_Per_s = in.LeftSodiumFlowSetPoint_mg_Per_s();
-  m_rightSodiumFlowSetPoint_mg_Per_s = in.RightSodiumFlowSetPoint_mg_Per_s();
-
-  m_urineProductionRate_mL_Per_min_runningAvg.Load(in.UrineProductionRate_mL_Per_min());
-  m_urineOsmolarity_mOsm_Per_L_runningAvg.Load(in.UrineOsmolarity_mOsm_Per_L());
-  m_sodiumConcentration_mg_Per_mL_runningAvg.Load(in.SodiumConcentration_mg_Per_mL());
-  m_sodiumExcretionRate_mg_Per_min_runningAvg.Load(in.SodiumExcretionRate_mg_Per_min());
-  m_leftSodiumFlow_mg_Per_s_runningAvg.Load(in.LeftSodiumFlow_mg_Per_s());
-  m_rightSodiumFlow_mg_Per_s_runningAvg.Load(in.RightSodiumFlow_mg_Per_s());
-  m_leftRenalArterialPressure_mmHg_runningAvg.Load(in.LeftRenalArterialPressure_mmHg());
-  m_rightRenalArterialPressure_mmHg_runningAvg.Load(in.RightRenalArterialPressure_mmHg());
-
-  PulseSystem::LoadState();
-  return true;
+  Renal::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseRenalSystemData* Renal::Unload() const
+void Renal::Serialize(const pulse::RenalSystemData& src, Renal& dst)
 {
-  CDM::PulseRenalSystemData* data = new CDM::PulseRenalSystemData();
-  Unload(*data);
-  return data;
+  dst.m_Urinating = src.urinating();
+  dst.m_leftAfferentResistance_mmHg_s_Per_mL = src.leftafferentresistance_mmhg_s_per_ml();
+  dst.m_rightAfferentResistance_mmHg_s_Per_mL = src.rightafferentresistance_mmhg_s_per_ml();
+  dst.m_leftSodiumFlowSetPoint_mg_Per_s = src.leftsodiumflowsetpoint_mg_per_s();
+  dst.m_rightSodiumFlowSetPoint_mg_Per_s = src.rightsodiumflowsetpoint_mg_per_s();
+
+  RunningAverage::Load(src.urineproductionrate_ml_per_min(),dst.m_urineProductionRate_mL_Per_min_runningAvg);
+  RunningAverage::Load(src.urineosmolarity_mosm_per_l(),dst.m_urineOsmolarity_mOsm_Per_L_runningAvg);
+  RunningAverage::Load(src.sodiumconcentration_mg_per_ml(),dst.m_sodiumConcentration_mg_Per_mL_runningAvg);
+  RunningAverage::Load(src.sodiumexcretionrate_mg_per_min(),dst.m_sodiumExcretionRate_mg_Per_min_runningAvg);
+  RunningAverage::Load(src.leftsodiumflow_mg_per_s(),dst.m_leftSodiumFlow_mg_Per_s_runningAvg);
+  RunningAverage::Load(src.rightsodiumflow_mg_per_s(),dst.m_rightSodiumFlow_mg_Per_s_runningAvg);
+  RunningAverage::Load(src.leftrenalarterialpressure_mmhg(),dst.m_leftRenalArterialPressure_mmHg_runningAvg);
+  RunningAverage::Load(src.rightrenalarterialpressure_mmhg(),dst.m_rightRenalArterialPressure_mmHg_runningAvg);
 }
-void Renal::Unload(CDM::PulseRenalSystemData& data) const
+
+pulse::RenalSystemData* Renal::Unload(const Renal& src)
 {
-  SERenalSystem::Unload(data);
 
-  data.Urinating(m_Urinating);
-  data.LeftAfferentResistance_mmHg_s_Per_mL(m_leftAfferentResistance_mmHg_s_Per_mL);
-  data.RightAfferentResistance_mmHg_s_Per_mL(m_rightAfferentResistance_mmHg_s_Per_mL);
-  data.LeftSodiumFlowSetPoint_mg_Per_s(m_leftSodiumFlowSetPoint_mg_Per_s);
-  data.RightSodiumFlowSetPoint_mg_Per_s(m_rightSodiumFlowSetPoint_mg_Per_s);
+  pulse::RenalSystemData* dst = new pulse::RenalSystemData();
+  Renal::Serialize(src, *dst);
+  return dst;
+}
+void Renal::Serialize(const Renal& src, pulse::RenalSystemData& dst)
+{
+  dst.set_urinating(src.m_Urinating);
+  dst.set_leftafferentresistance_mmhg_s_per_ml(src.m_leftAfferentResistance_mmHg_s_Per_mL);
+  dst.set_rightafferentresistance_mmhg_s_per_ml(src.m_rightAfferentResistance_mmHg_s_Per_mL);
+  dst.set_leftsodiumflowsetpoint_mg_per_s(src.m_leftSodiumFlowSetPoint_mg_Per_s);
+  dst.set_rightsodiumflowsetpoint_mg_per_s(src.m_rightSodiumFlowSetPoint_mg_Per_s);
 
-  data.UrineProductionRate_mL_Per_min(std::unique_ptr<CDM::RunningAverageData>(m_urineProductionRate_mL_Per_min_runningAvg.Unload()));
-  data.UrineOsmolarity_mOsm_Per_L(std::unique_ptr<CDM::RunningAverageData>(m_urineOsmolarity_mOsm_Per_L_runningAvg.Unload()));
-  data.SodiumConcentration_mg_Per_mL(std::unique_ptr<CDM::RunningAverageData>(m_sodiumConcentration_mg_Per_mL_runningAvg.Unload()));
-  data.SodiumExcretionRate_mg_Per_min(std::unique_ptr<CDM::RunningAverageData>(m_sodiumExcretionRate_mg_Per_min_runningAvg.Unload()));
-  data.LeftSodiumFlow_mg_Per_s(std::unique_ptr<CDM::RunningAverageData>(m_leftSodiumFlow_mg_Per_s_runningAvg.Unload()));
-  data.RightSodiumFlow_mg_Per_s(std::unique_ptr<CDM::RunningAverageData>(m_rightSodiumFlow_mg_Per_s_runningAvg.Unload()));
-  data.LeftRenalArterialPressure_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_leftRenalArterialPressure_mmHg_runningAvg.Unload()));
-  data.RightRenalArterialPressure_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_rightRenalArterialPressure_mmHg_runningAvg.Unload()));
+  dst.set_allocated_urineproductionrate_ml_per_min(RunningAverage::Unload(src.m_urineProductionRate_mL_Per_min_runningAvg));
+  dst.set_allocated_urineosmolarity_mosm_per_l(RunningAverage::Unload(src.m_urineOsmolarity_mOsm_Per_L_runningAvg));
+  dst.set_allocated_sodiumconcentration_mg_per_ml(RunningAverage::Unload(src.m_sodiumConcentration_mg_Per_mL_runningAvg));
+  dst.set_allocated_sodiumexcretionrate_mg_per_min(RunningAverage::Unload(src.m_sodiumExcretionRate_mg_Per_min_runningAvg));
+  dst.set_allocated_leftsodiumflow_mg_per_s(RunningAverage::Unload(src.m_leftSodiumFlow_mg_Per_s_runningAvg));
+  dst.set_allocated_rightsodiumflow_mg_per_s(RunningAverage::Unload(src.m_rightSodiumFlow_mg_Per_s_runningAvg));
+  dst.set_allocated_leftrenalarterialpressure_mmhg(RunningAverage::Unload(src.m_leftRenalArterialPressure_mmHg_runningAvg));
+  dst.set_allocated_rightrenalarterialpressure_mmhg(RunningAverage::Unload(src.m_rightRenalArterialPressure_mmHg_runningAvg));
 }
 
 void Renal::SetUp()
@@ -992,15 +990,15 @@ void Renal::CalculateFilterability(SESubstance& sub)
   {
     switch (sub.GetClearance().GetChargeInBlood())
     {
-    case CDM::enumCharge::Positive:
+    case cdm::eCharge::Positive:
       filterability = 0.0386 * pow(molecularRadius_nm, 4.0) - 0.431 * pow(molecularRadius_nm, 3.0)
         + 1.61 * pow(molecularRadius_nm, 2.0) - 2.6162 * molecularRadius_nm + 2.607;
       break;
-    case CDM::enumCharge::Neutral:
+    case cdm::eCharge::Neutral:
       filterability = -0.0908 * pow(molecularRadius_nm, 4.0) + 1.2135 * pow(molecularRadius_nm, 3.0)
         - 5.76 * pow(molecularRadius_nm, 2.0) + 11.013 * molecularRadius_nm - 6.2792;
       break;
-    case CDM::enumCharge::Negative:
+    case cdm::eCharge::Negative:
       //Subtracting 0.01 to account for not enough significant digits given by the best fit - tuned looking at data table from report and confirmed for Albumin
       filterability = 0.0616 * pow(molecularRadius_nm, 4.0) - 0.8781 * pow(molecularRadius_nm, 3.0)
         + 4.6699 * pow(molecularRadius_nm, 2.0) - 10.995 * molecularRadius_nm + 9.6959 - 0.01;
@@ -1482,7 +1480,7 @@ void Renal::CalculateVitalSigns()
 
   //Only check these once each cardiac cycle (using running average for entire cycle)
   //Otherwise, they could turn on and off like crazy as the flows fluctuate throughout the cycle
-  if (m_data.GetPatient().IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle) && m_Urinating == false)
+  if (m_data.GetPatient().IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle) && m_Urinating == false)
   {
     if (m_data.GetState() > EngineState::InitialStabilization)
     {// Don't throw events if we are initializing
@@ -1492,12 +1490,12 @@ void Renal::CalculateVitalSigns()
       if (m_urineProductionRate_mL_Per_min_runningAvg.Value() > 2.5)
       {
         /// \event Patient: Diuresis. Occurs when the urine production rate double to around 2.5 ml/min. \cite lahav1992intermittent
-        m_patient->SetEvent(CDM::enumPatientEvent::Diuresis, true, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_Diuresis, true, m_data.GetSimulationTime());
       }
       else if (m_urineProductionRate_mL_Per_min_runningAvg.Value() < 1.0)
       {
         /// \event Patient: Ends when the urine production rate falls below 1.0 mL/min (near normal urine production). \cite lahav1992intermittent
-        m_patient->SetEvent(CDM::enumPatientEvent::Diuresis, false, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_Diuresis, false, m_data.GetSimulationTime());
       }
 
       /// \cite valtin1995renal
@@ -1506,12 +1504,12 @@ void Renal::CalculateVitalSigns()
       if (m_urineProductionRate_mL_Per_min_runningAvg.Value() < 0.5 && m_urineOsmolarity_mOsm_Per_L_runningAvg.Value() > 280)
       {
         /// \event Patient: Antidiuresis occurs when urine production rate is less than 0.5 mL/min and the urine osmolarity is hyperosmotic to the plasma \cite valtin1995renal
-        m_patient->SetEvent(CDM::enumPatientEvent::Antidiuresis, true, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_Antidiuresis, true, m_data.GetSimulationTime());
       }
       else if ((m_urineProductionRate_mL_Per_min_runningAvg.Value() > 0.55 || m_urineOsmolarity_mOsm_Per_L_runningAvg.Value() < 275))
       {
         /// \event Patient: Antidiuresis. Ends when urine production rate rises back above 0.55 mL/min or the urine osmolarity falls below that of the plasma \cite valtin1995renal
-        m_patient->SetEvent(CDM::enumPatientEvent::Antidiuresis, false, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_Antidiuresis, false, m_data.GetSimulationTime());
       }
 
       /// \cite Zager1988HypoperfusionRate
@@ -1519,12 +1517,12 @@ void Renal::CalculateVitalSigns()
       if (renalBloodFlow_mL_Per_s < 3.0)
       {
         /// \event Patient: hypoperfusion occurs when renal blood flow decreases below 3 ml/s 
-        m_patient->SetEvent(CDM::enumPatientEvent::RenalHypoperfusion, true, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_RenalHypoperfusion, true, m_data.GetSimulationTime());
       }
       else if (renalBloodFlow_mL_Per_s > 4.0)
       {
         /// \event Patient: hypoperfusion ends when blood flow recovers above 4 ml/s
-        m_patient->SetEvent(CDM::enumPatientEvent::RenalHypoperfusion, false, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_RenalHypoperfusion, false, m_data.GetSimulationTime());
       }
 
       /// \cite moss2014hormonal
@@ -1534,12 +1532,12 @@ void Renal::CalculateVitalSigns()
       if (m_sodiumExcretionRate_mg_Per_min_runningAvg.Value() > 14.4)
       {
         /// \event Patient: Natriuresis. Occurs when the sodium excretion rate rises above 14.4 mg/min \cite moss2013hormonal
-        m_patient->SetEvent(CDM::enumPatientEvent::Natriuresis, true, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_Natriuresis, true, m_data.GetSimulationTime());
       }
       else if (m_sodiumExcretionRate_mg_Per_min_runningAvg.Value() < 14.0)
       {
         /// \event Patient: Ends when the sodium excretion rate falls below 14.0 mg/min \cite moss2013hormonal
-        m_patient->SetEvent(CDM::enumPatientEvent::Natriuresis, false, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_Natriuresis, false, m_data.GetSimulationTime());
       }
     }
 
@@ -1571,7 +1569,7 @@ void Renal::Urinate()
   if (m_bladderNode->GetNextVolume().GetValue(VolumeUnit::mL) > bladderMaxVolume_mL)
   {
     /// \event Patient: FunctionalIncontinence: The patient's bladder has reached a maximum
-    m_patient->SetEvent(CDM::enumPatientEvent::FunctionalIncontinence, true, m_data.GetSimulationTime());
+    m_patient->SetEvent(cdm::PatientData_eEvent_FunctionalIncontinence, true, m_data.GetSimulationTime());
     m_Urinating = true;
   }
 
@@ -1591,9 +1589,9 @@ void Renal::Urinate()
       //The urethra resistances will use the baselines value of an open switch to stop the flow
 
       //Turn off the event
-      if (m_patient->IsEventActive(CDM::enumPatientEvent::FunctionalIncontinence))
+      if (m_patient->IsEventActive(cdm::PatientData_eEvent_FunctionalIncontinence))
       {
-        m_patient->SetEvent(CDM::enumPatientEvent::FunctionalIncontinence, false, m_data.GetSimulationTime());
+        m_patient->SetEvent(cdm::PatientData_eEvent_FunctionalIncontinence, false, m_data.GetSimulationTime());
       }      
     }
     else
@@ -1676,43 +1674,43 @@ void Renal::CalculateColloidOsmoticPressure(SEScalarMassPerVolume& albuminConcen
 //--------------------------------------------------------------------------------------------------
 bool Renal::CalculateUrinalysis(SEUrinalysis& u)
 {
-  u.Reset();
+  u.Clear();
   
   double urineOsm_Per_kg = GetUrineOsmolality(OsmolalityUnit::mOsm_Per_kg);
   if (urineOsm_Per_kg <= 400)// Need cite for this
-    u.SetColorResult(CDM::enumUrineColor::PaleYellow);
+    u.SetColorResult(cdm::UrinalysisData_eUrineColor_PaleYellow);
   else if (urineOsm_Per_kg > 400 && urineOsm_Per_kg <= 750)
-    u.SetColorResult(CDM::enumUrineColor::Yellow);
+    u.SetColorResult(cdm::UrinalysisData_eUrineColor_Yellow);
   else
-    u.SetColorResult(CDM::enumUrineColor::DarkYellow);
+    u.SetColorResult(cdm::UrinalysisData_eUrineColor_DarkYellow);
 
   //u.SetApperanceResult();
   double bladder_glucose_mg_Per_dL = m_bladderGlucose->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_dL);
 
   if (bladder_glucose_mg_Per_dL >= 100.0)/// \cite roxe1990urinalysis
-    u.SetGlucoseResult(CDM::enumPresenceIndicator::Positive);
+    u.SetGlucoseResult(cdm::UrinalysisData_ePresenceIndicator_Positive);
   else
-    u.SetGlucoseResult(CDM::enumPresenceIndicator::Negative);
+    u.SetGlucoseResult(cdm::UrinalysisData_ePresenceIndicator_Negative);
 
   if (bladder_glucose_mg_Per_dL >= 5.0)/// \cite roxe1990urinalysis
-    u.SetKetoneResult(CDM::enumPresenceIndicator::Positive);
+    u.SetKetoneResult(cdm::UrinalysisData_ePresenceIndicator_Positive);
   else
-    u.SetKetoneResult(CDM::enumPresenceIndicator::Negative);
+    u.SetKetoneResult(cdm::UrinalysisData_ePresenceIndicator_Negative);
 
   //u.SetBilirubinResult();
 
   u.GetSpecificGravityResult().Set(GetUrineSpecificGravity());
   if (bladder_glucose_mg_Per_dL > 0.15) /// \cite roxe1990urinalysis
-    u.SetBloodResult(CDM::enumPresenceIndicator::Positive);
+    u.SetBloodResult(cdm::UrinalysisData_ePresenceIndicator_Positive);
   else
-    u.SetBloodResult(CDM::enumPresenceIndicator::Negative);
+    u.SetBloodResult(cdm::UrinalysisData_ePresenceIndicator_Negative);
 
   //u.GetPHResult().Set();
 
   if (bladder_glucose_mg_Per_dL > 30.0)/// \cite roxe1990urinalysis
-    u.SetProteinResult(CDM::enumPresenceIndicator::Positive);
+    u.SetProteinResult(cdm::UrinalysisData_ePresenceIndicator_Positive);
   else
-    u.SetProteinResult(CDM::enumPresenceIndicator::Negative);
+    u.SetProteinResult(cdm::UrinalysisData_ePresenceIndicator_Negative);
 
   //u.SetUrobilinogen();
   //u.SetNitrite();
@@ -1792,7 +1790,7 @@ void Renal::CalculateOsmoreceptorFeedback()
       
         m_leftReabsorptionPermeabilityModificationFactor = pow(sodiumConcentration_mg_Per_mL, sodiumSensitivity) / pow(m_sodiumPlasmaConcentrationSetpoint_mg_Per_mL, sodiumSensitivity);
 
-        if (m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+        if (m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
         {
           permeability_mL_Per_s_Per_mmHg_Per_m2 *= m_leftReabsorptionPermeabilityModificationFactor;
 
@@ -1807,7 +1805,7 @@ void Renal::CalculateOsmoreceptorFeedback()
 
       
         m_rightReabsorptionPermeabilityModificationFactor = pow(sodiumConcentration_mg_Per_mL, sodiumSensitivity) / pow(m_sodiumPlasmaConcentrationSetpoint_mg_Per_mL, sodiumSensitivity);
-        if (m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+        if (m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
         {
           permeability_mL_Per_s_Per_mmHg_Per_m2 *= m_rightReabsorptionPermeabilityModificationFactor;
 
@@ -1816,7 +1814,7 @@ void Renal::CalculateOsmoreceptorFeedback()
         }
     }
   }
-  if (m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+  if (m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
   {
     m_sodiumConcentration_mg_Per_mL_runningAvg.Reset();
   }
@@ -1881,7 +1879,7 @@ void Renal::CalculateTubuloglomerularFeedback()
 
       // Save off the last set point from initial stabilization for use after stabilization
       if (m_data.GetState() == EngineState::InitialStabilization &&
-        m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+        m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
       {
         //Don't change the resistance - just figure out what it is
         m_leftSodiumFlowSetPoint_mg_Per_s = sodiumFlow_mg_Per_s;
@@ -1915,7 +1913,7 @@ void Renal::CalculateTubuloglomerularFeedback()
 
       // Save off the last set point from initial stabilization for use after stabilization
       if (m_data.GetState() == EngineState::InitialStabilization &&
-        m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+        m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
       {
         //Don't change the resistance - just figure out what it is
         m_rightSodiumFlowSetPoint_mg_Per_s = sodiumFlow_mg_Per_s;
@@ -1923,7 +1921,7 @@ void Renal::CalculateTubuloglomerularFeedback()
       sodiumFlowSetPoint_mg_Per_s = m_rightSodiumFlowSetPoint_mg_Per_s;
     }
     
-    if (m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+    if (m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
     {
       //Us the "current" resistance, to continually drive towards the response we want - the next value is overwritten by the baseline during postprocess
       double currentAfferentResistance_mmHg_s_Per_mL = afferentResistancePath->GetResistance().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
@@ -1974,7 +1972,7 @@ void Renal::CalculateTubuloglomerularFeedback()
     }
   }
   //reset sodium flow at start of cardiac cycle 
-  if (m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+  if (m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
   {
     m_leftSodiumFlow_mg_Per_s_runningAvg.Reset();
     m_rightSodiumFlow_mg_Per_s_runningAvg.Reset();
@@ -2019,7 +2017,7 @@ void Renal::CalculateFluidPermeability()
       leftArterialPressure_mmHg = m_leftRenalArterialPressure_mmHg_runningAvg.Sample(leftArterialPressure_mmHg);
 
       //compute desired permeability as a function of arterial pressure, else set as baseline
-      if (m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+      if (m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
       {
         if (round(leftArterialPressure_mmHg) >= 80.0)
         {
@@ -2052,7 +2050,7 @@ void Renal::CalculateFluidPermeability()
       rightArterialPressure_mmHg = m_rightRenalArterialPressure_mmHg_runningAvg.Sample(rightArterialPressure_mmHg);
 
       //compute desired permeability as a function of arterial pressure, else set as baseline
-      if (m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+      if (m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
       {
         if (round(rightArterialPressure_mmHg) >= 80.0)
         {
@@ -2076,7 +2074,7 @@ void Renal::CalculateFluidPermeability()
     
   }
   //reset average at start of cardiac cycle
-  if (m_patient->IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+  if (m_patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
   {
     m_leftRenalArterialPressure_mmHg_runningAvg.Reset();
     m_rightRenalArterialPressure_mmHg_runningAvg.Reset();

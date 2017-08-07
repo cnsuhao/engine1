@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "Systems/Energy.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "properties/SEScalarFrequency.h"
@@ -34,9 +34,9 @@ specific language governing permissions and limitations under the License.
 #include "utils/DataTrack.h"
 
 //This test holds EnvironmentSkin and EnvironmentCore sources constant and varies BMR
-void BioGearsEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\InternalTemperatureVariableBMRCircuitTest.log");
+  Pulse bg(sTestDirectory + "\\InternalTemperatureVariableBMRCircuitTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -108,9 +108,9 @@ void BioGearsEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::st
 }
 
 //This test holds BMR and EnvironmentCore sources constant and varies EnvironmentSkin
-void BioGearsEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\InternalTemperatureVariableSkinCircuitTest.log");
+  Pulse bg(sTestDirectory + "\\InternalTemperatureVariableSkinCircuitTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -205,9 +205,9 @@ void BioGearsEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::s
 }
 
 //This test holds BMR and EnvironmentSkin sources constant and varies EnvironmentCore
-void BioGearsEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\InternalTemperatureVariableCoreCircuitTest.log");
+  Pulse bg(sTestDirectory + "\\InternalTemperatureVariableCoreCircuitTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -301,9 +301,9 @@ void BioGearsEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::s
 }
 
 //This test uses a constant BMR in place of the Energy circuit and varies ambient temperature
-void BioGearsEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\EnvironmentVariableTemperatureCircuitTest.log");
+  Pulse bg(sTestDirectory + "\\EnvironmentVariableTemperatureCircuitTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -425,9 +425,9 @@ void BioGearsEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::st
 }
 
 //This test uses both the Environment and Energy circuits, varying both BMR and ambient temp
-void BioGearsEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
+  Pulse bg(sTestDirectory + "\\CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -579,9 +579,9 @@ void BioGearsEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperature
 }
 
 //This test verifies that the Skin temperature drops when drastically lowering other values
-void BioGearsEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
+  Pulse bg(sTestDirectory + "\\CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -673,9 +673,9 @@ void BioGearsEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(c
 }
 
 //This test compares Environment circuit output to ISO data
-void BioGearsEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestDirectory)
+void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\EnvironmentTemperatureInput.log");
+  Pulse bg(sTestDirectory + "\\EnvironmentTemperatureInput.log");
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);

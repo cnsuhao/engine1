@@ -10,12 +10,10 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "BioGearsEngineJNI.h"
-#include "Controller/Scenario/BioGearsScenario.h"
-#include "Controller/Scenario/BioGearsScenarioExec.h"
-#include "bind/Scenario.hxx"
-#include "bind/DataRequestsData.hxx"
-#include "scenario/requests/SEDataRequest.h"
+#include "PulseEngineJNI.h"
+#include "Controller/Scenario/PulseScenario.h"
+#include "Controller/Scenario/PulseScenarioExec.h"
+#include "scenario/SEDataRequest.h"
 #include "scenario/SEAction.h"
 #include "scenario/SECondition.h"
 
@@ -24,40 +22,38 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEUrinalysis.h"
 
-#include "bind/BioGearsStateData.hxx"
-
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_biogears_testing_BGEUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_Pulse_testing_BGEUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
 {
-  BioGearsEngineTest *executor = new BioGearsEngineTest();
+  PulseEngineTest *executor = new PulseEngineTest();
   return reinterpret_cast<jlong>(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_biogears_testing_BGEUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_testing_BGEUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
 {
-  BioGearsEngineTest *executor = reinterpret_cast<BioGearsEngineTest*>(ptr);
+  PulseEngineTest *executor = reinterpret_cast<PulseEngineTest*>(ptr);
   SAFE_DELETE(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_biogears_testing_BGEUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_testing_BGEUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
-  BioGearsEngineTest *executor = reinterpret_cast<BioGearsEngineTest*>(ptr);
+  PulseEngineTest *executor = reinterpret_cast<PulseEngineTest*>(ptr);
   executor->RunTest(testName, outputDir);
   env->ReleaseStringUTFChars(test, testName);
   env->ReleaseStringUTFChars(toDir, outputDir);
 }
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGears_nativeAllocate(JNIEnv *env, jobject obj, jstring logFile)
+JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_Pulse_engine_Pulse_nativeAllocate(JNIEnv *env, jobject obj, jstring logFile)
 { 
   const char* logF = env->GetStringUTFChars(logFile, JNI_FALSE);
-  BioGearsEngineJNI *engineJNI = new BioGearsEngineJNI(logF);
+  PulseEngineJNI *engineJNI = new PulseEngineJNI(logF);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   env->ReleaseStringUTFChars(logFile, logF);
@@ -65,41 +61,41 @@ JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGears_nativ
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGears_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_Pulse_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
 {
-  BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr);
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   SAFE_DELETE(engineJNI);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_nativeReset(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeReset(JNIEnv *env, jobject obj, jlong ptr)
 {
-  BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr); 
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr); 
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   engineJNI->Reset();
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenarioXML, jstring outputFile, double updateFreq_s)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenarioXML, jstring outputFile, double updateFreq_s)
 {
   const char* sceXML = env->GetStringUTFChars(scenarioXML, JNI_FALSE);
   const char* dataF = env->GetStringUTFChars(outputFile,JNI_FALSE);
   try
   {
-    BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr); 
+    PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr); 
     engineJNI->updateFrequency_cnt = (int)(updateFreq_s /engineJNI->eng->GetTimeStep(TimeUnit::s));
     engineJNI->jniEnv = env;
     engineJNI->jniObj = obj;
     // Load up the xml and run the scenario
-    BioGearsScenario sce(engineJNI->eng->GetSubstanceManager());
+    PulseScenario sce(engineJNI->eng->GetSubstanceManager());
     std::istringstream istr(sceXML);
     xml_schema::properties properties;
-    properties.schema_location("uri:/mil/tatrc/physiology/datamodel","./xsd/BioGearsDataModel.xsd");
+    properties.schema_location("uri:/mil/tatrc/physiology/datamodel","./xsd/PulseDataModel.xsd");
     sce.Load(*CDM::Scenario(istr, 0, properties));
-    engineJNI->exec = new BioGearsScenarioExec(*engineJNI->eng);
+    engineJNI->exec = new PulseScenarioExec(*engineJNI->eng);
     engineJNI->exec->Execute(sce, dataF, updateFreq_s<=0?nullptr:engineJNI);
     SAFE_DELETE(engineJNI->exec);
   }
@@ -116,9 +112,9 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsScenari
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsScenarioExec_nativeCancelScenario(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_nativeCancelScenario(JNIEnv *env, jobject obj, jlong ptr)
 {
-  BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr); 
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr); 
   //engineJNI->jniEnv = env; I am not doing this because the cancel comes in on another thread
   //engineJNI->jniObj = obj; and it has valid copies of the env and obj for its context
   if (engineJNI->exec != nullptr)
@@ -126,9 +122,9 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsScenari
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_nativeLoadState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jdouble simTime_s, jstring dataRequestsXML)
+JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeLoadState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jdouble simTime_s, jstring dataRequestsXML)
 {
-  BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr);
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
@@ -136,7 +132,7 @@ JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEng
   const char* drXML = env->GetStringUTFChars(dataRequestsXML, JNI_FALSE);
   // Load up the data requests
   xml_schema::properties properties;
-  properties.schema_location("uri:/mil/tatrc/physiology/datamodel", "./xsd/BioGearsDataModel.xsd");
+  properties.schema_location("uri:/mil/tatrc/physiology/datamodel", "./xsd/PulseDataModel.xsd");
   std::istringstream drstr(drXML);
   std::unique_ptr<CDM::DataRequestsData> drData(CDM::DataRequests(drstr, 0, properties));
   engineJNI->eng->GetEngineTrack()->GetDataRequestManager().Load(*drData, engineJNI->eng->GetSubstanceManager());
@@ -162,29 +158,29 @@ JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEng
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_nativeSaveState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename)
+JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeSaveState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename)
 {
-  BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr);
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env; 
   engineJNI->jniObj = obj;
   const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  std::unique_ptr<CDM::BioGearsStateData> data((CDM::BioGearsStateData*)(engineJNI->eng->SaveState(pStateFilename).release()));
+  std::unique_ptr<CDM::PulseStateData> data((CDM::PulseStateData*)(engineJNI->eng->SaveState(pStateFilename).release()));
   env->ReleaseStringUTFChars(stateFilename, pStateFilename);
 
   xml_schema::namespace_infomap map;
   map[""].name = "uri:/mil/tatrc/phsyiology/datamodel";
-  map[""].schema = "./xsd/BioGearsDataModel.xsd";
+  map[""].schema = "./xsd/PulseDataModel.xsd";
 
   data->contentVersion(BGE::Version);
   std::stringstream stream;
-  BioGearsState(stream, *data, map);
+  PulseState(stream, *data, map);
   jstring stateXML = env->NewStringUTF(stream.str().c_str());
   env->ReleaseStringUTFChars(stateFilename, pStateFilename);
   return stateXML;
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patientXML, jstring conditionsXML, jstring dataRequestsXML)
+JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patientXML, jstring conditionsXML, jstring dataRequestsXML)
 {
   bool ret = false;
   const char* pXML = env->GetStringUTFChars(patientXML, JNI_FALSE);
@@ -194,12 +190,12 @@ JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEng
   const char* drXML = env->GetStringUTFChars(dataRequestsXML, JNI_FALSE);
   try
   {
-    BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr);
+    PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
     engineJNI->jniEnv = env;
     engineJNI->jniObj = obj;
     // Schema location
     xml_schema::properties properties;
-    properties.schema_location("uri:/mil/tatrc/physiology/datamodel", "./xsd/BioGearsDataModel.xsd");
+    properties.schema_location("uri:/mil/tatrc/physiology/datamodel", "./xsd/PulseDataModel.xsd");
     // Load up the patient
     SEPatient patient(nullptr);
     std::istringstream pstr(pXML);    
@@ -241,10 +237,10 @@ JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEng
 }
 
 extern "C"
-JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_nativeAdvanceTimeStep(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeAdvanceTimeStep(JNIEnv *env, jobject obj, jlong ptr)
 {
   bool success = true;
-  BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr);
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   try
@@ -268,17 +264,17 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_
   if (success)
   {
     double currentTime_s = engineJNI->eng->GetSimulationTime(TimeUnit::s);
-    engineJNI->eng->GetEngineTrack()->TrackData(currentTime_s);
+    engineJNI->eng->GetEngineTracker()->TrackData(currentTime_s);
     engineJNI->PushData(currentTime_s);
   }
   return success;
 }
 
 extern "C"
-JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_nativeAdvanceTime(JNIEnv *env, jobject obj, jlong ptr, jdouble time_s)
+JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeAdvanceTime(JNIEnv *env, jobject obj, jlong ptr, jdouble time_s)
 {
   bool success = true;
-  BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr);
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   try
@@ -302,26 +298,26 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_
   if (success)
   {
     double currentTime_s = engineJNI->eng->GetSimulationTime(TimeUnit::s);
-    engineJNI->eng->GetEngineTrack()->TrackData(currentTime_s);
+    engineJNI->eng->GetEngineTracker()->TrackData(currentTime_s);
     engineJNI->PushData(currentTime_s);
   }
   return success;
 }
 
 extern "C"
-JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_nativeProcessActions(JNIEnv *env, jobject obj, jlong ptr, jstring actionsXML)
+JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeProcessActions(JNIEnv *env, jobject obj, jlong ptr, jstring actionsXML)
 {
   bool success = true;
   if (actionsXML == nullptr)
     return success;
-  BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr);
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   const char* aXML = env->GetStringUTFChars(actionsXML, JNI_FALSE);
   std::istringstream astr(aXML);
   // Schema location
   xml_schema::properties properties;
-  properties.schema_location("uri:/mil/tatrc/physiology/datamodel", "./xsd/BioGearsDataModel.xsd");
+  properties.schema_location("uri:/mil/tatrc/physiology/datamodel", "./xsd/PulseDataModel.xsd");
   std::unique_ptr<CDM::ActionListData> aList(CDM::ActionList(astr, 0, properties));
   try
   {
@@ -353,9 +349,9 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngine_nativeGetAssessment(JNIEnv *env, jobject obj, jlong ptr, jint type)
+JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeGetAssessment(JNIEnv *env, jobject obj, jlong ptr, jint type)
 {
-  BioGearsEngineJNI *engineJNI = reinterpret_cast<BioGearsEngineJNI*>(ptr);
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   
@@ -363,7 +359,7 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngi
 
   xml_schema::namespace_infomap map;
   map[""].name = "uri:/mil/tatrc/phsyiology/datamodel";
-  map[""].schema = "./xsd/BioGearsDataModel.xsd";
+  map[""].schema = "./xsd/PulseDataModel.xsd";
 
   std::stringstream stream;
   switch (type)
@@ -412,21 +408,21 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_biogears_engine_BioGearsEngi
   return assessmentXML;
 }
 
-BioGearsEngineJNI::BioGearsEngineJNI(const std::string& logFile) : SEEventHandler(nullptr)
+PulseEngineJNI::PulseEngineJNI(const std::string& logFile) : SEEventHandler(nullptr)
 {// No logger needed for the event handler, at this point
   Reset(); 
-  eng = CreateBioGearsEngine(logFile);
+  eng = CreatePulseEngine(logFile);
   eng->GetLogger()->SetForward(this);
   eng->GetLogger()->LogToConsole(false);
-  trk=&eng->GetEngineTrack()->GetDataTrack();
+  trk=&eng->GetEngineTracker()->GetDataTrack();
 }
 
-BioGearsEngineJNI::~BioGearsEngineJNI()
+PulseEngineJNI::~PulseEngineJNI()
 {
   Reset();
 }
 
-void BioGearsEngineJNI::Reset()
+void PulseEngineJNI::Reset()
 {
   exec = nullptr;
   firstUpdate = true;
@@ -441,7 +437,7 @@ void BioGearsEngineJNI::Reset()
   updateFrequency_cnt = 45;// About every half second
 }
 
-void BioGearsEngineJNI::CustomExec(double time_s, PhysiologyEngine* engine)
+void PulseEngineJNI::CustomExec(double time_s, PhysiologyEngine* engine)
 {
   if (update_cnt++ > updateFrequency_cnt)
   {    
@@ -449,7 +445,7 @@ void BioGearsEngineJNI::CustomExec(double time_s, PhysiologyEngine* engine)
     update_cnt = 0;
   }
 }
-void BioGearsEngineJNI::PushData(double time_s)
+void PulseEngineJNI::PushData(double time_s)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
@@ -486,7 +482,7 @@ void BioGearsEngineJNI::PushData(double time_s)
   }
 }
 
-void BioGearsEngineJNI::ForwardDebug(const std::string&  msg, const std::string&  origin)
+void PulseEngineJNI::ForwardDebug(const std::string&  msg, const std::string&  origin)
 {
   if(jniEnv!=nullptr&&jniObj!=nullptr)
   {
@@ -498,7 +494,7 @@ void BioGearsEngineJNI::ForwardDebug(const std::string&  msg, const std::string&
   }
 }
 
-void BioGearsEngineJNI::ForwardInfo(const std::string&  msg, const std::string&  origin)
+void PulseEngineJNI::ForwardInfo(const std::string&  msg, const std::string&  origin)
 {
   if(jniEnv!=nullptr&&jniObj!=nullptr)
   {
@@ -510,7 +506,7 @@ void BioGearsEngineJNI::ForwardInfo(const std::string&  msg, const std::string& 
   }
 }
 
-void BioGearsEngineJNI::ForwardWarning(const std::string&  msg, const std::string&  origin)
+void PulseEngineJNI::ForwardWarning(const std::string&  msg, const std::string&  origin)
 {
   if(jniEnv!=nullptr&&jniObj!=nullptr)
   {
@@ -522,7 +518,7 @@ void BioGearsEngineJNI::ForwardWarning(const std::string&  msg, const std::strin
   }
 }
 
-void BioGearsEngineJNI::ForwardError(const std::string&  msg, const std::string&  origin)
+void PulseEngineJNI::ForwardError(const std::string&  msg, const std::string&  origin)
 {
   if(jniEnv!=nullptr&&jniObj!=nullptr)
   {
@@ -534,7 +530,7 @@ void BioGearsEngineJNI::ForwardError(const std::string&  msg, const std::string&
   }
 }
 
-void BioGearsEngineJNI::ForwardFatal(const std::string&  msg, const std::string&  origin)
+void PulseEngineJNI::ForwardFatal(const std::string&  msg, const std::string&  origin)
 {
   if(jniEnv!=nullptr&&jniObj!=nullptr)
   {
@@ -551,7 +547,7 @@ void BioGearsEngineJNI::ForwardFatal(const std::string&  msg, const std::string&
   throw PhysiologyEngineException(err);
 }
 
-void BioGearsEngineJNI::HandlePatientEvent(CDM::enumPatientEvent::value type, bool active, const SEScalarTime* time)
+void PulseEngineJNI::HandlePatientEvent(cdm::PatientData_eEvent type, bool active, const SEScalarTime* time)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
@@ -561,7 +557,7 @@ void BioGearsEngineJNI::HandlePatientEvent(CDM::enumPatientEvent::value type, bo
     jniEnv->CallVoidMethod(jniObj, m, 0, type, active, time != nullptr ? time->GetValue(TimeUnit::s) : 0);
   }
 }
-void BioGearsEngineJNI::HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time)
+void PulseEngineJNI::HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {

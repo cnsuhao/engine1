@@ -36,6 +36,7 @@ protected:
   static void Serialize(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst);
   static void Serialize(const SEConsciousRespiration& src, cdm::ConsciousRespirationData& dst);
 
+public:
   // Get the active command
   virtual SEConsciousRespirationCommand* GetActiveCommand();
   /// When the active command has been processed, remove it

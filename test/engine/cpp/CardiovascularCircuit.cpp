@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "properties/SEScalarFlowCompliance.h"
@@ -34,32 +34,32 @@ specific language governing permissions and limitations under the License.
 enum Driver { Sinusoid = 0, Heart };
 
 // We use 1,1,1,0 to run our test without any scaling of the circuit and using the HeartRate Baseline in the standard patient file
-void BioGearsEngineTest::CardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::CardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, false, sTestDirectory, "Cardiovascular", false);
 }
 
-void BioGearsEngineTest::CardiovascularAndRenalCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::CardiovascularAndRenalCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, true, false, sTestDirectory, "CardiovascularAndRenal", false);
 }
 
-void BioGearsEngineTest::CardiovascularAndTissueCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::CardiovascularAndTissueCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, false, false, sTestDirectory, "CardiovascularAndTissue", false);
 }
 
-void BioGearsEngineTest::CardiovascularTissueAndRenalCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::CardiovascularTissueAndRenalCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, false, sTestDirectory, "CardiovascularTissueAndRenal", false);
 }
 
-void BioGearsEngineTest::CardiovascularBloodGasesTest(const std::string& sTestDirectory)
+void PulseEngineTest::CardiovascularBloodGasesTest(const std::string& sTestDirectory)
 {
   CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, true, sTestDirectory, "CardiovascularBloodGasesTest", false);
 }
 
-void BioGearsEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDirectory)
 {
   m_Logger->ResetLogFile(sTestDirectory + "\\TuneCardiovascularCircuit.log");
 
@@ -69,7 +69,7 @@ void BioGearsEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestD
 
   SEPatient patient(nullptr);
   patient.SetName("TuneTest");
-  patient.SetSex(CDM::enumSex::Male);
+  patient.SetSex(cdm::PatientData_eSex_Male);
 
   double HRLower = 60;
   double HRUpper = 100;
@@ -121,11 +121,11 @@ void BioGearsEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestD
   }
   testReport.WriteFile(sTestDirectory + "\\TuneCardiovascularCircuitReport.xml");
 }
-void BioGearsEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient)
+void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient)
 {
   TimingProfile timer;
   timer.Start("TestCase");
-  BioGears bg(testSuite.GetLogger());
+  Pulse bg(testSuite.GetLogger());
   testSuite.GetLogger()->Info("Running " + sTestName);
   CDM_COPY((&patient), (&bg.GetPatient()));
   bg.m_Config->EnableRenal(cdm::eSwitch::On);
@@ -148,7 +148,7 @@ void BioGearsEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, c
   testCase.GetDuration().SetValue(timer.GetElapsedTime_s("TestCase"), TimeUnit::s);
 }
 
-void BioGearsEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver driverType,
+void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver driverType,
   double complianceScale, double resistanceScale, double volumeScale, double heartRate_bpm,
   double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale,
   double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale,
@@ -189,7 +189,7 @@ void BioGearsEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDri
   double circuit_s = 0;
   double transport_s = 0;
   double binding_s = 0;
-  BioGears bg(sTestDirectory + "\\" + tName.str() + "CircuitAndTransportTest.log");
+  Pulse bg(sTestDirectory + "\\" + tName.str() + "CircuitAndTransportTest.log");
   bg.GetLogger()->Info("Running " + tName.str());
   bg.GetPatient().LoadFile("./patients/StandardMale.xml");
   bg.SetupPatient();
@@ -239,7 +239,7 @@ void BioGearsEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDri
 
   Cardiovascular& cv = (Cardiovascular&)bg.GetCardiovascular();
   cv.m_TuneCircuit = true;// Run the circuit as constructed
-  //cv.m_TuningFile = "./test_results/unit_tests/biogears/"+ sTestName+"Tuning.txt";
+  //cv.m_TuningFile = "./test_results/unit_tests/Pulse/"+ sTestName+"Tuning.txt";
 
   SEFluidCircuit& cvCircuit = bg.GetCircuits().GetActiveCardiovascularCircuit();
   
@@ -624,7 +624,7 @@ void BioGearsEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDri
   bg.GetLogger()->Info(ss, "CardiovascularCircuitAndTransportTest");
 }
 
-void BioGearsEngineTest::SinusoidHeartDriver(double time_s, double heartFreq_Per_s, double& lHeartElastance, double& rHeartElastance)
+void PulseEngineTest::SinusoidHeartDriver(double time_s, double heartFreq_Per_s, double& lHeartElastance, double& rHeartElastance)
 {
   double RmaxElastance = 0.523;
   double RminElastance = 0.0243;
@@ -638,7 +638,7 @@ void BioGearsEngineTest::SinusoidHeartDriver(double time_s, double heartFreq_Per
   lHeartElastance = LminElastance + LhalfAmp - LhalfAmp * wave;
 }
 // Using the Cardiovascular Driver, but this is the math if you want
-//void BioGearsEngineTest::HeartDriver(double cycleTime_s, double period_s, double& lHeartElastance, double& rHeartElastance)
+//void PulseEngineTest::HeartDriver(double cycleTime_s, double period_s, double& lHeartElastance, double& rHeartElastance)
 //{
 //  double alpha1 = 0.303;
 //  double alpha2 = 0.508;
@@ -656,7 +656,7 @@ void BioGearsEngineTest::SinusoidHeartDriver(double time_s, double heartFreq_Per
 //  rHeartElastance = (RmaxElastance - RminElastance)*elastanceShapeFunction + RminElastance;
 //}
 
-void BioGearsEngineTest::CardiovascularCircuitScaleTests(const std::string& sTestDirectory)
+void PulseEngineTest::CardiovascularCircuitScaleTests(const std::string& sTestDirectory)
 {
   DataTrack     cvLastMeanPressureTrk;
   std::ofstream cvLastMeanPressureFile;

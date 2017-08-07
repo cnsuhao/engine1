@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
 #include "utils/FileUtils.h"
 
 #include "engine/PhysiologyEngineTimedStabilization.h"
@@ -31,7 +31,7 @@ specific language governing permissions and limitations under the License.
 #include "system/equipment/Anesthesia/SEAnesthesiaMachine.h"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachineOxygenBottle.h"
 
-#include "bind/BioGearsStateData.hxx"
+#include "bind/PulseStateData.hxx"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarElectricPotential.h"
@@ -76,7 +76,7 @@ public:
   }
 };
 
-void BioGearsEngineTest::InhalerState(PhysiologyEngine* bg, HowToTracker& tracker)
+void PulseEngineTest::InhalerState(PhysiologyEngine* bg, HowToTracker& tracker)
 {
   bg->GetEngineTrack()->GetDataRequestManager().SetResultsFilename("InhalerResults.txt");
   if (!bg->InitializeEngine("StandardMale.xml"))
@@ -126,7 +126,7 @@ void BioGearsEngineTest::InhalerState(PhysiologyEngine* bg, HowToTracker& tracke
   tracker.AdvanceModelTime(145);
 }
 
-void BioGearsEngineTest::InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tracker, const SESubstance& succs)
+void PulseEngineTest::InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tracker, const SESubstance& succs)
 {
   bg->GetEngineTrack()->GetDataRequestManager().SetResultsFilename("InjectSuccsResults.txt");
   if (!bg->InitializeEngine("StandardMale.xml"))
@@ -179,10 +179,10 @@ void BioGearsEngineTest::InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tr
   tracker.AdvanceModelTime(40);
 }
 
-void BioGearsEngineTest::SerializationTest(const std::string& sTestDirectory)
+void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> bg = CreateBioGearsEngine("SerializationTestSetup.log");
+  std::unique_ptr<PhysiologyEngine> bg = CreatePulseEngine("SerializationTestSetup.log");
   HowToTracker tracker(*bg);
 
   SESubstance* O2 = bg->GetSubstanceManager().GetSubstance("Oxygen");

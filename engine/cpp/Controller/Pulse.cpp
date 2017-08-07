@@ -15,7 +15,6 @@ specific language governing permissions and limitations under the License.
 
 #include "substance/SESubstance.h"
 #include "patient/SEPatient.h"
-#include "bind/Patient.hxx"
 #include "utils/DataTrack.h"
 #include "utils/FileUtils.h"
 
@@ -28,8 +27,6 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEUrinalysis.h"
-
-#include "bind/EnvironmentalConditionsData.hxx"
 
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalar0To1.h"
@@ -106,7 +103,7 @@ DataTrack& Pulse::GetDataTrack()
   return *m_DataTrack;
 }
 
-bool Pulse::Initialize(const PhysiologyEngineConfiguration* config)
+bool Pulse::Initialize(const SEEngineConfiguration* config)
 {
   m_State = EngineState::NotReady;
   Info("Configuring patient");
@@ -135,7 +132,7 @@ bool Pulse::Initialize(const PhysiologyEngineConfiguration* config)
   m_Config->Merge(cFile);
 
   // Now we can check the config
-  if (m_Config->WritePatientBaselineFile())
+  if (m_Config->IsWritingPatientBaselineFile())
   {
     std::string stableDir = "./stable/";
     MKDIR(stableDir.c_str());

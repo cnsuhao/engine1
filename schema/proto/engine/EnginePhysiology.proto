@@ -5,13 +5,13 @@ option java_package = "com.kitware.physiology.pulse";
 import "cdm/Properties.proto";
 
 
-message PulseBloodChemistrySystemData
+message BloodChemistrySystemData
 {
   cdm.RunningAverageData  ArterialOxygenAverage_mmHg                          = 1;
   cdm.RunningAverageData  ArterialCarbonDioxideAverage_mmHg                   = 2;
 }
 
-message PulseCardiovascularSystemData
+message CardiovascularSystemData
 {
   bool                    StartSystole                                        = 1;
   bool                    HeartFlowDetected                                   = 2;
@@ -49,17 +49,17 @@ message PulseCardiovascularSystemData
   cdm.RunningAverageData  CardiacCycleSkinFlow_mL_Per_s                       = 31;
 }
 
-message PulseDrugSystemData
+message DrugSystemData
 {
   
 }
 
-message PulseEndocrineSystemData
+message EndocrineSystemData
 {
 
 }
 
-message PulseEnergySystemData
+message EnergySystemData
 {
   double                  EnduranceEnergyStore_J                              = 1;
   double                  MediumPowerEnergyStore_J                            = 2;
@@ -70,23 +70,23 @@ message PulseEnergySystemData
   cdm.RunningAverageData  BicarbonateMolarity_mmol_Per_L                      = 6;
 }
 
-message PulseGastrointestinalSystemData
+message GastrointestinalSystemData
 {
 
 }
 
-message PulseHepaticSystemData
+message HepaticSystemData
 {
 
 }
 
-message PulseNervousSystemData
+message NervousSystemData
 {
   double                  ArterialOxygenSetPoint_mmHg                         = 1;
   double                  ArterialCarbonDioxideSetPoint_mmHg                  = 2;
 }
 
-message PulseRenalSystemData
+message RenalSystemData
 {
   bool                    Urinating                                           = 1;
   double                  LeftAfferentResistance_mmHg_s_Per_mL                = 2;
@@ -104,7 +104,7 @@ message PulseRenalSystemData
   cdm.RunningAverageData  RightRenalArterialPressure_mmHg                     = 13;
 }
 
-message PulseRespiratorySystemData
+message RespiratorySystemData
 {
   double                  InitialExpiratoryReserveVolume_L                         = 1;
   double                  InitialFunctionalResidualCapacity_L                      = 2;
@@ -148,7 +148,7 @@ message PulseRespiratorySystemData
   double                  ConsciousEndPressure_cmH2O                               = 37;
 }
 
-message PulseTissueSystemData
+message TissueSystemData
 {
   double                  RestingTissueGlucose_g                                   = 1;
   double                  RestingBloodGlucose_g_Per_L                              = 2;

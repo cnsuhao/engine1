@@ -59,22 +59,26 @@ void Inhaler::Initialize()
   m_InhalerDrug = nullptr;
 }
 
-bool Inhaler::Load(const CDM::PulseInhalerData& in)
+void Inhaler::Load(const pulse::InhalerData& src, Inhaler& dst)
 {
-  if (!SEInhaler::Load(in))
-    return false;  
-  PulseSystem::LoadState();
-  return true;
+  Inhaler::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseInhalerData* Inhaler::Unload() const
+void Inhaler::Serialize(const pulse::InhalerData& src, Inhaler& dst)
 {
-  CDM::PulseInhalerData* data = new CDM::PulseInhalerData();
-  Unload(*data);
-  return data;
+
 }
-void Inhaler::Unload(CDM::PulseInhalerData& data) const
+
+pulse::InhalerData* Inhaler::Unload(const Inhaler& src)
 {
-  SEInhaler::Unload(data);
+
+  pulse::InhalerData* dst = new pulse::InhalerData();
+  Inhaler::Serialize(src, *dst);
+  return dst;
+}
+void Inhaler::Serialize(const Inhaler& src, pulse::InhalerData& dst)
+{
+
 }
 
 void Inhaler::SetUp()
@@ -153,7 +157,7 @@ void Inhaler::PreProcess()
       Info("Inhaler removed!");
       m_InhalerDrug = nullptr;
       m_State = cdm::eSwitch::Off;
-      m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Free);
+      m_data.SetAirwayMode(pulse::eAirwayMode::Free);
     }
   }
 }
@@ -191,7 +195,7 @@ void Inhaler::Administer()
   // Alert the user that the inhaler is actuated
   Info("Inhaler actuated!");
   m_State = cdm::eSwitch::On;
-  m_data.SetAirwayMode(CDM::enumPulseAirwayMode::Inhaler);
+  m_data.SetAirwayMode(pulse::eAirwayMode::Inhaler);
 
   // Initialize pressure in the inhaler node to ambient  
   double dAmbientPressure = m_AmbientEnv->GetPressure(PressureUnit::cmH2O);

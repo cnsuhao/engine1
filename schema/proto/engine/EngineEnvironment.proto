@@ -2,7 +2,7 @@ syntax = "proto3";
 package pulse;
 option java_package = "com.kitware.physiology.pulse";
 
-message PulseEnvironmentData
+message EnvironmentData
 {
   double PatientEquivalentDiameter_m = 1;
 }
