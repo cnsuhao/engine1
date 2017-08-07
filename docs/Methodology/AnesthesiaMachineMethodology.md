@@ -6,7 +6,7 @@ Anesthesia Machine Methodology {#AnesthesiaMachineMethodology}
 @anchor anesthesia-abstract
 ## Abstract
 
-The %BioGears Anesthesia Model is a generic representation of mechanical ventilation and 
+The Anesthesia Model is a generic representation of mechanical ventilation and 
 inhaled agent administration. It models a semi-closed circuit breathing system. The 
 Anesthesia System employs a pressure-control ventilation mode for positive-pressure 
 ventilation and gas delivery. The model uses a constant ventilator pressure source to drive 
@@ -59,26 +59,26 @@ The large number of components, the sophisticated computer controls, and the hig
 ensure an appropriate airway plan is in place. Equipment failures are not uncommon with anesthesia machines. These failures range from minor tube leaks and tangles to a failure of the ventilator to provide adequate pressure
 for respiration. @cite Morgan2006Clinical
 	
-The %BioGears Anesthesia Machine Model is designed to provide a generic anesthesia machine capable of simulating mechanical ventilation and the administration of inhaled anesthetic agents. This provides a model capable of 
-powering training simulations designed to practice the use of anesthesia equipment. Combining this model with the rest of the %BioGears Engine provides a whole-body approach that allows training of drug administration, airway
+The Anesthesia Machine Model is designed to provide a generic anesthesia machine capable of simulating mechanical ventilation and the administration of inhaled anesthetic agents. This provides a model capable of 
+powering training simulations designed to practice the use of anesthesia equipment. Combining this model with the rest of the engine provides a whole-body approach that allows training of drug administration, airway
 management, maintenance of anesthesia, transitions from negative- to positive-pressure ventilation, and diagnosis and problem-solving related to equipment failures. 
 @anchor anesthesia-system
 # System Design
 @anchor anesthesia-background
 ## Background and Scope
 
-### %BioGears Anesthesia Machine History
+### Anesthesia Machine History
 
-The %BioGears Anesthesia Machine has its origin in the work of Dr. N. Ty Smith and colleagues at the University of California at San Diego. Their
+The Anesthesia Machine has its origin in the work of Dr. N. Ty Smith and colleagues at the University of California at San Diego. Their
 work on this subject can be traced back to a series of cardiopulmonary and drug distribution models that they developed @cite Smith1972multiplemodel , @cite Zwart1972analog . For
 example, they developed multicompartment models of the human physiology and pharmacology that describe the uptake and distribution of halothane
 @cite FukuiSmith1981hybrid . The early models of the group employed analog and hybrid computers. Later, they developed models on standard personal computers that formed
 a basis for the screen-based simulator originally known as SLEEPER. This program eventually evolved into an advanced anesthesia simulator
 called BODY simulation and was distributed by the Advanced Simulation Corporation. The BODY simulation program consisted of the cardiovascular, respiratory, 
-and drug models and formed the basis for the HumanSim physiology engine. As part of the %BioGears Engine, the anesthesia machine system is an extension of the 
+and drug models and formed the basis for the HumanSim physiology engine. As part of the engine, the anesthesia machine system is an extension of the 
 HumanSim physiology engine. The major components that control the gas flow and delivery of the anesthetic drugs are derived from the HumanSim engine. Various
 modifications, including the integration of the Anesthesia System as part of the closed circuit-based common data model, are done on the current version of the 
-%BioGears Anesthesia Delivery System. As it stands currently, the Anesthesia System is under development and involves some restriction on its use as described 
+Anesthesia Delivery System. As it stands currently, the Anesthesia System is under development and involves some restriction on its use as described 
 in the Features section below. Future releases will provide a more rigorously tested Anesthesia System that is fully integrated with the respiratory and drug systems.
 @anchor anesthesia-flow
 ## Data Flow
@@ -87,8 +87,8 @@ in the Features section below. Future releases will provide a more rigorously te
 
 The ventilator and valves operate via time-based cycles based on the settings. There are four phases to each complete cycle, as shown in Figure 1.
 
-<center><img src="./images/AnesthesiaMachine/Cycles.png" width="550"></center>
-<center><i>Figure 1. Flow diagram showing the ventilatory cycles as implemented in the %BioGears %Anesthesia Machine.</i></center> 
+<center><img src="./Images/AnesthesiaMachine/Cycles.png" width="550"></center>
+<center><i>Figure 1. Flow diagram showing the ventilatory cycles as implemented in the Anesthesia Machine.</i></center> 
 
 #### Process Actions
 
@@ -101,7 +101,7 @@ below.
 
 The breathing circuit of the commonly used Anesthesia Machine is comprised of unidirectional valves
 on the inspiratory and expiratory limbs that control the flow of gases during the inspiration and 
-expiration phases. The %BioGears Anesthesia Machine incorporates the unidirectional valves using
+expiration phases. The Anesthesia Machine incorporates the unidirectional valves using
 resistors and logical on/off conditions that serve as switches. These resistors are updated depending 
 on the phase of the respiration cycle. During the inspiratory phase of the breathing cycle, the 
 unidirectional valve on the inspiratory limb is opened to flow by employing a predefined low resistance, 
@@ -121,7 +121,7 @@ ventilation. In the pressure-controlled ventilation mode, a set plateau (control
 delivered at each breathing 
 cycle. The tidal volume delivered to the patient is an outcome of the control ventilator pressure and the
  lung compliance of 
-the patient. The current version of the %BioGears Anesthesia Machine employs the pressure-controlled 
+the patient. The current version of the Anesthesia Machine employs the pressure-controlled 
 ventilator. During each inspiratory phase, a constant control pressure that
 serves as a driving pressure source is applied to the ventilator. This pressure drives flow across 
 the inspiratory limb path to supply gas to the patient. During the expiratory phase, the ventilator
@@ -137,13 +137,13 @@ concentrations.
 
 #### Breathing Cycle Calculation
 
-The %BioGears Engine calculates the inspiratory and expiratory phase times based on 
+The engine calculates the inspiratory and expiratory phase times based on 
 a preset respiration rate and inspiration-expiration ratio parameters that are selected as 
 inputs for the Anesthesia Machine configurations. 
 
 ### Process
 
-The current %BioGears implementation has no specific circuit or transport process
+The current implementation has no specific circuit or transport process
 functionality for the anesthesia machine. Anesthesia Machine processing
 is currently done in the %Respiratory System with the combined circuit
 methodology.  However, the substance volume fractions and volumes are updated to remove carbon dioxide in the scrubber during this step.
@@ -151,21 +151,21 @@ methodology.  However, the substance volume fractions and volumes are updated to
 ### Postprocess
 
 The Postprocess step moves values calculated in the Process step from the next
-time step calculation to the current time step calculation. The current %BioGears has no 
+time step calculation to the current time step calculation. The current implementation has no 
 specific post process functionality for the anesthesia machine. All postprocessing is done in the
 %Respiratory System with the combined circuit methodology.
 
 The following figure presents the data flow of the %Anesthesia System data processing steps.
 
-<center><img src="./images/AnesthesiaMachine/AnesthesiaMachineDataFlow.png" width="550"></center>
+<center><img src="./Images/AnesthesiaMachine/AnesthesiaMachineDataFlow.png" width="550"></center>
 <center><i>Figure 2. The Anesthesia Machine system has three processing steps at the highest level. Each time step, Preprocess prepares the circuit to be calculated; Process performs the calculation to determine the entire circuit state; and Postprocess advances time.</i></center>    
 <br>
 @anchor anesthesia-features
 ## Features and Capabilities
 
-### The %BioGears Anesthesia Machine Circuit
+### The Anesthesia Machine Circuit
 
-The %BioGears %Anesthesia Machine System represents a generic mechanical ventilation system. 
+The Anesthesia Machine System represents a generic mechanical ventilation system. 
 It models a semi-closed anesthesia breathing circuit that employs a pressure-control 
 mode of positive-pressure ventilation. The Model is designed to represent the
 functions of a ventilator, breathing circuit, and vaporizer of a typical
@@ -179,17 +179,17 @@ volatile anesthetic medications and fresh gas into the breathing circuit.
 In the model, the vaporizer functionality of anesthesia machines is incorporated 
 by adjusting the concentration of the gas mixture delivered through the 
 fresh gas inlet. In anesthesia machine systems, vaporizers are designed to hold 
-only one specific volatile anesthetic medication. Accordingly, the %BioGears Anesthesia 
+only one specific volatile anesthetic medication. Accordingly, the Anesthesia 
 Model reproduces this functionality by employing conditions that represent
 left and right chambers, each of which hold
 a specific inhaled agent. The model treats the agents in these chambers as vapor and 
 mixes them with other gases to be delivered into the breathing circuit. Depending on the amount of 
 oxygen and/or inhaled volatile gases 
-selected, the %BioGears Anesthesia Model adjusts the total gas mixture 
+selected, the Anesthesia Model adjusts the total gas mixture 
 to the level of oxygen and/or volatile gases selected. In particular, the model deducts the volume
 fraction of the nitrogen gas proportional to the oxygen and/or inhaled volatile gases concentration. 
 
-In this way, the %BioGears Anesthesia Machine captures the effect of the vaporizer functionality. 
+In this way, the Anesthesia Machine captures the effect of the vaporizer functionality. 
 For delivering supplemental oxygen, the model offers conditions 
 that can be used to represent a separate wall port or an oxygen bottle as options. The model
 comprises two oxygen bottles that can be used one after the other, depending on the length of 
@@ -204,9 +204,9 @@ breathing circle of the Anesthesia System that reduces the amount of
 inhaled CO2 in re-breathed gas. The diagram in Figure 3 presents the
 compartmental view of the Anesthesia Delivery System.
 
-<center><img src="./images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png" width="650"></center>
+<center><img src="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png" width="650"></center>
 <center>
-*Figure 3. Compartmental view of the Anesthesia System. The %BioGears Anesthesia 
+*Figure 3. Compartmental view of the Anesthesia System. The Anesthesia 
 Machine consists of seven major compartments, as shown in the breathing circuit. 
 These are the mask/endotracheal tube compartment, the Y-piece, the inspiratory 
 and expiratory limbs, the fresh gas inlet, the CO2 absorber, 
@@ -217,11 +217,11 @@ switches shown on the inspiratory and expiratory limbs permits unidirectional ai
 in the patient's breathing cycle. The connecting lines represent the flow of gas between 
 compartments and, 
 the arrows show the flow direction. The red lines and the associated arrows in the figure 
-show flow direction during the inspiratory phase. The %BioGears 
+show flow direction during the inspiratory phase. The 
 Anesthesia Machine handles the delivery 
 of anesthetic drug and other medical gases through approaches that allow 
 inhaled gas delivery. The model also consists of a relief valve path that emulates 
-the exhaust scavenging interface. The %BioGears
+the exhaust scavenging interface. The 
 Anesthesia Machine also interacts with the %Respiratory System through a circuit 
 path that links the two systems at the airway node.*
 </center><br>
@@ -268,24 +268,24 @@ inspiratory or expiratory limbs depending on the breathing phase.*
 
 When an anesthesia machine is used on a patient, there is a direct
 connection that allows air to flow freely between both. In the same
-fashion, the Anesthesia Machine and %Respiratory circuits in %BioGears are
+fashion, the Anesthesia Machine and %Respiratory circuits in the engine are
 directly connected and allowed to share the same fluid. When the machine
 is turned on, both individually defined circuits are combined into a
 single circuit that is then used for calculations.
 
-### The %BioGears Anesthesia Machine Settings
+### The Anesthesia Machine Settings
 
 Anesthesia machines operate in a specific mode for positive-pressure
 delivery. As mentioned above, there are two modes of ventilation commonly used.
-The %BioGears Anesthesia Machine employs a pressure-controlled ventilator
+The Anesthesia Machine employs a pressure-controlled ventilator
 for positive-pressure ventilation. 
 
 To achieve this, a set of predefined parameters are
-selected to control the Anesthesia Machine configuration. The %BioGears
+selected to control the Anesthesia Machine configuration. The 
 Anesthesia Machine assigns the values of the ventilator pressure,
 respiration rate, inspiration-to-expiration ratio, relief valve
 pressure, and positive end expired pressure as input parameters. 
-Additionally, the %BioGears model assigns a set of parameters to control the fresh gas
+Additionally, the model assigns a set of parameters to control the fresh gas
 flow and the various gas fractions delivered to the breathing circuit.
 Table 1 lists the Anesthesia Machine configuration settings
 currently used in the engine. It should be noted that the current
@@ -319,7 +319,7 @@ anesthesia machine*
 @anchor anesthesia-dependencies
 ### Dependencies
 
-The %BioGears Anesthesia Machine interacts with 
+The Anesthesia Machine interacts with 
 the %Respiratory System
 through a connection that delivers gases and anesthesia drugs into the
 %Respiratory System (see @ref RespiratoryMethodology). The two 
@@ -336,12 +336,12 @@ created. When the combined circuit is generated at runtime, the
 ground environment node connected to the mouth node of the %Respiratory System is
 replaced by the AnesthesiaConnection node that represents the mask/endotracheal node, 
 becoming one combined circuit.
-Apart from such interaction, the %BioGears Anesthesia Delivery System is
+Apart from such interaction, the Anesthesia Delivery System is
 also responsive to the flow resistances of the %Respiratory System. In
 this regard, the ventilator driver pressure serves as a positive-pressure source for 
 the combined circuit. This allows the Anesthesia System to manage pressure-controlled ventilation.
 For providing air into the breathing circuit, the Anesthesia Machine is linked to the %Environment 
-System that regulates the gas concentration and atmospheric pressure. The %BioGears engine
+System that regulates the gas concentration and atmospheric pressure. The engine
 %Anesthesia System has system data that allows for selection of the primary gas, e.g., air, 
 nitrogen, etc. Based on the primary gas, the delivery of supplemental 
 oxygen and/or anesthetic gases adjusts the composition and fraction of gases derived from the 
@@ -349,7 +349,7 @@ oxygen and/or anesthetic gases adjusts the composition and fraction of gases der
 @anchor anesthesia-assumptions
 ## Assumptions and Limitations
 
-The %BioGears Anesthesia Machine is a generic model to represent the various components 
+The Anesthesia Machine is a generic model to represent the various components 
 available in 
 the administration of 
 inhaled agents and mechanical ventilation. This system is intended to provide
@@ -371,11 +371,11 @@ Future efforts may be directed towards rectifying this limitation.
 @anchor anesthesia-actions
 ## Actions
 
-The %BioGears Anesthesia Machine can model a variety of different equipment
+The Anesthesia Machine can model a variety of different equipment
 failures. Breathing circuit disconnection is a leading cause of critical
 incidents in anesthesia @cite roth2007anesthesia @cite Morgan2006Clinical .
 Disconnections, which are effectively leaks, can be complete or partial. Some of these
-failures are modeled in %BioGears by changing a resistance value based on
+failures are modeled in the engine by changing a resistance value based on
 the severity. Figure 5 shows the resistance value that is set based on
 the insult severity and will be referenced throughout the rest of this
 section. We have chosen a resistance of 1000 cmH2O-s/L to be associated with a fully open 
@@ -404,7 +404,7 @@ The following three types of leaks are all implemented the same in the Anesthesi
 
 One of the most common equipment failures in the anesthetic delivery system
 is the mask leak. If a mask is being used on an Anesthesia Machine and is improperly
-secured or has damage, leaks can occur. The %BioGears Engine models mask
+secured or has damage, leaks can occur. The engine models mask
 leaks by varying a resistance based on the severity in the manner previously
 described and shown in Figure 5.
 
@@ -412,14 +412,14 @@ described and shown in Figure 5.
 
 Endotracheal tube cuff leaks are often caused by a structural defects in the endotracheal tube, 
 but may also arise from improper placement or a failure to fully inflate the cuff.
-Large leaks can lead to inadequate ventilation. The %BioGears Engine models endotracheal tube 
+Large leaks can lead to inadequate ventilation. The engine models endotracheal tube 
 leaks by varying a resistance based on severity
 in the manner previously described and shown in Figure 5.
 
 #### Y-Piece Disconnect
 
 The most common disconnection site is at the Y-piece @cite roth2007anesthesia @cite Morgan2006Clinical .
-The %BioGears Engine models endotracheal tube leaks by varying a resistance based on the severity in 
+The engine models endotracheal tube leaks by varying a resistance based on the severity in 
 the manner previously described and shown
 in Figure 5. In the case of both a tube and Y-piece leak, the severities are combined and limited to a 
 total value of one.
@@ -438,14 +438,14 @@ in the manner previously described and shown in Figure 5.
 
 Anesthesia Machine tracheal tubes can become kinked, and hoses throughout the breathing circuit are subject to occlusions by external
 mechanical forces that can impinge the flow @cite roth2007anesthesia @cite Morgan2006Clinical .
-%BioGears models both inspiratory and expiratory valve obstructions similarly to leaks, by modifying the valve resistance values. If there is an
+The engine models both inspiratory and expiratory valve obstructions similarly to leaks, by modifying the valve resistance values. If there is an
 obstruction present, the valve open (i.e., low resistance) value is modified based on the severity in the manner previously described and shown
 in Figure 5.
 
 ### Ventilator Pressure Loss
 
 Both piston and bellows ventilators can sometimes experience mechanical failures that prevent them from filling completely. This causes the driving pressure of the 
-ventilator to be less than the target. %BioGears uses a ventilator failure severity to linearly reduce the pressure produced by the ventilator, i.e., the pressure source value. The
+ventilator to be less than the target. The engine uses a ventilator failure severity to linearly reduce the pressure produced by the ventilator, i.e., the pressure source value. The
 pressure source can range from the full calculated value to a zero pressure. Failure in ventilator pressure may affect the amount of tidal volume delivered to the patient, which 
 in turn reduces the amount of fresh gas delivered to the body, affecting the oxygen saturation level and other physiological parameters.
 
@@ -453,20 +453,20 @@ in turn reduces the amount of fresh gas delivered to the body, affecting the oxy
 
 Re-breathing circuits direct expired gases through soda lime granules to remove CO2. To ensure that a soda lime canister (CO2 absorber) is
 functioning properly, it must be replaced regularly. If it is not monitored and replaced, the absorber will become less effective or completely unable
-to remove at CO2 from the breathing circuit. The %BioGears Anesthesia Machine models soda lime failure by reducing the amount of CO2 removed. The severity
+to remove at CO2 from the breathing circuit. The Anesthesia Machine models soda lime failure by reducing the amount of CO2 removed. The severity
 linearly decreases the amount of CO2 removed.
 
 ### Vaporizer Failure
 
 Vaporizers in anesthesia machines convert volatile anesthetic medications from a liquid to a set concentration gas for delivery to a patient. Anesthesia Machine 
-vaporizers can fail due to component problems such as leaks in seals and O-rings or electronics failures. The %BioGears Engine models vaporizer
+vaporizers can fail due to component problems such as leaks in seals and O-rings or electronics failures. The engine models vaporizer
 failures by reducing the inhaled agent volume fraction at the vaporizer flow source linearly with the severity.
 
 ### Oxygen Supply Failures
 
 Supplemental oxygen is supplied to the Anesthesia System either from the wall source or oxygen tank bottle. 
 Many scenarios, such as a problem with the oxygen pipeline, may cause disruption of gas delivery. To identify these issues, 
-pressures in the gas supplies are often checked. The %BioGears Anesthesia System attempts to capture such 
+pressures in the gas supplies are often checked. The Anesthesia System attempts to capture such 
 equipment failures by triggering oxygen wall pressure loss and oxygen tank pressure loss conditions. When the
 oxygen pressure loss conditions are triggered, the model
 removes the supplemental oxygen delivered to the gas flow inlet by setting the oxygen inlet volume 
@@ -477,13 +477,13 @@ Events
 
 ### Oxygen Bottle Exhausted
 
-The %BioGears %Anesthesia system triggers the oxygen bottle tank exhausted  event to alert 
+The Anesthesia system triggers the oxygen bottle tank exhausted  event to alert 
 the user of the depletion of each of the oxygen bottles when oxygen bottle is used as a source of 
 supplemental oxygen. 
 
 ### Relief Valve Active 
 
-The %BioGears %Anesthesia system triggers the Relief Valve Active event to
+The Anesthesia system triggers the Relief Valve Active event to
 alert the user when the relief valve is closed (closed in the electric analogue sense), 
 and a condition the alerts the user when the pressure has reached the threshold value. 
 @anchor anesthesia-results
@@ -491,7 +491,7 @@ and a condition the alerts the user when the pressure has reached the threshold 
 @anchor anesthesia-settingsvalidation
 ## Validation - Settings
 
-The Anesthesia Machine Settings are fully dynamic and do not have any bounds enforced.  A scenario that varies these settings in several different combinations is included with the %BioGears deployment and produces the outputs shown in Figure 6.  This scenario also tests the relief valve functionality and causes the active event to be logged when the Ventilator Pressure is set too high.
+The Anesthesia Machine Settings are fully dynamic and do not have any bounds enforced.  A scenario that varies these settings in several different combinations is included with the code base and produces the outputs shown in Figure 6.  This scenario also tests the relief valve functionality and causes the active event to be logged when the Ventilator Pressure is set too high.
 
 <center>
 <table border="0">
@@ -512,7 +512,7 @@ The Anesthesia Machine Settings are fully dynamic and do not have any bounds enf
 @anchor anesthesia-actionsvalidation
 ## Validation - Actions
 
-All equipment failures in the Anesthesia Machine system were validated quantitatively where possible and qualitatively elsewhere by comparing the engine output to expected trends and values. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future %BioGears Engine releases.
+All equipment failures in the Anesthesia Machine system were validated quantitatively where possible and qualitatively elsewhere by comparing the engine output to expected trends and values. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future engine releases.
 
 <center><br>
 Table 2. Cumulative validation results for Anesthesia Machine specific conditions and actions scenarios.
@@ -877,7 +877,7 @@ oxygen by turning off the failure brings the oxygen level to normal.
 
 ##### Oxygen Tank Pressure Loss
 
-The %BioGears Anesthesia System has two oxygen tanks as additional oxygen supply sources. Under normal 
+The Anesthesia System has two oxygen tanks as additional oxygen supply sources. Under normal 
 conditions, the model allows 
 selection between the two tanks as substitutes for the wall source. To address the effect of 
 oxygen tank pressure loss, the model employs a scenario that begins 
@@ -923,13 +923,13 @@ a decline in oxygen saturation and arterial oxygen partial pressure due to a fai
 @anchor anesthesia-conclusion
 ## Conclusion
 
-While the %BioGears model is a generic representation of mechanical ventilation and inhaled agent 
+While the model is a generic representation of mechanical ventilation and inhaled agent 
 administration, this model represents the behavior of a complex piece of equipment that is 
 associated with a difficult
-medical speciality. The %BioGears Engine provides a whole-body approach to modelling that 
+medical speciality. The engine provides a whole-body approach to modelling that 
 allows for simulation of this complex field with multiple steps. This includes common equipment 
 failures and the impacts they have
-on the body. This system is a strong addition to the %BioGears Engine with the potential for 
+on the body. This system is a strong addition to the engine with the potential for 
 future development. This system has previously been used to power the training application 
 HumanSim: Sedation and Airway, which
 was funded by TATRC under contract number W81XWH-11-C-0045.
@@ -943,14 +943,14 @@ There are no planned near term additions.
 
 ## Recommended Improvements
 
-The %BioGears Engine modularity could be taken advantage of to add parameters and elements 
+The engine modularity could be taken advantage of to add parameters and elements 
 for specific equipment models and manufacturers. 
 
 Including  bag squeeze capability to
 allow the use of manual ventilation as an additional option will expand 
-the functionality of the %BioGears Anesthesia Machine system.
+the functionality of the Anesthesia Machine system.
 
-Further functionality to the %BioGears Anesthesia Machine system includes the 
+Further functionality to the Anesthesia Machine system includes the 
 implementation of  synchronized ventilation
 that allows spontaneous breathing along with positive-pressure ventilation.
 @anchor anesthesia-appendices

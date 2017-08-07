@@ -5,7 +5,7 @@ System Methodology {#SystemMethodology}
 
 ## Abstract
 
-The %BioGears Engine is a fully customizable collection of physiologic
+The Engine is a fully customizable collection of physiologic
 systems. It includes models for anatomy-based biological systems and
 medical equipment. We developed an advanced engine through a
 top-down approach, with the ability to easily increase fidelity and
@@ -29,14 +29,14 @@ clinician requires for informed decision-making. Physiologically-based
 pharmacokinetic (PBPK) modeling focuses only on drug interactions, and
 is generally designed to deal with specific pathophysiology.
 
-%BioGears is designed to be a deterministic multiscale modeling application that can be
+The engine is designed to be a deterministic multiscale modeling application that can be
 integrated with all other types of physiologic software. Models at
 any anatomical level can be implemented within the existing
 infrastructure.
 
 @image html SystemFidelity.png
 <center>
-*Figure 1. %BioGears uses a top-down approach to model development with bottom-up hooks for expansion.*
+*Figure 1. The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
 </center><br>
 
 # System Design
@@ -45,7 +45,7 @@ infrastructure.
 
 ### Physiology Engine
 
-The %BioGears Physiology Engine is the combination of lumped parameter
+The engine is the combination of lumped parameter
 mathematical models that, together, simulate whole body physiology. Each
 system contributes to the maintenance of homeostasis. The systems are
 designed to be modular and each has the ability to work in
@@ -55,14 +55,13 @@ several generic solvers and transport algorithms.
 The system as a whole needs to be easy to use and modify, modular, and
 extensible to virtually any fidelities. Envisioned end user groups
 include game developers, mannequin builders, educators, researchers,
-sensor system developers, and trainers. Several of these users implement
-%BioGears in a way that requires faster than real time processing without
+sensor system developers, and trainers. Several of these users utilize
+the engine in a way that requires faster than real time processing without
 access to computational resources that exceed a personal computer.
 
 ### Sub-Systems
 
-There are two different types of systems defined in %BioGears - physiology-based and equipment-based.
-Below is a list of the current %BioGears Systems with links to their methodology reports:
+Below is a list of the current systems with links to their methodology reports:
 
 @anchor system-systems
 Patient Variablity:
@@ -86,15 +85,18 @@ Equipment:
 - @ref InhalerMethodology
 - Electrocardiogram (%ECG) Methodology (see @ref CardiovascularMethodology)
 
+Environment:
+- @ref EnvironmentMethodology
+
 ### Solvers
 
-The %BioGears suite of also comes with verified tools for extensibility and elimination of potential error sources:
+The engine of also comes with verified tools for extensibility and elimination of potential error sources:
 - @ref CircuitMethodology
 - @ref SubstanceTransportMethodology
 
 ## Data Flow
 
-%BioGears uses differential equations with control-based feedback mechanisms to
+The engine uses differential equations with control-based feedback mechanisms to
 dynamically respond to parameter changes. It is designed and tuned
 around a stable resting physiologic state, with the ability to
 model pathophysiology through insults and intervention action calls.
@@ -119,22 +121,22 @@ bolus injections or the administration of an IV.
 
 Interactions between systems, such as alveoli transfer and diffusion between the extravascular and vascular space are modeled in the System Interactions methodology. This ensures each system is responsible for only its own behavior while capturing the behavior that occurs between systems.
 
-<img src="./images/System/SystemFlow.png" width="600">
+<img src="./Images/System/SystemFlow.png" width="600">
 <center>
-*Figure 2. Overall %BioGears Engine data flow diagram showing all of the
+*Figure 2. Overall the engine data flow diagram showing all of the
 systems. Dashed lines are only present for certain actions.
 Non-italicized elements are defined as classes in the engine.*
 </center><br>
 
 ### %Timing
 
-The entire %BioGears Engine works off of a transient analysis time step
+The entire engine works off of a transient analysis time step
 of 0.02 s (50 Hz). All system states are recalculated every time step.
 The differential equations that determine changes are linearized to
 approximate system variables, but the small time step provides a very
 accurate solution.
 
-To provide the %BioGears systems with sufficient information, the CDM
+To provide the systems with sufficient information, the CDM
 maintains three time steps for elements and parameters. These times are:
 
 -   Baseline - The original resting physiology set-point. Baseline
@@ -151,16 +153,16 @@ maintains three time steps for elements and parameters. These times are:
 @anchor system-stabilization	
 ### Stabilization
 
-The %BioGears Engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in Figure 3.
+The engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in Figure 3.
 
-<center><img src="./images/System/Stabilization.png" width="550"></center>
+<center><img src="./Images/System/Stabilization.png" width="550"></center>
 <center> 
-<i>Figure 3. Overall %BioGears Engine stabilization protocol. This highlights the multi-step process required to initialize either a healthy or chronically ill patient prior to executing a scenario.</i>
+<i>Figure 3. Overall the engine stabilization protocol. This highlights the multi-step process required to initialize either a healthy or chronically ill patient prior to executing a scenario.</i>
 </center><br>
 
 #### Dynamic Stabilization
 
-The %BioGears Engine must perform numerous cycles of the calculations to reach a point of
+The engine must perform numerous cycles of the calculations to reach a point of
 convergence for the output values, such as heart rate, tidal volume, systolic pressure, etc. When the engine has reached this convergence point, it is considered to be 
 stable. During the stabilization period, the majority of feedback in the engine is inactive. An exception is the Tune Circuit methodology found in the %Cardiovascular System. This modifies the cardiovascular circuit parameters to achieve the mean arterial pressure specified in each patient file. For more information on this function, see the @ref CardiovascularMethodology. No actions or conditions
 can be applied during the stabilization time. Because the patient parameters may vary in the patient file,
@@ -169,7 +171,7 @@ will be fully initialized and the solution will have converged at the conclusion
 for any patient. This stabilization algorithm also prevents an unnecessarily long time for a solution that may be required in the time that were 
 statically specified for all scenarios and patients.
 
-To determine the convergence time, %BioGears uses a dynamic stabilization algorithm. The stable outputs
+To determine the convergence time, the engine uses a dynamic stabilization algorithm. The stable outputs
 were analyzed to determine the variation present in each individual output over time. This percent
 variation was identified for the key outputs in each system. The percent difference between the
 current time step and the next time step is calculated for output. The percent difference calculated
@@ -189,7 +191,7 @@ than it does to acute conditions. While the body is in an altered state, which m
 In short, the body reaches a new level of homeostasis that may not be considered healthy, but does not have the same continual
 feedback mechanisms operating that occur when acute conditions cause a deviation from homeostasis. 
 
-To implement these conditions in the %BioGears Engine, a two step stabilization process was implemented.
+To implement these conditions in the engine, a two step stabilization process was implemented.
 As discussed above, the dynamic stabilization criteria was required to ensure all outputs converged prior to
 performing any actions (insults or intervention) in a given patient. This is true for conditions, as well. However,
 after a condition is applied the solution must again converge to represent the body's new homeostatic state, that while different
@@ -234,13 +236,12 @@ preparation for the upcoming Preprocess call.
 <center>
 *Figure 4. This shows the repetitive three-step process used each time
 step to determine the system states. These three processes are mirrored
-in each system's code and are sequentially called by the %BioGears
-Engine.*
+in each system's code and are sequentially called by the engine.*
 </center><br>
 
 ### Interface
 
-Externally available data is defined within the %BioGears Engine in three major ways:
+Externally available data is defined within the engine in three major ways:
 -	System data
 	-	Similar to vitals
 	-	Set individually within the system classes at each time step
@@ -256,25 +257,25 @@ Externally available data is defined within the %BioGears Engine in three major 
 	-	Calculated on demand
 	-	Example: pulmonary function test
 
-The %BioGears modeling approach takes the human body and conceptually divides it into various fluid compartments that represents a real division in terms of how portions of the body's water, solutes, and suspended elements are segregated @cite rhoades2012medical.  Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In %BioGears, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts.
+The engine modeling approach takes the human body and conceptually divides it into various fluid compartments that represents a real division in terms of how portions of the body's water, solutes, and suspended elements are segregated @cite rhoades2012medical.  Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In the engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts.
 	
-Compartments are implemented in %BioGears as conceptual physical divisions of the body.  Anatomical data can be pulled from each compartment through optional node and path mapping. Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In %BioGears, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts. Figure 5 shows an example of how compartments can be defined in the %Cardiovascular System.
+Compartments are implemented as conceptual physical divisions of the body.  Anatomical data can be pulled from each compartment through optional node and path mapping. Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts. Figure 5 shows an example of how compartments can be defined in the %Cardiovascular System.
 	
 @image html CompartmentExample.png
 <center>
 <i>Figure 5. This is an example of possible %Cardiovascular System compartments.  This is for explanation purposes only and not necessarily indicative of how things are really defined.  See the @ref CardiovascularMethodology documentation for how they are really defined.</i>
 </center><br>
 
-Users can customize scenarios for %BioGears by modifying a variety of file types. For example, patients, substances, compound substances, and environments can all be modified
+Users can customize scenarios by modifying a variety of file types. For example, patients, substances, compound substances, and environments can all be modified
 via the text files provided. This allows users to customize scenarios by tailoring patients and environmental conditions to the specific circumstances of the user. 
-As an example of this flexibility, %Biogears provides a variety of patient files. These parameters in these patient files can be specified to represent different physiologic states for a patient. 
+As an example of this flexibility, the code base contains a variety of patient files. These parameters in these patient files can be specified to represent different physiologic states for a patient. 
 See @ref PatientMethodology for details.
 
-For more details on interfacing with the %BioGears Engine, see the @ref engine documentation.
+For more details on interfacing with the engine, see the @ref engine documentation.
 
 ## Assumptions and Limitations
 
-%BioGears uses a low fidelity clinical approach and is not necessarily
+The engine uses a low fidelity clinical approach and is not necessarily
 for high fidelity predictive purposes. It is also assumed to be contained
 within the CDM.
 
@@ -284,7 +285,7 @@ See the individual system methodology documents for more specifics.
 
 ## Combined Effects Validation
 
-Several scenarios have been developed and validated to ensure proper interaction not only within, but also between the %BioGears physiologic systems. These patients and scenarios were developed as part of the HumanSim: Sedation and Airway project funded by TATRC, contract number W81XWH-11-C-0045. The combined effects scenarios were validated qualitatively from available literature and from the opinions of subject matter experts (SME).  More detail on patient parameters can be found in the @ref PatientMethodology documentation. A summary of the validation is shown in Table 6.  Green indicates good agreement with validation data, 
+Several scenarios have been developed and validated to ensure proper interaction not only within, but also between the physiologic systems. These patients and scenarios were developed as part of the HumanSim: Sedation and Airway project funded by TATRC, contract number W81XWH-11-C-0045. The combined effects scenarios were validated qualitatively from available literature and from the opinions of subject matter experts (SME).  More detail on patient parameters can be found in the @ref PatientMethodology documentation. A summary of the validation is shown in Table 6.  Green indicates good agreement with validation data, 
 yellow indicates agreement with a general trend with some minor disagreement, and red indicates a disagreement with the validation data. The number indicates the number of output parameters for each category of validation
 success or failure.
 
@@ -307,7 +308,7 @@ success or failure.
 |	Joel	|	Airway obstruction occurs at the beginning of the scenario. the obstruction is removed, and oxygen is supplied via a mask. Etomidate and succinylcholine are administered, and the mask is removed. An endotracheal tube is set.	|<span class="success">	30	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |		|	Total	|<span class="success">	125	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 
-Although the tidal volume is not shown for these scenarios, it should be noted that mild to moderate discrepancies between the tidal volume set on the anesthesia machine and that observed for the patient were observed in %BioGears. This is also a common observation in clinical practice, because the anesthesia machine may have to overcome the patient condition and airway resistance to provide sufficient tidal volume @cite Morgan2006Clinical .
+Although the tidal volume is not shown for these scenarios, it should be noted that mild to moderate discrepancies between the tidal volume set on the anesthesia machine and that observed for the patient were observed in the engine. This is also a common observation in clinical practice, because the anesthesia machine may have to overcome the patient condition and airway resistance to provide sufficient tidal volume @cite Morgan2006Clinical .
 
 ### Cynthia
 
@@ -428,7 +429,7 @@ The Joel scenario begins with a full severity airway obstruction at 50&nbsp;seco
 <center><i>Figure 9. Select outputs from the Joel combined effects scenario.</i></center>
 
 <center><br>
-*Table 10. The Joel scenario displays the effects of sequential airway obstruction, ventilator mask application, etomidate administration, succinylcholine administration, and intubation. The %BioGears results show excellent agreement with the validation trends.*
+*Table 10. The Joel scenario displays the effects of sequential airway obstruction, ventilator mask application, etomidate administration, succinylcholine administration, and intubation. The engine results show excellent agreement with the validation trends.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -473,7 +474,7 @@ Nathan receives a bolus injection of fentanyl at a dose of 150&nbsp;micrograms a
 
 ## Showcase Scenarios Validation
 
-Four scenarios were created to showcase the ability of the %BioGears open-source physiology engine to simulate complex and combinatory insults and interventions. The %BioGears Showcase Scenarios demonstrate the ability of the engine to fill the physiology simulation needs of the medical simulation community.
+Four scenarios were created to showcase the ability of the open-source physiology engine to simulate complex and combinatory insults and interventions. The Showcase Scenarios demonstrate the ability of the engine to fill the physiology simulation needs of the medical simulation community.
 
 ### Combat Multitrauma
 
@@ -569,11 +570,11 @@ See <a href="EnvironmentExposureValidation.pdf">Environment Exposure Validation 
 
 ## Conclusion
 
-The %BioGears Engine has successfully leveraged the CDM to model and
+The engine has successfully leveraged the CDM to model and
 simulate whole body physiology. The interaction of the existing system
 models was validated by looking at the combined effects of multiple actions on a variety of patients. Virtually
 everything within the engine is modular and extensible. Fidelity can be
-changed at any level within the system. %BioGears is a fully standalone
+changed at any level within the system. The engine is a fully standalone
 simulator, but can also implement or interface with external software.
 
 # Future Work
@@ -598,7 +599,7 @@ We will continue to improve system modularity.  See the system specific methodol
 
 ## Recommended Improvements
 
-An area of potential future advancements for the %BioGears Engine includes the integration of differing time step and un-fixed time
+An area of potential future advancements for the engine includes the integration of differing time step and un-fixed time
 step models. This could be achieved through simple
 interpolation and down-sampling, where applicable. Other advanced system
 dynamics, adaptive step sizes, and mixed fidelity techniques could also be investigated.

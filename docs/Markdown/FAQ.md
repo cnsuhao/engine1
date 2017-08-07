@@ -1,4 +1,4 @@
-%BioGears FAQ {#FAQ}
+FAQ {#FAQ}
 ============
 
 @insert ./docs/markdown/MainPageFAQ.md

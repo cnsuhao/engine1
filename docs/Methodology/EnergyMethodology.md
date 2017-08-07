@@ -7,13 +7,13 @@ Overview
 @anchor energy-abstract
 Abstract
 --------
-The %BioGears&reg; %Energy system provides a methodology for both thermal and metabolic regulation within the body. Heat transfer is modeled by a body thermal [circuit](@ref CircuitMethodology) that is connected to the [environment](@ref EnvironmentMethodology) circuit. A heat source at the core of the body circuit represents the metabolic heat production. In addition to generating heat, the dynamic metabolic rate is also used to compute the metabolic production and consumption rates of gases and other substances in the body. This system has been [validated](@ref energy-results) both under resting and dynamic conditions, such as exercise and external environment changes.
+The %Energy system provides a methodology for both thermal and metabolic regulation within the body. Heat transfer is modeled by a body thermal [circuit](@ref CircuitMethodology) that is connected to the [environment](@ref EnvironmentMethodology) circuit. A heat source at the core of the body circuit represents the metabolic heat production. In addition to generating heat, the dynamic metabolic rate is also used to compute the metabolic production and consumption rates of gases and other substances in the body. This system has been [validated](@ref energy-results) both under resting and dynamic conditions, such as exercise and external environment changes.
 
 Introduction
 ------------
 The %Energy system is responsible for simulating metabolism and regulating internal temperature. Metabolism is simulated through the consumption of nutrients in the tissues. Glucose and fat are the nutrients most readily used as an energy source for the human body. Oxygen is used to metabolize these nutrients during aerobic metabolism. After entering the pulmonary capillaries, oxygen is transported via the circulatory system and diffuses into the tissue where it is used in the aerobic reaction. The resulting by-product, carbon dioxide, diffuses out of tissue, traveling through the circulation before exiting the body through the pulmonary capillaries @cite guyton2006medical. Glucose can also be used to produce energy under anaerobic conditions, and lactate (lactic acid) is the resulting by-product. The lactate enters the circulation and can be reconverted to glucose via gluconeogenesis in the liver and kidneys. During periods of prolonged starvation, the liver produces ketoacids. Acetoacetate is the predominant ketone synthesized. After it is produced, acetoacetate may be used as an energy source for the brain, myocardium, and muscle @cite gropper2013nutrition. 
 
-The body's temperature is well-regulated. Core temperature regulation can be achieved by varying heat production (e.g. shivering) or heat exchange (e.g. sweating). In %BioGears, variations in the external environment or physical activity can lead to changes in the core temperature, triggering thermal feedback. Examples of thermal feedback during shifts in core temperature are sweating and shivering. Sweating is initiated if the core temperature is too high @cite herman2007physics. The increased evaporation of water from the surface of the skin leads to an increase in heat transferred out of the body. Changes in core temperature directly affect other systems. For example, a low core temperature causes blood flow to be shunted away from the skin, resulting in less heat transfer from the core to the skin @cite guyton2006medical. These feedback mechanisms are used to maintain thermal homeostasis in a variety of environmental conditions.
+The body's temperature is well-regulated. Core temperature regulation can be achieved by varying heat production (e.g. shivering) or heat exchange (e.g. sweating). In the engine, variations in the external environment or physical activity can lead to changes in the core temperature, triggering thermal feedback. Examples of thermal feedback during shifts in core temperature are sweating and shivering. Sweating is initiated if the core temperature is too high @cite herman2007physics. The increased evaporation of water from the surface of the skin leads to an increase in heat transferred out of the body. Changes in core temperature directly affect other systems. For example, a low core temperature causes blood flow to be shunted away from the skin, resulting in less heat transfer from the core to the skin @cite guyton2006medical. These feedback mechanisms are used to maintain thermal homeostasis in a variety of environmental conditions.
 
 @anchor energy-system-design
 System Design
@@ -23,12 +23,12 @@ Background and Scope
 --------------------
 
 ### Requirements
-The %BioGears energy system is required to simulate the effects of exercise and elevated physical activity as well as react to temperature and pressure changes in the environment.
+The energy system is required to simulate the effects of exercise and elevated physical activity as well as react to temperature and pressure changes in the environment.
 
 ### Approach
-The %BioGears %Energy system is a physical model of heat transfer combined with a collection of empirical equations for heat production and exchange obtained from literature. Additional equations are derived from stoichiometric relationships and empirical data found in the literature, particularly the governing equations for the metabolic [production and consumption](@ref tissue-metabolic-production) of substances. It uses a thermal circuit to simulate heat transfer through the body, with the body circuit connected to the [environment](@ref EnvironmentMethodology) circuit. The body thermal circuit consists of a core node, representing core temperature, and a skin node, which represents the lumped peripheral temperature. The body thermal circuit is shown in Figure 1.
+The %Energy system is a physical model of heat transfer combined with a collection of empirical equations for heat production and exchange obtained from literature. Additional equations are derived from stoichiometric relationships and empirical data found in the literature, particularly the governing equations for the metabolic [production and consumption](@ref tissue-metabolic-production) of substances. It uses a thermal circuit to simulate heat transfer through the body, with the body circuit connected to the [environment](@ref EnvironmentMethodology) circuit. The body thermal circuit consists of a core node, representing core temperature, and a skin node, which represents the lumped peripheral temperature. The body thermal circuit is shown in Figure 1.
 
-<img src="./images/Energy/internalThermal.png" width="400">
+<img src="./Images/Energy/internalThermal.png" width="400">
 <center>
 *Figure 1. The body thermal circuit consists of two nodes and four paths. Two additional paths exist, connecting to the environment thermal circuit. The circuit is used to model the dynamic core and skin temperatures.*
 </center><br>
@@ -40,7 +40,7 @@ The [metabolic production and consumption](@ref tissue-metabolic-production) of 
 ### Thermal Regulation
 Thermal regulation in the %Energy system occurs through manipulation of the metabolic rate or through external losses (sweating). The thermal feedback mechanisms are a direct implementation from those discussed by Herman @cite herman2007physics. For high core temperature, a control equation specifies the sweat rate as a function of the difference between the current core temperature and the set-point (Equation 1). Sweat is removed from the body via a path connected between the skin and the environment (Figure 2). Note that sweat is currently composed of water only, a known limitation which will be addressed in the [future](@ref energy-future).
 
-<img src="./images/Energy/sweat.png" width="400">
+<img src="./Images/Energy/sweat.png" width="400">
 <center>
 *Figure 2. Sweat is removed from the body via a flow source path connected to ground. The flow source rate is computed using Equation 1.*
 </center><br>
@@ -108,7 +108,7 @@ The exercise function adds to the body&rsquo;s basal metabolic rate a value that
 ### Process
 
 #### Process Temperature Circuit
-The generic circuit methodology developed for the %BioGears Engine is used to solve for the temperature and heat transfer rate at each node or path. For more details, see @ref CircuitMethodology.
+The generic circuit methodology developed for the engine is used to solve for the temperature and heat transfer rate at each node or path. For more details, see @ref CircuitMethodology.
 
 #### Calculate Vital Signs
 The core and skin temperatures are recorded in this function. In addition, the current metabolic state of the patient may trigger the following [events](@ref energy-events): hypothermia, hyperthermia, dehydration, fasciculation, or fatigue. These events are only triggered if the current state falls within the criteria of the specific event.
@@ -117,7 +117,7 @@ The core and skin temperatures are recorded in this function. In addition, the c
 The Postprocess step moves everything calculated in Process from the next timestep calculation to the current timestep calculation. This allows all other systems access to the information when completing their preprocess analysis for the next timestep.
 
 <br>
-<img src="./images/Energy/EnergyDataFlow.png" width="900">
+<img src="./Images/Energy/EnergyDataFlow.png" width="900">
 <center>
 <i>Figure 3. The data flow for the %Energy System consists of Preprocess, Process, and Postprocess. Preprocess determines the circuit element values based on feedback mechanisms engine actions. Process uses the generic @ref CircuitMethodology to solve the temperature circuit for temperatures and heat transfer rates. Postprocess updates these quantities to the next time step and then begins advancing time, which causes the loop to repeat.</i>
 </center><br>
@@ -125,7 +125,7 @@ The Postprocess step moves everything calculated in Process from the next timest
 @anchor energy-features
 Features, Capabilities, and Dependencies
 ----------------------------------------
-The %Energy system is connected with every other %BioGears system. %Energy directly affects the %Cardiovascular System through modification of vascular tone, heart rate, and heart contractility. This leads to modifications in the cardiac output and flow distribution in the cardiovascular circuit. In addition, there is indirect feedback through the modification of oxygen consumption and carbon dioxide production. Increased carbon dioxide production can lead to higher arterial carbon dioxide, which, in the case of severe hypercapnia, causes an %Endocrine response in the form of epinephrine and norepinephrine release. There is direct feedback on the %Respiratory system via modification of the ventilation frequency and driver pressure. The previously mentioned oxygen consumption and carbon dioxide production changes indirectly based on feedback to %Respiratory driver, which is dependent on the arterial carbon dioxide and arterial oxygen. There is a dependence on the %Gastrointestinal and %Renal systems since they are the methods by which nutrients enter the body and metabolic wastes are cleared from the body.
+The %Energy system is connected with every other system. %Energy directly affects the %Cardiovascular System through modification of vascular tone, heart rate, and heart contractility. This leads to modifications in the cardiac output and flow distribution in the cardiovascular circuit. In addition, there is indirect feedback through the modification of oxygen consumption and carbon dioxide production. Increased carbon dioxide production can lead to higher arterial carbon dioxide, which, in the case of severe hypercapnia, causes an %Endocrine response in the form of epinephrine and norepinephrine release. There is direct feedback on the %Respiratory system via modification of the ventilation frequency and driver pressure. The previously mentioned oxygen consumption and carbon dioxide production changes indirectly based on feedback to %Respiratory driver, which is dependent on the arterial carbon dioxide and arterial oxygen. There is a dependence on the %Gastrointestinal and %Renal systems since they are the methods by which nutrients enter the body and metabolic wastes are cleared from the body.
 
 The %Environment circuit is directly connected to the energy&rsquo;s internal temperature circuit to form the total temperature circuit. Modifications on the metabolic rate will therefore have a direct feedback on the environment temperature circuit, while changes in the ambient environment temperature will have a direct feedback on the metabolic rate.
 
@@ -133,7 +133,7 @@ Additional dependence on the cardiovascular system comes from the extravascular 
 
 @anchor energy-variability
 ### Patient Variability
-The basal metabolic rate is computed from the sex, height, weight, and age of the patient using the Harris-Benedict formula and will be directly affected by patient variability. Other indirect effects, such as fluid compositional changes due to sweating, may be observed. As with all of the %BioGears systems, the energy system is validated using the %BioGears Standard Male patient. A detailed discussion of patient variability in %BioGears is available in the @ref PatientMethodology report.
+The basal metabolic rate is computed from the sex, height, weight, and age of the patient using the Harris-Benedict formula and will be directly affected by patient variability. Other indirect effects, such as fluid compositional changes due to sweating, may be observed. As with all of the systems, the energy system is validated using the Standard Male patient. A detailed discussion of patient variability is available in the @ref PatientMethodology report.
 
 @anchor energy-assumptions
 Assumptions and Limitations
@@ -160,7 +160,7 @@ The exercise action is initiated by specifying the exercise intensity. The exerc
 |Jogging at about 2.2 m/s (5 mph) @cite johnson2000exercise                                  |0.06 |70   |
 |Rest  |0.0 |0 |
 
-The exercise capacity of the body is physiologically and psychologically limited @cite noakes2012fatigue. The amount of work produced by the exercise action in %BioGears is limited by the fatigue model; however, this limitation is purely physiologic. Fatigue is modeled as a system of interconnected energy storage compartments, as shown in Figure 4.
+The exercise capacity of the body is physiologically and psychologically limited @cite noakes2012fatigue. The amount of work produced by the exercise action is limited by the fatigue model; however, this limitation is purely physiologic. Fatigue is modeled as a system of interconnected energy storage compartments, as shown in Figure 4.
 
 <center>
 @image html fatigue.png
@@ -250,10 +250,10 @@ Dehydration functionality is simulated completely in the %Energy system. Similar
 Events
 ------
 ### Hypothermia
-Hypothermia is defined as a decrease in core temperature below 35 degrees Celsius @cite mallet2002hypothermia. In %BioGears, this is triggered due to changes in the external environment, leading to increased heat transfer off the skin surface.
+Hypothermia is defined as a decrease in core temperature below 35 degrees Celsius @cite mallet2002hypothermia. In the engine, this is triggered due to changes in the external environment, leading to increased heat transfer off the skin surface.
 
 ### Hyperthermia
-Hyperthermia is defined as an increase in core temperature above 38.8 degrees Celsius @cite mallet2002hypothermia . This may result from vigorous exercise, harsh environments, or infection. In %BioGears, this event is achievable through the exercise action or by specifying a high-temperature environment.
+Hyperthermia is defined as an increase in core temperature above 38.8 degrees Celsius @cite mallet2002hypothermia . This may result from vigorous exercise, harsh environments, or infection. In the engine, this event is achievable through the exercise action or by specifying a high-temperature environment.
 
 ### Dehydration
 Dehydration is classified by the World Health Organization as a three percent decrease in patient body mass due to fluid loss @cite who2005dehydration. This is tested by summing the total fluid mass on the cardiovascular and extravascular circuits at each timestep. Currently, this event can be triggered during a hemorrhage action or through prolonged exercise.
@@ -262,7 +262,7 @@ Dehydration is classified by the World Health Organization as a three percent de
 The fatigue event is triggered by any depletion of the energy stores, and it is removed when the energy stores are at capacity. Note that fatigue is only triggered by above-basal metabolic energy production. A fatigue event indicates that the skeletal muscle of the body has been active.
 
 ### Fasciculation
-Fasciculation is involuntary twitching of the skeletal muscle. This can be caused from a variety of conditions, such as mineral deficiency or stimulant use. In %BioGears, the criteria for the fasciculation event is calcium deficiency. If the patient&rsquo;s arterial calcium concentration falls below one milligram per deciliter, then fasciculation is triggered @cite gropper2013nutrition. 
+Fasciculation is involuntary twitching of the skeletal muscle. This can be caused from a variety of conditions, such as mineral deficiency or stimulant use. In the engine, the criteria for the fasciculation event is calcium deficiency. If the patient&rsquo;s arterial calcium concentration falls below one milligram per deciliter, then fasciculation is triggered @cite gropper2013nutrition. 
 
 @anchor energy-results
 Results and Conclusions
@@ -335,7 +335,7 @@ There are two scenarios for validation of the exercise action. The first scenari
 |	---	|	---	|	---	|	---	|
 |	Exercise Severity 0.3583	|	Exercise intensity of 0.3583 is a requested work rate of 430 watts.	|	N/A	|<span class="success">	~ 3 min @cite johnson2000exercise	</span>|
 
-There are several physiological measures that are failing validation for the exercise action. However, most of the failing measures will be addressed by the chemoreceptor model currently in development as a part of the Biogears nervous system. The oxygen consumption and urine production measures may still fail validation during exercise after the nervous system is fully implemented. The development team is currently making plans to address those failures.
+There are several physiological measures that are failing validation for the exercise action. However, most of the failing measures will be addressed by the chemoreceptor model currently in development as a part of the nervous system. The oxygen consumption and urine production measures may still fail validation during exercise after the nervous system is fully implemented. The development team is currently making plans to address those failures.
 
 ### Cold Water Submersion
 
@@ -374,7 +374,7 @@ At a scenario time of 50 seconds, the patient is submerged in water with a tempe
 </tr>
 </table>
 <center>
-*Figure 6. The patient is placed at a high altitude with an atmospheric pressure of 525 mmHg. The immediate result is a drop in arterial oxygen due to the decreased environment oxygen partial pressure. This leads to a drop in oxygen saturation and an increase in the patient heart rate. The patient stabilizes, acquiring a new resting physiologic state at the reduced pressure. The exaggerated increase in heart rate is due to a catecholamine release secondary to  hypoxia, a [known issue](@ref known-issues) in %BioGears*
+*Figure 6. The patient is placed at a high altitude with an atmospheric pressure of 525 mmHg. The immediate result is a drop in arterial oxygen due to the decreased environment oxygen partial pressure. This leads to a drop in oxygen saturation and an increase in the patient heart rate. The patient stabilizes, acquiring a new resting physiologic state at the reduced pressure. The exaggerated increase in heart rate is due to a catecholamine release secondary to  hypoxia, a [known issue](@ref known-issues) in the engine*
 </center><br>
 
 This scenario is used to simulate the effects of low oxygen due to high altitude. At 30 seconds, the surrounding environment is changed to an equivalent elevation of 4000 meters, resulting in a drop in atmospheric pressure from 760 mmHg to 525 mmHg. The patient remains in the reduced pressure environment for 15 minutes. The immediate response is a decrease in arterial oxygen due to the reduced partial pressure in the environment. This leads to a decrease in the blood oxygen saturation, which is in line with the expected validation data. The reduced arterial oxygen causes an increase in the heart rate. This increase is currently determined from epinephrine release due to a hypoxia event being triggered. Another expected result of the epinephrine release is a respiration rate increase. This effect is nullified from the reduction in atmospheric carbon dioxide, which allows for larger quantities of carbon dioxide to diffuse out of the alveoli. The increased diffusion leads to lower arterial carbon dioxide partial pressures, which is used to drive the respiratory frequency. This counter balances the effect of epinephrine in the system, thus causing a slight decrease in respiration rate.
@@ -384,7 +384,7 @@ The starvation and dehydration conditions are currently disabled while we make i
 
 Conclusions
 -----------
-The %BioGears %Energy system has provided a method for handling metabolic consumption and production and heat transfer in the human body. This system is fundamentally connected to all of the other systems, and provides dynamic feedback according to changes in the external environment. In its current state, the energy system accurately calculates resting thermal physiology and nutrient consumption and production. The energy system can be used by developers who wish to model thermal changes due to the environment or through strenuous activity. This may be a simple simulation, or connection with a mannequin for real-time interfacing.
+The %%Energy system has provided a method for handling metabolic consumption and production and heat transfer in the human body. This system is fundamentally connected to all of the other systems, and provides dynamic feedback according to changes in the external environment. In its current state, the energy system accurately calculates resting thermal physiology and nutrient consumption and production. The energy system can be used by developers who wish to model thermal changes due to the environment or through strenuous activity. This may be a simple simulation, or connection with a mannequin for real-time interfacing.
 
 @anchor energy-future
 Future Work

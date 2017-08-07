@@ -76,8 +76,8 @@ public:
 ///
 /// Currently there are two objects that have event based data
 ///
-///     Patient - please see the Patient.xsd or https://www.biogearsengine.com/documentation/group___patient__enum_patient_event.html
-///     AnesthesiaMachine - please see Anesthesia.xsd or https://www.biogearsengine.com/documentation/group___anesthesia__enum_anesthesia_machine_event.html
+///     Patient - please see the Patient.xsd
+///     AnesthesiaMachine - please see Anesthesia.xsd
 ///
 /// The time provided is the current engine time.
 /// The provided methods will be called at the end of the time step when the event was triggered

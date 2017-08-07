@@ -8,9 +8,9 @@ Overview
 Abstract
 --------
 
-The %BioGears&reg; %Inhaler Model is a generic representation of a pressurized metered dose inhaler (pMDI).  The results show an excellent correlation with the expected trends.  Future work will address the current limitations of the system, including incorrect use of the device and re-inhalation of exhaled drug dose.
+The %Inhaler Model is a generic representation of a pressurized metered dose inhaler (pMDI).  The results show an excellent correlation with the expected trends.  Future work will address the current limitations of the system, including incorrect use of the device and re-inhalation of exhaled drug dose.
 
-<center><img src="./images/Inhaler/Inhaler_Figure01.png" width="400"></center>
+<center><img src="./Images/Inhaler/Inhaler_Figure01.png" width="400"></center>
 <center>
 <i>Figure 1. A pressurized metered dose inhaler @cite Wikiphoto2016How.</i>
 </center>
@@ -45,20 +45,20 @@ Most pMDI's deliver 100-200 &mu;g of a substance per actuation, but a large port
 | Actuator | 16.1% | 23.5% |
 | Exhaled | 0.7% | 1.7% |
 
-Regardless of how coordinated the user is with the device, a large portion of the dose is generally deposited the oropharynx, lost in the actuator and nozzle, or is exhaled. In %BioGears, the portion of aerosolized dose lost to deposition in oropharynx region is estimated using an empirical relation developed for a study conducted by Yeh in 1996 @cite yeh1996comparisons ,
+Regardless of how coordinated the user is with the device, a large portion of the dose is generally deposited the oropharynx, lost in the actuator and nozzle, or is exhaled. In engine, the portion of aerosolized dose lost to deposition in oropharynx region is estimated using an empirical relation developed for a study conducted by Yeh in 1996 @cite yeh1996comparisons ,
 
 \f[ODF = \frac{1}{{1 + {{\left( {\frac{{\rho {d^2}Q}}{{30000}}} \right)}^{ - 1.37}}}}\f]
 <center>
 *Equation 1.*
 </center><br> 
 
-In this relation, the oral deposition fraction (ODF) is a function of droplet density, <i>&rho;</i>(g/cm<SUP>3</SUP>), droplet diameter, d (&mu;m), and flow rate, Q (cm<SUP>3</SUP>/sec). Nozzle and actuator losses are generally design dependent and will vary depending on the specific pMDI used. In %BioGears, nozzle losses are treated as a property of the pMDI.
+In this relation, the oral deposition fraction (ODF) is a function of droplet density, <i>&rho;</i>(g/cm<SUP>3</SUP>), droplet diameter, d (&mu;m), and flow rate, Q (cm<SUP>3</SUP>/sec). Nozzle and actuator losses are generally design dependent and will vary depending on the specific pMDI used. In the engine, nozzle losses are treated as a property of the pMDI.
 
 ### Requirements
 The inhaler implementation is used to meet the requirement to administer a beta agonist (e.g., albuterol) as an intervention action for acute asthma.
 
 ### Approach
-In %BioGears, the pMDI is modeled as a simple circuit (Figure 2) conditionally appended to the existing %Respiratory System circuit model. The inhaler circuit consists of a single inhaler node with a fixed volume connected to the external environment &ldquo;ground.&rdquo; If a spacer is specified in the scenario, the volume of the spacer is added to the inhaler node volume. When the pMDI is actuated during a scenario, the inhaler circuit is connected to the mouth node of the respiratory model, replacing the connection from the mouth to the external environment. Atmospheric air initially fills the inhaler volume and airflow into and out of the respiratory system temporarily passes through the inhaler node. 
+The pMDI is modeled as a simple circuit (Figure 2) conditionally appended to the existing %Respiratory System circuit model. The inhaler circuit consists of a single inhaler node with a fixed volume connected to the external environment &ldquo;ground.&rdquo; If a spacer is specified in the scenario, the volume of the spacer is added to the inhaler node volume. When the pMDI is actuated during a scenario, the inhaler circuit is connected to the mouth node of the respiratory model, replacing the connection from the mouth to the external environment. Atmospheric air initially fills the inhaler volume and airflow into and out of the respiratory system temporarily passes through the inhaler node. 
 
 @image html Inhaler_Figure02.png
 <center>
@@ -95,15 +95,15 @@ Coordinated use of the pMDI is dependent on the conscious breathing actions exec
 
 ### Process
 
-The current %BioGears implementation has no specific Process functionality for the inhaler. %Inhaler processing is currently done in the %Respiratory System with the combined circuit methodology.
+The current implementation has no specific Process functionality for the inhaler. %Inhaler processing is currently done in the %Respiratory System with the combined circuit methodology.
 
 ### Post Process
 
-The Post Process step moves values calculated in the Process step from the next time step calculation to the current time step calculation. The current %BioGears has no specific Post Process functionality for the inhaler. All postprocessing is done in the %Respiratory System with the combined circuit methodology.
+The Post Process step moves values calculated in the Process step from the next time step calculation to the current time step calculation. The current implementation has no specific Post Process functionality for the inhaler. All postprocessing is done in the %Respiratory System with the combined circuit methodology.
 
 The following figure presents the data flow of the %Inhaler data processing steps. 
 
-<center><img src="./images/Inhaler/Inhaler_Figure03.png" width="550"></center>
+<center><img src="./Images/Inhaler/Inhaler_Figure03.png" width="550"></center>
 
 <center>
 <i>Figure 3. All primary inhaler activity occurs during the preprocessing step.</i>
@@ -119,12 +119,12 @@ When the pMDI is used by a patient, there is a direct connection that allows air
 
 #### pMDI (%Inhaler) Settings
 <center>
-*Table 2. The table shows the basic settings parameters used in BioGears as inputs to use the pMDI*
+*Table 2. The table shows the basic settings parameters used in the engine as inputs to use the pMDI*
 </center>
 
 | Preset Parameter | Description |
 | --- | --- |
-| Substance | The name of the substance being administered.  The substance must be one of the gaseous substances handled by BioGears. |
+| Substance | The name of the substance being administered.  The substance must be one of the gaseous substances. |
 | Metered Dose (ug) | Dose mass. |
 | Nozzle Loss | Fraction of the dose that is lost in actuation nozzle. |
 | Spacer Volume (mL) | Volume of the spacer used with the pMDI.  Optional. |
@@ -133,7 +133,7 @@ When the pMDI is used by a patient, there is a direct connection that allows air
 Losses due to drug deposition in the oropharynx region are estimated based on the droplet diameter and density. The droplet density used by the model is the density of the suspension (liquid solution including the drug).  Typically, the density of these suspensions is close to that of water @cite yeh1996comparisons .  Droplet diameters typically range between 0.5 and 6.0 &mu;m. 
 @anchor inhaler-dependencies
 ### Dependencies
-The %BioGears pMDI interacts with the %Respiratory System through a connection that delivers atmospheric air and drugs into the %Respiratory System (@ref RespiratoryMethodology). The two systems are connected to each other at the mouth node through a path that connects the mouth node of the %Respiratory System to the inhaler node (see Figure 2). Before and after the pMDI is actuated, the mouth node of the %Respiratory System is connected to the atmosphere through the %Environment System that serves as a ground node for the %Respiratory System. 
+The pMDI interacts with the %Respiratory System through a connection that delivers atmospheric air and drugs into the %Respiratory System (@ref RespiratoryMethodology). The two systems are connected to each other at the mouth node through a path that connects the mouth node of the %Respiratory System to the inhaler node (see Figure 2). Before and after the pMDI is actuated, the mouth node of the %Respiratory System is connected to the atmosphere through the %Environment System that serves as a ground node for the %Respiratory System. 
 
 When the pMDI is actuated, a network of combined circuits that include the elements from both the %Respiratory System and the inhaler is created. When the combined circuit is generated at the run-time, the ground environment node connected to the mouth node of the %Respiratory System is replaced by the inhaler node that represents the nozzle, becoming one combined circuit.
 
@@ -141,7 +141,7 @@ Coordinated use of the pMDI depends on the uses of the conscious breathing actio
 @anchor inhaler-assumptions
 Assumptions and Limitations
 ---------------------------
-- The modeling approach used by %BioGears assumes a monodisperse aerosol (constant droplet diameter). pMDI&rsquo;s are known to generate a polydisperse aerosol. Moreover, evaporation decreases droplet diameter within a short timescale. Both of these effects are known to be significant but are not currently addressed in the %BioGears inhaler model. 
+- The modeling approach used assumes a monodisperse aerosol (constant droplet diameter). pMDI&rsquo;s are known to generate a polydisperse aerosol. Moreover, evaporation decreases droplet diameter within a short timescale. Both of these effects are known to be significant but are not currently addressed in the inhaler model. 
 - The system transport of the administered drug is treated as a gas. As a result, the model does not address drug deposition and absorption through respiratory airway surfaces other than the alveoli. All diffusion into the bloodstream occurs as a result of gas transfer from the alveoli into the pulmonary capillaries. Other transport mechanisms, such as the dissolving of deposited mass into the mucous membranes or the ingestion of orally-deposited drug mass are not addressed. 
 - The re-inhalation of exhaled drug mass is not addressed. Drug mass that is exhaled is presumed lost.
 - Losses due to drug deposition on airway surfaces during exhalation are not addressed. Although losses during inhalation are handled, the flow geometry is more complex during exhalation and is more difficult to model. 
@@ -158,7 +158,7 @@ Events
 
 ### Multiple Actuations
 
-If the inhaler is actuated too soon after an initial actuation, %BioGears triggers an event to alert the user.
+If the inhaler is actuated too soon after an initial actuation, the engine triggers an event to alert the user.
 @anchor inhaler-results
 Results and Conclusions
 =======================
@@ -166,7 +166,7 @@ Results and Conclusions
 Validation - Actions
 --------------------
 
-pMDI actuation and coordinated breathing actions were validated in several scenarios. A summary of this validation is shown in Table 3. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future %BioGears Engine releases.
+pMDI actuation and coordinated breathing actions were validated in several scenarios. A summary of this validation is shown in Table 3. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future engine releases.
 
 <center><br>
 *Table 3. Cumulative validation results for %Inhaler specific conditions and actions scenarios.*
@@ -288,7 +288,7 @@ Below are validation results for two non-concurrent pMDI actuations using a mete
 @anchor inhaler-conclusions
 Conclusions
 -----------
-The %BioGears inhaler implementation was developed to simulate the administration of inhaled drugs and support the administration of a beta-agonist to intervene in the case of acute asthma.  The results from the validation cases show the successful modeling of albuterol administration using a pMDI. The model also supports multiple use of a pMDI as shown in another validation case. 
+The inhaler implementation was developed to simulate the administration of inhaled drugs and support the administration of a beta-agonist to intervene in the case of acute asthma.  The results from the validation cases show the successful modeling of albuterol administration using a pMDI. The model also supports multiple use of a pMDI as shown in another validation case. 
 @anchor inhaler-future
 Future Work
 ===========
@@ -302,9 +302,9 @@ There are no planned near term additions.
 Recommended Improvements
 ------------------------
 
-- The system transport of inhaled drugs is currently treated as gaseous. As a result, the model does not address drug deposition and absorption through respiratory airway surfaces or through oral ingestion. Albuterol is actually a solid in a liquid suspension, but %BioGears treats it as a gas with assumed gas diffusion and transport properties. All diffusion into the bloodstream occurs as a result of gas transfer from the alveoli into the pulmonary capillaries. The development of a model that includes lung and airway particle deposition could improve realism and allow drug transport through other tissues (such as the bronchial tubes or intestine lining), which are known to be a significant transport mechanisms. 
-- %BioGears currently assumes that aerosolized drugs are monodisperse. The development of a polydisperse model for %BioGears that includes droplet evaporation could improve realism. 
-- In %BioGears, aerosolized drug that is is exhaled after initial inhalation is currently lost. The ability to model the re-inhalation of exhaled drug would improve the simulation of uncoordinated use of the inhaler. 
+- The system transport of inhaled drugs is currently treated as gaseous. As a result, the model does not address drug deposition and absorption through respiratory airway surfaces or through oral ingestion. Albuterol is actually a solid in a liquid suspension, but the engine treats it as a gas with assumed gas diffusion and transport properties. All diffusion into the bloodstream occurs as a result of gas transfer from the alveoli into the pulmonary capillaries. The development of a model that includes lung and airway particle deposition could improve realism and allow drug transport through other tissues (such as the bronchial tubes or intestine lining), which are known to be a significant transport mechanisms. 
+- The model currently assumes that aerosolized drugs are monodisperse. The development of a polydisperse model that includes droplet evaporation could improve realism. 
+- In the engine, aerosolized drug that is is exhaled after initial inhalation is currently lost. The ability to model the re-inhalation of exhaled drug would improve the simulation of uncoordinated use of the inhaler. 
 @anchor inhaler-appendices
 Appendices
 ==========

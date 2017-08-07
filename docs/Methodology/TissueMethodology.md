@@ -6,32 +6,32 @@ Overview
 
 Abstract
 --------
-This %BioGears %Tissue system manages the extravascular space. It handles substance transport between the organs and the blood vessels, and it computes substance storage, transformation (e.g. chemical conversion), clearance, and excretion. 
+This %Tissue system manages the extravascular space. It handles substance transport between the organs and the blood vessels, and it computes substance storage, transformation (e.g. chemical conversion), clearance, and excretion. 
 
 Introduction
 ------------
-The %BioGears %Tissue system is a low-resolution, mid-fidelity model of the tissues of the body. The system is mechanically tied to the [Cardiovascular](@ref CardiovascularMethodology) and [Respiratory](@ref RespiratoryMethodology) systems, and it interacts with the [Energy](@ref EnergyMethodology) and [Drugs](@ref DrugsMethodology) systems. The tissue system handles the non-advective transport of substances between the intravascular and extravascular spaces, as well as the conversion of substance (including chemical conversion of species and clearance/excretion). The metabolic production and consumption of substances takes place in the tissue system, and the tissues generate substances that are produced in the organs by any process or mode.
+The %Tissue system is a low-resolution, mid-fidelity model of the tissues of the body. The system is mechanically tied to the [Cardiovascular](@ref CardiovascularMethodology) and [Respiratory](@ref RespiratoryMethodology) systems, and it interacts with the [Energy](@ref EnergyMethodology) and [Drugs](@ref DrugsMethodology) systems. The tissue system handles the non-advective transport of substances between the intravascular and extravascular spaces, as well as the conversion of substance (including chemical conversion of species and clearance/excretion). The metabolic production and consumption of substances takes place in the tissue system, and the tissues generate substances that are produced in the organs by any process or mode.
 
 System Design
 =============
 
 Background and Scope
 --------------------
-Groups of cells in the body which share a common embryonic origin can be described collectively as a tissue. In the classical organizational hierarchy of organisms, tissues are at the level directly below organs, meaning that groups of tissues interacting to perform a function are an organ. There are four types of tissue in the human body: epithelial, connective, muscle, and nervous tissue. In %BioGears, the term tissue refers to the extravascular space of an organ. In other words, in %BioGears 'tissue' is a collective term which generally refers to the parenchyma.
+Groups of cells in the body which share a common embryonic origin can be described collectively as a tissue. In the classical organizational hierarchy of organisms, tissues are at the level directly below organs, meaning that groups of tissues interacting to perform a function are an organ. There are four types of tissue in the human body: epithelial, connective, muscle, and nervous tissue. In the engine, the term tissue refers to the extravascular space of an organ. In other words, 'tissue', is a collective term which generally refers to the parenchyma.
 
 @anchor tissue-data-flow
 Data Flow
 ---------
-Like the other %BioGears systems, the %Tissue system uses the execution structure described in @ref SystemMethodology. Figure 1 shows the data flow.
+Like the other systems, the %Tissue system uses the execution structure described in @ref SystemMethodology. Figure 1 shows the data flow.
 
-<img src="./images/Tissue/TissueDataFlow.png" width="900">
+<img src="./Images/Tissue/TissueDataFlow.png" width="900">
 <center>
 <i>Figure 1. The %Tissue data flow consists of a Preprocess, Process, and Post Process loop. Conditions are applied during initialization prior to executing the loop. Albumin is produced in the preprocess step. Most of the tissue functionality is executed during the process step, including all modes of mass transport and conversion. Time is advanced in the postprocess step.</i>
 </center><br>
 
 ### Preprocess
 #### Produce Albumin
-The liver produces albumin as part of normal function. %BioGears does not have a dedicated hepatic system; therefore, a flat rate of albumin production is estimated in Tissue. The rate has been specified as 0.15 mg/s, as found in @cite Jarnum1972plasma. At each time step, the mass is added to the liver extracellular compartment. Hepatic albumin production is non-functional in the current implementation as the substance does not transport out of the tissue compartment. Improvements to the albumin production and transport model are [planned](@ref tissue-future).
+The liver produces albumin as part of normal function. The engine does not have a dedicated hepatic model; therefore, a flat rate of albumin production is estimated in Tissue. The rate has been specified as 0.15 mg/s, as found in @cite Jarnum1972plasma. At each time step, the mass is added to the liver extracellular compartment. Hepatic albumin production is non-functional in the current implementation as the substance does not transport out of the tissue compartment. Improvements to the albumin production and transport model are [planned](@ref tissue-future).
 
 ### Process
 
@@ -56,22 +56,22 @@ In this method the tissue volumes are summed in order to compute total body wate
 At this time the there are no postprecess steps in the tissue system. 
 
 ### Assessments
-Assessments in %BioGears are data collected and packaged to resemble a report or analysis that might be ordered by a physician. No %BioGears assessments are associated with the %Tissue system.
+Assessments are data collected and packaged to resemble a report or analysis that might be ordered by a physician. No assessments are associated with the %Tissue system.
 
 Features, Capabilities, and Dependencies
 ----------------------------------------
-The %BioGears %Tissue system is a low-resolution, mid-fidelity model of the tissues of the body. One of the primary functions of the %BioGears %Tissue system is to control the transport of substances between the tissues and the blood. There are several transport models which help the %Tissue system perform that function. Figure 2 provides an overview of the extravascular space and the various modes of substance transport between the blood and the tissues. The %BioGears %Tissue system also handles the conversion of substance (i.e. metabolic consumption and production).
+The %Tissue system is a low-resolution, mid-fidelity model of the tissues of the body. One of the primary functions of the %Tissue system is to control the transport of substances between the tissues and the blood. There are several transport models which help the %Tissue system perform that function. Figure 2 provides an overview of the extravascular space and the various modes of substance transport between the blood and the tissues. The %Tissue system also handles the conversion of substance (i.e. metabolic consumption and production).
 
 @anchor tissue-fig2
-<img src="./images/Tissue/tissueTransport.png" width="500">
+<img src="./Images/Tissue/tissueTransport.png" width="500">
 <center>
 <i>Figure 2. The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
 </center><br>
 
 ### Bulk Flow and Advection
-The movement of fluid between the intravascular and extravascular space is modeled using the %BioGears @ref CircuitMethodology. Figure 3 shows a representative circuit diagram. In most cases, each tissue circuit node is connected to one and only one cardiovascular circuit node. However, the gut tissue compartment is a lumped representation of the abdominal viscera organ tissues, and thus the large intestine, small intestine, and splanchnic vascular circuit nodes all connect to the gut tissue circuit node.
+The movement of fluid between the intravascular and extravascular space is modeled using the @ref CircuitMethodology. Figure 3 shows a representative circuit diagram. In most cases, each tissue circuit node is connected to one and only one cardiovascular circuit node. However, the gut tissue compartment is a lumped representation of the abdominal viscera organ tissues, and thus the large intestine, small intestine, and splanchnic vascular circuit nodes all connect to the gut tissue circuit node.
 
-<img src="./images/Tissue/TissueCircuitExample.png" width="500">
+<img src="./Images/Tissue/TissueCircuitExample.png" width="500">
 <center>
 <i>Figure 3. The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
 </center><br>
@@ -80,11 +80,11 @@ The volume in the tissue compartment is partitioned into the extracellular and i
 
 @anchor tissue-variability
 ### Patient Variability
-The %BioGears %Tissue system is heavily dependent on the patient configuration. Fluid volume distributions and parenchyma masses both depend heavily on the patient sex, height, weight, and body fat fraction. Transport properties are also affected by patient variability. For example, permeability coefficients are computed from membrane permeability and membrane surface area, where the surface area is a function of the tissue mass, which in turn is a function of the patient weight. A detailed discussion of patient configuration and variability in %BioGears is available in the @ref PatientMethodology report.
+The %Tissue system is heavily dependent on the patient configuration. Fluid volume distributions and parenchyma masses both depend heavily on the patient sex, height, weight, and body fat fraction. Transport properties are also affected by patient variability. For example, permeability coefficients are computed from membrane permeability and membrane surface area, where the surface area is a function of the tissue mass, which in turn is a function of the patient weight. A detailed discussion of patient configuration and variability is available in the @ref PatientMethodology report.
 
 @anchor tissue-perfusionLimitedDiffusion
 ## Perfusion-Limited Diffusion
-Perfusion-limited diffusion is a technique for describing drug kinetics in physiology-based pharmacokintic models. Partition coefficents are using to compute the amount of a drug crossing a membrane at a given perfusion rate. The partition coefficients are calculated based on the physical chemical properties of the drug, the tissue properties of the organ, and the blood properties. They represent a specific substance&rsquo;s affinity for moving across the blood-tissue partition. %BioGears uses this methodology to simulate drug diffusion, and details of the partition coefficient calculation can be found in the @ref DrugsMethodology. All current drugs in the %BioGears Engine use perfusion-limited diffusion as found in @cite khalil2011physiologically @cite huisinga2012modeling. In the [future](@ref drugs-future), permeability-limited diffusion could be used. Equation 1 shows the calculation used to move mass from the vascular to the tissue and vice versa for perfusion-limited diffusion @cite khalil2011physiologically .
+Perfusion-limited diffusion is a technique for describing drug kinetics in physiology-based pharmacokintic models. Partition coefficents are using to compute the amount of a drug crossing a membrane at a given perfusion rate. The partition coefficients are calculated based on the physical chemical properties of the drug, the tissue properties of the organ, and the blood properties. They represent a specific substance&rsquo;s affinity for moving across the blood-tissue partition. The engine uses this methodology to simulate drug diffusion, and details of the partition coefficient calculation can be found in the @ref DrugsMethodology. All current drugs in the engine use perfusion-limited diffusion as found in @cite khalil2011physiologically @cite huisinga2012modeling. In the [future](@ref drugs-future), permeability-limited diffusion could be used. Equation 1 shows the calculation used to move mass from the vascular to the tissue and vice versa for perfusion-limited diffusion @cite khalil2011physiologically .
 
 \f[\Delta M = Q_{T} * C_{V} - \frac{Q_{T} * C_{T}}{K_{P}} \f]
 <center>
@@ -97,11 +97,11 @@ Where <i>&Delta;M</i> is the change in mass due to diffusion, *Q<sub>T</sub>* is
 ## Gradient Dependent Transport Processes
 
 ### Gas Exchange - Alveoli Transfer
-At the alveoli-pulmonary capillary interface, oxygen diffuses from the alveoli into the pulmonary capillaries, while carbon dioxide diffuses from the pulmonary capillaries into the alveoli. In reality, gas exchange at the alveoli is a multi-step process in space, where gases dissolve into liquid according to Henry's law and diffuse through liquid and across membranes according to Fick's law. In %BioGears, alveolar gas exchange is driven by the partial pressure differential between the pulmonary capillaries and the alveoli in a one-step process, as shown in Figure 4. The partial pressures of each gas in the capillaries are calculated using Equation&nbsp;2, while the partial pressures of each gas in the alveoli are calculated using Equation&nbsp;3.
+At the alveoli-pulmonary capillary interface, oxygen diffuses from the alveoli into the pulmonary capillaries, while carbon dioxide diffuses from the pulmonary capillaries into the alveoli. In reality, gas exchange at the alveoli is a multi-step process in space, where gases dissolve into liquid according to Henry's law and diffuse through liquid and across membranes according to Fick's law. In the model, alveolar gas exchange is driven by the partial pressure differential between the pulmonary capillaries and the alveoli in a one-step process, as shown in Figure 4. The partial pressures of each gas in the capillaries are calculated using Equation&nbsp;2, while the partial pressures of each gas in the alveoli are calculated using Equation&nbsp;3.
 
-<img src="./images/Tissue/AlveolarDiffusion.png" width="700">
+<img src="./Images/Tissue/AlveolarDiffusion.png" width="700">
 <center>
-<i>Figure 4. Alveolar gas exchange in %BioGears is a single-step, lumped-diffusion process driven by a partial pressure gradient, where the partial pressures are computed using Equations 2 and 3.</i>
+<i>Figure 4. Alveolar gas exchange is a single-step, lumped-diffusion process driven by a partial pressure gradient, where the partial pressures are computed using Equations 2 and 3.</i>
 </center><br>
 
 \f[P_{P} = \frac{C}{d * C_{S}} \f]
@@ -140,7 +140,7 @@ The mass diffused at each time step is calculated using Equation&nbsp;6. This ma
 </center><br>
 
 ### Instant Diffusion
-Some substances are able to diffuse across biological membranes at a rate that ensures concentration equilibrium within one %BioGears time step. The instant diffusion model is included in the %BioGears %Tissue system in order to simulate transport processes that fully evolve in a time period much smaller than the %BioGears time step. All of the gases in %BioGears are transported by instant diffusion. 
+Some substances are able to diffuse across biological membranes at a rate that ensures concentration equilibrium within one engine time step. The instant diffusion model is included in the %Tissue system in order to simulate transport processes that fully evolve in a time period much smaller than the engine time step. All of the gases are transported by instant diffusion. 
 
 ### Simple Diffusion
 Simple diffusion is an implementation of Fick's law in one dimension with a known constant distance. In this case, Fick's law can be described by Equation&nbsp;7.
@@ -149,7 +149,7 @@ Simple diffusion is an implementation of Fick's law in one dimension with a know
 <center>
 *Equation 7.*
 </center><br>
-Where *J<sub>x</sub>* is the mass flux (mass per area-time) of substance *X*, *[X]<sub>v,t</sub>* is the concentration of substance X in compartment v (or t), and *P<sub>x</sub>* is a proportionality constant defining the permeability. The flux is multiplied by an area to obtain a rate of mass transfer. It is incredibly difficult to experimentally determine the capillary surface area for a given tissue, and it may be impossible to experimentally determine the total cellular membrane surface area. Additionally, lumped tissue models can be difficult to delineate. In %BioGears, the capillary and cellular membrane surface areas are assumed to be proportional to the mass of a given organ or tissue group, such that the mass transfered in one time step (*D<sub>m</sub>*) may be computed by Equation&nbsp;8, where *k* is the empirically-determined constant relating the tissue mass (*m<sub>t</sub>*) to the surface area.
+Where *J<sub>x</sub>* is the mass flux (mass per area-time) of substance *X*, *[X]<sub>v,t</sub>* is the concentration of substance X in compartment v (or t), and *P<sub>x</sub>* is a proportionality constant defining the permeability. The flux is multiplied by an area to obtain a rate of mass transfer. It is incredibly difficult to experimentally determine the capillary surface area for a given tissue, and it may be impossible to experimentally determine the total cellular membrane surface area. Additionally, lumped tissue models can be difficult to delineate. In the engine, the capillary and cellular membrane surface areas are assumed to be proportional to the mass of a given organ or tissue group, such that the mass transfered in one time step (*D<sub>m</sub>*) may be computed by Equation&nbsp;8, where *k* is the empirically-determined constant relating the tissue mass (*m<sub>t</sub>*) to the surface area.
 
 \f[ D_{m} = k * m_{t} * J_{X} * \Delta t \f]
 <center>
@@ -171,7 +171,7 @@ Facilitated diffusion uses Michaelis-Menten kinetics to model the facilitated tr
 
 ## Gradient Independent Transport Processes
 ### Active Transport
-Active transport is a coarse model of the energy-requiring transport processes (e.g. the sodium-potassium pump). The active transport functionality is currently inactive while work continues on the comprehensive substance handling in %BioGears. When complete, active transport will use energy (through feedback to consumption rates of energy-containing substances) to move substances across barriers.
+Active transport is a coarse model of the energy-requiring transport processes (e.g. the sodium-potassium pump). The active transport functionality is currently inactive while work continues on comprehensive substance handling. When complete, active transport will use energy (through feedback to consumption rates of energy-containing substances) to move substances across barriers.
 
 @anchor tissue-metabolic-production
 ## Metabolic Production and Consumption
@@ -219,13 +219,13 @@ lactic acid, oxygen, and carbon dioxide.*
 
 Assumptions and Limitations
 ---------------------------
-Proteins are large molecules which take up space. About 7% of plasma volume is due to proteins. Proteins also have a net negative charge. in reality, diffusion depends on the elctrochemical gradient, not just the chemical gradient. With the exception of the perfusion-limited diffusion model, the %BioGears diffusion models do not account for the entire elecrochemical gradient or the volume of the protein in the plasma (i.e. no "plasma water").
+Proteins are large molecules which take up space. About 7% of plasma volume is due to proteins. Proteins also have a net negative charge. in reality, diffusion depends on the elctrochemical gradient, not just the chemical gradient. With the exception of the perfusion-limited diffusion model, the diffusion models do not account for the entire elecrochemical gradient or the volume of the protein in the plasma (i.e. no "plasma water").
 
-The diffusional exchange of water between the capillaries and extravascular space amounts to as much as 80,000 liters per day. Convective capillary exchange is much less, on the order of 16 liters per day. The diffusional exchange of water is not modeled in %BioGears.
+The diffusional exchange of water between the capillaries and extravascular space amounts to as much as 80,000 liters per day. Convective capillary exchange is much less, on the order of 16 liters per day. The diffusional exchange of water is not modeled in the engine.
 
 Conditions
 ----------
-There are no conditions associated with the %BioGears %Tissue system.
+There are no conditions associated with the %Tissue system.
 
 Actions
 -------
@@ -262,12 +262,12 @@ Validation - Resting Physiologic State
 The tissue system volumes are validated using data from @cite valentin2002icrp.  
 
 <br><center>
-*Table 4. Validation of the resting physiologic state comparison of system-level outputs from %BioGears to referenced values. System-level outputs show favorable agreement with validation data.*
+*Table 4. Validation of the resting physiologic state comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data.*
 </center>
 @insert ./test_results/tables/TissueValidationTable.md
 
 <br><center>
-*Table 5. Validation of the resting physiologic state comparison of compartment-level outputs from %BioGears to referenced values. The compartments are currently validated on a flow/volume basis. Flows and most of the volumes show good agreement with validation values.*
+*Table 5. Validation of the resting physiologic state comparison of compartment-level outputs from the engine to referenced values. The compartments are currently validated on a flow/volume basis. Flows and most of the volumes show good agreement with validation values.*
 </center>
 @insert ./test_results/tables/TissueCompartmentsValidationTable.md
 

@@ -1,11 +1,11 @@
 Scenario XML Files {#ScenarioXMLFile} 
 ==================
 
-%BioGears can be used to simulate various physiological scenarios.
-The Common Data Model (CDM) provides a Scenario structure that can contain a set of instructions that can be used to drive %BioGears. 
+The engine can be used to simulate various physiological scenarios.
+The Common Data Model (CDM) provides a Scenario structure that can contain a set of instructions that can be used to drive the engine. 
 Below you can see :
 - How a scenario is structured in XSD Schema
-- XML examples of all the actions, conditions, assessments supported by %BioGears 
+- XML examples of all the actions, conditions, assessments supported
 
 A Scenario is a 'canned' instruction set with requested data to be output in a comma delimited file that is executed by the engine and will produce the same results data.
 'FATAL' is used below to note boundary cases that will result in a fatal exception, stopping the engine.
@@ -206,7 +206,7 @@ You can read more about compartments @ref CompartmentsInterface "here".
 There are two amin types of Compartments, gas and liquid.
 
 Data on the compartment itself: 
-The Compartment attribute can be any of the enumerations defined by %BioGears. 
+The Compartment attribute can be any of the enumerations defined. 
 The Name attribute should be set to a Compartment Property name.
 The Substance attribute is optional, and the if used the name will refer to a substance quantity property.
 
@@ -277,7 +277,7 @@ The following are links to the Action class specification along with XML example
 @copybrief Scenario_SerializeStateData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <Action xsi:type="SerializeStateData" Type="Save">
-		<Filename></Filename><!-- No Filename, engine is going to auto generate a name, BioGears will do something like : StandardMale@0s.xml -->		
+		<Filename></Filename><!-- No Filename, engine is going to auto generate a name, something like : StandardMale@0s.xml -->		
   </Action>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

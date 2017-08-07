@@ -12,12 +12,12 @@ circuits can be defined easily within the Common Data Model (CDM).  They
 are fully dynamic, and can be manipulated and modified at each time
 step.  The solver can be used to analyze electrical, fluid, and thermal
 circuits using native units.  The solver outputs were validated using the outputs from an existing known third party circuit solver.  All results matched the validation data, confirming this is a sound approach for
-the %BioGears Engine. 
+the engine. 
 
 @anchor circuit-intro
 ## Introduction
 
-%BioGears systems use lumped parameter circuits to mimic the physiology
+Engine systems use lumped parameter circuits to mimic the physiology
 of the human body.  These circuits use fluid or thermal elements that
 are analogous to electrical circuit elements.  The
 circuits have several types of feedback mechanisms that can be set and
@@ -34,11 +34,11 @@ and free breathing model (right) @cite Clipp2012Humansim.</i>
 
 *Note: For simplicity, this document uses electrical components and terminology when discussing the solver functionality.  See Table&nbsp;1 for analogies and details about the mapping of electrical components.*
 
-The %BioGears CDM includes many of the same generic definitions traditionally used to define and analyze circuits.  Paths are ideal conductor branches that may contain elements (i.e., resistors, capacitors, inductors, diodes, etc.).  Nodes are junctions at the intersection of paths.  Figure&nbsp;2 shows these base circuit element definitions.  Paths are each assigned one source and one target node.  We use the convention of positive current from source to target when performing calculations.
+The CDM includes many of the same generic definitions traditionally used to define and analyze circuits.  Paths are ideal conductor branches that may contain elements (i.e., resistors, capacitors, inductors, diodes, etc.).  Nodes are junctions at the intersection of paths.  Figure&nbsp;2 shows these base circuit element definitions.  Paths are each assigned one source and one target node.  We use the convention of positive current from source to target when performing calculations.
 
 @image html CircuitBaseDefinitions.png
 <center>
-<i>Figure 2. Nodes and paths are the lowest level elements used to define all circuits in %BioGears.  Paths correspond to ideal conductors (i.e., wires).  Nodes are placed at the intersections of paths.  In fluid systems, paths can be thought of as frictionless pipes and nodes as pipe junctions.</i>
+<i>Figure 2. Nodes and paths are the lowest level elements used to define all circuits.  Paths correspond to ideal conductors (i.e., wires).  Nodes are placed at the intersections of paths.  In fluid systems, paths can be thought of as frictionless pipes and nodes as pipe junctions.</i>
 </center><br>
 
 @anchor circuit-design
@@ -48,7 +48,7 @@ The %BioGears CDM includes many of the same generic definitions traditionally us
 
 ### Legacy Solution
 
-The physiology engine from which %BioGears was spawned (released by
+The physiology engine from which the engine was spawned (released by
 Advanced Simulation Corporation as Body Simulation for Anesthesia&trade;)
 solved each lump parameter circuit using non-closed loop calculations
 contained within each system.  The systems were extensively
@@ -66,7 +66,7 @@ fundamental base on which to build physiological systems.
 
 ### Requirements
 
-Given the overall goals of %BioGears, we set out to create a generic
+Given the overall goals of the engine, we set out to create a generic
 circuit solver on which to expand.  The solver is required to efficiently
 solve transient linear and non-linear circuits.  Some other high-level
 requirements include:
@@ -75,7 +75,7 @@ requirements include:
     physics engine.  This allows rapid development, and makes engine
     outputs much easier to validate and verify.
 
--   Computational Speed - %BioGears is required to maintain a transient
+-   Computational Speed - The engine is required to maintain a transient
     full-body solution faster than real time on typical personal
     computers.
 
@@ -95,7 +95,7 @@ requirements include:
 -   Common Data Model - The entire solution must reside within and
     effectively use the @ref CDM.
 
--   Circuits types - %BioGears will include fluid and thermal
+-   Circuits types - The engine will include fluid and thermal
     circuits.  It is beneficial to use the same solver for both types of
     systems.
 
@@ -104,7 +104,7 @@ requirements include:
     for expansion.
 
 -   Open source - As a whole, any third-party software must adhere to the same
-    license requirements as %BioGears.
+    license requirements as the engine.
 
 ### Solutions Investigated
 
@@ -124,7 +124,7 @@ deviate from that path.  We discovered a small number of bugs, some with
 possible workarounds.  It was found to be very slow for our approach of
 solving a new (i.e., dynamic) circuit each time step.  It was cumbersome
 to parse using the netlist input and output style.  The most significant
-downside against implementing Ngspice into %BioGears was the
+downside against implementing Ngspice into the engine was the
 unavoidable build-up of memory that caused our software to crash.
 
 Due to the aforementioned complications, we ultimately determined that
@@ -143,7 +143,7 @@ next time step.
 
 ### Preprocess
 
-There is no literal Preprocess call within the circuit solver class (i.e., code).  Each system individually and directly modifies its circuit(s).  This allows our functionality to be entirely dynamic by performing a separate calculation every time step.  See the Data Model Implementation Appendix below for details about %BioGears circuit elements and the data they contain.
+There is no literal Preprocess call within the circuit solver class (i.e., code).  Each system individually and directly modifies its circuit(s).  This allows our functionality to be entirely dynamic by performing a separate calculation every time step.  See the Data Model Implementation Appendix below for details about CDM circuit elements and the data they contain.
 
 ### Process
 
@@ -215,7 +215,7 @@ are (also see Figure&nbsp;3):
     Note that this is to prevent unwanted transport to the reference
     node (i.e., ground).
 
-<center><img src="./images/Circuit/CircuitDataFlow.png" width="400"></center>
+<center><img src="./Images/Circuit/CircuitDataFlow.png" width="400"></center>
 <center>
 *Figure 3.  Data flow chart showing the steps used at each time step to
 determine each circuit state.*
@@ -255,7 +255,7 @@ parameter values to the &ldquo;current&rdquo; time step parameter values (see @r
 
 ### Approach and Extensibility
 
-The %BioGears systems use two different lumped parameter system types,
+The engine systems use two different lumped parameter system types,
 each with analogies to electrical circuits.  Most systems models (%Cardiovascular, %Respiratory, etc.) use fluid units (pressures, flows,
 and volumes), while others (%Energy, %Environment, etc.) use thermal units
 (temperature, heat transfer rate, and heat).  Both model types use the same
@@ -280,12 +280,12 @@ thermal, and electrical models, we can easily extend it to include any
 of the model types in Table&nbsp;1.  Further details specific to the
 implementation of our model with the hydraulic analogy are shown in Table&nbsp;2.  
 A more intuitive pipe analogy is described through images.  The
-%BioGears defined fluid model elements are outlined in the first column.
+CDM defined fluid model elements are outlined in the first column.
 The flow equations are important for our analysis technique outlined earlier.
 
 <center><br>
 <i>Table 2.  In-depth description of the hydraulic analogy for electrical
-circuits that are used extensively inside %BioGears.  The Elements are
+circuits that are used extensively inside the engine.  The Elements are
 defined by the CDM and used by the solver.  The Flow equations are
 important for solving for the unknown parameters.  @cite HydraulicAnalogy2014 </i>
 </center>
@@ -340,7 +340,7 @@ There are several assumptions made for the circuit math in general:
 
 ### Fluids
 
-There are other assumptions specific to the %BioGears fluid systems:
+There are other assumptions specific to fluid systems:
 
 -   Flows are incompressible
 
@@ -349,10 +349,10 @@ There are other assumptions specific to the %BioGears fluid systems:
 ## Limitations
 
 There are frequency response limitations that are directly tied to the
-time step set externally to the solver itself.  %BioGears uses a time step
+time step set externally to the solver itself.  The engine uses a time step
 of 1/50 s (~ 2 ms).  Because the solver calculates nonlinear
 behavior through linearization using the trapezoid rule, extremely high
-frequency signal components will be lost.  However, this far exceeds the Nyquist frequency for all current %BioGears system models.
+frequency signal components will be lost.  However, this far exceeds the Nyquist frequency for all current system models.
 
 While it is not necessarily a limitation, users of the Circuit Solver
 must be careful to assign current and voltage source elements to set currents and voltages respectively.
@@ -369,7 +369,7 @@ Beyond several numerical (hand) calculations used during implementation, we
 performed validation on the generalized circuit math by duplicating
 circuits in LTspice (version 4.21s, created by Linear Technology,
 Milpitas, CA).  LTspice is based on the well-documented and validated
-SPICE simulator.  We created circuits using all %BioGears elements
+SPICE simulator.  We created circuits using all elements
 individually and in combination.  We used several different types of
 dynamically-changing drivers to ensure proper transient functionality.
 The resulting voltage and current values were interpolated and validated
@@ -377,14 +377,14 @@ to match for all 114 circuits.  Table&nbsp;3 shows a summary of the validation
 circuits investigated.
 
 <center><br>
-*Table 3.  The list of circuits created in %BioGears and validated against LTspice.  Every element is covered in combination with each other.*
+*Table 3.  The list of circuits created in the engine and validated against LTspice.  Every element is covered in combination with each other.*
 </center>
 
 |	Test Name	|	Purpose of test	|	Results Summary	|
 |	------------------------	|	------------------------	|	------------------------	|
-|	BadDiodeDC	|	Intentionally failing to test Diode implementation	|	<span class="success">LTSpice: Will not run, %BioGears: successfully fails - provides feedback on failure</span>	|
-|	BadDiodePULSE	|	Intentionally failing to test Diode implementation	|	<span class="success">LTSpice: Will not run, %BioGears: successfully fails - provides feedback on failure</span>	|
-|	BadDiodeSIN	|	Intentionally failing to test Diode implementation	|	<span class="success">LTSpice: Will not run, %BioGears: successfully fails - provides feedback on failure</span>	|
+|	BadDiodeDC	|	Intentionally failing to test Diode implementation	|	<span class="success">LTSpice: Will not run, Test: successfully fails - provides feedback on failure</span>	|
+|	BadDiodePULSE	|	Intentionally failing to test Diode implementation	|	<span class="success">LTSpice: Will not run, Test: successfully fails - provides feedback on failure</span>	|
+|	BadDiodeSIN	|	Intentionally failing to test Diode implementation	|	<span class="success">LTSpice: Will not run, Test: successfully fails - provides feedback on failure</span>	|
 |	BasicCircuit	|	Simple pressure source with resistances in series	|	<span class="success">Match</span>	|
 |	BasicDiodeDCCurrent	|	Diode behavior in response to a current source	|	<span class="success">Match</span>	|
 |	BasicDiodePULSECurrent	|	Diode behavior in response to a current source	|	<span class="success">Match</span>	|
@@ -410,9 +410,9 @@ circuits investigated.
 |	ParallelIndPULSECurrent	|	Adding inductors in parallel with a current source	|	<span class="success">Match</span>	|
 |	ParallelIndSIN	|	Adding inductors in parallel with a voltage source	|	<span class="success">Match</span>	|
 |	ParallelIndSINCurrent	|	Adding inductors in parallel with a current source	|	<span class="success">Match</span>	|
-|	ParallelPressureSourceAdditionDC	|	Intentionally failing adding voltage sources in parallel	|	<span class="success">%BioGears: successfully fails - provides feedback on failure</span>	|
-|	ParallelPressureSourceAdditionPULSE	|	Intentionally failing adding voltage sources in parallel	|	<span class="success">%BioGears: successfully fails - provides feedback on failure</span>	|
-|	ParallelPressureSourceAdditionSIN	|	Intentionally failing adding voltage sources in parallel	|	<span class="success">%BioGears: successfully fails - provides feedback on failure</span>	|
+|	ParallelPressureSourceAdditionDC	|	Intentionally failing adding voltage sources in parallel	|	<span class="success">Test: successfully fails - provides feedback on failure</span>	|
+|	ParallelPressureSourceAdditionPULSE	|	Intentionally failing adding voltage sources in parallel	|	<span class="success">Test: successfully fails - provides feedback on failure</span>	|
+|	ParallelPressureSourceAdditionSIN	|	Intentionally failing adding voltage sources in parallel	|	<span class="success">Test: successfully fails - provides feedback on failure</span>	|
 |	ParallelRCDC	|	Parallel resistor and capacitor response to a voltage source	|	<span class="success">Match</span>	|
 |	ParallelRCPULSE	|	Parallel resistor and capacitor response to a voltage source	|	<span class="success">Match</span>	|
 |	ParallelRCSIN	|	Parallel resistor and capacitor response to a voltage source	|	<span class="success">Match</span>	|
@@ -441,9 +441,9 @@ circuits investigated.
 |	SeriesCapPULSECurrent	|	Adding capacitors in series with a current source	|	<span class="success">Match</span>	|
 |	SeriesCapSIN	|	Adding capacitors in series with a voltage source	|	<span class="success">Match</span>	|
 |	SeriesCapSINCurrent	|	Adding capacitors in series with a current source	|	<span class="success">Match</span>	|
-|	SeriesCurrentSourceAdditionDC	|	Intentionally failing adding current sources in series	|	<span class="success">%BioGears: successfully fails - provides feedback on failure</span>	|
-|	SeriesCurrentSourceAdditionPULSE	|	Intentionally failing adding current sources in series	|	<span class="success">%BioGears: successfully fails - provides feedback on failure</span>	|
-|	SeriesCurrentSourceAdditionSIN	|	Intentionally failing adding current sources in series	|	<span class="success">%BioGears: successfully fails - provides feedback on failure</span>	|
+|	SeriesCurrentSourceAdditionDC	|	Intentionally failing adding current sources in series	|	<span class="success">Test: successfully fails - provides feedback on failure</span>	|
+|	SeriesCurrentSourceAdditionPULSE	|	Intentionally failing adding current sources in series	|	<span class="success">Test: successfully fails - provides feedback on failure</span>	|
+|	SeriesCurrentSourceAdditionSIN	|	Intentionally failing adding current sources in series	|	<span class="success">Test: successfully fails - provides feedback on failure</span>	|
 |	SeriesIndDC	|	Adding inductors in series with a voltage source	|	<span class="success">Match</span>	|
 |	SeriesIndDCCurrent	|	Adding inductors in series with a current source	|	<span class="success">Match</span>	|
 |	SeriesIndPULSE	|	Adding inductors in series with a voltage source	|	<span class="success">Match</span>	|
@@ -486,10 +486,10 @@ The most interesting and complex circuits use a combination of all
 elements.  Two of these comprehensive circuits are shown below because of
 their complexity.  The first uses sine wave sources and the second uses
 pulse sources.  There is a strong correlation between the given LTspice
-outputs and the calculated %BioGears outputs.  Note that the sign
+outputs and the calculated outputs.  Note that the sign
 convention of the current across voltage sources is reversed for LTspice,
 because it does not maintain the source-to-target positive current
-standard as is done with %BioGears.
+standard as is done with the engine.
 
 @image html Comprehensive2CircuitDiagram.png
 <center>
@@ -501,14 +501,14 @@ included.  The same circuit was defined using the CDM for comparison.*
 
 @image html ValidationComprehensive2SINCenteredPressure.png
 <center>
-*Figure 5.  %BioGears node voltage outputs for the first comprehensive
+*Figure 5.  Engine node voltage outputs for the first comprehensive
 circuit compared to LTspice baseline values, using sinusoid sources.  All
 are very tightly correlated.*
 </center><br>
 
 @image html ValidationComprehensive2SINCenteredFlow.png
 <center>
-*Figure 6.  %BioGears path current outputs for the first comprehensive
+*Figure 6.  Engine path current outputs for the first comprehensive
 circuit compared to LTspice baseline values.  All are very tightly
 correlated.  The signs of the current through voltage sources are reversed
 because of differing conventions for those elements.*
@@ -524,20 +524,20 @@ included.  The same circuit was defined using the CDM for comparison.*
 
 @image html ValidationComprehensive1PulsePressure.png
 <center>
-*Figure 8.  %BioGears node voltage outputs for the second comprehensive
+*Figure 8.  Engine node voltage outputs for the second comprehensive
 circuit compared to LTspice baseline values, using pulse sources.  All
 are very tightly correlated.*
 </center><br>
 
 @image html ValidationComprehensive1PulseFlow.png
 <center>
-*Figure 9.  %BioGears path current outputs for the second comprehensive
+*Figure 9.  Engine path current outputs for the second comprehensive
 circuit compared to LTspice baseline values.  All are very tightly
 correlated.  The sign of the current through voltage sources are reversed
 because of differing conventions for those elements.*
 </center><br>
 
-%BioGears has been shown to successfully conserve mass, energy, and momentum within all defined closed-loop systems. The successful conservation of mass provided by the solver is shown in Figure 10. The volume (quantity/charge) within cardiovascular circuit nodes through approximately 2.5 full heart beat cycles.  The total volume of all compartments remains at a constant value of 5L throughout the entire process.
+The engine has been shown to successfully conserve mass, energy, and momentum within all defined closed-loop systems. The successful conservation of mass provided by the solver is shown in Figure 10. The volume (quantity/charge) within cardiovascular circuit nodes through approximately 2.5 full heart beat cycles.  The total volume of all compartments remains at a constant value of 5L throughout the entire process.
 
 @image html CardiovascularCompartmentVolumes.png
 <center>
@@ -558,7 +558,7 @@ All basic Circuit Solver functionality is further validated and verified with sp
 @anchor circuit-conclusion
 ## Conclusion
 
-The %BioGears generalized circuit analysis techniques have successfully
+The generalized circuit analysis techniques have successfully
 accomplished all of the goals for that area of the code.  The solver
 implements the CDM effectively and generically in a way that allows for
 infinitely complex lumped parameter models that can also be combined.  We
@@ -570,7 +570,7 @@ validation.  The burden for the modeler is on creating a good model and not
 worrying about implementing sound physics math.
 
 The Circuit Solver has also been designed such that it can be extracted
-from %BioGears and used for any software that needs to perform transient
+from the enbgine and used for any software that needs to perform transient
 circuit analysis.
 
 @anchor circuit-future
