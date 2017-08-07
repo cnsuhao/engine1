@@ -47,7 +47,7 @@ protected:// Stewart Model + Dash-Bassingthwaighte Model + Henderson-Hasselbach 
   SESubstance* m_HbO2;
   SESubstance* m_HbO2CO2;
   SESubstance* m_CO2;
-  SESubstance* m_CO;    //Remember to tell amb I added these CO members
+  SESubstance* m_CO;
   SESubstance* m_HbCO;
   SESubstance* m_HCO3;
   SESubstance* m_HbCO2;
@@ -63,7 +63,7 @@ protected:// Stewart Model + Dash-Bassingthwaighte Model + Henderson-Hasselbach 
   SELiquidCompartment*       m_cmpt;
   SELiquidSubstanceQuantity* m_subO2Q;
   SELiquidSubstanceQuantity* m_subCO2Q;
-  SELiquidSubstanceQuantity* m_subCOQ;    //Remember to tell amb I added these CO members
+  SELiquidSubstanceQuantity* m_subCOQ;
   SELiquidSubstanceQuantity* m_subHbCOQ;
   SELiquidSubstanceQuantity* m_subHCO3Q;
   SELiquidSubstanceQuantity* m_subHbQ;
