@@ -15,7 +15,7 @@ class SESubstanceClearanceAnatomyEffect;
 #include "bind/cdm/Substance.pb.h"
 
 enum class RenalDynamic{ NullDynamic, Clearance, Regulation };
-class DLL_DECL SESubstanceClearance : public Loggable
+class CDM_DECL SESubstanceClearance : public Loggable
 {
 public:
 

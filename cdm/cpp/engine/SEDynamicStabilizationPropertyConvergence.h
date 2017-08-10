@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "engine/SEEngineTracker.h"
 
-class DLL_DECL SEDynamicStabilizationPropertyConvergence : public Loggable
+class CDM_DECL SEDynamicStabilizationPropertyConvergence : public Loggable
 {
   friend class SEDynamicStabilizationEngineConvergence;
 protected:

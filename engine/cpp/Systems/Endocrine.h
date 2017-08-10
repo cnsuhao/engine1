@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
  * and two hormones (epinephrine and norepinephrine). The release of the hormones in response to the stimuli to represent the response of the sympathetic nervous system.
  * In the future, additional stimuli and additional hormones will be added.
  */  
-class PULSE_API Endocrine : public SEEndocrineSystem, public PulseSystem
+class PULSE_DECL Endocrine : public SEEndocrineSystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 class SEPatient;
 class SERespiratorySystem;
 
-class DLL_DECL SEPulmonaryFunctionTest : public SEPatientAssessment
+class CDM_DECL SEPulmonaryFunctionTest : public SEPatientAssessment
 {
 public:
 
@@ -23,6 +23,8 @@ public:
   virtual ~SEPulmonaryFunctionTest();
 
   virtual void Clear();
+
+  virtual void SaveFile(const std::string& filename);
 
   static void Load(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst);
   static cdm::PulmonaryFunctionTestData* Unload(const SEPulmonaryFunctionTest& src);

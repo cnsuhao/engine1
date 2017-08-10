@@ -88,7 +88,10 @@ public class SEElectroCardioGramWaveformList
     }
     if(!leads.containsKey(rhythm))
     {
-      leads.put(rhythm, new SEElectroCardioGramWaveform());
+    	SEElectroCardioGramWaveform waveform = new SEElectroCardioGramWaveform();
+    	waveform.setLead(lead);
+    	waveform.setRhythm(rhythm);
+      leads.put(rhythm, waveform);
     }
     return leads.get(rhythm);
   }

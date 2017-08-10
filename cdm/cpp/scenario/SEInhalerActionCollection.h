@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 #include "system/equipment/Inhaler/SEInhaler.h"
 #include "system/equipment/Inhaler/actions/SEInhalerConfiguration.h"
 
-class DLL_DECL SEInhalerActionCollection : public Loggable
+class CDM_DECL SEInhalerActionCollection : public Loggable
 {
   friend class SEActionManager;
 protected:

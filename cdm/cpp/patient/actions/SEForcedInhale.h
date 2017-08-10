@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/actions/SEConsciousRespirationCommand.h"
 
-class DLL_DECL SEForcedInhale : public SEConsciousRespirationCommand
+class CDM_DECL SEForcedInhale : public SEConsciousRespirationCommand
 {
   friend class SEConsciousRespiration;
   SEForcedInhale();

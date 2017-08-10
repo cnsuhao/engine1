@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/actions/SEChestCompression.h"
 
-class DLL_DECL SEChestCompressionForce : public SEChestCompression
+class CDM_DECL SEChestCompressionForce : public SEChestCompression
 {
 public:
 

@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SEPatientAssessment.h"
 class SEBloodChemistrySystem;
 
-class DLL_DECL SECompleteBloodCount : public SEPatientAssessment
+class CDM_DECL SECompleteBloodCount : public SEPatientAssessment
 {
 public:
 
@@ -22,6 +22,8 @@ public:
   virtual ~SECompleteBloodCount();
 
   virtual void Clear(); //clear memory
+
+  virtual void SaveFile(const std::string& filename);
 
   static void Load(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst);
   static cdm::CompleteBloodCountData* Unload(const SECompleteBloodCount& src);

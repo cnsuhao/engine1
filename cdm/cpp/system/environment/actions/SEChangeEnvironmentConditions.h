@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
 
-class DLL_DECL SEChangeEnvironmentConditions : public SEEnvironmentAction
+class CDM_DECL SEChangeEnvironmentConditions : public SEEnvironmentAction
 {
 public:
 

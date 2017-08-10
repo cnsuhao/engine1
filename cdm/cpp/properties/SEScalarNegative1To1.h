@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL SEScalarNegative1To1 : public SEScalar
+class CDM_DECL SEScalarNegative1To1 : public SEScalar
 {
 
 public:

@@ -19,6 +19,8 @@ import java.util.Set;
 
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.Properties.eSide;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 import com.kitware.physiology.cdm.Scenario.AnyActionData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
 import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
@@ -26,6 +28,7 @@ import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
 import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.actions.SEAdvanceTime;
 import mil.tatrc.physiology.datamodel.datarequests.*;
+import mil.tatrc.physiology.datamodel.patient.actions.SENeedleDecompression;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.utilities.FileUtils;
@@ -40,20 +43,41 @@ public class SEScenario
     mgr.loadSubstanceDirectory();
     
     {
-    SEScenario s = new SEScenario(mgr);
-    s.setName("Test");
-    s.setDescription("Description");
-    s.getInitialParameters().setPatientFile("StandardMale.pba");
-    SEDataRequest dr = new SEDataRequest();
-    dr.setCategory(eCategory.Physiology);
-    dr.setPropertyName("Weight");
-    dr.setUnit("kg");
-    dr.setPrecision(1);
-    s.getDataRequestManager().getRequestedData().add(dr);
-    SEAdvanceTime adv = new SEAdvanceTime();
-    adv.getTime().setValue(320,TimeUnit.s);
-    s.getActions().add(adv);
-    System.out.println(SEScenario.unload(s).toString());
+    	SEScenario s = new SEScenario(mgr);
+    	s.setName("Test");
+    	s.setDescription("Description");
+    	s.getInitialParameters().setPatientFile("StandardMale.pba");
+    	SEDataRequest dr = new SEDataRequest();
+    	dr.setCategory(eCategory.Physiology);
+    	dr.setPropertyName("Weight");
+    	dr.setUnit("kg");
+    	dr.setPrecision(1);
+    	s.getDataRequestManager().getRequestedData().add(dr);
+    	SEAdvanceTime adv = new SEAdvanceTime();
+    	adv.getTime().setValue(320,TimeUnit.s);
+    	s.getActions().add(adv);
+    	SENeedleDecompression nd = new SENeedleDecompression();
+    	nd.setState(eSwitch.On);
+    	nd.setSide(eSide.Left);
+    	s.getActions().add(nd);
+    	System.out.println(SEScenario.unload(s).toString());
+    	s.writeFile("TestScenario.pba");
+
+    	SEScenario s2 = new SEScenario(mgr);
+    	try 
+    	{
+    		s2.readFile("TestScenario.pba");
+    	} 
+    	catch (ParseException e) 
+    	{
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+    	for(SEAction a : s2.getActions())
+    	{
+    		System.out.println(a.toString());
+    		System.out.println();
+    	}
     }
     
     boolean onlyCheckSchema=true;
@@ -133,7 +157,6 @@ public class SEScenario
   protected String                        name;
   protected String                        description;
   protected SEScenarioInitialParameters   params;
-  protected SEScenarioAutoSerialization   autoSerialize;
   protected String                        engineStateFile;
   protected SEDataRequestManager          drMgr = new SEDataRequestManager();
   protected List<SEAction>                actions = new ArrayList<SEAction>();
@@ -148,11 +171,10 @@ public class SEScenario
   
   public void reset() 
   {
-    this.name          = "";
-    this.description   = "";
-    this.params        = null;
-    this.autoSerialize = null;
-    this.engineStateFile   = null;
+    this.name            = "";
+    this.description     = "";
+    this.params          = null;
+    this.engineStateFile = null;
     this.actions.clear();    
     this.drMgr.reset();
   }
@@ -184,9 +206,6 @@ public class SEScenario
       SEScenarioInitialParameters.load(src.getInitialParameters(),dst.getInitialParameters(),dst.subMgr);
     }
     
-    if(src.hasAutoSerialization())
-      SEScenarioAutoSerialization.load(src.getAutoSerialization(), dst.getAutoSerialization());
-    
     if(src.hasDataRequestManager())
       SEDataRequestManager.load(src.getDataRequestManager(), dst.getDataRequestManager());
    
@@ -213,9 +232,6 @@ public class SEScenario
       dst.setInitialParameters(SEScenarioInitialParameters.unload(src.params));
     else if(src.hasEngineState())
       dst.setEngineStateFile(src.engineStateFile);
-    
-    if(src.hasAutoSerialization())
-      dst.setAutoSerialization(SEScenarioAutoSerialization.unload(src.autoSerialize));
     
     if(!src.drMgr.getRequestedData().isEmpty())
       dst.setDataRequestManager(SEDataRequestManager.unload(src.drMgr));
@@ -299,21 +315,6 @@ public class SEScenario
     this.params = null;
   }
   
-  public boolean hasAutoSerialization()
-  {
-    return autoSerialize!=null && autoSerialize.isValid();
-  }
-  public SEScenarioAutoSerialization getAutoSerialization()
-  {
-    if(this.autoSerialize==null)
-      this.autoSerialize=new SEScenarioAutoSerialization();
-    return this.autoSerialize;
-  }
-  public void invalidateAutoSerialization()
-  {
-    this.autoSerialize = null;
-  }
-
   public List<SEAction> getActions() 
   {
     return actions;

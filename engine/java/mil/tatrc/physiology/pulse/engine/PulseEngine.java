@@ -9,11 +9,13 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-package mil.tatrc.physiology.biogears.engine;
+package mil.tatrc.physiology.pulse.engine;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.kitware.physiology.pulse.Engine.StateData;
 
 import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.conditions.SECondition;
@@ -29,11 +31,11 @@ import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 
-public class BioGearsEngine extends BioGears
+public class PulseEngine extends Pulse
 {
   protected boolean deadEngine = false;
   
-  public BioGearsEngine()
+  public PulseEngine()
   {
     super();
   }
@@ -81,20 +83,20 @@ public class BioGearsEngine extends BioGears
       return false;
     }
     Object bind = CDMSerializer.readFile(stateFile);
-    if(!(bind instanceof BioGearsStateData))
+    if(!(bind instanceof StateData))
     {
-      Log.error(stateFile +" is not an instance of BioGearsStateData"); 
+      Log.error(stateFile +" is not an instance of StateData"); 
       return false;
     }
     return nativeLoadState(this.nativeObj, stateFile, simTime_s, dataRequestsXML);
   }
   
-  public synchronized BioGearsStateData saveState(String stateFile)
+  public synchronized StateData saveState(String stateFile)
   {
     String xml = nativeSaveState(this.nativeObj, stateFile);
     Object bind = CDMSerializer.serialize(xml);
-    if(bind instanceof BioGearsStateData)
-      return (BioGearsStateData)bind;
+    if(bind instanceof StateData)
+      return (StateData)bind;
     Log.error("State did not save");
     return null;
   }

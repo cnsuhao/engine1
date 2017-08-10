@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/cdm/Patient.pb.h"
 #include "bind/cdm/AnesthesiaMachine.pb.h"
 
-class DLL_DECL SEEventHandler : public Loggable
+class CDM_DECL SEEventHandler : public Loggable
 {
 public:
   SEEventHandler(Logger* logger) : Loggable(logger) {};

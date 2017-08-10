@@ -16,7 +16,7 @@ class SESubstanceManager;
 class SEAnesthesiaMachine;
 #include "bind/cdm/AnesthesiaMachine.pb.h"
 
-class DLL_DECL SEAnesthesiaMachineChamber : Loggable
+class CDM_DECL SEAnesthesiaMachineChamber : Loggable
 {
 protected:
   friend SEAnesthesiaMachine;

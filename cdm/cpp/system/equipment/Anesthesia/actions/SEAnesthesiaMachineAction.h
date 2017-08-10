@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/cdm/AnesthesiaMachineActions.pb.h"
 #include "substance/SESubstanceManager.h"
 
-class DLL_DECL SEAnesthesiaMachineAction : public SEAction
+class CDM_DECL SEAnesthesiaMachineAction : public SEAction
 {
 public:
 

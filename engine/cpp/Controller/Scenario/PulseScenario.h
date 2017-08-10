@@ -11,19 +11,36 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
+#include "bind/engine/Engine.pb.h"
 #include "scenario/SEScenario.h"
-#include "Controller/Scenario/PulseScenarioInitialParameters.h"
+#include "Controller/PulseConfiguration.h"
 
 /**
 * @brief A Pulse specific scenario (i.e. holds a %Pulse configuration object)
 */
-class PULSE_API PulseScenario : public SEScenario
+class PULSE_DECL PulseScenario : public SEScenario
 {
 public:
 
   PulseScenario(SESubstanceManager& subMgr);
   virtual ~PulseScenario();
+
+  virtual void Clear();
+
+  bool LoadFile(const std::string& scenarioFile);
+
+  static void Load(const pulse::ScenarioData& src, PulseScenario& dst);
+  static pulse::ScenarioData* Unload(const PulseScenario& src);
+protected:
+  static void Serialize(const pulse::ScenarioData& src, PulseScenario& dst);
+  static void Serialize(const PulseScenario& src, pulse::ScenarioData& dst);
   
-  virtual PulseScenarioInitialParameters& GetInitialParameters();
-  virtual const PulseScenarioInitialParameters* GetInitialParameters() const;
+public:
+  virtual PulseConfiguration& GetConfiguration();
+  virtual const PulseConfiguration* GetConfiguration() const;
+  virtual bool HasConfiguration() const;
+  virtual void InvalidateConfiguration();
+
+protected:
+  PulseConfiguration*         m_Configuration;
 };

@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceConcentration.h"
 
-class DLL_DECL SEEnvironmentalConditions : public Loggable
+class CDM_DECL SEEnvironmentalConditions : public Loggable
 {
 protected:
   friend class SEEnvironment;

@@ -40,9 +40,9 @@ specific language governing permissions and limitations under the License.
 
 #endif
 
-bool DLL_DECL CreateFilePath(const std::string&);
-std::string DLL_DECL Replace(const std::string& original, const std::string& replace, const std::string& withThis);
-void DLL_DECL ListFiles(const std::string& dir, std::vector<std::string>& files, const std::string& mask = "");
-std::string DLL_DECL GetCurrentWorkingDirectory();
-void DLL_DECL DeleteDirectory(const std::string &dir, bool bDeleteSubdirectories=true);
-bool DLL_DECL IsDirectory(struct dirent* ent);
+bool CDM_DECL CreateFilePath(const std::string&);
+std::string CDM_DECL Replace(const std::string& original, const std::string& replace, const std::string& withThis);
+void CDM_DECL ListFiles(const std::string& dir, std::vector<std::string>& files, const std::string& mask = "");
+std::string CDM_DECL GetCurrentWorkingDirectory();
+void CDM_DECL DeleteDirectory(const std::string &dir, bool bDeleteSubdirectories=true);
+bool CDM_DECL IsDirectory(struct dirent* ent);

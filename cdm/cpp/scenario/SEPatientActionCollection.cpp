@@ -626,7 +626,7 @@ bool SEPatientActionCollection::HasChestOcclusiveDressing() const
 }
 bool SEPatientActionCollection::HasLeftChestOcclusiveDressing() const
 {
-  return m_LeftChestOcclusiveDressing != nullptr ? true : m_LeftChestOcclusiveDressing->IsActive();
+  return m_LeftChestOcclusiveDressing == nullptr ? false : m_LeftChestOcclusiveDressing->IsActive();
 }
 SEChestOcclusiveDressing* SEPatientActionCollection::GetLeftChestOcclusiveDressing() const
 {
@@ -638,7 +638,7 @@ void SEPatientActionCollection::RemoveLeftChestOcclusiveDressing()
 }
 bool SEPatientActionCollection::HasRightChestOcclusiveDressing() const
 {
-  return m_RightChestOcclusiveDressing != nullptr ? true : m_RightChestOcclusiveDressing->IsActive();
+  return m_RightChestOcclusiveDressing == nullptr ? false : m_RightChestOcclusiveDressing->IsActive();
 }
 SEChestOcclusiveDressing* SEPatientActionCollection::GetRightChestOcclusiveDressing() const
 {

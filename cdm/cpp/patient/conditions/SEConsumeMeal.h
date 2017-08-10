@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/conditions/SEPatientCondition.h"
 #include "patient/SEMeal.h"
 
-class DLL_DECL SEConsumeMeal : public SEPatientCondition
+class CDM_DECL SEConsumeMeal : public SEPatientCondition
 {
 public:
 

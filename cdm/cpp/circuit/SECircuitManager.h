@@ -43,7 +43,7 @@ public:
 #define FLUID_LEDGER_TYPES SEFluidCircuitNode,SEFluidCircuitPath,SEFluidCircuit
 #define THERMAL_LEDGER_TYPES SEThermalCircuitNode,SEThermalCircuitPath,SEThermalCircuit
 
-class DLL_DECL SECircuitManager : public Loggable
+class CDM_DECL SECircuitManager : public Loggable
 {
 public:
   SECircuitManager(Logger* logger);
@@ -51,6 +51,7 @@ public:
 
   virtual void Clear(); //clear memory
 
+  virtual void StateChange() { };
   bool LoadFile(const std::string& filename);
   void SaveFile(const std::string& filename);
 

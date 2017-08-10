@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "bind/cdm/ElectroCardioGram.pb.h"
 
-class DLL_DECL SEElectroCardioGramWaveform : public Loggable
+class CDM_DECL SEElectroCardioGramWaveform : public Loggable
 {
 public:
 

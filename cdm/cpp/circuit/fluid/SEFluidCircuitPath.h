@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarVolume.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 
-class DLL_DECL SEFluidCircuitPath : public SECircuitPath<FLUID_CIRCUIT_PATH>
+class CDM_DECL SEFluidCircuitPath : public SECircuitPath<FLUID_CIRCUIT_PATH>
 {
   friend class SECircuitManager;  
 protected:

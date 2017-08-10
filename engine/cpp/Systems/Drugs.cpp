@@ -63,7 +63,6 @@ void Drugs::Clear()
   m_liverVascular    = nullptr;
   m_liverTissue      = nullptr;
   m_IVToVenaCava     = nullptr;
-  DELETE_MAP_SECOND(m_BolusAdministrations);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -87,64 +86,28 @@ void Drugs::Initialize()
   GetTubularPermeabilityChange().SetValue(0);
 }
 
-void Drugs::Load(const pulse::DrugsSystemData& src, Drugs& dst)
+void Drugs::Load(const pulse::DrugSystemData& src, Drugs& dst)
 {
   Drugs::Serialize(src, dst);
   dst.SetUp();
 }
-void Drugs::Serialize(const pulse::DrugsSystemData& src, Drugs& dst)
+void Drugs::Serialize(const pulse::DrugSystemData& src, Drugs& dst)
 {
 
 }
 
-pulse::DrugsSystemData* Drugs::Unload(const Drugs& src)
+pulse::DrugSystemData* Drugs::Unload(const Drugs& src)
 {
 
-  pulse::DrugsSystemData* dst = new pulse::DrugsSystemData();
+  pulse::DrugSystemData* dst = new pulse::DrugSystemData();
   Drugs::Serialize(src, *dst);
   return dst;
 }
-void Drugs::Serialize(const Drugs& src, pulse::DrugsSystemData& dst)
+void Drugs::Serialize(const Drugs& src, pulse::DrugSystemData& dst)
 {
 
 }
 
-bool Drugs::Load(const CDM::PulseDrugSystemData& in)
-{
-  if (!SEDrugSystem::Load(in))
-    return false;
-  PulseSystem::LoadState();
-  for (const CDM::SubstanceBolusStateData& bData : in.BolusAdministration())
-  {
-    SESubstance* sub = m_data.GetSubstances().GetSubstance(bData.Substance());
-    if (sub == nullptr)
-    {
-      /// \error Error: Unable to find substance for IV bolus administration
-      m_ss << "Unable to find substance " << bData.Substance();
-      Error(m_ss, "Drugs::Load::BolusAdministration");
-      return false;
-    }
-    SESubstanceBolusState* bolusState = new SESubstanceBolusState(*sub);
-    m_BolusAdministrations[sub] = bolusState;
-    bolusState->Load(bData);
-  }
-  return true;
-}
-CDM::PulseDrugSystemData* Drugs::Unload() const
-{
-  CDM::PulseDrugSystemData* data = new CDM::PulseDrugSystemData();
-  Unload(*data);
-  return data;
-}
-void Drugs::Unload(CDM::PulseDrugSystemData& data) const
-{
-  SEDrugSystem::Unload(data);
-  for (auto itr : m_BolusAdministrations)
-  {
-    if(itr.second != nullptr)
-      data.BolusAdministration().push_back(std::unique_ptr<CDM::SubstanceBolusStateData>(itr.second->Unload()));
-  }
-}
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -163,7 +126,6 @@ void Drugs::SetUp()
   m_liverVascular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver);
   m_liverTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Liver);
   m_IVToVenaCava = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(BGE::CardiovascularPath::IVToVenaCava);
-  DELETE_MAP_SECOND(m_BolusAdministrations);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -245,12 +207,7 @@ void Drugs::AdministerSubstanceBolus()
   {    
     sub = b.first;
     bolus = b.second;
-    bolusState = m_BolusAdministrations[b.first];
-    if (bolusState == nullptr)
-    {
-      bolusState = new SESubstanceBolusState(*b.first);
-      m_BolusAdministrations[b.first] = bolusState;     
-    }
+    bolusState = &bolus->GetState();
     dose_mL = bolus->GetDose().GetValue(VolumeUnit::mL);
     if (bolusState->GetAdministeredDose().GetValue(VolumeUnit::mL)>=dose_mL)
     {
@@ -288,11 +245,7 @@ void Drugs::AdministerSubstanceBolus()
   }
   // Remove any bolus that are complete
   for (const SESubstance* s : completedBolus)
-  {
     m_data.GetActions().GetPatientActions().RemoveSubstanceBolus(*s);
-    delete m_BolusAdministrations[s];
-    m_BolusAdministrations[s] = nullptr;
-  }
 }
 
 //--------------------------------------------------------------------------------------------------

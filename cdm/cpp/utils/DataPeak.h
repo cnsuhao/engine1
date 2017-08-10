@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
  * Note: I wrote this for finding peaks on well behaved sinusoidal data. 
  *       I have some Ideas in the comments if the data is not as well behaved.
  */ 
-class DLL_DECL DataPeak
+class CDM_DECL DataPeak
 {
 public:
   

@@ -19,7 +19,7 @@ class SETestSuite;
 // Each value in the array is compared and can be tracked
 // and this provides a summary of how many values in the array
 // were wrong and some statistics to go along with all of those errors
-class DLL_DECL SETestErrorStatistics : public Loggable
+class CDM_DECL SETestErrorStatistics : public Loggable
 {
   friend SETestCase;
   friend SETestSuite;

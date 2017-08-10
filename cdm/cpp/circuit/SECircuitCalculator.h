@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 #define CIRCUIT_CALCULATOR_TYPES CircuitType,NodeType,PathType,CapacitanceUnit,FluxUnit,InductanceUnit,PotentialUnit,QuantityUnit,ResistanceUnit
 
 // These are the Eigen Solvers we can use for solving our circuits
-struct DLL_DECL EigenCircuitSolver
+struct CDM_DECL EigenCircuitSolver
 {
   enum Type { Direct, PartialPivLu, FullPivLu, JacobiSvd, HouseholderQr, Ldlt, Llt, SparseLU, SparseQR, BiCGSTAB, ConjugateGradient };
   SMART_ENUM(EigenCircuitSolver, Type, 11);

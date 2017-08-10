@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "scenario/SEDataRequest.h"
 
-class DLL_DECL SEDataRequestManager : public Loggable
+class CDM_DECL SEDataRequestManager : public Loggable
 {
 public:
   SEDataRequestManager(Logger* logger);

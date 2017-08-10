@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 /**
  * @brief The %Environment class characterizes the environment and manages interactions between the body its surroundings.
  */  
-class PULSE_API Environment : public SEEnvironment, public PulseSystem
+class PULSE_DECL Environment : public SEEnvironment, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

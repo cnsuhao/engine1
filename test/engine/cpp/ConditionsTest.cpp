@@ -61,12 +61,12 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
       SETestCase& testCase = testSuite.CreateTestCase();
       log.Info(ss);
       std::unique_ptr<PhysiologyEngine> physEng = CreatePulseEngine(&log);
-      if (!physEng->InitializeEngine("StandardMale.xml",&sceConditions))
+      if (!physEng->InitializeEngine("StandardMale.pba",&sceConditions))
       {
         testCase.AddFailure("Unable to stabilize condition permutation");
       }  
     }
   }
-  testReport.WriteFile("ConditionsPermutationsReport.xml");
+  testReport.WriteFile("ConditionsPermutationsReport.pba");
   DELETE_VECTOR(testConditions);
 }

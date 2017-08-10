@@ -90,75 +90,6 @@ void PulseCompartments::Clear()
   m_IntracellularFluid.clear();
 }
 
-bool PulseCompartments::Load(const CDM::CompartmentManagerData& in, SECircuitManager* circuits)
-{
-  if (!SECompartmentManager::Load(in, circuits))
-    return false;
-
-  m_CombinedCardiovascularGraph = GetLiquidGraph(BGE::Graph::ActiveCardiovascular);
-  if (m_CombinedCardiovascularGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::ActiveCardiovascular));
-    return false;
-  }
-  m_CardiovascularGraph = GetLiquidGraph(BGE::Graph::Cardiovascular);
-  if (m_CardiovascularGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::Cardiovascular));
-    return false;
-  }
-  m_RenalGraph = GetLiquidGraph(BGE::Graph::Renal);
-  if (m_RenalGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::Renal));
-    return false;
-  }
-  m_RespiratoryGraph = GetGasGraph(BGE::Graph::Respiratory);
-  if (m_RespiratoryGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::Respiratory));
-    return false;
-  }
-  m_AnesthesiaMachineGraph = GetGasGraph(BGE::Graph::AnesthesiaMachine);
-  if (m_AnesthesiaMachineGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::AnesthesiaMachine));
-    return false;
-  }
-  m_CombinedRespiratoryAnesthesiaGraph = GetGasGraph(BGE::Graph::RespiratoryAndAnesthesiaMachine);
-  if (m_CombinedRespiratoryAnesthesiaGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::RespiratoryAndAnesthesiaMachine));
-    return false;
-  }
-  m_CombinedRespiratoryInhalerGraph = GetGasGraph(BGE::Graph::RespiratoryAndInhaler);
-  if (m_CombinedRespiratoryInhalerGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::RespiratoryAndInhaler));
-    return false;
-  }
-  m_AerosolGraph = GetLiquidGraph(BGE::Graph::Aerosol);
-  if (m_AerosolGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::Aerosol));
-    return false;
-  }
-  m_CombinedAerosolInhalerGraph = GetLiquidGraph(BGE::Graph::AerosolAndInhaler);
-  if (m_CombinedAerosolInhalerGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::AerosolAndInhaler));
-    return false;
-  }
-  m_CombinedRespiratoryMechanicalVentilatorGraph = GetGasGraph(BGE::Graph::RespiratoryAndMechanicalVentilator);
-  if (m_CombinedRespiratoryMechanicalVentilatorGraph == nullptr)
-  {
-    Error("Could not find required Graph " + std::string(BGE::Graph::RespiratoryAndMechanicalVentilator));
-    return false;
-  }
-
-  return true;
-}
-
 #define SORT_CMPTS(bin, type) \
 m_##bin##Compartments.clear(); \
 m_##bin##LeafCompartments.clear(); \
@@ -253,6 +184,57 @@ void PulseCompartments::StateChange()
   // (We could have removed it from the enum, but not deleted the code that makes it)
   // It would also be nice to have code that makes sure there are no compartments that are made, but NOT in the enums
   // Note, Tissue Enum list does not contain the Tissue Extracellular or Intracellular names, NO list does
+
+  m_CombinedCardiovascularGraph = GetLiquidGraph(BGE::Graph::ActiveCardiovascular);
+  if (m_CombinedCardiovascularGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::ActiveCardiovascular));
+  }
+  m_CardiovascularGraph = GetLiquidGraph(BGE::Graph::Cardiovascular);
+  if (m_CardiovascularGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::Cardiovascular));
+  }
+  m_RenalGraph = GetLiquidGraph(BGE::Graph::Renal);
+  if (m_RenalGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::Renal));
+  }
+  m_RespiratoryGraph = GetGasGraph(BGE::Graph::Respiratory);
+  if (m_RespiratoryGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::Respiratory));
+  }
+  m_AnesthesiaMachineGraph = GetGasGraph(BGE::Graph::AnesthesiaMachine);
+  if (m_AnesthesiaMachineGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::AnesthesiaMachine));
+  }
+  m_CombinedRespiratoryAnesthesiaGraph = GetGasGraph(BGE::Graph::RespiratoryAndAnesthesiaMachine);
+  if (m_CombinedRespiratoryAnesthesiaGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::RespiratoryAndAnesthesiaMachine));
+  }
+  m_CombinedRespiratoryInhalerGraph = GetGasGraph(BGE::Graph::RespiratoryAndInhaler);
+  if (m_CombinedRespiratoryInhalerGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::RespiratoryAndInhaler));
+  }
+  m_AerosolGraph = GetLiquidGraph(BGE::Graph::Aerosol);
+  if (m_AerosolGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::Aerosol));
+  }
+  m_CombinedAerosolInhalerGraph = GetLiquidGraph(BGE::Graph::AerosolAndInhaler);
+  if (m_CombinedAerosolInhalerGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::AerosolAndInhaler));
+  }
+  m_CombinedRespiratoryMechanicalVentilatorGraph = GetGasGraph(BGE::Graph::RespiratoryAndMechanicalVentilator);
+  if (m_CombinedRespiratoryMechanicalVentilatorGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(BGE::Graph::RespiratoryAndMechanicalVentilator));
+  }
 }
 
 void PulseCompartments::AddGasCompartmentSubstance(SESubstance& sub)

@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarEnergy.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
 
-class DLL_DECL SEThermalCircuitPath : public SECircuitPath<THERMAL_CIRCUIT_PATH>
+class CDM_DECL SEThermalCircuitPath : public SECircuitPath<THERMAL_CIRCUIT_PATH>
 {
   friend class SECircuitManager;  
 protected:

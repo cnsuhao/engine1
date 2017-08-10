@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL InverseVolumeUnit : public CCompoundUnit
+class CDM_DECL InverseVolumeUnit : public CCompoundUnit
 {
 public:
   InverseVolumeUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -26,7 +26,7 @@ public:
   static const InverseVolumeUnit Inverse_mL;
 };
 
-class DLL_DECL SEScalarInverseVolume : public SEScalarQuantity<InverseVolumeUnit>
+class CDM_DECL SEScalarInverseVolume : public SEScalarQuantity<InverseVolumeUnit>
 {
 public:
   SEScalarInverseVolume() {}

@@ -51,7 +51,7 @@ enum class EngineState { NotReady=0, Initialization, InitialStabilization, AtIni
 /**
 * @brief Manages and controls execution of all data/systems in %Pulse
 */
-class PULSE_API Pulse : public Loggable, protected LoggerForward
+class PULSE_DECL Pulse : public Loggable, protected LoggerForward
 {
   friend class PulseEngineTest;
   friend class PulseScenarioExec;
@@ -70,7 +70,7 @@ public:
   DataTrack&                              GetDataTrack();
   SaturationCalculator&                   GetSaturationCalculator() { return *m_SaturationCalculator; }
 
-  PulseSubstances&                     GetSubstances() { return *m_Substances; }
+  PulseSubstances&                        GetSubstances() { return *m_Substances; }
 
   SEPatient&                              GetPatient() { return *m_Patient; }
   bool                                    GetPatientAssessment(SEPatientAssessment& assessment);
@@ -129,7 +129,7 @@ protected:
   void SetupExternalTemperature();
   void SetupInternalTemperature();
 
-  bool Initialize(const SEEngineConfiguration* config);
+  bool Initialize(const PulseConfiguration* config);
   bool SetupPatient();
 
   // Notify systems that steady state has been achieved

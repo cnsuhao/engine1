@@ -61,7 +61,7 @@ bool SETimedStabilization::Stabilize(PhysiologyEngine& engine, const SEScalarTim
   m_Cancelled = false;
   std::stringstream ss;
   TimingProfile profiler;
-  Info("Initializing BioGears : 0%");
+  Info("Initializing Engine : 0%");
   if (m_LogProgress)
   {
     profiler.Start("Total");
@@ -115,7 +115,7 @@ bool SETimedStabilization::Stabilize(PhysiologyEngine& engine, const SEScalarTim
       if (i>Progress)
       {
         Progress += ProgressStep;
-        ss << "Initializing BioGears : " << (double)i / count * 100 << "% Complete";
+        ss << "Initializing Engine : " << (double)i / count * 100 << "% Complete";
         Info(ss);
       }
     }

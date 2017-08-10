@@ -152,7 +152,7 @@ public class MultiPlotter implements Plotter
     {
       XYSeries dataSeries;
       if(job.experimentalData != null)
-        dataSeries = plotTool.createXYSeries("BioGears "+job.Y1headers.get(i),data.get(job.X1header),data.get(job.Y1headers.get(i)));
+        dataSeries = plotTool.createXYSeries("Engine "+job.Y1headers.get(i),data.get(job.X1header),data.get(job.Y1headers.get(i)));
       else
         dataSeries = plotTool.createXYSeries(job.Y1headers.get(i),data.get(job.X1header),data.get(job.Y1headers.get(i)));
       dataSet1.addSeries(dataSeries);

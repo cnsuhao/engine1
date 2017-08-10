@@ -30,7 +30,7 @@ typedef std::map<std::string, std::vector<double>*>::iterator TrackMapItr;
 
 typedef std::map<std::string, SEDecimalFormat> FormattingMap;
 
-class DLL_DECL DataTrack : public Loggable
+class CDM_DECL DataTrack : public Loggable
 {
 public:
   DataTrack();

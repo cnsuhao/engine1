@@ -12,20 +12,19 @@ specific language governing permissions and limitations under the License.
  
 #pragma once
 
-#if defined (__clang__)
-    #define DLL_DECL
-    #define STL_DECL
-#elif defined(__gnu_linux__)
-    #define DLL_DECL __attribute__ ((visibility ("default")))
-    #define STL_DECL extern
-#else
-    #ifdef COMMONDATAMODEL_EXPORTS
-      #define DLL_DECL __declspec(dllexport)
-        #define STL_DECL
-    #else
-      #define DLL_DECL __declspec(dllimport)
-        #define STL_DECL extern
-    #endif
+#define CDM_DECL
+#ifdef SHARED_CDM
+  #if defined (__clang__)
+      #define CDM_DECL
+  #elif defined(__gnu_linux__)
+      #define CDM_DECL __attribute__ ((visibility ("default")))
+  #else
+      #ifdef SHARED_CDM
+        #define CDM_DECL __declspec(dllexport)
+      #else
+        #define CDM_DECL __declspec(dllimport)
+      #endif
+  #endif
 #endif
 
 #if (0)

@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstance.h"
 #include "properties/SEScalarMassPerVolume.h"
 
-SESubstanceBolus::SESubstanceBolus(const SESubstance& substance) : SESubstanceAdministration(), m_Substance(substance)
+SESubstanceBolus::SESubstanceBolus(const SESubstance& substance) : SESubstanceAdministration(), m_Substance(substance), m_State(substance)
 {
   m_AdminRoute=cdm::SubstanceBolusData_eAdministrationRoute_Intravenous;
   m_Dose=nullptr;
@@ -35,6 +35,7 @@ void SESubstanceBolus::Clear()
   SAFE_DELETE(m_Dose);
   SAFE_DELETE(m_Concentration);
   // m_Substance=nullptr; Keeping mapping!!
+  m_State.Clear();
 }
 
 bool SESubstanceBolus::IsValid() const
@@ -59,6 +60,8 @@ void SESubstanceBolus::Serialize(const cdm::SubstanceBolusData& src, SESubstance
     SEScalarVolume::Load(src.dose(), dst.GetDose());
   if (src.has_concentration())
     SEScalarMassPerVolume::Load(src.concentration(), dst.GetConcentration());
+  if (src.has_state())
+    SESubstanceBolusState::Load(src.state(), dst.m_State);
 }
 
 cdm::SubstanceBolusData* SESubstanceBolus::Unload(const SESubstanceBolus& src)
@@ -76,6 +79,7 @@ void SESubstanceBolus::Serialize(const SESubstanceBolus& src, cdm::SubstanceBolu
     dst.set_allocated_dose(SEScalarVolume::Unload(*src.m_Dose));
   if (src.HasConcentration())
     dst.set_allocated_concentration(SEScalarMassPerVolume::Unload(*src.m_Concentration));
+  dst.set_allocated_state(SESubstanceBolusState::Unload(src.m_State));
 }
 
 cdm::SubstanceBolusData_eAdministrationRoute SESubstanceBolus::GetAdminRoute() const
@@ -129,12 +133,17 @@ void SESubstanceBolus::ToString(std::ostream &str) const
 
 SESubstanceBolusState::SESubstanceBolusState(const SESubstance& sub) : m_Substance(sub)
 {
-  m_ElapsedTime.SetValue(0, TimeUnit::s);
-  m_AdministeredDose.SetValue(0, VolumeUnit::mL);
+  Clear();
 }
 SESubstanceBolusState::~SESubstanceBolusState()
 {
 
+}
+
+void SESubstanceBolusState::Clear()
+{
+  m_ElapsedTime.SetValue(0, TimeUnit::s);
+  m_AdministeredDose.SetValue(0, VolumeUnit::mL);
 }
 
 void SESubstanceBolusState::Load(const cdm::SubstanceBolusData_StateData& src, SESubstanceBolusState& dst)

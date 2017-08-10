@@ -21,7 +21,7 @@ specific language governing permissions and limitations under the License.
 * @brief 
 * Generic ECG machine to assess the heart rhythm.
 */
-class PULSE_API ECG : public SEElectroCardioGram, public PulseSystem
+class PULSE_DECL ECG : public SEElectroCardioGram, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

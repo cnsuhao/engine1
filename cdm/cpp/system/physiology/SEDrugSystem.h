@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/cdm/Physiology.pb.h"
 #include "system/physiology/SEPupillaryResponse.h"
 
-class DLL_DECL SEDrugSystem : public SESystem
+class CDM_DECL SEDrugSystem : public SESystem
 {
 public:
   SEDrugSystem(Logger* logger);

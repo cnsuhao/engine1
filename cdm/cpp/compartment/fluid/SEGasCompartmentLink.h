@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 
 class SEGasCompartment;
 
-class DLL_DECL SEGasCompartmentLink : public SEFluidCompartmentLink<SEGasTransportEdge, SEGasTransportVertex, SEGasCompartment>
+class CDM_DECL SEGasCompartmentLink : public SEFluidCompartmentLink<SEGasTransportEdge, SEGasTransportVertex, SEGasCompartment>
 {
   friend class SECompartmentManager;
 protected:

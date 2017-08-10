@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/actions/SEConsciousRespirationCommand.h"
 class SESubstance;
 
-class DLL_DECL SEUseInhaler : public SEConsciousRespirationCommand
+class CDM_DECL SEUseInhaler : public SEConsciousRespirationCommand
 {
   friend class SEConsciousRespiration;
   SEUseInhaler();

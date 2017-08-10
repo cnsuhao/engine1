@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/conditions/SEChronicHeartFailure.h"
 
-class DLL_DECL SEChronicVentricularSystolicDysfunction : public SEChronicHeartFailure
+class CDM_DECL SEChronicVentricularSystolicDysfunction : public SEChronicHeartFailure
 {
 public:
 

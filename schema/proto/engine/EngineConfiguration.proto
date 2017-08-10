@@ -3,6 +3,7 @@ package pulse;
 option java_package = "com.kitware.physiology.pulse";
 
 import "cdm/Properties.proto";
+import "cdm/Engine.proto";
 import "cdm/Environment.proto";
 import "cdm/PatientNutrition.proto";
 import "cdm/ElectroCardioGram.proto";
@@ -30,10 +31,10 @@ message ConfigurationData
   
   message BloodChemistryConfigurationData
   {
-    cdm.ScalarMassPerAmountData                        ResponseSlope                                         = 1;
-    cdm.ScalarVolumeData                               HeartRateDistributedTimeDelay                         = 2;
-    cdm.ScalarLengthData                               HeartElastanceDistributedTimeDelay                    = 3;
-    cdm.ScalarAreaPerTimePressureData                  SystemicResistanceDistributedTimeDelay                = 4;
+    cdm.ScalarMassPerAmountData                        MeanCorpuscularHemoglobin                             = 1;
+    cdm.ScalarVolumeData                               MeanCorpuscularVolume                                 = 2;
+    cdm.ScalarLengthData                               StandardDiffusionDistance                             = 3;
+    cdm.ScalarAreaPerTimePressureData                  StandardOxygenDiffusionCoefficient                    = 4;
   }
   
   message CardiovascularConfigurationData
@@ -139,17 +140,17 @@ message ConfigurationData
     cdm.ScalarMassPerVolumeData                        PlasmaSodiumConcentrationSetPoint                    = 2;
     
     cdm.ScalarAreaData                                 LeftGlomerularFilteringSurfaceAreaBaseline           = 3;
-    cdm.ScalarData                                     LeftGlomerularFluidPermeabilityBaseline              = 4;
+    cdm.ScalarVolumePerTimePressureAreaData            LeftGlomerularFluidPermeabilityBaseline              = 4;
     cdm.ScalarAreaData                                 LeftTubularReabsorptionFilteringSurfaceAreaBaseline  = 5;
-    cdm.ScalarData                                     LeftTubularReabsorptionFluidPermeabilityBaseline     = 6;
+    cdm.ScalarVolumePerTimePressureAreaData            LeftTubularReabsorptionFluidPermeabilityBaseline     = 6;
     
     cdm.ScalarFlowResistanceData                       MaximumAfferentResistance                            = 7;
     cdm.ScalarFlowResistanceData                       MinimumAfferentResistance                            = 8;
     
     cdm.ScalarAreaData                                 RightGlomerularFilteringSurfaceAreaBaseline          = 9;
-    cdm.ScalarData                                     RightGlomerularFluidPermeabilityBaseline             = 10;
+    cdm.ScalarVolumePerTimePressureAreaData            RightGlomerularFluidPermeabilityBaseline             = 10;
     cdm.ScalarAreaData                                 RightTubularReabsorptionFilteringSurfaceAreaBaseline = 11;
-    cdm.ScalarData                                     RightTubularReabsorptionFluidPermeabilityBaseline    = 12;
+    cdm.ScalarVolumePerTimePressureAreaData            RightTubularReabsorptionFluidPermeabilityBaseline    = 12;
     
     cdm.ScalarMassPerTimeData                          TargetSodiumDelivery                                 = 13;
   }
@@ -171,20 +172,28 @@ message ConfigurationData
     cdm.eSwitch                                        EnableTissue                                         = 1;
   }
   
-  cdm.eSwitch                                          WritePatientBaselineFile                             = 1;/**<< @brief Inform execution to write out patient object after stabilization completes. */
-  BaroreceptorConfigurationData                        BaroreceptorConfiguration                            = 2;
-  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 3;
-  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 4;
-  CircuitConfigurationData                             CircuitConfiguration                                 = 5;
-  ConstantsConfigurationData                           ConstantsConfiguration                               = 6;
-  DrugsConfigurationData                               DrugsConfiguration                                   = 7;
-  ECGConfigurationData                                 ECGConfiguration                                     = 8;
-  EnergyConfigurationData                              EnergyConfiguration                                  = 9;
-  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 10;
-  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 11;
-  NervousConfigurationData                             NervousConfiguration                                 = 12;
-  RenalConfigurationData                               RenalConfiguration                                   = 13;
-  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 14;
-  TissueConfigurationData                              TissueConfiguration                                  = 15;
+  cdm.ScalarTimeData                                   TimeStep                                             = 1;/**<< @brief */
+  oneof StabilizationCriteria
+  {
+    string                                             StabilizationFileName                                = 2;/**<< @brief */
+    cdm.TimedStabilizationData                         TimedStabilization                                   = 3;/**<< @brief */
+    cdm.DynamicStabilizationData                       DynamicStabilization                                 = 4;/**<< @brief */
+  }
+  cdm.eSwitch                                          WritePatientBaselineFile                             = 5;/**<< @brief Inform execution to write out patient object after stabilization completes. */
+  cdm.AutoSerializationData                            AutoSerialization                                    = 6;
+  BaroreceptorConfigurationData                        BaroreceptorConfiguration                            = 7;
+  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 8;
+  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 9;
+  CircuitConfigurationData                             CircuitConfiguration                                 = 10;
+  ConstantsConfigurationData                           ConstantsConfiguration                               = 11;
+  DrugsConfigurationData                               DrugsConfiguration                                   = 12;
+  ECGConfigurationData                                 ECGConfiguration                                     = 13;
+  EnergyConfigurationData                              EnergyConfiguration                                  = 14;
+  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 15;
+  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 16;
+  NervousConfigurationData                             NervousConfiguration                                 = 17;
+  RenalConfigurationData                               RenalConfiguration                                   = 18;
+  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 19;
+  TissueConfigurationData                              TissueConfiguration                                  = 20;
 }
  

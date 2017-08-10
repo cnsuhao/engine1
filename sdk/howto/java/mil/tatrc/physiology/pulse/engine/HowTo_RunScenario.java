@@ -25,26 +25,26 @@ import mil.tatrc.physiology.utilities.LogListener;
 
 public class HowTo_RunScenario
 {
-  // Create a callback object that BioGears will call at the specified update frequency.
+  // Create a callback object that Pulse will call at the specified update frequency.
   // Note the time provided refers to simulation time, not real time
   // For example, if you request a callback every second, it will be called
   // every time 1 second is simulated
   protected static class MyCallback extends CDMUpdatedCallback
   {
-    protected BioGears bg;
-    protected MyCallback(BioGears bg, double updateFrequency_s)
+    protected Pulse pe;
+    protected MyCallback(Pulse pe, double updateFrequency_s)
     {
       super(updateFrequency_s);
-      this.bg = bg;
+      this.pe = pe;
     }
     
     public void update(double time_s)
     {
-      // Note only the data requested (As a DataRequest) in the scenario file will be updated in the BioGears CDM objects
+      // Note only the data requested (As a DataRequest) in the scenario file will be updated in the Pulse CDM objects
       // All data is pulled from the engine at callback time, so when we get here, the CDM objects have the latest values      
-      Log.info("Heart Rate " + bg.cardiovascular.getHeartRate());
-      Log.info("Respiration Rate " + bg.respiratory.getRespirationRate());
-      Log.info("Total Lung Volume " + bg.respiratory.getTotalLungVolume());      
+      Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
+      Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
+      Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());      
     }    
   }
   
@@ -77,7 +77,7 @@ public class HowTo_RunScenario
   
   public static void main(String[] args)
   {
-    // Create a log file for this example (by default, a BioGears.log will be made)
+    // Create a log file for this example (by default, a Pulse.log will be made)
     // NOTE the engine will have its own log, so there is a Java log and an Engine log!!
     // You don't have to have a Java log, but if you want to, this is how you can do it.
     Log.setFileName("HowTo_StaticEngineDriver.log");
@@ -85,13 +85,13 @@ public class HowTo_RunScenario
     // i.e. in Java, multiple engines will write to the same log, where as in C++, each engine will write to its own log
     // The listener and callback objects are unique to this engine
     
-    // Create a BioGears Engine
-    BioGearsScenarioExec bge = new BioGearsScenarioExec();
+    // Create a Pulse Engine
+    PulseScenarioExec pe = new PulseScenarioExec();
         
     // I am going to create a listener that will get any log messages (Info, Warnings, Errors, Fatal Errors)
     // that come from the engine. The default listener will just put them into the log file
     // If you want to do custom logic that occurs when the engine throws an error (or any other message type), just create a class just like this one
-    bge.setListener(new MyListener());
+    pe.setListener(new MyListener());
     
     // Static Execution refers to fact that the engine is only going to execute and record outputs as defined in a predefined scenario file
     // You cannot request different data from the engine, and you cannot give any new actions to the engine.
@@ -100,10 +100,10 @@ public class HowTo_RunScenario
     // the name and location of a results file
     // an optional callback that will be called so you can get the latest data values and do some custom logic
     String xml = FileUtils.readFile("../verification/Scenarios/Basic/Basic1.xml");
-    bge.runScenario("./Scenarios/Basic/Basic1.log", xml,"./Scenarios/Basic/Basic1Results.txt", null);// No Callback, just write out the file
+    pe.runScenario("./Scenarios/Basic/Basic1.log", xml,"./Scenarios/Basic/Basic1Results.txt", null);// No Callback, just write out the file
     
     // You could create and provide an SEScenario object as well
-    SEScenario sce = new SEScenario(bge.substanceManager);
+    SEScenario sce = new SEScenario(pe.substanceManager);
     sce.setName("HowTo_StaticEngine");
     sce.setDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
     sce.getInitialParameters().setPatientFile("Standard.xml");
@@ -128,12 +128,12 @@ public class HowTo_RunScenario
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);
     sce.getActions().add(adv);
-    bge.runScenario("./Scenarios/HowToStaticEngine.log",sce,"./Scenarios/HowToStaticEngineResults.xml", new MyCallback(bge,1.0));// Callback with new data every simulated second
+    pe.runScenario("./Scenarios/HowToStaticEngine.log",sce,"./Scenarios/HowToStaticEngineResults.xml", new MyCallback(pe,1.0));// Callback with new data every simulated second
     
-    // Note if your engine is running in another thread, you can call bge.cancelScenario to halt the engine
+    // Note if your engine is running in another thread, you can call pe.cancelScenario to halt the engine
     
     // Be nice to your memory and deallocate the native memory associated with this engine if you are done with it
-    bge.cleanUp();
-    // Note you can now run a static (scenario) or another dynamic engine with the bge object, it will allocate and manage a new C++ engine 
+    pe.cleanUp();
+    // Note you can now run a static (scenario) or another dynamic engine with the pe object, it will allocate and manage a new C++ engine 
   }
 }

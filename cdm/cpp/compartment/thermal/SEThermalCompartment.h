@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "circuit/thermal/SEThermalCircuitNode.h"
 class SEThermalCompartmentLink;
 
-class DLL_DECL SEThermalCompartment : public SECompartment
+class CDM_DECL SEThermalCompartment : public SECompartment
 {
   friend class SECompartmentManager;
   template<typename CompartmentType, typename CompartmentLinkType> friend class SECompartmentGraph;

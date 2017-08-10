@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "bind/cdm/Physiology.pb.h"
 
-class DLL_DECL SEPupillaryResponse
+class CDM_DECL SEPupillaryResponse
 {
 public:
 

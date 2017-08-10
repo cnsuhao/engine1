@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL MassPerTimeUnit : public CCompoundUnit
+class CDM_DECL MassPerTimeUnit : public CCompoundUnit
 {
 public:
   MassPerTimeUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -32,7 +32,7 @@ public:
   static const MassPerTimeUnit kg_Per_s;
 };
 
-class DLL_DECL SEScalarMassPerTime : public SEScalarQuantity<MassPerTimeUnit>
+class CDM_DECL SEScalarMassPerTime : public SEScalarQuantity<MassPerTimeUnit>
 {
 public:
   SEScalarMassPerTime() {}

@@ -19,6 +19,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerVolume.h"
+#include <google/protobuf/text_format.h>
 
 SECompleteBloodCount::SECompleteBloodCount(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -48,6 +49,18 @@ void SECompleteBloodCount::Clear()
   SAFE_DELETE(m_MeanCorpuscularVolume);
   SAFE_DELETE(m_RedBloodCellCount);
   SAFE_DELETE(m_WhiteBloodCellCount);
+}
+
+void SECompleteBloodCount::SaveFile(const std::string& filename)
+{
+  std::string content;
+  cdm::CompleteBloodCountData* src = SECompleteBloodCount::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
+  ascii_ostream << content;
+  ascii_ostream.flush();
+  ascii_ostream.close();
+  delete src;
 }
 
 void SECompleteBloodCount::Load(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst)

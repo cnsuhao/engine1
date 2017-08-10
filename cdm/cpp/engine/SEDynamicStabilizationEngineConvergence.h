@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarTime.h"
 #include "bind/cdm/Engine.pb.h"
 
-class DLL_DECL SEDynamicStabilizationEngineConvergence : public Loggable
+class CDM_DECL SEDynamicStabilizationEngineConvergence : public Loggable
 {
   friend class SEDynamicStabilization;
 protected:

@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "utils/testing/SETestCase.h"
 class SETestReport;
 
-class DLL_DECL SETestSuite : public Loggable
+class CDM_DECL SETestSuite : public Loggable
 {
   friend SETestReport;
 protected:

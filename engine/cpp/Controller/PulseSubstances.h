@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 class SELiquidCompartment;
 class SETissueCompartment;
 
-class PULSE_API SizeIndependentDepositionEfficencyCoefficient
+class PULSE_DECL SizeIndependentDepositionEfficencyCoefficient
 {
   friend class PulseSubstances;
  public:
@@ -38,7 +38,7 @@ protected:
 /**
 * @brief Manages and initializes all systems with substances needed by %Pulse
 */
-class PULSE_API PulseSubstances : public SESubstanceManager
+class PULSE_DECL PulseSubstances : public SESubstanceManager
 {
   friend class PulseEngineTest;
 public:

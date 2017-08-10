@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarTemperature.h"
 
-class DLL_DECL SEThermalCircuitNode : public SECircuitNode<THERMAL_CIRCUIT_NODE>
+class CDM_DECL SEThermalCircuitNode : public SECircuitNode<THERMAL_CIRCUIT_NODE>
 {
   friend class SECircuitManager;  
 protected:

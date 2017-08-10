@@ -10,15 +10,15 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-package mil.tatrc.physiology.datamodel.scenario;
+package mil.tatrc.physiology.datamodel.engine;
 
 
+import com.kitware.physiology.cdm.Engine.AutoSerializationData;
 import com.kitware.physiology.cdm.Properties.eSwitch;
-import com.kitware.physiology.cdm.Scenario.ScenarioData;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
-public class SEScenarioAutoSerialization 
+public class SEAutoSerialization 
 {
   protected SEScalarTime period;
   protected eSwitch      periodTimeStamps;
@@ -27,7 +27,7 @@ public class SEScenarioAutoSerialization
   protected String       directory;
   protected String       filename;
   
-  public SEScenarioAutoSerialization()
+  public SEAutoSerialization()
   {
     reset();
   }
@@ -42,7 +42,7 @@ public class SEScenarioAutoSerialization
     this.filename = null;
   }
   
-  public static void load(ScenarioData.AutoSerializationData src, SEScenarioAutoSerialization dst)
+  public static void load(AutoSerializationData src, SEAutoSerialization dst)
   {
     dst.reset();
 
@@ -58,13 +58,13 @@ public class SEScenarioAutoSerialization
     	dst.setReloadState(src.getReloadState());
   }
   
-  public static ScenarioData.AutoSerializationData unload(SEScenarioAutoSerialization src)
+  public static AutoSerializationData unload(SEAutoSerialization src)
   {
-    ScenarioData.AutoSerializationData.Builder dst = ScenarioData.AutoSerializationData.newBuilder();
+    AutoSerializationData.Builder dst = AutoSerializationData.newBuilder();
     unload(src,dst);
     return dst.build();
   }  
-  protected static void unload(SEScenarioAutoSerialization src, ScenarioData.AutoSerializationData.Builder dst)
+  protected static void unload(SEAutoSerialization src, AutoSerializationData.Builder dst)
   {
     if (src.hasDirectory())
       dst.setDirectory(src.directory);

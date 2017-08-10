@@ -86,15 +86,7 @@ message ScenarioData
     repeated AnyConditionData      AnyCondition              = 3;
   }
   
-  message AutoSerializationData
-  {
-    string                         Directory                 = 1;/**<< @brief The location of the state file being written to. */
-    string                         Filename                  = 2;/**<< @brief The file name of the state file being written to. */
-    eSwitch                        AfterActions              = 3;/**<< @brief Save state after an action is added to the action manager, then again after it is processed. (These states are always time stamped.) */
-    ScalarTimeData                 Period                    = 4;/**<< @brief The frequency at which to write a file, 1s would write a file every second. 0 will not save out at all (if you wanted after actions only.) */    
-    eSwitch                        PeriodTimeStamps          = 5;/**<< @brief Put a time stamp at the end of the period state filename, Off will overwrite the same individual file, On will create new files every period, named with the simulation time. */
-    eSwitch                        ReloadState               = 6;/**<< @brief Load the data back into the engine, this is primarily used for testing */
-  }
+  
   
   string                           Name                      = 1;
   string                           Description               = 2;
@@ -103,7 +95,6 @@ message ScenarioData
     string                         EngineStateFile           = 3;
     InitialParametersData          InitialParameters         = 4;
   }
-  AutoSerializationData            AutoSerialization         = 5;
-  DataRequestManagerData           DataRequestManager        = 6;
-  repeated AnyActionData           AnyAction                 = 7;
+  DataRequestManagerData           DataRequestManager        = 5;
+  repeated AnyActionData           AnyAction                 = 6;
 }

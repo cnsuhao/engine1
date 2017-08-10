@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL FrequencyUnit : public CCompoundUnit
+class CDM_DECL FrequencyUnit : public CCompoundUnit
 {
 public:
   FrequencyUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -27,7 +27,7 @@ public:
   static const FrequencyUnit Hz;
 };
 
-class DLL_DECL SEScalarFrequency : public SEScalarQuantity<FrequencyUnit>
+class CDM_DECL SEScalarFrequency : public SEScalarQuantity<FrequencyUnit>
 {
 public:
   SEScalarFrequency() {}

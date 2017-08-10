@@ -16,7 +16,7 @@ class SESubstanceManager;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 
-class DLL_DECL GeneralMath
+class CDM_DECL GeneralMath
 {
 public:
   static void CalculateConcentration(const SEScalarMass& mass, const SEScalarVolume& volume, SEScalarMassPerVolume& concentration, Logger* logger = nullptr);

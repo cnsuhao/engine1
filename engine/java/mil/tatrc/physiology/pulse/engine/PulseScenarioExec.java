@@ -9,22 +9,21 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-package mil.tatrc.physiology.biogears.engine;
+package mil.tatrc.physiology.pulse.engine;
 
-import mil.tatrc.physiology.datamodel.datarequests.SEDataRequestManager;
 import mil.tatrc.physiology.datamodel.scenario.SEScenario;
 import mil.tatrc.physiology.datamodel.utilities.SEEventHandler;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
 
 /**
- * This is a class that will run a scenario through BioGears
+ * This is a class that will run a scenario through Pulse
  * and create it's results file. You could easily write your
  * own exec class that does what you want in between actions
  * but this may work for most of your needs.
  * @author abray
  */
-public class BioGearsScenarioExec extends BioGears
+public class PulseScenarioExec extends Pulse
 {
   public void runScenario(String logFile, SEScenario scenario, String resultsFile, CDMUpdatedCallback callback)
   {    

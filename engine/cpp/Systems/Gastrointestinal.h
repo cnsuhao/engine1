@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 /**
 * @brief @copydoc Physiology_GastrointestinalSystemData
 */
-class PULSE_API Gastrointestinal : public SEGastrointestinalSystem, public PulseSystem
+class PULSE_DECL Gastrointestinal : public SEGastrointestinalSystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

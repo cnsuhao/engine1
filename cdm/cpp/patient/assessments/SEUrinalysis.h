@@ -19,7 +19,7 @@ class SEPatient;
 class SERenalSystem;
 class SEAnatomy;
 
-class DLL_DECL SEUrinalysis : public SEPatientAssessment
+class CDM_DECL SEUrinalysis : public SEPatientAssessment
 {
 public:
 
@@ -27,6 +27,8 @@ public:
   virtual ~SEUrinalysis();
 
   virtual void Clear();
+
+  virtual void SaveFile(const std::string& filename);
 
   static void Load(const cdm::UrinalysisData& src, SEUrinalysis& dst);
   static cdm::UrinalysisData* Unload(const SEUrinalysis& src);

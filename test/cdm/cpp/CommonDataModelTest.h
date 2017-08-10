@@ -12,16 +12,20 @@
 #include "utils/testing/SETestSuite.h"
 
 
-#if defined(__clang__)
-#define TEST_DECL
-#elif defined(__gnu_linux__)
-#define TEST_DECL  __attribute__ ((visibility ("default")))
-#else
-#ifdef TEST_EXPORTS
-#define TEST_DECL __declspec(dllexport)
-#else
-#define TEST_DECL __declspec(dllimport)
-#endif
+
+#define CDM_TEST_DECL
+#ifdef SHARED_CDM_TEST
+  #if defined (__clang__)
+   #define CDM_TEST_DECL
+  #elif defined(__gnu_linux__)
+    #define CDM_TEST_DECL __attribute__ ((visibility ("default")))
+  #else
+    #ifdef SHARED_CDM_TEST
+      #define CDM_TEST_DECL __declspec(dllexport)
+    #else
+      #define CDM_TEST_DECL __declspec(dllimport)
+    #endif
+  #endif
 #endif
 
 enum enumCDMTestSourceType
@@ -32,7 +36,7 @@ enum enumCDMTestSourceType
   ZEROCENTEREDSIN
 };
 
-class TEST_DECL CommonDataModelTest : public Loggable
+class CDM_TEST_DECL CommonDataModelTest : public Loggable
 {
 public:
   CommonDataModelTest();

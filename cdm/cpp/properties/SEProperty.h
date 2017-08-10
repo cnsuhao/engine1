@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-class DLL_DECL SEProperty
+class CDM_DECL SEProperty
 {
 protected:
 

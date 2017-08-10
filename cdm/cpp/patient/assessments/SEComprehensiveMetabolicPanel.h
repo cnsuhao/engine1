@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SEPatientAssessment.h"
 class SEBloodChemistrySystem;
 
-class DLL_DECL SEComprehensiveMetabolicPanel : public SEPatientAssessment
+class CDM_DECL SEComprehensiveMetabolicPanel : public SEPatientAssessment
 {
 public:
 
@@ -22,6 +22,8 @@ public:
   virtual ~SEComprehensiveMetabolicPanel();
 
   virtual void Clear(); //clear memory
+
+  virtual void SaveFile(const std::string& filename);
 
   static void Load(const cdm::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst);
   static cdm::ComprehensiveMetabolicPanelData* Unload(const SEComprehensiveMetabolicPanel& src);

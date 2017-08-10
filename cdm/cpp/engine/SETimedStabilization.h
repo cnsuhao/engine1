@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "engine/SEEngineStabilization.h"
 #include "properties/SEScalarTime.h"
 
-class DLL_DECL SETimedStabilization : public SEEngineStabilization
+class CDM_DECL SETimedStabilization : public SEEngineStabilization
 {
 public:
   SETimedStabilization(Logger* logger);

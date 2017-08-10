@@ -62,6 +62,7 @@ void SECircuitManager::SaveFile(const std::string& filename)
 void SECircuitManager::Load(const cdm::CircuitManagerData& src, SECircuitManager& dst)
 {
   SECircuitManager::Serialize(src, dst);
+  dst.StateChange();
 }
 void SECircuitManager::Serialize(const cdm::CircuitManagerData& src, SECircuitManager& dst)
 {

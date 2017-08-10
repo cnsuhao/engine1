@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 
 #include "CommonDataModel.h"
 
-class DLL_DECL ScopedMutex
+class CDM_DECL ScopedMutex
 {
 public:
   ScopedMutex();

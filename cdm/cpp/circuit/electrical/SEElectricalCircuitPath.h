@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarElectricCharge.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
 
-class DLL_DECL SEElectricalCircuitPath : public SECircuitPath<SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge>
+class CDM_DECL SEElectricalCircuitPath : public SECircuitPath<SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge>
 {
   friend class SECircuitManager;  
 protected:

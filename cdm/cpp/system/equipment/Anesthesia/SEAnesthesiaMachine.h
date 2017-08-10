@@ -20,7 +20,7 @@ class SEAnesthesiaMachineOxygenBottle;
 class SEAnesthesiaMachineConfiguration;
 class Serializer;
 
-class DLL_DECL SEAnesthesiaMachine : public SESystem
+class CDM_DECL SEAnesthesiaMachine : public SESystem
 {
 protected:
   friend SEAnesthesiaMachineConfiguration;

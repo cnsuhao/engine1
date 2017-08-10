@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 class SEAnesthesiaMachine;
 class SESubstanceManager;
 
-class DLL_DECL SEAnesthesiaMachineConfiguration : public SEAnesthesiaMachineAction
+class CDM_DECL SEAnesthesiaMachineConfiguration : public SEAnesthesiaMachineAction
 {
 public:
 

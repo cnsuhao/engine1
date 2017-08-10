@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 
 // Book keeping class that tracks all the properties and if their convergent state
-class DLL_DECL SEDynamicStabilizationLedger : public Loggable
+class CDM_DECL SEDynamicStabilizationLedger : public Loggable
 {
 public:
   SEDynamicStabilizationLedger(double timeStep_s, const SEDynamicStabilizationEngineConvergence& convergence);

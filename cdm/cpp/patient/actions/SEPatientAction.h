@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "scenario/SEAction.h"
 #include "bind/cdm/PatientActions.pb.h"
 
-class DLL_DECL SEPatientAction : public SEAction
+class CDM_DECL SEPatientAction : public SEAction
 {
 public:
 

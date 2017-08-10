@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 class SECircuitManager;
 #include "bind/cdm/Compartment.pb.h"
 
-class DLL_DECL SECompartmentLink : public Loggable
+class CDM_DECL SECompartmentLink : public Loggable
 {
 protected:
   SECompartmentLink(const std::string& nam, Logger* logger);

@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 
 enum class BalanceGasBy { Volume, VolumeFraction };
 
-class DLL_DECL SEGasCompartment : public SEFluidCompartment<SEGasCompartmentLink, SEGasTransportVertex, SEGasTransportSubstance, SEGasSubstanceQuantity>
+class CDM_DECL SEGasCompartment : public SEFluidCompartment<SEGasCompartmentLink, SEGasTransportVertex, SEGasTransportSubstance, SEGasSubstanceQuantity>
 {
   friend class SECompartmentManager;
 protected:

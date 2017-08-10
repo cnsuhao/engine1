@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "bind/cdm/Environment.pb.h"
 
-class DLL_DECL SEAppliedTemperature : public Loggable
+class CDM_DECL SEAppliedTemperature : public Loggable
 {
 public:
 

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEHistogram.h"
 
-class DLL_DECL SEHistogramFractionVsLength : public SEHistogram
+class CDM_DECL SEHistogramFractionVsLength : public SEHistogram
 {
 public:
 

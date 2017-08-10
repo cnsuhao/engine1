@@ -22,7 +22,7 @@ specific language governing permissions and limitations under the License.
  * Drug transvascular transport is modeled with a physiologically-based pharmacokinetic (PBPK) model,
  * and the physiologic effects on the body are modeled with a low-fidelity pharmacodynamic (PD) model.
  */  
-class PULSE_API Drugs : public SEDrugSystem, public PulseSystem
+class PULSE_DECL Drugs : public SEDrugSystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;
@@ -63,9 +63,6 @@ protected:
   void CalculateSubstanceClearance();
   void CalculatePlasmaSubstanceConcentration();
   void CalculateDrugEffects();
-
-  // Serializable member variables (Set in Initialize and in schema)
-  std::map<const SESubstance*, SESubstanceBolusState*> m_BolusAdministrations;
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;

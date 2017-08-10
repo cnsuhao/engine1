@@ -1111,7 +1111,7 @@ void Respiratory::RespiratoryDriver()
 /// Airway obstruction 
 ///
 /// \details
-/// Various factors can trigger upper airway obstruction. The Biogears engine handles airway obstruction that arise from 
+/// Various factors can trigger upper airway obstruction. The engine handles airway obstruction that arise from 
 /// the partial or complete obstruction of the upper airways by foreign objects. The model accounts for such obstruction by setting the 
 /// flow resistance of the trachea compartment in proportion to the severity of the obstruction.
 /// The function updates the tracheal flow resistance by modifying the resistance across the airway to carina node path.
@@ -1134,7 +1134,7 @@ void Respiratory::AirwayObstruction()
 ///
 /// \details
 /// Bronchoconstriction involves the tightening of smooth muscles surrounding bronchi. The effect of such airway constriction is the 
-/// reduction of air flow or increase of flow resistance of the lower airways. The Biogears model handles bronchoconstriction by increasing
+/// reduction of air flow or increase of flow resistance of the lower airways. This model handles bronchoconstriction by increasing
 /// the flow resistances of the bronchi compartments. The function updates the bronchial resistances in proportion to the severity of the 
 /// bronchoconstriction. 
 //--------------------------------------------------------------------------------------------------
@@ -1263,7 +1263,7 @@ void Respiratory::Intubation()
 /// \details
 /// Pneumothorax is an abnormal accumulation of air in the pleural cavity. Tension pneumothorax occurs when 
 /// air escapes into the pleural space on inspiration, but cannot return on expiration. Different types of pneumothorces are known.
-/// The Biogears engine models  open (sucking chest wound) and closed (intact thoracic cage) pnumothoraces whereas occlusive dressing
+/// The engine models  open (sucking chest wound) and closed (intact thoracic cage) pnumothoraces whereas occlusive dressing
 /// and needle decompression are modeled as interventions. 
 /// The function models pneumothorax and needle decompression by opening respiratory circuits that allow air flows into 
 /// and out of the pleural cavity. Under normal condition, the path between the lung node or the outside environment and the intrapleural cavity 

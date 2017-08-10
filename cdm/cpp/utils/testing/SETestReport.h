@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "utils/testing/SETestSuite.h"
 
-class DLL_DECL SETestReport : public Loggable
+class CDM_DECL SETestReport : public Loggable
 {
 public:
 

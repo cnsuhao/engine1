@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 
 class Logger;
 class SEScalarTime;
-class DLL_DECL Loggable
+class CDM_DECL Loggable
 {
 public:
   static const std::string empty;
@@ -58,7 +58,7 @@ protected:
 
 #pragma warning(push)
 #pragma warning(disable:4100)
-class DLL_DECL LoggerForward
+class CDM_DECL LoggerForward
 {
 public:
   virtual void ForwardDebug(const std::string&  msg, const std::string&  origin){};
@@ -70,7 +70,7 @@ public:
 
 #pragma warning(pop)
 
-class DLL_DECL Logger
+class CDM_DECL Logger
 {
   friend Loggable;
 public:

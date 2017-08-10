@@ -18,7 +18,7 @@ class PulseEngine;
 /**
  * @brief Generic class for handling the %Pulse stabilization methodology
  */
-class PULSE_API PulseSystem
+class PULSE_DECL PulseSystem
 {
   friend PulseEngine;
 public:

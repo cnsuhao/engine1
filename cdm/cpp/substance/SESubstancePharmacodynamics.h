@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "system/physiology/SEPupillaryResponse.h"
 #include "bind/cdm/Substance.pb.h"
 
-class DLL_DECL SESubstancePharmacodynamics : Loggable
+class CDM_DECL SESubstancePharmacodynamics : Loggable
 {
 public:
 

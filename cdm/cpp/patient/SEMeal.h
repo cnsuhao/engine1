@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/SENutrition.h"
 
-class DLL_DECL SEMeal : public SENutrition
+class CDM_DECL SEMeal : public SENutrition
 {
 public:
 

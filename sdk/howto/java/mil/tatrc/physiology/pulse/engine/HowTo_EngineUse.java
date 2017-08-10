@@ -37,9 +37,7 @@ import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
 
 /**
- * How to use the Java interface to BioGears
- * For eclipse projects, please set the Debug/Run Configuration Working Directory for this file to
- * ${workspace_loc:BioGearsHowTo}.\bin
+ * How to use the Java interface to the Pulse Physiology Engine
  */
 public class HowTo_EngineUse
 {
@@ -90,7 +88,7 @@ public class HowTo_EngineUse
  {
    SEScalarTime time = new SEScalarTime(0, TimeUnit.s);
    
-   // Create a log file for this example (by default, a BioGears.log will be made)
+   // Create a log file for this example (by default, a Pulse.log will be made)
    // NOTE the engine will have its own log, so there is a Java log and an Engine log!!
    // You don't have to have a Java log, but if you want to, this is how you can do it.
    Log.setFileName("HowTo_DynamicEngineDriver.log");
@@ -98,19 +96,19 @@ public class HowTo_EngineUse
    // i.e. in Java, multiple engines will write to the same log, where as in C++, each engine will write to its own log
    // The listener and callback objects are unique to this engine
    
-   // Create a BioGears Engine
-   BioGearsEngine bge = new BioGearsEngine();// The engine log will be named based the provided string + ".log" 
+   // Create a Pulse Engine
+   PulseEngine pe = new PulseEngine();// The engine log will be named based the provided string + ".log" 
    
    // I am going to create a listener that will get any log messages (Info, Warnings, Errors, Fatal Errors)
    // that come from the engine. The default listener will just put them into the log file
    // If you want to do custom logic that occurs when the engine throws an error (or any other message type), just create a class just like this one
-   bge.setListener(new MyListener());
+   pe.setListener(new MyListener());
    
    // I want to know when ever the patient and anesthesia machine(if used) enters and exits a particular state
-   bge.setEventHandler(new MyEventHandler());
+   pe.setEventHandler(new MyEventHandler());
    
    // Here are the data I want back from the engine
-   // The CDM objects on the bge object will be updated 
+   // The CDM objects on the pe object will be updated 
    // at the end of AdvanceTime calls (which are blocking)
    // No other data values will have data in Java classes
    SEDataRequestManager dataRequests = new SEDataRequestManager();
@@ -166,23 +164,23 @@ public class HowTo_EngineUse
       conditions.add(anemia);
       
       // Allocate an engine
-      bge.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient, null/*optionally, pass in our conditions list*/, dataRequests);
+      pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient, null/*optionally, pass in our conditions list*/, dataRequests);
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
    case PatientFile:
      {
        // Allocate an engine
-       bge.initializeEngine("./Scenarios/HowToDynamicEngine.log", "./patient/StandardMale.xml", null/*optionally, pass in a conditions list*/, dataRequests);       
+       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", "./patient/StandardMale.xml", null/*optionally, pass in a conditions list*/, dataRequests);       
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
    case StateFile:
      {
-       bge.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.xml", dataRequests);
+       pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.xml", dataRequests);
        // This method method sets the engine to the provided state instantaneously and you are ready to process actions/advance time
        // You can alternatively specify the starting simTime of the engine       
-       //bge.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.xml", time, dataRequests);
+       //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.xml", time, dataRequests);
        break;
      }
    }
@@ -190,69 +188,69 @@ public class HowTo_EngineUse
    // Now we can start telling the engine what to do
    // All the same concepts apply from the C++ HowTo files, so look there if you want to see more examples
    
-   if(!bge.advanceTime()) // Advance one engine time step
+   if(!pe.advanceTime()) // Advance one engine time step
    {
      Log.info("Something bad happened");
      return;
    }
-   // The CDM objects contained in bge will be automatically updated after this method returns
+   // The CDM objects contained in pe will be automatically updated after this method returns
    // NOTE ONLY THE CDM PROPERTIES ASSOCIATED WITH THE DATA REQUESTS PROVIDED IN initializeEngine WILL BE UPDATED
    // it would be pretty slow to push EVERYTHING from the engine into Java if you are not using it all.
    // This is just a limitation of the Java interface, let me know if you think we can push everything or have some other idea for pushing..
    // SO this does mean that you have to know up front everything you are going to use from the engine, there may be ways to make it more
    // dynamic it getting data back from the engine, but at this time, I am not going to support that, not that it cannot be done, again let's talk if you want it...
    
-   Log.info("Heart Rate " + bge.cardiovascular.getHeartRate());
-   Log.info("Respiration Rate " + bge.respiratory.getRespirationRate());
-   Log.info("Total Lung Volume " + bge.respiratory.getTotalLungVolume());
-   Log.info("Blood Volume " + bge.cardiovascular.getBloodVolume());    
+   Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
+   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
+   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());
+   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());    
    
    // Let's get an assessment from the engine
    // Assessments can involve extra calculation to generate the data necessary for the specified assessment
    SECompleteBloodCount cbc = new SECompleteBloodCount();
-   bge.getPatientAssessment(cbc);
+   pe.getPatientAssessment(cbc);
    Log.info("Red Blood Count "+cbc.getRedBloodCellCount());
    Log.info("White Blood Count "+cbc.getWhiteBloodCellCount());
    
    // You can check if the patient is in a specific state/event
-   if(bge.patient.isEventActive(PatientData.eEvent.CardiacArrest))
+   if(pe.patient.isEventActive(PatientData.eEvent.CardiacArrest))
      Log.info("CODE BLUE!");
    
    time.setValue(1, TimeUnit.s);
-   if(!bge.advanceTime(time)) // Simulate one second
+   if(!pe.advanceTime(time)) // Simulate one second
    {
      Log.info("Something bad happened");
      return;
    }
    // Again, the CDM is updated after this call
    
-   Log.info("Heart Rate " + bge.cardiovascular.getHeartRate());
-   Log.info("Respiration Rate " + bge.respiratory.getRespirationRate());
-   Log.info("Total Lung Volume " + bge.respiratory.getTotalLungVolume());   
-   Log.info("Blood Volume " + bge.cardiovascular.getBloodVolume());      
+   Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
+   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
+   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());   
+   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());      
    
    // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
    SEHemorrhage h = new SEHemorrhage();
-   h.setCompartment(BioGearsCompartments.Vascular.RightLeg);
+   h.setCompartment(PulseCompartments.Vascular.RightLeg);
    h.getRate().setValue(500,VolumePerTimeUnit.mL_Per_min);
-   bge.processAction(h);
+   pe.processAction(h);
    // Note CDM is not updated after this call, you have to advance some time
 
    time.setValue(5.0,TimeUnit.min);
-   if(!bge.advanceTime(time)) // Simulate one second
+   if(!pe.advanceTime(time)) // Simulate one second
    {
      Log.error("Engine was unable to stay within modeling parameters with requested actions");
      return;
    }
    // Again, the CDM is updated after this call
    
-   Log.info("Heart Rate " + bge.cardiovascular.getHeartRate());
-   Log.info("Respiration Rate " + bge.respiratory.getRespirationRate());
-   Log.info("Total Lung Volume " + bge.respiratory.getTotalLungVolume());     
-   Log.info("Blood Volume " + bge.cardiovascular.getBloodVolume());    
+   Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
+   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
+   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
+   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());    
    
    // Be nice to your memory and deallocate the native memory associated with this engine if you are done with it
-   bge.cleanUp();
-   // Note you can now run a static (scenario) or another dynamic engine with the bge object, it will allocate and manage a new C++ engine 
+   pe.cleanUp();
+   // Note you can now run a static (scenario) or another dynamic engine with the pe object, it will allocate and manage a new C++ engine 
  }
 }

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/actions/SEPatientAction.h"
 
-class DLL_DECL SEPatientAssessmentRequest : public SEPatientAction
+class CDM_DECL SEPatientAssessmentRequest : public SEPatientAction
 {
 public:
 
@@ -33,12 +33,12 @@ protected:
 
 public:
 
-  virtual cdm::PatientAssessmentRequestData_eAssessmentType GetType() const;
-  virtual void SetType(cdm::PatientAssessmentRequestData_eAssessmentType type);
+  virtual cdm::PatientAssessmentRequestData_eType GetType() const;
+  virtual void SetType(cdm::PatientAssessmentRequestData_eType type);
 
   virtual void ToString(std::ostream &str) const;
   
 protected:
 
-  cdm::PatientAssessmentRequestData_eAssessmentType m_Type;
+  cdm::PatientAssessmentRequestData_eType m_Type;
 }; 

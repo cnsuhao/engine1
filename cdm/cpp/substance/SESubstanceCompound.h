@@ -16,7 +16,7 @@ class SESubstanceManager;
 class SESubstanceConcentration;
 #include "bind/cdm/Substance.pb.h"
 
-class DLL_DECL SESubstanceCompound : public Loggable
+class CDM_DECL SESubstanceCompound : public Loggable
 {
 public:
 

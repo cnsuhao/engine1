@@ -1,4 +1,4 @@
-## What is the physiology engine?
+## What is the Pulse Physiology Engine?
 
 The physiology engine is a C++ based, open source, multi-platform (Windows, Mac, and Linux), comprehensive human physiology
 simulator that will drive medical education, research, and training technologies. 

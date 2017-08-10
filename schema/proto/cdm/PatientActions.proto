@@ -45,7 +45,7 @@ message PatientActionData
 
 message PatientAssessmentRequestData
 {
-  enum eAssessmentType
+  enum eType
   {
     CompleteBloodCount                                                      = 0;
     ComprehensiveMetabolicPanel                                             = 1;
@@ -54,7 +54,7 @@ message PatientAssessmentRequestData
   }
   
   PatientActionData                         PatientAction                   = 1;
-  eAssessmentType                           type                            = 2;
+  eType                                     type                            = 2;
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */

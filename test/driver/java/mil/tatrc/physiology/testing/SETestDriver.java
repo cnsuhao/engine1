@@ -21,8 +21,8 @@ import java.util.*;
 
 import com.kitware.physiology.cdm.Properties.eSwitch;
 
+import mil.tatrc.physiology.datamodel.engine.SEAutoSerialization;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
-import mil.tatrc.physiology.datamodel.scenario.SEScenarioAutoSerialization;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
@@ -162,7 +162,7 @@ public class SETestDriver
   protected double percentDifference=2.0;
 
   protected boolean useStates=false;
-  protected SEScenarioAutoSerialization autoSerialization=null;
+  protected SEAutoSerialization autoSerialization=null;
   protected String patientFiles;
 
   protected Map<String,String> macros = new HashMap<String,String>();
@@ -178,7 +178,7 @@ public class SETestDriver
   {
     public TestJob(){ listen(false);  }
     public boolean      useState=false;
-    public SEScenarioAutoSerialization autoSerialization=null;
+    public SEAutoSerialization autoSerialization=null;
     public String       patientFile = null;
     public JobState     state=JobState.Provisioned;
     public String       name;
@@ -289,7 +289,7 @@ public class SETestDriver
         }
         if(key.equalsIgnoreCase("AutoSerialization"))
         {
-          this.autoSerialization=new SEScenarioAutoSerialization();
+          this.autoSerialization=new SEAutoSerialization();
           // Parse the value
           String[] values = value.split(",");
           this.autoSerialization.setDirectory(values[0]);

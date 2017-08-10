@@ -19,7 +19,7 @@ class SESubstance;
 class SECircuitManager;
 #include "bind/cdm/Compartment.pb.h"
 
-class DLL_DECL SECompartment : public Loggable
+class CDM_DECL SECompartment : public Loggable
 {
 protected:
   SECompartment(const std::string& name, Logger* logger);

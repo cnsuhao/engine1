@@ -31,7 +31,7 @@ class SEPulmonaryFunctionTest;
 * of gases in the lungs, and ensures the integration and flow of data between the
 * respiratory system and the anesthesia machine during mechanical ventilation.
 */
-class PULSE_API Respiratory : public SERespiratorySystem, public PulseSystem
+class PULSE_DECL Respiratory : public SERespiratorySystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

@@ -67,7 +67,6 @@ void SEElectroCardioGramWaveformInterpolator::Serialize(const SEElectroCardioGra
 bool SEElectroCardioGramWaveformInterpolator::LoadFile(const std::string& file, const SEScalarTime* timeStep)
 {
   Clear();
-
   cdm::ElectroCardioGramWaveformListData src;
   std::ifstream file_stream(file, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());

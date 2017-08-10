@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL OsmolalityUnit : public CCompoundUnit
+class CDM_DECL OsmolalityUnit : public CCompoundUnit
 {
 public:
   OsmolalityUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -26,7 +26,7 @@ public:
   static const OsmolalityUnit mOsm_Per_kg;
 };
 
-class DLL_DECL SEScalarOsmolality : public SEScalarQuantity<OsmolalityUnit>
+class CDM_DECL SEScalarOsmolality : public SEScalarQuantity<OsmolalityUnit>
 {
 public:
   SEScalarOsmolality() {}

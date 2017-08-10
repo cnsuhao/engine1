@@ -55,7 +55,7 @@ struct PhysiologyEngineException : public CommonDataModelException
     : CommonDataModelException(_Message) {}
 };
 
-class DLL_DECL PhysiologyEngine
+class CDM_DECL PhysiologyEngine
 {
 public:
   virtual ~PhysiologyEngine() {}
@@ -67,8 +67,9 @@ public:
   /// It will be reflected in the GetSimulationTime method.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
+  /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool LoadState(const std::string& file, const SEScalarTime* simTime=nullptr) = 0;
+  virtual bool LoadState(const std::string& file, const SEScalarTime* simTime=nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -77,8 +78,9 @@ public:
   /// It will be reflected in the GetSimulationTime method.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
+  /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr) = 0;
+  virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

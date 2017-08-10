@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"
 
-class DLL_DECL SEThermalApplication : public SEEnvironmentAction
+class CDM_DECL SEThermalApplication : public SEEnvironmentAction
 {
 public:
 

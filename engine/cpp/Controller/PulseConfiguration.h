@@ -12,13 +12,19 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 class SENutrition;
-#include "engine/SEEngineConfiguration.h"
+class SEAutoSerialization;
+class SEEngineStabilization;
+class SEDynamicStabilization;
+class SETimedStabilization;
 class SEEnvironmentalConditions;
+class SEElectroCardioGramWaveformInterpolator;
+#include "engine/SEEngineConfiguration.h"
+#include "bind/engine/EngineConfiguration.pb.h"
 
 /**
 * @brief %Pulse specific configuration parameters for all systems/equipment
 */
-class PULSE_API PulseConfiguration : public SEEngineConfiguration
+class PULSE_DECL PulseConfiguration : public SEEngineConfiguration
 {
 public:
 
@@ -28,24 +34,54 @@ public:
   virtual void Clear();
   virtual void Initialize();
 
-  virtual void Merge(const SEEngineConfiguration& from);
   virtual void Merge(const PulseConfiguration& from);
 
   bool LoadFile(const std::string& file);
 
-  static void Load(const cdm::EngineConfigurationData& src, PulseConfiguration& dst);
-  static cdm::EngineConfigurationData* Unload(const PulseConfiguration& src);
+  static void Load(const pulse::ConfigurationData& src, PulseConfiguration& dst);
+  static pulse::ConfigurationData* Unload(const PulseConfiguration& src);
 protected:
-  static void Serialize(const cdm::EngineConfigurationData& src, PulseConfiguration& dst);
-  static void Serialize(const PulseConfiguration& src, cdm::EngineConfigurationData& dst);
+  static void Serialize(const pulse::ConfigurationData& src, PulseConfiguration& dst);
+  static void Serialize(const PulseConfiguration& src, pulse::ConfigurationData& dst);
 
   SESubstanceManager& m_Substances;
 
 public:
+  virtual bool HasTimeStep() const;
+  virtual SEScalarTime& GetTimeStep();
+  virtual double GetTimeStep(const TimeUnit& unit) const;
+
+  // You can have either a timed or dynamic stabilization object (cannot have both)
+  virtual bool HasStabilization() const;
+  virtual SEEngineStabilization* GetStabilization();
+  virtual void RemoveStabilization();
+  // Timed Methods, If you have dynamic, calling GetTimedStabilization will remove the dynamic object
+  virtual bool HasTimedStabilization() const;
+  virtual SETimedStabilization& GetTimedStabilization();
+  virtual const SETimedStabilization* GetTimedStabilization() const;
+  virtual void RemoveTimedStabilization();
+  // Dynamic Methods, If you have timed, calling GetDynamicStabilization will remove the timed object
+  virtual bool HasDynamicStabilization() const;
+  virtual SEDynamicStabilization& GetDynamicStabilization();
+  virtual const SEDynamicStabilization* GetDynamicStabilization() const;
+  virtual void RemoveDynamicStabilization();
+
   virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == cdm::eSwitch::On; }
   virtual void EnableWritePatientBaselineFile(cdm::eSwitch s) { m_WritePatientBaselineFile = s; }
+
+  virtual bool HasAutoSerialization() const;
+  virtual SEAutoSerialization& GetAutoSerialization();
+  virtual const SEAutoSerialization* GetAutoSerialization() const;
+  virtual void RemoveAutoSerialization();
+
 protected:
-  cdm::eSwitch m_WritePatientBaselineFile;
+
+  bool                       m_Merge;
+  SEScalarTime*              m_TimeStep;
+  SETimedStabilization*      m_TimedStabilization;
+  SEDynamicStabilization*    m_DynamicStabilization;
+  SEAutoSerialization*       m_AutoSerialization;
+  cdm::eSwitch               m_WritePatientBaselineFile;
 
   ////////////////////
   /** Baroreceptors */
@@ -278,12 +314,12 @@ protected:
   /** ECG */
   //////////
 public:
-//  virtual bool HasECGInterpolator() const;
-//  virtual SEElectroCardioGramInterpolator& GetECGInterpolator();
-//  virtual const SEElectroCardioGramInterpolator* GetECGInterpolator() const;
-//  virtual void RemoveECGInterpolator();
+  virtual bool HasECGInterpolator() const;
+  virtual SEElectroCardioGramWaveformInterpolator& GetECGInterpolator();
+  virtual const SEElectroCardioGramWaveformInterpolator* GetECGInterpolator() const;
+  virtual void RemoveECGInterpolator();
 //protected:
-//  SEElectroCardioGramInterpolator*         m_ECGInterpolator;
+  SEElectroCardioGramWaveformInterpolator*         m_ECGInterpolator;
 
   /////////////
   /** Energy */
@@ -293,9 +329,9 @@ public:
   virtual SEScalarHeatCapacitancePerMass& GetBodySpecificHeat();
   virtual double GetBodySpecificHeat(const HeatCapacitancePerMassUnit& unit) const;
 
-  virtual bool HasCarbondDioxideProductionFromOxygenConsumptionConstant() const;
-  virtual SEScalar& GetCarbondDioxideProductionFromOxygenConsumptionConstant();
-  virtual double GetCarbondDioxideProductionFromOxygenConsumptionConstant() const;
+  virtual bool HasCarbonDioxideProductionFromOxygenConsumptionConstant() const;
+  virtual SEScalar& GetCarbonDioxideProductionFromOxygenConsumptionConstant();
+  virtual double GetCarbonDioxideProductionFromOxygenConsumptionConstant() const;
 
   virtual bool HasCoreTemperatureHigh() const;
   virtual SEScalarTemperature& GetCoreTemperatureHigh();
@@ -326,7 +362,7 @@ public:
   virtual double GetVaporSpecificHeat(const HeatCapacitancePerMassUnit& unit) const;
 protected:
   SEScalarHeatCapacitancePerMass* m_BodySpecificHeat;
-  SEScalar*                       m_CarbondDioxideProductionFromOxygenConsumptionConstant;
+  SEScalar*                       m_CarbonDioxideProductionFromOxygenConsumptionConstant;
   SEScalarTemperature*            m_CoreTemperatureLow;
   SEScalarTemperature*            m_CoreTemperatureHigh;
   SEScalarTemperature*            m_DeltaCoreTemperatureLow;

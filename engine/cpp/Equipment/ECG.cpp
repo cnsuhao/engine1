@@ -16,6 +16,7 @@ specific language governing permissions and limitations under the License.
 #include "../Systems/Cardiovascular.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEFunctionElectricPotentialVsTime.h"
+#include "properties/SEScalarTime.h"
 
 /*
 ========================
@@ -58,7 +59,9 @@ void ECG::Initialize()
 
   m_heartRhythmTime.SetValue(0,TimeUnit::s);
   m_heartRhythmPeriod.SetValue(0, TimeUnit::s);
-  CDM_COPY(m_data.GetConfiguration().GetECGInterpolator(), (&m_interpolator));
+  auto* d = SEElectroCardioGramWaveformInterpolator::Unload(*m_data.GetConfiguration().GetECGInterpolator());
+  SEElectroCardioGramWaveformInterpolator::Load(*d, m_interpolator);
+  delete d;
   // You can uncomment this code to compare the original waveform to the interpolated waveform and make sure you are capturing the data properly
 /* Code to write out the ECG data in a format easy to view in plotting tools 
   std::vector<double> original_s = m_interpolator.GetWaveform(3, CDM::enumHeartRhythm::NormalSinus).GetData().GetTime();
@@ -68,7 +71,7 @@ void ECG::Initialize()
     Original.Track("Original_ECG",original_s[i], original_mV[i]);
   Original.WriteTrackToFile("OriginalECG.txt");
 */
-  m_interpolator.Interpolate(m_data.GetTimeStep());
+  // jbw m_interpolator.Interpolate(m_data.GetTimeStep());
 /* Code to write out the Interpolated ECG data in a format easy to view in plotting tools
   std::vector<double> interpolated_s = m_interpolator.GetWaveform(3, CDM::enumHeartRhythm::NormalSinus).GetData().GetTime();
   std::vector<double> interpolated_mV = m_interpolator.GetWaveform(3, CDM::enumHeartRhythm::NormalSinus).GetData().GetElectricPotential();
@@ -77,32 +80,33 @@ void ECG::Initialize()
     Interpolated.Track("Interpolated_ECG", interpolated_s[i], interpolated_mV[i]);
   Interpolated.WriteTrackToFile("InterpolatedECG.txt");
 */
-  m_interpolator.SetLeadElectricPotential(3, GetLead3ElectricPotential());
+  m_interpolator.SetLeadElectricPotential(cdm::ElectroCardioGramWaveformData_eLead_Lead3, GetLead3ElectricPotential());
 }
 
-bool ECG::Load(const CDM::PulseElectroCardioGramData& in)
+void ECG::Load(const pulse::ElectroCardioGramData& src, ECG& dst)
 {
-  if (!SEElectroCardioGram::Load(in))
-    return false;  
-  PulseSystem::LoadState(); 
-  m_heartRhythmTime.Load(in.HeartRythmTime());
-  m_heartRhythmPeriod.Load(in.HeartRythmPeriod());
-  m_interpolator.Load(in.Waveforms());
-  m_interpolator.SetLeadElectricPotential(3, GetLead3ElectricPotential());
-  return true;
+  ECG::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::PulseElectroCardioGramData* ECG::Unload() const
+void ECG::Serialize(const pulse::ElectroCardioGramData& src, ECG& dst)
 {
-  CDM::PulseElectroCardioGramData* data = new CDM::PulseElectroCardioGramData();
-  Unload(*data);
-  return data;
+  dst.m_heartRhythmTime.SetValue(src.heartrythmtime_s(),TimeUnit::s);
+  dst.m_heartRhythmPeriod.SetValue(src.heartrythmperiod_s(),TimeUnit::s);
+  SEElectroCardioGramWaveformInterpolator::Load(src.waveforms(),dst.m_interpolator);
+  dst.m_interpolator.SetLeadElectricPotential(cdm::ElectroCardioGramWaveformData_eLead_Lead3, dst.GetLead3ElectricPotential());
 }
-void ECG::Unload(CDM::PulseElectroCardioGramData& data) const
+
+pulse::ElectroCardioGramData* ECG::Unload(const ECG& src)
 {
-  SEElectroCardioGram::Unload(data);
-  data.HeartRythmTime(std::unique_ptr<CDM::ScalarTimeData>(m_heartRhythmTime.Unload()));
-  data.HeartRythmPeriod(std::unique_ptr<CDM::ScalarTimeData>(m_heartRhythmPeriod.Unload()));
-  data.Waveforms(std::unique_ptr<CDM::ElectroCardioGramWaveformInterpolatorData>(m_interpolator.Unload()));
+  pulse::ElectroCardioGramData* dst = new pulse::ElectroCardioGramData();
+  ECG::Serialize(src,*dst);
+  return dst;
+}
+void ECG::Serialize(const ECG& src, pulse::ElectroCardioGramData& dst)
+{
+  dst.set_heartrythmtime_s(src.m_heartRhythmTime.GetValue(TimeUnit::s));
+  dst.set_heartrythmperiod_s(src.m_heartRhythmPeriod.GetValue(TimeUnit::s));
+  dst.set_allocated_waveforms(SEElectroCardioGramWaveformInterpolator::Unload(src.m_interpolator));
 }
 
 void ECG::SetUp()

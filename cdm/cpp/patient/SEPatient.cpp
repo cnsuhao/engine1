@@ -70,21 +70,6 @@ SEPatient::~SEPatient()
   Clear();  
 }
 
-bool SEPatient::LoadFile(const std::string& patientFile)
-{
-  cdm::PatientData src;
-  std::ifstream file_stream(patientFile, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    return false;
-  SEPatient::Load(src, *this);
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
-}
-
 void SEPatient::Clear()
 {
   m_EventHandler=nullptr;
@@ -179,6 +164,35 @@ const SEScalar* SEPatient::GetScalar(const std::string& name)
 
   return nullptr;
 }
+
+
+bool SEPatient::LoadFile(const std::string& patientFile)
+{
+  cdm::PatientData src;
+  std::ifstream file_stream(patientFile, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
+  SEPatient::Load(src, *this);
+  return true;
+
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
+}
+
+void SEPatient::SaveFile(const std::string& filename)
+{
+  std::string content;
+  cdm::PatientData* src = SEPatient::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
+  ascii_ostream << content;
+  ascii_ostream.flush();
+  ascii_ostream.close();
+  delete src;
+}
+
 
 void SEPatient::Load(const cdm::PatientData& src, SEPatient& dst)
 {

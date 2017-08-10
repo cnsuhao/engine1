@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-package mil.tatrc.physiology.biogears.engine;
+package mil.tatrc.physiology.pulse.engine;
 
 import java.io.File;
 import java.util.*;
@@ -39,7 +39,7 @@ import mil.tatrc.physiology.utilities.LogListener;
 import mil.tatrc.physiology.utilities.Pair;
 import mil.tatrc.physiology.utilities.UnitConverter;
 
-public class BioGears
+public class Pulse
 {
   public SEScalarTime                     timeStep;
   public SEScalarTime                     currentTime;
@@ -83,14 +83,14 @@ public class BioGears
   {        
     UnitConverter.initialize(System.getProperty("user.dir"));
     List<String> libs = new ArrayList<String>();
-    libs.add("BioGearsEngine");
-    libs.add("BioGearsEngineUnitTests");
-    libs.add("BioGearsEngineJNI");
+    libs.add("PulseEngine");
+    libs.add("PulseEngineUnitTests");
+    libs.add("PulseEngineJNI");
         
     FileUtils.loadLibraries(libs);
   }
 
-  public BioGears()
+  public Pulse()
   {
     this.nativeObj=0;
   }
@@ -174,7 +174,7 @@ public class BioGears
     FileUtils.delete(new File(System.getProperty("user.home") + "/patients/"));
     FileUtils.delete(new File(System.getProperty("user.home") + "/environments/"));
     FileUtils.delete(new File(System.getProperty("user.home") + "/xsd/"));
-    FileUtils.delete(new File(System.getProperty("user.home") + "/BioGearsConfiguration.xml"));
+    FileUtils.delete(new File(System.getProperty("user.home") + "/PulseConfiguration.xml"));
   }
 
   public void setListener(LogListener listener)

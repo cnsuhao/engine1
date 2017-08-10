@@ -15,7 +15,6 @@ specific language governing permissions and limitations under the License.
 
 SEScenarioInitialParameters::SEScenarioInitialParameters(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
-  m_Configuration = nullptr;
   m_Patient = nullptr;
   Clear();
 }
@@ -29,7 +28,6 @@ void SEScenarioInitialParameters::Clear()
 {
   m_PatientFile = "";
   SAFE_DELETE(m_Patient);
-  SAFE_DELETE(m_Configuration);
   DELETE_VECTOR(m_Conditions);
 }
 
@@ -40,10 +38,7 @@ void SEScenarioInitialParameters::Load(const cdm::ScenarioData_InitialParameters
 void SEScenarioInitialParameters::Serialize(const cdm::ScenarioData_InitialParametersData& src, SEScenarioInitialParameters& dst)
 {
   dst.Clear();
-  //amb todo 
-  //if (src.has)
-  //  GetConfiguration().Load(in.Configuration().get());
-
+ 
   if (src.has_patient())
     SEPatient::Load(src.patient(), dst.GetPatient());
   else
@@ -71,10 +66,6 @@ void SEScenarioInitialParameters::Serialize(const SEScenarioInitialParameters& s
     dst.set_allocated_patient(SEPatient::Unload(*src.m_Patient));
   for (SECondition* c : src.m_Conditions)
     dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*c));
-
-  // amb todo
-  //if (src.HasConfiguration())
-  //  data.Configuration(std::unique_ptr<CDM::PhysiologyEngineConfigurationData>(m_Configuration->Unload()));
 }
 
 bool SEScenarioInitialParameters::IsValid() const
@@ -84,30 +75,6 @@ bool SEScenarioInitialParameters::IsValid() const
   return true;
 }
 
-bool SEScenarioInitialParameters::HasConfiguration() const
-{
-  return m_Configuration != nullptr;
-}
-SEEngineConfiguration& SEScenarioInitialParameters::GetConfiguration()
-{
-  if (m_Configuration == nullptr)
-    m_Configuration = new SEEngineConfiguration(GetLogger());
-  return *m_Configuration;
-}
-const SEEngineConfiguration* SEScenarioInitialParameters::GetConfiguration() const
-{
-  return m_Configuration;
-}
-void SEScenarioInitialParameters::CopyConfiguration(const SEEngineConfiguration& config)
-{
-  cdm::EngineConfigurationData* c = SEEngineConfiguration::Unload(config);
-  SEEngineConfiguration::Load(*c, GetConfiguration());
-  delete c;
-}
-void SEScenarioInitialParameters::InvalidateConfiguration()
-{
-  SAFE_DELETE(m_Configuration);
-}
 
 std::string SEScenarioInitialParameters::GetPatientFile() const
 {

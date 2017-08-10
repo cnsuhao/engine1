@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 #include "scenario/SECondition.h"
 #include "substance/SESubstanceManager.h"
 
-class DLL_DECL SEScenarioInitialParameters : public Loggable
+class CDM_DECL SEScenarioInitialParameters : public Loggable
 {
   friend class SEScenario;
 protected:
@@ -36,12 +36,6 @@ public:
 
   virtual bool IsValid()const;
 
-  virtual SEEngineConfiguration& GetConfiguration();
-  virtual const SEEngineConfiguration* GetConfiguration() const;
-  virtual void CopyConfiguration(const SEEngineConfiguration& config);
-  virtual bool HasConfiguration() const;
-  virtual void InvalidateConfiguration();
-
   virtual std::string GetPatientFile() const;
   virtual void SetPatientFile(const std::string& patientFile);
   virtual bool HasPatientFile() const;
@@ -58,7 +52,6 @@ public:
 
 protected:
   SESubstanceManager&            m_SubMgr;
-  SEEngineConfiguration*         m_Configuration;
   SEPatient*                     m_Patient;
   std::string                    m_PatientFile;
   std::vector<SECondition*>      m_Conditions;

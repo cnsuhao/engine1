@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarElectricCharge.h"
 #include "properties/SEScalarElectricPotential.h"
 
-class DLL_DECL SEElectricalCircuitNode : public SECircuitNode<SEScalarElectricPotential, SEScalarElectricCharge>
+class CDM_DECL SEElectricalCircuitNode : public SECircuitNode<SEScalarElectricPotential, SEScalarElectricCharge>
 {
   friend class SECircuitManager;
 protected:

@@ -13,7 +13,7 @@ target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..
 target_include_directories(UnitTestDriver PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_include_directories(UnitTestDriver PRIVATE ${LOG4CPP_INCLUDE_DIR})
 target_include_directories(UnitTestDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
-target_link_libraries(UnitTestDriver CommonDataModelUnitTests BioGearsEngineUnitTests)
+target_link_libraries(UnitTestDriver CommonDataModelUnitTests PulseEngineUnitTests)
 
 add_custom_command(TARGET UnitTestDriver POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}

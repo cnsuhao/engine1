@@ -16,7 +16,7 @@ if(NOT SOURCE)
 endif()
 
 # The DLL we are building
-add_library(DataModelBindings STATIC ${SOURCE})
+add_library(DataModelBindings ${SOURCE})
 # Preprocessor Definitions and Include Paths
 target_include_directories(DataModelBindings PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
 target_include_directories(DataModelBindings PRIVATE ${PROTOBUF_INCLUDE_DIR})
@@ -36,6 +36,26 @@ add_custom_command(TARGET DataModelBindings POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:DataModelBindings> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/proto ${INSTALL_BIN}/proto)
+if(${BUILD_SHARED_LIBS})
+  if(WIN32)# Copy dll files to the bin
+    install(TARGETS DataModelBindings 
+            RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(TARGETS DataModelBindings 
+            RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(TARGETS DataModelBindings 
+            RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  else()# Copy so files to the bin
+    install(TARGETS DataModelBindings 
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(TARGETS DataModelBindings 
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(TARGETS DataModelBindings 
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  endif()
+endif()
 # Copy lib/so files to the sdk/lib
 install(TARGETS DataModelBindings         
         LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG}

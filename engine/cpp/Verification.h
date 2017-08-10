@@ -14,8 +14,8 @@ specific language governing permissions and limitations under the License.
 #include "utils/FileUtils.h"
 #include "utils/ConfigParser.h"
 #include "utils/TaskRunner/TaskRunner.h"
-#include "BioGearsPhysiologyEngine.h"
-#include "Controller/Scenario/BioGearsScenarioExec.h"
+#include "PulsePhysiologyEngine.h"
+#include "Controller/Scenario/PulseScenarioExec.h"
 
 #include <string>
 #include <vector>
@@ -51,7 +51,7 @@ namespace
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// This function is called when the task is executed, it creates a BioGearsEngine and executes the scenario
+  /// This function is called when the task is executed, it creates a Engine and executes the scenario
   //--------------------------------------------------------------------------------------------------
   void RunScenarioTask::Run()
   {
@@ -68,23 +68,23 @@ namespace
     // Delete any results file that may be there
     remove(dataFile.c_str());
 
-    // Aquire the constrution mutex before we create the BioGearsEngine.  Due to some third-party library
-    // initialization constructs not being thread safe, we must not construct BioGearsEngines simultaneously
+    // Aquire the constrution mutex before we create the Engine.  Due to some third-party library
+    // initialization constructs not being thread safe, we must not construct Engines simultaneously
     // from multiple threads.
     ms_constructionMutex.lock();
-    std::unique_ptr<PhysiologyEngine> bioGears = CreateBioGearsEngine(logFile.c_str());
+    std::unique_ptr<PhysiologyEngine> pulse = CreatePulseEngine(logFile.c_str());
     ms_constructionMutex.unlock();
 
-    if (!bioGears)
+    if (!pulse)
     {
-      std::cerr << "Unable to create BioGearsEngine" << std::endl;
+      std::cerr << "Unable to create Engine" << std::endl;
       return;
     }
 
     // Run the scenario
     try
     {
-      BioGearsScenarioExec exec(*bioGears);
+      PulseScenarioExec exec(*(PulseEngine*)pulse.get());
       exec.Execute(m_scenarioFile.c_str(), dataFile.c_str(), nullptr);
     }
     catch (std::exception ex)

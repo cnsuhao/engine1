@@ -17,7 +17,7 @@ class SEEngineConfiguration;
 class SECondition;
 #include "bind/cdm/Engine.pb.h"
 
-class DLL_DECL SEEngineStabilization : public Loggable
+class CDM_DECL SEEngineStabilization : public Loggable
 {
 public:
   SEEngineStabilization(Logger* logger);

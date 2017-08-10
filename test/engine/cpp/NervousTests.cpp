@@ -68,7 +68,7 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 
   Pulse bg(sTestDirectory + "\\" + tName + ".log");
   bg.GetLogger()->Info("Running " + tName);
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
+  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
   bg.SetupPatient();
 
   //Renal and Tissue are on

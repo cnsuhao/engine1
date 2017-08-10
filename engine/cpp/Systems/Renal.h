@@ -22,7 +22,7 @@ class SEUrinalysis;
 /**
  * @brief @copydoc Physiology_RenalSystemData
  */  
-class PULSE_API Renal : public SERenalSystem, public PulseSystem
+class PULSE_DECL Renal : public SERenalSystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

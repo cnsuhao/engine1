@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/SENutrition.h"
 #include "bind/cdm/Physiology.pb.h"
 
-class DLL_DECL SEGastrointestinalSystem : public SESystem
+class CDM_DECL SEGastrointestinalSystem : public SESystem
 {
 public:
 

@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 
 #ifdef REBASE_TOOL
-#define DLL_DECL
+#define CDM_DECL
 #else
 #include "CommonDataModel.h"
 #endif
@@ -21,7 +21,7 @@ specific language governing permissions and limitations under the License.
 #include <vector>
 #include <map>
 
-class DLL_DECL ConfigSet
+class CDM_DECL ConfigSet
 {
 public:
     void SetKeyValues(const std::map<std::string, std::string>& keyValues);
@@ -35,7 +35,7 @@ private:
     std::map<std::string, std::string> m_keyValues;
 };
 
-class DLL_DECL ConfigParser
+class CDM_DECL ConfigParser
 {
 public:
     ConfigParser(const std::string& configFilePath);

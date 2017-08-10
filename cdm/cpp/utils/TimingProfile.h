@@ -36,7 +36,7 @@ namespace
     };
 }
 
-class DLL_DECL TimingProfile : public Loggable
+class CDM_DECL TimingProfile : public Loggable
 {
 public:
     TimingProfile() {}

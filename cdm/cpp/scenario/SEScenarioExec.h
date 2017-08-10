@@ -15,14 +15,15 @@ specific language governing permissions and limitations under the License.
 class SEAction;
 class SEScenario;
 class PhysiologyEngine;
+#include "engine/SEEngineConfiguration.h"
 
-class DLL_DECL SEScenarioCustomExec
+class CDM_DECL SEScenarioCustomExec
 {
 public:
   virtual void CustomExec(double time_s, PhysiologyEngine* engine)=0;
 };
 
-class DLL_DECL SEScenarioExec : public Loggable
+class CDM_DECL SEScenarioExec : public Loggable
 {
 public:
   SEScenarioExec(PhysiologyEngine& engine);
@@ -43,9 +44,10 @@ protected:
   /// actions override the ProcessActions method
   virtual bool ProcessAction(const SEAction& action);
 
-  bool                  m_Cancel;
-  SEScenarioCustomExec* m_CustomExec;
-  PhysiologyEngine&     m_Engine;
+  bool                         m_Cancel;
+  SEScenarioCustomExec*        m_CustomExec;
+  PhysiologyEngine&            m_Engine;
+  const SEEngineConfiguration* m_EngineConfiguration;
 
   std::stringstream     m_ss;
 };

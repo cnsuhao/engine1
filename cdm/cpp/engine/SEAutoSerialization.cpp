@@ -11,10 +11,10 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "scenario/SEScenarioAutoSerialization.h"
+#include "engine/SEAutoSerialization.h"
 #include "properties/SEScalarTime.h"
 
-SEScenarioAutoSerialization::SEScenarioAutoSerialization(Logger* logger) : Loggable(logger)
+SEAutoSerialization::SEAutoSerialization(Logger* logger) : Loggable(logger)
 {
   m_Period = nullptr;
   m_PeriodTimeStamps = cdm::eSwitch::Off;
@@ -24,12 +24,12 @@ SEScenarioAutoSerialization::SEScenarioAutoSerialization(Logger* logger) : Logga
   m_FileName     = "";
 }
 
-SEScenarioAutoSerialization::~SEScenarioAutoSerialization()
+SEAutoSerialization::~SEAutoSerialization()
 {
   Clear();
 }
 
-void SEScenarioAutoSerialization::Clear()
+void SEAutoSerialization::Clear()
 {
   SAFE_DELETE(m_Period);
   m_PeriodTimeStamps = cdm::eSwitch::Off;
@@ -39,7 +39,7 @@ void SEScenarioAutoSerialization::Clear()
   m_FileName = "";
 }
 
-bool SEScenarioAutoSerialization::IsValid() const
+bool SEAutoSerialization::IsValid() const
 {
   if (!HasPeriod())
     return false;
@@ -52,11 +52,11 @@ bool SEScenarioAutoSerialization::IsValid() const
   return true;
 }
 
-void SEScenarioAutoSerialization::Load(const cdm::ScenarioData_AutoSerializationData& src, SEScenarioAutoSerialization& dst)
+void SEAutoSerialization::Load(const cdm::AutoSerializationData& src, SEAutoSerialization& dst)
 {
-  SEScenarioAutoSerialization::Serialize(src, dst);
+  SEAutoSerialization::Serialize(src, dst);
 }
-void SEScenarioAutoSerialization::Serialize(const cdm::ScenarioData_AutoSerializationData& src, SEScenarioAutoSerialization& dst)
+void SEAutoSerialization::Serialize(const cdm::AutoSerializationData& src, SEAutoSerialization& dst)
 {
   dst.Clear();
   if (src.has_period())
@@ -68,13 +68,13 @@ void SEScenarioAutoSerialization::Serialize(const cdm::ScenarioData_AutoSerializ
   dst.SetFileName(src.filename());
 }
 
-cdm::ScenarioData_AutoSerializationData* SEScenarioAutoSerialization::Unload(const SEScenarioAutoSerialization& src)
+cdm::AutoSerializationData* SEAutoSerialization::Unload(const SEAutoSerialization& src)
 {
-  cdm::ScenarioData_AutoSerializationData *dst = new cdm::ScenarioData_AutoSerializationData();
-  SEScenarioAutoSerialization::Serialize(src,*dst);
+  cdm::AutoSerializationData *dst = new cdm::AutoSerializationData();
+  SEAutoSerialization::Serialize(src,*dst);
   return dst;
 }
-void SEScenarioAutoSerialization::Serialize(const SEScenarioAutoSerialization& src, cdm::ScenarioData_AutoSerializationData& dst)
+void SEAutoSerialization::Serialize(const SEAutoSerialization& src, cdm::AutoSerializationData& dst)
 {
   if (src.HasPeriod())
     dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
@@ -87,80 +87,80 @@ void SEScenarioAutoSerialization::Serialize(const SEScenarioAutoSerialization& s
     dst.set_filename(src.m_FileName);
 }
 
-bool SEScenarioAutoSerialization::HasPeriod() const
+bool SEAutoSerialization::HasPeriod() const
 {
   return m_Period == nullptr ? false : m_Period->IsValid();
 }
-SEScalarTime& SEScenarioAutoSerialization::GetPeriod()
+SEScalarTime& SEAutoSerialization::GetPeriod()
 {
   if (m_Period == nullptr)
     m_Period = new SEScalarTime();
   return *m_Period;
 }
-double SEScenarioAutoSerialization::GetPeriod(const TimeUnit& unit) const
+double SEAutoSerialization::GetPeriod(const TimeUnit& unit) const
 {
   if (m_Period == nullptr)
     return SEScalar::dNaN();
   return m_Period->GetValue(unit);
 }
 
-cdm::eSwitch SEScenarioAutoSerialization::GetPeriodTimeStamps() const
+cdm::eSwitch SEAutoSerialization::GetPeriodTimeStamps() const
 {
   return m_PeriodTimeStamps;
 }
-void SEScenarioAutoSerialization::SetPeriodTimeStamps(cdm::eSwitch v)
+void SEAutoSerialization::SetPeriodTimeStamps(cdm::eSwitch v)
 {
   m_PeriodTimeStamps = v;
 }
 
-cdm::eSwitch SEScenarioAutoSerialization::GetAfterActions() const
+cdm::eSwitch SEAutoSerialization::GetAfterActions() const
 {
   return m_AfterActions;
 }
-void SEScenarioAutoSerialization::SetAfterActions(cdm::eSwitch v)
+void SEAutoSerialization::SetAfterActions(cdm::eSwitch v)
 {
   m_AfterActions = v;
 }
 
-cdm::eSwitch SEScenarioAutoSerialization::GetReloadState() const
+cdm::eSwitch SEAutoSerialization::GetReloadState() const
 {
   return m_ReloadState;
 }
-void SEScenarioAutoSerialization::SetReloadState(cdm::eSwitch v)
+void SEAutoSerialization::SetReloadState(cdm::eSwitch v)
 {
   m_ReloadState = v;
 }
 
-std::string SEScenarioAutoSerialization::GetDirectory() const
+std::string SEAutoSerialization::GetDirectory() const
 {
   return m_Directory;
 }
-void SEScenarioAutoSerialization::SetDirectory(const std::string& dir)
+void SEAutoSerialization::SetDirectory(const std::string& dir)
 {
   m_Directory = dir;
 }
-bool SEScenarioAutoSerialization::HasDirectory() const
+bool SEAutoSerialization::HasDirectory() const
 {
   return m_Directory.empty() ? false : true;
 }
-void SEScenarioAutoSerialization::InvalidateDirectory()
+void SEAutoSerialization::InvalidateDirectory()
 {
   m_Directory = "";
 }
 
-std::string SEScenarioAutoSerialization::GetFileName() const
+std::string SEAutoSerialization::GetFileName() const
 {
   return m_FileName;
 }
-void SEScenarioAutoSerialization::SetFileName(const std::string& name)
+void SEAutoSerialization::SetFileName(const std::string& name)
 {
   m_FileName = name;
 }
-bool SEScenarioAutoSerialization::HasFileName() const
+bool SEAutoSerialization::HasFileName() const
 {
   return m_FileName.empty() ? false : true;
 }
-void SEScenarioAutoSerialization::InvalidateFileName()
+void SEAutoSerialization::InvalidateFileName()
 {
   m_FileName = "";
 }

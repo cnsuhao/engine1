@@ -12,13 +12,11 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "scenario/SEScenario.h"
-
 #include <google/protobuf/text_format.h>
 
 SEScenario::SEScenario(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr), m_DataRequestMgr(subMgr.GetLogger())
 {
   m_InitialParameters = nullptr;
-  m_AutoSerialization = nullptr;
   Clear();
 }
 
@@ -33,7 +31,6 @@ void SEScenario::Clear()
   m_Description = "";
   m_EngineStateFile = "";
   SAFE_DELETE(m_InitialParameters);
-  SAFE_DELETE(m_AutoSerialization);
   DELETE_VECTOR(m_Actions);
   m_DataRequestMgr.Clear();
 }
@@ -55,9 +52,6 @@ void SEScenario::Serialize(const cdm::ScenarioData& src, SEScenario& dst)
     dst.SetEngineStateFile(src.enginestatefile());
   }
   
-  if (src.has_autoserialization())
-    SEScenarioAutoSerialization::Load(src.autoserialization(), dst.GetAutoSerialization());
-
   if (src.has_datarequestmanager())
     SEDataRequestManager::Load(src.datarequestmanager(), dst.GetDataRequestManager(), dst.m_SubMgr);
 
@@ -80,9 +74,6 @@ void SEScenario::Serialize(const SEScenario& src, cdm::ScenarioData& dst)
     dst.set_enginestatefile(src.m_EngineStateFile);
   else if (src.HasInitialParameters())
     dst.set_allocated_initialparameters(SEScenarioInitialParameters::Unload(*src.m_InitialParameters));
-
-  if (src.HasAutoSerialization())
-    dst.set_allocated_autoserialization(SEScenarioAutoSerialization::Unload(*src.m_AutoSerialization));
 
   dst.set_allocated_datarequestmanager(SEDataRequestManager::Unload(src.m_DataRequestMgr));
 
@@ -187,25 +178,6 @@ bool SEScenario::HasInitialParameters() const
 void SEScenario::InvalidateInitialParameters()
 {
   SAFE_DELETE(m_InitialParameters);
-}
-
-bool SEScenario::HasAutoSerialization() const
-{
-  return m_AutoSerialization == nullptr ? false : m_AutoSerialization->IsValid();
-}
-SEScenarioAutoSerialization& SEScenario::GetAutoSerialization()
-{
-  if (m_AutoSerialization == nullptr)
-    m_AutoSerialization = new SEScenarioAutoSerialization(GetLogger());
-  return *m_AutoSerialization;
-}
-const SEScenarioAutoSerialization* SEScenario::GetAutoSerialization() const
-{
-  return m_AutoSerialization;
-}
-void SEScenario::RemoveAutoSerialization()
-{
-  SAFE_DELETE(m_AutoSerialization);
 }
 
 void SEScenario::AddAction(const SEAction& a)

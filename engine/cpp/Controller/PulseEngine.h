@@ -32,7 +32,7 @@ specific language governing permissions and limitations under the License.
 /// calls as well as assessment calls for obtaining the results. During engine execution a log files
 /// is generated containing information, warning and error data.
 //--------------------------------------------------------------------------------------------------
-class PULSE_API PulseEngine : public PhysiologyEngine, public Pulse
+class PULSE_DECL PulseEngine : public PhysiologyEngine, public Pulse
 {
 public:
 
@@ -40,12 +40,12 @@ public:
   PulseEngine(const std::string&);
   virtual ~PulseEngine();
 
-  virtual bool LoadState(const std::string& file, const SEScalarTime* simTime = nullptr);
-  virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr);
-  virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& file = "");
+  virtual bool LoadState(const std::string& file, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config=nullptr) { return false; }
+  virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config=nullptr) { return false; }
+  virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& file = "") { return nullptr; }
 
   virtual Logger* GetLogger();
-  virtual SEEngineTracker* GetEngineTrack();
+  virtual SEEngineTracker* GetEngineTracker();
 
   virtual bool InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);
   virtual bool InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);

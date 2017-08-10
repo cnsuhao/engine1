@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 * @brief 
 * Generic inhaler for substance administration.
 */
-class PULSE_API Inhaler : public SEInhaler, public PulseSystem
+class PULSE_DECL Inhaler : public SEInhaler, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

@@ -15,10 +15,9 @@ specific language governing permissions and limitations under the License.
 #include "scenario/SECondition.h"
 #include "scenario/SEDataRequestManager.h"
 #include "scenario/SEScenarioInitialParameters.h"
-#include "scenario/SEScenarioAutoSerialization.h"
 #include "substance/SESubstanceManager.h"
 
-class DLL_DECL SEScenario : public Loggable
+class CDM_DECL SEScenario : public Loggable
 {
 public:
 
@@ -27,6 +26,8 @@ public:
   
   virtual void Clear(); //clear memory
 
+  bool LoadFile(const std::string& scenarioFile);
+
   static void Load(const cdm::ScenarioData& src, SEScenario& dst);
   static cdm::ScenarioData* Unload(const SEScenario& src);
 protected:
@@ -34,7 +35,6 @@ protected:
   static void Serialize(const SEScenario& src, cdm::ScenarioData& dst);
 
 public:
-  bool LoadFile(const std::string& scenarioFile);
   bool IsValid() const;
 
   virtual std::string GetName() const;
@@ -57,17 +57,11 @@ public:
   virtual bool HasInitialParameters() const;
   virtual void InvalidateInitialParameters();
 
-  virtual bool HasAutoSerialization() const;
-  virtual SEScenarioAutoSerialization& GetAutoSerialization();
-  virtual const SEScenarioAutoSerialization* GetAutoSerialization() const;
-  virtual void RemoveAutoSerialization();
-
   virtual void AddAction(const SEAction& action);
   virtual const std::vector<SEAction*>& GetActions() const;
 
   virtual SEDataRequestManager& GetDataRequestManager() { return m_DataRequestMgr; }
   virtual const SEDataRequestManager& GetDataRequestManager() const { return m_DataRequestMgr; }
-
 
 protected:
   SESubstanceManager&                         m_SubMgr;
@@ -75,7 +69,6 @@ protected:
   std::string                                 m_Description;
   std::string                                 m_EngineStateFile;
   SEScenarioInitialParameters*                m_InitialParameters;
-  SEScenarioAutoSerialization*                m_AutoSerialization;
   SEDataRequestManager                        m_DataRequestMgr;
   std::vector<SEAction*>                      m_Actions;
 

@@ -10,12 +10,13 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "BioGearsScenarioDriver.h"
+#include "PulseScenarioDriver.h"
 
 #include "Verification.h"
-#include "BioGearsPhysiologyEngine.h"
+#include "engine/SEEngineConfiguration.h"
+#include "Controller/PulseConfiguration.h"
 
-bool BioGearsScenarioDriver::Configure(int argc, char* argv[])
+bool PulseScenarioDriver::Configure(int argc, char* argv[])
 {
     if (argc <= 1)
     {
@@ -24,7 +25,7 @@ bool BioGearsScenarioDriver::Configure(int argc, char* argv[])
     }
 
     std::string file(argv[1]);
-    if (file.find(".xml") != std::string::npos)
+    if (file.find(".pba") != std::string::npos)
     {
         m_file = file;
         m_mode = RunMode::Scenario;
@@ -51,7 +52,7 @@ bool BioGearsScenarioDriver::Configure(int argc, char* argv[])
   return true;
 }
 
-void BioGearsScenarioDriver::Run()
+void PulseScenarioDriver::Run()
 {
     if (m_mode == RunMode::Scenario)
     {
@@ -68,30 +69,34 @@ void BioGearsScenarioDriver::Run()
     }
 }
 
-void BioGearsScenarioDriver::RunScenario()
+void PulseScenarioDriver::RunScenario()
 {
   // Set up the log file
   std::string logFile = m_file;
   logFile = Replace(logFile, "verification", "bin");
-  logFile = Replace(logFile, ".xml", ".log");
+  logFile = Replace(logFile, ".pba", ".log");
   // Set up the verification output file  
   std::string dataFile = m_file;
   dataFile = Replace(dataFile, "verification", "bin");
-  dataFile = Replace(dataFile, ".xml", "Results.txt");
+  dataFile = Replace(dataFile, ".pba", "Results.txt");
   // Delete any results file that may be there
   remove(dataFile.c_str());
-  std::unique_ptr<PhysiologyEngine> bioGears = CreateBioGearsEngine(logFile.c_str());
-  if (!bioGears)
+  std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine(logFile.c_str());
+  if (!Pulse)
   {
-    std::cerr << "Unable to create BioGearsEngine" << std::endl;
+    std::cerr << "Unable to create PulseEngine" << std::endl;
     return;
   }
   try
   {
-    BioGearsScenarioExec exec(*bioGears);
+    PulseScenarioExec exec(*((PulseEngine*)Pulse.get()));
     exec.Execute(m_file.c_str(), dataFile.c_str(), nullptr);
   }
   catch (std::exception ex)
+  {
+    std::cerr << ex.what() << std::endl;
+  }
+  catch (CommonDataModelException ex)
   {
     std::cerr << ex.what() << std::endl;
   }
@@ -101,7 +106,7 @@ void BioGearsScenarioDriver::RunScenario()
   }
 }
 
-void BioGearsScenarioDriver::RunVerification()
+void PulseScenarioDriver::RunVerification()
 {
     Verification::RunMode mode = Verification::RunMode::Default;
     if (HasArgument("runall"))
@@ -117,7 +122,7 @@ void BioGearsScenarioDriver::RunVerification()
     verifier.Verify();
 }
 
-bool BioGearsScenarioDriver::HasArgument(const std::string& argument)
+bool PulseScenarioDriver::HasArgument(const std::string& argument)
 {
     return m_arguments.find(argument) != end(m_arguments);
 }
@@ -126,7 +131,7 @@ int main(int argc, char* argv[])
 {
   try
   {
-    BioGearsScenarioDriver scenarioDriver;
+    PulseScenarioDriver scenarioDriver;
     if (!scenarioDriver.Configure(argc, argv))
     {
       return 1;

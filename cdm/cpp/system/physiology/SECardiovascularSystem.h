@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "system/SESystem.h"
 #include "bind/cdm/Physiology.pb.h"
 
-class DLL_DECL SECardiovascularSystem : public SESystem
+class CDM_DECL SECardiovascularSystem : public SESystem
 {
 public:
 

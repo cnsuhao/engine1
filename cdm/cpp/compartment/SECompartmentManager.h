@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/tissue/SETissueCompartment.h"
 #include "bind/cdm/Compartment.pb.h"
 
-class DLL_DECL SECompartmentManager : public Loggable
+class CDM_DECL SECompartmentManager : public Loggable
 {
 public:
   SECompartmentManager(SESubstanceManager& subMgr);
