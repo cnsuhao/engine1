@@ -15,7 +15,7 @@ class SESubstance;
 class SESubstanceManager;
 class SELiquidCompartment;
 
-class DLL_DECL SETissueCompartment : public SECompartment
+class CDM_DECL SETissueCompartment : public SECompartment
 {
   friend class SECompartmentManager;
 protected:

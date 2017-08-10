@@ -19,15 +19,15 @@ class Pulse;
 /**
 * @brief Manages all circuits associated with all %Pulse systems/equipement
 */
-class PULSE_API PulseCircuits : public SECircuitManager
+class PULSE_DECL PulseCircuits : public SECircuitManager
 {
 public:
 
   PulseCircuits(Pulse& data);
   virtual ~PulseCircuits();
-  void Clear();
 
-  virtual bool Load(const cdm::CircuitManagerData& in);
+  virtual void Clear();
+  virtual void StateChange();
 
   virtual void SetReadOnlyFluid(bool b);
 

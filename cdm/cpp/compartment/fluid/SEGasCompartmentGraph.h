@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/SECompartmentTransportGraph.h"
 class SECompartmentManager;
 
-class DLL_DECL SEGasCompartmentGraph : public SECompartmentTransportGraph<SEGasTransportGraph, SEGasTransportVertex, SEGasTransportEdge, SEGasCompartment, SEGasCompartmentLink>
+class CDM_DECL SEGasCompartmentGraph : public SECompartmentTransportGraph<SEGasTransportGraph, SEGasTransportVertex, SEGasTransportEdge, SEGasCompartment, SEGasCompartmentLink>
 {
   friend class SECompartmentManager;
 protected:

@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/actions/SEPatientAction.h"
 #include "patient/SENutrition.h"
 
-class DLL_DECL SEConsumeNutrients : public SEPatientAction
+class CDM_DECL SEConsumeNutrients : public SEPatientAction
 {
 public:
 

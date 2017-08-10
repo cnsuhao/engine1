@@ -19,24 +19,25 @@ specific language governing permissions and limitations under the License.
 
 #include <memory>
 
-#if defined(__clang__)
-#define PULSE_API
-#define BG_EXT
-#elif defined(__gnu_linux__)
-#define PULSE_API __attribute__ ((visibility ("default")))
-#define BG_EXT extern
-#else
-#ifdef PULSE_EXPORT
-#define PULSE_API __declspec(dllexport)
-#define BG_EXT
-#else
-#define PULSE_API __declspec(dllimport)
-#define BG_EXT extern
-#endif
+#define PULSE_DECL
+#ifdef SHARED_PULSE
+  #if defined(__clang__)
+    #define PULSE_DECL
+  #elif defined(__gnu_linux__)
+    #define PULSE_DECL __attribute__ ((visibility ("default")))
+  #else
+    #ifdef SHARED_PULSE
+      #define PULSE_DECL __declspec(dllexport)
+    #else
+      #define PULSE_DECL __declspec(dllimport)
+    #endif
+  #endif
 #endif
 
-PULSE_API std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile = "");
-PULSE_API std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr);
+#include "Controller/Scenario/PulseScenario.h"
+
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile = "");
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr);
 
 #define BGE mil::tatrc::physiology::pulse
 

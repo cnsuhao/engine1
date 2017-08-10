@@ -16,7 +16,7 @@ class SESubstanceManager;
 class SEEnvironmentalConditions;
 #include "bind/cdm/Substance.pb.h"
 
-class DLL_DECL SESubstanceConcentration : public Loggable
+class CDM_DECL SESubstanceConcentration : public Loggable
 {
 protected:
   friend SEEnvironmentalConditions;// So it can add substances to the manager

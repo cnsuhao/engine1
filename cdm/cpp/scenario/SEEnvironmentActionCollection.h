@@ -16,7 +16,7 @@ class SEEnvironment;
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 
-class DLL_DECL SEEnvironmentActionCollection : public Loggable
+class CDM_DECL SEEnvironmentActionCollection : public Loggable
 {
   friend class SEActionManager;
 protected:

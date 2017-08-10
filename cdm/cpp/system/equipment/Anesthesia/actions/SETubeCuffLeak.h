@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineAction.h"
 
-class DLL_DECL SETubeCuffLeak : public SEAnesthesiaMachineAction
+class CDM_DECL SETubeCuffLeak : public SEAnesthesiaMachineAction
 {
 public:
 

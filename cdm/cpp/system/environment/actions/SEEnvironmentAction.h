@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "scenario/SEAction.h"
 #include "bind/cdm/EnvironmentActions.pb.h"
 
-class DLL_DECL SEEnvironmentAction : public SEAction
+class CDM_DECL SEEnvironmentAction : public SEAction
 {
 public:
 

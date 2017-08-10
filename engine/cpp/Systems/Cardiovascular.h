@@ -31,7 +31,7 @@ class SEFluidCircuitCalculator;
 * with other systems, if alterations are made to the cardiovascular system then the feedback will be felt in the other physiologic systems.
 *
 */
-class PULSE_API Cardiovascular : public SECardiovascularSystem, public PulseSystem
+class PULSE_DECL Cardiovascular : public SECardiovascularSystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

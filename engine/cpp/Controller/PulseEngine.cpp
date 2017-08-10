@@ -30,12 +30,12 @@ specific language governing permissions and limitations under the License.
 
 #include <memory>
 
-PULSE_API std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile)
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile)
 {
   return std::unique_ptr<PulseEngine>(new PulseEngine(logfile));
 }
 
-PULSE_API std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
 {
   return std::unique_ptr<PulseEngine>(new PulseEngine(logger));
 }
@@ -68,7 +68,7 @@ SEEngineTracker* PulseEngine::GetEngineTracker()
 {
   return &m_EngineTrack;
 }
-
+/*
 bool PulseEngine::LoadState(const std::string& file, const SEScalarTime* simTime)
 {
   std::unique_ptr<CDM::ObjectData> bind = Serializer::ReadFile(file, GetLogger());
@@ -79,7 +79,7 @@ bool PulseEngine::LoadState(const std::string& file, const SEScalarTime* simTime
   return false;
 }
 
-bool PulseEngine::LoadState(const CDM::PhysiologyEngineStateData& state, const SEScalarTime* simTime)
+bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime)
 {
   m_ss.str("");
   
@@ -202,7 +202,7 @@ bool PulseEngine::LoadState(const CDM::PhysiologyEngineStateData& state, const S
   // At this point I don't think we should be doing this... but maybe you want to...
   //Info("Merging OnDisk Configuration");
   //PulseConfiguration cFile(*m_Substances);
-  //cFile.LoadFile("PulseConfiguration.xml");
+  //cFile.LoadFile("PulseConfiguration.pba");
   //m_Config->Merge(cFile);
   
 
@@ -363,7 +363,7 @@ bool PulseEngine::LoadState(const CDM::PhysiologyEngineStateData& state, const S
   m_Compartments->GetActiveAerosolGraph();
 
   // It helps to unload what you just loaded and to a compare if you have issues
-  //SaveState("WhatIJustLoaded.xml");
+  //SaveState("WhatIJustLoaded.pba");
 
   // Good to go, save it off and carry on!
   m_State = EngineState::Active;
@@ -427,7 +427,7 @@ std::unique_ptr<CDM::PhysiologyEngineStateData> PulseEngine::SaveState(const std
     CreateFilePath(file);
     // Write out the engine state
     std::ofstream stream(file);
-    // Write out the xml file
+    // Write out the pba file
     xml_schema::namespace_infomap map;
     map[""].name = "uri:/mil/tatrc/physiology/datamodel";
     try
@@ -443,6 +443,7 @@ std::unique_ptr<CDM::PhysiologyEngineStateData> PulseEngine::SaveState(const std
 
   return state;
 }
+*/
 
 bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
 {
@@ -459,7 +460,9 @@ bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::ve
 
 bool PulseEngine::InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
 { 
-  CDM_COPY((&patient), m_Patient);
+  auto* p = SEPatient::Unload(patient);
+  SEPatient::Load(*p, *m_Patient);
+  delete p;  
   // We need logic here that makes sure we have what we need
   // and notify we are ignoring anything provided we won't use
   return InitializeEngine(conditions,config);
@@ -467,9 +470,19 @@ bool PulseEngine::InitializeEngine(const SEPatient& patient, const std::vector<c
 
 bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
 {
+  const PulseConfiguration* pConfig = nullptr;
+  if (config != nullptr)
+  {
+    pConfig = dynamic_cast<const PulseConfiguration*>(config);
+    if (pConfig == nullptr)
+    {
+      Error("Configuration provided is not a Pulse Configuration Object");
+      return false;
+    }
+  }
   m_EngineTrack.ResetFile();
   m_State = EngineState::Initialization;
-  if (!Pulse::Initialize(config))
+  if (!Pulse::Initialize(pConfig))
     return false;
 
   // We don't capture events during initialization
@@ -477,14 +490,14 @@ bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* condit
   m_AnesthesiaMachine->ForwardEvents(nullptr);
 
   // Stabilize the engine to a resting state (with a standard meal and environment)
-  if (!m_Config->HasStabilizationCriteria())
+  if (!m_Config->HasStabilization())
   {
     Error("Pulse needs stabilization criteria, none provided in configuration file");
     return false;
   }
 
   m_State = EngineState::InitialStabilization;
-  if (!m_Config->GetStabilizationCriteria()->StabilizeRestingState(*this))
+  if (!m_Config->GetStabilization()->StabilizeRestingState(*this))
     return false;  
   // We need to process conditions here, so systems can prepare for them in their AtSteadyState method
   if (conditions != nullptr && !conditions->empty())
@@ -505,12 +518,12 @@ bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* condit
   if (conditions != nullptr && !conditions->empty())
   {// Now restabilize the patient with any conditions that were applied
    // Push conditions into condition manager
-    if (!m_Config->GetStabilizationCriteria()->StabilizeConditions(*this, *conditions))
+    if (!m_Config->GetStabilization()->StabilizeConditions(*this, *conditions))
       return false;
   }
   else
   {
-    if (!m_Config->GetStabilizationCriteria()->StabilizeFeedbackState(*this))
+    if (!m_Config->GetStabilization()->StabilizeFeedbackState(*this))
       return false;
   }
   AtSteadyState(EngineState::AtSecondaryStableState);
@@ -527,7 +540,7 @@ bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* condit
   //if (!m_Config->GetStabilizationCriteria()->StabilizeFeedbackState(*this))
   //  return false;
 
-  if (!m_Config->GetStabilizationCriteria()->IsTrackingStabilization())
+  if (!m_Config->GetStabilization()->IsTrackingStabilization())
     m_SimulationTime->SetValue(0, TimeUnit::s);  
   // Don't allow any changes to Quantity/Potential/Flux values directly
   // Use Quantity/Potential/Flux Sources
@@ -580,7 +593,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
   const SESerializeState* serialize = dynamic_cast<const SESerializeState*>(&action);
   if (serialize != nullptr)
   {
-    if (serialize->GetType() == CDM::enumSerializationType::Save)
+    if (serialize->GetType() == cdm::SerializeStateData_eSerializationType_Save)
     {
       if (serialize->HasFilename())
         SaveState(serialize->GetFilename());
@@ -588,7 +601,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
       {
         std::stringstream ss;
         MKDIR("./states");
-        ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.xml";
+        ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.pba";
         SaveState(ss.str());
       }     
     }
@@ -602,102 +615,65 @@ bool PulseEngine::ProcessAction(const SEAction& action)
   {
     switch (patientAss->GetType())
     {
-      case CDM::enumPatientAssessment::PulmonaryFunctionTest:
+      case cdm::PatientAssessmentRequestData_eType_PulmonaryFunctionTest:
       {
         SEPulmonaryFunctionTest pft(m_Logger);
         GetPatientAssessment(pft);
 
         // Write out the Assessement
-        std::string pftFile = GetEngineTrack()->GetDataRequestManager().GetResultFilename();
+        std::string pftFile = GetEngineTracker()->GetDataRequestManager().GetResultFilename();
         if (pftFile.empty())
           pftFile = "PulmonaryFunctionTest";
         m_ss << "PFT@" << GetSimulationTime(TimeUnit::s) << "s";
         pftFile = Replace(pftFile, "Results", m_ss.str());
-        pftFile = Replace(pftFile, ".txt", ".xml");
-        m_ss << "PulmonaryFunctionTest@" << GetSimulationTime(TimeUnit::s) << "s.xml";
-        std::ofstream stream(pftFile);
-        m_ss.str("");
-        m_ss.clear();
-        // Write out the xml file
-        xml_schema::namespace_infomap map;
-        map[""].name = "uri:/mil/tatrc/phsyiology/datamodel";
-        map[""].schema = "Pulse.xsd";
-        std::unique_ptr<CDM::PulmonaryFunctionTestData> unloaded(pft.Unload());
-        unloaded->contentVersion(BGE::Version);
-        PulmonaryFunctionTest(stream, *unloaded, map);
-        stream.close();
+        pftFile = Replace(pftFile, ".txt", ".pba");
+        m_ss << "PulmonaryFunctionTest@" << GetSimulationTime(TimeUnit::s) << "s.pba";
+        pft.SaveFile(pftFile);
         break;
       }
-      case CDM::enumPatientAssessment::Urinalysis:
+      case cdm::PatientAssessmentRequestData_eType_Urinalysis:
       {
         SEUrinalysis upan(m_Logger);
         GetPatientAssessment(upan);
 
-        std::string upanFile = GetEngineTrack()->GetDataRequestManager().GetResultFilename();
+        std::string upanFile = GetEngineTracker()->GetDataRequestManager().GetResultFilename();
         if (upanFile.empty())
           upanFile = "Urinalysis";
         m_ss << "Urinalysis@" << GetSimulationTime(TimeUnit::s) << "s";
         upanFile = Replace(upanFile, "Results", m_ss.str());
-        upanFile = Replace(upanFile, ".txt", ".xml");
-        m_ss << "Urinalysis@" << GetSimulationTime(TimeUnit::s) << "s.xml";
-        std::ofstream stream(upanFile);
-        m_ss.str("");
-        m_ss.clear();
-        // Write out the xml file
-        xml_schema::namespace_infomap map;
-        map[""].name = "uri:/mil/tatrc/phsyiology/datamodel";
-        std::unique_ptr<CDM::UrinalysisData> unloaded(upan.Unload());
-        unloaded->contentVersion(BGE::Version);
-        Urinalysis(stream, *unloaded, map);
-        stream.close();
+        upanFile = Replace(upanFile, ".txt", ".pba");
+        m_ss << "Urinalysis@" << GetSimulationTime(TimeUnit::s) << "s.pba";
+        upan.SaveFile(upanFile);
         break;
       }
 
-      case CDM::enumPatientAssessment::CompleteBloodCount:
+      case cdm::PatientAssessmentRequestData_eType_CompleteBloodCount:
       {
         SECompleteBloodCount cbc(m_Logger);
         GetPatientAssessment(cbc);
-        std::string cbcFile = GetEngineTrack()->GetDataRequestManager().GetResultFilename();
+        std::string cbcFile = GetEngineTracker()->GetDataRequestManager().GetResultFilename();
         if (cbcFile.empty())
           cbcFile = "CompleteBloodCount";
         m_ss << "CBC@" << GetSimulationTime(TimeUnit::s) << "s";
         cbcFile = Replace(cbcFile, "Results", m_ss.str());
-        cbcFile = Replace(cbcFile, ".txt", ".xml");
-        m_ss << "CompleteBloodCount@" << GetSimulationTime(TimeUnit::s) << "s.xml";
-        std::ofstream stream(cbcFile);
-        m_ss.str("");
-        m_ss.clear();
-        // Write out the xml file
-        xml_schema::namespace_infomap map;
-        map[""].name = "uri:/mil/tatrc/phsyiology/datamodel";
-        std::unique_ptr<CDM::CompleteBloodCountData> unloaded(cbc.Unload());
-        unloaded->contentVersion(BGE::Version);
-        CompleteBloodCount(stream, *unloaded, map);
-        stream.close();
+        cbcFile = Replace(cbcFile, ".txt", ".pba");
+        m_ss << "CompleteBloodCount@" << GetSimulationTime(TimeUnit::s) << "s.pba";
+        cbc.SaveFile(cbcFile);
         break;
       }
 
-      case CDM::enumPatientAssessment::ComprehensiveMetabolicPanel:
+      case cdm::PatientAssessmentRequestData_eType_ComprehensiveMetabolicPanel:
       {
         SEComprehensiveMetabolicPanel mp(m_Logger);
         GetPatientAssessment(mp);
-        std::string mpFile = GetEngineTrack()->GetDataRequestManager().GetResultFilename();
+        std::string mpFile = GetEngineTracker()->GetDataRequestManager().GetResultFilename();
         if (mpFile.empty())
           mpFile = "ComprehensiveMetabolicPanel";
         m_ss << "CMP@" << GetSimulationTime(TimeUnit::s) << "s";
         mpFile = Replace(mpFile, "Results", m_ss.str());
-        mpFile = Replace(mpFile, ".txt", ".xml");
-        m_ss << "ComprehensiveMetabolicPanel@" << GetSimulationTime(TimeUnit::s) << "s.xml";
-        std::ofstream stream(mpFile);
-        m_ss.str("");
-        m_ss.clear();
-        // Write out the xml file
-        xml_schema::namespace_infomap map;
-        map[""].name = "uri:/mil/tatrc/phsyiology/datamodel";
-        std::unique_ptr<CDM::ComprehensiveMetabolicPanelData> unloaded(mp.Unload());
-        unloaded->contentVersion(BGE::Version);
-        ComprehensiveMetabolicPanel(stream, *mp.Unload(), map);
-        stream.close();
+        mpFile = Replace(mpFile, ".txt", ".pba");
+        m_ss << "ComprehensiveMetabolicPanel@" << GetSimulationTime(TimeUnit::s) << "s.pba";
+        mp.SaveFile(mpFile);
         break;
       }
       default:

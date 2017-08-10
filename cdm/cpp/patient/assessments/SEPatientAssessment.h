@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
  * This is high level data, such as a mean or generalized data 
  * value intended to give a genaral overview of the patient (SEPatientAssessment) or other systems
  */
-class DLL_DECL SEPatientAssessment : public Loggable
+class CDM_DECL SEPatientAssessment : public Loggable
 {
 public:
 
@@ -27,6 +27,8 @@ public:
   virtual ~SEPatientAssessment();
 
   virtual void Clear();
+
+  virtual void SaveFile(const std::string& filename) = 0;
 
 protected:
   static void Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst);

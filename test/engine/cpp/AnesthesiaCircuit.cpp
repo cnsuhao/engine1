@@ -49,13 +49,13 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   std::ofstream fileGraph;
   
   Pulse bg(sTestDirectory + "\\AnesthesiaMachineCircuitAndTransportTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
+  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
   bg.m_Config->EnableTissue(cdm::eSwitch::Off);
   bg.CreateCircuitsAndCompartments();
   SEEnvironmentalConditions env(bg.GetSubstances());
-  env.LoadFile("./environments/Standard.xml");
+  env.LoadFile("./environments/Standard.pba");
   SEGasCompartment* cEnv = bg.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {

@@ -24,11 +24,11 @@ namespace
     };
 }
 
-class BioGearsScenarioDriver
+class PulseScenarioDriver
 {
 public:
-    BioGearsScenarioDriver() = default;
-    ~BioGearsScenarioDriver() = default;
+    PulseScenarioDriver() = default;
+    ~PulseScenarioDriver() = default;
 
     bool Configure(int argc, char* argv[]);
     void Run();

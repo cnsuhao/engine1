@@ -19,7 +19,7 @@ class SEAction;
 #include "scenario/SEInhalerActionCollection.h"
 #include "bind/cdm/Scenario.pb.h"
 
-class DLL_DECL SEActionManager : public Loggable
+class CDM_DECL SEActionManager : public Loggable
 {
 public:
 

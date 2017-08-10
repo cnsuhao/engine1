@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "scenario/SEAction.h"
 
-class DLL_DECL SEAdvanceTime : public SEAction
+class CDM_DECL SEAdvanceTime : public SEAction
 {
 public:
 

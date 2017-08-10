@@ -24,7 +24,7 @@ specific language governing permissions and limitations under the License.
 /// \brief
 /// This class handles concurrent execution of tasks
 //--------------------------------------------------------------------------------------------------
-class DLL_DECL TaskRunner : public TaskQueue
+class CDM_DECL TaskRunner : public TaskQueue
 {
 public:
     TaskRunner();

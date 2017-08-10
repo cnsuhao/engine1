@@ -37,7 +37,7 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   std::ofstream graphFile;
 
   Pulse bg(sTestDirectory + "\\RenalCircuitAndTransportTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
+  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::On);
   bg.m_Config->EnableTissue(cdm::eSwitch::Off);
@@ -163,7 +163,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   TimingProfile tmr;
   tmr.Start("Test");
   Pulse bg(sTestDirectory + "\\RenalFeedbackTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
+  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::On);
   bg.m_Config->EnableTissue(cdm::eSwitch::Off);
@@ -478,7 +478,7 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   TimingProfile tmr;
   tmr.Start("Test");
   Pulse bg(sTestDirectory + "\\RenalSystemTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
+  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::On);
   bg.m_Config->EnableTissue(cdm::eSwitch::Off);

@@ -4,8 +4,8 @@ set(BUILD_SHARED_LIBS ON)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # Policy to address @foo@ variable expansion
-set(_VERSION_MAJOR 6)
-set(_VERSION_MINOR 2)
+set(_VERSION_MAJOR 1)
+set(_VERSION_MINOR 0)
 set(_VERSION_PATCH 0)
 set(_VERSION "${_VERSION_MAJOR}.${_VERSION_MINOR}.${_VERSION_PATCH}")
 
@@ -30,6 +30,9 @@ if(UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
 endif()
+
+# Build the core libraries as shared or static (DataModel, CDM, Engine)
+set(BUILD_SHARED_LIBS OFF)
 
 message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)

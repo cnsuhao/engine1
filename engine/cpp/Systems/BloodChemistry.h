@@ -25,7 +25,7 @@ class SEComprehensiveMetabolicPanel;
  * The blood chemistry system houses all of the blood concentrations and compositions needed to assess a patient's health. This system is under development
  * and will be improved in future releases to include more substances that can provide clinician level details and assessments, such as a CBC and blood panel.
  */           
-class PULSE_API BloodChemistry : public SEBloodChemistrySystem, public PulseSystem
+class PULSE_DECL BloodChemistry : public SEBloodChemistrySystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

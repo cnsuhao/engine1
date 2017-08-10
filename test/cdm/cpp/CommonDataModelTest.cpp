@@ -261,5 +261,9 @@ void CommonDataModelTest::FillFunctionMap()
 void CommonDataModelTest::TestCompartmentSerialization(SECompartmentManager& mgr, const std::string& filename)
 {
   mgr.SaveFile(filename);
-  mgr.LoadFile(filename, &m_Circuits);
+  if(!mgr.LoadFile(filename, &m_Circuits))
+  {
+    m_Circuits.Clear();
+    m_Circuits.Error("Unable to load file " + filename, "TestCompartmentSerialization");
+  }
 }

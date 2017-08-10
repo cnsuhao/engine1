@@ -1,5 +1,5 @@
 
-# A Phsyiology Simulation Engine
+# The Pulse Physiology Engine
 
 This project uses the Apache License 2.0 @ref License
 

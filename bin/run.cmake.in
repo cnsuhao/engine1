@@ -22,7 +22,7 @@ endif()
 #  You tell me what JDK/JRE you want to use
 #set(Java_JAVA_EXECUTABLE "/the_jdk_I_want/bin/java)
 
-set(JAVA_CLASSPATH BioGears.jar
+set(JAVA_CLASSPATH Pulse.jar
         @DATA_ROOT@/jar/javassist-3.16.1-GA.jar
         @DATA_ROOT@/jar/jcommon-1.0.16.jar
         @DATA_ROOT@/jar/jdom-2.0.2.jar
@@ -49,7 +49,7 @@ elseif(TYPE STREQUAL "PatientValidation")
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver ValidationPatients.config)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.validation.PatientValidation)
 elseif(TYPE STREQUAL "genData")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.biogears.dataset.DataSetReader)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.pulse.dataset.DataSetReader)
 elseif(TYPE STREQUAL "genStates")
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.TestDriver InitialPatientStates.config)
 elseif(TYPE STREQUAL "doxygen")
@@ -67,7 +67,7 @@ elseif(TYPE STREQUAL "doxygen")
   #execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.validation.PatientValidation)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.DoxygenPreprocessor @DATA_ROOT@/docs/Markdown ./docs/markdown)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.DoxygenPreprocessor @DATA_ROOT@/docs/Methodology ./docs/markdown)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.XSDToDoxygen ./xsd/BioGearsDataModel.xsd ./docs/markdown/xsd.ixx)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.XSDToDoxygen ./xsd/DataModel.xsd ./docs/markdown/xsd.ixx)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.CDM2MD ./docs/markdown)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.utilities.csv.plots.PlotDriver PlotRun.config)
   execute_process(COMMAND doxygen ./docs/full.doxy)

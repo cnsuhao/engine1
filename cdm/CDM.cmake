@@ -139,14 +139,16 @@ list(APPEND SOURCE ${UTILS_UCE_FILES})
 #list(APPEND SOURCE ${UTILS_XPSTL_FILES}) 
 
 # The DLL we are building
-add_library(CommonDataModel SHARED ${SOURCE})
+add_library(CommonDataModel ${SOURCE})
 # Preprocessor Definitions and Include Paths
 # Common Compile Flags
 set(CDM_FLAGS)
 set(CDM_FLAGS "${CDM_FLAGS} -D EIGEN_MPL2_ONLY")
-set(CDM_FLAGS "${CDM_FLAGS} -D COMMONDATAMODEL_EXPORTS")
 set(CDM_FLAGS "${CDM_FLAGS} -D UNICODE")
 set(CDM_FLAGS "${CDM_FLAGS} -D _UNICODE")
+if(${BUILD_SHARED_LIBS}) 
+  set(CDM_FLAGS "${CDM_FLAGS} -D SHARED_CDM")
+endif()
 if(MSVC)
   set(CDM_FLAGS "${CDM_FLAGS} -Zm215")
   if(EX_PLATFORM EQUAL 64)
@@ -175,23 +177,25 @@ target_link_libraries(CommonDataModel log4cpp)
 add_custom_command(TARGET CommonDataModel POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModel> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
-if(WIN32)# Copy dll files to the bin
-  install(TARGETS CommonDataModel 
-          RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
-          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(TARGETS CommonDataModel 
-          RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
-          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(TARGETS CommonDataModel 
-          RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
-          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-else()# Copy so files to the bin
-  install(TARGETS CommonDataModel 
-          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(TARGETS CommonDataModel 
-          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(TARGETS CommonDataModel 
-          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+if(${BUILD_SHARED_LIBS})
+  if(WIN32)# Copy dll files to the bin
+    install(TARGETS CommonDataModel 
+            RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(TARGETS CommonDataModel 
+            RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(TARGETS CommonDataModel 
+            RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  else()# Copy so files to the bin
+    install(TARGETS CommonDataModel 
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(TARGETS CommonDataModel 
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(TARGETS CommonDataModel 
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  endif()
 endif()
 # Copy lib/so files to the sdk/lib
 install(TARGETS CommonDataModel         

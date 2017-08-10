@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceTransport.h"
 class SEGasCompartment;
 
-class DLL_DECL SEGasSubstanceQuantity : public SESubstanceQuantity, public SEGasTransportSubstance
+class CDM_DECL SEGasSubstanceQuantity : public SESubstanceQuantity, public SEGasTransportSubstance
 {
   friend class SEGasCompartment;
 protected:

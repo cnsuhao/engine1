@@ -5293,5 +5293,9 @@ void CommonDataModelTest::RunTest(const std::string& outputDirectory, const std:
 void CommonDataModelTest::TestCircuitSerialization(const std::string& fileName)
 {
   m_Circuits.SaveFile(fileName);
-  m_Circuits.LoadFile(fileName);
+  if (!m_Circuits.LoadFile(fileName))
+  {
+    m_Circuits.Clear();
+    m_Circuits.Error("Unable to load file " + fileName,"TestCircuitSerialization");
+  }
 }

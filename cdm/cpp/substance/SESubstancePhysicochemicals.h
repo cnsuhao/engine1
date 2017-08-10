@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "bind/cdm/Substance.pb.h"
 
-class DLL_DECL SESubstancePhysicochemicals : public Loggable
+class CDM_DECL SESubstancePhysicochemicals : public Loggable
 {
 public:
 

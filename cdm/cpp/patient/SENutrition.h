@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "bind/cdm/PatientNutrition.pb.h"
 
-class DLL_DECL SENutrition : public Loggable
+class CDM_DECL SENutrition : public Loggable
 {
 public:
 

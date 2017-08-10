@@ -28,7 +28,7 @@ specific language governing permissions and limitations under the License.
 #include "system/equipment/Anesthesia/actions/SEYPieceDisconnect.h"
 #include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineConfiguration.h"
 
-class DLL_DECL SEAnesthesiaMachineActionCollection : public Loggable
+class CDM_DECL SEAnesthesiaMachineActionCollection : public Loggable
 {
   friend class SEActionManager;
 protected:

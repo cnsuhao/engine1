@@ -45,7 +45,7 @@ specific language governing permissions and limitations under the License.
 // a circular dependency that manifests itself as different error messages depending
 // on which thing you export first. So, on a hunch, I reversed the order, and voila!
 
-class DLL_DECL CCompoundUnit
+class CDM_DECL CCompoundUnit
 {
   // Define the vector type that holds our individual components of a CompoundUnit
   typedef std::vector<CCompoundUnitElement> CUEVecType;

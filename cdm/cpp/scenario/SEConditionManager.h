@@ -26,7 +26,7 @@ specific language governing permissions and limitations under the License.
 // Environment Conditions
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 
-class DLL_DECL SEConditionManager : public Loggable
+class CDM_DECL SEConditionManager : public Loggable
 {
 public:
 

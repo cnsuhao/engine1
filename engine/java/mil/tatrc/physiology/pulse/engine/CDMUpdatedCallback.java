@@ -9,26 +9,23 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
+package mil.tatrc.physiology.pulse.engine;
 
-#pragma once
+import mil.tatrc.physiology.datamodel.datarequests.SEDataRequestManager;
 
-#include "Controller/PulseConfiguration.h"
-#include "scenario/SEScenarioInitialParameters.h"
-class PulseScenario;
-
-/**
-* @brief Overloaded scenario that creates a %Pulse configuration as its configuration object
-*/
-class PULSE_API PulseScenarioInitialParameters : public SEScenarioInitialParameters
+public abstract class CDMUpdatedCallback
 {
-protected:
-  friend PulseScenario;
-
-  PulseScenarioInitialParameters(SESubstanceManager& subMgr);
-  virtual ~PulseScenarioInitialParameters();
-
-  virtual PulseConfiguration& GetConfiguration();
-  virtual const PulseConfiguration* GetConfiguration() const;
-  virtual void SetConfiguration(const PulseConfiguration& config);
-protected:
-};
+  protected double callbackFrequency_s;
+  protected SEDataRequestManager drMgr;
+  public CDMUpdatedCallback(double updateFrequency_s)
+  {
+    this.drMgr = null;
+    callbackFrequency_s = updateFrequency_s;
+  }
+  public void setDataRequests(SEDataRequestManager drMgr)
+  {
+    this.drMgr = drMgr;
+  }
+  
+  public abstract void update(double time_s);
+}

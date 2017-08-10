@@ -20,7 +20,7 @@ class SELiquidCompartmentGraph;
 /**
 * @brief Manages all compartments and graphs associated with all %Pulse systems/equipement
 */
-class PULSE_API PulseCompartments : public SECompartmentManager
+class PULSE_DECL PulseCompartments : public SECompartmentManager
 {
   friend class PulseSubstances;
 public:
@@ -29,8 +29,6 @@ public:
   virtual ~PulseCompartments();
 
   void Clear();
-
-  virtual bool Load(const cdm::CompartmentManagerData& in, SECircuitManager* circuits = nullptr);
 
   void StateChange();
   void UpdateAirwayGraph() { m_UpdateActiveAirwayGraph = true; m_UpdateActiveAerosolGraph = true; }

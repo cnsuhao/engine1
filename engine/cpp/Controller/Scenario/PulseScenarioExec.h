@@ -11,15 +11,16 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
+#include "Controller/PulseEngine.h"
 #include "scenario/SEScenarioExec.h"
 
 /**
 * @brief Overloaded scenario exector to run a %Pulse specific scenario
 */
-class PULSE_API PulseScenarioExec : public SEScenarioExec
+class PULSE_DECL PulseScenarioExec : public SEScenarioExec
 {
 public:
-  PulseScenarioExec(PhysiologyEngine& engine);
+  PulseScenarioExec(PulseEngine& engine);
   virtual ~PulseScenarioExec();
 
   virtual bool Execute(const std::string& scenarioFile, const std::string& resultsFile, SEScenarioCustomExec* cExec = nullptr);
@@ -27,4 +28,6 @@ public:
 
 protected:
 
+  virtual bool ProcessActions(const SEScenario& scenario);
+  virtual bool ProcessAction(const SEAction& action);
 };

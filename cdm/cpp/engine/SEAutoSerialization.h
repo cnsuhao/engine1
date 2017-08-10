@@ -11,23 +11,23 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/cdm/Scenario.pb.h"
+#include "bind/cdm/Engine.pb.h"
 #include "properties/SEScalarTime.h"
 
-class DLL_DECL SEScenarioAutoSerialization : public Loggable
+class CDM_DECL SEAutoSerialization : public Loggable
 {
 public:
-  SEScenarioAutoSerialization(Logger* logger);
-  virtual ~SEScenarioAutoSerialization();
+  SEAutoSerialization(Logger* logger);
+  virtual ~SEAutoSerialization();
 
   virtual void Clear();
   virtual bool IsValid() const;
 
-  static void Load(const cdm::ScenarioData_AutoSerializationData& src, SEScenarioAutoSerialization& dst);
-  static cdm::ScenarioData_AutoSerializationData* Unload(const SEScenarioAutoSerialization& src);
+  static void Load(const cdm::AutoSerializationData& src, SEAutoSerialization& dst);
+  static cdm::AutoSerializationData* Unload(const SEAutoSerialization& src);
 protected:
-  static void Serialize(const cdm::ScenarioData_AutoSerializationData& src, SEScenarioAutoSerialization& dst);
-  static void Serialize(const SEScenarioAutoSerialization& src, cdm::ScenarioData_AutoSerializationData& dst);
+  static void Serialize(const cdm::AutoSerializationData& src, SEAutoSerialization& dst);
+  static void Serialize(const SEAutoSerialization& src, cdm::AutoSerializationData& dst);
 
 public:
 

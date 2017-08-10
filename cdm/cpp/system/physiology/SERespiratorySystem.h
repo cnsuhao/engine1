@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "bind/cdm/Physiology.pb.h"
 
 
-class DLL_DECL SERespiratorySystem : public SESystem
+class CDM_DECL SERespiratorySystem : public SESystem
 {
 public:
 

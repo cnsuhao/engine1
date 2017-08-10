@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "bind/cdm/Properties.pb.h"
 
-class DLL_DECL RunningAverage
+class CDM_DECL RunningAverage
 {
 public:
   

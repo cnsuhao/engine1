@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "engine/SEEngineStabilization.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 
-class DLL_DECL SEDynamicStabilization : public SEEngineStabilization
+class CDM_DECL SEDynamicStabilization : public SEEngineStabilization
 {
 public:
   SEDynamicStabilization(Logger* logger);

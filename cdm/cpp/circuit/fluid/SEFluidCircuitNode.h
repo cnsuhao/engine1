@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 
-class DLL_DECL SEFluidCircuitNode : public SECircuitNode<FLUID_CIRCUIT_NODE>
+class CDM_DECL SEFluidCircuitNode : public SECircuitNode<FLUID_CIRCUIT_NODE>
 {
   friend class SECircuitManager;  
 protected:

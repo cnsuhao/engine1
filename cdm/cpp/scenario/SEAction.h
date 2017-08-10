@@ -15,7 +15,7 @@ class SESubstanceManager;
 #include "bind/cdm/Actions.pb.h"
 #include "bind/cdm/Scenario.pb.h"
 
-class DLL_DECL SEAction : public Loggable
+class CDM_DECL SEAction : public Loggable
 {
 public:
 

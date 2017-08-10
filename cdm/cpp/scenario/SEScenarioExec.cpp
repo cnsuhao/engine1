@@ -17,7 +17,6 @@ specific language governing permissions and limitations under the License.
 #include "scenario/SEScenario.h"
 #include "scenario/SEScenarioInitialParameters.h"
 #include "scenario/SEAdvanceTime.h"
-#include "scenario/SEScenarioAutoSerialization.h"
 #include "PhysiologyEngine.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEEngineConfiguration.h"
@@ -30,6 +29,7 @@ SEScenarioExec::SEScenarioExec(PhysiologyEngine& engine) : Loggable(engine.GetLo
 {
   m_Cancel     = false;
   m_CustomExec = nullptr; 
+  m_EngineConfiguration = nullptr;//Derived class will manage this pointer
 }
 
 SEScenarioExec::~SEScenarioExec()
@@ -120,7 +120,7 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
         // Set up the patient
         std::string pFile = "./patients/";
         pFile += params->GetPatientFile();
-        if (!m_Engine.InitializeEngine(pFile.c_str(), &conditions, params->GetConfiguration()))
+        if (!m_Engine.InitializeEngine(pFile.c_str(), &conditions, m_EngineConfiguration))
         {
           Error("Unable to initialize engine");
           return false;
@@ -128,7 +128,7 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
       }
       else if (params->HasPatient())
       {
-        if (!m_Engine.InitializeEngine(*params->GetPatient(), &conditions, params->GetConfiguration()))
+        if (!m_Engine.InitializeEngine(*params->GetPatient(), &conditions, m_EngineConfiguration))
         {
           Error("Unable to initialize engine");
           return false;
@@ -146,8 +146,6 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
       return false;
     }
 
-    if (scenario.HasAutoSerialization())
-      CreateFilePath(scenario.GetAutoSerialization()->GetDirectory());// Note method assumes you have a file and it ignores it
     return ProcessActions(scenario);
   }
   catch (CommonDataModelException& ex)
@@ -184,32 +182,6 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
     sampleTime_s = 1 / sampleTime_s;
   double currentSampleTime_s = sampleTime_s;//Sample the first step
 
-  // Auto serialization
-  bool serializeAction = false;
-  double serializationTime_s = 0;
-  double serializationPeriod_s = 0;
-  std::string actionName;
-  std::string serializationFileNameBase;
-  std::stringstream serializationFileName;
-  const SEScenarioAutoSerialization* serialization = scenario.GetAutoSerialization();
-  if (serialization != nullptr)
-  {
-    if (!serialization->IsValid())
-      serialization = nullptr;//ignore it
-    else
-    {
-      serializationFileNameBase = serialization->GetFileName();
-      // Strip off the pba if it's there
-      size_t split = serializationFileNameBase.find(".pba");
-      if (split != serializationFileNameBase.npos)
-        serializationFileNameBase = serializationFileNameBase.substr(0, split);
-
-      serializationPeriod_s = serialization->GetPeriod(TimeUnit::s);
-      serializationFileName << serialization->GetDirectory() << "/" << serializationFileNameBase;     
-      serializationFileNameBase = serializationFileName.str();
-    }
-  }
-
   TimingProfile profiler;
   profiler.Start("Total");
   profiler.Start("Status");
@@ -236,41 +208,6 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
           break;
 
         m_Engine.AdvanceModelTime();
-
-        if (serialization!=nullptr)
-        {// Auto Serialize
-          if(serializationPeriod_s > 0)
-          {
-            serializationTime_s += dT_s;
-            if (serializationTime_s > serializationPeriod_s)
-            {
-              serializationTime_s = 0;
-              serializationFileName.str("");
-              serializationFileName << serializationFileNameBase;
-              if (serialization->GetPeriodTimeStamps() == cdm::eSwitch::On)
-                serializationFileName << "@" << m_Engine.GetSimulationTime(TimeUnit::s);
-              serializationFileName << ".pba";
-              std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
-              if (serialization->GetReloadState() == cdm::eSwitch::On)
-              {
-                m_Engine.LoadState(*state);
-                std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()+".Reloaded.pba"));
-              }
-            }
-          }
-          if (serializeAction)
-          {
-            serializeAction = false;
-            serializationFileName.str("");
-            serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".pba";
-            std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
-            if (serialization->GetReloadState() == cdm::eSwitch::On)
-            {
-              m_Engine.LoadState(*state);
-              std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()+".Reloaded.pba"));
-            }
-          }          
-        }
 
         // Pull data from the engine
         scenarioTime_s = m_Engine.GetSimulationTime(TimeUnit::s);
@@ -303,27 +240,6 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
       err=true;
       break;
     }
-    
-    if (serialization != nullptr && serialization->GetAfterActions()==cdm::eSwitch::On)
-    {// If we are testing force serialization after any action with this
-     // Pull out the action type/name for file naming
-      m_ss << *a;
-      size_t start = m_ss.str().find(": ") + 2;
-      size_t end = m_ss.str().find('\n');
-      actionName = m_ss.str().substr(start, end - start);
-      m_ss.str("");
-
-      serializationFileName.str("");
-      serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".pba";
-      std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
-      if (serialization->GetReloadState() == cdm::eSwitch::On)
-      {
-        m_Engine.LoadState(*state);
-        std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()+".Reloaded.pba"));
-      }
-      serializeAction = true;// Serialize after the next time step
-    }
-   
     if(m_Engine.GetPatient().IsEventActive(cdm::PatientData_eEvent_IrreversibleState))
       return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
   }

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL PressureTimePerAreaUnit : public CCompoundUnit
+class CDM_DECL PressureTimePerAreaUnit : public CCompoundUnit
 {
 public:
   PressureTimePerAreaUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -26,7 +26,7 @@ public:
   static const PressureTimePerAreaUnit cmH2O_Per_mL_m2;
 };
 
-class DLL_DECL SEScalarPressureTimePerArea : public SEScalarQuantity<PressureTimePerAreaUnit>
+class CDM_DECL SEScalarPressureTimePerArea : public SEScalarQuantity<PressureTimePerAreaUnit>
 {
 public:
   SEScalarPressureTimePerArea() {}

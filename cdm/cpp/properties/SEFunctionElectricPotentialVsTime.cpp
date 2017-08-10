@@ -136,8 +136,8 @@ SEFunctionElectricPotentialVsTime*  SEFunctionElectricPotentialVsTime::Interpola
   //m_Independent;// Original X (Time)
   //m_Dependent;// Original Y (ElectricPotential)
   double x1, x2, y1, y2, xPrime, yPrime;
-  unsigned int newTimeIterator = 0;
-  for (unsigned int i = 0; i < m_Independent.size(); i++)
+  size_t newTimeIterator = 0;
+  for (size_t i = 0; i < m_Independent.size(); i++)
   {
     x1 = GetTimeValue(i,unit); // get the points needed for interpolation.
     x2 = GetTimeValue(i + 1, unit);

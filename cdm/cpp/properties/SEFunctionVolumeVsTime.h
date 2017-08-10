@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEFunction.h"
 
-class DLL_DECL SEFunctionVolumeVsTime : public SEFunction
+class CDM_DECL SEFunctionVolumeVsTime : public SEFunction
 {
 public:
 

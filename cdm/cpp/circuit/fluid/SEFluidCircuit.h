@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 
 class SECircuitManager;
 
-class DLL_DECL SEFluidCircuit : public SECircuit<cdm::FluidCircuitData, SEFluidCircuitNode, cdm::FluidCircuitNodeData, SEFluidCircuitPath, cdm::FluidCircuitPathData>
+class CDM_DECL SEFluidCircuit : public SECircuit<cdm::FluidCircuitData, SEFluidCircuitNode, cdm::FluidCircuitNodeData, SEFluidCircuitPath, cdm::FluidCircuitPathData>
 {
   friend class SECircuitManager;
 protected:

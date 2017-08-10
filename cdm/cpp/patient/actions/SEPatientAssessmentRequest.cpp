@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 
 SEPatientAssessmentRequest::SEPatientAssessmentRequest() : SEPatientAction()
 {
-  m_Type=cdm::PatientAssessmentRequestData_eAssessmentType_CompleteBloodCount;
+  m_Type=cdm::PatientAssessmentRequestData_eType_CompleteBloodCount;
 }
 
 SEPatientAssessmentRequest::~SEPatientAssessmentRequest()
@@ -26,7 +26,7 @@ SEPatientAssessmentRequest::~SEPatientAssessmentRequest()
 void SEPatientAssessmentRequest::Clear()
 {
   SEPatientAction::Clear();
-  m_Type=cdm::PatientAssessmentRequestData_eAssessmentType_CompleteBloodCount;
+  m_Type=cdm::PatientAssessmentRequestData_eType_CompleteBloodCount;
 }
 
 bool SEPatientAssessmentRequest::IsValid() const
@@ -61,11 +61,11 @@ void SEPatientAssessmentRequest::Serialize(const SEPatientAssessmentRequest& src
   dst.set_type(src.m_Type);
 }
 
-cdm::PatientAssessmentRequestData_eAssessmentType SEPatientAssessmentRequest::GetType() const
+cdm::PatientAssessmentRequestData_eType SEPatientAssessmentRequest::GetType() const
 {
   return m_Type;
 }
-void SEPatientAssessmentRequest::SetType(cdm::PatientAssessmentRequestData_eAssessmentType Type)
+void SEPatientAssessmentRequest::SetType(cdm::PatientAssessmentRequestData_eType Type)
 {
   m_Type = Type;
 }

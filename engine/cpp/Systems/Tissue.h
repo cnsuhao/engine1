@@ -21,7 +21,7 @@ specific language governing permissions and limitations under the License.
  * To capture this behavior, the System Interactions methodology was introduced. 
  * The primary function of this system is to capture the substance transport that occurs between systems.
  */  
-class PULSE_API Tissue : public SETissueSystem, public PulseSystem
+class PULSE_DECL Tissue : public SETissueSystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

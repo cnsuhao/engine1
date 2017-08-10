@@ -89,7 +89,7 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_
     engineJNI->updateFrequency_cnt = (int)(updateFreq_s /engineJNI->eng->GetTimeStep(TimeUnit::s));
     engineJNI->jniEnv = env;
     engineJNI->jniObj = obj;
-    // Load up the xml and run the scenario
+    // Load up the pba and run the scenario
     PulseScenario sce(engineJNI->eng->GetSubstanceManager());
     std::istringstream istr(sceXML);
     xml_schema::properties properties;

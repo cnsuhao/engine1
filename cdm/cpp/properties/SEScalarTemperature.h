@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL TemperatureUnit : public CCompoundUnit
+class CDM_DECL TemperatureUnit : public CCompoundUnit
 {
 public:
   TemperatureUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -28,7 +28,7 @@ public:
   static const TemperatureUnit R;
 };
 
-class DLL_DECL SEScalarTemperature : public SEScalarQuantity<TemperatureUnit>
+class CDM_DECL SEScalarTemperature : public SEScalarQuantity<TemperatureUnit>
 {
 public:
   SEScalarTemperature() {}

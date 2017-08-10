@@ -13,11 +13,11 @@ specific language governing permissions and limitations under the License.
 package mil.tatrc.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.PatientAssessmentRequestData;
-import com.kitware.physiology.cdm.PatientActions.PatientAssessmentRequestData.eAssessmentType;
+import com.kitware.physiology.cdm.PatientActions.PatientAssessmentRequestData.eType;
 
 public class SEPatientAssessmentRequest extends SEPatientAction
 {
-  protected eAssessmentType type;
+  protected eType type;
   
   public SEPatientAssessmentRequest()
   {
@@ -46,7 +46,7 @@ public class SEPatientAssessmentRequest extends SEPatientAction
   public static void load(PatientAssessmentRequestData src, SEPatientAssessmentRequest dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.getType()!=eAssessmentType.UNRECOGNIZED)
+    if(src.getType()!=eType.UNRECOGNIZED)
     	dst.type = src.getType();
   }
   
@@ -64,11 +64,11 @@ public class SEPatientAssessmentRequest extends SEPatientAction
       dst.setType(src.type);
   }
   
-  public eAssessmentType getType()
+  public eType getType()
   {
     return type;
   }
-  public void setType(eAssessmentType type)
+  public void setType(eType type)
   {
     this.type = type;
   }

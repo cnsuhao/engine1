@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 
 /** @copydoc Physiology_BloodChemistrySystemData
   @nosubgrouping */
-class DLL_DECL SEBloodChemistrySystem : public SESystem
+class CDM_DECL SEBloodChemistrySystem : public SESystem
 {
 public:
 

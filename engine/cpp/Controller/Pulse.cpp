@@ -38,6 +38,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarHeatCapacitance.h"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
 #include "properties/SEScalarFlowElastance.h"
+#include <google/protobuf/text_format.h>
 
 Pulse::Pulse(const std::string& logFileName) : Pulse(new Logger(logFileName))
 {
@@ -103,7 +104,7 @@ DataTrack& Pulse::GetDataTrack()
   return *m_DataTrack;
 }
 
-bool Pulse::Initialize(const SEEngineConfiguration* config)
+bool Pulse::Initialize(const PulseConfiguration* config)
 {
   m_State = EngineState::NotReady;
   Info("Configuring patient");
@@ -125,10 +126,11 @@ bool Pulse::Initialize(const SEEngineConfiguration* config)
     Info("Merging Provided Configuration");
     m_Config->Merge(*config);
   }
+
   // Now, Let's see if there is anything to merge into our base configuration
   Info("Merging OnDisk Configuration");
   PulseConfiguration cFile(*m_Substances);
-  cFile.LoadFile("PulseConfiguration.xml");
+  cFile.LoadFile("PulseConfiguration.pba");
   m_Config->Merge(cFile);
 
   // Now we can check the config
@@ -136,16 +138,7 @@ bool Pulse::Initialize(const SEEngineConfiguration* config)
   {
     std::string stableDir = "./stable/";
     MKDIR(stableDir.c_str());
-    CDM::PatientData* pData = m_Patient->Unload(); 
-    pData->contentVersion(BGE::Version);
-    // Write out the stable patient state
-    std::ofstream stream(stableDir + m_Patient->GetName() + ".xml");
-    // Write out the xml file
-    xml_schema::namespace_infomap map;
-    map[""].name = "uri:/mil/tatrc/physiology/datamodel";
-    Patient(stream, *pData, map);
-    stream.close();
-    SAFE_DELETE(pData);
+    m_Patient->SaveFile(stableDir + m_Patient->GetName() + ".pba");
   }
 
   m_SaturationCalculator->Initialize(*m_Substances);
@@ -158,7 +151,7 @@ bool Pulse::Initialize(const SEEngineConfiguration* config)
   Info("Creating Circuits and Compartments");
   CreateCircuitsAndCompartments();
 
-  m_AirwayMode = CDM::enumPulseAirwayMode::Free;
+  m_AirwayMode = pulse::eAirwayMode::Free;
   m_Intubation = cdm::eSwitch::Off;
   m_CurrentTime->SetValue(0, TimeUnit::s);
   m_SimulationTime->SetValue(0, TimeUnit::s);
@@ -186,15 +179,15 @@ bool Pulse::Initialize(const SEEngineConfiguration* config)
   return true;
 }
 
-void Pulse::SetAirwayMode(CDM::enumPulseAirwayMode::value mode)
+void Pulse::SetAirwayMode(pulse::eAirwayMode mode)
 {
   if (mode == m_AirwayMode)
     return;// do nazing!
-  if (mode == CDM::enumPulseAirwayMode::Inhaler && m_AirwayMode != CDM::enumPulseAirwayMode::Free)
+  if (mode == pulse::eAirwayMode::Inhaler && m_AirwayMode != pulse::eAirwayMode::Free)
     throw CommonDataModelException("Can only change airway mode to Inhaler from the Free mode, Disable other equipment first.");
-  if (mode == CDM::enumPulseAirwayMode::AnesthesiaMachine && m_AirwayMode != CDM::enumPulseAirwayMode::Free)
+  if (mode == pulse::eAirwayMode::AnesthesiaMachine && m_AirwayMode != pulse::eAirwayMode::Free)
     throw CommonDataModelException("Can only change airway mode to Anesthesia Machine from the Free mode, Disable other equipment first.");
-  if (mode == CDM::enumPulseAirwayMode::MechanicalVentilator && m_AirwayMode != CDM::enumPulseAirwayMode::Free)
+  if (mode == pulse::eAirwayMode::MechanicalVentilator && m_AirwayMode != pulse::eAirwayMode::Free)
     throw CommonDataModelException("Can only change airway mode to Mechanical Ventilator from the Free mode, Disable other equipment first.");
   if (mode != m_AirwayMode)  
     m_Compartments->UpdateAirwayGraph();
@@ -207,7 +200,7 @@ void Pulse::SetIntubation(cdm::eSwitch s)
 {
   if (m_Intubation == s)
     return;// do nazing!
-  if (m_AirwayMode == CDM::enumPulseAirwayMode::Inhaler)
+  if (m_AirwayMode == pulse::eAirwayMode::Inhaler)
     throw CommonDataModelException("Cannot intubate if the inhaler is active.");
   m_Intubation = s;
 }
@@ -217,13 +210,7 @@ bool Pulse::SetupPatient()
   bool err = false;
   std::stringstream ss;
 
-  //Sex is the only thing we absolutely need to be defined
-  //Everything else is either derived or assumed to be a "standard" value
-  if (!m_Patient->HasSex())
-  {
-    Error("Patient must provide sex.");
-    err = true;
-  }
+  //Sex is the only thing we absolutely need to be defined, the CDM assumes male if not provided
 
   //AGE ---------------------------------------------------------------
   double age_yr;
@@ -264,7 +251,7 @@ bool Pulse::SetupPatient()
   double heightMin_cm = heightMinMale_cm;
   double heightMax_cm = heightMaxMale_cm;
   double heightStandard_cm = heightStandardMale_cm;
-  if (m_Patient->GetSex() == CDM::enumSex::Female)
+  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
   {
     //Female
     heightMin_cm = heightMinFemale_cm;
@@ -351,7 +338,7 @@ bool Pulse::SetupPatient()
   double fatFractionMin = fatFractionMinMale;
   double fatFractionMax = fatFractionMaxMale;
   double fatFractionStandard = fatFractionStandardMale;
-  if (m_Patient->GetSex() == CDM::enumSex::Female)
+  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
   {
     //Female
     fatFractionMin = fatFractionMinFemale;
@@ -798,7 +785,7 @@ bool Pulse::SetupPatient()
   /// \cite roza1984metabolic
   double BMR_kcal_Per_day;
   double computBMR_kcal_Per_day = 88.632 + 13.397 * weight_kg + 4.799 * height_cm - 5.677 * age_yr; //Male
-  if (m_Patient->GetSex() == CDM::enumSex::Female)
+  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
   {
     computBMR_kcal_Per_day = 447.593 + 9.247 * weight_kg + 3.098 * height_cm - 4.330 * age_yr; //Female
   }
@@ -990,7 +977,9 @@ bool Pulse::CreateCircuitsAndCompartments()
   lEnvironment.MapNode(Ambient);
 
   m_Environment->Initialize();
-  CDM_COPY((&m_Config->GetInitialEnvironmentalConditions()), (&m_Environment->GetConditions()));
+  auto* d = SEEnvironmentalConditions::Unload(m_Config->GetInitialEnvironmentalConditions());
+  SEEnvironmentalConditions::Load(*d, m_Environment->GetConditions());
+  delete d;
   m_Environment->StateChange();
   // Update the environment pressures on all the 'air' circuits to match what the environment was set to
   gEnvironment.GetPressure().Set(m_Environment->GetConditions().GetAtmosphericPressure());
@@ -1007,7 +996,7 @@ bool Pulse::CreateCircuitsAndCompartments()
 void Pulse::SetupCardiovascular()
 {
   Info("Setting Up Cardiovascular");
-  bool male = m_Patient->GetSex() == CDM::enumSex::Male ? true : false;
+  bool male = m_Patient->GetSex() == cdm::PatientData_eSex_Male ? true : false;
   double RightLungRatio = m_Patient->GetRightLungRatio().GetValue();
   double LeftLungRatio = 1 - RightLungRatio;
   double bloodVolume_mL = m_Patient->GetBloodVolumeBaseline(VolumeUnit::mL);
@@ -1256,16 +1245,16 @@ void Pulse::SetupCardiovascular()
   SEFluidCircuitPath& VenaCavaToRightHeart2 = cCardiovascular.CreatePath(VenaCava, RightHeart2, BGE::CardiovascularPath::VenaCavaToRightHeart2);
   VenaCavaToRightHeart2.GetResistanceBaseline().SetValue(ResistanceHeartRight, FlowResistanceUnit::mmHg_s_Per_mL);
   SEFluidCircuitPath& RightHeart2ToRightHeart1 = cCardiovascular.CreatePath(RightHeart2, RightHeart1, BGE::CardiovascularPath::RightHeart2ToRightHeart1);
-  RightHeart2ToRightHeart1.SetNextValve(CDM::enumOpenClosed::Closed);
+  RightHeart2ToRightHeart1.SetNextValve(cdm::eGate::Closed);
   SEFluidCircuitPath& RightHeart1ToRightHeart3 = cCardiovascular.CreatePath(RightHeart1, RightHeart3, BGE::CardiovascularPath::RightHeart1ToRightHeart3);
   SEFluidCircuitPath& RightHeart3ToGround = cCardiovascular.CreatePath(Ground, RightHeart3, BGE::CardiovascularPath::RightHeart3ToGround);
   RightHeart3ToGround.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
 
   SEFluidCircuitPath& RightHeart1ToMainPulmonaryArteries = cCardiovascular.CreatePath(RightHeart1, MainPulmonaryArteries, BGE::CardiovascularPath::RightHeart1ToMainPulmonaryArteries);
-  RightHeart1ToMainPulmonaryArteries.SetNextValve(CDM::enumOpenClosed::Closed);
+  RightHeart1ToMainPulmonaryArteries.SetNextValve(cdm::eGate::Closed);
 
   SEFluidCircuitPath& MainPulmonaryArteriesToRightIntermediatePulmonaryArteries = cCardiovascular.CreatePath(MainPulmonaryArteries, RightIntermediatePulmonaryArteries, BGE::CardiovascularPath::MainPulmonaryArteriesToRightIntermediatePulmonaryArteries);
-  //MainPulmonaryArteriesToRightIntermediatePulmonaryArteries.SetNextValve(CDM::enumOpenClosed::Closed);
+  //MainPulmonaryArteriesToRightIntermediatePulmonaryArteries.SetNextValve(cdm::eGate::Closed);
   SEFluidCircuitPath& RightIntermediatePulmonaryArteriesToRightPulmonaryArteries = cCardiovascular.CreatePath(RightIntermediatePulmonaryArteries, RightPulmonaryArteries, BGE::CardiovascularPath::RightIntermediatePulmonaryArteriesToRightPulmonaryArteries);
   RightIntermediatePulmonaryArteriesToRightPulmonaryArteries.GetResistanceBaseline().SetValue(ResistancePulmArtLeft, FlowResistanceUnit::mmHg_s_Per_mL);
 
@@ -1285,10 +1274,10 @@ void Pulse::SetupCardiovascular()
   SEFluidCircuitPath& RightPulmonaryVeinsToGround = cCardiovascular.CreatePath(RightPulmonaryVeins, Ground, BGE::CardiovascularPath::RightPulmonaryVeinsToGround);
   RightPulmonaryVeinsToGround.GetComplianceBaseline().SetValue(0.0, FlowComplianceUnit::mL_Per_mmHg);
   SEFluidCircuitPath& RightIntermediatePulmonaryVeinsToLeftHeart2 = cCardiovascular.CreatePath(RightIntermediatePulmonaryVeins, LeftHeart2, BGE::CardiovascularPath::RightIntermediatePulmonaryVeinsToLeftHeart2);
-  //RightIntermediatePulmonaryVeinsToLeftHeart2.SetNextValve(CDM::enumOpenClosed::Closed);
+  //RightIntermediatePulmonaryVeinsToLeftHeart2.SetNextValve(cdm::eGate::Closed);
 
   SEFluidCircuitPath& MainPulmonaryArteriesToLeftIntermediatePulmonaryArteries = cCardiovascular.CreatePath(MainPulmonaryArteries, LeftIntermediatePulmonaryArteries, BGE::CardiovascularPath::MainPulmonaryArteriesToLeftIntermediatePulmonaryArteries);
-  //MainPulmonaryArteriesToLeftIntermediatePulmonaryArteries.SetNextValve(CDM::enumOpenClosed::Closed);
+  //MainPulmonaryArteriesToLeftIntermediatePulmonaryArteries.SetNextValve(cdm::eGate::Closed);
   SEFluidCircuitPath& LeftIntermediatePulmonaryArteriesToLeftPulmonaryArteries = cCardiovascular.CreatePath(LeftIntermediatePulmonaryArteries, LeftPulmonaryArteries, BGE::CardiovascularPath::LeftIntermediatePulmonaryArteriesToLeftPulmonaryArteries);
   LeftIntermediatePulmonaryArteriesToLeftPulmonaryArteries.GetResistanceBaseline().SetValue(ResistancePulmArtLeft, FlowResistanceUnit::mmHg_s_Per_mL);
 
@@ -1308,15 +1297,15 @@ void Pulse::SetupCardiovascular()
   SEFluidCircuitPath& LeftPulmonaryVeinsToGround = cCardiovascular.CreatePath(LeftPulmonaryVeins, Ground, BGE::CardiovascularPath::LeftPulmonaryVeinsToGround);
   LeftPulmonaryVeinsToGround.GetComplianceBaseline().SetValue(0.0, FlowComplianceUnit::mL_Per_mmHg);
   SEFluidCircuitPath& LeftIntermediatePulmonaryVeinsToLeftHeart2 = cCardiovascular.CreatePath(LeftIntermediatePulmonaryVeins, LeftHeart2, BGE::CardiovascularPath::LeftIntermediatePulmonaryVeinsToLeftHeart2);
-  //LeftIntermediatePulmonaryVeinsToLeftHeart2.SetNextValve(CDM::enumOpenClosed::Closed);
+  //LeftIntermediatePulmonaryVeinsToLeftHeart2.SetNextValve(cdm::eGate::Closed);
   SEFluidCircuitPath& LeftHeart2ToLeftHeart1 = cCardiovascular.CreatePath(LeftHeart2, LeftHeart1, BGE::CardiovascularPath::LeftHeart2ToLeftHeart1);
-  LeftHeart2ToLeftHeart1.SetNextValve(CDM::enumOpenClosed::Closed);
+  LeftHeart2ToLeftHeart1.SetNextValve(cdm::eGate::Closed);
   SEFluidCircuitPath& LeftHeart1ToLeftHeart3 = cCardiovascular.CreatePath(LeftHeart1, LeftHeart3, BGE::CardiovascularPath::LeftHeart1ToLeftHeart3);
 
   SEFluidCircuitPath& LeftHeart3ToGround = cCardiovascular.CreatePath(Ground, LeftHeart3, BGE::CardiovascularPath::LeftHeart3ToGround);
   LeftHeart3ToGround.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
   SEFluidCircuitPath& LeftHeart1ToAorta2 = cCardiovascular.CreatePath(LeftHeart1, Aorta2, BGE::CardiovascularPath::LeftHeart1ToAorta2);
-  LeftHeart1ToAorta2.SetNextValve(CDM::enumOpenClosed::Closed);
+  LeftHeart1ToAorta2.SetNextValve(cdm::eGate::Closed);
   SEFluidCircuitPath& Aorta2ToAorta3 = cCardiovascular.CreatePath(Aorta2, Aorta3, BGE::CardiovascularPath::Aorta2ToAorta3);
   SEFluidCircuitPath& Aorta3ToAorta1 = cCardiovascular.CreatePath(Aorta3, Aorta1, BGE::CardiovascularPath::Aorta3ToAorta1);
   Aorta3ToAorta1.GetResistanceBaseline().SetValue(ResistanceAorta, FlowResistanceUnit::mmHg_s_Per_mL);
@@ -2256,7 +2245,7 @@ void Pulse::SetupRenal()
   //////////////////////////
   // RightUreterToBladder //
   SEFluidCircuitPath& RightUreterToBladder = cRenal.CreatePath(RightUreter, Bladder, BGE::RenalPath::RightUreterToBladder);
-  RightUreterToBladder.SetNextValve(CDM::enumOpenClosed::Closed);
+  RightUreterToBladder.SetNextValve(cdm::eGate::Closed);
 
   /////////////////
   // Left Blood //
@@ -2338,7 +2327,7 @@ void Pulse::SetupRenal()
   //////////////////////////
   // LeftUreterToBladder //
   SEFluidCircuitPath& LeftUreterToBladder = cRenal.CreatePath(LeftUreter, Bladder, BGE::RenalPath::LeftUreterToBladder);
-  LeftUreterToBladder.SetNextValve(CDM::enumOpenClosed::Closed);
+  LeftUreterToBladder.SetNextValve(cdm::eGate::Closed);
 
   ///////////////////////
   // BladderCompliance //
@@ -2792,7 +2781,7 @@ void Pulse::SetupTissue()
 
   //Typical ICRP Female - From ICRP
   //Total Mass (kg)
-  if (m_Patient->GetSex() == CDM::enumSex::Female)
+  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
   {
     AdiposeTissueMass = 19.0;
     BoneTissueMass = 7.8;
@@ -2818,7 +2807,7 @@ void Pulse::SetupTissue()
   //Male
   double standardPatientWeight_lb = 170.0;
   double standardPatientHeight_in = 71.0;
-  if (m_Patient->GetSex() == CDM::enumSex::Female)
+  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
   {
     //Female
     standardPatientWeight_lb = 130.0;
@@ -2831,14 +2820,14 @@ void Pulse::SetupTissue()
   //Modify most based on lean body mass
   //Hume, R (Jul 1966). "Prediction of lean body mass from height and weight." Journal of clinical pathology. 19 (4): 389–91. doi:10.1136/jcp.19.4.389. PMC 473290. PMID 5929341.
   //double typicalLeanBodyMass_kg = 0.32810 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.33929 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 29.5336; //Male
-  //if (m_Patient->GetSex() == CDM::enumSex::Female)
+  //if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
   //{
    // typicalLeanBodyMass_kg = 0.29569 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.41813 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 43.2933; //Female
   //}
 
   //Male
   double standardFatFraction = 0.21;
-  if (m_Patient->GetSex() == CDM::enumSex::Female)
+  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
   {
     //Female
     standardFatFraction = 0.28;
@@ -3628,32 +3617,32 @@ void Pulse::SetupRespiratory()
   CarinaToLeftAnatomicDeadSpace.GetResistanceBaseline().SetValue(BronchiResistance, FlowResistanceUnit::cmH2O_s_Per_L);
   SEFluidCircuitPath& RightAnatomicDeadSpaceToRightPleuralConnection = cRespiratory.CreatePath(RightAnatomicDeadSpace, RightPleuralConnection, BGE::RespiratoryPath::RightAnatomicDeadSpaceToRightPleuralConnection);
   RightAnatomicDeadSpaceToRightPleuralConnection.GetComplianceBaseline().SetValue(DeadSpaceCompliance, FlowComplianceUnit::L_Per_cmH2O);
-  RightAnatomicDeadSpaceToRightPleuralConnection.SetNextPolarizedState(CDM::enumOpenClosed::Closed);
+  RightAnatomicDeadSpaceToRightPleuralConnection.SetNextPolarizedState(cdm::eGate::Closed);
   SEFluidCircuitPath& LeftAnatomicDeadSpaceToLeftPleuralConnection = cRespiratory.CreatePath(LeftAnatomicDeadSpace, LeftPleuralConnection, BGE::RespiratoryPath::LeftAnatomicDeadSpaceToLeftPleuralConnection);
   LeftAnatomicDeadSpaceToLeftPleuralConnection.GetComplianceBaseline().SetValue(DeadSpaceCompliance, FlowComplianceUnit::L_Per_cmH2O);
-  LeftAnatomicDeadSpaceToLeftPleuralConnection.SetNextPolarizedState(CDM::enumOpenClosed::Closed);
+  LeftAnatomicDeadSpaceToLeftPleuralConnection.SetNextPolarizedState(cdm::eGate::Closed);
   SEFluidCircuitPath& RightAnatomicDeadSpaceToRightAlveoli = cRespiratory.CreatePath(RightAnatomicDeadSpace, RightAlveoli, BGE::RespiratoryPath::RightAnatomicDeadSpaceToRightAlveoli);
   RightAnatomicDeadSpaceToRightAlveoli.GetResistanceBaseline().SetValue(AlveoliDuctResistance, FlowResistanceUnit::cmH2O_s_Per_L);
   SEFluidCircuitPath& LeftAnatomicDeadSpaceToLeftAlveoli = cRespiratory.CreatePath(LeftAnatomicDeadSpace, LeftAlveoli, BGE::RespiratoryPath::LeftAnatomicDeadSpaceToLeftAlveoli);
   LeftAnatomicDeadSpaceToLeftAlveoli.GetResistanceBaseline().SetValue(AlveoliDuctResistance, FlowResistanceUnit::cmH2O_s_Per_L);
   SEFluidCircuitPath& RightAlveoliToRightPleuralConnection = cRespiratory.CreatePath(RightAlveoli, RightPleuralConnection, BGE::RespiratoryPath::RightAlveoliToRightPleuralConnection);
   RightAlveoliToRightPleuralConnection.GetComplianceBaseline().SetValue(AlveoliCompliance, FlowComplianceUnit::L_Per_cmH2O);
-  RightAlveoliToRightPleuralConnection.SetNextPolarizedState(CDM::enumOpenClosed::Closed);
+  RightAlveoliToRightPleuralConnection.SetNextPolarizedState(cdm::eGate::Closed);
   SEFluidCircuitPath& LeftAlveoliToLeftPleuralConnection = cRespiratory.CreatePath(LeftAlveoli, LeftPleuralConnection, BGE::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
   LeftAlveoliToLeftPleuralConnection.GetComplianceBaseline().SetValue(AlveoliCompliance, FlowComplianceUnit::L_Per_cmH2O);
-  LeftAlveoliToLeftPleuralConnection.SetNextPolarizedState(CDM::enumOpenClosed::Closed);
+  LeftAlveoliToLeftPleuralConnection.SetNextPolarizedState(cdm::eGate::Closed);
   //Need a no element path to be able to include a node with no volume, so it doesn't get modified by compliances
   SEFluidCircuitPath& RightPleuralConnectionToRightPleural = cRespiratory.CreatePath(RightPleuralConnection, RightPleural, BGE::RespiratoryPath::RightPleuralConnectionToRightPleural);
   SEFluidCircuitPath& LeftPleuralConnectionToLeftPleural = cRespiratory.CreatePath(LeftPleuralConnection, LeftPleural, BGE::RespiratoryPath::LeftPleuralConnectionToLeftPleural);
   //----------------------------------------------------------------------------------------------------------------------------------------------
   // Path between alveoli and pleural - for right pleural leak
   SEFluidCircuitPath& RightAlveoliToRightAlveoliLeak = cRespiratory.CreatePath(RightAlveoli, RightAlveoliLeak, BGE::RespiratoryPath::RightAlveoliToRightAlveoliLeak);
-  RightAlveoliToRightAlveoliLeak.SetNextValve(CDM::enumOpenClosed::Closed);
+  RightAlveoliToRightAlveoliLeak.SetNextValve(cdm::eGate::Closed);
   SEFluidCircuitPath& RightAlveoliLeakToRightPleural = cRespiratory.CreatePath(RightAlveoliLeak, RightPleural, BGE::RespiratoryPath::RightAlveoliLeakToRightPleural);
   RightAlveoliLeakToRightPleural.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
   // path between alveoli and pleural - for left pleural leak
   SEFluidCircuitPath& LeftAlveoliToLeftAlveoliLeak = cRespiratory.CreatePath(LeftAlveoli, LeftAlveoliLeak, BGE::RespiratoryPath::LeftAlveoliToLeftAlveoliLeak);
-  LeftAlveoliToLeftAlveoliLeak.SetNextValve(CDM::enumOpenClosed::Closed);
+  LeftAlveoliToLeftAlveoliLeak.SetNextValve(cdm::eGate::Closed);
   SEFluidCircuitPath& LeftAlveoliLeakToLeftPleural = cRespiratory.CreatePath(LeftAlveoliLeak, LeftPleural, BGE::RespiratoryPath::LeftAlveoliLeakToLeftPleural);
   LeftAlveoliLeakToLeftPleural.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
   // Path for needle decompression - right side
@@ -3666,12 +3655,12 @@ void Pulse::SetupRespiratory()
   SEFluidCircuitPath& EnvironmentToRightChestLeak = cRespiratory.CreatePath(*Ambient, RightChestLeak, BGE::RespiratoryPath::EnvironmentToRightChestLeak);
   EnvironmentToRightChestLeak.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
   SEFluidCircuitPath& RightChestLeakToRightPleural = cRespiratory.CreatePath(RightChestLeak, RightPleural, BGE::RespiratoryPath::RightChestLeakToRightPleural);
-  RightChestLeakToRightPleural.SetNextValve(CDM::enumOpenClosed::Closed);
+  RightChestLeakToRightPleural.SetNextValve(cdm::eGate::Closed);
   // Path for open (chest wound) pneumothorax circuit - left side
   SEFluidCircuitPath& EnvironmentToLeftChestLeak = cRespiratory.CreatePath(*Ambient, LeftChestLeak, BGE::RespiratoryPath::EnvironmentToLeftChestLeak);
   EnvironmentToLeftChestLeak.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
   SEFluidCircuitPath& LeftChestLeakToLeftPleural = cRespiratory.CreatePath(LeftChestLeak, LeftPleural, BGE::RespiratoryPath::LeftChestLeakToLeftPleural);
-  LeftChestLeakToLeftPleural.SetNextValve(CDM::enumOpenClosed::Closed);
+  LeftChestLeakToLeftPleural.SetNextValve(cdm::eGate::Closed);
   // Paths for the Driver
   SEFluidCircuitPath& EnvironmentToRespiratoryMuscle = cRespiratory.CreatePath(*Ambient, RespiratoryMuscle, BGE::RespiratoryPath::EnvironmentToRespiratoryMuscle);
   EnvironmentToRespiratoryMuscle.GetPressureSourceBaseline().SetValue(DefaultRespDrivePressure, PressureUnit::cmH2O);
@@ -3980,14 +3969,14 @@ void Pulse::SetupAnesthesiaMachine()
   // VentilatorConnectionToVentilator //
   SEFluidCircuitPath& VentilatorToVentilatorConnection = cAnesthesia.CreatePath(Ventilator, VentilatorConnection, BGE::AnesthesiaMachinePath::VentilatorToVentilatorConnection);
   VentilatorToVentilatorConnection.GetComplianceBaseline().SetValue(ventilatorCompliance_L_Per_cmH2O, FlowComplianceUnit::L_Per_cmH2O);
-  VentilatorToVentilatorConnection.SetNextPolarizedState(CDM::enumOpenClosed::Closed);
+  VentilatorToVentilatorConnection.SetNextPolarizedState(cdm::eGate::Closed);
   ////////////////////////////////////
   // VentilatorConnectionToSelector //
   SEFluidCircuitPath& VentilatorConnectionToSelector = cAnesthesia.CreatePath(VentilatorConnection, Selector, BGE::AnesthesiaMachinePath::VentilatorConnectionToSelector);
   ///////////////////////////
   // SelectorToReliefValve //
   SEFluidCircuitPath& SelectorToReliefValve = cAnesthesia.CreatePath(Selector, ReliefValve, BGE::AnesthesiaMachinePath::SelectorToReliefValve);
-  SelectorToReliefValve.SetNextValve(CDM::enumOpenClosed::Open);
+  SelectorToReliefValve.SetNextValve(cdm::eGate::Open);
   ////////////////////////
   // SelectorToScrubber //
   SEFluidCircuitPath& SelectorToScrubber = cAnesthesia.CreatePath(Selector, Scrubber, BGE::AnesthesiaMachinePath::SelectorToScrubber);
@@ -4319,7 +4308,7 @@ void Pulse::SetupExternalTemperature()
   SEThermalCircuitPath& AbsoluteReferenceToActivePath = exthermal.CreatePath(Ground, Active, BGE::ExternalTemperaturePath::GroundToActive);
   AbsoluteReferenceToActivePath.GetNextTemperatureSource().SetValue(0.0, TemperatureUnit::K);
   SEThermalCircuitPath& ActiveToClothing = exthermal.CreatePath(Active, Clothing, BGE::ExternalTemperaturePath::ActiveToClothing);
-  ActiveToClothing.SetNextSwitch(CDM::enumOpenClosed::Open);
+  ActiveToClothing.SetNextSwitch(cdm::eGate::Open);
 
   exthermal.SetNextAndCurrentFromBaselines();
   exthermal.StateChange();

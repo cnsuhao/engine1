@@ -28,7 +28,7 @@ public:
 
     virtual void Run() override
     {
-        m_pEngine->InitializeEngine("StandardMale.xml");
+        m_pEngine->InitializeEngine("StandardMale.pba");
 
         double dT_s = m_pEngine->GetTimeStep(TimeUnit::s);
 
@@ -66,11 +66,11 @@ void RunScenarioTask::Run()
     // Set up the log file
   std::string logFile = m_scenarioFile;
   logFile = Replace(logFile, "verification", "bin");
-  logFile = Replace(logFile, ".xml", ".log");
+  logFile = Replace(logFile, ".pba", ".log");
   // Set up the verification output file  
   std::string dataFile = m_scenarioFile;
   dataFile = Replace(dataFile, "verification", "bin");
-  dataFile = Replace(dataFile, ".xml", "Results.txt");
+  dataFile = Replace(dataFile, ".pba", "Results.txt");
   // Delete any results file that may be there
   remove(dataFile.c_str());
 
@@ -95,17 +95,17 @@ void PulseEngineTest::MultiEngineTest(const std::string& sTestDirectory)
     {
         TaskRunner runner(1);
 
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic1.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic2.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic3.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicCynthia.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicGus.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicHassan.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicJoel.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicNathan.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicSoldier.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicStandardHeavy.xml")));
-        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicStandardLight.xml")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic1.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic2.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic3.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicCynthia.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicGus.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicHassan.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicJoel.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicNathan.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicSoldier.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicStandardHeavy.pba")));
+        runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicStandardLight.pba")));
 
         std::cout << " *** Running single-threaded ***" << "\n";
 

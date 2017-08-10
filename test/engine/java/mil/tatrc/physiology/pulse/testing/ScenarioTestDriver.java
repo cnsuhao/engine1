@@ -11,8 +11,16 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.pulse.testing;
 
-import mil.tatrc.physiology.biogears.engine.*;
-import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
+import java.io.File;
+
+import com.google.protobuf.TextFormat;
+import com.kitware.physiology.cdm.Engine.AutoSerializationData;
+import com.kitware.physiology.cdm.Scenario.ScenarioData;
+import com.kitware.physiology.cdm.Scenario.ScenarioData.StartTypeCase;
+import com.kitware.physiology.pulse.*;
+
+import mil.tatrc.physiology.datamodel.engine.SEAutoSerialization;
+import mil.tatrc.physiology.pulse.engine.PulseScenarioExec;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.testing.SETestDriver;
@@ -29,106 +37,80 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     String outputFile = job.computedDirectory+job.name;
     String log;
     String results;
-    String xml = FileUtils.readFile(job.baselineDirectory+job.name);
-    if(xml==null)
+    String pba = FileUtils.readFile(job.baselineDirectory+job.name);
+    if(pba==null)
     {
       Log.error("Could not read file : "+job.baselineDirectory+"/"+job.name);
       return false;
     }
+    ScenarioData.Builder builder;
+    Engine.ScenarioData.Builder pBuilder = Engine.ScenarioData.newBuilder();
+    try
+    {
+    	TextFormat.getParser().merge(pba, pBuilder);
+    	builder = pBuilder.getScenarioBuilder();
+    }
+    catch(Exception ex)
+    {
+	    builder = ScenarioData.newBuilder();
+	    try
+	    {
+	    	TextFormat.getParser().merge(pba, builder);
+	    	pBuilder.setScenario(builder);
+	    }
+	    catch(Exception ex2)
+	    {
+	    	Log.error("Unable to read scenario"+job.baselineDirectory+"/"+job.name,ex2);
+	    	return false;
+	    }
+    }
+    if(builder.getStartTypeCase()==StartTypeCase.STARTTYPE_NOT_SET)
+    {
+    	Log.error("Scenario does not have a start type");
+    	return false;
+    }
+    
     if(job.patientFile==null)
     {
-      log = outputFile.replaceAll("xml", "log");
-      results = outputFile.replaceAll(".xml", "Results.txt");
+      log = outputFile.replaceAll("pba", "log");
+      results = outputFile.replaceAll(".pba", "Results.txt");
     }
     else
     {
       String patientName = job.patientFile.substring(0,job.patientFile.length()-4);
-      log = outputFile.replaceAll(".xml", "-"+patientName+".log");
-      results = outputFile.replaceAll(".xml", "-"+patientName+"Results.txt");
+      log = outputFile.replaceAll(".pba", "-"+patientName+".log");
+      results = outputFile.replaceAll(".pba", "-"+patientName+"Results.txt");
       
-      int startTag = xml.indexOf("<PatientFile>");
-      if(startTag == -1)
+      switch(builder.getStartTypeCase())      
       {
-        // I did not test this code!!
-        startTag = xml.indexOf("<EngineStateFile>");
-        String startXML = xml.substring(0,startTag);
-        String restOfTheXML = xml.substring(xml.indexOf("</EngineStateFile>"));    
-        xml = startXML+"<PatientFile>"+job.patientFile+"</PatientFile>"+restOfTheXML.substring(18);
-        Log.warn("Replacing engine state with a patient file for xml file : "+job.name+". Expect initialization time");
-      }
-      else
-      {
-        String startXML = xml.substring(0,startTag);
-        String restOfTheXML = xml.substring(xml.indexOf("</PatientFile>"));    
-        xml = startXML+"<PatientFile>"+job.patientFile+restOfTheXML;
-      }
+      	case INITIALPARAMETERS:
+      		builder.getInitialParametersBuilder().clearPatient();
+      		builder.getInitialParametersBuilder().setPatientFile(job.patientFile);
+      		break;
+      	case ENGINESTATEFILE:
+      		builder.clearEngineStateFile();
+      		builder.getInitialParametersBuilder().setPatientFile(job.patientFile);
+        	break;
+      }      
     }
-    if(job.useState)
+    if(job.useState && builder.getStartTypeCase()==StartTypeCase.INITIALPARAMETERS)      
     {
-      
-      int startTag = xml.indexOf("<InitialParameters>");
-      if(startTag == -1)
-      {
-        Log.warn("Cannot find InitialParameters tag in xml...");
-      }
-      else
-      {
-        String startXML = xml.substring(0,startTag);
-        String initialParameters = xml.substring(startTag,xml.indexOf("</InitialParameters>"));
-        String restOfTheXML = xml.substring(xml.indexOf("</InitialParameters>"));
-        
-        if(initialParameters.indexOf("<Condition")>-1)
-        {
-          // Don't run any scenarios with conditions
-          Log.warn("States cannont be applied to a scenario with conditions, will run with patient file for "+job.name);
-        }
-        else
-        {        
-        String patientStateFile;
-        if(job.patientFile!=null && !job.patientFile.isEmpty())
-          patientStateFile = job.patientFile;
-        else// Dig it out of the xml
-          patientStateFile = xml.substring(xml.indexOf("<PatientFile>")+13,xml.indexOf("</PatientFile>")).trim();          
+      	String pFile = pBuilder.getScenario().getInitialParameters().getPatientFile();
+      	pFile =  pFile.substring(0, pFile.indexOf(".pba"));
+      	pFile = "./states/"+pFile+"@0s.pba";
+      	builder.clearInitialParameters();
+      	builder.setEngineStateFile(pFile);
+    }
 
-        patientStateFile = patientStateFile.substring(0, patientStateFile.indexOf(".xml"));
-        patientStateFile = "./states/"+patientStateFile+"@0s.xml";
-        xml = startXML+"<EngineStateFile>"+patientStateFile+"</EngineStateFile>"+restOfTheXML.substring(20);
-        }
-      }
-    }
     if(job.autoSerialization!=null)
-    {
-      int startTag = xml.indexOf("<AutoSerialization>");
-      if(startTag != -1)
-      {
-        // strip this out
-        String startXML = xml.substring(0,startTag);
-        String restOfTheXML = xml.substring(xml.indexOf("</AutoSerialization>")+20);
-        xml = startXML+restOfTheXML;
-      }
-      
-      startTag = xml.indexOf("<DataRequests");
-      if(startTag == -1)        
-        startTag = xml.indexOf("<Action");
-      
-      String startXML = xml.substring(0,startTag);
-      String restOfTheXML = xml.substring(startTag);
-      String serializationTag = "<AutoSerialization>\n"+
-                                "  <Directory>"+job.autoSerialization.getDirectory() +"</Directory>\n"+
-                                "  <FileName>"+job.name+"</FileName>\n"+
-                                "  <AfterActions>"+job.autoSerialization.getAfterActions().value()+"</AfterActions>\n"+
-                                "  <Period value=\""+job.autoSerialization.getPeriod().getValue(TimeUnit.s)+"\" unit=\"s\"/>\n"+
-                                "  <PeriodTimeStamps>"+job.autoSerialization.getPeriodTimeStamps().value()+"</PeriodTimeStamps>\n"+
-                                "  <ReloadState>"+job.autoSerialization.getReloadState().value()+"</ReloadState>\n"+
-                                "</AutoSerialization>\n";
-      xml = startXML+serializationTag+restOfTheXML;
-      
-    }
-    BioGearsScenarioExec bge = new BioGearsScenarioExec();
-    bge.setListener(job);      
-    bge.runScenario(log, xml, results);
+    	pBuilder.getConfigurationBuilder().setAutoSerialization(SEAutoSerialization.unload(job.autoSerialization)); 
+
+    pba = pBuilder.toString();
+    PulseScenarioExec pse = new PulseScenarioExec();
+    pse.setListener(job);      
+    pse.runScenario(log, pba, results);
     Log.info("Completed running "+job.name);
-    bge=null;
+    pse=null;
     return true;
   }
   

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/actions/SEPatientAction.h"
 
-class DLL_DECL SEUrinate : public SEPatientAction
+class CDM_DECL SEUrinate : public SEPatientAction
 {
 public:
 

@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 class SEInhaler;
 class SESubstanceManager;
 
-class DLL_DECL SEInhalerConfiguration : public SEInhalerAction
+class CDM_DECL SEInhalerConfiguration : public SEInhalerAction
 {
 public:
 

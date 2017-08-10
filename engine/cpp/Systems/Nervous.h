@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
  * @brief 
  * The nervous class holds models of the peripheral and central nervous system. Currently, on the baroreceptor reflex is modeled.
  */  
-class PULSE_API Nervous : public SENervousSystem, public PulseSystem
+class PULSE_DECL Nervous : public SENervousSystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

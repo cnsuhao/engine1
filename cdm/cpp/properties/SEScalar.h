@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 
 #define ZERO_APPROX 1e-10
 
-class DLL_DECL NoUnit
+class CDM_DECL NoUnit
 {
 public:
   NoUnit() {}
@@ -26,7 +26,7 @@ public:
   static const NoUnit unitless;
 };
 
-class DLL_DECL SEScalar : public SEProperty
+class CDM_DECL SEScalar : public SEProperty
 {
 protected:
   double m_value;
@@ -113,7 +113,7 @@ inline std::ostream& operator<< (std::ostream& out, const SEScalar& s)
  * @details - This interface allows you to have a pointer to a scalar with units
  *            but you don't need to now what units it's associated with
  */
-class DLL_DECL SEUnitScalar :  public SEScalar
+class CDM_DECL SEUnitScalar :  public SEScalar
 {
   friend SEGenericScalar;
 public:
@@ -196,7 +196,7 @@ protected:
  * @details Be aware, I did not really protect this class, I assume you know what you are doing
  * If you use this class without setting the scalar it will produce nullptr errors and other CDM Exceptions, use with caution and smarts.
  */
-class DLL_DECL SEGenericScalar : public Loggable
+class CDM_DECL SEGenericScalar : public Loggable
 {
 public:
   SEGenericScalar(Logger* logger);
@@ -222,8 +222,8 @@ protected:
   const SEUnitScalar* m_UnitScalar;
 };
 
-DLL_DECL double Convert(double d,const CCompoundUnit& from, const CCompoundUnit& to);
-DLL_DECL bool   CompatibleUnits(const CCompoundUnit& u1, const CCompoundUnit& u2);
+CDM_DECL double Convert(double d,const CCompoundUnit& from, const CCompoundUnit& to);
+CDM_DECL bool   CompatibleUnits(const CCompoundUnit& u1, const CCompoundUnit& u2);
 
 inline void Override(const SEScalar& from, SEScalar& to)
 {

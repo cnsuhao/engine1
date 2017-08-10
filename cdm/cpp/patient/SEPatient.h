@@ -15,7 +15,7 @@ class SEEventHandler;
 class SENutrition;
 #include "bind/cdm/Patient.pb.h"
 
-class DLL_DECL SEPatient : public Loggable
+class CDM_DECL SEPatient : public Loggable
 {
 public:
 
@@ -24,16 +24,16 @@ public:
 
   virtual void Clear();
 
+  bool LoadFile(const std::string& patientFile);
+  void SaveFile(const std::string& filename);
+
   static void Load(const cdm::PatientData& src, SEPatient& dst);
   static cdm::PatientData* Unload(const SEPatient& src);
 protected:
   static void Serialize(const cdm::PatientData& src, SEPatient& dst);
   static void Serialize(const SEPatient& src, cdm::PatientData& dst);
 
-
 public:
-  bool LoadFile(const std::string& patientFile);
-
   /** @name GetScalar
   *   @brief - A reflextion type call that will return the Scalar associated
   *            with the string. ex. GetScalar("Hematocrit") will return the

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "SEEnvironmentCondition.h"
 
-class DLL_DECL SEInitialEnvironmentConditions : public SEEnvironmentCondition
+class CDM_DECL SEInitialEnvironmentConditions : public SEEnvironmentCondition
 {
 public:
 

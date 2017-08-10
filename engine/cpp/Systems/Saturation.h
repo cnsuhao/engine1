@@ -19,7 +19,7 @@ struct error_functor;
 * @brief
 * The %SaturationCalculator class holds the blood gas distribution model.
 */
-class PULSE_API SaturationCalculator : public Loggable
+class PULSE_DECL SaturationCalculator : public Loggable
 {
 protected:
   friend error_functor;

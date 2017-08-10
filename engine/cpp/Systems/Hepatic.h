@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 /**
  * @copydoc Physiology_HepaticystemData
  */  
-class PULSE_API Hepatic : public SEHepaticSystem, public PulseSystem
+class PULSE_DECL Hepatic : public SEHepaticSystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "utils/unitconversion/UCCommon.h"
 #include "bind/cdm/Properties.pb.h"
 
-class DLL_DECL SEFunction : public SEProperty
+class CDM_DECL SEFunction : public SEProperty
 {
 public:
 

@@ -20,7 +20,7 @@ class SEAnesthesiaMachineActionCollection;
  * @brief 
  * Generic anesthesia machine for positive pressure ventilation.
  */    
-class PULSE_API AnesthesiaMachine : public SEAnesthesiaMachine, public PulseSystem
+class PULSE_DECL AnesthesiaMachine : public SEAnesthesiaMachine, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

@@ -66,7 +66,7 @@ public:
   // Tissue cmpts don't have children and they don't have computed data that changes on call (like flow)
 };
 
-class DLL_DECL SEEngineTracker : public Loggable
+class CDM_DECL SEEngineTracker : public Loggable
 {
 public:
   SEEngineTracker(PhysiologyEngine& engine);

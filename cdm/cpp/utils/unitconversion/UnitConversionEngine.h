@@ -28,7 +28,7 @@ specific language governing permissions and limitations under the License.
 #include "QuantityConversionKey.h"
 #include "UnitDimension.h"
 
-class DLL_DECL CUnitConversionEngine
+class CDM_DECL CUnitConversionEngine
 {
 private:
   static CUnitConversionEngine* uce;

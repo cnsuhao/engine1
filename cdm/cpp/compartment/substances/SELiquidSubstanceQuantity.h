@@ -17,7 +17,7 @@ class SELiquidCompartment;
 
 enum class BalanceLiquidBy { Mass, Concentration, Molarity, PartialPressure };
 
-class DLL_DECL SELiquidSubstanceQuantity : public SESubstanceQuantity, public SELiquidTransportSubstance
+class CDM_DECL SELiquidSubstanceQuantity : public SESubstanceQuantity, public SELiquidTransportSubstance
 {
   friend class SELiquidCompartment;
 protected:

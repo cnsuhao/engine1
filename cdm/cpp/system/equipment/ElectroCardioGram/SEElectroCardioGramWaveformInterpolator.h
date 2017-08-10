@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "system/equipment/ElectroCardioGram/SEElectroCardioGramWaveform.h"
 
 
-class DLL_DECL SEElectroCardioGramWaveformInterpolator : public Loggable
+class CDM_DECL SEElectroCardioGramWaveformInterpolator : public Loggable
 {
 public:
 
@@ -23,14 +23,14 @@ public:
 
   virtual void Clear();// Deletes all members
 
+  virtual bool LoadFile(const std::string& file, const SEScalarTime* timeStep = nullptr);
+
   static void Load(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst);
   static cdm::ElectroCardioGramWaveformListData* Unload(const SEElectroCardioGramWaveformInterpolator& src);
 protected:
   static void Serialize(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst);
   static void Serialize(const SEElectroCardioGramWaveformInterpolator& src, cdm::ElectroCardioGramWaveformListData& dst);
 
-  virtual bool LoadFile(const std::string& file, const SEScalarTime* timeStep = nullptr);
- 
 public: 
   virtual void Interpolate(const SEScalarTime& timeStep);
   virtual bool StartNewCycle(cdm::eHeartRhythm rhythm);

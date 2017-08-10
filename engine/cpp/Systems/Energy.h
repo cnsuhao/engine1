@@ -21,7 +21,7 @@ class SEThermalCircuitCalculator;
 /**
  * @brief @copydoc Physiology_EnergySystemData
  */  
-class PULSE_API Energy : public SEEnergySystem, public PulseSystem
+class PULSE_DECL Energy : public SEEnergySystem, public PulseSystem
 {
   friend Pulse;
   friend class PulseEngineTest;

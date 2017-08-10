@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
 
-class DLL_DECL SEUrinalysisMicroscopic : public Loggable
+class CDM_DECL SEUrinalysisMicroscopic : public Loggable
 {
   friend class SEUrinalysis;
 protected:

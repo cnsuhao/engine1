@@ -1270,5 +1270,5 @@ void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
   std::string results = sOutputDirectory + "\\AcidBaseBloodGasTests.txt";
   bg.GetDataTrack().WriteTrackToFile(results.c_str());
 
-  testReport.WriteFile(sOutputDirectory + "\\AcidBaseBloodGasTestsReport.xml");
+  testReport.WriteFile(sOutputDirectory + "\\AcidBaseBloodGasTestsReport.pba");
 }

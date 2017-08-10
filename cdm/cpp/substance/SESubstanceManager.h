@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceCompound.h"
 #include "bind/cdm/Substance.pb.h"
 
-class DLL_DECL SESubstanceManager : public Loggable
+class CDM_DECL SESubstanceManager : public Loggable
 {
 public:
   SESubstanceManager(Logger* logger);

@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "scenario/SECondition.h"
 #include "bind/cdm/PatientConditions.pb.h"
 
-class DLL_DECL SEPatientCondition : public SECondition
+class CDM_DECL SEPatientCondition : public SECondition
 {
 public:
 

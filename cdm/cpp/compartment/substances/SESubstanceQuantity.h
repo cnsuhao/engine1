@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstance.h"
 #include "bind/cdm/SubstanceQuantity.pb.h"
 
-class DLL_DECL SESubstanceQuantity : public Loggable
+class CDM_DECL SESubstanceQuantity : public Loggable
 {
 public:
   SESubstanceQuantity(SESubstance& sub) : Loggable(sub.GetLogger()), m_Substance(sub) {};

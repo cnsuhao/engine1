@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 class SESubstanceManager;
 #include "bind/cdm/Physiology.pb.h"
 
-class DLL_DECL SESystem : public Loggable
+class CDM_DECL SESystem : public Loggable
 {
 public:
 

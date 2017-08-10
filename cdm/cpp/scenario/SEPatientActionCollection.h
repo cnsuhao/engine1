@@ -41,7 +41,7 @@ specific language governing permissions and limitations under the License.
 
 #include "system/physiology/SEGastrointestinalSystem.h"
 
-class DLL_DECL SEPatientActionCollection : public Loggable
+class CDM_DECL SEPatientActionCollection : public Loggable
 {
   friend class SEActionManager;
 protected:

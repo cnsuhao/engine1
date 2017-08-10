@@ -39,12 +39,14 @@ source_group("Equipment" FILES ${PULSE_EQUIPMENT_FILES})
 source_group("Systems" FILES ${PULSE_SYSTEMS_FILES})
 
 # The DLL we are building
-add_library(PulseEngine SHARED ${SOURCE})
+add_library(PulseEngine ${SOURCE})
 # Preprocessor Definitions and Include Paths
 set(ENG_FLAGS)
-set(ENG_FLAGS "${ENG_FLAGS} -D PULSE_EXPORT")
 set(ENG_FLAGS "${ENG_FLAGS} -D UNICODE")
 set(ENG_FLAGS "${ENG_FLAGS} -D _UNICODE")
+if(${BUILD_SHARED_LIBS}) 
+  set(ENG_FLAGS "${ENG_FLAGS} -D SHARED_PULSE")
+endif()
 if(MSVC)  
   set(ENG_FLAGS "${ENG_FLAGS} -Zm120")
 endif(MSVC)
@@ -70,23 +72,25 @@ target_link_libraries(PulseEngine CommonDataModel)
 add_custom_command(TARGET PulseEngine POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseEngine> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
-if(WIN32)# Copy dll files to the bin
-  install(TARGETS PulseEngine 
-          RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
-          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(TARGETS PulseEngine 
-          RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
-          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(TARGETS PulseEngine 
-          RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
-          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-else()# Copy so files to the bin
-  install(TARGETS PulseEngine 
-          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(TARGETS PulseEngine 
-          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(TARGETS PulseEngine 
-          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+if(${BUILD_SHARED_LIBS})
+  if(WIN32)# Copy dll files to the bin
+    install(TARGETS PulseEngine 
+            RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(TARGETS PulseEngine 
+            RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(TARGETS PulseEngine 
+            RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  else()# Copy so files to the bin
+    install(TARGETS PulseEngine 
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(TARGETS PulseEngine 
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(TARGETS PulseEngine 
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  endif()
 endif()
 # Copy lib/so files to the sdk/lib
 install(TARGETS PulseEngine         
@@ -99,3 +103,5 @@ install(TARGETS PulseEngine
         LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG}
         ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PulsePhysiologyEngine.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Controller/PulseConfiguration.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Controller/Scenario/PulseScenario.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)

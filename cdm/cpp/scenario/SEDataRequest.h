@@ -18,7 +18,7 @@ class CCompoundUnit;
 class SEDecimalFormat;
 class SEDataRequestManager;
 
-class DLL_DECL SEDataRequest : public SEDecimalFormat
+class CDM_DECL SEDataRequest : public SEDecimalFormat
 {
   friend class SEDataRequestManager;
 protected:

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL FlowComplianceUnit : public CCompoundUnit
+class CDM_DECL FlowComplianceUnit : public CCompoundUnit
 {
 public:
   FlowComplianceUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -28,7 +28,7 @@ public:
   static const FlowComplianceUnit m3_Per_Pa;
 };
 
-class DLL_DECL SEScalarFlowCompliance : public SEScalarQuantity<FlowComplianceUnit>
+class CDM_DECL SEScalarFlowCompliance : public SEScalarQuantity<FlowComplianceUnit>
 {
 public:
   SEScalarFlowCompliance() {}

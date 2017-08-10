@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "scenario/SECondition.h"
 #include "bind/cdm/EnvironmentConditions.pb.h"
 
-class DLL_DECL SEEnvironmentCondition : public SECondition
+class CDM_DECL SEEnvironmentCondition : public SECondition
 {
 public:
 

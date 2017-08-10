@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL VolumeUnit : public CCompoundUnit
+class CDM_DECL VolumeUnit : public CCompoundUnit
 {
 public:
   VolumeUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -29,7 +29,7 @@ public:
   static const VolumeUnit uL;
 };
 
-class DLL_DECL SEScalarVolume : public SEScalarQuantity<VolumeUnit>
+class CDM_DECL SEScalarVolume : public SEScalarQuantity<VolumeUnit>
 {
 public:
   SEScalarVolume() {}

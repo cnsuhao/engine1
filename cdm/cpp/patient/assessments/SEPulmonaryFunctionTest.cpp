@@ -19,6 +19,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEFunctionVolumeVsTime.h"
+#include <google/protobuf/text_format.h>
 
 SEPulmonaryFunctionTest::SEPulmonaryFunctionTest(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -63,7 +64,18 @@ void SEPulmonaryFunctionTest::Clear()
   SAFE_DELETE(m_VitalCapacity);
 
   SAFE_DELETE(m_LungVolumePlot);
+}
 
+void SEPulmonaryFunctionTest::SaveFile(const std::string& filename)
+{
+  std::string content;
+  cdm::PulmonaryFunctionTestData* src = SEPulmonaryFunctionTest::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
+  ascii_ostream << content;
+  ascii_ostream.flush();
+  ascii_ostream.close();
+  delete src;
 }
 
 void SEPulmonaryFunctionTest::Load(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst)

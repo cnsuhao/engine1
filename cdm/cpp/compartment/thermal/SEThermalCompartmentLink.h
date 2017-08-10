@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
 
-class DLL_DECL SEThermalCompartmentLink : public SECompartmentLink
+class CDM_DECL SEThermalCompartmentLink : public SECompartmentLink
 {
   friend class SECompartmentManager;
 protected:

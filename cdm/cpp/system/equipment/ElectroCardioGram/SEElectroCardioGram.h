@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "system/SESystem.h"
 #include "bind/cdm/ElectroCardioGram.pb.h"
 
-class DLL_DECL SEElectroCardioGram : public SESystem
+class CDM_DECL SEElectroCardioGram : public SESystem
 {
 protected:
 

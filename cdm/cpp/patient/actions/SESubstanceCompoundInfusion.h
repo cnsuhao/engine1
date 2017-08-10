@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/actions/SESubstanceAdministration.h"
 class SESubstanceCompound;
 
-class DLL_DECL SESubstanceCompoundInfusion : public SESubstanceAdministration
+class CDM_DECL SESubstanceCompoundInfusion : public SESubstanceAdministration
 {
 public:
 

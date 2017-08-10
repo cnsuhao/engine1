@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstancePharmacokinetics.h"
 #include "substance/SESubstancePharmacodynamics.h"
 
-class DLL_DECL SESubstance : public Loggable
+class CDM_DECL SESubstance : public Loggable
 {
 public:
 

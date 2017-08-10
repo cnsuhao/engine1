@@ -23,6 +23,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarOsmolarity.h"
 #include "properties/SEScalarOsmolality.h"
+#include <google/protobuf/text_format.h>
 
 SEUrinalysis::SEUrinalysis(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -64,6 +65,18 @@ void SEUrinalysis::Clear()
   m_LeukocyteEsterase = cdm::UrinalysisData_ePresenceIndicator_NullPresence;
 
   SAFE_DELETE(m_Microscopic);
+}
+
+void SEUrinalysis::SaveFile(const std::string& filename)
+{
+  std::string content;
+  cdm::UrinalysisData* src = SEUrinalysis::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
+  ascii_ostream << content;
+  ascii_ostream.flush();
+  ascii_ostream.close();
+  delete src;
 }
 
 void SEUrinalysis::Load(const cdm::UrinalysisData& src, SEUrinalysis& dst)

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL PowerPerAreaTemperatureToTheFourthUnit : public CCompoundUnit
+class CDM_DECL PowerPerAreaTemperatureToTheFourthUnit : public CCompoundUnit
 {
 public:
   PowerPerAreaTemperatureToTheFourthUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -25,7 +25,7 @@ public:
   static const PowerPerAreaTemperatureToTheFourthUnit W_Per_m2_K4;
 };
 
-class DLL_DECL SEScalarPowerPerAreaTemperatureToTheFourth : public SEScalarQuantity<PowerPerAreaTemperatureToTheFourthUnit>
+class CDM_DECL SEScalarPowerPerAreaTemperatureToTheFourth : public SEScalarQuantity<PowerPerAreaTemperatureToTheFourthUnit>
 {
 public:
   SEScalarPowerPerAreaTemperatureToTheFourth() {}

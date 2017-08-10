@@ -1402,7 +1402,7 @@ public class DataSetReader
         }         
         else if(property.equals("Lead"))
         {          
-          lead = eLead.valueOf((row.getCell(1).getStringCellValue()));
+          lead = eLead.values()[((int)(row.getCell(1).getNumericCellValue()))];
         }
         else if(property.equals("Rhythm"))
         {

@@ -18,7 +18,7 @@ class SESubstance;
 class SESubstanceManager;
 class SEInhalerConfiguration;
 
-class DLL_DECL SEInhaler : public SESystem
+class CDM_DECL SEInhaler : public SESystem
 {
 protected:
 

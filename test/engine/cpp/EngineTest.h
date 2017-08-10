@@ -15,22 +15,25 @@ specific language governing permissions and limitations under the License.
 #include "PulsePhysiologyEngine.h"
 #include "Controller/PulseEngine.h"
 
-#if defined(_MSC_VER) || defined(__MINGW64_VERSION_MAJOR)
-    #ifdef TEST_EXPORTS
-      #define TEST_DECL __declspec(dllexport)
+#define ENGINE_TEST_DECL
+#ifdef SHARED_ENGINE_TEST
+  #if defined (__clang__)
+    #define ENGINE_TEST_DECL
+  #elif defined(__gnu_linux__)
+    #define ENGINE_TEST_DECL __attribute__ ((visibility ("default")))
+  #else
+    #ifdef SHARED_ENGINE_TEST
+      #define ENGINE_TEST_DECL __declspec(dllexport)
     #else
-      #define TEST_DECL __declspec(dllimport)
+      #define ENGINE_TEST_DECL __declspec(dllimport)
     #endif
-#elif defined(__gnu_linux__)
-    #define TEST_DECL __attribute__ ((visibility ("default")))
-#else
-    #define TEST_DECL
+  #endif
 #endif
 
 class SETestSuite;
 class HowToTracker;
 
-class TEST_DECL PulseEngineTest : Loggable
+class ENGINE_TEST_DECL PulseEngineTest : Loggable
 {
 public:
   PulseEngineTest();

@@ -22,7 +22,7 @@ foreach(f ${_FILES})
   execute_process(COMMAND ${BINDER} --proto_path=${from}
                                     --cpp_out=${cpp_bindings_DIR}/bind
                                     # or 
-                                    #--cpp_out=dllexport_decl=CDM_BINDINGS_EXPORT:${cpp_bindings_DIR}/bind
+                                    #--cpp_out=dllexport_decl=_DECL:${cpp_bindings_DIR}/bind
                                     ${f})
 endforeach()
 message(STATUS "cpp bindings are here : ${cpp_bindings_DIR}" )

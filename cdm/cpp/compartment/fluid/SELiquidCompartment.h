@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
 
-class DLL_DECL SELiquidCompartment : public SEFluidCompartment<SELiquidCompartmentLink, SELiquidTransportVertex, SELiquidTransportSubstance, SELiquidSubstanceQuantity>
+class CDM_DECL SELiquidCompartment : public SEFluidCompartment<SELiquidCompartmentLink, SELiquidTransportVertex, SELiquidTransportSubstance, SELiquidSubstanceQuantity>
 {
   friend class SETissueCompartment;
   friend class SECompartmentManager;

@@ -17,7 +17,7 @@ class SESubstance;
 class SESubstanceFraction;
 class SEMechanicalVentilationConfiguration;
 
-class DLL_DECL SEMechanicalVentilation : public SEPatientAction
+class CDM_DECL SEMechanicalVentilation : public SEPatientAction
 {
 protected:
 

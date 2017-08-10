@@ -42,7 +42,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   std::ofstream fAerosolGraph;
 
   Pulse bg(sTestDirectory + "\\RespiratoryCircuitAndTransportTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
+  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
   bg.m_Config->EnableTissue(cdm::eSwitch::Off); 
@@ -189,13 +189,13 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   TimingProfile tmr;
   tmr.Start("Test");
   Pulse bg(sTestDirectory + "\\RespiratoryDriverTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
+  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
   bg.SetupPatient();
   bg.m_Config->EnableRenal(cdm::eSwitch::Off);
   bg.m_Config->EnableTissue(cdm::eSwitch::Off);
   bg.CreateCircuitsAndCompartments();
   SEEnvironmentalConditions env(bg.GetSubstances());
-  env.LoadFile("./environments/Standard.xml");
+  env.LoadFile("./environments/Standard.pba");
   SEGasCompartment* cEnv = bg.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {

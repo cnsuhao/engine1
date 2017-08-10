@@ -119,7 +119,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDire
       }
     }
   }
-  testReport.WriteFile(sTestDirectory + "\\TuneCardiovascularCircuitReport.xml");
+  testReport.WriteFile(sTestDirectory + "\\TuneCardiovascularCircuitReport.pba");
 }
 void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient)
 {
@@ -127,7 +127,9 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, cons
   timer.Start("TestCase");
   Pulse bg(testSuite.GetLogger());
   testSuite.GetLogger()->Info("Running " + sTestName);
-  CDM_COPY((&patient), (&bg.GetPatient()));
+  auto* p = SEPatient::Unload(patient);
+  SEPatient::Load(*p, bg.GetPatient());
+  delete p;  
   bg.m_Config->EnableRenal(cdm::eSwitch::On);
   bg.m_Config->EnableTissue(cdm::eSwitch::On);
   bg.SetupPatient();
@@ -191,7 +193,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   double binding_s = 0;
   Pulse bg(sTestDirectory + "\\" + tName.str() + "CircuitAndTransportTest.log");
   bg.GetLogger()->Info("Running " + tName.str());
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
+  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
   bg.SetupPatient();
   if (heartRate_bpm <= 0)
     heartRate_bpm = bg.GetPatient().GetHeartRateBaseline().GetValue(FrequencyUnit::Per_min);
@@ -208,7 +210,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   if (balanceBloodGases)
   {
     SEEnvironmentalConditions env(bg.GetSubstances());
-    env.LoadFile("./environments/Standard.xml");
+    env.LoadFile("./environments/Standard.pba");
     SEGasCompartment* cEnv = bg.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
     for (SESubstanceFraction* subFrac : env.GetAmbientGases())
     {

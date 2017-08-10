@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "properties/SEScalar.h"
 
-class DLL_DECL TimeUnit : public CCompoundUnit
+class CDM_DECL TimeUnit : public CCompoundUnit
 {
 public:
   TimeUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -29,7 +29,7 @@ public:
   static const TimeUnit yr;
 };
 
-class DLL_DECL SEScalarTime : public SEScalarQuantity<TimeUnit>
+class CDM_DECL SEScalarTime : public SEScalarQuantity<TimeUnit>
 {
 public:
   SEScalarTime() {}

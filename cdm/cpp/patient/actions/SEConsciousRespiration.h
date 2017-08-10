@@ -18,7 +18,7 @@ class SEForcedInhale;
 class SEBreathHold;
 class SEUseInhaler;
 
-class DLL_DECL SEConsciousRespiration : public SEPatientAction
+class CDM_DECL SEConsciousRespiration : public SEPatientAction
 {
 public:
 
