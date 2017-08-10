@@ -9,7 +9,7 @@ Below you can see :
 
 A Scenario is a 'canned' instruction set with requested data to be output in a comma delimited file that is executed by the engine and will produce the same results data.
 'FATAL' is used below to note boundary cases that will result in a fatal exception, stopping the engine.
-	
+
 If you would like execute scenarios, the CDM contains a class, @ref SEScenarioExec, that can execute any scenario with a physiology engine that implements the PhysiologyEngine interface.
 The @ref Toolkit, also provides example scenario files and can also execute scenario files.
 
@@ -23,15 +23,15 @@ An example of a basic scenario file is shown below.
   <EngineStateFile>./states/StandardMale@0s.xml</EngineStateFile>
   
   <DataRequests>
-	  <DataRequest xsi:type="PhysiologySystemDataRequestData" Name="HeartRate" Unit="1/min"/>
-	  <DataRequest xsi:type="PhysiologySystemDataRequestData" Name="RespirationRate" Unit="1/min"/>
+      <DataRequest xsi:type="PhysiologySystemDataRequestData" Name="HeartRate" Unit="1/min"/>
+      <DataRequest xsi:type="PhysiologySystemDataRequestData" Name="RespirationRate" Unit="1/min"/>
     <DataRequest xsi:type="PhysiologySystemDataRequestData" Name="OxygenSaturation" Unit="unitless"/>
-    
-	  <DataRequest xsi:type="GasCompartmentDataRequestData" Compartment="Carina"       Substance="Oxygen"        Name="PartialPressure" Unit="cmH2O" Precision="0"/>
-	  <DataRequest xsi:type="GasCompartmentDataRequestData" Compartment="Carina"       Substance="CarbonDioxide" Name="PartialPressure" Unit="cmH2O" Precision="1"/>
-	  	
-	  <DataRequest xsi:type="LiquidCompartmentDataRequestData" Compartment="Aorta"     Substance="Oxygen"        Name="PartialPressure" Unit="mmHg" Precision="1"/>
-	  <DataRequest xsi:type="LiquidCompartmentDataRequestData" Compartment="Aorta"     Substance="CarbonDioxide" Name="PartialPressure" Unit="mmHg" Precision="1"/>
+
+      <DataRequest xsi:type="GasCompartmentDataRequestData" Compartment="Carina"       Substance="Oxygen"        Name="PartialPressure" Unit="cmH2O" Precision="0"/>
+      <DataRequest xsi:type="GasCompartmentDataRequestData" Compartment="Carina"       Substance="CarbonDioxide" Name="PartialPressure" Unit="cmH2O" Precision="1"/>
+          
+      <DataRequest xsi:type="LiquidCompartmentDataRequestData" Compartment="Aorta"     Substance="Oxygen"        Name="PartialPressure" Unit="mmHg" Precision="1"/>
+      <DataRequest xsi:type="LiquidCompartmentDataRequestData" Compartment="Aorta"     Substance="CarbonDioxide" Name="PartialPressure" Unit="mmHg" Precision="1"/>
   </DataRequests>
    
   <Action xsi:type="AdvanceTimeData">
@@ -60,11 +60,11 @@ Replace the <EngineStateFile> tag with the <InitialParameters> tag like this:
     <Name>Anemia30</Name>
     <Description>Anemia onset, leading to 30% reduction in hemoblogin content</Description>
     <InitialParameters>
-		  <PatientFile>StandardMale.xml</PatientFile>
-		  <Condition xsi:type="ChronicAnemiaData">
-			  <ReductionFactor value="0.3"/>
-		  </Condition>
-	  </InitialParameters>
+          <PatientFile>StandardMale.xml</PatientFile>
+          <Condition xsi:type="ChronicAnemiaData">
+              <ReductionFactor value="0.3"/>
+          </Condition>
+      </InitialParameters>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Patient Conditions
@@ -75,110 +75,153 @@ The following are links to the Condition class specification along with XML exam
 #### Chronic Anemia
 @copybrief PatientConditions_ChronicAnemiaData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Condition xsi:type="ChronicAnemiaData">
- <ReductionFactor value="0.3"/>
-</Condition>
+PatientCondition {
+  ChronicAnemia {
+    ReductionFactor { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### COPD
 @copybrief PatientConditions_ChronicObstructivePulmonaryDiseaseData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Condition xsi:type="ChronicObstructivePulmonaryDiseaseData">
-  <BronchitisSeverity  value="0.65"/>
-	<EmphysemaSeverity   value="0.50"/>
-</Condition>
+PatientCondition {
+  ChronicObstructivePulmonaryDisease {
+    BronchitisSeverity { Scalar0To1 {Value: 0.3} }
+    EmphysemaSeverity { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Chronic Pericardial Effusion
 @copybrief PatientConditions_ChronicPericardialEffusionData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Condition xsi:type="ChronicPericardialEffusionData">
-    <AccumulatedVolume value="500" unit="mL"/>
- </Condition>
+PatientCondition {
+  ChronicPericardialEffusion {
+    AccumulatedVolume { ScalarVolume {Value: 500 Unit: "mL"} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Chronic %Renal Stenosis
 @copybrief PatientConditions_ChronicRenalStenosisData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Condition xsi:type="ChronicRenalStenosisData"> 
-    <LeftKidneySeverity value="0.9"/>
-    <RightKidneySeverity value="0.9"/>
-</Condition>
+PatientCondition {
+  ChronicRenalStenosis {
+    LeftKidneySeverity { Scalar0To1 {Value: 0.9} }
+    RightKidneySeverity { Scalar0To1 {Value: 0.9} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Chronic Ventricular Systolic Dysfunction
 @copybrief PatientConditions_ChronicVentricularSystolicDysfunctionData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Condition xsi:type="ChronicVentricularSystolicDysfunctionData"/>
+PatientCondition {
+  ChronicVentricularSystolicDysfunction {}
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Consume Meal
 @copybrief PatientConditions_ConsumeMealData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Condition xsi:type="ConsumeMealData">
-	<Meal>
-		<Water value="1.0" unit="L"/>
-		<ElapsedTime value="12.0" unit="hr"/>
-	</Meal>
-</Condition>
+PatientCondition {
+  ConsumeMeal {
+    Meal {
+      Nutrition {
+        Carbohydrate { ScalarMass {Value: 390.0 Unit: "g"} }
+        CarbohydrateDigestionRate { ScalarMassPerTime {Value: 0.5 Unit: "g/min"} }
+        Fat { ScalarMass {Value: 90.0 Unit: "g"} }
+        FatDigestionRate { ScalarMassPerTime {Value: 0.055 Unit: "g/min"} }
+        Protein { ScalarMass {Value: 56.0 Unit: "g"} }
+        ProteinDigestionRate { ScalarMassPerTime {Value: 0.071 Unit: "g/min"} }
+        Calcium { ScalarMass {Value: 1.0 Unit: "g"} }
+        Sodium { ScalarMass {Value: 1.5 Unit: "g"} }
+        Water { ScalarVolume {Value: 3.7 Unit: "L"} }
+      }
+    }
+  }
+}
+
+or
+
+<!-- file must be in the ./bin/nutrition directory -->
+jbw
+PatientCondition {
+  ConsumeMeal {
+    Meal {
+      NutritionFile { "Soylent.pba" }
+    }
+  }
+}
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Impaired Alveolar Exchange
 @copybrief PatientConditions_ImpairedAlveolarExchangeData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Condition xsi:type="ImpairedAlveolarExchangeData">
-		<ImpairedSurfaceArea value="1.0" unit="m^2"/>
-</Condition>
+PatientCondition {
+  ImpairedAlveolarExchange {
+    ImpairedSurfaceArea { ScalarArea {Value: 0.3 Unit: "m^2"} }
+  }
+}
 
 or
 
-<Condition xsi:type="ImpairedAlveolarExchangeData">
-		<ImpairedFraction value="0.20"/>
-</Condition>
+PatientCondition {
+  ImpairedAlveolarExchange {
+    ImpairedFraction { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Lobar Pneumonia
 @copybrief PatientConditions_LobarPneumoniaData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Condition xsi:type="LobarPneumoniaData">
-	<Severity            value="0.70"/>
-	<LeftLungAffected    value="0.00"/>
-	<RightLungAffected   value="0.67"/>
-</Condition>
+PatientCondition {
+  LobarPneumonia {
+    Severity  { Scalar0To1 {Value: 0.7} }
+    LeftLungAffected  { Scalar0To1 {Value: 0.0} }
+    RightLungAffected  { Scalar0To1 {Value: 0.67} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Initial %Environment
 @copybrief EnvironmentConditions_InitialEnvironmentData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Condition xsi:type="InitialEnvironmentData">
-	<Conditions>
-		<SurroundingType>Air</SurroundingType>
-		<AirVelocity value="0.0" unit="m/s"/>
-		<AmbientTemperature value="20.0" unit="degC"/>
-		<AtmosphericPressure value="525.0" unit="mmHg"/>
-		<ClothingResistance value="3.0" unit="clo"/>
-		<Emissivity value="0.9"/>
-		<MeanRadiantTemperature value="20.0" unit="degC"/>
-		<RelativeHumidity value="1.0"/>
-		<RespirationAmbientTemperature value="20.0" unit="degC"/>
-		<AmbientSubstance Name="Nitrogen">
-			<FractionAmount value="0.8576"/>
-		</AmbientSubstance>
-		<AmbientSubstance Name="Oxygen">
-			<FractionAmount value="0.142"/>
-		</AmbientSubstance>
-		<AmbientSubstance Name="CarbonDioxide">
-			<FractionAmount value="4.0E-4"/>
-		</AmbientSubstance>
-	</Conditions>
-</Condition>
+EnvironmentCondition {
+  InitialEnvironmentConditions {
+    Conditions {
+      SurroundingType: Air
+      AirVelocity { ScalarLengthPerTime {Value: 1.0 Unit: "m/s"} }
+      AmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
+      AtmosphericPressure { ScalarPressure {Value: 542.0 Unit: "mmHg"} }
+      ClothingResistance { ScalarHeatResistanceArea {Value: 2.0 Unit: "clo"} }
+      Emissivity { Scalar0To1 {Value: 0.9} }
+      MeanRadiantTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
+      RelativeHumidity { Scalar0To1 {Value: 0.1} }
+      RespirationAmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
+      AmbientGas { Name: "Nitrogen" Amount { Scalar0To1 {Value: 0.79008} } }
+      AmbientGas { Name: "Oxygen" Amount {Scalar0To1 {Value: 0.2095} } }
+      AmbientGas { Name: "CarbonDioxide" Amount {Scalar0To1 {Value: 4.0E-4} } }
+      AmbientGas { Name: "CarbonMonoxide" Amount {Scalar0To1 {Value: 2.0E-5} } }
+      AmbientAerosol { Name: "ForestFireParticulate" Concentration { ScalarMassPerVolume {Value: 2.9 Unit: "mg/m^3"} } } 
+    }
+  }
+}
 
 or
 
-<!-- file must be in the ./bin/environemnts directory -->
-<Condition xsi:type="InitialEnvironmentData">
-	<ConditionsFile>Hypobaric3000m.xml</ConditionsFile>
-</Condition>
+<!-- file must be in the ./bin/environments directory -->
+jbw
+EnvironmentCondition {
+  InitialEnvironmentConditions {
+    Conditions {
+      ConditionsFile {"Hypobaric3000m.pba"}
+    }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - - 
@@ -268,9 +311,10 @@ The following are links to the Action class specification along with XML example
 
 @copybrief Scenario_AdvanceTimeData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="AdvanceTimeData">
-	<Time value="350" unit="s"/>       
-</Action>
+AdvanceTime 
+{
+  Time { ScalarTime {Value: 20.0  Unit: "s"} }
+}    
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Serialize State
@@ -292,9 +336,11 @@ Patient Insults
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="AcuteStressData">
-   <Severity value="0.3"/>       
-</Action>
+PatientAction {
+  AcuteStress {
+    Severity { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -304,9 +350,11 @@ A severity of 0 removes the action completely.
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ApneaData">
-   <Severity value="0.3"/>       
-</Action>
+PatientAction {
+  Apnea {
+    Severity { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -316,9 +364,11 @@ A severity of 0 removes the action completely.
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="AirwayObstructionData">
-   <Severity value="0.3"/>       
-</Action>
+PatientAction {
+  AirwayObstruction {
+    Severity { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -328,9 +378,11 @@ A severity of 0 removes the action completely.
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="AsthmaAttackData">
-	<Severity value="0.3"/>       
-</Action>
+PatientAction {
+  AsthmaAttack {
+    Severity { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -341,9 +393,12 @@ Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.<br>
 Types : Diffuse, LeftFocal, RightFocal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="BrainInjuryData" Type="Diffuse">
-	<Severity value="0.3"/>       
-</Action>
+PatientAction {
+  BrainInjury {
+    Type: LeftFocal
+    Severity { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -353,9 +408,11 @@ Types : Diffuse, LeftFocal, RightFocal
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="BronchoconstrictionData">
-	<Severity value="0.3"/>       
-</Action>
+PatientAction {
+  Bronchoconstriction {
+    Severity { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -363,19 +420,33 @@ A severity of 0 removes the action completely.
 #### Consume Nutrients 
 @copybrief PatientActions_ConsumeNutrientsData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ConsumeMealData">
-	<Nutrition>
-		<Carbohydrate value="390.0" unit="g"/>
-		<CarbohydrateDigestionRate value="0.5" unit="g/min"/>
-		<Fat value="90.0" unit="g"/>
-		<FatDigestionRate value="0.055" unit="g/min"/>
-		<Protein value="56.0" unit="g"/>
-		<ProteinDigestionRate value="0.071" unit="g/min"/>
-		<Calcium value="1000.0" unit="mg"/>
-		<Sodium value="1.5" unit="g"/>
-		<Water value="3.7" unit="L"/>
-	</Nutrition>
-</Action>
+PatientAction {
+  ConsumeNutrients {
+    Nutrition {
+      Carbohydrate { ScalarMass {Value: 390.0 Unit: "g"} }
+      CarbohydrateDigestionRate { ScalarMassPerTime {Value: 0.5 Unit: "g/min"} }
+      Fat { ScalarMass {Value: 90.0 Unit: "g"} }
+      FatDigestionRate { ScalarMassPerTime {Value: 0.055 Unit: "g/min"} }
+      Protein { ScalarMass {Value: 56.0 Unit: "g"} }
+      ProteinDigestionRate { ScalarMassPerTime {Value: 0.071 Unit: "g/min"} }
+      Calcium { ScalarMass {Value: 1.0 Unit: "g"} }
+      Sodium { ScalarMass {Value: 1.5 Unit: "g"} }
+      Water { ScalarVolume {Value: 3.7 Unit: "L"} }
+    }
+  }
+}
+
+or
+
+<!-- file must be in the ./bin/nutrition directory -->
+jbw
+PatientAction {
+  ConsumeNutrients {
+    NutritionFile { "Soylent.pba" }
+    }
+  }
+}
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -383,7 +454,9 @@ A severity of 0 removes the action completely.
 #### Cardiac Arrest 
 @copybrief PatientActions_CardiacArrestData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="CardiacArrestData"/>
+PatientAction {
+  CardiacArrest {State: On}
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -392,15 +465,11 @@ A severity of 0 removes the action completely.
 @copybrief PatientActions_ExerciseData <br>
 An intensity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ExerciseData">
-	<Intensity value="1.0"/>
-</Action>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ExerciseData">
-	<BorgScale value="10.0"/>
-</Action>
+PatientAction {
+  Exercise {
+    Intensity { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -410,9 +479,11 @@ An intensity of 0 removes the action completely.
 The Compartment attribute can be any of the enumerations defined in the enumAnatomy enumeration.<br>
 FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="HemorrhageData" Compartment="RightLegVascular">
-    <Rate value="250" unit="mL/min"/>
-</Action>
+PatientAction {
+  Hemorrhage { Compartment: "RightLegVascular"
+    Rate { ScalarVolumePerTime {Value: 250.0 Unit: "mL/min"} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -421,9 +492,11 @@ FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
 @copybrief PatientActions_PericardialEffusionData <br>
 EffusionRate of the liquid
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="PericardialEffusionData" >
-	<EffusionRate value="0.1" unit="mL/s"/>
-</Action>
+PatientAction {
+  PericardialEffusion {
+    EffusionRate { ScalarVolumePerTime {Value: 0.1 Unit: "mL/s"} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -435,9 +508,13 @@ The Side attribute can be "Left" or "Right"<br>
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="TensionPneumothoraxData" Type="Closed" Side="Left">
-        <Severity value="0.6"/>       
-    </Action>
+PatientAction {
+  TensionPneumothorax {
+    Type: Open
+    Side: Right
+    Severity { Scalar0To1 {Value: 0.3} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -452,9 +529,11 @@ Patient Interventions
 Force is the specific magnitude to perform a compression with.<br>
 Note, that patient should be in Cardiac Arrest before performing CPR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ChestCompressionForceData">
-    <Force value="100.0" unit="N"/>
-</Action>
+PatientAction {
+  ChestCompressionForce {
+    Force { ScalarForce {Value: 100.0 Unit: "N"} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -464,9 +543,11 @@ Note, that patient should be in Cardiac Arrest before performing CPR
 ForceScale value must be >=0.0 and <=1.0<br>
 Note, that patient should be in Cardiac Arrest before performing CPR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ChestCompressionForceScaleData"> 
-	<ForceScale value="0.73"/>
-</Action>
+PatientAction {
+  ChestCompressionForceScale {
+    ForceScale { Scalar0To1 {Value: 0.73} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -477,8 +558,12 @@ The State attribute can be "On" or "Off" <br>
 Side is either Left or Right<br>
 FATAL: If the side specified does not have a pnumothorax 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ChestOcclusiveDressingData" State="On" Side="Left">
-</Action>
+PatientAction {
+  ChestOcclusiveDressing {
+    State: On
+    Side: Right
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -503,20 +588,32 @@ command periods to ensure the body is doing what you
 expect it to.. Or not, depending on how you want 
 the system to react.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ConsciousRespirationData">
-	<Command xsi:type="ForcedExhaleData">
-		<ExpiratoryReserveVolumeFraction value="1.0"/>
-		<Period value="3.0" unit="s"/>			
-	</Command>  
-	<Command xsi:type="ForcedInhaleData">
-		<InspiratoryCapacityFraction value="1.0"/>
-		<Period value="5.0" unit="s"/>          
-	</Command> 
-	<Command xsi:type="UseInhalerData"/>	
-	<Command xsi:type="BreathHoldData">
-		<Period value="10.0" unit="s"/>          
-	</Command> 
-</Action>
+PatientAction {
+  ConsciousRespiration {
+    Command {
+      ForcedExhale {
+        ExpiratoryCapacityFraction { Scalar0To1 {Value: 1.0} }
+        Period { ScalarTime {Value: 3.0 Unit: "s"} }
+      }
+    }
+    Command {
+      ForcedInhale {
+        InspiratoryCapacityFraction { Scalar0To1 {Value: 0.5} }
+        Period { ScalarTime {Value: 5.0 Unit: "s"} }
+      }
+    }
+    Command {
+      UseInhaler {}
+    }
+    Command {
+      BreathHold {
+        Period { ScalarTime {Value: 10.0 Unit: "s"} }
+      }
+    }
+  }
+}
+
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -526,7 +623,9 @@ the system to react.
 Note: In order to 'turn off' an intubation, use'Off' as the Type  <br>
 Types : Off, Esophageal, LeftMainstem, RightMainstem, Tracheal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="IntubationData" Type="Tracheal"/>
+PatientAction {
+  Intubation {Type: Tracheal}
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -537,13 +636,19 @@ You may provide Pressure and/or Flow. <br>
 If you do not provide GasFractions, the environment gas fractions will be used. <br>
 If you do provide Gas Fractions, they must add up to 1.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="MechanicalVentilationData" State="On">
-  <Pressure value="10.0" unit="cmH2O"/>
-  <Flow value="1.0" unit="mL/s"/>
-  <GasFraction Name="Oxygen">
-    <FractionAmount value="1.0"/>
-  </GasFraction>
-</Action>
+PatientAction {
+  MechanicalVentilation { State: On
+    Flow { ScalarVolumePerTime {Value: 1.0 Unit: "mL/s"} }
+    Pressure { ScalarPressure {Value: 10.0 Unit: "cmH2O"} }
+    GasFraction { Name: "Oxygen"
+      Amount { Scalar0To1 {Value: 0.3} } }
+    GasFraction { Name: "CarbonDioxide"
+      Amount { Scalar0To1 {Value: 0.1} } }
+    GasFraction { Name: "Nitrogen"
+      Amount { Scalar0To1 {Value: 0.6} } }
+  }
+}
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -554,7 +659,12 @@ The Side attribute can be "Left" or "Right"<br>
 The State attribute can be "On" or "Off"
 FATAL: If the side specified does not have a pnumothorax 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="NeedleDecompressionData" State="On" Side="Left"/>
+PatientAction {
+  NeedleDecompression {
+    State: On
+    Side: Right
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Urinate 
@@ -562,7 +672,9 @@ FATAL: If the side specified does not have a pnumothorax
 Action to empty the bladder. if not emptied, 
 it will empty and throw an event.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="UrinateData"/>
+PatientAction {
+  Urinate {}
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -580,11 +692,14 @@ The AdminRoute can be one of:
 
 The Substance element should be set to a name of any of the %Substances.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="SubstanceBolusData" AdminRoute="Intravenous">
-	<Substance>Succinylcholine</Substance>
-	<Concentration value="4820" unit="ug/mL"/>
-	<Dose value="30" unit="mL"/>
-</Action>
+PatientAction {
+  SubstanceBolus { 
+    AdministrationRoute: Intravenous
+    Substance: "Succinylcholine"
+    Concentration { ScalarMassPerVolume {Value: 4820.0 Unit: "ug/mL"} }
+    Dose { ScalarVolume {Value: 30.0 Unit: "mL"} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -594,11 +709,13 @@ The Substance element should be set to a name of any of the %Substances.
 The Substance Compound element should be set to a name of any of the %Substances Compounds. <br>
 Set Rate to 0 to remove Action
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="SubstanceCompoundInfusionData">
-	<SubstanceCompound>Saline</SubstanceCompound>
-	<BagVolume value="500" unit="mL"/>
-	<Rate value="100" unit="mL/min"/>
-</Action>
+PatientAction {
+  SubstanceCompoundInfusion { 
+    SubstanceCompound: "Saline"
+    BagVolume { ScalarVolume {Value: 500.0 Unit: "mL"} }
+    Rate { ScalarVolumePerTime {Value: 100.0 Unit: "mL/min"} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -608,11 +725,13 @@ Set Rate to 0 to remove Action
 The Substance element should be set to a name of any of the %Substances. <br>
 Set Rate to 0 to remove Action
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="SubstanceInfusionData" State="On" AdminRoute="Intravenous">
-    <Substance>Succinylcholine</Substance>
-    <Concentration value="5000" unit="ug/mL"/>
-    <Rate value="100" unit="mL/min"/>
-</Action>
+PatientAction {
+  SubstanceInfusion { 
+   Substance: "Succinylcholine"
+    Concentration { ScalarMassPerVolume {Value: 5000.0 Unit: "ug/mL"} }
+    Rate { ScalarVolumePerTime {Value: 100.0 Unit: "mL/min"} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -631,43 +750,56 @@ Patient cannot be intubated to be connected as Mask <br>
 Anesthesia machine will be disconneted if patient is then intubated. <br>
 Cannot have inhaler and anesthesia machine on at the same time <br>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="AnesthesiaMachineConfigurationData">
-	<Configuration>
-    <Connection>Mask</Connection>
-		<InletFlow value="5.0" unit="L/min"/>
-		<InspiratoryExpiratoryRatio value="0.5"/>
-		<OxygenFraction value="0.25"/>
-		<OxygenSource>Wall</OxygenSource>
-		<PositiveEndExpiredPressure value="1.0" unit="cmH2O"/>
-		<PrimaryGas>Nitrogen</PrimaryGas>
-		<RespiratoryRate value="16.0" unit="1/min"/>
-		<VentilatorPressure value="10.5" unit="cmH2O"/>
-		<OxygenBottleOne>
-			<Volume value="660" unit="L"/>
-		</OxygenBottleOne>
-		<OxygenBottleTwo>
-			<Volume value="660" unit="L"/>
-		</OxygenBottleTwo>
-	</Configuration>
-</Action>    
+AnesthesiaMachineAction {
+  Configuration {
+    Configuration {
+      Connection: Mask
+      InletFlow { ScalarVolumePerTime {Value: 5.0 Unit: "L/min"} }
+      InspiratoryExpiratoryRatio { Scalar {Value="0.5"} }
+      OxygenFraction { Scalar0To1 {Value="0.25"} }
+      OxygenSource: Wall
+      PositiveEndExpiredPressure { ScalarPressure { Value: 1.0 Unit: "cmH2O"} }
+      PrimaryGas: Nitrogen      
+      RespiratoryRate { ScalarFrequency {Value: 16.0 Unit: "1/min"} }
+      VentilatorPressure { ScalarPressure { Value: 10.5 Unit: "cmH2O"} }
+      OxygenBottleOne {
+        Volume { ScalarVolume {Value: 660.0 Unit: "L"} }
+      }
+      OxygenBottleTwo {
+        Volume { ScalarVolume {Value: 700.0 Unit: "L"} }
+      }
+    }
+  }
+}
+
+jbw - file?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="AnesthesiaMachineConfigurationData" >
-	<Configuration>
-		<Connection>Off</Connection>
-	</Configuration>
-</Action> 
+AnesthesiaMachineAction {
+  Configuration {
+    Configuration {
+      Connection: Off
+    }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-<Action xsi:type="AnesthesiaMachineConfigurationData">
-	<Configuration>
-		<LeftChamber>
-      <State>On</State>
-			<SubstanceFraction value="0.04"/>					
-			<Substance>Desflurane</Substance>
-		</LeftChamber>
-	</Configuration>
-</Action>
+AnesthesiaMachineAction {
+  Configuration {
+    Configuration {
+      RightChamber {
+        State: On
+        SubstanceFraction { Scalar0To1 {Value="0.04"} }
+        Substance: "Desflurane"
+      }
+      LeftChamber {
+        State: Off
+        SubstanceFraction { Scalar0To1 {Value="0.01"} }
+        Substance: "Desflurane"
+      }
+    }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 - - -
@@ -681,7 +813,9 @@ Anesthesia Machine Incidents
 @copybrief AnesthesiaActions_OxygenTankPressureLossData <br>
 The State attribute can be "On" or "Off"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="OxygenTankPressureLossData" State="On"/>
+AnesthesiaMachineAction {
+  OxygenTankPressureLoss {State: On}
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -690,7 +824,9 @@ The State attribute can be "On" or "Off"
 @copybrief AnesthesiaActions_OxygenWallPortPressureLossData <br>
 The State attribute can be "On" or "Off"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="OxygenWallPortPressureLossData" State="On"/>
+AnesthesiaMachineAction {
+  OxygenWallPortPressureLoss {State: On}
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -705,9 +841,11 @@ Anesthesia Machine Failures
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ExpiratoryValveLeakData" State="On">
-    <Severity value="0.5"/>
-</Action>
+AnesthesiaMachineAction {
+  ExpiratoryValveLeak {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -717,9 +855,11 @@ Severity value must be >=0.0 and <=1.0
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ExpiratoryValveObstructionData" State="On">
-    <Severity value="1.0"/>
-</Action>
+AnesthesiaMachineAction {
+  ExpiratoryValveObstruction {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -729,9 +869,11 @@ Severity value must be >=0.0 and <=1.0
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="InspiratoryValveLeakData" State="On">
-    <Severity value="1.0"/>
-</Action>
+AnesthesiaMachineAction {
+  InspiratoryValveLeak {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -741,9 +883,11 @@ Severity value must be >=0.0 and <=1.0
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="InspiratoryValveObstructionData" State="On">
-    <Severity value="1.0"/>
-</Action>
+AnesthesiaMachineAction {
+  InspiratoryValveObstruction {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -753,9 +897,11 @@ Severity value must be >=0.0 and <=1.0
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="MaskLeakData" State="On">
-    <Severity value="1.0"/>
-</Action>
+AnesthesiaMachineAction {
+  MaskLeak {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -765,9 +911,11 @@ Severity value must be >=0.0 and <=1.0
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="SodaLimeFailureData" State="On">
-    <Severity value="1.0"/>
-</Action>
+AnesthesiaMachineAction {
+  SodaLimeFailure {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -777,9 +925,11 @@ Severity value must be >=0.0 and <=1.0
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="TubeCuffLeakData" State="On">
-    <Severity value="0.5"/>
-</Action>
+AnesthesiaMachineAction {
+  TubeCuffLeak {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -789,9 +939,11 @@ Severity value must be >=0.0 and <=1.0
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="VaporizerFailureData" State="On">
-    <Severity value="0.25"/>
-</Action>
+AnesthesiaMachineAction {
+  VaporizerFailure {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -801,9 +953,11 @@ Severity value must be >=0.0 and <=1.0
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="VentilatorPressureLossData" State="On">
-    <Severity value="1.0"/>
-</Action>
+AnesthesiaMachineAction {
+  VentilatorPressureLoss {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -813,9 +967,11 @@ Severity value must be >=0.0 and <=1.0
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="YPieceDisconnectData" State="On">
-    <Severity value="1.0"/>
-</Action>
+AnesthesiaMachineAction {
+  YPieceDisconnect {
+    Severity { Scalar0To1 {Value: 0.5} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -827,13 +983,18 @@ Severity value must be >=0.0 and <=1.0
 @copybrief InhalerActions_InhalerConfigurationData <br>
 FATAL: Cannot have inhaler and anesthesia machine on at the same time
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="InhalerConfigurationData">
-	<Configuration>
-		<Substance>Albuterol</Substance>
-		<MeteredDose value="90.0" unit="ug"/>
-		<NozzleLoss value="0.04"/>
-	</Configuration>
-</Action>
+InhalerAction {
+  Configuration {
+    Configuration {
+      Substance: "Oxygen"
+      MeteredDose { ScalarMass {Value: 90.0 Unit: "ug"} }
+      NozzleLoss { Scalar0To1 {Value: 0.04} }
+      SpacerVolume { ScalarVolume {Value: 0.1 Unit: "L"} }
+    }
+  }
+}
+
+jbw - file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -846,59 +1007,64 @@ FATAL: Cannot have inhaler and anesthesia machine on at the same time
 #### %Environment Configuration State <br>
 @copybrief EnvironmentActions_EnvironmentChangeData <br>
 NOTE: Each field is optional.
+jbw - mention CO and particulates (e.g., smoke)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="EnvironmentChangeData">
-	<Conditions>
-        <SurroundingType>Water</SurroundingType>
-        <AirVelocity value="0.0" unit="m/s"/>
-        <AmbientTemperature value="10.0" unit="degC"/>
-        <AtmosphericPressure value="760.0" unit="mmHg"/>
-        <ClothingResistance value="0.01" unit="clo"/>
-        <Emissivity value="0.0"/>
-        <MeanRadiantTemperature value="22.0" unit="degC"/>
-        <RelativeHumidity value="1.0"/>
-        <RespirationAmbientTemperature value="22.0" unit="degC"/>
-        <AmbientSubstance Name="Nitrogen">
-            <FractionAmount value="0.7901"/>
-        </AmbientSubstance>
-        <AmbientSubstance Name="Oxygen">
-            <FractionAmount value="0.2095"/>
-        </AmbientSubstance>
-        <AmbientSubstance Name="CarbonDioxide">
-            <FractionAmount value="4.0E-4"/>
-        </AmbientSubstance>
-	</Conditions>
-</Action>
+EnvironmentAction {
+  Conditions {
+    Conditions {
+      SurroundingType: Air
+      AirVelocity { ScalarLengthPerTime {Value: 1.0 Unit: "m/s"} }
+      AmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
+      AtmosphericPressure { ScalarPressure {Value: 542.0 Unit: "mmHg"} }
+      ClothingResistance { ScalarHeatResistanceArea {Value: 2.0 Unit: "clo"} }
+      Emissivity { Scalar0To1 {Value: 0.9} }
+      MeanRadiantTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
+      RelativeHumidity { Scalar0To1 {Value: 0.1} }
+      RespirationAmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
+      AmbientGas { Name: "Nitrogen" Amount { Scalar0To1 {Value: 0.79008} } }
+      AmbientGas { Name: "Oxygen" Amount {Scalar0To1 {Value: 0.2095} } }
+      AmbientGas { Name: "CarbonDioxide" Amount {Scalar0To1 {Value: 4.0E-4} } }
+      AmbientGas { Name: "CarbonMonoxide" Amount {Scalar0To1 {Value: 2.0E-5} } }
+      AmbientAerosol { Name: "ForestFireParticulate" Concentration { ScalarMassPerVolume {Value: 2.9 Unit: "mg/m^3"} } } 
+    }
+  }
+}
+
+or
+
+<!-- file must be in the ./bin/environments directory -->
+jbw
+EnvironmentCondition {
+  InitialEnvironmentConditions {
+    Conditions {
+      ConditionsFile {"Hypobaric3000m.pba"}
+    }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
 
 #### Thermal Application <br>
 @copybrief EnvironmentActions_ThermalApplicationData <br>
 You must provide at least 1 activity, but up can also 
-apply upto all 3 in one action.
+apply up-to all 3 in one action.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ThermalApplicationData">
-	<ActiveHeating>
-		<Power value="500" unit="BTU/hr"/> 
-		<SurfaceAreaFraction value="0.2" unit="unitless"/>  		
-	</ActiveHeating>
-	<ActiveCooling>
-		<Power value="500" unit="BTU/hr"/> 
-		<CSurfaceArea value="0.1" unit="m^2"/> 			
-	</ActiveCooling>
-	<AppliedTemperature>
-    <State>On</State>
-		<Temperature value="30" unit="degF"/> 
-		<SurfaceAreaFraction value="1.0" unit="unitless"/> 			
-	</AppliedTemperature>
-</Action>	
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="ThermalApplicationData">		
-	<AppliedTemperature>
-    <State>On</State>
-		<Temperature value="140" unit="degF"/> 
-		<SurfaceAreaFraction value="0.9" unit="unitless"/> 			
-	</AppliedTemperature>
-</Action>
+EnvironmentAction {
+  ThermalApplication {
+    ActiveHeating {
+      Power { ScalarPower {Value: 500.0 Unit: "BTU/hr"} }
+      SurfaceAreaFraction { Scalar0To1 {Value: 0.2} }
+    }
+    ActiveCooling {
+      Power { ScalarPower {Value: 500.0 Unit: "BTU/hr"} }
+      SurfaceArea { ScalarArea {Value: 0.1 Unit: "m^2"} }
+    }
+    AppliedTemperature { 
+      State: On
+      Temperature { ScalarTemperature {Value: 30.0 Unit: "degF"} }
+      SurfaceAreaFraction { Scalar0To1 {Value: 1.0} }
+    }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
