@@ -66,7 +66,14 @@ void SEPulmonaryFunctionTest::Clear()
   SAFE_DELETE(m_LungVolumePlot);
 }
 
-void SEPulmonaryFunctionTest::SaveFile(const std::string& filename)
+std::string SEPulmonaryFunctionTest::Save() const
+{
+  std::string content;
+  cdm::PulmonaryFunctionTestData* src = SEPulmonaryFunctionTest::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  return content;
+}
+void SEPulmonaryFunctionTest::SaveFile(const std::string& filename) const
 {
   std::string content;
   cdm::PulmonaryFunctionTestData* src = SEPulmonaryFunctionTest::Unload(*this);

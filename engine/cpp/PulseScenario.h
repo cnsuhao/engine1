@@ -11,9 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/engine/Engine.pb.h"
 #include "scenario/SEScenario.h"
-#include "Controller/PulseConfiguration.h"
+#include "PulseConfiguration.h"
 
 /**
 * @brief A Pulse specific scenario (i.e. holds a %Pulse configuration object)
@@ -27,7 +26,9 @@ public:
 
   virtual void Clear();
 
+
   bool LoadFile(const std::string& scenarioFile);
+  bool Load(const std::string& str);
 
   static void Load(const pulse::ScenarioData& src, PulseScenario& dst);
   static pulse::ScenarioData* Unload(const PulseScenario& src);

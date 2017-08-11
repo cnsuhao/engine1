@@ -33,7 +33,7 @@ specific language governing permissions and limitations under the License.
 
 // #define VERBOSE
 
-Nervous::Nervous(Pulse& bg) : SENervousSystem(bg.GetLogger()), m_data(bg)
+Nervous::Nervous(PulseController& data) : SENervousSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }

@@ -59,7 +59,7 @@ void SEFunctionVolumeVsTime::Serialize(const SEFunctionVolumeVsTime& src, cdm::F
   dst.mutable_functionvolumevstime()->set_dependentunit(src.m_VolumeUnit->GetString());
 }
 
-double SEFunctionVolumeVsTime::GetTimeValue(unsigned int index, const TimeUnit& unit)
+double SEFunctionVolumeVsTime::GetTimeValue(size_t index, const TimeUnit& unit)
 {
   if (m_TimeUnit == nullptr)
     throw CommonDataModelException("No time units have been set");
@@ -80,7 +80,7 @@ void SEFunctionVolumeVsTime::SetTimeUnit(const TimeUnit& unit)
   m_TimeUnit = &unit;
 }
 
-double SEFunctionVolumeVsTime::GetVolumeValue(unsigned int index, const VolumeUnit& unit)
+double SEFunctionVolumeVsTime::GetVolumeValue(size_t index, const VolumeUnit& unit)
 {
   if (m_VolumeUnit == nullptr)
     throw CommonDataModelException("No volume units have been set");

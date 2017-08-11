@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include <jni.h>
 #include <iostream>
 #include "PulsePhysiologyEngine.h"
-#include "Controller/PulseEngine.h"
+#include "Controller/Engine.h"
 #include "scenario/SEScenarioExec.h"
 #include "utils/SEEventHandler.h"
 
@@ -45,7 +45,7 @@ public:
   bool       firstUpdate;
   int        update_cnt;
   int        updateFrequency_cnt;
-  std::unique_ptr<PhysiologyEngine> eng;
+  std::unique_ptr<PulseEngine> eng;
   
   jmethodID jniDebugMethodID;
   jmethodID jniInfoMethodID;

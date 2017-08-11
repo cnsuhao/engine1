@@ -58,7 +58,7 @@ specific language governing permissions and limitations under the License.
 #define GAS_ONLY_PRODCOM
 #define ZERO_APPROX 1e-10
 
-Tissue::Tissue(Pulse& bg) : SETissueSystem(bg.GetLogger()), m_data(bg)
+Tissue::Tissue(PulseController& data) : SETissueSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -130,9 +130,9 @@ void Tissue::Initialize()
     m_RestingFluidMass_kg += intracellular.GetVolume(VolumeUnit::mL)*m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
     m_RestingFluidMass_kg += extracellular.GetVolume(VolumeUnit::mL)*m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
   }
-  m_RestingBloodGlucose_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Glucose)->GetConcentration(MassPerVolumeUnit::g_Per_L);
-  m_RestingBloodLipid_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Tristearin)->GetConcentration(MassPerVolumeUnit::g_Per_L);
-  m_RestingBloodInsulin_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Insulin)->GetConcentration(MassPerVolumeUnit::g_Per_L);
+  m_RestingBloodGlucose_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Glucose)->GetConcentration(MassPerVolumeUnit::g_Per_L);
+  m_RestingBloodLipid_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Tristearin)->GetConcentration(MassPerVolumeUnit::g_Per_L);
+  m_RestingBloodInsulin_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Insulin)->GetConcentration(MassPerVolumeUnit::g_Per_L);
   m_RestingPatientMass_kg = m_data.GetPatient().GetWeight(MassUnit::kg);
   GetIntracellularFluidPH().SetValue(7.0);
 
@@ -189,7 +189,7 @@ void Tissue::SetUp()
 
   m_AlbuminProdutionRate_g_Per_s = 1.5e-4; /// \cite jarnum1972plasma
   m_Albumin = &m_data.GetSubstances().GetAlbumin();
-  m_LiverTissueAlbumin = m_data.GetCompartments().GetLiquidCompartment(BGE::ExtravascularCompartment::LiverExtracellular)->GetSubstanceQuantity(*m_Albumin);
+  m_LiverTissueAlbumin = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::LiverExtracellular)->GetSubstanceQuantity(*m_Albumin);
   m_Glucose = &m_data.GetSubstances().GetGlucose();
 
   m_Tristearin = &m_data.GetSubstances().GetTristearin();
@@ -203,60 +203,60 @@ void Tissue::SetUp()
   m_Calcium = &m_data.GetSubstances().GetCalcium();
   m_Insulin = &m_data.GetSubstances().GetInsulin();
 
-  m_GutT1 = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetNode(BGE::TissueNode::GutT1);
-  m_GutT1ToGutT3 = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(BGE::TissuePath::GutT1ToGutT3);
+  m_GutT1 = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetNode(pulse::TissueNode::GutT1);
+  m_GutT1ToGutT3 = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::TissuePath::GutT1ToGutT3);
 
-  m_MuscleVascular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Muscle);
-  m_FatVascular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Fat);
+  m_MuscleVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle);
+  m_FatVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat);
 
-  m_FatVascularLipid = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Fat)->GetSubstanceQuantity(*m_Tristearin);
-  m_LiverVascularGlucose = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Glucose);
-  m_MuscleVascularGlucose = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Muscle)->GetSubstanceQuantity(*m_Glucose);
+  m_FatVascularLipid = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat)->GetSubstanceQuantity(*m_Tristearin);
+  m_LiverVascularGlucose = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Glucose);
+  m_MuscleVascularGlucose = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle)->GetSubstanceQuantity(*m_Glucose);
 
 
-  m_LeftLungTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::LeftLung);
-  m_RightLungTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::RightLung);
-  m_LiverTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Liver);
-  m_FatTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Fat);
-  m_MuscleTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Muscle);
+  m_LeftLungTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftLung);
+  m_RightLungTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightLung);
+  m_LiverTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver);
+  m_FatTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat);
+  m_MuscleTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Muscle);
 
-  m_LiverIntracellular = m_data.GetCompartments().GetLiquidCompartment(BGE::ExtravascularCompartment::LiverIntracellular);
-  m_FatIntracellular = m_data.GetCompartments().GetLiquidCompartment(BGE::ExtravascularCompartment::FatIntracellular);
-  m_MuscleIntracellular = m_data.GetCompartments().GetLiquidCompartment(BGE::ExtravascularCompartment::MuscleIntracellular);
+  m_LiverIntracellular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::LiverIntracellular);
+  m_FatIntracellular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::FatIntracellular);
+  m_MuscleIntracellular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::MuscleIntracellular);
 
-  m_LeftAlveoli = m_data.GetCompartments().GetGasCompartment(BGE::PulmonaryCompartment::LeftAlveoli);
-  m_RightAlveoli = m_data.GetCompartments().GetGasCompartment(BGE::PulmonaryCompartment::RightAlveoli);
-  m_LeftPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftPulmonaryCapillaries);
-  m_RightPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightPulmonaryCapillaries);
+  m_LeftAlveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli);
+  m_RightAlveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli);
+  m_LeftPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries);
+  m_RightPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries);
 
   //Store tissue-blood pairs
   m_TissueToVascular.clear();
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Fat)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Fat);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Bone)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Bone);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Brain)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Brain);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Gut)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Gut);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::LeftKidney)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftKidney);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::RightKidney)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightKidney);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Liver)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::LeftLung)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftLung);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::RightLung)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightLung);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Muscle)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Muscle);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Myocardium)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Myocardium);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Skin)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Skin);
-  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Spleen)] = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Spleen);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Bone)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Bone);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Brain)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Gut)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Gut);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftLung)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLung);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightLung)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightLung);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Muscle)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Myocardium)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Skin)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin);
+  m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Spleen)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Spleen);
 
   m_ConsumptionProdutionTissues.clear();
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Fat));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Bone));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Brain));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Gut));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::LeftKidney));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::RightKidney));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Liver));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Muscle));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Myocardium));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Skin));
-  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Spleen));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Bone));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Brain));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Gut));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftKidney));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightKidney));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Muscle));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Myocardium));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Skin));
+  m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Spleen));
 
   // Here is some code to cross check our maps with what is in the compartment manager
   // If by some chance, some other system added a new tissue compartment we don't know about
@@ -698,12 +698,12 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
   /// \todo Remove this temporary blood increment when diffusion is operational (0.125 is tuning factor)
   double acetoacetateIncrement_mg = 0.375 * KetoneProductionRate_mmol_Per_kg_s * m_Acetoacetate->GetMolarMass(MassPerAmountUnit::mg_Per_mmol) 
     * m_data.GetPatient().GetWeight(MassUnit::kg) * time_s;
-  m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass().IncrementValue(acetoacetateIncrement_mg, MassUnit::mg);
-  if (m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass(MassUnit::ug) < ZERO_APPROX)
+  m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass().IncrementValue(acetoacetateIncrement_mg, MassUnit::mg);
+  if (m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass(MassUnit::ug) < ZERO_APPROX)
   {
-    m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass().SetValue(0.0, MassUnit::ug);
+    m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass().SetValue(0.0, MassUnit::ug);
   }
-  m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->Balance(BalanceLiquidBy::Mass);
+  m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->Balance(BalanceLiquidBy::Mass);
   // End temporary blood increment
 
   // Lactate production is computed per tissue
@@ -739,7 +739,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
 
   double oxygenConsumptionRate_g_Per_s = 0.0;
   double carbonDioxideProductionRate_g_Per_s = 0.0;
-  double arterialGlucose_mg_Per_dL = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Aorta)->GetSubstanceQuantity(*m_Glucose)->GetConcentration(MassPerVolumeUnit::mg_Per_dL);
+  double arterialGlucose_mg_Per_dL = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*m_Glucose)->GetConcentration(MassPerVolumeUnit::mg_Per_dL);
 
   for (SETissueCompartment* tissue : m_ConsumptionProdutionTissues)
   {
@@ -837,7 +837,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
 
       /// \todo Remove this temporary blood increment when diffusion is fully operational 
       // The insulin effect is based on the insulin dependent term in the model described in \cite tolic2000modeling
-      double insulinConc_ug_Per_L = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Insulin)->GetConcentration(MassPerVolumeUnit::ug_Per_L);
+      double insulinConc_ug_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Insulin)->GetConcentration(MassPerVolumeUnit::ug_Per_L);
       double InsulinIndependRate_mg_Per_s = 0.0017623 * glucoseConsumption_mol_Per_s * m_Glucose->GetMolarMass(MassPerAmountUnit::mg_Per_mol); // Tuning parameter to convert existing model max to values found in \cite keener2009mathematical
       double insulinDependMax = 0.01; //0.015667;
       double insulinEffectTimeK = 0.8;

@@ -33,6 +33,8 @@ specific language governing permissions and limitations under the License.
 #define DEBUGOUT(x) 
 #endif
 
+#define CDM_BIND_DECL(type) namespace cdm { class type; }
+
 #include <memory>
 #include <stdio.h>
 #include <iostream>

@@ -43,9 +43,9 @@ void PulseEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
 
   DataTrack trk;
 
-  Pulse bg(rptDirectory + "\\AcidBaseMath.log");
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SESubstanceManager& subMgr = bg.GetSubstances();
+  PulseController pc(rptDirectory + "\\AcidBaseMath.log");
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SESubstanceManager& subMgr = pc.GetSubstances();
 
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
   SESubstance* Hb = subMgr.GetSubstance("Hemoglobin");
@@ -286,9 +286,9 @@ void PulseEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   // It’s making sure the solver gives the same answer when it's feed back the previous answer.
 
   DataTrack trk;
-  Pulse bg(rptDirectory + "\\AcidBaseFeedback.log");
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SESubstanceManager& subMgr = bg.GetSubstances();
+  PulseController pc(rptDirectory + "\\AcidBaseFeedback.log");
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SESubstanceManager& subMgr = pc.GetSubstances();
 
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
   SESubstance* Hb = subMgr.GetSubstance("Hemoglobin");
@@ -399,9 +399,9 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   // Did not test negatives because the engine already has checks for negative mass and concentrations. 
 
   DataTrack trk;
-  Pulse bg(rptDirectory + "\\AcidBaseLimits.log");
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SESubstanceManager& subMgr = bg.GetSubstances();
+  PulseController pc(rptDirectory + "\\AcidBaseLimits.log");
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SESubstanceManager& subMgr = pc.GetSubstances();
 
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
   SESubstance* Hb = subMgr.GetSubstance("Hemoglobin");
@@ -544,7 +544,7 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
       normalHgb_gPerL = 0.0;
       break;
     default:
-      bg.GetLogger()->Fatal("AcidBaseLimitsTest:: Problem in the switch");
+      pc.GetLogger()->Fatal("AcidBaseLimitsTest:: Problem in the switch");
       break;
     }
     nO2->GetConcentration().SetValue(normalDissolvedO2_gPerL, MassPerVolumeUnit::g_Per_L);
@@ -595,9 +595,9 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
 void PulseEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
 {
   DataTrack trk;
-  Pulse bg(rptDirectory + "\\AcidBaseExtreme.log");
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SESubstanceManager& subMgr = bg.GetSubstances();
+  PulseController pc(rptDirectory + "\\AcidBaseExtreme.log");
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SESubstanceManager& subMgr = pc.GetSubstances();
 
   std::ofstream file;
   std::string   rptFile = rptDirectory + "\\AcidBaseExtreme.txt";
@@ -781,7 +781,7 @@ void PulseEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
   }
 }
 
-void PulseEngineTest::AcidBaseBloodGasTest(Pulse& bg, bloodType bloodCompartment, SETestSuite& testSuite)
+void PulseEngineTest::AcidBaseBloodGasTest(PulseController& pc, bloodType bloodCompartment, SETestSuite& testSuite)
 {
   TimingProfile timer;
   timer.Start("Test");
@@ -789,10 +789,10 @@ void PulseEngineTest::AcidBaseBloodGasTest(Pulse& bg, bloodType bloodCompartment
   // within normal range specified in \cite van2013davis and outputs are expected 
   // to also be within normal range.
 
-  DataTrack& trk = bg.GetDataTrack(); 
-  SESubstanceManager& subMgr = bg.GetSubstances();
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SECompartmentManager& cmptMgr = bg.GetCompartments();
+  DataTrack& trk = pc.GetDataTrack(); 
+  SESubstanceManager& subMgr = pc.GetSubstances();
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SECompartmentManager& cmptMgr = pc.GetCompartments();
   cmptMgr.Clear();
 
   SETestCase& testCase = testSuite.CreateTestCase();
@@ -1251,24 +1251,24 @@ void PulseEngineTest::AcidBaseBloodGasTest(Pulse& bg, bloodType bloodCompartment
 
 void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
 {
-  Pulse bg(sOutputDirectory + "\\AcidBaseBloodGasTests.log");
+  PulseController pc(sOutputDirectory + "\\AcidBaseBloodGasTests.log");
 
   // Set up our test report
-  SETestReport testReport = SETestReport(bg.GetLogger());
+  SETestReport testReport = SETestReport(pc.GetLogger());
   SETestSuite& testSuite = testReport.CreateTestSuite();
   testSuite.SetName("AcidBaseBloodGasCompartmentTests");
 
-  AcidBaseBloodGasTest(bg, ARTERIAL, testSuite);
-  AcidBaseBloodGasTest(bg, VENOUS, testSuite);
-  AcidBaseBloodGasTest(bg, CAPILLARY, testSuite);
+  AcidBaseBloodGasTest(pc, ARTERIAL, testSuite);
+  AcidBaseBloodGasTest(pc, VENOUS, testSuite);
+  AcidBaseBloodGasTest(pc, CAPILLARY, testSuite);
   /// \todo Do these tests with Strong Ion Differences once we ensure the Sodium, Potassium, and Chloride concentrations are correct and being handled properly
-  //AcidBaseBloodGasTest(bg, RESPIRATORY_ACIDOSIS, testSuite, sOutputDirectory);
-  //AcidBaseBloodGasTest(bg, METABOLIC_ALKALOSIS, testSuite, sOutputDirectory);
-  //AcidBaseBloodGasTest(bg, METABOLIC_ACIDOSIS, testSuite, sOutputDirectory);
-  //AcidBaseBloodGasTest(bg, RESPIRATORY_ALKALOSIS, testSuite, sOutputDirectory);
+  //AcidBaseBloodGasTest(pc, RESPIRATORY_ACIDOSIS, testSuite, sOutputDirectory);
+  //AcidBaseBloodGasTest(pc, METABOLIC_ALKALOSIS, testSuite, sOutputDirectory);
+  //AcidBaseBloodGasTest(pc, METABOLIC_ACIDOSIS, testSuite, sOutputDirectory);
+  //AcidBaseBloodGasTest(pc, RESPIRATORY_ALKALOSIS, testSuite, sOutputDirectory);
 
   std::string results = sOutputDirectory + "\\AcidBaseBloodGasTests.txt";
-  bg.GetDataTrack().WriteTrackToFile(results.c_str());
+  pc.GetDataTrack().WriteTrackToFile(results.c_str());
 
   testReport.WriteFile(sOutputDirectory + "\\AcidBaseBloodGasTestsReport.pba");
 }

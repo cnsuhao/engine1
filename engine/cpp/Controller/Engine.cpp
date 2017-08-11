@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "stdafx.h"
-#include "PulsePhysiologyEngine.h"
+#include "Controller/Engine.h"
 #include "patient/SEPatient.h"
 #include "circuit/SECircuit.h"
 #include "compartment/SECompartmentManager.h"
@@ -40,14 +40,14 @@ PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
   return std::unique_ptr<PulseEngine>(new PulseEngine(logger));
 }
 
-PulseEngine::PulseEngine(Logger* logger) : Pulse(logger), m_EngineTrack(*this)
+PulseEngine::PulseEngine(Logger* logger) : PulseController(logger), m_EngineTrack(*this)
 {
   m_State = EngineState::NotReady;
   m_EventHandler = nullptr;
   m_DataTrack = &m_EngineTrack.GetDataTrack();
 }
 
-PulseEngine::PulseEngine(const std::string& logFileName) : Pulse(logFileName), m_EngineTrack(*this)
+PulseEngine::PulseEngine(const std::string& logFileName) : PulseController(logFileName), m_EngineTrack(*this)
 {
   m_State = EngineState::NotReady;
   m_EventHandler = nullptr;
@@ -482,7 +482,7 @@ bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* condit
   }
   m_EngineTrack.ResetFile();
   m_State = EngineState::Initialization;
-  if (!Pulse::Initialize(pConfig))
+  if (!PulseController::Initialize(pConfig))
     return false;
 
   // We don't capture events during initialization
@@ -711,24 +711,24 @@ void PulseEngine::SetEventHandler(SEEventHandler* handler)
 
 const SEEngineConfiguration* PulseEngine::GetConfiguration()
 {
-  return &Pulse::GetConfiguration();
+  return &PulseController::GetConfiguration();
 }
 
 const SEPatient&  PulseEngine::GetPatient()
 {
-  return Pulse::GetPatient();
+  return PulseController::GetPatient();
 }
 
 bool PulseEngine::GetPatientAssessment(SEPatientAssessment& assessment)
 {
   if (!IsReady())
     return false;
-  return Pulse::GetPatientAssessment(assessment);
+  return PulseController::GetPatientAssessment(assessment);
 }
 
 const SEEnvironment* PulseEngine::GetEnvironment()
 {
-  return &Pulse::GetEnvironment();
+  return &PulseController::GetEnvironment();
 }
 
 SESubstanceManager& PulseEngine::GetSubstanceManager()
@@ -738,76 +738,76 @@ SESubstanceManager& PulseEngine::GetSubstanceManager()
 
 const SEBloodChemistrySystem* PulseEngine::GetBloodChemistrySystem()
 {
-  return &Pulse::GetBloodChemistry();
+  return &PulseController::GetBloodChemistry();
 }
 
 const SECardiovascularSystem* PulseEngine::GetCardiovascularSystem()
 {
-  return &Pulse::GetCardiovascular();
+  return &PulseController::GetCardiovascular();
 }
 
 const SEDrugSystem* PulseEngine::GetDrugSystem()
 {
-  return &Pulse::GetDrugs();
+  return &PulseController::GetDrugs();
 }
 
 const SEEndocrineSystem* PulseEngine::GetEndocrineSystem()
 {
-  return &Pulse::GetEndocrine();
+  return &PulseController::GetEndocrine();
 }
 
 const SEEnergySystem* PulseEngine::GetEnergySystem()
 {
-  return &Pulse::GetEnergy();
+  return &PulseController::GetEnergy();
 }
 
 const SEGastrointestinalSystem* PulseEngine::GetGastrointestinalSystem()
 {
-  return &Pulse::GetGastrointestinal();
+  return &PulseController::GetGastrointestinal();
 }
 
 const SEHepaticSystem* PulseEngine::GetHepaticSystem()
 {
-  return &Pulse::GetHepatic();
+  return &PulseController::GetHepatic();
 }
 
 const SENervousSystem* PulseEngine::GetNervousSystem()
 {
-  return &Pulse::GetNervous();
+  return &PulseController::GetNervous();
 }
 
 const SERenalSystem* PulseEngine::GetRenalSystem()
 {
-  return &Pulse::GetRenal();
+  return &PulseController::GetRenal();
 }
 
 const SERespiratorySystem* PulseEngine::GetRespiratorySystem()
 {
-  return &Pulse::GetRespiratory();
+  return &PulseController::GetRespiratory();
 }
 
 const SETissueSystem* PulseEngine::GetTissueSystem()
 {
-  return &Pulse::GetTissue();
+  return &PulseController::GetTissue();
 }
 
 
 const SEAnesthesiaMachine* PulseEngine::GetAnesthesiaMachine()
 {
-  return &Pulse::GetAnesthesiaMachine();
+  return &PulseController::GetAnesthesiaMachine();
 }
 
 const SEElectroCardioGram* PulseEngine::GetElectroCardioGram()
 {
-  return &Pulse::GetECG();
+  return &PulseController::GetECG();
 }
 
 const SEInhaler* PulseEngine::GetInhaler()
 {
-  return &Pulse::GetInhaler();
+  return &PulseController::GetInhaler();
 }
 
 const SECompartmentManager& PulseEngine::GetCompartments()
 {
-  return Pulse::GetCompartments();
+  return PulseController::GetCompartments();
 }

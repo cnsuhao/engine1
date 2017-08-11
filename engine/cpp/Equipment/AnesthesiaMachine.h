@@ -11,9 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/engine/EngineEquipment.pb.h"
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/equipment/Anesthesia/SEAnesthesiaMachine.h"
+#include "bind/engine/EngineEquipment.pb.h"
 class SEAnesthesiaMachineActionCollection;
 
 /**
@@ -22,11 +22,11 @@ class SEAnesthesiaMachineActionCollection;
  */    
 class PULSE_DECL AnesthesiaMachine : public SEAnesthesiaMachine, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  AnesthesiaMachine(Pulse& bg);
-  Pulse& m_data;
+  AnesthesiaMachine(PulseController& pc);
+  PulseController& m_data;
 
 public:
   virtual ~AnesthesiaMachine();

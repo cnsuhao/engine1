@@ -7,6 +7,13 @@ import "cdm/Properties.proto";
 /** @brief Base Patient Assessment type */
 message PatientAssessmentData
 {
+  enum eType
+  {
+    CompleteBloodCount                                                      = 0;
+    ComprehensiveMetabolicPanel                                             = 1;
+    PulmonaryFunctionTest                                                   = 2;
+    Urinalysis                                                              = 3;
+  }
 }
 
 /** @brief A group of tests that measure how well the lungs take in and release air, and how well they move gases from the atmosphere into the body's circulation. */

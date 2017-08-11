@@ -52,7 +52,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
 
-Energy::Energy(Pulse& bg) : SEEnergySystem(bg.GetLogger()), m_data(bg), m_circuitCalculator(GetLogger())
+Energy::Energy(PulseController& data) : SEEnergySystem(data.GetLogger()), m_data(data), m_circuitCalculator(GetLogger())
 {
   Clear();
 }
@@ -163,19 +163,19 @@ void Energy::SetUp()
   m_PatientActions = &m_data.GetActions().GetPatientActions();
   m_Patient = &m_data.GetPatient();
 
-  m_AortaHCO3 = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Aorta)->GetSubstanceQuantity(m_data.GetSubstances().GetHCO3());
+  m_AortaHCO3 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(m_data.GetSubstances().GetHCO3());
 
   //Circuit elements
   //Circuits
   m_TemperatureCircuit = &m_data.GetCircuits().GetTemperatureCircuit();
   m_InternalTemperatureCircuit = &m_data.GetCircuits().GetInternalTemperatureCircuit();
   //Nodes
-  m_coreNode = m_InternalTemperatureCircuit->GetNode(BGE::InternalTemperatureNode::InternalCore);
-  m_skinNode = m_InternalTemperatureCircuit->GetNode(BGE::InternalTemperatureNode::InternalSkin);
+  m_coreNode = m_InternalTemperatureCircuit->GetNode(pulse::InternalTemperatureNode::InternalCore);
+  m_skinNode = m_InternalTemperatureCircuit->GetNode(pulse::InternalTemperatureNode::InternalSkin);
   //Paths
-  m_temperatureGroundToCorePath = m_InternalTemperatureCircuit->GetPath(BGE::InternalTemperaturePath::GroundToInternalCore);
-  m_coreToSkinPath = m_InternalTemperatureCircuit->GetPath(BGE::InternalTemperaturePath::InternalCoreToInternalSkin);
-  m_skinExtravascularToSweatingGroundPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(BGE::TissuePath::SkinSweating);
+  m_temperatureGroundToCorePath = m_InternalTemperatureCircuit->GetPath(pulse::InternalTemperaturePath::GroundToInternalCore);
+  m_coreToSkinPath = m_InternalTemperatureCircuit->GetPath(pulse::InternalTemperaturePath::InternalCoreToInternalSkin);
+  m_skinExtravascularToSweatingGroundPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::TissuePath::SkinSweating);
 }
 
 //--------------------------------------------------------------------------------------------------

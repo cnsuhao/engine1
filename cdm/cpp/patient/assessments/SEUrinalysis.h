@@ -28,7 +28,8 @@ public:
 
   virtual void Clear();
 
-  virtual void SaveFile(const std::string& filename);
+  virtual std::string Save() const;
+  virtual void SaveFile(const std::string& filename) const;
 
   static void Load(const cdm::UrinalysisData& src, SEUrinalysis& dst);
   static cdm::UrinalysisData* Unload(const SEUrinalysis& src);

@@ -36,7 +36,7 @@ specific language governing permissions and limitations under the License.
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
 
-BloodChemistry::BloodChemistry(Pulse& bg) : SEBloodChemistrySystem(bg.GetLogger()), m_data(bg)
+BloodChemistry::BloodChemistry(PulseController& data) : SEBloodChemistrySystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -158,15 +158,15 @@ void BloodChemistry::SetUp()
   SESubstance* tristearin = &m_data.GetSubstances().GetTristearin();
   SESubstance* urea = &m_data.GetSubstances().GetUrea();
 
-  m_aorta = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Aorta);
+  m_aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
   m_aortaO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_aortaCO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_aortaBicarbonate = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetHCO3());
 
-  m_brainO2 = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-  m_myocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+  m_brainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+  m_myocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
 
-  m_venaCava = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::VenaCava);
+  m_venaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
   m_venaCavaO2 = m_venaCava->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_venaCavaCO2 = m_venaCava->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_venaCavaAcetoacetate = m_venaCava->GetSubstanceQuantity(*acetoacetate);
@@ -184,11 +184,11 @@ void BloodChemistry::SetUp()
   m_venaCavaTristearin = m_venaCava->GetSubstanceQuantity(*tristearin);
   m_venaCavaUrea = m_venaCava->GetSubstanceQuantity(*urea);
 
-  SELiquidCompartment* pulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::PulmonaryArteries);
+  SELiquidCompartment* pulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries);
   m_pulmonaryArteriesO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_pulmonaryArteriesCO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 
-  SELiquidCompartment* pulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::PulmonaryVeins);
+  SELiquidCompartment* pulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins);
   m_pulmonaryVeinsO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_pulmonaryVeinsCO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 

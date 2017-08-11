@@ -11,11 +11,19 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.pulse.engine;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kitware.physiology.pulse.Engine.StateData;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.PatientAssessments.CompleteBloodCountData;
+import com.kitware.physiology.cdm.PatientAssessments.ComprehensiveMetabolicPanelData;
+import com.kitware.physiology.cdm.PatientAssessments.PatientAssessmentData;
+import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
+import com.kitware.physiology.cdm.PatientAssessments.UrinalysisData;
+import com.kitware.physiology.cdm.Scenario.ActionListData;
+import com.kitware.physiology.cdm.Scenario.ConditionListData;
+import com.kitware.physiology.pulse.EngineState.StateData;
 
 import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.conditions.SECondition;
@@ -66,69 +74,55 @@ public class PulseEngine extends Pulse
   protected synchronized boolean loadStateContents(String logFile, String stateFile, double simTime_s, SEDataRequestManager dataRequests)
   {
     this.reset();
-    String dataRequestsXML = null;
+    String dataRequestsStr = null;
     if(dataRequests !=null && !dataRequests.getRequestedData().isEmpty())
-      dataRequestsXML = CDMSerializer.serialize(dataRequests.unload());
-    if(dataRequestsXML == null)
+    	dataRequestsStr = SEDataRequestManager.unload(dataRequests).toString();
+    if(dataRequestsStr == null)
     {
       Log.error("Invalid/No data requests provided");
       return false;
     }
     this.requestData(dataRequests);
     this.nativeObj = nativeAllocate(logFile);
-    File f = new File(stateFile);
-    if(!f.exists())
-    {
-      Log.error("State File : "+stateFile+" does not exist");
-      return false;
-    }
-    Object bind = CDMSerializer.readFile(stateFile);
-    if(!(bind instanceof StateData))
-    {
-      Log.error(stateFile +" is not an instance of StateData"); 
-      return false;
-    }
-    return nativeLoadState(this.nativeObj, stateFile, simTime_s, dataRequestsXML);
+    return nativeLoadState(this.nativeObj, stateFile, simTime_s, dataRequestsStr);
   }
   
-  public synchronized StateData saveState(String stateFile)
+  public synchronized StateData saveState(String stateFile) throws ParseException
   {
-    String xml = nativeSaveState(this.nativeObj, stateFile);
-    Object bind = CDMSerializer.serialize(xml);
-    if(bind instanceof StateData)
-      return (StateData)bind;
-    Log.error("State did not save");
-    return null;
+    String str = nativeSaveState(this.nativeObj, stateFile);
+    StateData.Builder sd = StateData.newBuilder();
+    TextFormat.getParser().merge(str, sd);
+    return sd.build();
   }
 
   public synchronized boolean initializeEngine(String logFile, SEPatient patient, List<SECondition> conditions, SEDataRequestManager dataRequests)
   {    
     this.reset();
-    String patientXML = CDMSerializer.serialize(patient.unload());
-    if(patientXML == null || patientXML.isEmpty())
+    String patientStr = SEPatient.unload(patient).toString();
+    if(patientStr == null || patientStr.isEmpty())
     {
       Log.error("Invalid/No patient provided");
       return false;
     }
-    String conditionsXML = null;
+    String conditionsStr = null;
     if(conditions !=null && !conditions.isEmpty())
     {
-      ConditionListData cData = CDMSerializer.objFactory.createConditionListData();
-      for(SECondition c : conditions)
-        cData.getCondition().add(c.unload());
-      conditionsXML = CDMSerializer.serialize(cData);
+      ConditionListData.Builder cData = ConditionListData.newBuilder();
+ //     for(SECondition c : conditions)
+ //amb       cData.getCondition().add(c.unload());
+      conditionsStr = cData.toString();
     }
-    String dataRequestsXML = null;
+    String dataRequestsStr = null;
     if(dataRequests !=null && !dataRequests.getRequestedData().isEmpty())
-      dataRequestsXML = CDMSerializer.serialize(dataRequests.unload());
-    if(dataRequestsXML == null)
+    	dataRequestsStr = SEDataRequestManager.unload(dataRequests).toString();
+    if(dataRequestsStr == null)
     {
       Log.error("Invalid/No data requests provided");
       return false;
     }
     this.requestData(dataRequests);
     this.nativeObj = nativeAllocate(logFile);
-    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patientXML, conditionsXML, dataRequestsXML);
+    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patientStr, conditionsStr, dataRequestsStr);
     if(this.deadEngine)
       Log.error("Unable to initialize engine");
     return !this.deadEngine;
@@ -137,31 +131,31 @@ public class PulseEngine extends Pulse
   public synchronized boolean initializeEngine(String logFile, String patientFile, List<SECondition> conditions, SEDataRequestManager dataRequests)
   {    
     this.reset();
-    String patientXML = FileUtils.readFile(patientFile);
-    if(patientXML == null || patientXML.isEmpty())
+    String patientStr = FileUtils.readFile(patientFile);
+    if(patientStr == null || patientStr.isEmpty())
     {
       Log.error("Invalid/No patient provided");
       return false;
     }
-    String conditionsXML = null;
+    String conditionsStr = null;
     if(conditions !=null && !conditions.isEmpty())
     {
-      ConditionListData cData = CDMSerializer.objFactory.createConditionListData();
-      for(SECondition c : conditions)
-        cData.getCondition().add(c.unload());
-      conditionsXML = CDMSerializer.serialize(cData);
+      ConditionListData.Builder cData = ConditionListData.newBuilder();
+//      for(SECondition c : conditions)
+//amb       cData.getCondition().add(c.unload());
+      conditionsStr = cData.toString();
     }
-    String dataRequestsXML = null;
+    String dataRequestsStr = null;
     if(dataRequests !=null && !dataRequests.getRequestedData().isEmpty())
-      dataRequestsXML = CDMSerializer.serialize(dataRequests.unload());
-    if(dataRequestsXML == null)
+    	dataRequestsStr = SEDataRequestManager.unload(dataRequests).toString();
+    if(dataRequestsStr == null)
     {
       Log.error("Invalid/No data requests provided");
       return false;
     }
     this.requestData(dataRequests);
     this.nativeObj = nativeAllocate(logFile);
-    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patientXML, conditionsXML, dataRequestsXML);
+    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patientStr, conditionsStr, dataRequestsStr);
     if(this.deadEngine)
       Log.error("Unable to initialize engine");
     return !this.deadEngine;
@@ -207,18 +201,18 @@ public class PulseEngine extends Pulse
     }
     if(actions !=null && !actions.isEmpty())
     {
-      ActionListData aData = CDMSerializer.objFactory.createActionListData();
-      for(SEAction a : actions)
-        aData.getAction().add(a.unload());
-      String actionsXML = CDMSerializer.serialize(aData);
-      if(!nativeProcessActions(this.nativeObj,actionsXML))
+      ActionListData.Builder aData = ActionListData.newBuilder();
+//      for(SEAction a : actions)
+//amb        aData.addAnyAction(a);
+      String actionsStr = aData.toString();
+      if(!nativeProcessActions(this.nativeObj,actionsStr))
         deadEngine=true;
       return !deadEngine;
     }
     return true;
   }
   
-  public synchronized boolean getPatientAssessment(SEPatientAssessment assessment)
+  public synchronized boolean getPatientAssessment(SEPatientAssessment assessment) throws ParseException
   {
     if(this.deadEngine)
     {
@@ -227,50 +221,38 @@ public class PulseEngine extends Pulse
     }
     if(assessment instanceof SEPulmonaryFunctionTest)
     {
-      String xml = nativeGetAssessment(this.nativeObj, EnumPatientAssessment.PULMONARY_FUNCTION_TEST.ordinal());
-      Object obj = CDMSerializer.serialize(xml);
-      if(obj instanceof PulmonaryFunctionTestData)
-      { 
-        return ((SEPulmonaryFunctionTest)assessment).load((PulmonaryFunctionTestData)obj);
-      }
-      Log.error("XML could not be parsed by SEPulmonaryFunctionTest : "+xml);
-      return false;
+    	PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
+      String str = nativeGetAssessment(this.nativeObj, PatientAssessmentData.eType.PulmonaryFunctionTest.ordinal());
+      TextFormat.getParser().merge(str, b);
+      SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
+      return true;
     }
     
     if(assessment instanceof SECompleteBloodCount)
     {
-      String xml = nativeGetAssessment(this.nativeObj, EnumPatientAssessment.COMPLETE_BLOOD_COUNT.ordinal());
-      Object obj = CDMSerializer.serialize(xml);
-      if(obj instanceof CompleteBloodCountData)
-      { 
-        return ((SECompleteBloodCount)assessment).load((CompleteBloodCountData)obj);
-      }
-      Log.error("XML could not be parsed by SECompleteBloodCount : "+xml);
-      return false;
+    	CompleteBloodCountData.Builder b = CompleteBloodCountData.newBuilder();
+      String str = nativeGetAssessment(this.nativeObj, PatientAssessmentData.eType.CompleteBloodCount.ordinal());
+      TextFormat.getParser().merge(str, b);
+      SECompleteBloodCount.load(b.build(),((SECompleteBloodCount)assessment));
+      return true;
     }
     
     if(assessment instanceof SEComprehensiveMetabolicPanel)
     {
-      String xml = nativeGetAssessment(this.nativeObj, EnumPatientAssessment.COMPREHENSIVE_METABOLIC_PANEL.ordinal());
-      Object obj = CDMSerializer.serialize(xml);
-      if(obj instanceof ComprehensiveMetabolicPanelData)
-      { 
-        return ((SEComprehensiveMetabolicPanel)assessment).load((ComprehensiveMetabolicPanelData)obj);
-      }
-      Log.error("XML could not be parsed by SEComprehensiveMetabolicPanel : "+xml);
-      return false;
+    	ComprehensiveMetabolicPanelData.Builder b = ComprehensiveMetabolicPanelData.newBuilder();
+      String str = nativeGetAssessment(this.nativeObj, PatientAssessmentData.eType.ComprehensiveMetabolicPanel.ordinal());
+      TextFormat.getParser().merge(str, b);
+      SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
+      return true;
     }
     
     if(assessment instanceof SEUrinalysis)
     {
-      String xml = nativeGetAssessment(this.nativeObj, EnumPatientAssessment.URINALYSIS.ordinal());
-      Object obj = CDMSerializer.serialize(xml);
-      if(obj instanceof UrinalysisData)
-      { 
-        return ((SEUrinalysis)assessment).load((UrinalysisData)obj);        
-      }
-      Log.error("XML could not be parsed by SEUrinalysis : "+xml);
-      return false;
+    	UrinalysisData.Builder b = UrinalysisData.newBuilder();
+      String str = nativeGetAssessment(this.nativeObj, PatientAssessmentData.eType.Urinalysis.ordinal());
+      TextFormat.getParser().merge(str, b);
+      SEUrinalysis.load(b.build(),((SEUrinalysis)assessment));
+      return true;
     }
     
     return false;

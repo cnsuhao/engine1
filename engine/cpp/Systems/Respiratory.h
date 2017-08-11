@@ -11,9 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SERespiratorySystem.h"
+#include "bind/engine/EnginePhysiology.pb.h"
 #include "patient/SEPatient.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "utils/RunningAverage.h"
@@ -33,12 +33,12 @@ class SEPulmonaryFunctionTest;
 */
 class PULSE_DECL Respiratory : public SERespiratorySystem, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
 
-  Respiratory(Pulse& bg);
-  Pulse& m_data;
+  Respiratory(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~Respiratory();

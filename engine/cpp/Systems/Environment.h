@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
+#include "Controller/System.h"
 #include "bind/engine/EngineEnvironment.pb.h"
-#include "../Controller/PulseSystem.h"
 #include "system/environment/SEEnvironment.h"
 
 /**
@@ -20,11 +20,11 @@ specific language governing permissions and limitations under the License.
  */  
 class PULSE_DECL Environment : public SEEnvironment, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  Environment(Pulse& bg);
-  Pulse& m_data;
+  Environment(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~Environment();

@@ -46,7 +46,6 @@ specific language governing permissions and limitations under the License.
 #include <google/protobuf/text_format.h>
 
 
-
 PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngineConfiguration(substances.GetLogger()), m_Substances(substances)
 {
   m_Merge = false;

@@ -48,24 +48,24 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   std::ofstream fileCircuit;
   std::ofstream fileGraph;
   
-  Pulse bg(sTestDirectory + "\\AnesthesiaMachineCircuitAndTransportTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(cdm::eSwitch::Off);
-  bg.m_Config->EnableTissue(cdm::eSwitch::Off);
-  bg.CreateCircuitsAndCompartments();
-  SEEnvironmentalConditions env(bg.GetSubstances());
+  PulseController pc(sTestDirectory + "\\AnesthesiaMachineCircuitAndTransportTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
+  SEEnvironmentalConditions env(pc.GetSubstances());
   env.LoadFile("./environments/Standard.pba");
-  SEGasCompartment* cEnv = bg.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
+  SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {
-    bg.GetSubstances().AddActiveSubstance(subFrac->GetSubstance());
+    pc.GetSubstances().AddActiveSubstance(subFrac->GetSubstance());
     cEnv->GetSubstanceQuantity(subFrac->GetSubstance())->GetVolumeFraction().Set(subFrac->GetFractionAmount());
   }
-  bg.GetSubstances().InitializeGasCompartments();
+  pc.GetSubstances().InitializeGasCompartments();
 
   //set environment pressure
-  SEFluidCircuitNode* nEnvironment = bg.GetCircuits().GetFluidNode(BGE::EnvironmentNode::Ambient);
+  SEFluidCircuitNode* nEnvironment = pc.GetCircuits().GetFluidNode(pulse::EnvironmentNode::Ambient);
   nEnvironment->GetPressure().Set(env.GetAtmosphericPressure());
   nEnvironment->GetNextPressure().Set(env.GetAtmosphericPressure());
   
@@ -76,31 +76,31 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   std::string sTransportFileName;
   if (config == AnesthesiaMachineSolo)
   {
-    amCircuit = &bg.GetCircuits().GetAnesthesiaMachineCircuit();
-    amGraph = &bg.GetCompartments().GetAnesthesiaMachineGraph();
+    amCircuit = &pc.GetCircuits().GetAnesthesiaMachineCircuit();
+    amGraph = &pc.GetCompartments().GetAnesthesiaMachineGraph();
     sCircuitFileName = "\\AnesthesiaMachineCircuitOutput.txt";
     sTransportFileName = "\\AnesthesiaMachineTransportOutput.txt";
 
     //Allow things to flow to ground, since the respiratory circuit isn't here
     //This approximates the total respiratory system resistance
-    SEFluidCircuitPath* AnesthesiaConnectionToEnvironment = amCircuit->GetPath(BGE::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
+    SEFluidCircuitPath* AnesthesiaConnectionToEnvironment = amCircuit->GetPath(pulse::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
     AnesthesiaConnectionToEnvironment->GetResistanceBaseline().SetValue(1.5, FlowResistanceUnit::cmH2O_s_Per_L);
     AnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(1.5, FlowResistanceUnit::cmH2O_s_Per_L);
   }
   else if (config == RespiratoryWithAnesthesiaMachine)
   {
-    bg.GetSubstances().InitializeGasCompartments();
+    pc.GetSubstances().InitializeGasCompartments();
 
-    amCircuit = &bg.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
-    amGraph = &bg.GetCompartments().GetRespiratoryAndAnesthesiaMachineGraph();
+    amCircuit = &pc.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
+    amGraph = &pc.GetCompartments().GetRespiratoryAndAnesthesiaMachineGraph();
     sCircuitFileName = "\\RespiratoryAndAnesthesiaMachineCircuitOutput.txt";
     sTransportFileName = "\\RespiratoryAndAnesthesiaMachineTransportOutput.txt";
 
     //Precharge the stomach to prevent negative volume
-    amCircuit->GetNode(BGE::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());
-    amCircuit->GetNode(BGE::RespiratoryNode::Stomach)->GetPressure().Set(env.GetAtmosphericPressure());
+    amCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());
+    amCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetPressure().Set(env.GetAtmosphericPressure());
 
-    SEFluidCircuitPath *driverPath = amCircuit->GetPath(BGE::RespiratoryPath::EnvironmentToRespiratoryMuscle);
+    SEFluidCircuitPath *driverPath = amCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
     driverPath->GetPressureSourceBaseline().SetValue(-12.0, PressureUnit::cmH2O);
     driverPath->GetNextPressureSource().SetValue(-12.0, PressureUnit::cmH2O);
   }
@@ -110,14 +110,14 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   }
   
   // Pull Pressure Source Paths
-  SEFluidCircuitPath* EnvironmentToVentilatorPath = amCircuit->GetPath(BGE::AnesthesiaMachinePath::EnvironmentToVentilator);
-  SEFluidCircuitPath* EnvironmentToReliefValve = amCircuit->GetPath(BGE::AnesthesiaMachinePath::EnvironmentToReliefValve);
-  SEFluidCircuitPath* GasSourceToGasInlet = amCircuit->GetPath(BGE::AnesthesiaMachinePath::GasSourceToGasInlet);
-  SEFluidCircuitPath* SelectorToEnvironment = amCircuit->GetPath(BGE::AnesthesiaMachinePath::SelectorToEnvironment);
-  SEFluidCircuitPath* EnvironmentToGasSource = amCircuit->GetPath(BGE::AnesthesiaMachinePath::EnvironmentToGasSource);
+  SEFluidCircuitPath* EnvironmentToVentilatorPath = amCircuit->GetPath(pulse::AnesthesiaMachinePath::EnvironmentToVentilator);
+  SEFluidCircuitPath* EnvironmentToReliefValve = amCircuit->GetPath(pulse::AnesthesiaMachinePath::EnvironmentToReliefValve);
+  SEFluidCircuitPath* GasSourceToGasInlet = amCircuit->GetPath(pulse::AnesthesiaMachinePath::GasSourceToGasInlet);
+  SEFluidCircuitPath* SelectorToEnvironment = amCircuit->GetPath(pulse::AnesthesiaMachinePath::SelectorToEnvironment);
+  SEFluidCircuitPath* EnvironmentToGasSource = amCircuit->GetPath(pulse::AnesthesiaMachinePath::EnvironmentToGasSource);
 
-  SEGasTransporter txpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, bg.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, bg.GetLogger());
+  SEGasTransporter txpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, pc.GetLogger());
+  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
   
   //Execution parameters
   double time = 0;
@@ -165,7 +165,7 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   fileGraph.close();
   std::stringstream ss;
   ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-  bg.GetLogger()->Info(ss.str(), "AnesthesiaMachineCircuitAndTransportTest");
+  pc.GetLogger()->Info(ss.str(), "AnesthesiaMachineCircuitAndTransportTest");
 }
 
 void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)

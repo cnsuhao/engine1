@@ -11,9 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SECardiovascularSystem.h"
+#include "bind/engine/EnginePhysiology.pb.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 
 class SELiquidCompartmentGraph;
@@ -33,11 +33,11 @@ class SEFluidCircuitCalculator;
 */
 class PULSE_DECL Cardiovascular : public SECardiovascularSystem, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  Cardiovascular(Pulse& bg);
-  Pulse& m_data;
+  Cardiovascular(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~Cardiovascular();

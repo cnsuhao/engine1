@@ -12,9 +12,9 @@ specific language governing permissions and limitations under the License.
 
 
 #pragma once
-#include "bind/engine/EngineEquipment.pb.h"
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/equipment/Inhaler/SEInhaler.h"
+#include "bind/engine/EngineEquipment.pb.h"
 
 /**
 * @brief 
@@ -22,11 +22,11 @@ specific language governing permissions and limitations under the License.
 */
 class PULSE_DECL Inhaler : public SEInhaler, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  Inhaler(Pulse& bg);
-  Pulse& m_data;
+  Inhaler(PulseController& pc);
+  PulseController& m_data;
 
 public:
   virtual ~Inhaler();

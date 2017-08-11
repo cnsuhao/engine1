@@ -24,6 +24,7 @@ public:
 
   virtual void Clear();
 
+  bool Load(const std::string& str);
   bool LoadFile(const std::string& patientFile);
   void SaveFile(const std::string& filename);
 

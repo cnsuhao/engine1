@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "SEDataRequestManager.h"
 #include "substance/SESubstanceManager.h"
+#include <google/protobuf/text_format.h>
 
 SEDataRequestManager::SEDataRequestManager(Logger* logger) : Loggable(logger)
 {
@@ -32,6 +33,15 @@ void SEDataRequestManager::Clear()
   DELETE_VECTOR(m_Requests);
   SAFE_DELETE(m_DefaultDecimalFormatting);
   SAFE_DELETE(m_OverrideDecimalFormatting);
+}
+
+bool SEDataRequestManager::Load(const std::string& str, SESubstanceManager& subMgr)
+{
+  cdm::DataRequestManagerData src;
+  if (!google::protobuf::TextFormat::ParseFromString(str, &src))
+    return false;
+  SEDataRequestManager::Load(src, *this, subMgr);
+  return true;
 }
 
 void SEDataRequestManager::Load(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, SESubstanceManager& subMgr)

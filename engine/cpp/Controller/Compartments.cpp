@@ -11,35 +11,35 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "Pulse.h"
-#include "Controller/PulseCompartments.h"
+#include "Controller/Controller.h"
+#include "Controller/Compartments.h"
 
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
 
-std::vector<std::string> BGE::Graph::_values;
-std::vector<std::string> BGE::ChymeCompartment::_values;
-//std::vector<std::string> BGE::ChymeLink::_values;
-std::vector<std::string> BGE::PulmonaryCompartment::_values;
-std::vector<std::string> BGE::PulmonaryLink::_values;
-std::vector<std::string> BGE::TissueCompartment::_values;
-std::vector<std::string> BGE::ExtravascularCompartment::_values;
-std::vector<std::string> BGE::TemperatureCompartment::_values;
-//std::vector<std::string> BGE::TissueLink::_values;
-std::vector<std::string> BGE::VascularCompartment::_values;
-std::vector<std::string> BGE::VascularLink::_values;
-std::vector<std::string> BGE::UrineCompartment::_values;
-std::vector<std::string> BGE::UrineLink::_values;
-std::vector<std::string> BGE::EnvironmentCompartment::_values;
-std::vector<std::string> BGE::AnesthesiaMachineCompartment::_values;
-std::vector<std::string> BGE::AnesthesiaMachineLink::_values;
-std::vector<std::string> BGE::InhalerCompartment::_values;
-std::vector<std::string> BGE::InhalerLink::_values;
-std::vector<std::string> BGE::MechanicalVentilatorCompartment::_values;
-std::vector<std::string> BGE::MechanicalVentilatorLink::_values;
+std::vector<std::string> pulse::Graph::_values;
+std::vector<std::string> pulse::ChymeCompartment::_values;
+//std::vector<std::string> pulse::ChymeLink::_values;
+std::vector<std::string> pulse::PulmonaryCompartment::_values;
+std::vector<std::string> pulse::PulmonaryLink::_values;
+std::vector<std::string> pulse::TissueCompartment::_values;
+std::vector<std::string> pulse::ExtravascularCompartment::_values;
+std::vector<std::string> pulse::TemperatureCompartment::_values;
+//std::vector<std::string> pulse::TissueLink::_values;
+std::vector<std::string> pulse::VascularCompartment::_values;
+std::vector<std::string> pulse::VascularLink::_values;
+std::vector<std::string> pulse::UrineCompartment::_values;
+std::vector<std::string> pulse::UrineLink::_values;
+std::vector<std::string> pulse::EnvironmentCompartment::_values;
+std::vector<std::string> pulse::AnesthesiaMachineCompartment::_values;
+std::vector<std::string> pulse::AnesthesiaMachineLink::_values;
+std::vector<std::string> pulse::InhalerCompartment::_values;
+std::vector<std::string> pulse::InhalerLink::_values;
+std::vector<std::string> pulse::MechanicalVentilatorCompartment::_values;
+std::vector<std::string> pulse::MechanicalVentilatorLink::_values;
 
-PulseCompartments::PulseCompartments(Pulse& bg) : SECompartmentManager(bg.GetSubstances()), m_data(bg)
+PulseCompartments::PulseCompartments(PulseController& data) : SECompartmentManager(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -93,7 +93,7 @@ void PulseCompartments::Clear()
 #define SORT_CMPTS(bin, type) \
 m_##bin##Compartments.clear(); \
 m_##bin##LeafCompartments.clear(); \
-for (const std::string& name : BGE::bin##Compartment::GetValues()) \
+for (const std::string& name : pulse::bin##Compartment::GetValues()) \
 { \
   SE##type##Compartment* cmpt = Get##type##Compartment(name); \
   if (cmpt == nullptr) \
@@ -117,7 +117,7 @@ void PulseCompartments::StateChange()
   if (m_data.GetConfiguration().IsTissueEnabled())
   {
     SORT_CMPTS(Tissue, Tissue);
-    for (const std::string& name : BGE::ExtravascularCompartment::GetValues())
+    for (const std::string& name : pulse::ExtravascularCompartment::GetValues())
     {
       if (GetLiquidCompartment(name) == nullptr)
         Warning("Could not find expected Extravascular compartment, " + name + " in compartment manager");
@@ -149,7 +149,7 @@ void PulseCompartments::StateChange()
   // so the macro does not work with us
   m_InhalerAerosolCompartments.clear();
   m_InhalerAerosolLeafCompartments.clear();
-  for (const std::string& name : BGE::InhalerCompartment::GetValues())
+  for (const std::string& name : pulse::InhalerCompartment::GetValues())
   {
     SELiquidCompartment* cmpt = GetLiquidCompartment(name);
     if (cmpt == nullptr)
@@ -164,7 +164,7 @@ void PulseCompartments::StateChange()
 
   m_AerosolCompartments.clear(); 
   m_AerosolLeafCompartments.clear(); 
-  for (const std::string& name : BGE::PulmonaryCompartment::GetValues()) 
+  for (const std::string& name : pulse::PulmonaryCompartment::GetValues()) 
   { 
     SELiquidCompartment* cmpt = GetLiquidCompartment(name); 
     if (cmpt == nullptr) 
@@ -185,55 +185,55 @@ void PulseCompartments::StateChange()
   // It would also be nice to have code that makes sure there are no compartments that are made, but NOT in the enums
   // Note, Tissue Enum list does not contain the Tissue Extracellular or Intracellular names, NO list does
 
-  m_CombinedCardiovascularGraph = GetLiquidGraph(BGE::Graph::ActiveCardiovascular);
+  m_CombinedCardiovascularGraph = GetLiquidGraph(pulse::Graph::ActiveCardiovascular);
   if (m_CombinedCardiovascularGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::ActiveCardiovascular));
+    Error("Could not find required Graph " + std::string(pulse::Graph::ActiveCardiovascular));
   }
-  m_CardiovascularGraph = GetLiquidGraph(BGE::Graph::Cardiovascular);
+  m_CardiovascularGraph = GetLiquidGraph(pulse::Graph::Cardiovascular);
   if (m_CardiovascularGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::Cardiovascular));
+    Error("Could not find required Graph " + std::string(pulse::Graph::Cardiovascular));
   }
-  m_RenalGraph = GetLiquidGraph(BGE::Graph::Renal);
+  m_RenalGraph = GetLiquidGraph(pulse::Graph::Renal);
   if (m_RenalGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::Renal));
+    Error("Could not find required Graph " + std::string(pulse::Graph::Renal));
   }
-  m_RespiratoryGraph = GetGasGraph(BGE::Graph::Respiratory);
+  m_RespiratoryGraph = GetGasGraph(pulse::Graph::Respiratory);
   if (m_RespiratoryGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::Respiratory));
+    Error("Could not find required Graph " + std::string(pulse::Graph::Respiratory));
   }
-  m_AnesthesiaMachineGraph = GetGasGraph(BGE::Graph::AnesthesiaMachine);
+  m_AnesthesiaMachineGraph = GetGasGraph(pulse::Graph::AnesthesiaMachine);
   if (m_AnesthesiaMachineGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::AnesthesiaMachine));
+    Error("Could not find required Graph " + std::string(pulse::Graph::AnesthesiaMachine));
   }
-  m_CombinedRespiratoryAnesthesiaGraph = GetGasGraph(BGE::Graph::RespiratoryAndAnesthesiaMachine);
+  m_CombinedRespiratoryAnesthesiaGraph = GetGasGraph(pulse::Graph::RespiratoryAndAnesthesiaMachine);
   if (m_CombinedRespiratoryAnesthesiaGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::RespiratoryAndAnesthesiaMachine));
+    Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndAnesthesiaMachine));
   }
-  m_CombinedRespiratoryInhalerGraph = GetGasGraph(BGE::Graph::RespiratoryAndInhaler);
+  m_CombinedRespiratoryInhalerGraph = GetGasGraph(pulse::Graph::RespiratoryAndInhaler);
   if (m_CombinedRespiratoryInhalerGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::RespiratoryAndInhaler));
+    Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndInhaler));
   }
-  m_AerosolGraph = GetLiquidGraph(BGE::Graph::Aerosol);
+  m_AerosolGraph = GetLiquidGraph(pulse::Graph::Aerosol);
   if (m_AerosolGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::Aerosol));
+    Error("Could not find required Graph " + std::string(pulse::Graph::Aerosol));
   }
-  m_CombinedAerosolInhalerGraph = GetLiquidGraph(BGE::Graph::AerosolAndInhaler);
+  m_CombinedAerosolInhalerGraph = GetLiquidGraph(pulse::Graph::AerosolAndInhaler);
   if (m_CombinedAerosolInhalerGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::AerosolAndInhaler));
+    Error("Could not find required Graph " + std::string(pulse::Graph::AerosolAndInhaler));
   }
-  m_CombinedRespiratoryMechanicalVentilatorGraph = GetGasGraph(BGE::Graph::RespiratoryAndMechanicalVentilator);
+  m_CombinedRespiratoryMechanicalVentilatorGraph = GetGasGraph(pulse::Graph::RespiratoryAndMechanicalVentilator);
   if (m_CombinedRespiratoryMechanicalVentilatorGraph == nullptr)
   {
-    Error("Could not find required Graph " + std::string(BGE::Graph::RespiratoryAndMechanicalVentilator));
+    Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndMechanicalVentilator));
   }
 }
 
@@ -257,15 +257,15 @@ bool PulseCompartments::AllowLiquidSubstance(SESubstance& s, SELiquidCompartment
   else
   {
     // Don't add it to the environment aerosol
-    const std::vector<std::string>& e = BGE::EnvironmentCompartment::GetValues();
+    const std::vector<std::string>& e = pulse::EnvironmentCompartment::GetValues();
     if (std::find(e.begin(), e.end(), cmpt.GetName()) != e.end())
       return false;
     // Don't add it to the aerosol compartments (Liquid version of Respiratory cmpts)
-    const std::vector<std::string>& p = BGE::PulmonaryCompartment::GetValues();
+    const std::vector<std::string>& p = pulse::PulmonaryCompartment::GetValues();
     if (std::find(p.begin(), p.end(), cmpt.GetName()) != p.end())
       return false;
     // Don't add it to aerosol cmpts either
-    const std::vector<std::string>& i = BGE::InhalerCompartment::GetValues();
+    const std::vector<std::string>& i = pulse::InhalerCompartment::GetValues();
     if (std::find(i.begin(), i.end(), cmpt.GetName()) != i.end())
       return false;
   }
@@ -275,19 +275,19 @@ bool PulseCompartments::AllowLiquidSubstance(SESubstance& s, SELiquidCompartment
 SELiquidCompartmentGraph& PulseCompartments::GetActiveCardiovascularGraph()
 {
   if (m_CombinedCardiovascularGraph == nullptr)
-    m_CombinedCardiovascularGraph = &CreateLiquidGraph(BGE::Graph::ActiveCardiovascular);
+    m_CombinedCardiovascularGraph = &CreateLiquidGraph(pulse::Graph::ActiveCardiovascular);
   return *m_CombinedCardiovascularGraph;
 }
 SELiquidCompartmentGraph& PulseCompartments::GetCardiovascularGraph()
 {
   if (m_CardiovascularGraph == nullptr)
-    m_CardiovascularGraph = &CreateLiquidGraph(BGE::Graph::Cardiovascular);
+    m_CardiovascularGraph = &CreateLiquidGraph(pulse::Graph::Cardiovascular);
   return *m_CardiovascularGraph;
 }
 SELiquidCompartmentGraph& PulseCompartments::GetRenalGraph()
 {
   if (m_RenalGraph == nullptr)
-    m_RenalGraph = &CreateLiquidGraph(BGE::Graph::Renal);
+    m_RenalGraph = &CreateLiquidGraph(pulse::Graph::Renal);
   return *m_RenalGraph;
 }
 SEGasCompartmentGraph& PulseCompartments::GetActiveRespiratoryGraph()
@@ -321,26 +321,26 @@ SEGasCompartmentGraph& PulseCompartments::GetActiveRespiratoryGraph()
 SEGasCompartmentGraph& PulseCompartments::GetRespiratoryGraph()
 {
   if (m_RespiratoryGraph == nullptr)
-    m_RespiratoryGraph = &CreateGasGraph(BGE::Graph::Respiratory);
+    m_RespiratoryGraph = &CreateGasGraph(pulse::Graph::Respiratory);
   return *m_RespiratoryGraph;
 }
 SEGasCompartmentGraph& PulseCompartments::GetAnesthesiaMachineGraph()
 {
   if (m_AnesthesiaMachineGraph == nullptr)
-    m_AnesthesiaMachineGraph = &CreateGasGraph(BGE::Graph::AnesthesiaMachine);
+    m_AnesthesiaMachineGraph = &CreateGasGraph(pulse::Graph::AnesthesiaMachine);
   return *m_AnesthesiaMachineGraph;
 }
 SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndAnesthesiaMachineGraph()
 {
   if (m_CombinedRespiratoryAnesthesiaGraph == nullptr)
-    m_CombinedRespiratoryAnesthesiaGraph = &CreateGasGraph(BGE::Graph::RespiratoryAndAnesthesiaMachine);
+    m_CombinedRespiratoryAnesthesiaGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndAnesthesiaMachine);
   return *m_CombinedRespiratoryAnesthesiaGraph;
 }
 
 SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndInhalerGraph()
 {
   if (m_CombinedRespiratoryInhalerGraph == nullptr)
-    m_CombinedRespiratoryInhalerGraph = &CreateGasGraph(BGE::Graph::RespiratoryAndInhaler);
+    m_CombinedRespiratoryInhalerGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndInhaler);
   return *m_CombinedRespiratoryInhalerGraph;
 }
 SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
@@ -366,19 +366,19 @@ SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
 SELiquidCompartmentGraph& PulseCompartments::GetAerosolGraph()
 {
   if (m_AerosolGraph == nullptr)
-    m_AerosolGraph = &CreateLiquidGraph(BGE::Graph::Aerosol);
+    m_AerosolGraph = &CreateLiquidGraph(pulse::Graph::Aerosol);
   return *m_AerosolGraph;
 }
 SELiquidCompartmentGraph& PulseCompartments::GetAerosolAndInhalerGraph()
 {
   if (m_CombinedAerosolInhalerGraph == nullptr)
-    m_CombinedAerosolInhalerGraph = &CreateLiquidGraph(BGE::Graph::AerosolAndInhaler);
+    m_CombinedAerosolInhalerGraph = &CreateLiquidGraph(pulse::Graph::AerosolAndInhaler);
   return *m_CombinedAerosolInhalerGraph;
 }
 
 SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndMechanicalVentilatorGraph()
 {
   if (m_CombinedRespiratoryMechanicalVentilatorGraph == nullptr)
-    m_CombinedRespiratoryMechanicalVentilatorGraph = &CreateGasGraph(BGE::Graph::RespiratoryAndMechanicalVentilator);
+    m_CombinedRespiratoryMechanicalVentilatorGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndMechanicalVentilator);
   return *m_CombinedRespiratoryMechanicalVentilatorGraph;
 }

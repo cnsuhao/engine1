@@ -47,7 +47,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SEUrinalysis.h"
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
 
-Renal::Renal(Pulse& bg) : SERenalSystem(bg.GetLogger()), m_data(bg)
+Renal::Renal(PulseController& data) : SERenalSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -322,23 +322,23 @@ void Renal::SetUp()
   //Substance quantities
 
   //Compartments
-  m_aorta = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Aorta);
-  m_venaCava = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::VenaCava);
+  m_aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
+  m_venaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
   
-  m_leftKidneyTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::LeftKidney);
-  m_leftGlomerular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftGlomerularCapillaries);
-  m_leftPeritubular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftPeritubularCapillaries);
-  m_leftBowmans = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftBowmansCapsules);
-  m_leftTubules = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftTubules);
-  m_rightKidneyTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::RightKidney);
-  m_rightGlomerular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightGlomerularCapillaries);
-  m_rightPeritubular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightPeritubularCapillaries);
-  m_rightBowmans = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightBowmansCapsules);
-  m_rightTubules = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightTubules);
+  m_leftKidneyTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftKidney);
+  m_leftGlomerular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftGlomerularCapillaries);
+  m_leftPeritubular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPeritubularCapillaries);
+  m_leftBowmans = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftBowmansCapsules);
+  m_leftTubules = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftTubules);
+  m_rightKidneyTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightKidney);
+  m_rightGlomerular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightGlomerularCapillaries);
+  m_rightPeritubular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPeritubularCapillaries);
+  m_rightBowmans = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightBowmansCapsules);
+  m_rightTubules = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightTubules);
 
-  m_bladder = m_data.GetCompartments().GetLiquidCompartment(BGE::UrineCompartment::Bladder);
-  m_leftUreter = m_data.GetCompartments().GetLiquidCompartment(BGE::UrineCompartment::LeftUreter);
-  m_rightUreter = m_data.GetCompartments().GetLiquidCompartment(BGE::UrineCompartment::RightUreter);
+  m_bladder = m_data.GetCompartments().GetLiquidCompartment(pulse::UrineCompartment::Bladder);
+  m_leftUreter = m_data.GetCompartments().GetLiquidCompartment(pulse::UrineCompartment::LeftUreter);
+  m_rightUreter = m_data.GetCompartments().GetLiquidCompartment(pulse::UrineCompartment::RightUreter);
 
   //Configuration parameters
   m_defaultOpenResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetDefaultOpenFlowResistance(FlowResistanceUnit::mmHg_s_Per_mL);
@@ -355,53 +355,53 @@ void Renal::SetUp()
 
    m_RenalCircuit = &m_data.GetCircuits().GetRenalCircuit();
   //Left
-  m_leftGlomerularNode = m_RenalCircuit->GetNode(BGE::RenalNode::LeftGlomerularCapillaries);
-  m_leftNetGlomerularCapillariesNode = m_RenalCircuit->GetNode(BGE::RenalNode::LeftNetGlomerularCapillaries);
-  m_leftBowmansNode = m_RenalCircuit->GetNode(BGE::RenalNode::LeftBowmansCapsules);
-  m_leftNetBowmansCapsulesNode = m_RenalCircuit->GetNode(BGE::RenalNode::LeftNetBowmansCapsules);
-  m_leftPeritubularNode = m_RenalCircuit->GetNode(BGE::RenalNode::LeftPeritubularCapillaries);
-  m_leftNetPeritubularCapillariesNode = m_RenalCircuit->GetNode(BGE::RenalNode::LeftNetPeritubularCapillaries);
-  m_leftTubulesNode = m_RenalCircuit->GetNode(BGE::RenalNode::LeftTubules);
-  m_leftNetTubulesNode = m_RenalCircuit->GetNode(BGE::RenalNode::LeftNetTubules);
-  m_leftRenalArteryNode = m_RenalCircuit->GetNode(BGE::RenalNode::LeftRenalArtery);
+  m_leftGlomerularNode = m_RenalCircuit->GetNode(pulse::RenalNode::LeftGlomerularCapillaries);
+  m_leftNetGlomerularCapillariesNode = m_RenalCircuit->GetNode(pulse::RenalNode::LeftNetGlomerularCapillaries);
+  m_leftBowmansNode = m_RenalCircuit->GetNode(pulse::RenalNode::LeftBowmansCapsules);
+  m_leftNetBowmansCapsulesNode = m_RenalCircuit->GetNode(pulse::RenalNode::LeftNetBowmansCapsules);
+  m_leftPeritubularNode = m_RenalCircuit->GetNode(pulse::RenalNode::LeftPeritubularCapillaries);
+  m_leftNetPeritubularCapillariesNode = m_RenalCircuit->GetNode(pulse::RenalNode::LeftNetPeritubularCapillaries);
+  m_leftTubulesNode = m_RenalCircuit->GetNode(pulse::RenalNode::LeftTubules);
+  m_leftNetTubulesNode = m_RenalCircuit->GetNode(pulse::RenalNode::LeftNetTubules);
+  m_leftRenalArteryNode = m_RenalCircuit->GetNode(pulse::RenalNode::LeftRenalArtery);
   //Right
-  m_rightGlomerularNode = m_RenalCircuit->GetNode(BGE::RenalNode::RightGlomerularCapillaries);
-  m_rightNetGlomerularCapillariesNode = m_RenalCircuit->GetNode(BGE::RenalNode::RightNetGlomerularCapillaries);
-  m_rightBowmansNode = m_RenalCircuit->GetNode(BGE::RenalNode::RightBowmansCapsules);
-  m_rightNetBowmansCapsulesNode = m_RenalCircuit->GetNode(BGE::RenalNode::RightNetBowmansCapsules);
-  m_rightPeritubularNode = m_RenalCircuit->GetNode(BGE::RenalNode::RightPeritubularCapillaries);
-  m_rightNetPeritubularCapillariesNode = m_RenalCircuit->GetNode(BGE::RenalNode::RightNetPeritubularCapillaries);
-  m_rightTubulesNode = m_RenalCircuit->GetNode(BGE::RenalNode::RightTubules);
-  m_rightNetTubulesNode = m_RenalCircuit->GetNode(BGE::RenalNode::RightNetTubules);
-  m_rightRenalArteryNode = m_RenalCircuit->GetNode(BGE::RenalNode::RightRenalArtery);
+  m_rightGlomerularNode = m_RenalCircuit->GetNode(pulse::RenalNode::RightGlomerularCapillaries);
+  m_rightNetGlomerularCapillariesNode = m_RenalCircuit->GetNode(pulse::RenalNode::RightNetGlomerularCapillaries);
+  m_rightBowmansNode = m_RenalCircuit->GetNode(pulse::RenalNode::RightBowmansCapsules);
+  m_rightNetBowmansCapsulesNode = m_RenalCircuit->GetNode(pulse::RenalNode::RightNetBowmansCapsules);
+  m_rightPeritubularNode = m_RenalCircuit->GetNode(pulse::RenalNode::RightPeritubularCapillaries);
+  m_rightNetPeritubularCapillariesNode = m_RenalCircuit->GetNode(pulse::RenalNode::RightNetPeritubularCapillaries);
+  m_rightTubulesNode = m_RenalCircuit->GetNode(pulse::RenalNode::RightTubules);
+  m_rightNetTubulesNode = m_RenalCircuit->GetNode(pulse::RenalNode::RightNetTubules);
+  m_rightRenalArteryNode = m_RenalCircuit->GetNode(pulse::RenalNode::RightRenalArtery);
   //Individual
-  m_bladderNode = m_RenalCircuit->GetNode(BGE::RenalNode::Bladder);
+  m_bladderNode = m_RenalCircuit->GetNode(pulse::RenalNode::Bladder);
   //Left
-  m_leftGlomerularOsmoticSourcePath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftGlomerularCapillariesToNetGlomerularCapillaries);
-  m_leftBowmansOsmoticSourcePath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftBowmansCapsulesToNetBowmansCapsules);
-  m_leftReabsorptionResistancePath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftNetTubulesToNetPeritubularCapillaries);
-  m_leftTubulesOsmoticSourcePath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftTubulesToNetTubules);
-  m_leftPeritubularOsmoticSourcePath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftPeritubularCapillariesToNetPeritubularCapillaries);
-  m_leftUreterPath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftTubulesToUreter);
-  m_leftGlomerularFilterResistancePath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftNetGlomerularCapillariesToNetBowmansCapsules);
-  m_leftAfferentArteriolePath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftAfferentArterioleToGlomerularCapillaries);
-  m_leftTubulesPath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftBowmansCapsulesToTubules);
-  m_leftEfferentArteriolePath = m_RenalCircuit->GetPath(BGE::RenalPath::LeftEfferentArterioleToPeritubularCapillaries);
+  m_leftGlomerularOsmoticSourcePath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftGlomerularCapillariesToNetGlomerularCapillaries);
+  m_leftBowmansOsmoticSourcePath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftBowmansCapsulesToNetBowmansCapsules);
+  m_leftReabsorptionResistancePath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftNetTubulesToNetPeritubularCapillaries);
+  m_leftTubulesOsmoticSourcePath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftTubulesToNetTubules);
+  m_leftPeritubularOsmoticSourcePath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftPeritubularCapillariesToNetPeritubularCapillaries);
+  m_leftUreterPath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftTubulesToUreter);
+  m_leftGlomerularFilterResistancePath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftNetGlomerularCapillariesToNetBowmansCapsules);
+  m_leftAfferentArteriolePath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftAfferentArterioleToGlomerularCapillaries);
+  m_leftTubulesPath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftBowmansCapsulesToTubules);
+  m_leftEfferentArteriolePath = m_RenalCircuit->GetPath(pulse::RenalPath::LeftEfferentArterioleToPeritubularCapillaries);
 
   //Right
-  m_rightGlomerularOsmoticSourcePath = m_RenalCircuit->GetPath(BGE::RenalPath::RightGlomerularCapillariesToNetGlomerularCapillaries);
-  m_rightBowmansOsmoticSourcePath = m_RenalCircuit->GetPath(BGE::RenalPath::RightBowmansCapsulesToNetBowmansCapsules);
-  m_rightReabsorptionResistancePath = m_RenalCircuit->GetPath(BGE::RenalPath::RightNetTubulesToNetPeritubularCapillaries);
-  m_rightTubulesOsmoticSourcePath = m_RenalCircuit->GetPath(BGE::RenalPath::RightTubulesToNetTubules);
-  m_rightPeritubularOsmoticSourcePath = m_RenalCircuit->GetPath(BGE::RenalPath::RightPeritubularCapillariesToNetPeritubularCapillaries);
-  m_rightUreterPath = m_RenalCircuit->GetPath(BGE::RenalPath::RightTubulesToUreter);
-  m_rightGlomerularFilterResistancePath = m_RenalCircuit->GetPath(BGE::RenalPath::RightNetGlomerularCapillariesToNetBowmansCapsules);
-  m_rightAfferentArteriolePath = m_RenalCircuit->GetPath(BGE::RenalPath::RightAfferentArterioleToGlomerularCapillaries);
-  m_rightTubulesPath = m_RenalCircuit->GetPath(BGE::RenalPath::RightBowmansCapsulesToTubules);
-  m_rightEfferentArteriolePath = m_RenalCircuit->GetPath(BGE::RenalPath::RightEfferentArterioleToPeritubularCapillaries);
+  m_rightGlomerularOsmoticSourcePath = m_RenalCircuit->GetPath(pulse::RenalPath::RightGlomerularCapillariesToNetGlomerularCapillaries);
+  m_rightBowmansOsmoticSourcePath = m_RenalCircuit->GetPath(pulse::RenalPath::RightBowmansCapsulesToNetBowmansCapsules);
+  m_rightReabsorptionResistancePath = m_RenalCircuit->GetPath(pulse::RenalPath::RightNetTubulesToNetPeritubularCapillaries);
+  m_rightTubulesOsmoticSourcePath = m_RenalCircuit->GetPath(pulse::RenalPath::RightTubulesToNetTubules);
+  m_rightPeritubularOsmoticSourcePath = m_RenalCircuit->GetPath(pulse::RenalPath::RightPeritubularCapillariesToNetPeritubularCapillaries);
+  m_rightUreterPath = m_RenalCircuit->GetPath(pulse::RenalPath::RightTubulesToUreter);
+  m_rightGlomerularFilterResistancePath = m_RenalCircuit->GetPath(pulse::RenalPath::RightNetGlomerularCapillariesToNetBowmansCapsules);
+  m_rightAfferentArteriolePath = m_RenalCircuit->GetPath(pulse::RenalPath::RightAfferentArterioleToGlomerularCapillaries);
+  m_rightTubulesPath = m_RenalCircuit->GetPath(pulse::RenalPath::RightBowmansCapsulesToTubules);
+  m_rightEfferentArteriolePath = m_RenalCircuit->GetPath(pulse::RenalPath::RightEfferentArterioleToPeritubularCapillaries);
   //Individual
-  m_bladderToGroundPressurePath = m_RenalCircuit->GetPath(BGE::RenalPath::BladderToGroundPressure);
-  m_urethraPath = m_RenalCircuit->GetPath(BGE::RenalPath::BladderToGroundUrinate);
+  m_bladderToGroundPressurePath = m_RenalCircuit->GetPath(pulse::RenalPath::BladderToGroundPressure);
+  m_urethraPath = m_RenalCircuit->GetPath(pulse::RenalPath::BladderToGroundUrinate);
 
   m_aortaLactate = m_aorta->GetSubstanceQuantity(*m_lactate);
 
@@ -455,9 +455,9 @@ void Renal::AtSteadyState()
     //But now we're stable and want to start filling the bladder, so make substances stay in bladder as they come in with the fluid
     SELiquidCompartmentGraph* renalGraph = &m_data.GetCompartments().GetRenalGraph();
     SELiquidCompartmentGraph* combinedCardiovascularGraph = &m_data.GetCompartments().GetActiveCardiovascularGraph();
-    renalGraph->RemoveLink(BGE::UrineLink::BladderToGroundSource);
+    renalGraph->RemoveLink(pulse::UrineLink::BladderToGroundSource);
     renalGraph->StateChange();
-    combinedCardiovascularGraph->RemoveLink(BGE::UrineLink::BladderToGroundSource);
+    combinedCardiovascularGraph->RemoveLink(pulse::UrineLink::BladderToGroundSource);
     combinedCardiovascularGraph->StateChange();
   }  
 }

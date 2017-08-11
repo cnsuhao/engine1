@@ -11,9 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SEEnergySystem.h"
+#include "bind/engine/EnginePhysiology.pb.h"
 #include "utils/RunningAverage.h"
 #include "circuit/thermal/SEThermalCircuitCalculator.h"
 class SEThermalCircuitCalculator;
@@ -23,11 +23,11 @@ class SEThermalCircuitCalculator;
  */  
 class PULSE_DECL Energy : public SEEnergySystem, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  Energy(Pulse& bg);
-  Pulse& m_data;
+  Energy(PulseController& data);
+  PulseController& m_data;
 
 public:
   ~Energy(void);

@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "../Controller/PulseSystem.h"
 #include "system/physiology/SETissueSystem.h"
 struct error_functor;
 
@@ -23,11 +22,11 @@ class PULSE_DECL SaturationCalculator : public Loggable
 {
 protected:
   friend error_functor;
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 
-  SaturationCalculator(Pulse& bg);
-  Pulse& m_data;
+  SaturationCalculator(PulseController& data);
+  PulseController& m_data;
 public:
   virtual ~SaturationCalculator();
 

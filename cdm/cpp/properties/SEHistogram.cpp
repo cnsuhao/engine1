@@ -85,7 +85,7 @@ cdm::HistogramData* SEHistogram::Unload(const SEHistogram& src)
 }
 void SEHistogram::Serialize(const SEHistogram& src, cdm::HistogramData& dst)
 {
-  for (unsigned int i = 0; i<src.m_Dependent.size(); i++)
+  for (size_t i = 0; i<src.m_Dependent.size(); i++)
   {
     dst.mutable_histogram()->mutable_dependent()->add_value(src.m_Dependent[i]);
     dst.mutable_histogram()->mutable_independent()->add_value(src.m_Independent[i]);
@@ -106,7 +106,7 @@ size_t SEHistogram::NumberOfBoundaries() const
   return 0;
 }
 
-double SEHistogram::GetDependentValue(unsigned int index) const
+double SEHistogram::GetDependentValue(size_t index) const
 {
   if (index >= m_Dependent.size())
     throw CommonDataModelException("Dependent index out of bounds");
@@ -122,7 +122,7 @@ const std::vector<double>& SEHistogram::GetDependent() const
   return m_Dependent;
 }
 
-double SEHistogram::GetIndependentValue(unsigned int index) const
+double SEHistogram::GetIndependentValue(size_t index) const
 {
   if (index >= m_Independent.size())
     throw CommonDataModelException("Independent index out of bounds");

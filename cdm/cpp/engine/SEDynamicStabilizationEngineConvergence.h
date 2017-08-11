@@ -11,10 +11,10 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
+CDM_BIND_DECL(DynamicStabilizationData_EngineConvergenceData)
 #include "engine/SEEngineTracker.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
 #include "properties/SEScalarTime.h"
-#include "bind/cdm/Engine.pb.h"
 
 class CDM_DECL SEDynamicStabilizationEngineConvergence : public Loggable
 {

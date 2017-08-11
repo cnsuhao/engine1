@@ -41,7 +41,7 @@ specific language governing permissions and limitations under the License.
 #pragma warning(disable:4996) // Deprecation
 
 #include "PulsePhysiologyEngine.h"
-#include "Controller/PulseEngine.h"
+#include "Controller/Controller.h"
 
 
 

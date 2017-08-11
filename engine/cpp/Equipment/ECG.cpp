@@ -24,7 +24,7 @@ Constructors
 ========================
 */
 
-ECG::ECG(Pulse& bg) : SEElectroCardioGram(bg.GetLogger()), m_data(bg), m_interpolator(bg.GetLogger())
+ECG::ECG(PulseController& data) : SEElectroCardioGram(data.GetLogger()), m_data(data), m_interpolator(data.GetLogger())
 {
   Clear();
 }

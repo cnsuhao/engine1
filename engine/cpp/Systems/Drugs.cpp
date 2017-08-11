@@ -44,7 +44,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarNegative1To1.h"
 
-Drugs::Drugs(Pulse& bg) : SEDrugSystem(bg.GetLogger()), m_data(bg)
+Drugs::Drugs(PulseController& data) : SEDrugSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -119,13 +119,13 @@ void Drugs::Serialize(const Drugs& src, pulse::DrugSystemData& dst)
 void Drugs::SetUp()
 {
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  m_muscleIntracellular = m_data.GetCompartments().GetLiquidCompartment(BGE::ExtravascularCompartment::MuscleIntracellular);
-  m_aortaVascular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Aorta);
-  m_venaCavaVascular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::VenaCava);
-  m_fatTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Fat);
-  m_liverVascular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver);
-  m_liverTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Liver);
-  m_IVToVenaCava = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(BGE::CardiovascularPath::IVToVenaCava);
+  m_muscleIntracellular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::MuscleIntracellular);
+  m_aortaVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
+  m_venaCavaVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
+  m_fatTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat);
+  m_liverVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver);
+  m_liverTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver);
+  m_IVToVenaCava = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::IVToVenaCava);
 }
 
 //--------------------------------------------------------------------------------------------------

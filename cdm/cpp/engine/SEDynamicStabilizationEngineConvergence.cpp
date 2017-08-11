@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
+#include "bind/cdm/Engine.pb.h"
 
 SEDynamicStabilizationEngineConvergence::SEDynamicStabilizationEngineConvergence(Logger *logger) : Loggable(logger), m_DataRequestMgr(logger)
 {

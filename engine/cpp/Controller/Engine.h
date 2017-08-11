@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 // If anyone else has opinions on this, let us know
 // physiology@kitware.com
 #pragma warning(disable : 4251)
-#include "Pulse.h"
+#include "Controller.h"
 #pragma warning(pop)
 
 
@@ -32,7 +32,7 @@ specific language governing permissions and limitations under the License.
 /// calls as well as assessment calls for obtaining the results. During engine execution a log files
 /// is generated containing information, warning and error data.
 //--------------------------------------------------------------------------------------------------
-class PULSE_DECL PulseEngine : public PhysiologyEngine, public Pulse
+class PULSE_DECL PulseEngine : public PhysiologyEngine, public PulseController
 {
 public:
 

@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 
 #pragma once
+#include "Controller/System.h"
 #include "bind/engine/EngineEquipment.pb.h"
-#include "../Controller/PulseSystem.h"
 #include "system/equipment/ElectroCardioGram/SEElectroCardioGram.h"
 #include "system/equipment/ElectroCardioGram/SEElectroCardioGramWaveformInterpolator.h"
 
@@ -23,11 +23,11 @@ specific language governing permissions and limitations under the License.
 */
 class PULSE_DECL ECG : public SEElectroCardioGram, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  ECG(Pulse& bg);
-  Pulse& m_data;
+  ECG(PulseController& pc);
+  PulseController& m_data;
 
 public:
   virtual ~ECG();

@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "Controller/PulseEngine.h"
+#include "Controller/Engine.h"
 #include "scenario/SEScenarioExec.h"
 
 /**

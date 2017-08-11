@@ -11,10 +11,10 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
+#include "Controller/ScenarioExec.h"
 #include "engine/SEAutoSerialization.h"
-#include "Controller/PulseConfiguration.h"
-#include "Controller/Scenario/PulseScenarioExec.h"
-#include "Controller/Scenario/PulseScenario.h"
+#include "PulseScenario.h"
+#include "PulseConfiguration.h"
 #include "utils/FileUtils.h"
 
 PulseScenarioExec::PulseScenarioExec(PulseEngine& engine) : SEScenarioExec(engine)

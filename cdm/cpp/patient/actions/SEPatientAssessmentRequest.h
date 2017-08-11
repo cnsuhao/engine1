@@ -33,12 +33,12 @@ protected:
 
 public:
 
-  virtual cdm::PatientAssessmentRequestData_eType GetType() const;
-  virtual void SetType(cdm::PatientAssessmentRequestData_eType type);
+  virtual cdm::PatientAssessmentData_eType GetType() const;
+  virtual void SetType(cdm::PatientAssessmentData_eType type);
 
   virtual void ToString(std::ostream &str) const;
   
 protected:
 
-  cdm::PatientAssessmentRequestData_eType m_Type;
+  cdm::PatientAssessmentData_eType m_Type;
 }; 

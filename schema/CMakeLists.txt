@@ -32,11 +32,14 @@ if(MSVC)
   target_link_libraries(DataModelBindings ws2_32.lib)
   target_link_libraries(DataModelBindings advapi32.lib)
 endif()
+
 add_custom_command(TARGET DataModelBindings POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:DataModelBindings> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/proto ${INSTALL_BIN}/proto)
+                   
 if(${BUILD_SHARED_LIBS})
+  add_custom_command(TARGET DataModelBindings POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:DataModelBindings> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
   if(WIN32)# Copy dll files to the bin
     install(TARGETS DataModelBindings 
             RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}

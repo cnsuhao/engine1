@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 // The following tests will be exported and runnable
 #include <math.h>
 #include "PulsePhysiologyEngine.h"
-#include "Controller/PulseEngine.h"
+#include "Controller/Controller.h"
 
 #define ENGINE_TEST_DECL
 #ifdef SHARED_ENGINE_TEST
@@ -187,7 +187,7 @@ public:
   void AcidBaseBloodGasTests(const std::string& sOutputDirectory);
 protected:
   enum bloodType { ARTERIAL, VENOUS, CAPILLARY, RESPIRATORY_ACIDOSIS, METABOLIC_ALKALOSIS, METABOLIC_ACIDOSIS, RESPIRATORY_ALKALOSIS, CUSTOM };
-  void AcidBaseBloodGasTest(Pulse& bg, bloodType compartment, SETestSuite& testSuite);
+  void AcidBaseBloodGasTest(PulseController& bg, bloodType compartment, SETestSuite& testSuite);
 
   /////////////////////
   // Aerosol Tests //

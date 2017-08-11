@@ -21,6 +21,8 @@ public:
 
   void Clear();
 
+  bool Load(const std::string& str, SESubstanceManager& subMgr);
+
   static void Load(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, SESubstanceManager& subMgr);
   static cdm::DataRequestManagerData* Unload(const SEDataRequestManager& src);
 protected:

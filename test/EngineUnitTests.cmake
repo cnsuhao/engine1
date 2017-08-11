@@ -33,10 +33,11 @@ ENDIF()
 # Dependent Libraries
 target_link_libraries(PulseEngineUnitTests PulseEngine)
 
-add_custom_command(TARGET PulseEngineUnitTests POST_BUILD
+if(${BUILD_SHARED_LIBS})
+  add_custom_command(TARGET PulseEngineUnitTests POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseEngineUnitTests> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
-if(${BUILD_SHARED_LIBS})
+
   if(WIN32)# Copy dll files to the bin
     install(TARGETS PulseEngineUnitTests 
             RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}

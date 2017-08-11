@@ -82,12 +82,6 @@ public class Pulse
   static
   {        
     UnitConverter.initialize(System.getProperty("user.dir"));
-    List<String> libs = new ArrayList<String>();
-    libs.add("PulseEngine");
-    libs.add("PulseEngineUnitTests");
-    libs.add("PulseEngineJNI");
-        
-    FileUtils.loadLibraries(libs);
   }
 
   public Pulse()

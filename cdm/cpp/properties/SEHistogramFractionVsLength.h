@@ -31,11 +31,11 @@ protected:
   static void Serialize(const SEHistogramFractionVsLength& src, cdm::HistogramFractionVsLengthData& dst);
 public:
 
-  virtual double                     GetFractionValue(unsigned int index) const;
+  virtual double                     GetFractionValue(size_t index) const;
   virtual std::vector<double>&       GetFraction();
   virtual const std::vector<double>& GetFraction() const;
   
-  virtual double                     GetLengthValue(unsigned int index, const LengthUnit& unit)  const;
+  virtual double                     GetLengthValue(size_t index, const LengthUnit& unit)  const;
   virtual std::vector<double>&       GetLength();
   virtual const std::vector<double>& GetLength() const;
   virtual const LengthUnit*          GetLengthUnit()  const;

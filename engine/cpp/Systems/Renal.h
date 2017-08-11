@@ -11,8 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SERenalSystem.h"
+#include "bind/engine/EnginePhysiology.pb.h"
 #include "properties/SEScalarMass.h"
 
 class SEUrinalysis;
@@ -24,11 +25,11 @@ class SEUrinalysis;
  */  
 class PULSE_DECL Renal : public SERenalSystem, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  Renal(Pulse& bg);
-  Pulse& m_data;
+  Renal(PulseController& data);
+  PulseController& m_data;
 
   double m_dt;
   

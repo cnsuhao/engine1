@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "Hepatic.h"
 
-Hepatic::Hepatic(Pulse& bg) : SEHepaticSystem(bg.GetLogger()), m_data(bg)
+Hepatic::Hepatic(PulseController& data) : SEHepaticSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }

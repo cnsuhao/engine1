@@ -11,8 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SENervousSystem.h"
+#include "bind/engine/EnginePhysiology.pb.h"
 
 /**
  * @brief 
@@ -20,11 +21,11 @@ specific language governing permissions and limitations under the License.
  */  
 class PULSE_DECL Nervous : public SENervousSystem, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  Nervous(Pulse& bg);
-  Pulse& m_data;
+  Nervous(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~Nervous();

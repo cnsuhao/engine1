@@ -61,7 +61,7 @@ void SEFunctionElectricPotentialVsTime::Serialize(const SEFunctionElectricPotent
   dst.mutable_functionelectricpotentialvstime()->set_dependentunit(src.m_ElectricPotentialUnit->GetString());
 }
 
-double SEFunctionElectricPotentialVsTime::GetTimeValue(unsigned int index, const TimeUnit& unit)
+double SEFunctionElectricPotentialVsTime::GetTimeValue(size_t index, const TimeUnit& unit)
 {
   if (m_TimeUnit==nullptr)
     throw CommonDataModelException("No time units have been set");
@@ -82,7 +82,7 @@ void SEFunctionElectricPotentialVsTime::SetTimeUnit(const TimeUnit& unit)
   m_TimeUnit = &unit;
 }
 
-double SEFunctionElectricPotentialVsTime::GetElectricPotentialValue(unsigned int index, const ElectricPotentialUnit& unit)
+double SEFunctionElectricPotentialVsTime::GetElectricPotentialValue(size_t index, const ElectricPotentialUnit& unit)
 {
   if (m_ElectricPotentialUnit == nullptr)
     throw CommonDataModelException("No electric potential units have been set");

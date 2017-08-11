@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "stdafx.h"
 #include "engine/SEAutoSerialization.h"
 #include "properties/SEScalarTime.h"
+#include "bind/cdm/Engine.pb.h"
 
 SEAutoSerialization::SEAutoSerialization(Logger* logger) : Loggable(logger)
 {

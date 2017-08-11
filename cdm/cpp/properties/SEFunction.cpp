@@ -80,7 +80,7 @@ cdm::FunctionData* SEFunction::Unload(const SEFunction& src)
 }
 void SEFunction::Serialize(const SEFunction& src, cdm::FunctionData& dst)
 {
-  for (unsigned int i = 0; i<src.m_Dependent.size(); i++)
+  for (size_t i = 0; i<src.m_Dependent.size(); i++)
   {
     dst.mutable_dependent()->add_value(src.m_Dependent[i]);
     dst.mutable_independent()->add_value(src.m_Independent[i]);
@@ -94,7 +94,7 @@ size_t SEFunction::Length()
   return 0;
 }
 
-double SEFunction::GetDependentValue(unsigned int index)
+double SEFunction::GetDependentValue(size_t index)
 {
   if (index >= m_Dependent.size())
     throw CommonDataModelException("Dependent index out of bounds");
@@ -106,7 +106,7 @@ std::vector<double>& SEFunction::GetDependent()
   return m_Dependent;
 }
 
-double SEFunction::GetIndependentValue(unsigned int index)
+double SEFunction::GetIndependentValue(size_t index)
 {
   if (index >= m_Independent.size())
     throw CommonDataModelException("Independent index out of bounds");

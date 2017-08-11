@@ -36,10 +36,10 @@ public:
 
   virtual size_t                        Length();
   
-  double                                GetDependentValue(unsigned int index);
+  double                                GetDependentValue(size_t index);
   std::vector<double>&                  GetDependent();      
 
-  double                                GetIndependentValue(unsigned int index);
+  double                                GetIndependentValue(size_t index);
   std::vector<double>&                  GetIndependent();
   
 protected:

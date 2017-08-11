@@ -32,29 +32,13 @@ public class UnitConverter
   /** Loads Unit Conversion DLL */
   static
   {
-//  	String location = System.getProperty("user.dir")+"/debug";
-//    if (System.getProperty("sun.arch.data.model").equals("32"))
-//      location += "32";
-//    
-//    List<String>libs = new ArrayList<String>();
-//    if(System.getProperty("os.name").toLowerCase().startsWith("win"))
-//    {
-//      if(!FileUtils.loadLibrary("libprotobufd",location))
-//        throw new RuntimeException("Could not find protobuf library");    
-//      libs.add("log4cpp");
-//    }
-//    else if (System.getProperty("os.name").toLowerCase().startsWith("mac"))
-//    {
-//      libs.add("libprotobufd");
-//      libs.add("liblog4cpp");
-//    }
-//    else
-//      libs.add("liblog4cpp");
-//    libs.add("CommonDataModel");
-//    libs.add("CommonDataModelUnitTests");
-//    libs.add("CommonDataModelJNI");          
-//    if(!FileUtils.loadLibraries(libs,location))
-//      throw new RuntimeException("Could not find all dependent libraries : " + libs);
+  	String location = System.getProperty("user.dir")+"/debug";
+    if (System.getProperty("sun.arch.data.model").equals("32"))
+      location += "32";
+    List<String>libs = new ArrayList<String>();
+    libs.add("PulseJNI");
+    if(!FileUtils.loadLibraries(libs,location))
+      throw new RuntimeException("Could not find all dependent libraries : " + libs);
   }
   
   /**

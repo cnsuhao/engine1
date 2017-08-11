@@ -17,6 +17,7 @@ specific language governing permissions and limitations under the License.
 #include "scenario/SECondition.h"
 #include "utils/TimingProfile.h"
 #include <google/protobuf/text_format.h>
+#include "bind/cdm/Engine.pb.h"
 
 
 SEDynamicStabilization::SEDynamicStabilization(Logger *logger) : SEEngineStabilization(logger), 

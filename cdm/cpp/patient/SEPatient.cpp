@@ -166,6 +166,14 @@ const SEScalar* SEPatient::GetScalar(const std::string& name)
 }
 
 
+bool SEPatient::Load(const std::string& str)
+{
+  cdm::PatientData src;
+  if (!google::protobuf::TextFormat::ParseFromString(str, &src))
+    return false;
+  SEPatient::Load(src, *this);
+  return true;
+}
 bool SEPatient::LoadFile(const std::string& patientFile)
 {
   cdm::PatientData src;

@@ -11,11 +11,10 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/engine/Engine.pb.h"
-#include "Controller/PulseCircuits.h"
-#include "Controller/PulseCompartments.h"
-#include "Controller/PulseConfiguration.h"
-#include "Controller/PulseSubstances.h"
+#include "PulseConfiguration.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
 
 // CDM 
 #include "scenario/SEActionManager.h"
@@ -51,7 +50,7 @@ enum class EngineState { NotReady=0, Initialization, InitialStabilization, AtIni
 /**
 * @brief Manages and controls execution of all data/systems in %Pulse
 */
-class PULSE_DECL Pulse : public Loggable, protected LoggerForward
+class PULSE_DECL PulseController : public Loggable, protected LoggerForward
 {
   friend class PulseEngineTest;
   friend class PulseScenarioExec;
@@ -60,9 +59,9 @@ protected:
 public:
   
 
-  Pulse(Logger* logger);
-  Pulse(const std::string& logfileName);
-  virtual ~Pulse();
+  PulseController(Logger* logger);
+  PulseController(const std::string& logfileName);
+  virtual ~PulseController();
 
  
   EngineState                             GetState() { return m_State; }

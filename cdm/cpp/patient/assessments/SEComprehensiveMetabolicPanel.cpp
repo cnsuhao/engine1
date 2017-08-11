@@ -63,7 +63,14 @@ void SEComprehensiveMetabolicPanel::Clear()
   SAFE_DELETE(m_TotalProtein);
 }
 
-void SEComprehensiveMetabolicPanel::SaveFile(const std::string& filename)
+std::string SEComprehensiveMetabolicPanel::Save() const
+{
+  std::string content;
+  cdm::ComprehensiveMetabolicPanelData* src = SEComprehensiveMetabolicPanel::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  return content;
+}
+void SEComprehensiveMetabolicPanel::SaveFile(const std::string& filename) const
 {
   std::string content;
   cdm::ComprehensiveMetabolicPanelData* src = SEComprehensiveMetabolicPanel::Unload(*this);

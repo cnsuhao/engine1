@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 package mil.tatrc.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.PatientAssessmentRequestData;
-import com.kitware.physiology.cdm.PatientActions.PatientAssessmentRequestData.eType;
+import com.kitware.physiology.cdm.PatientAssessments.PatientAssessmentData.eType;
 
 public class SEPatientAssessmentRequest extends SEPatientAction
 {

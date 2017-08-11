@@ -51,7 +51,15 @@ void SECompleteBloodCount::Clear()
   SAFE_DELETE(m_WhiteBloodCellCount);
 }
 
-void SECompleteBloodCount::SaveFile(const std::string& filename)
+
+std::string SECompleteBloodCount::Save() const
+{
+  std::string content;
+  cdm::CompleteBloodCountData* src = SECompleteBloodCount::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  return content;
+}
+void SECompleteBloodCount::SaveFile(const std::string& filename) const
 {
   std::string content;
   cdm::CompleteBloodCountData* src = SECompleteBloodCount::Unload(*this);

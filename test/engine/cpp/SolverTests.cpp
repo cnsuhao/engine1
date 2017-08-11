@@ -45,12 +45,12 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   double deltaT_s = 1.0 / 90.0;
   bool showAllOutput = true; //toggle this to show all Info outputs for all circuits, which will show first-pass solve times and fail rates
 
-  Pulse bg(tsSolverSpeed.GetLogger());
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(cdm::eSwitch::On);
-  bg.m_Config->EnableTissue(cdm::eSwitch::On);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(tsSolverSpeed.GetLogger());
+  pc.GetPatient().LoadFile("./patients/StandardMale.xml");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::On);
+  pc.m_Config->EnableTissue(cdm::eSwitch::On);
+  pc.CreateCircuitsAndCompartments();
 
   SEFluidCircuitCalculator fluidCalc(tsSolverSpeed.GetLogger());
   SEThermalCircuitCalculator thermalCalc(tsSolverSpeed.GetLogger());
@@ -99,7 +99,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     bool failed = false;
 
     //Anesthesia Machine alone
-    SEFluidCircuit* fCircuit = &bg.GetCircuits().GetAnesthesiaMachineCircuit();
+    SEFluidCircuit* fCircuit = &pc.GetCircuits().GetAnesthesiaMachineCircuit();
 
     //Set the solver type
     fluidCalc.SetEigenSolver(solver);
@@ -178,7 +178,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Anesthesia Machine with Respiratory
-    fCircuit = &bg.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
+    fCircuit = &pc.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
     numFails = 0;
 
     timer.Start("AnesthesiaMachineWithRespiratory");
@@ -253,7 +253,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Respiratory Only
-    fCircuit = &bg.GetCircuits().GetRespiratoryCircuit();
+    fCircuit = &pc.GetCircuits().GetRespiratoryCircuit();
 
     numFails = 0;
 
@@ -329,7 +329,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Respiratory with Inhaler
-    fCircuit = &bg.GetCircuits().GetRespiratoryAndInhalerCircuit();
+    fCircuit = &pc.GetCircuits().GetRespiratoryAndInhalerCircuit();
 
     numFails = 0;
 
@@ -405,7 +405,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Cardiovascular
-    fCircuit = &bg.GetCircuits().GetActiveCardiovascularCircuit();
+    fCircuit = &pc.GetCircuits().GetActiveCardiovascularCircuit();
     numFails = 0;
 
     timer.Start("Cardiovascular");
@@ -480,7 +480,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Renal
-    fCircuit = &bg.GetCircuits().GetRenalCircuit();
+    fCircuit = &pc.GetCircuits().GetRenalCircuit();
     numFails = 0;
 
     timer.Start("Renal");
@@ -555,7 +555,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Internal Temp
-    SEThermalCircuit* tCircuit = &bg.GetCircuits().GetInternalTemperatureCircuit();
+    SEThermalCircuit* tCircuit = &pc.GetCircuits().GetInternalTemperatureCircuit();
     thermalCalc.SetEigenSolver(solver);
     numFails = 0;
 
@@ -631,7 +631,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //External Temp
-    tCircuit = &bg.GetCircuits().GetExternalTemperatureCircuit();
+    tCircuit = &pc.GetCircuits().GetExternalTemperatureCircuit();
     numFails = 0;
 
     timer.Start("ExternalTemperature");
@@ -706,7 +706,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Temperature
-    tCircuit = &bg.GetCircuits().GetTemperatureCircuit();
+    tCircuit = &pc.GetCircuits().GetTemperatureCircuit();
     numFails = 0;
 
     timer.Start("Temperature");

@@ -33,7 +33,7 @@ specific language governing permissions and limitations under the License.
 ========================
 */
 
-AnesthesiaMachine::AnesthesiaMachine(Pulse& bg) : SEAnesthesiaMachine(bg.GetSubstances()), m_data(bg)
+AnesthesiaMachine::AnesthesiaMachine(PulseController& data) : SEAnesthesiaMachine(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -145,34 +145,34 @@ void AnesthesiaMachine::SetUp()
   m_dSwitchClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(FlowResistanceUnit::cmH2O_s_Per_L);
 
   // Compartments
-  m_ambient = m_data.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
+  m_ambient = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   m_ambientCO2 = m_ambient->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_ambientN2 = m_ambient->GetSubstanceQuantity(m_data.GetSubstances().GetN2());
   m_ambientO2 = m_ambient->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
 
-  m_gasSource = m_data.GetCompartments().GetGasCompartment(BGE::AnesthesiaMachineCompartment::GasSource);
+  m_gasSource = m_data.GetCompartments().GetGasCompartment(pulse::AnesthesiaMachineCompartment::GasSource);
   m_gasSourceCO2 = m_gasSource->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_gasSourceN2 = m_gasSource->GetSubstanceQuantity(m_data.GetSubstances().GetN2());
   m_gasSourceO2 = m_gasSource->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
 
-  m_scrubber = m_data.GetCompartments().GetGasCompartment(BGE::AnesthesiaMachineCompartment::Scrubber);
+  m_scrubber = m_data.GetCompartments().GetGasCompartment(pulse::AnesthesiaMachineCompartment::Scrubber);
   m_scubberCO2 = m_scrubber->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_scrubberN2 = m_scrubber->GetSubstanceQuantity(m_data.GetSubstances().GetN2());
 
   // Circuit Nodes
-  m_nVentilator = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetNode(BGE::AnesthesiaMachineNode::Ventilator);
+  m_nVentilator = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetNode(pulse::AnesthesiaMachineNode::Ventilator);
 
   // Circuit Paths
-  m_pAnesthesiaConnectionToEnvironment = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
-  m_pYPieceToExpiratoryLimb = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::YPieceToExpiratoryLimb);
-  m_pGasSourceToGasInlet = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::GasSourceToGasInlet);
-  m_pInspiratoryLimbToYPiece = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::InspiratoryLimbToYPiece);
-  m_pSelectorToReliefValve = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::SelectorToReliefValve);
-  m_pEnvironmentToReliefValve = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::EnvironmentToReliefValve);
-  m_pSelectorToEnvironment = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::SelectorToEnvironment);
-  m_pEnvironmentToVentilator = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::EnvironmentToVentilator);
-  m_pExpiratoryLimbToSelector = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::ExpiratoryLimbToSelector);
-  m_pSelectorToScrubber = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(BGE::AnesthesiaMachinePath::SelectorToScrubber);
+  m_pAnesthesiaConnectionToEnvironment = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
+  m_pYPieceToExpiratoryLimb = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::YPieceToExpiratoryLimb);
+  m_pGasSourceToGasInlet = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::GasSourceToGasInlet);
+  m_pInspiratoryLimbToYPiece = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::InspiratoryLimbToYPiece);
+  m_pSelectorToReliefValve = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::SelectorToReliefValve);
+  m_pEnvironmentToReliefValve = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::EnvironmentToReliefValve);
+  m_pSelectorToEnvironment = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::SelectorToEnvironment);
+  m_pEnvironmentToVentilator = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::EnvironmentToVentilator);
+  m_pExpiratoryLimbToSelector = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::ExpiratoryLimbToSelector);
+  m_pSelectorToScrubber = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::SelectorToScrubber);
 }
 
 void AnesthesiaMachine::StateChange()

@@ -19,7 +19,9 @@ class SETimedStabilization;
 class SEEnvironmentalConditions;
 class SEElectroCardioGramWaveformInterpolator;
 #include "engine/SEEngineConfiguration.h"
-#include "bind/engine/EngineConfiguration.pb.h"
+PULSE_BIND_DECL(ConfigurationData)
+#include "bind/engine/Engine.pb.h"
+#include "bind/cdm/Properties.pb.h"
 
 /**
 * @brief %Pulse specific configuration parameters for all systems/equipment

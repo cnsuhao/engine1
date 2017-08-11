@@ -1,6 +1,5 @@
-project(Engine)
+project(Pulse)
 
-set(BUILD_SHARED_LIBS ON)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # Policy to address @foo@ variable expansion
@@ -49,7 +48,7 @@ if(MSVC)
   set(protobuf_BUILD_TESTS OFF CACHE TYPE INTERNAL FORCE)
   set(protobuf_BUILD_EXAMPLES OFF CACHE TYPE INTERNAL FORCE)
   add_subdirectory("${protobuf_DIR}/cmake" "${protobuf_DIR}-build")
-  set_target_properties(libprotobuf-lite libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+  set_target_properties(libprotobuf libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
   set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc js_embed PROPERTIES FOLDER protobufs)
 endif()
 add_subdirectory("${log4cpp_DIR}" "${log4cpp_DIR}-build")
@@ -58,40 +57,11 @@ add_subdirectory(cdm)
 add_subdirectory(engine)
 add_subdirectory(test)
 add_subdirectory(sdk)
+add_subdirectory(verification)
+include(${CMAKE_CURRENT_SOURCE_DIR}/EngineJNI.cmake)
 
-# TODO put a USE_JAVA option in (you would get no JNI, jar, and test suite, but maybe you just want the C++ SDK)
-# Java Compiling
-
-file(GLOB_RECURSE JAVA_FILES 
-  "${CMAKE_BINARY_DIR}/schema/java/*.java"
-  "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/*.java"
-  "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
-  "${CMAKE_SOURCE_DIR}/engine/java/*.java"
-  "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"
-  "${CMAKE_SOURCE_DIR}/test/engine/java/*.java"
-  "${CMAKE_SOURCE_DIR}/test/driver/java/*.java")
-add_jar(PulseJava ${JAVA_FILES}
-    INCLUDE_JARS 
-      ${CMAKE_SOURCE_DIR}/jar/jcommon-1.0.16.jar
-      ${CMAKE_SOURCE_DIR}/jar/jdom-2.0.2.jar
-      ${CMAKE_SOURCE_DIR}/jar/jfreechart-1.0.13.jar
-      ${CMAKE_SOURCE_DIR}/jar/guava-11.0.2.jar
-      ${CMAKE_SOURCE_DIR}/jar/log4j-1.2.17.jar
-      ${CMAKE_SOURCE_DIR}/jar/poi-3.13-20150929.jar
-      ${CMAKE_SOURCE_DIR}/jar/poi-ooxml-3.13-20150929.jar
-      ${CMAKE_SOURCE_DIR}/jar/poi-ooxml-schemas-3.13-20150929.jar
-      ${CMAKE_SOURCE_DIR}/jar/pdfbox-2.0.0-RC3.jar
-      ${CMAKE_SOURCE_DIR}/jar/reflections-0.9.9-RC1-uberjar.jar
-      ${CMAKE_SOURCE_DIR}/jar/zip4j-1.3.1.jar
-    OUTPUT_NAME Pulse)
-get_target_property(_jarFile PulseJava JAR_FILE)
-add_custom_command(TARGET PulseJava POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}
-    COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${INSTALL_BIN})
-install_jar(PulseJava ${INSTALL_BIN})
-
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
 set(DATA_ROOT ${CMAKE_SOURCE_DIR})
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_BINARY_DIR}/run.cmake @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/run.cmake DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_BINARY_DIR}/run.config @ONLY)
@@ -106,7 +76,7 @@ add_test(NAME runCDMUnitTests
   COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=CDMUnitTests -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
 add_test(NAME runBGEUnitTests
-  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=BGEUnitTests -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
+  COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=EngineUnitTests -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake
   WORKING_DIRECTORY ${INSTALL_BIN})
 add_test(NAME runSystemValidation
   COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=SystemValidation -P ${CMAKE_BINARY_DIR}/install/bin/run.cmake

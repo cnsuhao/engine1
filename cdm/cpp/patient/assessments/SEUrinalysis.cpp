@@ -67,7 +67,14 @@ void SEUrinalysis::Clear()
   SAFE_DELETE(m_Microscopic);
 }
 
-void SEUrinalysis::SaveFile(const std::string& filename)
+std::string SEUrinalysis::Save() const
+{
+  std::string content;
+  cdm::UrinalysisData* src = SEUrinalysis::Unload(*this);
+  google::protobuf::TextFormat::PrintToString(*src, &content);
+  return content;
+}
+void SEUrinalysis::SaveFile(const std::string& filename) const
 {
   std::string content;
   cdm::UrinalysisData* src = SEUrinalysis::Unload(*this);

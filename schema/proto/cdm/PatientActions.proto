@@ -6,6 +6,7 @@ import "cdm/Properties.proto";
 import "cdm/Substance.proto";
 import "cdm/PatientNutrition.proto";
 import "cdm/Actions.proto";
+import "cdm/PatientAssessments.proto";
 
 message AnyPatientActionData
 {
@@ -45,16 +46,8 @@ message PatientActionData
 
 message PatientAssessmentRequestData
 {
-  enum eType
-  {
-    CompleteBloodCount                                                      = 0;
-    ComprehensiveMetabolicPanel                                             = 1;
-    PulmonaryFunctionTest                                                   = 2;
-    Urinalysis                                                              = 3;
-  }
-  
   PatientActionData                         PatientAction                   = 1;
-  eType                                     type                            = 2;
+  PatientAssessmentData.eType               type                            = 2;
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */

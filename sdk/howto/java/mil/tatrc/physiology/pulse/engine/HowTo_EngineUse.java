@@ -13,6 +13,7 @@ package mil.tatrc.physiology.pulse.engine;
 
 import java.util.*;
 
+import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
 import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
@@ -208,7 +209,14 @@ public class HowTo_EngineUse
    // Let's get an assessment from the engine
    // Assessments can involve extra calculation to generate the data necessary for the specified assessment
    SECompleteBloodCount cbc = new SECompleteBloodCount();
-   pe.getPatientAssessment(cbc);
+   try
+   {
+  	 pe.getPatientAssessment(cbc);
+   }
+   catch(ParseException ex)
+   {
+  	 Log.error("Failed to get patient assessment",ex);
+   }
    Log.info("Red Blood Count "+cbc.getRedBloodCellCount());
    Log.info("White Blood Count "+cbc.getWhiteBloodCellCount());
    

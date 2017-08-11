@@ -70,13 +70,13 @@ cdm::HistogramFractionVsLengthData* SEHistogramFractionVsLength::Unload(const SE
 }
 void SEHistogramFractionVsLength::Serialize(const SEHistogramFractionVsLength& src, cdm::HistogramFractionVsLengthData& dst)
 {
-  for (unsigned int i = 0; i<src.m_Dependent.size(); i++)
+  for (size_t i = 0; i<src.m_Dependent.size(); i++)
   {
     dst.mutable_histogramfractionvslength()->mutable_histogram()->mutable_dependent()->add_value(src.m_Dependent[i]);
     dst.mutable_histogramfractionvslength()->mutable_histogram()->mutable_independent()->add_value(src.m_Independent[i]);
   }
 }
-double SEHistogramFractionVsLength::GetLengthValue(unsigned int index, const LengthUnit& unit) const
+double SEHistogramFractionVsLength::GetLengthValue(size_t index, const LengthUnit& unit) const
 {
   if (m_LengthUnit == nullptr)
     throw CommonDataModelException("No length units have been set");
@@ -101,7 +101,7 @@ void SEHistogramFractionVsLength::SetLengthUnit(const LengthUnit& unit)
   m_LengthUnit = &unit;
 }
 
-double SEHistogramFractionVsLength::GetFractionValue(unsigned int index) const
+double SEHistogramFractionVsLength::GetFractionValue(size_t index) const
 {
   if (index >= m_Dependent.size())
     throw CommonDataModelException("Dependent index out of bounds");

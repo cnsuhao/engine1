@@ -11,7 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "bind/cdm/Engine.pb.h"
+
+CDM_BIND_DECL(AutoSerializationData)
 #include "properties/SEScalarTime.h"
 
 class CDM_DECL SEAutoSerialization : public Loggable

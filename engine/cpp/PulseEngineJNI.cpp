@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "PulseEngineJNI.h"
-#include "Controller/Scenario/PulseScenario.h"
-#include "Controller/Scenario/PulseScenarioExec.h"
+#include "PulseScenario.h"
+#include "Controller/ScenarioExec.h"
 #include "scenario/SEDataRequest.h"
 #include "scenario/SEAction.h"
 #include "scenario/SECondition.h"
@@ -21,6 +21,10 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEUrinalysis.h"
+
+#include "bind/cdm/Patient.pb.h"
+#include "bind/cdm/AnesthesiaMachine.pb.h"
+#include <google/protobuf/text_format.h>
 
 #include "EngineTest.h"
 
@@ -79,9 +83,9 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_native
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenarioXML, jstring outputFile, double updateFreq_s)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenario, jstring outputFile, double updateFreq_s)
 {
-  const char* sceXML = env->GetStringUTFChars(scenarioXML, JNI_FALSE);
+  const char* sceStr = env->GetStringUTFChars(scenario, JNI_FALSE);
   const char* dataF = env->GetStringUTFChars(outputFile,JNI_FALSE);
   try
   {
@@ -91,23 +95,22 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_
     engineJNI->jniObj = obj;
     // Load up the pba and run the scenario
     PulseScenario sce(engineJNI->eng->GetSubstanceManager());
-    std::istringstream istr(sceXML);
-    xml_schema::properties properties;
-    properties.schema_location("uri:/mil/tatrc/physiology/datamodel","./xsd/PulseDataModel.xsd");
-    sce.Load(*CDM::Scenario(istr, 0, properties));
-    engineJNI->exec = new PulseScenarioExec(*engineJNI->eng);
-    engineJNI->exec->Execute(sce, dataF, updateFreq_s<=0?nullptr:engineJNI);
+    if (!sce.Load(sceStr))
+    {
+      std::cerr << "The scenario string is bad " << std::endl;
+    }
+    else
+    {
+      engineJNI->exec = new PulseScenarioExec(*engineJNI->eng);
+      engineJNI->exec->Execute(sce, dataF, updateFreq_s <= 0 ? nullptr : engineJNI);
+    }
     SAFE_DELETE(engineJNI->exec);
   }
-  catch (const xml_schema::exception& e)
+  catch (...)
   {
-    std::cerr << e << std::endl;
-  }  
-  catch(std::exception& ex)
-  {
-    std::cerr<<"TODO Handle this Failure : "<<ex.what()<<std::endl;
+    std::cerr << "Unable to execute scenario " << std::endl;
   }
-  env->ReleaseStringUTFChars(scenarioXML, sceXML);
+  env->ReleaseStringUTFChars(scenario, sceStr);
   env->ReleaseStringUTFChars(outputFile,dataF);
 }
 
@@ -122,22 +125,28 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeLoadState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jdouble simTime_s, jstring dataRequestsXML)
+JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeLoadState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jdouble simTime_s, jstring dataRequests)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
-  const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
+  
 
-  const char* drXML = env->GetStringUTFChars(dataRequestsXML, JNI_FALSE);
   // Load up the data requests
-  xml_schema::properties properties;
-  properties.schema_location("uri:/mil/tatrc/physiology/datamodel", "./xsd/PulseDataModel.xsd");
-  std::istringstream drstr(drXML);
-  std::unique_ptr<CDM::DataRequestsData> drData(CDM::DataRequests(drstr, 0, properties));
-  engineJNI->eng->GetEngineTrack()->GetDataRequestManager().Load(*drData, engineJNI->eng->GetSubstanceManager());
-  // Ok, crank 'er up!
+  if (dataRequests != nullptr)
+  {
+    const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
+    if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().Load(drmStr, engineJNI->eng->GetSubstanceManager()))
+    {
+      env->ReleaseStringUTFChars(dataRequests, drmStr);
+      std::cerr << "Unable to load datarequest string" << std::endl;
+      return false;
+    }
+    env->ReleaseStringUTFChars(dataRequests, drmStr);
+  }
 
+  // Ok, crank 'er up!
+  const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
   jboolean bRet;
   SEScalarTime simTime;
   if (simTime_s >= 0)
@@ -153,7 +162,6 @@ JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_na
   engineJNI->eng->SetEventHandler(engineJNI);
 
   env->ReleaseStringUTFChars(stateFilename, pStateFilename);
-  env->ReleaseStringUTFChars(dataRequestsXML, drXML);
   return bRet;
 }
 
@@ -164,75 +172,85 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nat
   engineJNI->jniEnv = env; 
   engineJNI->jniObj = obj;
   const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  std::unique_ptr<CDM::PulseStateData> data((CDM::PulseStateData*)(engineJNI->eng->SaveState(pStateFilename).release()));
+  std::unique_ptr<google::protobuf::Message> data = engineJNI->eng->SaveState(pStateFilename);
   env->ReleaseStringUTFChars(stateFilename, pStateFilename);
 
-  xml_schema::namespace_infomap map;
-  map[""].name = "uri:/mil/tatrc/phsyiology/datamodel";
-  map[""].schema = "./xsd/PulseDataModel.xsd";
-
-  data->contentVersion(BGE::Version);
-  std::stringstream stream;
-  PulseState(stream, *data, map);
-  jstring stateXML = env->NewStringUTF(stream.str().c_str());
-  env->ReleaseStringUTFChars(stateFilename, pStateFilename);
+  std::string content;
+  google::protobuf::TextFormat::PrintToString(*data, &content);
+  jstring stateXML = env->NewStringUTF(content.c_str());
   return stateXML;
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patientXML, jstring conditionsXML, jstring dataRequestsXML)
+JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient, jstring conditions, jstring dataRequests)
 {
   bool ret = false;
-  const char* pXML = env->GetStringUTFChars(patientXML, JNI_FALSE);
-  const char* cXML = nullptr;
-  if(conditionsXML != nullptr)
-    cXML = env->GetStringUTFChars(conditionsXML, JNI_FALSE);
-  const char* drXML = env->GetStringUTFChars(dataRequestsXML, JNI_FALSE);
+  
+  
+  const char* drStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
   try
   {
     PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
     engineJNI->jniEnv = env;
     engineJNI->jniObj = obj;
-    // Schema location
-    xml_schema::properties properties;
-    properties.schema_location("uri:/mil/tatrc/physiology/datamodel", "./xsd/PulseDataModel.xsd");
+
     // Load up the patient
-    SEPatient patient(nullptr);
-    std::istringstream pstr(pXML);    
-    patient.Load(*CDM::Patient(pstr, 0, properties));
-    // Load up the conditions
-    std::vector<const SECondition*> conditions;
-    if (cXML != nullptr)
+    const char* pStr = env->GetStringUTFChars(patient, JNI_FALSE);
+    SEPatient p(nullptr);
+    if (!p.Load(pStr))
     {
-      std::istringstream cstr(cXML);
-      std::unique_ptr<CDM::ConditionListData> cList(CDM::ConditionList(cstr, 0, properties));
-      for (unsigned int i = 0; i < cList->Condition().size(); i++)
+      env->ReleaseStringUTFChars(patient, pStr);
+      std::cerr << "Unable to load patient string" << std::endl;
+      return false;
+    }
+    env->ReleaseStringUTFChars(patient, pStr);
+
+    // Load up the conditions
+    std::vector<const SECondition*> c;
+    const char* cStr = nullptr;
+    if (conditions != nullptr)
+    {
+      cStr = env->GetStringUTFChars(conditions, JNI_FALSE);
+      cdm::ConditionListData cList;
+      if (!google::protobuf::TextFormat::ParseFromString(cStr, &cList))
       {
-        conditions.push_back(SECondition::newFromBind(cList->Condition()[i], engineJNI->eng->GetSubstanceManager()));
+        env->ReleaseStringUTFChars(conditions, cStr);
+        return false;
+      }
+      env->ReleaseStringUTFChars(conditions, cStr);
+
+      
+      for (int i = 0; i < cList.anycondition_size(); i++)
+      {
+        c.push_back(SECondition::Load(cList.anycondition()[i], engineJNI->eng->GetSubstanceManager()));
       }
     }
+
     // Load up the data requests
-    std::istringstream drstr(drXML);
-    std::unique_ptr<CDM::DataRequestsData> drData(CDM::DataRequests(drstr, 0, properties));
-    engineJNI->eng->GetEngineTrack()->GetDataRequestManager().Load(*drData, engineJNI->eng->GetSubstanceManager());
+    if (dataRequests != nullptr)
+    {
+      const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
+      if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().Load(drmStr, engineJNI->eng->GetSubstanceManager()))
+      {
+        env->ReleaseStringUTFChars(dataRequests, drmStr);
+        std::cerr << "Unable to load datarequest string" << std::endl;
+        return false;
+      }
+      env->ReleaseStringUTFChars(dataRequests, drmStr);
+    }
+
     // Ok, crank 'er up!
-    ret = engineJNI->eng->InitializeEngine(patient, &conditions);
+    ret = engineJNI->eng->InitializeEngine(p, &c);
     engineJNI->eng->SetEventHandler(engineJNI);
-    DELETE_VECTOR(conditions);// Clean up the conditions, the engine makes copies of them
+    DELETE_VECTOR(c);// Clean up the conditions, the engine makes copies of them
   }
-  catch (const xml_schema::exception& e)
-  {
-    ret = false;
-    std::cerr << e << std::endl;
-  }
+
   catch (std::exception& ex)
   {
     ret = false;
     std::cerr << "TODO Handle this Failure : " << ex.what() << std::endl;
   }
-  env->ReleaseStringUTFChars(patientXML, pXML);
-  env->ReleaseStringUTFChars(conditionsXML, cXML);
-  env->ReleaseStringUTFChars(dataRequestsXML, drXML);
+  
   return ret;
 }
 
@@ -305,25 +323,29 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_native
 }
 
 extern "C"
-JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeProcessActions(JNIEnv *env, jobject obj, jlong ptr, jstring actionsXML)
+JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeProcessActions(JNIEnv *env, jobject obj, jlong ptr, jstring actions)
 {
   bool success = true;
-  if (actionsXML == nullptr)
+  if (actions == nullptr)
     return success;
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
-  const char* aXML = env->GetStringUTFChars(actionsXML, JNI_FALSE);
-  std::istringstream astr(aXML);
-  // Schema location
-  xml_schema::properties properties;
-  properties.schema_location("uri:/mil/tatrc/physiology/datamodel", "./xsd/PulseDataModel.xsd");
-  std::unique_ptr<CDM::ActionListData> aList(CDM::ActionList(astr, 0, properties));
+  const char* aStr = env->GetStringUTFChars(actions, JNI_FALSE);
+
+  cdm::ActionListData aList;
+  if (!google::protobuf::TextFormat::ParseFromString(aStr, &aList))
+  {
+    env->ReleaseStringUTFChars(actions, aStr);
+    return false;
+  }
+  env->ReleaseStringUTFChars(actions, aStr);
+
   try
   {
-    for (unsigned int i = 0; i < aList->Action().size(); i++)
+    for (int i = 0; i < aList.anyaction_size(); i++)
     {
-      SEAction* a = SEAction::newFromBind(aList->Action()[i], engineJNI->eng->GetSubstanceManager());
+      SEAction* a = SEAction::Load(aList.anyaction()[i], engineJNI->eng->GetSubstanceManager());
       if (!engineJNI->eng->ProcessAction(*a))
         success = false;
       SAFE_DELETE(a);
@@ -343,7 +365,6 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_native
   {
     success = false;
   }
-  env->ReleaseStringUTFChars(actionsXML, aXML);
 
   return success;
 }
@@ -357,61 +378,49 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nat
   
   jstring assessmentXML;
 
-  xml_schema::namespace_infomap map;
-  map[""].name = "uri:/mil/tatrc/phsyiology/datamodel";
-  map[""].schema = "./xsd/PulseDataModel.xsd";
-
-  std::stringstream stream;
+  std::string stream;
   switch (type)
   {
     case 0:// PFT
     {
       SEPulmonaryFunctionTest pft(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(pft);
-      std::unique_ptr<CDM::PulmonaryFunctionTestData> unloaded(pft.Unload());
-      unloaded->contentVersion(BGE::Version);
-      PulmonaryFunctionTest(stream, *unloaded, map);
+      stream = pft.Save();
       break;
     }
     case 1: // CBC
     {
       SECompleteBloodCount cbc(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(cbc);
-      std::unique_ptr<CDM::CompleteBloodCountData> unloaded(cbc.Unload());
-      unloaded->contentVersion(BGE::Version);
-      CompleteBloodCount(stream, *unloaded, map);
+      stream = cbc.Save();
       break;
     }
     case 2: // CMP
     {
       SEComprehensiveMetabolicPanel cmp(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(cmp);
-      std::unique_ptr<CDM::ComprehensiveMetabolicPanelData> unloaded(cmp.Unload());
-      unloaded->contentVersion(BGE::Version);
-      ComprehensiveMetabolicPanel(stream, *unloaded, map);
+      stream = cmp.Save();
       break;
     }
     case 3: // U
     {
       SEUrinalysis u(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(u);
-      std::unique_ptr<CDM::UrinalysisData> unloaded(u.Unload());
-      unloaded->contentVersion(BGE::Version);
-      Urinalysis(stream, *unloaded, map);
+      stream = u.Save();
       break;
     }
     default:
-      stream << "Unsupported assessment type";
+      stream = "Unsupported assessment type";
   };
 
-  assessmentXML = env->NewStringUTF(stream.str().c_str());
+  assessmentXML = env->NewStringUTF(stream.c_str());
   return assessmentXML;
 }
 
 PulseEngineJNI::PulseEngineJNI(const std::string& logFile) : SEEventHandler(nullptr)
 {// No logger needed for the event handler, at this point
   Reset(); 
-  eng = CreatePulseEngine(logFile);
+  eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine(logFile).release());
   eng->GetLogger()->SetForward(this);
   eng->GetLogger()->LogToConsole(false);
   trk=&eng->GetEngineTracker()->GetDataTrack();

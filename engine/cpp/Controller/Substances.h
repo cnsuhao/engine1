@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "substance/SESubstanceManager.h"
-
 class SELiquidCompartment;
 class SETissueCompartment;
 
@@ -42,7 +41,7 @@ class PULSE_DECL PulseSubstances : public SESubstanceManager
 {
   friend class PulseEngineTest;
 public:
-  PulseSubstances(Pulse& data);
+  PulseSubstances(PulseController& data);
   virtual ~PulseSubstances() = default;
 
   virtual void Clear();
@@ -141,6 +140,6 @@ protected:
 
   std::map<SESubstance*, SizeIndependentDepositionEfficencyCoefficient*> m_SIDECoefficients;
 
-  Pulse&     m_data;
+  PulseController&     m_data;
 };
 

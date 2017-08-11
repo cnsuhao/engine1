@@ -28,7 +28,8 @@ public:
 
   virtual void Clear();
 
-  virtual void SaveFile(const std::string& filename) = 0;
+  virtual std::string Save() const = 0;
+  virtual void SaveFile(const std::string& filename) const = 0;
 
 protected:
   static void Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst);

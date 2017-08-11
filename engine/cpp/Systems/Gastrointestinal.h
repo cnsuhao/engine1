@@ -11,9 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SEGastrointestinalSystem.h"
+#include "bind/engine/EnginePhysiology.pb.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolumePerTime.h"
 
@@ -22,11 +22,11 @@ specific language governing permissions and limitations under the License.
 */
 class PULSE_DECL Gastrointestinal : public SEGastrointestinalSystem, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  Gastrointestinal(Pulse& bg);
-  Pulse& m_data;
+  Gastrointestinal(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~Gastrointestinal();

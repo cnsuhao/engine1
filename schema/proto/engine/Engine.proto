@@ -2,15 +2,7 @@ syntax = "proto3";
 package pulse;
 option java_package = "com.kitware.physiology.pulse";
 
-import "cdm/Patient.proto";
-import "cdm/Properties.proto";
 import "cdm/Scenario.proto";
-import "cdm/Substance.proto";
-import "cdm/Compartment.proto";
-import "cdm/Circuit.proto";
-import "engine/EnginePhysiology.proto";
-import "engine/EngineEnvironment.proto";
-import "engine/EngineEquipment.proto";
 import "engine/EngineConfiguration.proto";
 
 enum eAirwayMode
@@ -20,37 +12,6 @@ enum eAirwayMode
     Inhaler                                                  = 2;
     MechanicalVentilator                                     = 3;
   }
-
-message StateData
-{
-  eAirwayMode                             AirwayMode         = 1;
-  cdm.eSwitch                             Intubation         = 2;
-  cdm.ScalarTimeData                      SimulationTime     = 3;
-  cdm.PatientData                         Patient            = 4;
-  repeated cdm.AnyConditionData           Condition          = 5;
-  repeated cdm.AnyActionData              ActiveAction       = 6;
-  BloodChemistrySystemData                BloodChemistry     = 7;
-  CardiovascularSystemData                Cardiovascular     = 8;
-  DrugSystemData                          Drug               = 9;
-  EndocrineSystemData                     Endocrine          = 10;
-  EnergySystemData                        Energy             = 11;
-  GastrointestinalSystemData              Gastrointestinal   = 12;
-  HepaticSystemData                       Hepatic            = 13;
-  NervousSystemData                       Nervous            = 14;
-  RenalSystemData                         Renal              = 15;
-  RespiratorySystemData                   Respiratory        = 16;
-  TissueSystemData                        Tissue             = 17;
-  EnvironmentData                         Environment        = 18;
-  AnesthesiaMachineData                   AnesthesiaMachine  = 19;
-  ElectroCardioGramData                   ElectroCardioGram  = 20;
-  InhalerData                             Inhaler            = 21;
-  cdm.CompartmentManagerData              CompartmentManager = 22;
-  cdm.CircuitManagerData                  CircuitManager     = 23;
-  repeated cdm.SubstanceData              ActiveSubstance    = 24;
-  repeated cdm.SubstanceData.CompoundData ActiveCompound     = 25;
-  ConfigurationData                       Configuration      = 26;
-  cdm.DataRequestManagerData              DataRequestManager = 27;
-}
 
 message ScenarioData
 {

@@ -11,8 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
+#include "bind/engine/EnginePhysiology.pb.h"
 #include "utils/RunningAverage.h"
 class SECompleteBloodCount;
 class SEComprehensiveMetabolicPanel;
@@ -27,11 +28,11 @@ class SEComprehensiveMetabolicPanel;
  */           
 class PULSE_DECL BloodChemistry : public SEBloodChemistrySystem, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  BloodChemistry(Pulse& bg);
-  Pulse& m_data;
+  BloodChemistry(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~BloodChemistry();

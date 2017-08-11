@@ -11,8 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-#include "../Controller/PulseSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SETissueSystem.h"
+#include "bind/engine/EnginePhysiology.pb.h"
 
 /**
  * @brief This class encapsulates logic necessary to connect independent systems together.
@@ -23,11 +24,11 @@ specific language governing permissions and limitations under the License.
  */  
 class PULSE_DECL Tissue : public SETissueSystem, public PulseSystem
 {
-  friend Pulse;
+  friend PulseController;
   friend class PulseEngineTest;
 protected:
-  Tissue(Pulse& data);
-  Pulse& m_data;
+  Tissue(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~Tissue();

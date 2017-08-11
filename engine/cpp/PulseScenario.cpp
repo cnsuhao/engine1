@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "stdafx.h"
-#include "Controller/Scenario/PulseScenario.h"
+#include "PulseScenario.h"
 #include <google/protobuf/text_format.h>
 
 PulseScenario::PulseScenario(SESubstanceManager& subMgr) : SEScenario(subMgr)
@@ -76,7 +76,24 @@ bool PulseScenario::LoadFile(const std::string& scenarioFile)
   //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
   //src.ParseFromIstream(&binary_istream);
 }
+bool PulseScenario::Load(const std::string& str)
+{
+  pulse::ScenarioData src;
+  if (google::protobuf::TextFormat::ParseFromString(str, &src))
+    PulseScenario::Load(src, *this);
+  else // Let's see if this is a cdm scenario
+  {
+    cdm::ScenarioData sce;
+    if (!google::protobuf::TextFormat::ParseFromString(str, &sce))
+      return false;//nope
+    SEScenario::Load(sce, *this);
+  }
+  return true;
 
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
+}
 
 bool PulseScenario::HasConfiguration() const
 {

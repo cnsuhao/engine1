@@ -11,10 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-class Pulse;
+class PulseController;
 class SEGasCompartmentGraph;
 class SELiquidCompartmentGraph;
-
 #include "compartment/SECompartmentManager.h"
 
 /**
@@ -25,7 +24,7 @@ class PULSE_DECL PulseCompartments : public SECompartmentManager
   friend class PulseSubstances;
 public:
 
-  PulseCompartments(Pulse& data);
+  PulseCompartments(PulseController& data);
   virtual ~PulseCompartments();
 
   void Clear();
@@ -96,7 +95,7 @@ protected:
   virtual bool AllowGasSubstance(SESubstance& s, SEGasCompartment& cmpt) const;
   virtual bool AllowLiquidSubstance(SESubstance& s, SELiquidCompartment& cmpt) const;
 
-  Pulse& m_data;
+  PulseController& m_data;
 
   bool m_UpdateActiveAirwayGraph;
   bool m_UpdateActiveAerosolGraph;

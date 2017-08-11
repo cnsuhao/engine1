@@ -51,9 +51,9 @@ message RunningAverageData
 /** @brief A unitless scalar. */
 message ScalarData 
 {
-  double Value     = 1;
-  string Unit      = 2;
-  bool   ReadOnly  = 3;
+  double Value       = 1;
+  string Unit        = 2;
+  bool   ReadOnly    = 3;
 }
 
 /** Various Scalar Types */

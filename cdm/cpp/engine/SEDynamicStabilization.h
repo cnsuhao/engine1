@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
+CDM_BIND_DECL(DynamicStabilizationData)
 #include "engine/SEEngineStabilization.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 

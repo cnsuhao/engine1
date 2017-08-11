@@ -24,7 +24,8 @@ public:
 
   virtual void Clear();
 
-  virtual void SaveFile(const std::string& filename);
+  virtual std::string Save() const;
+  virtual void SaveFile(const std::string& filename) const;
 
   static void Load(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst);
   static cdm::PulmonaryFunctionTestData* Unload(const SEPulmonaryFunctionTest& src);

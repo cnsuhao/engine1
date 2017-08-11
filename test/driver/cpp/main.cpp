@@ -37,10 +37,10 @@ int main(int argc, char* argv[])
       // Pulse Tests //
       ////////////////////
 
-      peTest.CardiovascularCircuitAndTransportTest(peDir);
+      //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndTissueCircuitAndTransportTest(peDir);
-      //peTest.CardiovascularTissueAndRenalCircuitAndTransportTest(peDir);
+      peTest.CardiovascularTissueAndRenalCircuitAndTransportTest(peDir);
       //peTest.CardiovascularBloodGasesTest(peDir);
       //peTest.TuneCardiovascularCircuitTest(peDir);
 

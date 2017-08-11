@@ -36,11 +36,11 @@ public:
   virtual size_t                        NumberOfBins() const;
   virtual size_t                        NumberOfBoundaries() const;
   
-  double                                GetDependentValue(unsigned int index) const;
+  double                                GetDependentValue(size_t index) const;
   std::vector<double>&                  GetDependent();      
   const std::vector<double>&            GetDependent() const;
 
-  double                                GetIndependentValue(unsigned int index) const;
+  double                                GetIndependentValue(size_t index) const;
   std::vector<double>&                  GetIndependent();
   const std::vector<double>&            GetIndependent() const;
   

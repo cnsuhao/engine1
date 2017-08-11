@@ -66,19 +66,19 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   DataTrack outTrk;
   std::ofstream file;
 
-  Pulse bg(sTestDirectory + "\\" + tName + ".log");
-  bg.GetLogger()->Info("Running " + tName);
-  bg.GetPatient().LoadFile("./patients/StandardMale.pba");
-  bg.SetupPatient();
+  PulseController pc(sTestDirectory + "\\" + tName + ".log");
+  pc.GetLogger()->Info("Running " + tName);
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
 
   //Renal and Tissue are on
-  bg.m_Config->EnableRenal(cdm::eSwitch::On);
-  bg.m_Config->EnableTissue(cdm::eSwitch::On);
-  bg.CreateCircuitsAndCompartments();
+  pc.m_Config->EnableRenal(cdm::eSwitch::On);
+  pc.m_Config->EnableTissue(cdm::eSwitch::On);
+  pc.CreateCircuitsAndCompartments();
 
-  Cardiovascular& cv = (Cardiovascular&)bg.GetCardiovascular();
+  Cardiovascular& cv = (Cardiovascular&)pc.GetCardiovascular();
   cv.m_TuneCircuit = true;
-  SEFluidCircuit& cvCircuit = bg.GetCircuits().GetActiveCardiovascularCircuit();
+  SEFluidCircuit& cvCircuit = pc.GetCircuits().GetActiveCardiovascularCircuit();
 
   cv.Initialize();
 
@@ -89,10 +89,10 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   double usResistanceMultiplier = 1;
   double complianceMultiplier = 1;  //Can change this if we find supporting sources, but note that it will increase "spikiness" of plots
 
-  SEFluidCircuitNode* brain = cvCircuit.GetNode(BGE::CardiovascularNode::Brain1);
-  SEFluidCircuitPath* brainResistanceDownstream = cvCircuit.GetPath(BGE::CardiovascularPath::Brain1ToBrain2);
-  SEFluidCircuitPath* brainResistanceUpstream = cvCircuit.GetPath(BGE::CardiovascularPath::Aorta1ToBrain1);
-  SEFluidCircuitPath* brainCompliance = cvCircuit.GetPath(BGE::CardiovascularPath::Brain1ToGround);
+  SEFluidCircuitNode* brain = cvCircuit.GetNode(pulse::CardiovascularNode::Brain1);
+  SEFluidCircuitPath* brainResistanceDownstream = cvCircuit.GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
+  SEFluidCircuitPath* brainResistanceUpstream = cvCircuit.GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
+  SEFluidCircuitPath* brainCompliance = cvCircuit.GetPath(pulse::CardiovascularPath::Brain1ToGround);
 
   double map_mmHg = cv.GetMeanArterialPressure(PressureUnit::mmHg);
   double cvp_mmHg = cv.GetCentralVenousPressure(PressureUnit::mmHg);
@@ -101,9 +101,9 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 
   std::stringstream ss;
   ss << "Downstream brain resistance multiplier is: " << dsResistanceMultiplier << ". Upstream resistance multiplier is: " << usResistanceMultiplier;
-  bg.GetLogger()->Info(ss);
+  pc.GetLogger()->Info(ss);
 
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, bg.GetLogger());
+  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, pc.GetLogger());
 
   for (unsigned int i = 0; i < (testTime_s / timeStep_s); i++)
   {

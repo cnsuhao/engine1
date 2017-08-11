@@ -121,9 +121,9 @@ public:
   }
 };
 
-SaturationCalculator::SaturationCalculator(Pulse& bg) : Loggable(bg.GetLogger()), m_data(bg)
+SaturationCalculator::SaturationCalculator(PulseController& data) : Loggable(data.GetLogger()), m_data(data)
 {
-  Initialize(bg.GetSubstances());
+  Initialize(data.GetSubstances());
 }
 
 void SaturationCalculator::Initialize(SESubstanceManager& substances)

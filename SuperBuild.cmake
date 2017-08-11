@@ -2,7 +2,7 @@ include(ExternalProject)
 include(CMakeDetermineSystem)
 project(OuterBuild)
 
-set(BUILD_SHARED_LIBS ON)
+set(BUILD_SHARED_LIBS OFF)
 if(MSVC OR XCode)
 # For multi configuration IDE environments,
 # these dependent libs only need to be built in release
@@ -82,21 +82,22 @@ list(APPEND CMAKE_PREFIX_PATH ${log4cpp_INSTALL})
 ###################################################
 
 message( STATUS "External project - protobuf" )
-set(protobuf_VERSION "3.3.2" )
+set(protobuf_VERSION "3.4.0rc2" )
+set(protobuf_MD5 "ca583ee8bfc9e23b257e8724d5aae180" )
 set(protobuf_DIR "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 set(protobuf_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/protobuf/install")
 
 ExternalProject_Add( protobuf
-  PREFIX protobuf
-  GIT_REPOSITORY "https://github.com/google/protobuf.git"
-  GIT_SHALLOW 1
-  GIT_TAG "v3.3.2"
-  SOURCE_SUBDIR ./cmake
+  PREFIX protobuf 
+  URL "https://github.com/google/protobuf/archive/v3.4.0rc2.zip"
+  URL_MD5 ${protobuf_MD5}
+  DOWNLOAD_DIR ${protobuf_DIR}
   INSTALL_DIR "${protobuf_INSTALL}"
+  SOURCE_SUBDIR ./cmake
   CMAKE_ARGS 
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
-    -DBUILD_SHARED_LIBS:BOOL=ON#${BUILD_SHARED_LIBS}
+    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_INSTALL_PREFIX:STRING=${protobuf_INSTALL}
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
@@ -117,76 +118,6 @@ list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
 
 install(DIRECTORY ${protobuf_INSTALL}/include
         DESTINATION ${CMAKE_INSTALL_PREFIX})
-
-if(WIN32)
-  if(MSVC)
-    if(BUILD_SHARED_LIBS)
-      install(FILES "${protobuf_DIR}-build/Release/libprotobuf.dll"
-        CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})  
-      install(FILES "${protobuf_DIR}-build/Debug/libprotobufd.dll"
-        CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-      install(FILES "${protobuf_DIR}-build/RelWithDebInfo/libprotobuf.dll"
-        CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-    endif()
-
-    install(FILES "${protobuf_DIR}-build/Release/libprotobuf.lib"
-      CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
-    install(FILES "${protobuf_DIR}-build/Debug/libprotobufd.lib"
-      CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
-    install(FILES "${protobuf_DIR}-build/RelWithDebInfo/libprotobuf.lib"
-      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
-  else()
-    if(BUILD_SHARED_LIBS)
-      install(FILES ${protobuf_INSTALL}/bin/libprotobuf.dll
-        CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})  
-      install(FILES ${protobuf_INSTALL}/bin/libprotobufd.dll
-        CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-      install(FILES ${protobuf_INSTALL}/bin/libprotobuf.dll
-        CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-    endif()
-
-    install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
-      CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/lib/libprotobufd.lib
-      CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
-    install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
-      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
-  endif()
-elseif(APPLE)
-
-  if(BUILD_SHARED_LIBS)
-    install(FILES ${protobuf_INSTALL}/bin/libprotobuf.dll
-      CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})  
-    install(FILES ${protobuf_INSTALL}/bin/libprotobufd.dll
-      CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-    install(FILES ${protobuf_INSTALL}/bin/libprotobuf.dll
-      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-  endif()
-    
-  install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
-    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libprotobufd.lib
-    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
-    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
-
-else()
-  if(BUILD_SHARED_LIBS)
-    install(FILES ${protobuf_INSTALL}/bin/libprotobuf.dll
-      CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})  
-    install(FILES ${protobuf_INSTALL}/bin/libprotobufd.dll
-      CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-    install(FILES ${protobuf_INSTALL}/bin/libprotobuf.dll
-      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-  endif()
-  # Install Libs
-  install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
-    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})  
-  install(FILES ${xerces_INSTALL}/lib/libprotobufd.lib
-    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})  
-  install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
-    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
-endif()
 
 message(STATUS "protobuf is here : ${protobuf_DIR}" )
 

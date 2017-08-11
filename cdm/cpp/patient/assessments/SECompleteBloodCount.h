@@ -23,7 +23,8 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual void SaveFile(const std::string& filename);
+  virtual std::string Save() const;
+  virtual void SaveFile(const std::string& filename) const;
 
   static void Load(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst);
   static cdm::CompleteBloodCountData* Unload(const SECompleteBloodCount& src);

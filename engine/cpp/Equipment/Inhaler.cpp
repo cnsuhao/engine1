@@ -30,7 +30,7 @@ Constructors
 ========================
 */
 
-Inhaler::Inhaler(Pulse& bg) : SEInhaler(bg.GetSubstances()), m_data(bg)
+Inhaler::Inhaler(PulseController& data) : SEInhaler(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -86,9 +86,9 @@ void Inhaler::SetUp()
   // Time step - used by inhaler timer
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
 
-  m_AmbientEnv = m_data.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
-  m_Mouthpiece = m_data.GetCompartments().GetGasCompartment(BGE::InhalerCompartment::Mouthpiece);
-  m_AerosolMouthpiece = m_data.GetCompartments().GetLiquidCompartment(BGE::InhalerCompartment::Mouthpiece);
+  m_AmbientEnv = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+  m_Mouthpiece = m_data.GetCompartments().GetGasCompartment(pulse::InhalerCompartment::Mouthpiece);
+  m_AerosolMouthpiece = m_data.GetCompartments().GetLiquidCompartment(pulse::InhalerCompartment::Mouthpiece);
  
   if (m_State == cdm::eSwitch::On)
   {

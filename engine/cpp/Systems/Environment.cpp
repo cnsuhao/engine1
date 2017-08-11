@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarLength.h"
 
-Environment::Environment(Pulse& bg) : SEEnvironment(bg.GetSubstances()), m_data(bg)
+Environment::Environment(PulseController& data) : SEEnvironment(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -135,24 +135,24 @@ void Environment::SetUp()
   //Circuits
   m_EnvironmentCircuit = &m_data.GetCircuits().GetExternalTemperatureCircuit();
   //Compartments
-  m_AmbientGases = m_data.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
-  m_AmbientAerosols = m_data.GetCompartments().GetLiquidCompartment(BGE::EnvironmentCompartment::Ambient);
+  m_AmbientGases = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+  m_AmbientAerosols = m_data.GetCompartments().GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
   //Nodes
-  m_ThermalEnvironment = m_EnvironmentCircuit->GetNode(BGE::ExternalTemperatureNode::Ambient);
-  m_SkinNode = m_EnvironmentCircuit->GetNode(BGE::ExternalTemperatureNode::ExternalSkin);
-  m_ClothingNode = m_EnvironmentCircuit->GetNode(BGE::ExternalTemperatureNode::Clothing);
-  m_EnclosureNode = m_EnvironmentCircuit->GetNode(BGE::ExternalTemperatureNode::Enclosure);
+  m_ThermalEnvironment = m_EnvironmentCircuit->GetNode(pulse::ExternalTemperatureNode::Ambient);
+  m_SkinNode = m_EnvironmentCircuit->GetNode(pulse::ExternalTemperatureNode::ExternalSkin);
+  m_ClothingNode = m_EnvironmentCircuit->GetNode(pulse::ExternalTemperatureNode::Clothing);
+  m_EnclosureNode = m_EnvironmentCircuit->GetNode(pulse::ExternalTemperatureNode::Enclosure);
   //Paths
-  m_SkinToClothing = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ExternalSkinToClothing);
-  m_ActiveHeatTransferRatePath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::GroundToClothing);
-  m_ActiveTemperaturePath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::GroundToActive);
-  m_ActiveSwitchPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ActiveToClothing);
-  m_ClothingToEnclosurePath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ClothingToEnclosure);
-  m_GroundToEnclosurePath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::GroundToEnclosure);
-  m_ClothingToEnvironmentPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ClothingToEnvironment);
-  m_GroundToEnvironmentPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::GroundToEnvironment);
-  m_EnvironmentSkinToGroundPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ExternalSkinToGround);
-  m_EnvironmentCoreToGroundPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ExternalCoreToGround);
+  m_SkinToClothing = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ExternalSkinToClothing);
+  m_ActiveHeatTransferRatePath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::GroundToClothing);
+  m_ActiveTemperaturePath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::GroundToActive);
+  m_ActiveSwitchPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ActiveToClothing);
+  m_ClothingToEnclosurePath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ClothingToEnclosure);
+  m_GroundToEnclosurePath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::GroundToEnclosure);
+  m_ClothingToEnvironmentPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ClothingToEnvironment);
+  m_GroundToEnvironmentPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::GroundToEnvironment);
+  m_EnvironmentSkinToGroundPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ExternalSkinToGround);
+  m_EnvironmentCoreToGroundPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ExternalCoreToGround);
 }
 
 //--------------------------------------------------------------------------------------------------

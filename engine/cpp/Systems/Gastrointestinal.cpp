@@ -37,7 +37,7 @@ specific language governing permissions and limitations under the License.
 
 //#define logMeal
 
-Gastrointestinal::Gastrointestinal(Pulse& bg) : SEGastrointestinalSystem(bg.GetLogger()), m_data(bg)
+Gastrointestinal::Gastrointestinal(PulseController& data) : SEGastrointestinalSystem(data.GetLogger()), m_data(data)
 {
   Clear();
   /* Move to a unit test
@@ -132,10 +132,10 @@ void Gastrointestinal::SetUp()
   m_WaterDigestionRate.SetValue(m_data.GetConfiguration().GetWaterDigestionRate(VolumePerTimeUnit::mL_Per_s), VolumePerTimeUnit::mL_Per_s);
   m_CalciumDigestionRate.SetValue(m_data.GetConfiguration().GetCalciumDigestionRate(MassPerTimeUnit::g_Per_s), MassPerTimeUnit::g_Per_s);
 
-  m_GItoCVPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(BGE::ChymePath::SmallIntestineC1ToSmallIntestine1);
-  m_GutT1ToGroundPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(BGE::ChymePath::GutT1ToGround);
+  m_GItoCVPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::SmallIntestineC1ToSmallIntestine1);
+  m_GutT1ToGroundPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::GutT1ToGround);
 
-  m_SmallIntestineChyme = m_data.GetCompartments().GetLiquidCompartment(BGE::ChymeCompartment::SmallIntestine);
+  m_SmallIntestineChyme = m_data.GetCompartments().GetLiquidCompartment(pulse::ChymeCompartment::SmallIntestine);
   m_SmallIntestineChymeGlucose    = m_SmallIntestineChyme->GetSubstanceQuantity(m_data.GetSubstances().GetGlucose());
   m_SmallIntestineChymeTristearin = m_SmallIntestineChyme->GetSubstanceQuantity(m_data.GetSubstances().GetTristearin());
   m_SmallIntestineChymeCalcium    = m_SmallIntestineChyme->GetSubstanceQuantity(m_data.GetSubstances().GetCalcium());

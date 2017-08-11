@@ -11,11 +11,11 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-class PhysiologyEngine;
-class SEEngineTrack;
-class SEEngineConfiguration; 
 class SECondition;
-#include "bind/cdm/Engine.pb.h"
+class SEEngineTrack;
+class PhysiologyEngine;
+class SEEngineConfiguration;
+#include "bind/cdm/Properties.pb.h"
 
 class CDM_DECL SEEngineStabilization : public Loggable
 {
