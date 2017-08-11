@@ -615,7 +615,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
   {
     switch (patientAss->GetType())
     {
-      case cdm::PatientAssessmentRequestData_eType_PulmonaryFunctionTest:
+      case cdm::PatientAssessmentData_eType_PulmonaryFunctionTest:
       {
         SEPulmonaryFunctionTest pft(m_Logger);
         GetPatientAssessment(pft);
@@ -631,7 +631,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         pft.SaveFile(pftFile);
         break;
       }
-      case cdm::PatientAssessmentRequestData_eType_Urinalysis:
+      case cdm::PatientAssessmentData_eType_Urinalysis:
       {
         SEUrinalysis upan(m_Logger);
         GetPatientAssessment(upan);
@@ -647,7 +647,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         break;
       }
 
-      case cdm::PatientAssessmentRequestData_eType_CompleteBloodCount:
+      case cdm::PatientAssessmentData_eType_CompleteBloodCount:
       {
         SECompleteBloodCount cbc(m_Logger);
         GetPatientAssessment(cbc);
@@ -662,7 +662,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         break;
       }
 
-      case cdm::PatientAssessmentRequestData_eType_ComprehensiveMetabolicPanel:
+      case cdm::PatientAssessmentData_eType_ComprehensiveMetabolicPanel:
       {
         SEComprehensiveMetabolicPanel mp(m_Logger);
         GetPatientAssessment(mp);

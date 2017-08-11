@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "utils/ConfigParser.h"
 #include "utils/TaskRunner/TaskRunner.h"
 #include "PulsePhysiologyEngine.h"
-#include "Controller/Scenario/PulseScenarioExec.h"
+#include "Controller/PulseScenarioExec.h"
 
 #include <string>
 #include <vector>
