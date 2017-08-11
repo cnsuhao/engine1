@@ -8,7 +8,7 @@ When you create an instance of an engine, you will be returned a pointer to a Ph
 This generic interface is the controlling class for a physiology engine modeling a single patient.
 
 @code 
-  std::unique_ptr<PhysiologyEngine> bg = CreateBioGearsEngine("MyBioGearsEngine.log");
+  std::unique_ptr<PhysiologyEngine> bg = CreatePulseEngine("MyEngine.log");
 @endcode
 
 @anchor LoggingInterface
@@ -143,7 +143,7 @@ It is not recommended to provide another configuration unless you know what effe
 There are some useful configuration options that may be of interest, such as writing data to a csv file while the initialization algorithm executes.
 Come visit us on the forums if this is something you want to know more about.
 
-You can retrieve and view the configuration with this method (note you will need to cast it to the BioGearsConfiguration class to see all configuration data)
+You can retrieve and view the configuration with this method (note you will need to cast it to the PulseConfiguration class to see configuration data)
 
 @code
   //--------------------------------------------------------------------------------------------------

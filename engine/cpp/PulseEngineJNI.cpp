@@ -29,21 +29,21 @@ specific language governing permissions and limitations under the License.
 #include "EngineTest.h"
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_Pulse_testing_BGEUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_pulse_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
 {
   PulseEngineTest *executor = new PulseEngineTest();
   return reinterpret_cast<jlong>(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_testing_BGEUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_pulse_testing_EngineUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineTest *executor = reinterpret_cast<PulseEngineTest*>(ptr);
   SAFE_DELETE(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_testing_BGEUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_pulse_testing_EngineUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
@@ -54,7 +54,7 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_testing_BGEUnitTestDriver
 }
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_Pulse_engine_Pulse_nativeAllocate(JNIEnv *env, jobject obj, jstring logFile)
+JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_pulse_engine_Pulse_nativeAllocate(JNIEnv *env, jobject obj, jstring logFile)
 { 
   const char* logF = env->GetStringUTFChars(logFile, JNI_FALSE);
   PulseEngineJNI *engineJNI = new PulseEngineJNI(logF);
@@ -65,7 +65,7 @@ JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_Pulse_engine_Pulse_nativeAlloc
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_Pulse_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_pulse_engine_Pulse_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -74,7 +74,7 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_Pulse_nativeDelete
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeReset(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nativeReset(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr); 
   engineJNI->jniEnv = env;
@@ -83,7 +83,7 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_native
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenario, jstring outputFile, double updateFreq_s)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenario, jstring outputFile, double updateFreq_s)
 {
   const char* sceStr = env->GetStringUTFChars(scenario, JNI_FALSE);
   const char* dataF = env->GetStringUTFChars(outputFile,JNI_FALSE);
@@ -115,7 +115,7 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_nativeCancelScenario(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseScenarioExec_nativeCancelScenario(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr); 
   //engineJNI->jniEnv = env; I am not doing this because the cancel comes in on another thread
@@ -125,7 +125,7 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseScenarioExec_
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeLoadState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jdouble simTime_s, jstring dataRequests)
+JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nativeLoadState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jdouble simTime_s, jstring dataRequests)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -166,7 +166,7 @@ JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_na
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeSaveState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename)
+JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nativeSaveState(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env; 
@@ -182,7 +182,7 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nat
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient, jstring conditions, jstring dataRequests)
+JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient, jstring conditions, jstring dataRequests)
 {
   bool ret = false;
   
@@ -255,7 +255,7 @@ JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_na
 }
 
 extern "C"
-JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeAdvanceTimeStep(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nativeAdvanceTimeStep(JNIEnv *env, jobject obj, jlong ptr)
 {
   bool success = true;
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
@@ -289,7 +289,7 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_native
 }
 
 extern "C"
-JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeAdvanceTime(JNIEnv *env, jobject obj, jlong ptr, jdouble time_s)
+JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nativeAdvanceTime(JNIEnv *env, jobject obj, jlong ptr, jdouble time_s)
 {
   bool success = true;
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
@@ -323,7 +323,7 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_native
 }
 
 extern "C"
-JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeProcessActions(JNIEnv *env, jobject obj, jlong ptr, jstring actions)
+JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nativeProcessActions(JNIEnv *env, jobject obj, jlong ptr, jstring actions)
 {
   bool success = true;
   if (actions == nullptr)
@@ -370,7 +370,7 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_native
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_Pulse_engine_PulseEngine_nativeGetAssessment(JNIEnv *env, jobject obj, jlong ptr, jint type)
+JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nativeGetAssessment(JNIEnv *env, jobject obj, jlong ptr, jint type)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;

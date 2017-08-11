@@ -26,7 +26,7 @@ public class Rebase
   {
     boolean scenarios=true;
     Log.setFileName("Rebase.log");    
-    String fromDir = "\\\\sed-biogears\\JenkinsBuild\\History\\MSVC-x86\\225 - a4c8402903f7c89e4799f9f2ad2c55339195e582\\Scenarios\\";
+    String fromDir = "\\bin\\test_results\\scenarios\\";
     String toDir = "..\\verification\\Scenarios\\";
     String configFile = "ALL";//"DebugRun.config";
     switch(args.length)

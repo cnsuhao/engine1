@@ -35,6 +35,8 @@ list(APPEND Pulse_DEPENDENCIES Eigen)
 # Install Headers
 install(DIRECTORY ${Eigen_INSTALL}/include
         DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY ${Eigen_INSTALL}/share/eigen3/cmake
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
 list(APPEND CMAKE_PREFIX_PATH ${Eigen_INSTALL})
 message(STATUS "Eigen is here : ${Eigen_DIR}" )
 
@@ -164,13 +166,13 @@ endif()
 string(REPLACE ";" "::" CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
 
 # Generate the Pulse project after dependencies have been built
-ExternalProject_Add( InnerBuild
-    PREFIX InnerBuild
+ExternalProject_Add( Pulse
+    PREFIX
     DEPENDS Eigen ${Pulse_DEPENDENCIES}
     DOWNLOAD_COMMAND ""
     DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}
     SOURCE_DIR ${CMAKE_SOURCE_DIR}
-    BINARY_DIR ${CMAKE_BINARY_DIR}/InnerBuild
+    BINARY_DIR ${CMAKE_BINARY_DIR}
     CMAKE_GENERATOR ${CMAKE_GENERATOR}
     BUILD_AWAYS 1
     LIST_SEPARATOR ::

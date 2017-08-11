@@ -585,6 +585,12 @@ public class SETestDriver
               }
               compare.write();
             }
+            else
+            {
+              compare.createErrorSuite("Basline file not found : "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
+              compare.write();
+              continue;
+            }
             if((job.plotType == PlotType.FastPlotErrors || job.plotType == PlotType.FullPlotErrors) && failures.isEmpty())
             {
               Log.info("No plots for "+job.computedFiles.get(i));

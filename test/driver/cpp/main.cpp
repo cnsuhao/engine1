@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndTissueCircuitAndTransportTest(peDir);
-      peTest.CardiovascularTissueAndRenalCircuitAndTransportTest(peDir);
+      //peTest.CardiovascularTissueAndRenalCircuitAndTransportTest(peDir);
       //peTest.CardiovascularBloodGasesTest(peDir);
       //peTest.TuneCardiovascularCircuitTest(peDir);
 
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
       //peTest.AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(peDir);
 
       // Our CV Characterization Driver  (Not part of the test suite)
-      //std::string cvDir = ".\\test_results\\unit_tests\\biogears\\CVTuningTests";
+      //std::string cvDir = ".\\test_results\\unit_tests\\pulse\\CVTuningTests";
       //MKDIR(cvDir.c_str());
       //peTest.CardiovascularCircuitScaleTests(cvDir);
 
@@ -313,7 +313,7 @@ int main(int argc, char* argv[])
   {
     if (cdmTest.RunTest(argv[1], ".\\test_results\\unit_tests\\cdm"))
       return 0;
-    //if (peTest.RunTest(argv[1], ".\\test_results\\unit_tests\\biogears"))
+    //if (peTest.RunTest(argv[1], ".\\test_results\\unit_tests\\pulse"))
     //  return 0;
   }
   return 1;

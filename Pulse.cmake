@@ -37,9 +37,29 @@ message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 
+
+
 find_package(Dirent REQUIRED)
-find_package(Eigen3 3.3.3 REQUIRED)
-find_package(ProtoBuf REQUIRED)
+find_package(Eigen3 REQUIRED)
+# The outer build does some custom installing of dependent libraries
+# Instead of using find_package, I will make sure things are where expected
+if(NOT protobuf_DIR)
+  set( protobuf_DIR ${CMAKE_BINARY_DIR}/protobuf/src/protobuf)
+  # Proto headers should have been installed here by the outer build
+  if(NOT EXISTS ${protobuf_DIR}/src/google/protobuf/package_info.h)
+    message(FATAL_ERROR "I cannot find protobuf headers, make sure you make the install target of the super build")
+  endif()
+endif()
+
+# Log4cpp src should have been download to somewhere
+if(NOT log4cpp_DIR)
+  # It should be here if the outer build ran
+  set( log4cpp_DIR ${CMAKE_BINARY_DIR}/log4cpp/src/log4cpp)
+  if(NOT EXISTS ${log4cpp_DIR}/include/log4cpp/Category.hh)
+    message(FATAL_ERROR "I cannot find log4cpp in expected location : ${log4cppDIR}")
+  endif()
+endif()
+
 find_package(Java REQUIRED)
 include(UseJava)
 
@@ -51,24 +71,56 @@ if(MSVC)
   set_target_properties(libprotobuf libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
   set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc js_embed PROPERTIES FOLDER protobufs)
 endif()
-add_subdirectory("${log4cpp_DIR}" "${log4cpp_DIR}-build")
+
+add_subdirectory(${log4cpp_DIR} ${log4cpp_DIR}-build)
 add_subdirectory(schema)
 add_subdirectory(cdm)
 add_subdirectory(engine)
 add_subdirectory(test)
 add_subdirectory(sdk)
 add_subdirectory(verification)
-include(${CMAKE_CURRENT_SOURCE_DIR}/EngineJNI.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
 
 set(DATA_ROOT ${CMAKE_SOURCE_DIR})
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
-configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_BINARY_DIR}/run.cmake @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/run.cmake DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
-configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_BINARY_DIR}/run.config @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/run.config DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
-# For documentation
-configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_BINARY_DIR}/full.doxy @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/full.doxy DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/docs)
+file(COPY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
+configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_INSTALL_PREFIX}/bin/run.cmake @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_INSTALL_PREFIX}/bin/run.config @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy @ONLY)
+
+# Install the proto libs to the right locations
+if(WIN32)
+  if(BUILD_SHARED_LIBS)
+    install(FILES "${protobuf_DIR}-build/Release/libprotobuf.dll"
+      CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})  
+    install(FILES "${protobuf_DIR}-build/Debug/libprotobufd.dll"
+      CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(FILES "${protobuf_DIR}-build/RelWithDebInfo/libprotobuf.dll"
+      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  endif()
+
+  install(FILES "${protobuf_DIR}-build/Release/libprotobuf.lib"
+    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+  install(FILES "${protobuf_DIR}-build/Debug/libprotobufd.lib"
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+  install(FILES "${protobuf_DIR}-build/RelWithDebInfo/libprotobuf.lib"
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
+else()
+  if(BUILD_SHARED_LIBS)
+    install(FILES ${protobuf_INSTALL}/bin/libprotobuf.so
+      CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})  
+    install(FILES ${protobuf_INSTALL}/bin/libprotobufd.so
+      CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(FILES ${protobuf_INSTALL}/bin/libprotobuf.so
+      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  endif()
+
+  install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
+    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/lib/libprotobufd.lib
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+  install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
+endif()
 
 # Pulse Testing
 enable_testing()

@@ -11,10 +11,6 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 package mil.tatrc.physiology.pulse.testing;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.UnitConverter;
 import mil.tatrc.physiology.testing.SETestDriver;
@@ -26,11 +22,6 @@ public class EngineUnitTestDriver implements SETestDriver.Executor
   static
   {
     UnitConverter.initialize(System.getProperty("user.dir"));
-    List<String> libs = new ArrayList<String>();
-    libs.add("PulseEngine");
-    libs.add("PulseEngineUnitTests");
-    libs.add("PulseEngineJNI");         
-    FileUtils.loadLibraries(libs);
   }
   
   protected long nativeObj;
