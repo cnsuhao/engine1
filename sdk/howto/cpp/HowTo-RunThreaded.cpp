@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "HowTo-ThreadedBioGears.h"
+#include "HowTo-RunThreaded.h"
 
 #include "patient/actions/SEHemorrhage.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
@@ -32,7 +32,7 @@ void HowToDynamicHemorrhage()
 {
   // Create the engine and have it run in it's own thread
   // This call will block while the engine stabilizes
-  BioGearsThread bgThread("./ThreadedDriver.txt");
+  PulseThread bgThread("./ThreadedDriver.txt");
   // When it comes back, the engine will be running, waiting for your input
 
   int action;
@@ -65,29 +65,29 @@ void HowToDynamicHemorrhage()
   } while (active);
 }
 
-BioGearsThread::BioGearsThread(const std::string& logfile) : m_thread()
+PulseThread::PulseThread(const std::string& logfile) : m_thread()
 {
   // Create our engine with the standard patient
-  m_bg = CreateBioGearsEngine(logfile);
-  SESubstanceCompound* saline = m_bg->GetSubstanceManager().GetCompound("Saline");
+  m_pe = CreatePulseEngine(logfile);
+  SESubstanceCompound* saline = m_pe->GetSubstanceManager().GetCompound("Saline");
 
-  if (!m_bg->LoadState("./states/StandardMale@0s.xml"))
+  if (!m_pe->LoadState("./states/StandardMale@0s.pba"))
   {
-    m_bg->GetLogger()->Error("Could not load state, check the error");
+    m_pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
   // Create and initialize our actions
   m_infusion = new SESubstanceCompoundInfusion(*saline);
   m_hemorrhage = new SEHemorrhage();
-  m_hemorrhage->SetCompartment(BGE::VascularCompartment::RightLeg);//the location of the hemorrhage  
+  m_hemorrhage->SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage  
 
   // Start advancing time in a seperate thread
   m_runThread = true;
-  m_thread = std::thread(&BioGearsThread::AdvanceTime, this);
+  m_thread = std::thread(&PulseThread::AdvanceTime, this);
 }
 
-BioGearsThread::~BioGearsThread()
+PulseThread::~PulseThread()
 {
   m_runThread = false;
   std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -95,47 +95,47 @@ BioGearsThread::~BioGearsThread()
   SAFE_DELETE(m_hemorrhage);
 }
 
-void BioGearsThread::SetHemorrhageFlow_mL_Per_min(double rate)
+void PulseThread::SetHemorrhageFlow_mL_Per_min(double rate)
 {
   m_hemorrhage->GetRate().SetValue(rate, VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
   m_mutex.lock();
-  m_bg->ProcessAction(*m_hemorrhage);
+  m_pe->ProcessAction(*m_hemorrhage);
   m_mutex.unlock();
 }
 
-void BioGearsThread::SetIVFluidsFlow_mL_Per_min(double rate)
+void PulseThread::SetIVFluidsFlow_mL_Per_min(double rate)
 {
   // For this example, I am always resetting the bag volume on every change, but you may want to allow the bag to run out..
   m_infusion->GetBagVolume().SetValue(500, VolumeUnit::mL);//the total volume in the bag of Saline
   m_infusion->GetRate().SetValue(100, VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline
   m_mutex.lock();
-  m_bg->ProcessAction(*m_infusion);
+  m_pe->ProcessAction(*m_infusion);
   m_mutex.unlock();
 }
 
-void BioGearsThread::AdvanceTime()
+void PulseThread::AdvanceTime()
 {
   while(m_runThread)
   {
     m_mutex.lock();
-    m_bg->AdvanceModelTime(1, TimeUnit::s);
+    m_pe->AdvanceModelTime(1, TimeUnit::s);
     m_mutex.unlock();
     std::this_thread::sleep_for(std::chrono::milliseconds(25));// let other things happen
   }
 }
 
-void BioGearsThread::Status()
+void PulseThread::Status()
 {// On demand call to print vitals to the screen
   m_mutex.lock();
-  m_bg->GetLogger()->Info("");
-  m_bg->GetLogger()->Info(std::stringstream() <<"Simulation Time : " << m_bg->GetSimulationTime(TimeUnit::s) << "s");
-  m_bg->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << m_bg->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  m_bg->GetLogger()->Info(std::stringstream() <<"Blood Volume : " << m_bg->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
-  m_bg->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << m_bg->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  m_bg->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << m_bg->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  m_bg->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << m_bg->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  m_bg->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << m_bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  m_bg->GetLogger()->Info(std::stringstream() <<"Respiration Rate : " << m_bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  m_bg->GetLogger()->Info("");
+  m_pe->GetLogger()->Info("");
+  m_pe->GetLogger()->Info(std::stringstream() <<"Simulation Time : " << m_pe->GetSimulationTime(TimeUnit::s) << "s");
+  m_pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << m_pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  m_pe->GetLogger()->Info(std::stringstream() <<"Blood Volume : " << m_pe->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
+  m_pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << m_pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  m_pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << m_pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  m_pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << m_pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  m_pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << m_pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  m_pe->GetLogger()->Info(std::stringstream() <<"Respiration Rate : " << m_pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
+  m_pe->GetLogger()->Info("");
   m_mutex.unlock();
 }

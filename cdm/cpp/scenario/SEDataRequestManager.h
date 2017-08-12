@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "scenario/SEDataRequest.h"
+class SESubstance;
 
 class CDM_DECL SEDataRequestManager : public Loggable
 {
@@ -22,6 +23,8 @@ public:
   void Clear();
 
   bool Load(const std::string& str, SESubstanceManager& subMgr);
+  bool LoadFile(const std::string& filename, SESubstanceManager& subMgr);
+  void SaveFile(const std::string& filename) const;
 
   static void Load(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, SESubstanceManager& subMgr);
   static cdm::DataRequestManagerData* Unload(const SEDataRequestManager& src);
@@ -49,6 +52,42 @@ public:
   virtual void RemoveOverrideDecimalFormatting();
 
   SEDataRequest& CreateDataRequest(cdm::DataRequestData_eCategory category, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreatePatientDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreatePatientDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreatePhysiologyDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreatePhysiologyDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreateEnvironmentDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateEnvironmentDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreateGasCompartmentDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateGasCompartmentDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateGasCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateGasCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreateLiquidCompartmentDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateLiquidCompartmentDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreateThermalCompartmentDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateThermalCompartmentDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreateTissueCompartmentDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateTissueCompartmentDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreateSubstanceDataRequest(const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateSubstanceDataRequest(const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreateAnesthesiaMachineDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateAnesthesiaMachineDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreateECGDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateECGDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
+  SEDataRequest& CreateInhalerDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateInhalerDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
   
 protected:
   std::string                  m_ResultsFilename;

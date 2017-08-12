@@ -13,10 +13,9 @@ specific language governing permissions and limitations under the License.
 #include <mutex>
 #include <thread>
 
-#include "bind/biogears-cdm.hxx"
 #include "CommonDataModel.h"
-#include "BioGearsPhysiologyEngine.h"
-// This class will run BioGears in it's own thread and accept changes to hemorrage and iv flow as the engine is running
+#include "PulsePhysiologyEngine.h"
+// This class will run Pulse in it's own thread and accept changes to hemorrage and iv flow as the engine is running
 
 // Forward declare what we will use in our thread
 class SEHemorrhage;
@@ -24,18 +23,18 @@ class SESubstanceCompoundInfusion;
 class PhysiologyEngine;
 
 
-class BioGearsThread
+class PulseThread
 {
 public:
-  BioGearsThread(const std::string& logfile);
-  virtual ~BioGearsThread();
+  PulseThread(const std::string& logfile);
+  virtual ~PulseThread();
 
   void SetHemorrhageFlow_mL_Per_min(double rate);
   void SetIVFluidsFlow_mL_Per_min(double rate);
 
   void Status();
 
-  Logger* GetLogger() { return m_bg->GetLogger(); }
+  Logger* GetLogger() { return m_pe->GetLogger(); }
 
 protected:
   void AdvanceTime();
@@ -44,7 +43,7 @@ protected:
   std::mutex  m_mutex;
   bool m_runThread;
 
-  std::unique_ptr<PhysiologyEngine> m_bg;
+  std::unique_ptr<PhysiologyEngine> m_pe;
 
   SEHemorrhage*                     m_hemorrhage;
   SESubstanceCompoundInfusion*      m_infusion;

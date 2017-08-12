@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-#include "BioGearsEngineHowTo.h"
+#include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
 #include "patient/SEPatient.h"
@@ -22,7 +22,7 @@ specific language governing permissions and limitations under the License.
 #include "system/physiology/SERespiratorySystem.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
-#include "engine/PhysiologyEngineTrack.h"
+#include "engine/SEEngineTracker.h"
 #include "utils/SEEventHandler.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
@@ -41,19 +41,19 @@ specific language governing permissions and limitations under the License.
 /// Creating a patient
 ///
 /// \details
-/// Creating a customized patient in BioGears
+/// Creating a customized patient in Pulse
 //--------------------------------------------------------------------------------------------------
 void HowToCreateAPatient()
 {
-  std::unique_ptr<PhysiologyEngine> bg = CreateBioGearsEngine("HowToEngineUse.log");
-  bg->GetLogger()->Info("HowToCreateAPatient");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToEngineUse.log");
+  pe->GetLogger()->Info("HowToCreateAPatient");
 
-  SEPatient patient(bg->GetLogger());
+  SEPatient patient(pe->GetLogger());
   patient.SetName("HowToCreateAPatient");
   //Patient sex is the only thing that is absolutely required to be set.
   //All value not explicitly set based or standard values or calculations.
   //If you do something out of bounds or set something you're not allowed to, it will alert you with a warning/error.
-  patient.SetSex(CDM::enumSex::Male);
+  patient.SetSex(cdm::PatientData_eSex_Male);
   patient.GetAge().SetValue(44, TimeUnit::yr);
   patient.GetWeight().SetValue(170, MassUnit::lb);
   patient.GetHeight().SetValue(71, LengthUnit::in);
@@ -64,22 +64,14 @@ void HowToCreateAPatient()
   patient.GetSystolicArterialPressureBaseline().SetValue(114, PressureUnit::mmHg);
 
   // You can save off the patient if you want to use it later
-  CDM::PatientData* pData = patient.Unload();
-  // Write out the stable patient state
-  std::ofstream stream("./patients/HowToCreateAPatient.xml");
-  // Write out the xml file
-  xml_schema::namespace_infomap map;
-  map[""].name = "uri:/mil/tatrc/physiology/datamodel";
-  Patient(stream, *pData, map);
-  stream.close();
-  SAFE_DELETE(pData);
+  patient.SaveFile("./patients/HowToCreateAPatient.pba");
 
-  if (!bg->InitializeEngine(patient))
+  if (!pe->InitializeEngine(patient))
   {
-    bg->GetLogger()->Error("Could not load state, check the error");
+    pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
   // You can save off the initial patient state if you want to use it later
-  bg->SaveState("./states/HowToCreateAPatient@0s.xml");  
+  pe->SaveState("./states/HowToCreateAPatient@0s.pba");  
 }

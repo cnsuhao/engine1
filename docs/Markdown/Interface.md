@@ -418,7 +418,7 @@ The following types are used to hold compartment substance information
  @refitem LiquidSubstanceQuantityTable "Liquid Substance Quantity"
 @endsecreflist
 
-The enumerations for compartments available is found in the BioGearsPhysiologyEngine.h file.
+The enumerations for compartments available is found in the PulsePhysiologyEngine.h file.
 As these are programatic enumerations, you can use the auto-complete feature of your favorite programming IDE to view these enumerations as you code.
 The engine discritizes it's compartments into enumerations based on fluid type and equipment. Here is a list of the various enumerated compartment names:
 

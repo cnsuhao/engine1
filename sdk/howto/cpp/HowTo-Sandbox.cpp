@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// A place to do experiment with BioGears
+/// A place to do experiment with Pulse
 ///
 /// \details
 /// This is a good place to code up something that demonstrates an issue for reproduction and debugging
@@ -27,26 +27,26 @@ specific language governing permissions and limitations under the License.
 void HowToSandbox()
 {
   std::stringstream ss;
-  // Create a BioGears Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> bg = CreateBioGearsEngine("Sandbox.log");
-  if (!bg->LoadState("./states/StandardMale@0s.xml"))
+  // Create a Pulse Engine and load the standard patient
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("Sandbox.log");
+  if (!pe->LoadState("./states/StandardMale@0s.pba"))
   {
-    bg->GetLogger()->Error("Could not load state, check the error");
+    pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-  bg->AdvanceModelTime(5, TimeUnit::s);
-  bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
+  pe->AdvanceModelTime(5, TimeUnit::s);
+  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
 
   // Ok we are done with that patient, let's do another patient with the same engine
-  if (!bg->LoadState("./states/StandardFemale@0s.xml"))
+  if (!pe->LoadState("./states/StandardFemale@0s.pba"))
   {
-    bg->GetLogger()->Error("Could not load state, check the error");
+    pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-  bg->AdvanceModelTime(5, TimeUnit::s);
-  bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
+  pe->AdvanceModelTime(5, TimeUnit::s);
+  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
 
-  bg->AdvanceModelTime(5, TimeUnit::min);
+  pe->AdvanceModelTime(5, TimeUnit::min);
 }

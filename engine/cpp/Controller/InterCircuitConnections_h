@@ -11,16 +11,16 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #pragma once
-class BioGears;
+class Pulse;
 #include "circuit/SECircuitContainer.h"
 #include "Serializer.h"
 
-class BIOGEARS_API BioGearsInterCircuitConnections : public SECircuitContainer
+class Pulse_API PulseInterCircuitConnections : public SECircuitContainer
 {
 public:
 
-  BioGearsInterCircuitConnections(BioGears& data);
-  virtual ~BioGearsInterCircuitConnections();
+  PulseInterCircuitConnections(Pulse& data);
+  virtual ~PulseInterCircuitConnections();
 
   void Reset();
   void Clear();
@@ -32,6 +32,6 @@ public:
 
 protected:
 
-  BioGears*   m_Data;
+  Pulse*   m_Data;
   SEInterCircuitConnection*  m_RespiratoryAnesthesiaMachineInterCircuitConnection;
 };

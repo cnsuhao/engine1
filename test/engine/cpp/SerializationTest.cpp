@@ -73,10 +73,10 @@ public:
   }
 };
 
-void PulseEngineTest::InhalerState(PhysiologyEngine* bg, HowToTracker& tracker)
+void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 {
-  bg->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerResults.txt");
-  if (!bg->InitializeEngine("StandardMale.pba"))
+  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerResults.txt");
+  if (!pc->InitializeEngine("StandardMale.pba"))
   {
     std::cerr << "Could not load initialize engine, check the error" << std::endl;
     return;
@@ -84,11 +84,11 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* bg, HowToTracker& tracker)
 
   tracker.AdvanceModelTime(30);
 
-  SEInhalerConfiguration config(bg->GetSubstanceManager());
-  config.GetConfiguration().SetSubstance(bg->GetSubstanceManager().GetSubstance("Albuterol"));
+  SEInhalerConfiguration config(pc->GetSubstanceManager());
+  config.GetConfiguration().SetSubstance(pc->GetSubstanceManager().GetSubstance("Albuterol"));
   config.GetConfiguration().GetMeteredDose().SetValue(90.0, MassUnit::ug);
   config.GetConfiguration().GetNozzleLoss().SetValue(0.040);
-  bg->ProcessAction(config);
+  pc->ProcessAction(config);
 
   SEConsciousRespiration cResp;
  
@@ -105,28 +105,28 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* bg, HowToTracker& tracker)
   SEBreathHold& hold = cResp.AddBreathHold();
   hold.GetPeriod().SetValue(10, TimeUnit::s);
 
-  bg->ProcessAction(cResp);
+  pc->ProcessAction(cResp);
   tracker.AdvanceModelTime(5);
 
   SEScalarTime now;// Make sure to tell the engine that we are at the same time
   // Save and Load the Engine State
-  bg->GetLogger()->Info("Serializing");
-  bg->SaveState("./MidInhalerState.pba");
-  now.SetValue(bg->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  bg->LoadState("./MidInhalerState.pba", &now);
+  pc->GetLogger()->Info("Serializing");
+  pc->SaveState("./MidInhalerState.pba");
+  now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
+  pc->LoadState("./MidInhalerState.pba", &now);
 
   // Change the results file
-  bg->GetLogger()->ResetLogFile("InhalerSerialization.log");
+  pc->GetLogger()->ResetLogFile("InhalerSerialization.log");
   std::remove("InhalerSerializationResults.txt");
-  bg->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerSerializationResults.txt");
+  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerSerializationResults.txt");
 
   tracker.AdvanceModelTime(145);
 }
 
-void PulseEngineTest::InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tracker, const SESubstance& succs)
+void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& tracker, const SESubstance& succs)
 {
-  bg->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsResults.txt");
-  if (!bg->InitializeEngine("StandardMale.pba"))
+  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsResults.txt");
+  if (!pc->InitializeEngine("StandardMale.pba"))
   {
     std::cerr << "Could not load initialize engine, check the error" << std::endl;
     return;
@@ -136,24 +136,24 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* bg, HowToTracker& track
   injection.SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute_Intravenous);
   injection.GetConcentration().SetValue(4820, MassPerVolumeUnit::ug_Per_mL);
   injection.GetDose().SetValue(30, VolumeUnit::mL);
-  bg->ProcessAction(injection);
-  bg->AdvanceModelTime(1, TimeUnit::s);// Not tracking
+  pc->ProcessAction(injection);
+  pc->AdvanceModelTime(1, TimeUnit::s);// Not tracking
 
   SEScalarTime now;// Make sure to tell the engine that we are at the same time
 
   // Change our results file name
-  bg->GetLogger()->ResetLogFile("InjectSuccsSerialization.log");
+  pc->GetLogger()->ResetLogFile("InjectSuccsSerialization.log");
   std::remove("InjectSuccsSerialization.txt");
-  bg->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsSerialization.txt");
+  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsSerialization.txt");
 
   // Save and Load the Engine State
-  bg->SaveState("./MidBolusState.pba");
-  now.SetValue(bg->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  bg->LoadState("./MidBolusState.pba",&now);
+  pc->SaveState("./MidBolusState.pba");
+  now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
+  pc->LoadState("./MidBolusState.pba",&now);
 
   tracker.AdvanceModelTime(15);
 
-  SEAnesthesiaMachineConfiguration amConfig(bg->GetSubstanceManager());
+  SEAnesthesiaMachineConfiguration amConfig(pc->GetSubstanceManager());
   amConfig.GetConfiguration().SetConnection(cdm::AnesthesiaMachineData_eConnection_Mask);
   amConfig.GetConfiguration().GetInletFlow().SetValue(5, VolumePerTimeUnit::L_Per_min);
   amConfig.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
@@ -166,12 +166,12 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* bg, HowToTracker& track
   amConfig.GetConfiguration().GetVentilatorPressure().SetValue(10, PressureUnit::cmH2O);
   amConfig.GetConfiguration().GetOxygenBottleOne().GetVolume().SetValue(660, VolumeUnit::L);
   amConfig.GetConfiguration().GetOxygenBottleTwo().GetVolume().SetValue(660, VolumeUnit::L);
-  bg->ProcessAction(amConfig);
+  pc->ProcessAction(amConfig);
   tracker.AdvanceModelTime(5);
 
-  bg->SaveState("./AnesthesiaMachineState.pba");
-  now.SetValue(bg->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  bg->LoadState("./AnesthesiaMachineState.pba", &now);
+  pc->SaveState("./AnesthesiaMachineState.pba");
+  now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
+  pc->LoadState("./AnesthesiaMachineState.pba", &now);
 
   tracker.AdvanceModelTime(40);
 }
@@ -179,11 +179,11 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* bg, HowToTracker& track
 void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> bg = CreatePulseEngine("SerializationTestSetup.log");
-  HowToTracker tracker(*bg);
+  std::unique_ptr<PhysiologyEngine> pc = CreatePulseEngine("SerializationTestSetup.log");
+  HowToTracker tracker(*pc);
 
-  SESubstance* O2 = bg->GetSubstanceManager().GetSubstance("Oxygen");
-  SESubstance* CO2 = bg->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  SESubstance* O2 = pc->GetSubstanceManager().GetSubstance("Oxygen");
+  SESubstance* CO2 = pc->GetSubstanceManager().GetSubstance("CarbonDioxide");
 /*
   SESubstanceDataRequest* subRequest;
   
@@ -277,9 +277,9 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
 
     // Gen Basic Standard Baseline
    /* {
-      bg->GetLogger()->ResetLogFile("BasicStandardResults.log");
-      bg->GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardResults.txt");
-      if (!bg->InitializeEngine("StandardMale.pba"))
+      pc->GetLogger()->ResetLogFile("BasicStandardResults.log");
+      pc->GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardResults.txt");
+      if (!pc->InitializeEngine("StandardMale.pba"))
       {
         std::cerr << "Could not load initialize engine, check the error" << std::endl;
         return;
@@ -289,44 +289,43 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
 
     // Gen Basic Standard State
     /*{
-      bg->GetLogger()->ResetLogFile("BasicStandardStateSetupResults.log");
-      bg->GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardStateSetupResults.txt");
-      if (!bg->InitializeEngine("StandardMale.pba"))
+      pc->GetLogger()->ResetLogFile("BasicStandardStateSetupResults.log");
+      pc->GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardStateSetupResults.txt");
+      if (!pc->InitializeEngine("StandardMale.pba"))
       {
         std::cerr << "Could not load initialize engine, check the error" << std::endl;
         return;
       }
       tracker.AdvanceModelTime(60);
-      bg->SaveState("./BasicStandardState@60s.pba");
+      pc->SaveState("./BasicStandardState@60s.pba");
     }*/
 
     // Run Basic Standard State
     {
-      bg->GetLogger()->ResetLogFile("BasicStandardStateResults.log");
-      bg->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.txt");
-      bg->LoadState("./BasicStandardState@60s.pba");
+      pc->GetLogger()->ResetLogFile("BasicStandardStateResults.log");
+      pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.txt");
+      pc->LoadState("./BasicStandardState@60s.pba");
       tracker.AdvanceModelTime(60);
     }
   }
-// amb, we want these methods back!
   // Several Options to choose how to set up our engine before we save and load
   if(false)
   {
-    SESubstance* Albert = bg->GetSubstanceManager().GetSubstance("Albuterol");
-//    bg->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "MassInBody", MassUnit::ug);
-//    bg->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
-//    bg->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "RemainingSystemicMassCleared", MassUnit::ug);
-    InhalerState(bg.get(), tracker);
+    SESubstance* Albert = pc->GetSubstanceManager().GetSubstance("Albuterol");
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "MassInBody", MassUnit::ug);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "RemainingSystemicMassCleared", MassUnit::ug);
+    InhalerState(pc.get(), tracker);
   }
   else if (false)
   {
-    SESubstance* Succs = bg->GetSubstanceManager().GetSubstance("Succinylcholine");
-//    bg->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "MassInBody", MassUnit::ug);
-//    bg->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
-//    bg->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "RemainingSystemicMassCleared", MassUnit::ug);
-//    bg->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainVasculature", *Succs, "Concentration", MassPerVolumeUnit::ug_Per_mL);
-//    bg->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainTissueExtracellular", *Succs, "Concentration", MassPerVolumeUnit::ug_Per_mL);
-    InjectSuccsState(bg.get(), tracker, *Succs);
+    SESubstance* Succs = pc->GetSubstanceManager().GetSubstance("Succinylcholine");
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "MassInBody", MassUnit::ug);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "RemainingSystemicMassCleared", MassUnit::ug);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainVasculature", *Succs, "Concentration", MassPerVolumeUnit::ug_Per_mL);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainTissueExtracellular", *Succs, "Concentration", MassPerVolumeUnit::ug_Per_mL);
+    InjectSuccsState(pc.get(), tracker, *Succs);
   }
-  bg->SaveState("./FinalEngineState.pba");
+  pc->SaveState("./FinalEngineState.pba");
 }

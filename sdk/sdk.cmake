@@ -13,22 +13,23 @@ add_executable(HowToDriver EXCLUDE_FROM_ALL ${SOURCE})
 set(FLAGS)
 target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include)
 target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include/cdm)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include/bind)
 set_target_properties(HowToDriver PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
 # Dependent Libraries
 
 set(D_LIB_FILES
-  lib/debug${EX_CONFIG}/PulseEngine.lib
-  lib/debug${EX_CONFIG}/CommonDataModel.lib
-  lib/debug${EX_CONFIG}/DataModelBindings.lib
-  lib/debug${EX_CONFIG}/log4cpp.lib
-  lib/debug${EX_CONFIG}/libprotobufd.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/PulseEngine.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/CommonDataModel.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/DataModelBindings.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/log4cpp.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/libprotobufd.lib
 )
 set(O_LIB_FILES
-  lib/release${EX_CONFIG}/PulseEngine.lib
-  lib/release${EX_CONFIG}/CommonDataModel.lib
-  lib/release${EX_CONFIG}/DataModelBindings.lib
-  lib/release${EX_CONFIG}/log4cpp.lib
-  lib/release${EX_CONFIG}/libprotobuf.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/PulseEngine.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/CommonDataModel.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/DataModelBindings.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/log4cpp.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/libprotobuf.lib
 )
 
 

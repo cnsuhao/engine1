@@ -14,18 +14,16 @@ The source is structured as follows:
 	- cdm - Code associated with the @ref CDM and @ref physeng 
   - cmake - The directory where cmake will create build files
 	- engine - Code associated with the lumped parameter models 
+    - PulseConfiguration - @copybrief PulseConfiguration
+    - PulseScenario - @copybrief PulseScenario
     - controller - These classes hold data necessary by the model, control the advancement of time
-      - scenario - These classes help execute a specific scenario (i.e. a scenario with a BioGearsConfiguration object)
-        - BioGearsScenario - @copybrief BioGearsScenario
-        - BioGearsScenarioExec - @copybrief BioGearsScenarioExec
-        - BioGearsScenarioInitialParameters - @copybrief BioGearsScenarioInitialParameters
-      - BioGears - @copybrief %BioGears
-      - BioGearsCircuits - @copybrief BioGearsCircuits
-      - BioGearsCompartments - @copybrief BioGearsCompartments
-      - BioGearsConfiguration - @copybrief BioGearsConfiguration
-      - BioGearsEngine - @copybrief BioGearsEngine
-      - BioGearsSubstances - @copybrief BioGearsSubstances
-      - BioGearsSystem - @copybrief BioGearsSystem
+      - Controller - @copybrief %PulseController
+      - Circuits - @copybrief PulseCircuits
+      - Compartments - @copybrief PulseCompartments
+      - Engine - @copybrief PulseEngine
+      - ScenarioExec - @copybrief PulseScenarioExec
+      - Substances - @copybrief PulseSubstances
+      - System - @copybrief PulseSystem
     - systems - These classes implement the methodology for modeling and simulating
       - BloodChemistry - @copybrief BloodChemistry
       - Cardiovascular - @copybrief Cardiovascular

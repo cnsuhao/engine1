@@ -10,9 +10,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
-// The following how-to functions demonstrate various ways of interacting with the BioGears engine
+// The following how-to functions demonstrate various ways of interacting with the Pulse engine
 #include "EngineHowTo.h"
-#include "engine/PhysiologyEngineTracker.h"
+#include "engine/SEEngineTracker.h"
 #include "scenario/SEDataRequest.h"
 #include "properties/SEScalarTime.h"
 
@@ -20,12 +20,12 @@ int main()
 {
   // Uncomment a method to execute fuctionality!
 
-  HowToSandbox();
+  //HowToSandbox();
 
   //HowToEngineUse();
   //HowToCreateAPatient();
 
-  //HowToAirwayObstruction();
+  HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToAsthmaAttack();
   //HowToBrainInjury();
@@ -37,7 +37,7 @@ int main()
   //HowToExercise();
   //HowToHemorrhage();
   //HowToLobarPneumonia();
-  HowToMechanicalVentilation();
+  //HowToMechanicalVentilation();
   //HowToPulmonaryFunctionTest();
   //HowToSmoke();
   //HowToTensionPneumothorax();
@@ -68,6 +68,6 @@ void HowToTracker::AdvanceModelTime(double time_s)
     m_Engine.AdvanceModelTime();  // Compute 1 time step
 
     // Pull Track will pull data from the engine and append it to the file
-    m_Engine.GetEngineTrack()->TrackData(m_Engine.GetSimulationTime(TimeUnit::s));
+    m_Engine.GetEngineTracker()->TrackData(m_Engine.GetSimulationTime(TimeUnit::s));
   }
 }
