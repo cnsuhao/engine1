@@ -11,8 +11,8 @@ add_executable(HowToDriver EXCLUDE_FROM_ALL ${SOURCE})
 
 # Preprocessor Definitions and Include Paths
 set(FLAGS)
-target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/cdm)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include/cdm)
 set_target_properties(HowToDriver PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
 # Dependent Libraries
 

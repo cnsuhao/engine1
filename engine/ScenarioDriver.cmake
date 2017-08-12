@@ -7,6 +7,7 @@ add_executable(PulseScenarioDriver cpp/PulseScenarioDriver.cpp
 #set_target_properties(PulseScenarioDriver PROPERTIES COMPILE_FLAGS -pthread LINK_FLAGS -pthread)
 
 # Preprocessor Definitions and Include Paths
+target_include_directories(PulseScenarioDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
 target_include_directories(PulseScenarioDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
 target_include_directories(PulseScenarioDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 target_include_directories(PulseScenarioDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)

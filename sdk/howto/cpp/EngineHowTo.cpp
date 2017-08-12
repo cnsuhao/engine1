@@ -11,9 +11,9 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 // The following how-to functions demonstrate various ways of interacting with the BioGears engine
-#include "BioGearsEngineHowTo.h"
-#include "engine/PhysiologyEngineTrack.h"
-#include "scenario/requests/SEDataRequest.h"
+#include "EngineHowTo.h"
+#include "engine/PhysiologyEngineTracker.h"
+#include "scenario/SEDataRequest.h"
 #include "properties/SEScalarTime.h"
 
 int main()

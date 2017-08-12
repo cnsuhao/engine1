@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 
 #include "Verification.h"
 #include "engine/SEEngineConfiguration.h"
-#include "Controller/PulseConfiguration.h"
+#include "PulseConfiguration.h"
 
 bool PulseScenarioDriver::Configure(int argc, char* argv[])
 {
@@ -73,11 +73,11 @@ void PulseScenarioDriver::RunScenario()
 {
   // Set up the log file
   std::string logFile = m_file;
-  logFile = Replace(logFile, "verification", "bin");
+  logFile = Replace(logFile, "verification", "");
   logFile = Replace(logFile, ".pba", ".log");
   // Set up the verification output file  
   std::string dataFile = m_file;
-  dataFile = Replace(dataFile, "verification", "bin");
+  dataFile = Replace(dataFile, "verification", "");
   dataFile = Replace(dataFile, ".pba", "Results.txt");
   // Delete any results file that may be there
   remove(dataFile.c_str());
@@ -92,11 +92,11 @@ void PulseScenarioDriver::RunScenario()
     PulseScenarioExec exec(*((PulseEngine*)Pulse.get()));
     exec.Execute(m_file.c_str(), dataFile.c_str(), nullptr);
   }
-  catch (std::exception ex)
+  catch (CommonDataModelException ex)
   {
     std::cerr << ex.what() << std::endl;
   }
-  catch (CommonDataModelException ex)
+  catch (std::exception ex)
   {
     std::cerr << ex.what() << std::endl;
   }

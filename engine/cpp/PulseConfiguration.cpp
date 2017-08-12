@@ -315,7 +315,7 @@ void PulseConfiguration::Initialize()
   GetECGInterpolator().LoadFile("./ecg/StandardECG.pba",&GetTimeStep());
   GetDynamicStabilization().LoadFile("./config/DynamicStabilization.pba");
   //GetTimedStabilization().LoadFile("./config/TimedStabilization.pba");
-  //m_StabilizationCriteria->TrackStabilization(true);// Hard coded override for debugging
+  //GetDynamicStabilization().TrackStabilization(cdm::eSwitch::On);// Hard coded override for debugging
   
   // Baroreceptors
   GetResponseSlope().SetValue(12.0); //nu

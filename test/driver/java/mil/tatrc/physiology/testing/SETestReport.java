@@ -163,12 +163,13 @@ public class SETestReport
   	this.testSuites.add(ts);
     return ts;
   }
-  public void createErrorSuite(String error)
+  public void createErrorSuite(String name, String error)
   {
   	SETestSuite ts = new SETestSuite();
+  	ts.setName(name);
   	ts.setPerformed(false);
   	SETestCase  tc = ts.createTestCase();
-  	tc.setName("ErrorSuite");
+  	tc.setName(name);
   	tc.AddFailure(error);
     this.testSuites.add(ts);
   }

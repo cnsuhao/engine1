@@ -13,9 +13,8 @@ specific language governing permissions and limitations under the License.
 // Note that this project is set with the following Additional Include Paths: ../include;../include/cdm;../include/cdm/bind
 // This will build an executable that is intended to execute a how-to method
 
-#include "bind/biogears-cdm.hxx"
-#include "CommonDataModel.h"            // Needs to be included before BioGearsPhysiologyEngine.h
-#include "BioGearsPhysiologyEngine.h"
+#include "CommonDataModel.h"
+#include "PulsePhysiologyEngine.h"
 
 // The following how-to functions are defined in their own file
 void HowToEngineUse();

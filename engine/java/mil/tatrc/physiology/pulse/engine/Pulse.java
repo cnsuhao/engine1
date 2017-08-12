@@ -163,12 +163,6 @@ public class Pulse
       this.nativeObj=0;
     }
     this.listener = null;
-    FileUtils.delete(new File(System.getProperty("user.home") + "/config/"));
-    FileUtils.delete(new File(System.getProperty("user.home") + "/ecg/"));
-    FileUtils.delete(new File(System.getProperty("user.home") + "/patients/"));
-    FileUtils.delete(new File(System.getProperty("user.home") + "/environments/"));
-    FileUtils.delete(new File(System.getProperty("user.home") + "/xsd/"));
-    FileUtils.delete(new File(System.getProperty("user.home") + "/PulseConfiguration.xml"));
   }
 
   public void setListener(LogListener listener)

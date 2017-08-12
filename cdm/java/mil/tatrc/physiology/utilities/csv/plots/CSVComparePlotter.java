@@ -27,7 +27,7 @@ import mil.tatrc.physiology.utilities.csv.CSVContents;
  */
 public class CSVComparePlotter
 {
-  public enum PlotType { FullPlot, FullPlotErrors, FastPlot, FastPlotErrors, MemoryFastPlot}
+  public enum PlotType { NoPlot, FullPlot, FullPlotErrors, FastPlot, FastPlotErrors, MemoryFastPlot}
   public PlotType plotType=PlotType.FastPlot;
 
   public static void main(String[] args) throws IOException, InterruptedException

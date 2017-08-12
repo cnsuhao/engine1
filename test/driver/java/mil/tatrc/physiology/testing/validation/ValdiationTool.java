@@ -137,7 +137,7 @@ public abstract class ValdiationTool
         return;
       }
       // Read in props file
-      File file = new File(cfg.getDataDirectory()+"/test/config/ValidationTables.config");
+      File file = new File(cfg.getTestConfigDirectory()+"/ValidationTables.config");
       FileInputStream fileInput = new FileInputStream(file);
       Properties config = new Properties();
       config.load(fileInput);
@@ -227,7 +227,7 @@ public abstract class ValdiationTool
             // Patient Name is encoded in the naming convention (or else it needs to be)
             String patientName = resultsName.substring(resultsName.lastIndexOf("-")+1,resultsName.indexOf("Results"));            
             patient = new SEPatient();
-            patient.readFile("./stable/"+patientName+".xml");
+            patient.readFile("./stable/"+patientName+".pba");
           }
 
           allRows.clear();

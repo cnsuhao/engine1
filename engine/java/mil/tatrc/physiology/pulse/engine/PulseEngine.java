@@ -108,8 +108,8 @@ public class PulseEngine extends Pulse
     if(conditions !=null && !conditions.isEmpty())
     {
       ConditionListData.Builder cData = ConditionListData.newBuilder();
- //     for(SECondition c : conditions)
- //amb       cData.getCondition().add(c.unload());
+      for(SECondition c : conditions)
+      	cData.addAnyCondition(SECondition.CDM2ANY(c));
       conditionsStr = cData.toString();
     }
     String dataRequestsStr = null;
@@ -141,8 +141,8 @@ public class PulseEngine extends Pulse
     if(conditions !=null && !conditions.isEmpty())
     {
       ConditionListData.Builder cData = ConditionListData.newBuilder();
-//      for(SECondition c : conditions)
-//amb       cData.getCondition().add(c.unload());
+      for(SECondition c : conditions)
+      	cData.addAnyCondition(SECondition.CDM2ANY(c));
       conditionsStr = cData.toString();
     }
     String dataRequestsStr = null;
@@ -202,8 +202,8 @@ public class PulseEngine extends Pulse
     if(actions !=null && !actions.isEmpty())
     {
       ActionListData.Builder aData = ActionListData.newBuilder();
-//      for(SEAction a : actions)
-//amb        aData.addAnyAction(a);
+      for(SEAction a : actions)
+      	aData.addAnyAction(SEAction.CDM2ANY(a));
       String actionsStr = aData.toString();
       if(!nativeProcessActions(this.nativeObj,actionsStr))
         deadEngine=true;
@@ -264,11 +264,11 @@ public class PulseEngine extends Pulse
    */
   protected native void nativeReset(long nativeObj);
   
-  protected native boolean nativeInitializeEngine(long nativeObj, String patientXML, String conditionsXML, String dataRequestsXML);
-  protected native boolean nativeLoadState(long nativeObj, String stateFile, double simTime_s, String dataRequestsXML);// pass <0 as simTime to use the time in the file
+  protected native boolean nativeInitializeEngine(long nativeObj, String patient, String conditions, String dataRequests);
+  protected native boolean nativeLoadState(long nativeObj, String stateFile, double simTime_s, String dataRequests);// pass <0 as simTime to use the time in the file
   protected native String  nativeSaveState(long nativeObj, String stateFile);
   protected native boolean nativeAdvanceTimeStep(long nativeObj);
   protected native boolean nativeAdvanceTime(long nativeObj, double time_s);
-  protected native boolean nativeProcessActions(long nativeObj, String actionsXML);
+  protected native boolean nativeProcessActions(long nativeObj, String actions);
   protected native String nativeGetAssessment(long nativeObj, int type);
 }

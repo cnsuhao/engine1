@@ -54,7 +54,7 @@ public class DataSetReader
   public static void main(String[] args)
   {
     cfg = new RunConfiguration();
-    loadData(cfg.getDataDirectory()+"/data/Data.xlsx");
+    loadData(cfg.getDataDirectory()+"/Data.xlsx");
   }
 
   public static void loadData(String xlsFile)

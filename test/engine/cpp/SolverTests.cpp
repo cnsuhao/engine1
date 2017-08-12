@@ -46,7 +46,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   bool showAllOutput = true; //toggle this to show all Info outputs for all circuits, which will show first-pass solve times and fail rates
 
   PulseController pc(tsSolverSpeed.GetLogger());
-  pc.GetPatient().LoadFile("./patients/StandardMale.xml");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::On);
   pc.m_Config->EnableTissue(cdm::eSwitch::On);
@@ -822,6 +822,6 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   Info(ss);
 
   //What should we write out in the report and/or Track?
-  //testReport.WriteFile(rptDirectory + "\\SolverSpeedTest.xml");
+  //testReport.WriteFile(rptDirectory + "\\SolverSpeedTest.pba");
 
 }

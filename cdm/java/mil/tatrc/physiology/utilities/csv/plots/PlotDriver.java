@@ -53,7 +53,7 @@ public class PlotDriver
         Log.error("Value "+args[0]+" doesn't seem to be a valid config file");
         return;
       }
-      File configFile = new File(cfg.getDataDirectory()+"/test/config/"+args[0]);      
+      File configFile = new File(cfg.getTestConfigDirectory()+"/"+args[0]);      
       if(!configFile.exists())
       {
         Log.error("ConfigFile "+configFile.getAbsolutePath()+" not found");
@@ -563,7 +563,7 @@ public class PlotDriver
         //If this is a scenario test, remove "Results" from name and don't add "Test"
           job.logFile = job.name.substring(0,job.name.indexOf("Results"))+".log";
           job.scenarioPath = expectedPath.substring(0,expectedPath.indexOf("Current Baseline"));
-          job.scenarioFile = job.name.substring(0,job.name.indexOf("Results"))+".xml";
+          job.scenarioFile = job.name.substring(0,job.name.indexOf("Results"))+".pba";
           job.hideAELegend = true;
         }
         else
@@ -653,7 +653,7 @@ public class PlotDriver
         //If this is a scenario test, remove "Results" from name and don't add "Test"
         job.logFile = job.name.substring(0,job.name.indexOf("Results"))+".log";
         job.scenarioPath = expectedPath.substring(0,expectedPath.indexOf("Current Baseline"));
-        job.scenarioFile = job.name.substring(0,job.name.indexOf("Results"))+".xml";
+        job.scenarioFile = job.name.substring(0,job.name.indexOf("Results"))+".pba";
         job.hideAELegend = true;
       }
       else

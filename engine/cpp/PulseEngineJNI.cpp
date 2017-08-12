@@ -177,8 +177,8 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nat
 
   std::string content;
   google::protobuf::TextFormat::PrintToString(*data, &content);
-  jstring stateXML = env->NewStringUTF(content.c_str());
-  return stateXML;
+  jstring state = env->NewStringUTF(content.c_str());
+  return state;
 }
 
 extern "C"
@@ -376,7 +376,7 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nat
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   
-  jstring assessmentXML;
+  jstring assessment;
 
   std::string stream;
   switch (type)
@@ -413,8 +413,8 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nat
       stream = "Unsupported assessment type";
   };
 
-  assessmentXML = env->NewStringUTF(stream.c_str());
-  return assessmentXML;
+  assessment = env->NewStringUTF(stream.c_str());
+  return assessment;
 }
 
 PulseEngineJNI::PulseEngineJNI(const std::string& logFile) : SEEventHandler(nullptr)

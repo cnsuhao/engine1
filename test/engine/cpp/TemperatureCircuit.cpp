@@ -37,7 +37,7 @@ specific language governing permissions and limitations under the License.
 void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "\\InternalTemperatureVariableBMRCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.xml");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
   pc.m_Config->EnableTissue(cdm::eSwitch::Off);
@@ -111,7 +111,7 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
 void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "\\InternalTemperatureVariableSkinCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.xml");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
   pc.m_Config->EnableTissue(cdm::eSwitch::Off);
@@ -208,7 +208,7 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
 void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "\\InternalTemperatureVariableCoreCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.xml");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
   pc.m_Config->EnableTissue(cdm::eSwitch::Off);
@@ -304,7 +304,7 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
 void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "\\EnvironmentVariableTemperatureCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.xml");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
   pc.m_Config->EnableTissue(cdm::eSwitch::Off);
@@ -428,7 +428,7 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
 void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "\\CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.xml");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
   pc.m_Config->EnableTissue(cdm::eSwitch::Off);
@@ -582,7 +582,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
 void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "\\CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.xml");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
   pc.m_Config->EnableTissue(cdm::eSwitch::Off);
@@ -676,14 +676,14 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
 void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "\\EnvironmentTemperatureInput.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.xml");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
   pc.m_Config->EnableTissue(cdm::eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   Environment &env = (Environment&)pc.GetEnvironment();
   env.Initialize();
-  env.GetConditions().LoadFile("./environments/Standard.xml");
+  env.GetConditions().LoadFile("./environments/Standard.pba");
   env.StateChange();
 
   pc.GetEnergy().GetCoreTemperature().SetValue(37.0, TemperatureUnit::C);

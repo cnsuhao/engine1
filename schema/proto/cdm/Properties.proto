@@ -34,9 +34,10 @@ message DecimalFormatData
 {
   enum eType
   {
-    DefaultFormatting = 0;
-    FixedMantissa     = 1;
-    SignificantDigits = 2;
+    SystemFormatting  = 0;/*<<@brief Not provided, let the system do what it wants */
+    DefaultFloat      = 1;
+    FixedMantissa     = 2;
+    SignificantDigits = 3;
   }
   eType                            Type                      = 1;
   uint32                           Precision                 = 2;

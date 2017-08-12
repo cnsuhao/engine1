@@ -172,16 +172,16 @@ public class HowTo_EngineUse
    case PatientFile:
      {
        // Allocate an engine
-       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", "./patient/StandardMale.xml", null/*optionally, pass in a conditions list*/, dataRequests);       
+       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", "./patient/StandardMale.pba", null/*optionally, pass in a conditions list*/, dataRequests);       
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
    case StateFile:
      {
-       pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.xml", dataRequests);
+       pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.pba", dataRequests);
        // This method method sets the engine to the provided state instantaneously and you are ready to process actions/advance time
        // You can alternatively specify the starting simTime of the engine       
-       //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.xml", time, dataRequests);
+       //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.pba", time, dataRequests);
        break;
      }
    }

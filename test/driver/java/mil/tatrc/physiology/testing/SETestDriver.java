@@ -60,13 +60,13 @@ public class SETestDriver
       me.environment = args[2];
       me.architecture = args[3];
     }
-    File configFile = new File(cfg.getDataDirectory()+"/test/config/"+args[0]);
+    File configFile = new File(cfg.getTestConfigDirectory()+"/"+args[0]);
     if(!configFile.exists())
     {
       System.err.println("Config file "+configFile.getName()+" does not exist");
       return;
     }
-    me.processConfigFile(configFile, cfg.getDataDirectory()+"/verification/");
+    me.processConfigFile(configFile, cfg.getVerificationDirectory());
 
     int     availableThreads = Runtime.getRuntime().availableProcessors();
     boolean isPlotting;
@@ -331,8 +331,9 @@ public class SETestDriver
 
         for(String macro : macros.keySet())
         {
-          if(value.indexOf(macro)>-1)
-            value = value.replaceAll(macro, macros.get(macro));
+        	String buffer = " "+value+" ";
+          if(buffer.indexOf(" "+macro+" ")>-1)
+            value = buffer.replaceAll(" "+macro+" ", " "+macros.get(macro)+" ");
         }
 
         TestJob job = new TestJob();
@@ -392,7 +393,9 @@ public class SETestDriver
             key = directive.substring(0, directive.indexOf('='));
             value = directive.substring(directive.indexOf("=") + 1);
             if(key.equalsIgnoreCase("Baseline"))
-            {job.baselineDirectory = baselineDir+value; continue;}              
+            {job.baselineDirectory = baselineDir+"/"+value; continue;}
+            if(key.equalsIgnoreCase("Scenario"))
+            {job.baselineDirectory = value; continue;}
             else if(key.equalsIgnoreCase("Computed"))
             {job.computedDirectory = value; continue;}
             if(key.equalsIgnoreCase("Results"))
@@ -492,9 +495,8 @@ public class SETestDriver
     String baseline = job.baselineDirectory;
     for(int i=0; i<dirs.length-1; i++)
       baseline+="/"+dirs[i];
-    baseline+="/Current Baseline/"+dirs[dirs.length-1]+"Results.zip";
+    baseline+="/"+dirs[dirs.length-1]+"Results.zip";
     job.baselineFiles.add(baseline);
-    //example : ..\verification\Scenarios\Validation\Current Baseline\Patient-ValidationResults.zip
     String output = job.computedDirectory;
     for(int i=0; i<dirs.length; i++)
       output+="/"+dirs[i];
@@ -578,20 +580,16 @@ public class SETestDriver
             {
               failures = compare.compare(job.baselineFiles.get(i), job.computedFiles.get(i));
               if(failures==null)// Something bad happened in running this test...
-              {
-                compare.createErrorSuite("Could not compare these files for some reason: "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
-                compare.write();
-                continue;
-              }
-              compare.write();
+                compare.createErrorSuite(job.name,"Could not compare these files for some reason: "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
             }
             else
             {
-              compare.createErrorSuite("Basline file not found : "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
-              compare.write();
-              continue;
+              compare.createErrorSuite(job.name,"Basline file not found : "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
             }
-            if((job.plotType == PlotType.FastPlotErrors || job.plotType == PlotType.FullPlotErrors) && failures.isEmpty())
+            
+            compare.write();
+           
+            if((job.plotType == PlotType.FastPlotErrors || job.plotType == PlotType.FullPlotErrors) && (failures==null || failures.isEmpty()))
             {
               Log.info("No plots for "+job.computedFiles.get(i));
             }
@@ -675,14 +673,14 @@ public class SETestDriver
       }    
       if(job.reportFiles.isEmpty())
       {
-        report.createErrorSuite("No reports found for "+job.name+" to summarize");
+        report.createErrorSuite(job.name,"No reports found for "+job.name+" to summarize");
         continue;
       }
       for(String reportFile : job.reportFiles)
       {
         if(!FileUtils.fileExists(reportFile))
         {
-          report.createErrorSuite("Unable to find file "+reportFile+" to summarize");
+          report.createErrorSuite(job.name,"Unable to find file "+reportFile+" to summarize");
           continue;
         }
         SETestReport tRpt = new SETestReport();
@@ -697,7 +695,7 @@ public class SETestDriver
         }
         catch(Exception ex)
         {
-        	report.createErrorSuite(reportFile);
+        	report.createErrorSuite(job.name,reportFile);
         	Log.error("Need file with TestReportData object");
         }
       }

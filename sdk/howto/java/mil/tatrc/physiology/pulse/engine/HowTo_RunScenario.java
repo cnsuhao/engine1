@@ -99,14 +99,14 @@ public class HowTo_RunScenario
     // the scenario file, 
     // the name and location of a results file
     // an optional callback that will be called so you can get the latest data values and do some custom logic
-    String xml = FileUtils.readFile("../verification/Scenarios/Basic/Basic1.xml");
-    pe.runScenario("./Scenarios/Basic/Basic1.log", xml,"./Scenarios/Basic/Basic1Results.txt", null);// No Callback, just write out the file
+    String pba = FileUtils.readFile("../verification/Scenarios/Basic/Basic1.pba");
+    pe.runScenario("./Scenarios/Basic/Basic1.log", pba,"./Scenarios/Basic/Basic1Results.txt", null);// No Callback, just write out the file
     
     // You could create and provide an SEScenario object as well
     SEScenario sce = new SEScenario(pe.substanceManager);
     sce.setName("HowTo_StaticEngine");
     sce.setDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
-    sce.getInitialParameters().setPatientFile("Standard.xml");
+    sce.getInitialParameters().setPatientFile("Standard.pba");
     // When filling out a data request, units are optional
     // The units will be set to whatever units the engine uses.
     SEDataRequest hr = new SEDataRequest();
@@ -128,7 +128,7 @@ public class HowTo_RunScenario
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);
     sce.getActions().add(adv);
-    pe.runScenario("./Scenarios/HowToStaticEngine.log",sce,"./Scenarios/HowToStaticEngineResults.xml", new MyCallback(pe,1.0));// Callback with new data every simulated second
+    pe.runScenario("./Scenarios/HowToStaticEngine.log",sce,"./Scenarios/HowToStaticEngineResults.pba", new MyCallback(pe,1.0));// Callback with new data every simulated second
     
     // Note if your engine is running in another thread, you can call pe.cancelScenario to halt the engine
     

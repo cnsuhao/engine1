@@ -90,7 +90,7 @@ public class RespiratoryPFTPlotter implements Plotter
     if(job.logFile == null || job.logFile.isEmpty())
     {job.logFile = job.name + "Results.log";}
     if(job.scenarioFile == null || job.scenarioFile.isEmpty())
-    {job.scenarioFile = job.name + ".xml";}
+    {job.scenarioFile = job.name + ".pba";}
     
     //get all events from Log file
     if(!job.skipAllEvents)

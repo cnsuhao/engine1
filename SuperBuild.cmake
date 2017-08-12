@@ -167,12 +167,12 @@ string(REPLACE ";" "::" CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
 
 # Generate the Pulse project after dependencies have been built
 ExternalProject_Add( Pulse
-    PREFIX
-    DEPENDS Eigen ${Pulse_DEPENDENCIES}
+    PREFIX Pulse
+    DEPENDS ${Pulse_DEPENDENCIES}
     DOWNLOAD_COMMAND ""
     DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}
     SOURCE_DIR ${CMAKE_SOURCE_DIR}
-    BINARY_DIR ${CMAKE_BINARY_DIR}
+    BINARY_DIR ${CMAKE_BINARY_DIR}/Pulse
     CMAKE_GENERATOR ${CMAKE_GENERATOR}
     BUILD_AWAYS 1
     LIST_SEPARATOR ::

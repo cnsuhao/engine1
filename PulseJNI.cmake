@@ -1,4 +1,6 @@
 
+find_package(Java REQUIRED)
+include(UseJava)
 # TODO put a USE_JAVA option in (you would get no JNI, jar, and test suite, but maybe you just want the C++ SDK)
 # Java Compiling
 

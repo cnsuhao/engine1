@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
       //peTest.EnvironmentVariableTemperatureCircuitTest(peDir);
       //peTest.CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(peDir);
       //peTest.CombinedInternalAndEnvironmentSkinTempDropCircuitTest(peDir);
-      //peTest.EnvironmentISO7730ComparisonTest(peDir);
+      peTest.EnvironmentISO7730ComparisonTest(peDir);
 
       //peTest.DiffusionClearanceExcretionTests(peDir);
       //peTest.AlveolarOxygenDiffusionTest(peDir);

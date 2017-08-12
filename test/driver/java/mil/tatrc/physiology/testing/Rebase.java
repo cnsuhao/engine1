@@ -111,10 +111,10 @@ public class Rebase
       }
       for(String f : config.getKeys())
       {
-        if(f.endsWith(".xml"))
+        if(f.endsWith(".pba"))
         {
           String resultFile = fromDir+f;
-          resultsFiles.add(resultFile.replaceAll(".xml","Results.txt"));
+          resultsFiles.add(resultFile.replaceAll(".pba","Results.txt"));
         }
       }
     }

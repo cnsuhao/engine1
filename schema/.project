@@ -18,12 +18,18 @@
 		<link>
 			<name>bind</name>
 			<type>2</type>
-			<location>C:/Programming/physiology/build/protobuf/InnerBuild/schema/java</location>
+			<locationURI>BINARY_DIR/Pulse/schema/java</locationURI>
 		</link>
 		<link>
 			<name>protobuf</name>
 			<type>2</type>
-			<location>C:/Programming/physiology/build/protobuf/protobuf/src/protobuf/java/core/src/main/java</location>
+			<locationURI>BINARY_DIR/protobuf/src/protobuf/java/core/src/main/java</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>BINARY_DIR</name>
+			<value>file:/C:/Programming/physiology/build/protobuf</value>
+		</variable>
+	</variableList>
 </projectDescription>

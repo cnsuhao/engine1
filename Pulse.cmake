@@ -37,40 +37,39 @@ message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 
-
-
 find_package(Dirent REQUIRED)
 find_package(Eigen3 REQUIRED)
 # The outer build does some custom installing of dependent libraries
 # Instead of using find_package, I will make sure things are where expected
 if(NOT protobuf_DIR)
-  set( protobuf_DIR ${CMAKE_BINARY_DIR}/protobuf/src/protobuf)
+  set(protobuf_DIR ${CMAKE_BINARY_DIR}/..//protobuf/src/protobuf)
+  set(protobuf_Header ${protobuf_DIR}/src/google/protobuf/package_info.h)
   # Proto headers should have been installed here by the outer build
-  if(NOT EXISTS ${protobuf_DIR}/src/google/protobuf/package_info.h)
-    message(FATAL_ERROR "I cannot find protobuf headers, make sure you make the install target of the super build")
+  if(NOT EXISTS ${protobuf_Header})
+    message(FATAL_ERROR "I cannot find protobuf header, ${protobuf_Header}, make sure you make the install target of the super build")
   endif()
 endif()
 
 # Log4cpp src should have been download to somewhere
 if(NOT log4cpp_DIR)
   # It should be here if the outer build ran
-  set( log4cpp_DIR ${CMAKE_BINARY_DIR}/log4cpp/src/log4cpp)
-  if(NOT EXISTS ${log4cpp_DIR}/include/log4cpp/Category.hh)
-    message(FATAL_ERROR "I cannot find log4cpp in expected location : ${log4cppDIR}")
+  set(log4cpp_DIR ${CMAKE_BINARY_DIR}/../log4cpp/src/log4cpp)
+  set(log4cpp_HEADER ${log4cpp_DIR}/include/log4cpp/Category.hh)
+  if(NOT EXISTS ${log4cpp_HEADER})
+    message(FATAL_ERROR "I cannot find log4cpp header, ${log4cpp_HEADER}, make sure you make the install target of the super build")
   endif()
 endif()
-
-find_package(Java REQUIRED)
-include(UseJava)
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-if(MSVC)
-  set(protobuf_BUILD_TESTS OFF CACHE TYPE INTERNAL FORCE)
-  set(protobuf_BUILD_EXAMPLES OFF CACHE TYPE INTERNAL FORCE)
-  add_subdirectory("${protobuf_DIR}/cmake" "${protobuf_DIR}-build")
-  set_target_properties(libprotobuf libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
-  set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc js_embed PROPERTIES FOLDER protobufs)
+if(NOT LOG4CPP_INCLUDE_DIR)
+  set(LOG4CPP_INCLUDE_DIR ${log4cpp_DIR}/include)
 endif()
+
+list(APPEND CMAKE_PREFIX_PATH ${eigen_INSTALL})
+list(APPEND CMAKE_PREFIX_PATH ${dirent_INSTALL})
+list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
+list(APPEND CMAKE_PREFIX_PATH ${log4cpp_INSTALL})
+
+set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
+set(SCHEMA_DST "${CMAKE_BINARY_DIR}/schema")
 
 add_subdirectory(${log4cpp_DIR} ${log4cpp_DIR}-build)
 add_subdirectory(schema)
@@ -81,7 +80,15 @@ add_subdirectory(sdk)
 add_subdirectory(verification)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
 
-set(DATA_ROOT ${CMAKE_SOURCE_DIR})
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+if(MSVC)
+  set(protobuf_BUILD_TESTS OFF CACHE TYPE INTERNAL FORCE)
+  set(protobuf_BUILD_EXAMPLES OFF CACHE TYPE INTERNAL FORCE)
+  add_subdirectory("${protobuf_DIR}/cmake" "${protobuf_DIR}-build")
+  set_target_properties(HowToDriver libprotobuf libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+  set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc js_embed PROPERTIES FOLDER protobufs)
+endif()
+
 file(COPY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_INSTALL_PREFIX}/bin/run.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_INSTALL_PREFIX}/bin/run.config @ONLY)

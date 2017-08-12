@@ -29,7 +29,7 @@ SEDecimalFormat::~SEDecimalFormat()
 void SEDecimalFormat::Clear()
 {
   m_Precision = 6;
-  m_Notation = cdm::DecimalFormatData_eType_DefaultFormatting;
+  m_Notation = cdm::DecimalFormatData_eType_SystemFormatting;
 }
 
 void SEDecimalFormat::Set(const SEDecimalFormat& f)
@@ -83,7 +83,10 @@ void SEDecimalFormat::SetStream(std::ofstream& s)
 {
   switch (m_Notation)
   {
-  case cdm::DecimalFormatData_eType_DefaultFormatting:
+  case cdm::DecimalFormatData_eType_SystemFormatting:
+    s << std::fixed << std::setprecision(m_Precision);
+    break;
+  case cdm::DecimalFormatData_eType_DefaultFloat:
     s << std::defaultfloat << std::setprecision(m_Precision);
     break;
   case cdm::DecimalFormatData_eType_FixedMantissa:

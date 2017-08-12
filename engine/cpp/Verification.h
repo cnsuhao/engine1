@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "utils/ConfigParser.h"
 #include "utils/TaskRunner/TaskRunner.h"
 #include "PulsePhysiologyEngine.h"
-#include "Controller/PulseScenarioExec.h"
+#include "Controller/ScenarioExec.h"
 
 #include <string>
 #include <vector>
@@ -57,13 +57,13 @@ namespace
   {
     // Set up the log file
     std::string logFile = m_scenarioFile;
-    logFile = Replace(logFile, "verification", "bin");
-    logFile = Replace(logFile, ".xml", ".log");
+    logFile = Replace(logFile, "verification", "");
+    logFile = Replace(logFile, ".pba", ".log");
 
     // Set up the verification output file
     std::string dataFile = m_scenarioFile;
-    dataFile = Replace(dataFile, "verification", "bin");
-    dataFile = Replace(dataFile, ".xml", "Results.txt");
+    dataFile = Replace(dataFile, "verification", "");
+    dataFile = Replace(dataFile, ".pba", "Results.txt");
 
     // Delete any results file that may be there
     remove(dataFile.c_str());

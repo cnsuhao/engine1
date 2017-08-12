@@ -22,7 +22,7 @@ public class PatientValidation extends ValdiationTool
   public PatientValidation()
   {
     DEST_DIRECTORY = "./test_results/tables/";
-    DEFAULT_DIRECTORY = cfg.getDataDirectory()+"/test/validation/";
+    DEFAULT_DIRECTORY = cfg.getValidationDirectory();
     DEFAULT_FILE = "PatientValidationData.xlsx";
     TABLE_TYPE = "Patient";
     HEADER_PREPEND = "Patient";

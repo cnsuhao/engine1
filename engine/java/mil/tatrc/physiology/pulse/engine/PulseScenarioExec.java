@@ -65,7 +65,7 @@ public class PulseScenarioExec extends Pulse
     Log.info("Cancelling execution");
   }
   
-  protected native void nativeExecuteScenario(long nativeObj, String scenarioXML, String resultsFile, double updateFreq_s);
+  protected native void nativeExecuteScenario(long nativeObj, String scenario, String resultsFile, double updateFreq_s);
   protected native void nativeCancelScenario(long nativeObj);
   
 }

@@ -28,16 +28,12 @@ import mil.tatrc.physiology.testing.SETestDriver.TestJob;
 
 public class ScenarioTestDriver implements SETestDriver.Executor
 {
-  
-  // Yes I am manipulating the xml as a string when I have bind classes
-  // I should really clean this up and use the bind classes (not the SE classes)
-  
   public boolean ExecuteTest(TestJob job)
   {
-    String outputFile = job.computedDirectory+job.name;
+    String outputFile = job.computedDirectory+"/"+job.name;
     String log;
     String results;
-    String pba = FileUtils.readFile(job.baselineDirectory+job.name);
+    String pba = FileUtils.readFile(job.baselineDirectory+"/"+job.name);
     if(pba==null)
     {
       Log.error("Could not read file : "+job.baselineDirectory+"/"+job.name);

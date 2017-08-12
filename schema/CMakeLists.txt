@@ -1,7 +1,5 @@
 # Files in the project 
 
-set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
-set(SCHEMA_DST "${CMAKE_BINARY_DIR}/schema")
 include(${CMAKE_CURRENT_SOURCE_DIR}/GenerateCDMBindings.cmake)
 
 file(GLOB_RECURSE BIND_FILES
@@ -21,7 +19,6 @@ add_library(DataModelBindings ${SOURCE})
 target_include_directories(DataModelBindings PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
 target_include_directories(DataModelBindings PRIVATE ${PROTOBUF_INCLUDE_DIR})
 set(FLAGS)
-list(APPEND FLAGS " -DXML_LIBRARY")
 set_target_properties(DataModelBindings PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
 
 if(APPLE)
@@ -35,6 +32,8 @@ endif()
 
 add_custom_command(TARGET DataModelBindings POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/proto ${INSTALL_BIN}/proto)
+add_custom_command(TARGET DataModelBindings POST_BUILD
+                  COMMAND ${CMAKE_COMMAND} -E touch ${SCHEMA_DST}/schema_last_built)
                    
 if(${BUILD_SHARED_LIBS})
   add_custom_command(TARGET DataModelBindings POST_BUILD
