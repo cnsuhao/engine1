@@ -1582,7 +1582,7 @@ void Cardiovascular::TuneCircuit()
       m_circuitCalculator.Process(*m_CirculatoryCircuit, m_dT_s);
       CalculateVitalSigns();
       m_circuitCalculator.PostProcess(*m_CirculatoryCircuit);
-      return; //Skip stabelization for debugging
+      //return; //Skip stabelization for debugging
 
       map_mmHg = GetMeanArterialPressure(PressureUnit::mmHg);
       systolic_mmHg = GetSystolicArterialPressure(PressureUnit::mmHg);

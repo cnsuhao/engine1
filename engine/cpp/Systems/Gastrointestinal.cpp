@@ -99,6 +99,9 @@ void Gastrointestinal::Initialize()
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeCalcium]    = m_SmallIntestineChymeCalcium->GetMass(MassUnit::ug);
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeSodium]     = m_SmallIntestineChymeSodium->GetMass(MassUnit::ug);
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeUrea]       = m_SmallIntestineChymeUrea->GetMass(MassUnit::ug);
+
+  m_ConsumeRate = false;
+  m_DecrementNutrients = false;
 }
 
 void Gastrointestinal::Load(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst)
@@ -126,16 +129,13 @@ void Gastrointestinal::Serialize(const Gastrointestinal& src, pulse::Gastrointes
 
 void Gastrointestinal::SetUp()
 {
-  m_ConsumeRate = false;
-  m_DecrementNutrients = false;
-
   m_WaterDigestionRate.SetValue(m_data.GetConfiguration().GetWaterDigestionRate(VolumePerTimeUnit::mL_Per_s), VolumePerTimeUnit::mL_Per_s);
   m_CalciumDigestionRate.SetValue(m_data.GetConfiguration().GetCalciumDigestionRate(MassPerTimeUnit::g_Per_s), MassPerTimeUnit::g_Per_s);
 
-  m_GItoCVPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::SmallIntestineC1ToSmallIntestine1);
-  m_GutT1ToGroundPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::GutT1ToGround);
+  m_GItoCVPath                    = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::SmallIntestineC1ToSmallIntestine1);
+  m_GutT1ToGroundPath             = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::GutT1ToGround);
 
-  m_SmallIntestineChyme = m_data.GetCompartments().GetLiquidCompartment(pulse::ChymeCompartment::SmallIntestine);
+  m_SmallIntestineChyme           = m_data.GetCompartments().GetLiquidCompartment(pulse::ChymeCompartment::SmallIntestine);
   m_SmallIntestineChymeGlucose    = m_SmallIntestineChyme->GetSubstanceQuantity(m_data.GetSubstances().GetGlucose());
   m_SmallIntestineChymeTristearin = m_SmallIntestineChyme->GetSubstanceQuantity(m_data.GetSubstances().GetTristearin());
   m_SmallIntestineChymeCalcium    = m_SmallIntestineChyme->GetSubstanceQuantity(m_data.GetSubstances().GetCalcium());

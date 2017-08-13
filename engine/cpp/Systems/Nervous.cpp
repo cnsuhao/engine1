@@ -64,6 +64,10 @@ void Nervous::Initialize()
   GetLeftEyePupillaryResponse().GetReactivityModifier().SetValue(0);
   GetRightEyePupillaryResponse().GetSizeModifier().SetValue(0);
   GetRightEyePupillaryResponse().GetReactivityModifier().SetValue(0);
+
+  // Set when feedback is turned on
+  m_ArterialOxygenSetPoint_mmHg = 0;
+  m_ArterialCarbonDioxideSetPoint_mmHg = 0;
 }
 
 void Nervous::Load(const pulse::NervousSystemData& src, Nervous& dst)
@@ -112,10 +116,6 @@ void Nervous::SetUp()
   m_normalizedAlphaCompliance = m_data.GetConfiguration().GetNormalizedComplianceParasympatheticSlope();
   m_normalizedAlphaResistance = m_data.GetConfiguration().GetNormalizedResistanceSympatheticSlope();
   m_normalizedBetaHeartRate   = m_data.GetConfiguration().GetNormalizedHeartRateParasympatheticSlope();
-
-  // Set when feedback is turned on
-  m_ArterialOxygenSetPoint_mmHg = 0;
-  m_ArterialCarbonDioxideSetPoint_mmHg = 0;
 }
 
 void Nervous::AtSteadyState()

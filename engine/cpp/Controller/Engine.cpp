@@ -497,13 +497,18 @@ bool PulseEngine::ProcessAction(const SEAction& action)
     if (serialize->GetType() == cdm::SerializeStateData_eSerializationType_Save)
     {
       if (serialize->HasFilename())
+      {
         SaveState(serialize->GetFilename());
+      }
       else
       {
         std::stringstream ss;
         MKDIR("./states");
         ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.pba";
         SaveState(ss.str());
+        // Debug code to make sure things are consistent
+        //LoadStateFile(ss.str());
+        //SaveState("./states/AfterSave.pba");
       }     
     }
     else

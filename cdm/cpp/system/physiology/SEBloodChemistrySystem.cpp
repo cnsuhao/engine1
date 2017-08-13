@@ -272,10 +272,10 @@ void SEBloodChemistrySystem::Serialize(const SEBloodChemistrySystem& src, cdm::B
     dst.set_allocated_pulmonaryarterialcarbondioxidepressure(SEScalarPressure::Unload(*src.m_PulmonaryArterialCarbonDioxidePressure));
   if (src.HasPulmonaryArterialOxygenPressure())
     dst.set_allocated_pulmonaryarterialoxygenpressure(SEScalarPressure::Unload(*src.m_PulmonaryArterialOxygenPressure));
-  if (src.HasPulmonaryVenousOxygenPressure())
-    dst.set_allocated_pulmonaryvenouscarbondioxidepressure(SEScalarPressure::Unload(*src.m_PulmonaryVenousOxygenPressure));
   if (src.HasPulmonaryVenousCarbonDioxidePressure())
-    dst.set_allocated_pulmonaryvenousoxygenpressure(SEScalarPressure::Unload(*src.m_PulmonaryVenousCarbonDioxidePressure));
+    dst.set_allocated_pulmonaryvenouscarbondioxidepressure(SEScalarPressure::Unload(*src.m_PulmonaryVenousCarbonDioxidePressure));
+  if (src.HasPulmonaryVenousOxygenPressure())
+    dst.set_allocated_pulmonaryvenousoxygenpressure(SEScalarPressure::Unload(*src.m_PulmonaryVenousOxygenPressure));
   if (src.HasVenousCarbonDioxidePressure())
     dst.set_allocated_venouscarbondioxidepressure(SEScalarPressure::Unload(*src.m_VenousCarbonDioxidePressure));
   if (src.HasVenousOxygenPressure())
