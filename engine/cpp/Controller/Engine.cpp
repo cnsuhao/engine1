@@ -10,6 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "stdafx.h"
+#include "bind/engine/EngineState.pb.h"
 #include "Controller/Engine.h"
 #include "patient/SEPatient.h"
 #include "circuit/SECircuit.h"
@@ -27,6 +28,7 @@ specific language governing permissions and limitations under the License.
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "substance/SESubstanceCompound.h"
+#include <google/protobuf/text_format.h>
 
 #include <memory>
 
@@ -68,18 +70,23 @@ SEEngineTracker* PulseEngine::GetEngineTracker()
 {
   return &m_EngineTrack;
 }
-/*
-bool PulseEngine::LoadState(const std::string& file, const SEScalarTime* simTime)
+
+bool PulseEngine::LoadStateFile(const std::string& filename, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
-  std::unique_ptr<CDM::ObjectData> bind = Serializer::ReadFile(file, GetLogger());
-  CDM::PulseStateData* state = dynamic_cast<CDM::PulseStateData*>(bind.get());
-  if (state != nullptr)
-    return LoadState(*state,simTime);
-  Error("File does not contain a valid PhysiologyEngineState");
-  return false;
+  pulse::StateData src;
+  std::ifstream file_stream(filename, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  if (fmsg.empty() || !google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+    return false;
+  LoadState(src, simTime);
+  return true;
+
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
 }
 
-bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime)
+bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
   m_ss.str("");
   
@@ -88,18 +95,18 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
   // Set it back up, and set or reset the results file they are using
   m_State = EngineState::NotReady;
 
-  const CDM::PulseStateData* bgState = dynamic_cast<const CDM::PulseStateData*>(&state);
-  if (bgState == nullptr)
+  const pulse::StateData* peState = dynamic_cast<const pulse::StateData*>(&state);
+  if (peState == nullptr)
   {
-    Error("State data is not a PulseStateData object");
+    Error("State data is not a Pulse StateData object");
     return false;
   }
 
  
-  if (state.DataRequests().present())
+  if (peState->has_datarequestmanager())
   {
     m_EngineTrack.GetDataRequestManager().Clear();
-    m_EngineTrack.GetDataRequestManager().Load(state.DataRequests().get(), *m_Substances);
+    SEDataRequestManager::Load(peState->datarequestmanager(), m_EngineTrack.GetDataRequestManager(), *m_Substances);
     m_EngineTrack.ForceConnection();// I don't want to rest the file because I would loose all my data      
   }
 
@@ -110,10 +117,10 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
   }
   else
   {
-    if (state.SimulationTime().present())
+    if (peState->has_simulationtime())
     {
-      m_CurrentTime->Load(state.SimulationTime().get());
-      m_SimulationTime->Load(state.SimulationTime().get());
+      SEScalarTime::Load(peState->simulationtime(), *m_CurrentTime);
+      SEScalarTime::Load(peState->simulationtime(), *m_SimulationTime);
     }
     else
     {
@@ -121,236 +128,148 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
       m_SimulationTime->SetValue(0, TimeUnit::s);
     }
   }
-  m_AirwayMode = bgState->AirwayMode();
-  m_Intubation = bgState->Intubation();
+  m_AirwayMode = peState->airwaymode();
+  m_Intubation = peState->intubation();
    
   /// Patient //  
-  if (!bgState->Patient().present())
+  if (!peState->has_patient())
     m_ss << "PulseState must have a patient" << std::endl;
-  else if (!m_Patient->Load(bgState->Patient().get()))
-    m_ss << "Error loading patient data" << std::endl;
+  else
+    SEPatient::Load(peState->patient(), *m_Patient);
   // Conditions //
   m_Conditions->Clear();
-  for (const CDM::ConditionData& cData : bgState->Condition())
+  if (peState->has_conditions())
   {
-    if (!m_Conditions->ProcessCondition(cData))
-      m_ss << "Unable to load condition" << std::endl;
+    for (int i=0; i<peState->conditions().anycondition_size(); i++)
+    {
+      SECondition* c = SECondition::Load(peState->conditions().anycondition()[i],*m_Substances);
+      m_Conditions->ProcessCondition(*c);
+      delete c;
+    }
   }
   // Actions //
   m_Actions->Clear();
-  for (const CDM::ActionData& cData : bgState->ActiveAction())
+  if (peState->has_activeactions())
   {
-    if (!m_Actions->ProcessAction(cData))
-      m_ss << "Unable to load action" << std::endl;
+    for (int i = 0; i<peState->activeactions().anyaction_size(); i++)
+    {
+      SEAction* a = SEAction::Load(peState->activeactions().anyaction()[i], *m_Substances);
+      m_Actions->ProcessAction(*a);
+      delete a;
+    }
   }
   // Substances //
-  for (const CDM::SubstanceData& subData : bgState->ActiveSubstance())
+  for (int i=0; i<peState->activesubstance_size(); i++)
   {
-    SESubstance* sub = m_Substances->GetSubstance(subData.Name());
+    const cdm::SubstanceData& subData = peState->activesubstance()[i];
+    SESubstance* sub = m_Substances->GetSubstance(subData.name());
     if (sub == nullptr)
     {
       sub = new SESubstance(GetLogger());
       m_Substances->AddSubstance(*sub);
     }
-    if (!sub->Load(subData))    
-      m_ss << "Unable to load substance" << subData.Name() << std::endl;
+    SESubstance::Load(subData, *sub);
     m_Substances->AddActiveSubstance(*sub);
   }
   // Compounds //
-  for (const CDM::SubstanceCompoundData& cmpdData : bgState->ActiveSubstanceCompound())
+  for (int i=0; i<peState->activecompound_size(); i++)
   {
-    SESubstanceCompound* cmpd = m_Substances->GetCompound(cmpdData.Name());
+    const cdm::SubstanceData_CompoundData& cmpdData = peState->activecompound()[i];
+    SESubstanceCompound* cmpd = m_Substances->GetCompound(cmpdData.name());
     if (cmpd == nullptr)
       cmpd = new SESubstanceCompound(GetLogger());
-    if (!cmpd->Load(cmpdData, *m_Substances))
-      m_ss << "Unable to load compound" << cmpdData.Name() << std::endl;      
+    SESubstanceCompound::Load(cmpdData, *cmpd, *m_Substances);
+    m_Substances->AddActiveCompound(*cmpd);
   }
   // Circuit Manager //
-  if (!bgState->CircuitManager().present())
+  if (!peState->has_circuitmanager())
     m_ss << "PulseState must have a circuit manager" << std::endl;
   else
-  {
-    const CDM::CircuitManagerData* cmptMgrData = dynamic_cast<const CDM::CircuitManagerData*>(&bgState->CircuitManager().get());
-    if (cmptMgrData == nullptr)
-      m_ss << "PulseState must have a Pulse circuit manager" << std::endl;
-    else if (!m_Circuits->Load(*cmptMgrData))
-      m_ss << "Error loading circuit manager data" << std::endl;
-  }
+    SECircuitManager::Load(peState->circuitmanager(), *m_Circuits);
   // Compartment Manager //
-  if (!bgState->CompartmentManager().present())
+  if (!peState->has_compartmentmanager())
     m_ss << "PulseState must have a compartment manager" << std::endl;
   else
-  {
-    const CDM::CompartmentManagerData* cmptMgrData = dynamic_cast<const CDM::CompartmentManagerData*>(&bgState->CompartmentManager().get());
-    if (cmptMgrData == nullptr)
-      m_ss << "PulseState must have a Pulse compartment manager" << std::endl;
-    else if (!m_Compartments->Load(*cmptMgrData, m_Circuits.get()))
-      m_ss << "Error loading compartment manager data" << std::endl;
-  }
+    SECompartmentManager::Load(peState->compartmentmanager(), *m_Compartments, m_Circuits.get());
   // Configuration //
-  if (!bgState->Configuration().present())
+  if (!peState->has_configuration())
     m_ss << "PulseState must have a configuration" << std::endl;
   else
-  {
-    const CDM::PulseConfigurationData* confData = dynamic_cast<const CDM::PulseConfigurationData*>(&bgState->Configuration().get());
-    if (confData == nullptr)
-      m_ss << "PulseState must have a Pulse configuration" << std::endl;
-    else if (!m_Config->Load(*confData))
-      m_ss << "Error loading configuration data" << std::endl;
+    PulseConfiguration::Load(peState->configuration(), *m_Config);
+  if (config != nullptr)
+  {// Merge in any provided configuration parameters, I hope you know what you are doing....
+    const PulseConfiguration* peConfig = dynamic_cast<const PulseConfiguration*>(config);
+    if (peState == nullptr)
+    {
+      Error("Configuration is not a Pulse configuration object");
+      return false;
+    }
+    m_Config->Merge(*peConfig);
   }
-  // Now, Let's see if there is anything to merge into our base configuration
-  // At this point I don't think we should be doing this... but maybe you want to...
-  //Info("Merging OnDisk Configuration");
-  //PulseConfiguration cFile(*m_Substances);
-  //cFile.LoadFile("PulseConfiguration.pba");
-  //m_Config->Merge(cFile);
-  
 
   /////////////
   // Systems //
   /////////////
-  // Physiology
-  const CDM::PulseBloodChemistrySystemData*   bcData  = nullptr;
-  const CDM::PulseCardiovascularSystemData*   cvData  = nullptr;
-  const CDM::PulseDrugSystemData*             dData   = nullptr;
-  const CDM::PulseEndocrineSystemData*        ndoData = nullptr;
-  const CDM::PulseEnergySystemData*           nrgData = nullptr;
-  const CDM::PulseGastrointestinalSystemData* gasData = nullptr;
-  const CDM::PulseHepaticSystemData*          hepData = nullptr;
-  const CDM::PulseNervousSystemData*          nrvData = nullptr;
-  const CDM::PulseRenalSystemData*            rnlData = nullptr;
-  const CDM::PulseRespiratorySystemData*      rspData = nullptr;
-  const CDM::PulseTissueSystemData*           tsuData = nullptr;
-  // Environment                                         
-  const CDM::PulseEnvironmentData*            envData = nullptr;
-  // Equipment                                           
-  const CDM::PulseAnesthesiaMachineData*      amData  = nullptr;
-  const CDM::PulseElectroCardioGramData*      ecgData = nullptr;
-  const CDM::PulseInhalerData*                nhlData = nullptr;
-  for (const CDM::SystemData& sysData : bgState->System())
-  {
-    if (bcData == nullptr)
-    {
-      bcData = dynamic_cast<const CDM::PulseBloodChemistrySystemData*>(&sysData);
-      if (bcData != nullptr && !m_BloodChemistrySystem->Load(*bcData))
-        m_ss << "Error loading Blood Chemistry data" << std::endl;
-    }
-    if (cvData == nullptr)
-    {
-      cvData = dynamic_cast<const CDM::PulseCardiovascularSystemData*>(&sysData);
-      if (cvData != nullptr && !m_CardiovascularSystem->Load(*cvData))
-        m_ss << "Error loading Cardiovascular data" << std::endl;
-    }
-    if (dData == nullptr)
-    {
-      dData = dynamic_cast<const CDM::PulseDrugSystemData*>(&sysData);
-      if (dData != nullptr && !m_DrugSystem->Load(*dData))
-        m_ss << "Error loading Drug data" << std::endl;
-    }
-    if (ndoData == nullptr)
-    {
-      ndoData = dynamic_cast<const CDM::PulseEndocrineSystemData*>(&sysData);
-      if (ndoData != nullptr && !m_EndocrineSystem->Load(*ndoData))
-        m_ss << "Error loading Endocrine data" << std::endl;
-    }
-    if (nrgData == nullptr)
-    {
-      nrgData = dynamic_cast<const CDM::PulseEnergySystemData*>(&sysData);
-      if (nrgData != nullptr && !m_EnergySystem->Load(*nrgData))
-        m_ss << "Error loading Energy data" << std::endl;
-    }
-    if (gasData == nullptr)
-    {
-      gasData = dynamic_cast<const CDM::PulseGastrointestinalSystemData*>(&sysData);
-      if (gasData != nullptr && !m_GastrointestinalSystem->Load(*gasData))
-        m_ss << "Error loading Gastrointestinal data" << std::endl;
-    }
-    if (hepData == nullptr)
-    {
-      hepData = dynamic_cast<const CDM::PulseHepaticSystemData*>(&sysData);
-      if (hepData != nullptr && !m_HepaticSystem->Load(*hepData))
-        m_ss << "Error loading Hepatic data" << std::endl;
-    }
-    if (nrvData == nullptr)
-    {
-      nrvData = dynamic_cast<const CDM::PulseNervousSystemData*>(&sysData);
-      if (nrvData != nullptr && !m_NervousSystem->Load(*nrvData))
-        m_ss << "Error loading Nervous data" << std::endl;
-    }
-    if (rnlData == nullptr)
-    {
-      rnlData = dynamic_cast<const CDM::PulseRenalSystemData*>(&sysData);
-      if (rnlData != nullptr && !m_RenalSystem->Load(*rnlData))
-        m_ss << "Error loading Renal data" << std::endl;
-    }
-    if (rspData == nullptr)
-    {
-      rspData = dynamic_cast<const CDM::PulseRespiratorySystemData*>(&sysData);
-      if (rspData != nullptr && !m_RespiratorySystem->Load(*rspData))
-        m_ss << "Error loading Respiratory data" << std::endl;
-    }
-    if (tsuData == nullptr)
-    {
-      tsuData = dynamic_cast<const CDM::PulseTissueSystemData*>(&sysData);
-      if (tsuData != nullptr && !m_TissueSystem->Load(*tsuData))
-        m_ss << "Error loading Tissue data" << std::endl;
-    }
-    if (envData == nullptr)
-    {
-      envData = dynamic_cast<const CDM::PulseEnvironmentData*>(&sysData);
-      if (envData != nullptr && !m_Environment->Load(*envData))
-        m_ss << "Error loading Environment data" << std::endl;
-    }
-    if (amData == nullptr)
-    {
-      amData = dynamic_cast<const CDM::PulseAnesthesiaMachineData*>(&sysData);
-      if (amData != nullptr && !m_AnesthesiaMachine->Load(*amData))
-        m_ss << "Error loading Anesthesia Machine data" << std::endl;
-    }
-    if (ecgData == nullptr)
-    {
-      ecgData = dynamic_cast<const CDM::PulseElectroCardioGramData*>(&sysData);
-      if (ecgData != nullptr && !m_ECG->Load(*ecgData))
-        m_ss << "Error loading ECG data" << std::endl;
-    }
-    if (nhlData == nullptr)
-    {
-      nhlData = dynamic_cast<const CDM::PulseInhalerData*>(&sysData);
-      if (nhlData != nullptr && !m_Inhaler->Load(*nhlData))
-        m_ss << "Error loading Inhaler data" << std::endl;
-    }
-  }
-  // Make sure we had all systems in the state
-  if (bcData == nullptr)
-    m_ss<<"Missing Blood Chemistry State"<<std::endl;
-  if (cvData == nullptr)
+  if (!peState->has_bloodchemistry())
+    m_ss << "Missing Blood Chemistry State" << std::endl;
+  else
+    BloodChemistry::Load(peState->bloodchemistry(), *m_BloodChemistrySystem);
+  if (!peState->has_cardiovascular())
     m_ss << "Missing Cardiovascular State" << std::endl;
-  if (dData == nullptr)
+  else
+    Cardiovascular::Load(peState->cardiovascular(), *m_CardiovascularSystem);
+  if (!peState->has_drug())
     m_ss << "Missing Drug State" << std::endl;
-  if (ndoData == nullptr)
+  else
+    Drugs::Load(peState->drug(), *m_DrugSystem);
+  if (!peState->has_endocrine())
     m_ss << "Missing Endocrine State" << std::endl;
-  if (nrgData == nullptr)
+  else
+    Endocrine::Load(peState->endocrine(), *m_EndocrineSystem);
+  if (!peState->has_energy())
     m_ss << "Missing Energy State" << std::endl;
-  if (gasData == nullptr)
+  else
+    Energy::Load(peState->energy(), *m_EnergySystem);
+  if (!peState->has_gastrointestinal())
     m_ss << "Missing Gastrointestinal State" << std::endl;
-  if (hepData == nullptr)
+  else
+    Gastrointestinal::Load(peState->gastrointestinal(), *m_GastrointestinalSystem);
+  if (!peState->has_hepatic())
     m_ss << "Missing Hepatic State" << std::endl;
-  if (nrvData == nullptr)
+  else
+    Hepatic::Load(peState->hepatic(), *m_HepaticSystem);
+  if (!peState->has_nervous())
     m_ss << "Missing Nervous State" << std::endl;
-  if (rnlData == nullptr)
+  else
+    Nervous::Load(peState->nervous(), *m_NervousSystem);
+  if (!peState->has_renal())
     m_ss << "Missing Renal State" << std::endl;
-  if (rspData == nullptr)
+  else
+    Renal::Load(peState->renal(), *m_RenalSystem);
+  if (!peState->has_respiratory())
     m_ss << "Missing Respiratory State" << std::endl;
-  if (tsuData == nullptr)
+  else
+    Respiratory::Load(peState->respiratory(), *m_RespiratorySystem);
+  if (!peState->has_tissue())
     m_ss << "Missing Tissue State" << std::endl;
-  if (envData == nullptr)
+  else
+    Tissue::Load(peState->tissue(), *m_TissueSystem);
+  if (!peState->has_environment())
     m_ss << "Missing Environment State" << std::endl;
-  if (amData == nullptr)
+  else
+    Environment::Load(peState->environment(), *m_Environment);
+  if (!peState->has_anesthesiamachine())
     m_ss << "Missing Anesthesia Machine State" << std::endl;
-  if (ecgData == nullptr)
+  else
+    AnesthesiaMachine::Load(peState->anesthesiamachine(), *m_AnesthesiaMachine);
+  if (!peState->has_electrocardiogram())
     m_ss << "Missing ECG State" << std::endl;
-  if (nhlData == nullptr)
+  else
+    ECG::Load(peState->electrocardiogram(), *m_ECG);
+  if (!peState->has_inhaler())
     m_ss << "Missing Inhaler State" << std::endl;
+  else
+    Inhaler::Load(peState->inhaler(), *m_Inhaler);
 
   if (!m_ss.str().empty())
   {
@@ -370,80 +289,62 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
   return true;// return CheckDataRequirements/IsValid() or something
 }
 
-std::unique_ptr<CDM::PhysiologyEngineStateData> PulseEngine::SaveState(const std::string& file)
+std::unique_ptr<google::protobuf::Message> PulseEngine::SaveState(const std::string& filename)
 {
-  std::unique_ptr<CDM::PhysiologyEngineStateData> state(new CDM::PulseStateData());
+  std::unique_ptr<pulse::StateData> state(new pulse::StateData());
 
-  state->contentVersion(BGE::Version);
-  
-  state->SimulationTime(std::unique_ptr<CDM::ScalarTimeData>(m_SimulationTime->Unload()));
+  state->set_airwaymode(m_AirwayMode);
+  state->set_intubation(m_Intubation);
+  state->set_allocated_simulationtime(SEScalarTime::Unload(*m_SimulationTime));
   if(m_EngineTrack.GetDataRequestManager().HasDataRequests())
-    state->DataRequests(std::unique_ptr<CDM::DataRequestsData>(m_EngineTrack.GetDataRequestManager().Unload()));
-
-  ((CDM::PulseStateData*)state.get())->AirwayMode(m_AirwayMode);
-  ((CDM::PulseStateData*)state.get())->Intubation(m_Intubation);
+    state->set_allocated_datarequestmanager(SEDataRequestManager::Unload(m_EngineTrack.GetDataRequestManager()));
   // Patient
-  state->Patient(std::unique_ptr<CDM::PatientData>(m_Patient->Unload()));  
+  state->set_allocated_patient(SEPatient::Unload(*m_Patient));
   // Conditions
-  std::vector<CDM::ConditionData*> conditions;
-  m_Conditions->Unload(conditions);
-  for (CDM::ConditionData* cData : conditions)
-    state->Condition().push_back(std::unique_ptr<CDM::ConditionData>(cData));
+  state->set_allocated_conditions(SEConditionManager::Unload(*m_Conditions));
   // Actions
-  std::vector<CDM::ActionData*> activeActions;
-  m_Actions->Unload(activeActions);
-  for (CDM::ActionData* aData : activeActions)
-    state->ActiveAction().push_back(std::unique_ptr<CDM::ActionData>(aData));
+  state->set_allocated_activeactions(SEActionManager::Unload(*m_Actions));
  // Active Substances/Compounds
   for (SESubstance* s : m_Substances->GetActiveSubstances())
-    state->ActiveSubstance().push_back(std::unique_ptr<CDM::SubstanceData>(s->Unload()));
+    state->mutable_activesubstance()->AddAllocated(SESubstance::Unload(*s));
   for (SESubstanceCompound* c : m_Substances->GetActiveCompounds())
-    state->ActiveSubstanceCompound().push_back(std::unique_ptr<CDM::SubstanceCompoundData>(c->Unload()));  
+    state->mutable_activecompound()->AddAllocated(SESubstanceCompound::Unload(*c));
   // Systems
-  state->System().push_back(std::unique_ptr<CDM::PulseBloodChemistrySystemData>(m_BloodChemistrySystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseCardiovascularSystemData>(m_CardiovascularSystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseDrugSystemData>(m_DrugSystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseEndocrineSystemData>(m_EndocrineSystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseEnergySystemData>(m_EnergySystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseGastrointestinalSystemData>(m_GastrointestinalSystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseHepaticSystemData>(m_HepaticSystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseNervousSystemData>(m_NervousSystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseRenalSystemData>(m_RenalSystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseRespiratorySystemData>(m_RespiratorySystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseTissueSystemData>(m_TissueSystem->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseEnvironmentData>(m_Environment->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseAnesthesiaMachineData>(m_AnesthesiaMachine->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseElectroCardioGramData>(m_ECG->Unload()));
-  state->System().push_back(std::unique_ptr<CDM::PulseInhalerData>(m_Inhaler->Unload()));
+  state->set_allocated_bloodchemistry(BloodChemistry::Unload(*m_BloodChemistrySystem));
+  state->set_allocated_cardiovascular(Cardiovascular::Unload(*m_CardiovascularSystem));
+  state->set_allocated_drug(Drugs::Unload(*m_DrugSystem));
+  state->set_allocated_endocrine(Endocrine::Unload(*m_EndocrineSystem));
+  state->set_allocated_energy(Energy::Unload(*m_EnergySystem));
+  state->set_allocated_gastrointestinal(Gastrointestinal::Unload(*m_GastrointestinalSystem));
+  state->set_allocated_hepatic(Hepatic::Unload(*m_HepaticSystem));
+  state->set_allocated_nervous(Nervous::Unload(*m_NervousSystem));
+  state->set_allocated_renal(Renal::Unload(*m_RenalSystem));
+  state->set_allocated_respiratory(Respiratory::Unload(*m_RespiratorySystem));
+  state->set_allocated_tissue(Tissue::Unload(*m_TissueSystem));
+  state->set_allocated_environment(Environment::Unload(*m_Environment));
+  state->set_allocated_anesthesiamachine(AnesthesiaMachine::Unload(*m_AnesthesiaMachine));
+  state->set_allocated_electrocardiogram(ECG::Unload(*m_ECG));
+  state->set_allocated_inhaler(Inhaler::Unload(*m_Inhaler));
   // Compartments
-  state->CompartmentManager(std::unique_ptr<CDM::CompartmentManagerData>(m_Compartments->Unload()));
+  state->set_allocated_compartmentmanager(SECompartmentManager::Unload(*m_Compartments));
   // Configuration
-  state->Configuration(std::unique_ptr<CDM::SEEngineConfigurationData>(m_Config->Unload()));
+  state->set_allocated_configuration(PulseConfiguration::Unload(*m_Config));
   // Circuitsk
-  state->CircuitManager(std::unique_ptr<CDM::CircuitManagerData>(m_Circuits->Unload()));
+  state->set_allocated_circuitmanager(SECircuitManager::Unload(*m_Circuits));
 
-  if (!file.empty())
+  if (!filename.empty())
   {
-    CreateFilePath(file);
-    // Write out the engine state
-    std::ofstream stream(file);
-    // Write out the pba file
-    xml_schema::namespace_infomap map;
-    map[""].name = "uri:/mil/tatrc/physiology/datamodel";
-    try
-    {
-      PulseState(stream, dynamic_cast<CDM::PulseStateData&>(*state), map);
-    }
-    catch (std::exception& ex)
-    {
-      Error(ex.what());
-    }
-    stream.close();
+    CreateFilePath(filename);
+    std::string content;
+    google::protobuf::TextFormat::PrintToString(*state, &content);
+    std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
+    ascii_ostream << content;
+    ascii_ostream.flush();
+    ascii_ostream.close();
   }
 
   return state;
 }
-*/
 
 bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
 {
@@ -606,7 +507,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
       }     
     }
     else
-      return LoadState(serialize->GetFilename());
+      return LoadStateFile(serialize->GetFilename());
     return true;
   }
 

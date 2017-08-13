@@ -45,19 +45,18 @@ void Hepatic::Load(const pulse::HepaticSystemData& src, Hepatic& dst)
 }
 void Hepatic::Serialize(const pulse::HepaticSystemData& src, Hepatic& dst)
 {
-
+  SEHepaticSystem::Serialize(src.common(), dst);
 }
 
 pulse::HepaticSystemData* Hepatic::Unload(const Hepatic& src)
 {
-
   pulse::HepaticSystemData* dst = new pulse::HepaticSystemData();
   Hepatic::Serialize(src, *dst);
   return dst;
 }
 void Hepatic::Serialize(const Hepatic& src, pulse::HepaticSystemData& dst)
 {
-
+  SEHepaticSystem::Serialize(src, *dst.mutable_common());
 }
 
 //--------------------------------------------------------------------------------------------------

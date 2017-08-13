@@ -218,6 +218,7 @@ void Respiratory::Load(const pulse::RespiratorySystemData& src, Respiratory& dst
 }
 void Respiratory::Serialize(const pulse::RespiratorySystemData& src, Respiratory& dst)
 {
+  SERespiratorySystem::Serialize(src.common(), dst);
   dst.m_InitialExpiratoryReserveVolume_L = src.initialexpiratoryreservevolume_l();
   dst.m_InitialFunctionalResidualCapacity_L = src.initialfunctionalresidualcapacity_l();
   dst.m_InitialInspiratoryCapacity_L = src.initialinspiratorycapacity_l();
@@ -262,13 +263,13 @@ void Respiratory::Serialize(const pulse::RespiratorySystemData& src, Respiratory
 
 pulse::RespiratorySystemData* Respiratory::Unload(const Respiratory& src)
 {
-
   pulse::RespiratorySystemData* dst = new pulse::RespiratorySystemData();
   Respiratory::Serialize(src, *dst);
   return dst;
 }
 void Respiratory::Serialize(const Respiratory& src, pulse::RespiratorySystemData& dst)
 {
+  SERespiratorySystem::Serialize(src, *dst.mutable_common());
   dst.set_initialexpiratoryreservevolume_l(src.m_InitialExpiratoryReserveVolume_L);
   dst.set_initialfunctionalresidualcapacity_l(src.m_InitialFunctionalResidualCapacity_L);
   dst.set_initialinspiratorycapacity_l(src.m_InitialInspiratoryCapacity_L);

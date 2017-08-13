@@ -30,6 +30,11 @@ void SEInhalerActionCollection::Clear()
   RemoveConfiguration();
 }
 
+void SEInhalerActionCollection::Serialize(const SEInhalerActionCollection& src, cdm::ActionListData& dst)
+{
+  if (src.HasConfiguration())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Configuration));
+}
 
 bool SEInhalerActionCollection::ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData& any)
 {

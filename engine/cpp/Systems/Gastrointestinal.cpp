@@ -108,20 +108,20 @@ void Gastrointestinal::Load(const pulse::GastrointestinalSystemData& src, Gastro
 }
 void Gastrointestinal::Serialize(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst)
 {
+  SEGastrointestinalSystem::Serialize(src.common(), dst);
   // We assume state have to be after all stabilization
   dst.m_DecrementNutrients = true;
 }
 
 pulse::GastrointestinalSystemData* Gastrointestinal::Unload(const Gastrointestinal& src)
 {
-
   pulse::GastrointestinalSystemData* dst = new pulse::GastrointestinalSystemData();
   Gastrointestinal::Serialize(src, *dst);
   return dst;
 }
 void Gastrointestinal::Serialize(const Gastrointestinal& src, pulse::GastrointestinalSystemData& dst)
 {
-
+  SEGastrointestinalSystem::Serialize(src, *dst.mutable_common());
 }
 
 void Gastrointestinal::SetUp()

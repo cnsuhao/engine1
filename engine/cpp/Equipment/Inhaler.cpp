@@ -66,19 +66,18 @@ void Inhaler::Load(const pulse::InhalerData& src, Inhaler& dst)
 }
 void Inhaler::Serialize(const pulse::InhalerData& src, Inhaler& dst)
 {
-
+  SEInhaler::Serialize(src.common(), dst);
 }
 
 pulse::InhalerData* Inhaler::Unload(const Inhaler& src)
 {
-
   pulse::InhalerData* dst = new pulse::InhalerData();
   Inhaler::Serialize(src, *dst);
   return dst;
 }
 void Inhaler::Serialize(const Inhaler& src, pulse::InhalerData& dst)
 {
-
+  SEInhaler::Serialize(src, *dst.mutable_common());
 }
 
 void Inhaler::SetUp()

@@ -110,6 +110,7 @@ void BloodChemistry::Load(const pulse::BloodChemistrySystemData& src, BloodChemi
 }
 void BloodChemistry::Serialize(const pulse::BloodChemistrySystemData& src, BloodChemistry& dst)
 {
+  SEBloodChemistrySystem::Serialize(src.common(), dst);
   if (!src.has_arterialoxygenaverage_mmhg()) { dst.Fatal("Missing ArterialOxygen_mmHg","BloodChemistry::Serialize"); }
   RunningAverage::Load(src.arterialoxygenaverage_mmhg(), dst.m_ArterialOxygen_mmHg);
   if (!src.has_arterialcarbondioxideaverage_mmhg()) { dst.Fatal("Missing ArterialCarbonDioxide_mmHg", "BloodChemistry::Serialize"); }
@@ -118,13 +119,13 @@ void BloodChemistry::Serialize(const pulse::BloodChemistrySystemData& src, Blood
 
 pulse::BloodChemistrySystemData* BloodChemistry::Unload(const BloodChemistry& src)
 {
-
   pulse::BloodChemistrySystemData* dst = new pulse::BloodChemistrySystemData();
   BloodChemistry::Serialize(src,*dst);
   return dst;
 }
 void BloodChemistry::Serialize(const BloodChemistry& src, pulse::BloodChemistrySystemData& dst)
 {
+  SEBloodChemistrySystem::Serialize(src, *dst.mutable_common());
   dst.set_allocated_arterialoxygenaverage_mmhg(RunningAverage::Unload(src.m_ArterialOxygen_mmHg));
   dst.set_allocated_arterialcarbondioxideaverage_mmhg(RunningAverage::Unload(src.m_ArterialCarbonDioxide_mmHg));
 }

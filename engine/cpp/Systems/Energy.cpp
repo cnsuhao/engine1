@@ -120,6 +120,7 @@ void Energy::Load(const pulse::EnergySystemData& src, Energy& dst)
 }
 void Energy::Serialize(const pulse::EnergySystemData& src, Energy& dst)
 {
+  SEEnergySystem::Serialize(src.common(), dst);
   dst.m_UsableEnergyStore_J = src.usableenergystore_j();
   dst.m_PeakPowerEnergyStore_J = src.peakpowerenergystore_j();
   dst.m_MediumPowerEnergyStore_J = src.mediumpowerenergystore_j();
@@ -131,13 +132,13 @@ void Energy::Serialize(const pulse::EnergySystemData& src, Energy& dst)
 
 pulse::EnergySystemData* Energy::Unload(const Energy& src)
 {
-
   pulse::EnergySystemData* dst = new pulse::EnergySystemData();
   Energy::Serialize(src, *dst);
   return dst;
 }
 void Energy::Serialize(const Energy& src, pulse::EnergySystemData& dst)
 {
+  SEEnergySystem::Serialize(src, *dst.mutable_common());
   dst.set_usableenergystore_j(src.m_UsableEnergyStore_J);
   dst.set_peakpowerenergystore_j(src.m_PeakPowerEnergyStore_J);
   dst.set_mediumpowerenergystore_j(src.m_MediumPowerEnergyStore_J);

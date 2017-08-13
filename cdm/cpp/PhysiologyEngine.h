@@ -69,7 +69,7 @@ public:
   /// Engine will be in a cleared state if this method fails.
   /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool LoadState(const std::string& file, const SEScalarTime* simTime=nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool LoadStateFile(const std::string& filename, const SEScalarTime* simTime=nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -89,7 +89,7 @@ public:
   /// State object will be returned.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& file = "") = 0;
+  virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& filename = "") = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

@@ -34,6 +34,7 @@ public:
 
 protected:
   void Clear();
+  static void Serialize(const SEEnvironmentActionCollection& src, cdm::ActionListData& dst);
   bool ProcessAction(const SEEnvironmentAction& action, cdm::AnyEnvironmentActionData& any);
   
   SEChangeEnvironmentConditions*  m_Change;

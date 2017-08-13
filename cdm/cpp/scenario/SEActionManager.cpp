@@ -37,6 +37,34 @@ void SEActionManager::Clear()
   m_ProcessedActions.Clear();// amb Does this delete?
 }
 
+void SEActionManager::Load(const cdm::ActionListData& src, SEActionManager& dst)
+{
+  SEActionManager::Serialize(src, dst);
+}
+void SEActionManager::Serialize(const cdm::ActionListData& src, SEActionManager& dst)
+{
+  for (int i = 0; i < src.anyaction_size(); i++)
+  {
+    SEAction* a = SEAction::Load(src.anyaction()[i], dst.m_Substances);
+    dst.ProcessAction(*a);
+    delete a;
+  }
+}
+
+cdm::ActionListData* SEActionManager::Unload(const SEActionManager& src)
+{
+  cdm::ActionListData* dst = new cdm::ActionListData();
+  SEActionManager::Serialize(src, *dst);
+  return dst;
+}
+void SEActionManager::Serialize(const SEActionManager& src, cdm::ActionListData& dst)
+{
+  SEPatientActionCollection::Serialize(src.m_PatientActions, dst);
+  SEEnvironmentActionCollection::Serialize(src.m_EnvironmentActions, dst);
+  SEAnesthesiaMachineActionCollection::Serialize(src.m_AnesthesiaMachineActions, dst);
+  SEInhalerActionCollection::Serialize(src.m_InhalerActions, dst);
+}
+
 bool SEActionManager::ProcessAction(const SEAction& action)
 {
   if (!action.IsValid())

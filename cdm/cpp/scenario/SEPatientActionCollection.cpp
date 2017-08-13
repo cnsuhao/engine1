@@ -80,6 +80,67 @@ void SEPatientActionCollection::Clear()
   DELETE_MAP_SECOND(m_SubstanceCompoundInfusions);
 }
 
+void SEPatientActionCollection::Serialize(const SEPatientActionCollection& src, cdm::ActionListData& dst)
+{
+  if (src.HasAcuteStress())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_AcuteStress));
+  if (src.HasAirwayObstruction())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_AirwayObstruction));
+  if (src.HasApnea())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Apnea));
+  if (src.HasAsthmaAttack())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_AsthmaAttack));
+  if (src.HasBrainInjury())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_BrainInjury));
+  if (src.HasBronchoconstriction())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Bronchoconstriction));
+  if (src.HasCardiacArrest())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_CardiacArrest));
+  if (src.HasChestCompression())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_ChestCompression));
+  if (src.HasLeftChestOcclusiveDressing())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_LeftChestOcclusiveDressing));
+  if (src.HasRightChestOcclusiveDressing())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_RightChestOcclusiveDressing));
+  if (src.HasConsciousRespiration())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_ConsciousRespiration));
+  if (src.HasConsumeNutrients())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_ConsumeNutrients));
+  if (src.HasExercise())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Exercise));
+  if (src.HasHemorrhage())
+  {
+    for (auto itr : src.m_Hemorrhages)
+      dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*itr.second));
+  } 
+  if (src.HasIntubation())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Intubation));
+  if (src.HasMechanicalVentilation())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_MechanicalVentilation));
+  if (src.HasLeftNeedleDecompression())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_LeftNeedleDecompression));
+  if (src.HasRightNeedleDecompression())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_RightNeedleDecompression));
+  if (src.HasPericardialEffusion())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_PericardialEffusion));
+  if (src.HasLeftClosedTensionPneumothorax())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_LeftClosedTensionPneumothorax));
+  if (src.HasLeftOpenTensionPneumothorax())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_LeftOpenTensionPneumothorax));
+  if (src.HasRightClosedTensionPneumothorax())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_RightClosedTensionPneumothorax));
+  if (src.GetRightClosedTensionPneumothorax())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_RightOpenTensionPneumothorax));
+  for (auto itr : src.m_SubstanceBolus)
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*itr.second));
+  for (auto itr : src.m_SubstanceInfusions)
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*itr.second));
+  for (auto itr : src.m_SubstanceCompoundInfusions)
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*itr.second));
+  if (src.HasUrinate())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Urinate));
+}
+
 
 bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm::AnyPatientActionData& any)
 {

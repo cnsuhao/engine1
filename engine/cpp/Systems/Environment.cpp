@@ -111,18 +111,19 @@ void Environment::Load(const pulse::EnvironmentData& src, Environment& dst)
 }
 void Environment::Serialize(const pulse::EnvironmentData& src, Environment& dst)
 {
+  SEEnvironment::Serialize(src.common(), dst);
   dst.m_PatientEquivalentDiameter_m = src.patientequivalentdiameter_m();
 }
 
 pulse::EnvironmentData* Environment::Unload(const Environment& src)
 {
-
   pulse::EnvironmentData* dst = new pulse::EnvironmentData();
   Environment::Serialize(src, *dst);
   return dst;
 }
 void Environment::Serialize(const Environment& src, pulse::EnvironmentData& dst)
 {
+  SEEnvironment::Serialize(src, *dst.mutable_common());
   dst.set_patientequivalentdiameter_m(src.m_PatientEquivalentDiameter_m);
 }
 

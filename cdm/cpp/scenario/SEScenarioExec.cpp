@@ -91,7 +91,7 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
     // Initialize the engine with a state or initial parameters
     if (scenario.HasEngineStateFile())
     {
-      m_Engine.LoadState(scenario.GetEngineStateFile());
+      m_Engine.LoadStateFile(scenario.GetEngineStateFile());
       // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
       // Make a copy of the data requests, note this clears out data requests from the engine
       cdm::DataRequestManagerData* drData = SEDataRequestManager::Unload(scenario.GetDataRequestManager());

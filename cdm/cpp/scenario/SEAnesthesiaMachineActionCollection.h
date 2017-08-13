@@ -47,7 +47,7 @@ public:
   SEOxygenTankPressureLoss* GetOxygenTankPressureLoss() const;
   void RemoveOxygenTankPressureLoss();
 
-  bool HasOxygenWallPortPressureLoss();
+  bool HasOxygenWallPortPressureLoss() const;
   SEOxygenWallPortPressureLoss* GetOxygenWallPortPressureLoss();
   void RemoveOxygenWallPortPressureLoss();
 
@@ -95,6 +95,7 @@ public:
   
 protected:
   void Clear();
+  static void Serialize(const SEAnesthesiaMachineActionCollection& src, cdm::ActionListData& dst);
   bool ProcessAction(const SEAnesthesiaMachineAction& action, cdm::AnyAnesthesiaMachineActionData& any);
 
   SEAnesthesiaMachineConfiguration*           m_Configuration;

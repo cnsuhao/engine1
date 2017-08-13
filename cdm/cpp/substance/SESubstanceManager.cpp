@@ -292,6 +292,7 @@ bool SESubstanceManager::LoadSubstanceDirectory()
         }
         SESubstance* sub = new SESubstance(GetLogger());
         SESubstance::Load(*subData, *sub);
+        //SESubstance::Unload(*sub); // This is here to debug serialization if I have to
         m_OriginalSubstanceData[sub] = subData;
         AddSubstance(*sub);
       }

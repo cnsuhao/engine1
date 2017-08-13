@@ -45,6 +45,48 @@ void SEConditionManager::Clear()
   m_Conditions.Clear(); // amd does this delete?
 }
 
+void SEConditionManager::Load(const cdm::ConditionListData& src, SEConditionManager& dst)
+{
+  SEConditionManager::Serialize(src, dst);
+}
+void SEConditionManager::Serialize(const cdm::ConditionListData& src, SEConditionManager& dst)
+{
+  for (int i = 0; i < src.anycondition_size(); i++)
+  {
+    SECondition* c = SECondition::Load(src.anycondition()[i],dst.m_Substances);
+    dst.ProcessCondition(*c);
+    delete c;
+  }
+}
+
+cdm::ConditionListData* SEConditionManager::Unload(const SEConditionManager& src)
+{
+  cdm::ConditionListData* dst = new cdm::ConditionListData();
+  SEConditionManager::Serialize(src, *dst);
+  return dst;
+}
+void SEConditionManager::Serialize(const SEConditionManager& src, cdm::ConditionListData& dst)
+{
+  if (src.HasChronicAnemia())
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*src.m_Anemia));
+  if (src.HasConsumeMeal())
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*src.m_ConsumeMeal));
+  if (src.HasChronicObstructivePulmonaryDisease())
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*src.m_COPD));
+  if (src.HasChronicVentricularSystolicDysfunction())
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*src.m_ChronicVentricularSystolicDysfunction));
+  if (src.HasImpairedAlveolarExchange())
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*src.m_ImpairedAlveolarExchange));
+  if (src.HasChronicPericardialEffusion())
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*src.m_PericardialEffusion));
+  if (src.HasLobarPneumonia())
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*src.m_LobarPneumonia));
+  if (src.HasChronicRenalStenosis())
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*src.m_RenalStenosis));
+  if (src.HasInitialEnvironmentConditions())
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*src.m_InitialEnvironmentConditions));
+}
+
 bool SEConditionManager::ProcessCondition(const SECondition& condition)
 {
   if (!condition.IsValid())

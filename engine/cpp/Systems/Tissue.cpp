@@ -149,6 +149,7 @@ void Tissue::Load(const pulse::TissueSystemData& src, Tissue& dst)
 }
 void Tissue::Serialize(const pulse::TissueSystemData& src, Tissue& dst)
 {
+  SETissueSystem::Serialize(src.common(), dst);
   dst.m_RestingTissueGlucose_g = src.restingtissueglucose_g();
   dst.m_RestingBloodGlucose_g_Per_L = src.restingbloodglucose_g_per_l();
   dst.m_RestingBloodLipid_g_Per_L = src.restingbloodlipid_g_per_l();
@@ -159,13 +160,13 @@ void Tissue::Serialize(const pulse::TissueSystemData& src, Tissue& dst)
 
 pulse::TissueSystemData* Tissue::Unload(const Tissue& src)
 {
-
   pulse::TissueSystemData* dst = new pulse::TissueSystemData();
   Tissue::Serialize(src, *dst);
   return dst;
 }
 void Tissue::Serialize(const Tissue& src, pulse::TissueSystemData& dst)
 {
+  SETissueSystem::Serialize(src, *dst.mutable_common());
   dst.set_restingtissueglucose_g(src.m_RestingTissueGlucose_g);
   dst.set_restingbloodglucose_g_per_l(src.m_RestingBloodGlucose_g_Per_L);
   dst.set_restingbloodlipid_g_per_l(src.m_RestingBloodLipid_g_Per_L);

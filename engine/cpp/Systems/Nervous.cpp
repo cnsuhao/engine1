@@ -73,6 +73,7 @@ void Nervous::Load(const pulse::NervousSystemData& src, Nervous& dst)
 }
 void Nervous::Serialize(const pulse::NervousSystemData& src, Nervous& dst)
 {
+  SENervousSystem::Serialize(src.common(), dst);
   // We assume state have to be after all stabilization
   dst.m_FeedbackActive = true;
   dst.m_ArterialOxygenSetPoint_mmHg = src.arterialoxygensetpoint_mmhg();
@@ -81,13 +82,13 @@ void Nervous::Serialize(const pulse::NervousSystemData& src, Nervous& dst)
 
 pulse::NervousSystemData* Nervous::Unload(const Nervous& src)
 {
-
   pulse::NervousSystemData* dst = new pulse::NervousSystemData();
   Nervous::Serialize(src, *dst);
   return dst;
 }
 void Nervous::Serialize(const Nervous& src, pulse::NervousSystemData& dst)
 {
+  SENervousSystem::Serialize(src, *dst.mutable_common());
   dst.set_arterialoxygensetpoint_mmhg(src.m_ArterialOxygenSetPoint_mmHg);
   dst.set_arterialcarbondioxidesetpoint_mmhg(src.m_ArterialCarbonDioxideSetPoint_mmHg);
 }

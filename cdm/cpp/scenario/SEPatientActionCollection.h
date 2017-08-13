@@ -163,6 +163,7 @@ public:
 
 protected:
   void Clear();
+  static void Serialize(const SEPatientActionCollection& src, cdm::ActionListData& dst);
   bool ProcessAction(const SEPatientAction& action, cdm::AnyPatientActionData& any);
 
   SEAcuteStress*                m_AcuteStress;

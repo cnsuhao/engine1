@@ -28,6 +28,14 @@ public:
 
   void Clear();
 
+  static void Load(const cdm::ActionListData& src, SEActionManager& dst);
+  static cdm::ActionListData* Unload(const SEActionManager& src);
+protected:
+  static void Serialize(const cdm::ActionListData& src, SEActionManager& dst);
+  static void Serialize(const SEActionManager& src, cdm::ActionListData& dst);
+
+public:
+
   bool ProcessAction(const SEAction& action);// Will make a copy
 
   SEPatientActionCollection&           GetPatientActions()           { return m_PatientActions; }

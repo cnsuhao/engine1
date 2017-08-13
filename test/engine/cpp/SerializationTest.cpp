@@ -113,7 +113,7 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
   pc->GetLogger()->Info("Serializing");
   pc->SaveState("./MidInhalerState.pba");
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->LoadState("./MidInhalerState.pba", &now);
+  pc->LoadStateFile("./MidInhalerState.pba", &now);
 
   // Change the results file
   pc->GetLogger()->ResetLogFile("InhalerSerialization.log");
@@ -149,7 +149,7 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   // Save and Load the Engine State
   pc->SaveState("./MidBolusState.pba");
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->LoadState("./MidBolusState.pba",&now);
+  pc->LoadStateFile("./MidBolusState.pba",&now);
 
   tracker.AdvanceModelTime(15);
 
@@ -171,7 +171,7 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
 
   pc->SaveState("./AnesthesiaMachineState.pba");
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->LoadState("./AnesthesiaMachineState.pba", &now);
+  pc->LoadStateFile("./AnesthesiaMachineState.pba", &now);
 
   tracker.AdvanceModelTime(40);
 }
@@ -304,7 +304,7 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     {
       pc->GetLogger()->ResetLogFile("BasicStandardStateResults.log");
       pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.txt");
-      pc->LoadState("./BasicStandardState@60s.pba");
+      pc->LoadStateFile("./BasicStandardState@60s.pba");
       tracker.AdvanceModelTime(60);
     }
   }

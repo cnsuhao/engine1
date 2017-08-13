@@ -94,7 +94,7 @@ void SEElectroCardioGram::Serialize(const SEElectroCardioGram& src, cdm::Electro
 {
   if (src.HasLead1ElectricPotential())
     dst.set_allocated_lead1electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead1ElectricPotential));
-  if (src.HasLead3ElectricPotential())
+  if (src.HasLead2ElectricPotential())
     dst.set_allocated_lead2electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead2ElectricPotential));
   if (src.HasLead3ElectricPotential())
     dst.set_allocated_lead3electricpotential(SEScalarElectricPotential::Unload(*src.m_Lead3ElectricPotential));

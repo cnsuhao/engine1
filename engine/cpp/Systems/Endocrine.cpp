@@ -65,7 +65,7 @@ void Endocrine::Load(const pulse::EndocrineSystemData& src, Endocrine& dst)
 }
 void Endocrine::Serialize(const pulse::EndocrineSystemData& src, Endocrine& dst)
 {
-
+  SEEndocrineSystem::Serialize(src.common(), dst);
 }
 
 pulse::EndocrineSystemData* Endocrine::Unload(const Endocrine& src)
@@ -77,7 +77,7 @@ pulse::EndocrineSystemData* Endocrine::Unload(const Endocrine& src)
 }
 void Endocrine::Serialize(const Endocrine& src, pulse::EndocrineSystemData& dst)
 {
-
+  SEEndocrineSystem::Serialize(src, *dst.mutable_common());
 }
 
 void Endocrine::SetUp()

@@ -64,6 +64,38 @@ void SEAnesthesiaMachineActionCollection::Clear()
   RemoveYPieceDisconnect();
 }
 
+void SEAnesthesiaMachineActionCollection::Serialize(const SEAnesthesiaMachineActionCollection& src, cdm::ActionListData& dst)
+{
+  if (src.HasConfiguration())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Configuration));
+
+  if (src.HasOxygenTankPressureLoss())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_OxygenTankPressureLoss));
+  if (src.HasOxygenWallPortPressureLoss())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_OxygenWallPortPressureLoss));
+
+  if (src.HasExpiratoryValveLeak())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_ExpiratoryValveLeak));
+  if (src.HasExpiratoryValveObstruction())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_ExpiratoryValveObstruction));
+  if (src.HasInspiratoryValveLeak())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_InspiratoryValveLeak));
+  if (src.HasInspiratoryValveObstruction())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_InspiratoryValveObstruction));
+  if (src.HasMaskLeak())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_MaskLeak));
+  if (src.HasSodaLimeFailure())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_SodaLimeFailure));
+  if (src.HasTubeCuffLeak())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_TubeCuffLeak));
+  if (src.HasVaporizerFailure())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_VaporizerFailure));
+  if (src.HasVentilatorPressureLoss())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_VentilatorPressureLoss));
+  if (src.HasYPieceDisconnect())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_YPieceDisconnect));
+}
+
 bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachineAction& action, cdm::AnyAnesthesiaMachineActionData& any)
 {
   const SEAnesthesiaMachineConfiguration* config = dynamic_cast<const SEAnesthesiaMachineConfiguration*>(&action);
@@ -252,7 +284,7 @@ void SEAnesthesiaMachineActionCollection::RemoveOxygenTankPressureLoss()
   SAFE_DELETE(m_OxygenTankPressureLoss);
 }
 
-bool SEAnesthesiaMachineActionCollection::HasOxygenWallPortPressureLoss()
+bool SEAnesthesiaMachineActionCollection::HasOxygenWallPortPressureLoss() const
 {
   return m_OxygenWallPortPressureLoss == nullptr ? false : true;
 }

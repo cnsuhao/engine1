@@ -38,6 +38,14 @@ void SEEnvironmentActionCollection::Clear()
   RemoveThermalApplication();
 }
 
+void SEEnvironmentActionCollection::Serialize(const SEEnvironmentActionCollection& src, cdm::ActionListData& dst)
+{
+  if (src.HasChange())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Change));
+  if (src.HasThermalApplication())
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_ThermalApplication));
+}
+
 bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action, cdm::AnyEnvironmentActionData& any)
 {
   const SEChangeEnvironmentConditions* conditions = dynamic_cast<const SEChangeEnvironmentConditions*>(&action);

@@ -40,9 +40,9 @@ public:
   PulseEngine(const std::string&);
   virtual ~PulseEngine();
 
-  virtual bool LoadState(const std::string& file, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config=nullptr) { return false; }
-  virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config=nullptr) { return false; }
-  virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& file = "") { return nullptr; }
+  virtual bool LoadStateFile(const std::string& file, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr);
+  virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr);
+  virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& file = "");
 
   virtual Logger* GetLogger();
   virtual SEEngineTracker* GetEngineTracker();

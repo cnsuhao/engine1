@@ -90,6 +90,7 @@ void ECG::Load(const pulse::ElectroCardioGramData& src, ECG& dst)
 }
 void ECG::Serialize(const pulse::ElectroCardioGramData& src, ECG& dst)
 {
+  SEElectroCardioGram::Serialize(src.common(), dst);
   dst.m_heartRhythmTime.SetValue(src.heartrythmtime_s(),TimeUnit::s);
   dst.m_heartRhythmPeriod.SetValue(src.heartrythmperiod_s(),TimeUnit::s);
   SEElectroCardioGramWaveformInterpolator::Load(src.waveforms(),dst.m_interpolator);
@@ -104,6 +105,7 @@ pulse::ElectroCardioGramData* ECG::Unload(const ECG& src)
 }
 void ECG::Serialize(const ECG& src, pulse::ElectroCardioGramData& dst)
 {
+  SEElectroCardioGram::Serialize(src, *dst.mutable_common());
   dst.set_heartrythmtime_s(src.m_heartRhythmTime.GetValue(TimeUnit::s));
   dst.set_heartrythmperiod_s(src.m_heartRhythmPeriod.GetValue(TimeUnit::s));
   dst.set_allocated_waveforms(SEElectroCardioGramWaveformInterpolator::Unload(src.m_interpolator));

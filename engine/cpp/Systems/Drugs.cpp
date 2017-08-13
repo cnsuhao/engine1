@@ -93,19 +93,18 @@ void Drugs::Load(const pulse::DrugSystemData& src, Drugs& dst)
 }
 void Drugs::Serialize(const pulse::DrugSystemData& src, Drugs& dst)
 {
-
+  SEDrugSystem::Serialize(src.common(), dst);
 }
 
 pulse::DrugSystemData* Drugs::Unload(const Drugs& src)
 {
-
   pulse::DrugSystemData* dst = new pulse::DrugSystemData();
   Drugs::Serialize(src, *dst);
   return dst;
 }
 void Drugs::Serialize(const Drugs& src, pulse::DrugSystemData& dst)
 {
-
+  SEDrugSystem::Serialize(src, *dst.mutable_common());
 }
 
 

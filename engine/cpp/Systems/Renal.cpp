@@ -265,6 +265,7 @@ void Renal::Load(const pulse::RenalSystemData& src, Renal& dst)
 }
 void Renal::Serialize(const pulse::RenalSystemData& src, Renal& dst)
 {
+  SERenalSystem::Serialize(src.common(), dst);
   dst.m_Urinating = src.urinating();
   dst.m_leftAfferentResistance_mmHg_s_Per_mL = src.leftafferentresistance_mmhg_s_per_ml();
   dst.m_rightAfferentResistance_mmHg_s_Per_mL = src.rightafferentresistance_mmhg_s_per_ml();
@@ -283,13 +284,13 @@ void Renal::Serialize(const pulse::RenalSystemData& src, Renal& dst)
 
 pulse::RenalSystemData* Renal::Unload(const Renal& src)
 {
-
   pulse::RenalSystemData* dst = new pulse::RenalSystemData();
   Renal::Serialize(src, *dst);
   return dst;
 }
 void Renal::Serialize(const Renal& src, pulse::RenalSystemData& dst)
 {
+  SERenalSystem::Serialize(src, *dst.mutable_common());
   dst.set_urinating(src.m_Urinating);
   dst.set_leftafferentresistance_mmhg_s_per_ml(src.m_leftAfferentResistance_mmHg_s_Per_mL);
   dst.set_rightafferentresistance_mmhg_s_per_ml(src.m_rightAfferentResistance_mmHg_s_Per_mL);

@@ -222,6 +222,7 @@ void Cardiovascular::Load(const pulse::CardiovascularSystemData& src, Cardiovasc
 }
 void Cardiovascular::Serialize(const pulse::CardiovascularSystemData& src, Cardiovascular& dst)
 {
+  SECardiovascularSystem::Serialize(src.common(), dst);
   dst.m_StartSystole = src.startsystole();
   dst.m_HeartFlowDetected = src.heartflowdetected();
   dst.m_EnterCardiacArrest = src.entercardiacarrest();
@@ -260,13 +261,13 @@ void Cardiovascular::Serialize(const pulse::CardiovascularSystemData& src, Cardi
 
 pulse::CardiovascularSystemData* Cardiovascular::Unload(const Cardiovascular& src)
 {
-
   pulse::CardiovascularSystemData* dst = new pulse::CardiovascularSystemData();
   Cardiovascular::Serialize(src, *dst);
   return dst;
 }
 void Cardiovascular::Serialize(const Cardiovascular& src, pulse::CardiovascularSystemData& dst)
 {
+  SECardiovascularSystem::Serialize(src, *dst.mutable_common());
   dst.set_startsystole(src.m_StartSystole);
   dst.set_heartflowdetected(src.m_HeartFlowDetected);
   dst.set_entercardiacarrest(src.m_EnterCardiacArrest);
@@ -1581,7 +1582,7 @@ void Cardiovascular::TuneCircuit()
       m_circuitCalculator.Process(*m_CirculatoryCircuit, m_dT_s);
       CalculateVitalSigns();
       m_circuitCalculator.PostProcess(*m_CirculatoryCircuit);
-      //return; //Skip stabelization for debugging
+      return; //Skip stabelization for debugging
 
       map_mmHg = GetMeanArterialPressure(PressureUnit::mmHg);
       systolic_mmHg = GetSystolicArterialPressure(PressureUnit::mmHg);

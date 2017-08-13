@@ -145,7 +145,7 @@ cdm::NutritionData* SENutrition::Unload(const SENutrition& src)
 void SENutrition::Serialize(const SENutrition& src, cdm::NutritionData& dst)
 {
   if (src.HasCarbohydrate())
-    dst.set_allocated_calcium(SEScalarMass::Unload(*src.m_Carbohydrate));
+    dst.set_allocated_carbohydrate(SEScalarMass::Unload(*src.m_Carbohydrate));
   if (src.HasCarbohydrateDigestionRate())
     dst.set_allocated_carbohydratedigestionrate(SEScalarMassPerTime::Unload(*src.m_CarbohydrateDigestionRate));
   if (src.HasFat())

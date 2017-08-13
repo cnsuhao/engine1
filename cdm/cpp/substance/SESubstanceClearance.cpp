@@ -174,7 +174,7 @@ void SESubstanceClearance::Serialize(const cdm::SubstanceData_ClearanceData& src
       dst.m_RenalDynamic = RenalDynamic::Regulation;
       dst.SetChargeInBlood(src.renalclearance().regulation().chargeinblood());
       SEScalar0To1::Load(src.renalclearance().regulation().fractionunboundinplasma(), dst.GetFractionUnboundInPlasma());
-      SEScalar::Load(src.renalclearance().regulation().reabsorptionratio(), dst.GetRenalReabsorptionRate());
+      SEScalar::Load(src.renalclearance().regulation().reabsorptionratio(), dst.GetRenalReabsorptionRatio());
       SEScalarMassPerTime::Load(src.renalclearance().regulation().transportmaximum(), dst.GetRenalTransportMaximum());
     }
     else if (src.renalclearance().has_clearance())

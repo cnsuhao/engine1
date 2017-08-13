@@ -4,5 +4,5 @@ InitialParameters { PatientFile:"StandardMale.pba" }
 
 AnyAction
 {
-  SerializeStateData { }
+  Serialize { }
 }

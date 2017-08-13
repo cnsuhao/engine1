@@ -152,12 +152,12 @@ JNIEXPORT jboolean JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_na
   if (simTime_s >= 0)
   {
     simTime.SetValue(simTime_s, TimeUnit::s);
-    bRet = engineJNI->eng->LoadState(pStateFilename, &simTime);
+    bRet = engineJNI->eng->LoadStateFile(pStateFilename, &simTime);
   }
   else
   {
     std::cout << "Loading... " << std::endl;
-    bRet = engineJNI->eng->LoadState(pStateFilename);
+    bRet = engineJNI->eng->LoadStateFile(pStateFilename);
   }  
   engineJNI->eng->SetEventHandler(engineJNI);
 

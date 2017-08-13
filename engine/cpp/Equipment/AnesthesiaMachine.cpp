@@ -105,6 +105,7 @@ void AnesthesiaMachine::Load(const pulse::AnesthesiaMachineData& src, Anesthesia
 }
 void AnesthesiaMachine::Serialize(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
+  SEAnesthesiaMachine::Serialize(src.common(), dst);
   dst.m_inhaling = src.inhaling();
   dst.m_currentbreathingCycleTime.SetValue(src.currentbreathingcycletime_s(),TimeUnit::s);
   dst.m_inspirationTime.SetValue(src.inspirationtime_s(), TimeUnit::s);
@@ -114,13 +115,13 @@ void AnesthesiaMachine::Serialize(const pulse::AnesthesiaMachineData& src, Anest
 
 pulse::AnesthesiaMachineData* AnesthesiaMachine::Unload(const AnesthesiaMachine& src)
 {
-
   pulse::AnesthesiaMachineData* dst = new pulse::AnesthesiaMachineData();
   AnesthesiaMachine::Serialize(src, *dst);
   return dst;
 }
 void AnesthesiaMachine::Serialize(const AnesthesiaMachine& src, pulse::AnesthesiaMachineData& dst)
 {
+  SEAnesthesiaMachine::Serialize(src, *dst.mutable_common());
   dst.set_inhaling(src.m_inhaling);
   dst.set_currentbreathingcycletime_s(src.m_currentbreathingCycleTime.GetValue(TimeUnit::s));
   dst.set_inspirationtime_s(src.m_inspirationTime.GetValue(TimeUnit::s));

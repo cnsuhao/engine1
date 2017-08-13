@@ -977,7 +977,7 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
     renal->set_allocated_righttubularreabsorptionfluidpermeabilitybaseline(SEScalarVolumePerTimePressureArea::Unload(*src.m_RightTubularReabsorptionFluidPermeabilityBaseline));
 
   // Respiratory
-  pulse::ConfigurationData_RespiratoryConfigurationData* resp = new pulse::ConfigurationData_RespiratoryConfigurationData();
+  pulse::ConfigurationData_RespiratoryConfigurationData* resp = dst.mutable_respiratoryconfiguration();
   if (src.HasCentralControllerCO2PressureSetPoint())
     resp->set_allocated_centralcontrollerco2pressuresetpoint(SEScalarPressure::Unload(*src.m_CentralControllerCO2PressureSetPoint));
   if (src.HasCentralVentilatoryControllerGain())

@@ -20,8 +20,8 @@ message StateData
   cdm.eSwitch                             Intubation         = 2;
   cdm.ScalarTimeData                      SimulationTime     = 3;
   cdm.PatientData                         Patient            = 4;
-  repeated cdm.AnyConditionData           Condition          = 5;
-  repeated cdm.AnyActionData              ActiveAction       = 6;
+  cdm.ConditionListData                   Conditions         = 5;
+  cdm.ActionListData                      ActiveActions      = 6;
   BloodChemistrySystemData                BloodChemistry     = 7;
   CardiovascularSystemData                Cardiovascular     = 8;
   DrugSystemData                          Drug               = 9;

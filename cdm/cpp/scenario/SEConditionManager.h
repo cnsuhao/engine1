@@ -35,6 +35,14 @@ public:
 
   void Clear();
 
+  static void Load(const cdm::ConditionListData& src, SEConditionManager& dst);
+  static cdm::ConditionListData* Unload(const SEConditionManager& src);
+protected:
+  static void Serialize(const cdm::ConditionListData& src, SEConditionManager& dst);
+  static void Serialize(const SEConditionManager& src, cdm::ConditionListData& dst);
+
+public:
+
   bool ProcessCondition(const SECondition& condition);// Will make a copy
 
   // Not too many conditions, so just have one manager
@@ -73,7 +81,7 @@ public:
   SEInitialEnvironmentConditions* GetInitialEnvironmentConditions() const;
   
   // This is here in case you want to take all the conditions from an engine and write them out so you can reproduce the same engine state later
-  const cdm::ConditionListData& GetActionList() { return m_Conditions; }// I don't really have anything that does that yet...
+  const cdm::ConditionListData& GetConditionList() { return m_Conditions; }// I don't really have anything that does that yet...
 
 protected:
 
