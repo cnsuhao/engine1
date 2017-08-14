@@ -30,6 +30,6 @@ public:
 
     void operator()();
 
-private:
+protected:
     TaskQueue* m_pTaskQueue = nullptr;  ///< Pointer to the TaskQueue to draw Tasks from
 };
