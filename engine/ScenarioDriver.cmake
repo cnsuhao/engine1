@@ -1,8 +1,6 @@
 # Files in the project
 add_executable(PulseScenarioDriver cpp/PulseScenarioDriver.cpp
-                                   cpp/PulseScenarioDriver.h
-                                   cpp/Verification.cpp
-                                   cpp/Verification.h)
+                                   cpp/PulseScenarioDriver.h)
 
 #set_target_properties(PulseScenarioDriver PROPERTIES COMPILE_FLAGS -pthread LINK_FLAGS -pthread)
 

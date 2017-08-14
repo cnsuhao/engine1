@@ -128,7 +128,7 @@ file(GLOB UTILS_UCE_FILES "cpp/utils/unitconversion/*.h" "cpp/utils/unitconversi
 list(REMOVE_ITEM UTILS_UCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utils/unitconversion/UnitConversionDriver.cpp)
 source_group("Utils\\UnitConversion" FILES ${UTILS_UCE_FILES})
 # Utils\TaskRunner
-file(GLOB UTILS_TASKRUNNER_FILES "cpp/utils/TaskRunner/*.h" "cpp/utils/TaskRunner/*.cpp")
+file(GLOB UTILS_TASKRUNNER_FILES "cpp/utils/taskrunner/*.h" "cpp/utils/taskrunner/*.cpp")
 source_group("Utils\\TaskRunner" FILES ${UTILS_TASKRUNNER_FILES})
 list(APPEND SOURCE ${UTILS_TASKRUNNER_FILES}) 
 #file(GLOB UTILS_XPSTL_FILES "cpp/utils/xpstl/*.h" "cpp/utils/xpstl/*.cpp")

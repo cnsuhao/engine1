@@ -8,6 +8,7 @@ set(_VERSION_MINOR 0)
 set(_VERSION_PATCH 0)
 set(_VERSION "${_VERSION_MAJOR}.${_VERSION_MINOR}.${_VERSION_PATCH}")
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CONFIGURATION_TYPES Debug Release RelWithDebInfo CACHE TYPE INTERNAL FORCE )
 if(MSVC)  
 # use MT to link the runtime library statically so that MSVCR*.DLL is not required at runtime
