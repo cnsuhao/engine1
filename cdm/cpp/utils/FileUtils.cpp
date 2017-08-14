@@ -140,14 +140,5 @@ std::string GetCurrentWorkingDirectory()
 
 bool IsDirectory(struct dirent* ent)
 {
-#if defined(__MINGW64_VERSION_MAJOR) || defined(__gnu_linux__)
-  struct stat info;
-  if (stat(ent->d_name, &info) == 0)
-  {
-    return S_ISDIR(info.st_mode);
-  }
-  return 0;
-#else
   return ent->d_type == DT_DIR;
-#endif
 }
