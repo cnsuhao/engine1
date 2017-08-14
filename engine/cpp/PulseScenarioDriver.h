@@ -14,16 +14,6 @@ specific language governing permissions and limitations under the License.
 #include <string>
 #include <set>
 
-namespace
-{
-    enum class RunMode
-    {
-        Invalid,
-        Scenario,
-        Verification
-    };
-}
-
 class PulseScenarioDriver
 {
 public:
@@ -34,12 +24,7 @@ public:
     void Run();
 
 private:
-    void RunScenario();
-    void RunVerification();
-
     bool HasArgument(const std::string& argument);
-
     std::string m_file;
     std::set<std::string> m_arguments;
-    RunMode m_mode = RunMode::Invalid;
 };

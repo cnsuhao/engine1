@@ -11,33 +11,16 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "PulseScenarioDriver.h"
-
-#include "Verification.h"
-#include "engine/SEEngineConfiguration.h"
-#include "PulseConfiguration.h"
+#include "PulsePhysiologyEngine.h"
+#include "Controller/Controller.h"
+#include "Controller/ScenarioExec.h"
+#include "utils/FileUtils.h"
 
 bool PulseScenarioDriver::Configure(int argc, char* argv[])
 {
     if (argc <= 1)
     {
         std::cerr << "Need scenario file or config file to execute" << std::endl;
-        return false;
-    }
-
-    std::string file(argv[1]);
-    if (file.find(".pba") != std::string::npos)
-    {
-        m_file = file;
-        m_mode = RunMode::Scenario;
-    }
-    else if (file.find(".config") != std::string::npos)
-    {
-        m_file = file;
-        m_mode = RunMode::Verification;
-    }
-    else
-    {
-        std::cerr << "Invalid file type, provide either a scenario file or verification config file" << std::endl;
         return false;
     }
 
@@ -53,23 +36,6 @@ bool PulseScenarioDriver::Configure(int argc, char* argv[])
 }
 
 void PulseScenarioDriver::Run()
-{
-    if (m_mode == RunMode::Scenario)
-    {
-        RunScenario();
-    }
-    else if (m_mode == RunMode::Verification)
-    {
-        RunVerification();
-    }
-    else
-    {
-        std::cerr << "Cannot run scenario driver in invalid state, please reconfigure with valid options" << std::endl;
-        return;
-    }
-}
-
-void PulseScenarioDriver::RunScenario()
 {
   // Set up the log file
   std::string logFile = m_file;
@@ -104,22 +70,6 @@ void PulseScenarioDriver::RunScenario()
   {
     std::cerr << "Unable to run scenario " << m_file << std::endl;
   }
-}
-
-void PulseScenarioDriver::RunVerification()
-{
-    Verification::RunMode mode = Verification::RunMode::Default;
-    if (HasArgument("runall"))
-    {
-        mode = Verification::RunMode::All;
-    }
-    else if (HasArgument("runred"))
-    {
-        mode = Verification::RunMode::KnownFailing;
-    }
-
-    Verification verifier(m_file, mode);
-    verifier.Verify();
 }
 
 bool PulseScenarioDriver::HasArgument(const std::string& argument)
