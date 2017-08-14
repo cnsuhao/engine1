@@ -46,7 +46,7 @@ void HowToExercise()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToExercise.log");
   pe->GetLogger()->Info("HowToExercise");
-  if (!pe->LoadState("./states/StandardMale@0s.pba"))
+  if (!pe->LoadStateFile("./states/StandardMale@0s.pba"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

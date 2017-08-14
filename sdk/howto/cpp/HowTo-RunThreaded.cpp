@@ -32,7 +32,7 @@ void HowToDynamicHemorrhage()
 {
   // Create the engine and have it run in it's own thread
   // This call will block while the engine stabilizes
-  PulseThread bgThread("./ThreadedDriver.txt");
+  PulseThread pThread("./ThreadedDriver.txt");
   // When it comes back, the engine will be running, waiting for your input
 
   int action;
@@ -40,24 +40,24 @@ void HowToDynamicHemorrhage()
   bool active = true;
   do
   {
-    bgThread.GetLogger()->Info("Enter Interger for Action to Perform : [1]Status, [2]Hemorrhage, [3]IVFluids, [4]Quit");
+    pThread.GetLogger()->Info("Enter Interger for Action to Perform : [1]Status, [2]Hemorrhage, [3]IVFluids, [4]Quit");
     std::cin >> action;
     switch (action)
     {
     case 1:
-      bgThread.Status();
+      pThread.Status();
       break;
     case 2:
-      bgThread.GetLogger()->Info("Enter Hemorrhage Rate in mL/min : ");
+      pThread.GetLogger()->Info("Enter Hemorrhage Rate in mL/min : ");
       std::cin >> rate;
-      bgThread.GetLogger()->Info(std::stringstream() << rate);
-      bgThread.SetHemorrhageFlow_mL_Per_min(rate);
+      pThread.GetLogger()->Info(std::stringstream() << rate);
+      pThread.SetHemorrhageFlow_mL_Per_min(rate);
       break;
     case 3:
-      bgThread.GetLogger()->Info("Enter IV Fluids Rate in mL/min : ");
+      pThread.GetLogger()->Info("Enter IV Fluids Rate in mL/min : ");
       std::cin >> rate;
-      bgThread.GetLogger()->Info(std::stringstream() << rate);
-      bgThread.SetIVFluidsFlow_mL_Per_min(rate);
+      pThread.GetLogger()->Info(std::stringstream() << rate);
+      pThread.SetIVFluidsFlow_mL_Per_min(rate);
       break;
     case 4:
       active = false;
@@ -71,7 +71,7 @@ PulseThread::PulseThread(const std::string& logfile) : m_thread()
   m_pe = CreatePulseEngine(logfile);
   SESubstanceCompound* saline = m_pe->GetSubstanceManager().GetCompound("Saline");
 
-  if (!m_pe->LoadState("./states/StandardMale@0s.pba"))
+  if (!m_pe->LoadStateFile("./states/StandardMale@0s.pba"))
   {
     m_pe->GetLogger()->Error("Could not load state, check the error");
     return;

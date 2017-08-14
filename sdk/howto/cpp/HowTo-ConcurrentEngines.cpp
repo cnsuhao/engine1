@@ -91,9 +91,9 @@ void HowToConcurrentEngines()
     TaskRunner runner;
 
     // Create tasks to be run and give them to the task runner
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("Scenarios/Patient/BasicStandard.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("Scenarios/Patient/BasicStandard.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("Scenarios/Patient/BasicStandard.pba")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.pba")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.pba")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.pba")));
 
     // Run the tasks.  This will launch the desired number of threads which will pull and execute tasks
     // until there are none left.  Run() blocks until all task threads are finished executing.

@@ -74,7 +74,7 @@ void HowToSmoke()
   }
   */
   
-  if (!pe->LoadState("./states/StandardMale@0s.pba"))
+  if (!pe->LoadStateFile("./states/StandardMale@0s.pba"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

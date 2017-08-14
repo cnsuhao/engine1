@@ -48,11 +48,10 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     }
     catch(Exception ex)
     {
-	    builder = ScenarioData.newBuilder();
 	    try
 	    {
+	    	builder = pBuilder.getScenarioBuilder();
 	    	TextFormat.getParser().merge(pba, builder);
-	    	pBuilder.setScenario(builder);
 	    }
 	    catch(Exception ex2)
 	    {

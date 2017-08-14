@@ -502,7 +502,7 @@ void SEPatient::SetEvent(cdm::PatientData::eEvent type, bool active, const SESca
         m_ss.str("");// make m_ss empty and nothing will be logged, this event does not need to get logged each activation
         break;
       default:
-        m_ss<<" Patient has entered state : "<<type;// TODO cdm::PatientData_eEvent__xsd_enumPatientEvent_literals_[type];
+        m_ss<<" Patient has entered state : "<< cdm::PatientData_eEvent_Name(type);// TODO cdm::PatientData_eEvent__xsd_enumPatientEvent_literals_[type];
       }
     }
     else
@@ -629,7 +629,7 @@ void SEPatient::SetEvent(cdm::PatientData::eEvent type, bool active, const SESca
         m_ss.str("");// make m_ss empty and nothing will be logged, this event does not need to get logged each activation
         break;
       default:
-        m_ss<<" Patient has exited state : "<<type;//TODO cdm::PatientData_eEvent__xsd_enumPatientEvent_literals_[type];
+        m_ss<<" Patient has exited state : "<< cdm::PatientData_eEvent_Name(type);//TODO cdm::PatientData_eEvent__xsd_enumPatientEvent_literals_[type];
       }
     }
     if (!m_ss.str().empty())

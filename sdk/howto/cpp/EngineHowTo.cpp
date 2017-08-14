@@ -25,7 +25,7 @@ int main()
   //HowToEngineUse();
   //HowToCreateAPatient();
 
-  HowToAirwayObstruction();
+  //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToAsthmaAttack();
   //HowToBrainInjury();
@@ -37,17 +37,17 @@ int main()
   //HowToExercise();
   //HowToHemorrhage();
   //HowToLobarPneumonia();
-  //HowToMechanicalVentilation();
+//  HowToMechanicalVentilation();
   //HowToPulmonaryFunctionTest();
   //HowToSmoke();
-  //HowToTensionPneumothorax();
+//  HowToTensionPneumothorax();
 
   // This one does not really run, is a pure example
   //HowToRunScenario();
 
   // More complicated examples that do run
-  //HowToConcurrentEngines();
-  //HowToDynamicHemorrhage();
+//  HowToConcurrentEngines();
+//  HowToDynamicHemorrhage();
 }
 
 HowToTracker::HowToTracker(PhysiologyEngine& engine) : m_Engine(engine)

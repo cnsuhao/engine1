@@ -39,7 +39,7 @@ void HowToScenarioBase()
 
   if (sce.HasEngineStateFile())
   {
-    if (!pe->LoadState(sce.GetEngineStateFile()))
+    if (!pe->LoadStateFile(sce.GetEngineStateFile()))
     {
       pe->GetLogger()->Error("Could not load state, check the error");
       return;

@@ -32,7 +32,7 @@ public class UnitConverter
   /** Loads Unit Conversion DLL */
   static
   {
-  	String location = System.getProperty("user.dir")+"/release";
+  	String location = System.getProperty("user.dir")+"/debug";
     if (System.getProperty("sun.arch.data.model").equals("32"))
       location += "32";
     List<String>libs = new ArrayList<String>();
