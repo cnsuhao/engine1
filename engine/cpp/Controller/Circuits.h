@@ -12,6 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 class PulseController;
+class SEFluidCircuit;
+class SEThermalCircuit;
 #include "circuit/SECircuitManager.h"
 
 /**

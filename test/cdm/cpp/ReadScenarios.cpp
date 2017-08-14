@@ -35,9 +35,9 @@ specific language governing permissions and limitations under the License.
 #include "system/physiology/SERespiratorySystem.h"
 #include "system/physiology/SEDrugSystem.h"
 #include "system/physiology/SETissueSystem.h"
-#include "system/equipment/Anesthesia/SEAnesthesiaMachine.h"
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGram.h"
-#include "system/equipment/Inhaler/SEInhaler.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+#include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
+#include "system/equipment/inhaler/SEInhaler.h"
 #include "system/environment/SEEnvironment.h"
 
 void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)

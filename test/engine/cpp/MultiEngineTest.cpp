@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #include "EngineTest.h"
 
-#include "utils/TaskRunner/TaskRunner.h"
-#include "utils/TaskRunner/Task.h"
+#include "utils/taskrunner/TaskRunner.h"
+#include "utils/taskrunner/Task.h"
 #include "utils/FileUtils.h"
 
 #include "scenario/SEScenarioExec.h"

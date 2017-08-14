@@ -505,6 +505,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         std::stringstream ss;
         MKDIR("./states");
         ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.pba";
+        Info("Saving " + ss.str());
         SaveState(ss.str());
         // Debug code to make sure things are consistent
         //LoadStateFile(ss.str());

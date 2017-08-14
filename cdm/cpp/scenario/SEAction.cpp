@@ -34,8 +34,8 @@ void SEAction::Clear()
 
 #include "patient/actions/SEPatientAction.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
-#include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineAction.h"
-#include "system/equipment/Inhaler/actions/SEInhalerAction.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
+#include "system/equipment/inhaler/actions/SEInhalerAction.h"
 SEAction* SEAction::Load(const cdm::AnyActionData& action, SESubstanceManager& subMgr)
 {
   switch (action.Action_case())

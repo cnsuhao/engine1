@@ -42,7 +42,7 @@ specific language governing permissions and limitations under the License.
 #include "engine/SEDynamicStabilization.h"
 #include "engine/SETimedStabilization.h"
 #include "engine/SEAutoSerialization.h"
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGramWaveformInterpolator.h"
+#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 #include <google/protobuf/text_format.h>
 
 

@@ -27,8 +27,8 @@ specific language governing permissions and limitations under the License.
 #include "patient/actions/SEBreathHold.h"
 #include "patient/actions/SESubstanceBolus.h"
 
-#include "system/equipment/Anesthesia/SEAnesthesiaMachine.h"
-#include "system/equipment/Anesthesia/SEAnesthesiaMachineOxygenBottle.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarElectricPotential.h"

@@ -14,8 +14,8 @@ specific language governing permissions and limitations under the License.
 #pragma once
 #include "Controller/System.h"
 #include "bind/engine/EngineEquipment.pb.h"
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGram.h"
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGramWaveformInterpolator.h"
+#include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
+#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 
 /**
 * @brief 

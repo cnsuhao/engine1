@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "scenario/SEAnesthesiaMachineActionCollection.h"
-#include "system/equipment/Anesthesia/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/Anesthesia/SEAnesthesiaMachineOxygenBottle.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"

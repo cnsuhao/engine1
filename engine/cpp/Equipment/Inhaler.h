@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 #include "Controller/System.h"
-#include "system/equipment/Inhaler/SEInhaler.h"
+#include "system/equipment/inhaler/SEInhaler.h"
 #include "bind/engine/EngineEquipment.pb.h"
 
 /**

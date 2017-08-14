@@ -17,27 +17,9 @@ specific language governing permissions and limitations under the License.
 
 #include <chrono>
 
-namespace
-{
-    using Clock = std::chrono::high_resolution_clock;
-
-    enum class State
-    {
-        Ready,      // Timer has no data and is not running
-        Running,    // Timer is currently running
-        Ran         // Timer has been stopped and has data
-    };
-
-    struct Timer
-    {
-        Clock::time_point start;
-        Clock::time_point end;
-        State state = State::Ready;
-    };
-}
-
 class CDM_DECL TimingProfile : public Loggable
 {
+
 public:
     TimingProfile() {}
     TimingProfile(Logger* logger) : Loggable(logger) {}
@@ -101,7 +83,24 @@ public:
     }
 
 private:
-    std::map<std::string, Timer> m_timers;
 
-    std::stringstream m_ss;
+  using Clock = std::chrono::high_resolution_clock;
+
+  enum class State
+  {
+    Ready,      // Timer has no data and is not running
+    Running,    // Timer is currently running
+    Ran         // Timer has been stopped and has data
+  };
+
+  struct Timer
+  {
+    Clock::time_point start;
+    Clock::time_point end;
+    State state = State::Ready;
+  };
+
+  std::map<std::string, Timer> m_timers;
+
+  std::stringstream m_ss;
 };

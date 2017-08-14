@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 #include "stdafx.h"
 #include "scenario/SEInhalerActionCollection.h"
-#include "system/equipment/Inhaler/SEInhaler.h"
+#include "system/equipment/inhaler/SEInhaler.h"
 
 SEInhalerActionCollection::SEInhalerActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {

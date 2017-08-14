@@ -9,32 +9,35 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 **************************************************************************************/
-
 #pragma once
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
 
-#include "substance/SESubstanceManager.h"
-#include "system/equipment/inhaler/SEInhaler.h"
-#include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
-
-class CDM_DECL SEInhalerActionCollection : public Loggable
+class CDM_DECL SETubeCuffLeak : public SEAnesthesiaMachineAction
 {
-  friend class SEActionManager;
-protected:
-  SEInhalerActionCollection(SESubstanceManager&);
 public:
-  ~SEInhalerActionCollection();
 
-  // STATE ACTION
-  bool HasConfiguration() const;
-  SEInhalerConfiguration* GetConfiguration() const;
-  void RemoveConfiguration();
-  
+  SETubeCuffLeak();
+  virtual ~SETubeCuffLeak();
+
+  virtual void Clear();
+
+  virtual bool IsValid() const;
+  virtual bool IsActive() const;
+
+  static void Load(const cdm::TubeCuffLeakData& src, SETubeCuffLeak& dst);
+  static cdm::TubeCuffLeakData* Unload(const SETubeCuffLeak& src);
 protected:
-  void Clear();
-  static void Serialize(const SEInhalerActionCollection& src, cdm::ActionListData& dst);
-  bool ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData& any);
+  static void Serialize(const cdm::TubeCuffLeakData& src, SETubeCuffLeak& dst);
+  static void Serialize(const SETubeCuffLeak& src, cdm::TubeCuffLeakData& dst);
 
-  SEInhalerConfiguration*   m_Configuration;
-  // General
-  SESubstanceManager& m_Substances;
-};
+public:
+  
+  virtual bool HasSeverity() const;
+  virtual SEScalar0To1& GetSeverity();
+
+  virtual void ToString(std::ostream &str) const;
+
+protected:
+
+  SEScalar0To1*     m_Severity;
+};  
