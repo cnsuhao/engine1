@@ -81,6 +81,7 @@ void Gastrointestinal::Initialize()
 {
   PulseSystem::Initialize();
 
+  m_DecrementNutrients = false;
   if (m_data.GetConfiguration().HasDefaultStomachContents())
   {
     // We are going to initialize the body with 2 meals so we process the default meal twice
@@ -100,20 +101,18 @@ void Gastrointestinal::Initialize()
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeSodium]     = m_SmallIntestineChymeSodium->GetMass(MassUnit::ug);
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeUrea]       = m_SmallIntestineChymeUrea->GetMass(MassUnit::ug);
 
-  m_ConsumeRate = false;
-  m_DecrementNutrients = false;
 }
 
 void Gastrointestinal::Load(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst)
 {
   Gastrointestinal::Serialize(src, dst);
   dst.SetUp();
+  // We assume state is from after all stabilization
+  dst.m_DecrementNutrients = true;
 }
 void Gastrointestinal::Serialize(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst)
 {
   SEGastrointestinalSystem::Serialize(src.common(), dst);
-  // We assume state have to be after all stabilization
-  dst.m_DecrementNutrients = true;
 }
 
 pulse::GastrointestinalSystemData* Gastrointestinal::Unload(const Gastrointestinal& src)
@@ -129,6 +128,7 @@ void Gastrointestinal::Serialize(const Gastrointestinal& src, pulse::Gastrointes
 
 void Gastrointestinal::SetUp()
 {
+  m_ConsumeRate = false;
   m_WaterDigestionRate.SetValue(m_data.GetConfiguration().GetWaterDigestionRate(VolumePerTimeUnit::mL_Per_s), VolumePerTimeUnit::mL_Per_s);
   m_CalciumDigestionRate.SetValue(m_data.GetConfiguration().GetCalciumDigestionRate(MassPerTimeUnit::g_Per_s), MassPerTimeUnit::g_Per_s);
 

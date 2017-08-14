@@ -64,7 +64,6 @@ protected:
 
   // Stateless member variable (Set in SetUp())
   SELiquidCompartment*         m_SmallIntestineChyme;
-  SELiquidSubstanceQuantity*   m_SmallIntestineChymeAlbumin;
   SELiquidSubstanceQuantity*   m_SmallIntestineChymeGlucose;
   SELiquidSubstanceQuantity*   m_SmallIntestineChymeTristearin;
   SELiquidSubstanceQuantity*   m_SmallIntestineChymeCalcium;
