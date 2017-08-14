@@ -37,7 +37,7 @@ specific language governing permissions and limitations under the License.
 void CommonDataModelTest::LargeFlowTransportTest(const std::string& sTestDirectory)
 {
   m_Logger->ResetLogFile(sTestDirectory + "\\LargeFlowTransportTest.log");
-  SEFluidCircuit& circuit = m_Circuits.CreateFluidCircuit("Circuit");
+  SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("Circuit");
   SEFluidCircuitCalculator CircuitCalculator(m_Logger);
 
   // Only give volumes to node that have mass & concentration
@@ -136,13 +136,13 @@ void CommonDataModelTest::LargeFlowTransportTest(const std::string& sTestDirecto
   }
   file.close();
   outTrk.Clear();
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::LiquidTransportTest(const std::string& rptDirectory)
 {
   Logger logger(rptDirectory + "\\LiquidTransportTest.log");
-  SEFluidCircuit& circuit = m_Circuits.CreateFluidCircuit("Circuit");
+  SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("Circuit");
   SEFluidCircuitCalculator CircuitCalculator(&logger);
 
 
@@ -321,13 +321,13 @@ void CommonDataModelTest::LiquidTransportTest(const std::string& rptDirectory)
   }
   file.close();
   outTrk.Clear();
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::GasTransportTest(const std::string& rptDirectory)
 {
   Logger logger(rptDirectory + "\\GasTransportTest.log");
-  SEFluidCircuit& circuit = m_Circuits.CreateFluidCircuit("Circuit");
+  SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("Circuit");
   SEFluidCircuitCalculator CircuitCalculator(&logger);
 
   SEFluidCircuitNode& Ground = circuit.CreateNode("Ground");
@@ -502,6 +502,6 @@ void CommonDataModelTest::GasTransportTest(const std::string& rptDirectory)
   }
   file.close();
   outTrk.Clear();
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 

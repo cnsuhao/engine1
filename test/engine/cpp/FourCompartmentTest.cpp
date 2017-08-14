@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 #include "EngineTest.h"
 #include "CommonDataModel.h"
+#include "Controller/Controller.h"
 
 #include "substance/SESubstanceManager.h"
 #include "compartment/fluid/SELiquidCompartment.h"

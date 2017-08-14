@@ -697,8 +697,8 @@ void CommonDataModelTest::TestGasCircuitVolumesPressuresAndFlows(SETestSuite& te
   TimingProfile pTimer;
   pTimer.Start("Test");
 
-  m_Circuits.Clear();
-  SEFluidCircuit& circuit = m_Circuits.CreateFluidCircuit("TestCircuit");
+  m_Circuits->Clear();
+  SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("TestCircuit");
   // Left Nodes
   SEFluidCircuitNode& l1 = circuit.CreateNode("Left1");
   l1.GetNextPressure().SetValue(10., PressureUnit::mmHg);

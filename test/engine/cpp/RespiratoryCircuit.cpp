@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 #define _USE_MATH_DEFINES
 
 #include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "substance/SESubstanceFraction.h"
 #include "compartment/SECompartmentManager.h"

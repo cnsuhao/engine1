@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "Systems/Tissue.h"
-
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
 #include "utils/TimingProfile.h"

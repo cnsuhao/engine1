@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 #define _USE_MATH_DEFINES
 
 #include "EngineTest.h"
+#include "Controller/Controller.h"
 #include <math.h>
 #include "Systems/Renal.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -25,6 +26,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarVolumePerTimePressureArea.h"
 #include "properties/SEScalar0To1.h"
+#include "utils/TimingProfile.h"
 
 void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirectory)
 {

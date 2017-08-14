@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "utils/FileUtils.h"
 
 #include "engine/SETimedStabilization.h"

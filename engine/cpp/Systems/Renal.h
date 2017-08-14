@@ -14,6 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "Controller/System.h"
 #include "system/physiology/SERenalSystem.h"
 #include "bind/engine/EnginePhysiology.pb.h"
+#include "utils/RunningAverage.h"
 #include "properties/SEScalarMass.h"
 
 class SEUrinalysis;

@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 
 
 #include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
@@ -24,6 +25,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalar0To1.h"
 #include "substance/SESubstanceFraction.h"
 #include "utils/DataTrack.h"
+#include "utils/TimingProfile.h"
 #include <math.h>
 
 

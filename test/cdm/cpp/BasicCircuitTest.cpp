@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "CommonDataModelTest.h"
+#include "circuit/SECircuitManager.h"
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
 #include "circuit/electrical/SEElectricalCircuitPath.h"
@@ -34,7 +35,7 @@ specific language governing permissions and limitations under the License.
 
 void CommonDataModelTest::TestSetup7SeriesRCDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -66,7 +67,7 @@ void CommonDataModelTest::TestSetup7SeriesRCDC()
 
 void CommonDataModelTest::TestSetup7SeriesRCSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -97,7 +98,7 @@ void CommonDataModelTest::TestSetup7SeriesRCSIN()
 
 void CommonDataModelTest::TestSetup7SeriesRCPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -128,7 +129,7 @@ void CommonDataModelTest::TestSetup7SeriesRCPULSE()
 
 void CommonDataModelTest::TestSetup8SeriesRDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -159,7 +160,7 @@ void CommonDataModelTest::TestSetup8SeriesRDC()
 
 void CommonDataModelTest::TestSetup8SeriesRSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -189,7 +190,7 @@ void CommonDataModelTest::TestSetup8SeriesRSIN()
 
 void CommonDataModelTest::TestSetup8SeriesRPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -219,7 +220,7 @@ void CommonDataModelTest::TestSetup8SeriesRPULSE()
 
 void CommonDataModelTest::TestSetup9SeriesRLDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -250,7 +251,7 @@ void CommonDataModelTest::TestSetup9SeriesRLDC()
 
 void CommonDataModelTest::TestSetup9SeriesRLSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -281,7 +282,7 @@ void CommonDataModelTest::TestSetup9SeriesRLSIN()
 
 void CommonDataModelTest::TestSetup9SeriesRLPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -312,7 +313,7 @@ void CommonDataModelTest::TestSetup9SeriesRLPULSE()
 
 void CommonDataModelTest::TestSetup10ParallelRDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -340,7 +341,7 @@ void CommonDataModelTest::TestSetup10ParallelRDC()
 
 void CommonDataModelTest::TestSetup10ParallelRSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -368,7 +369,7 @@ void CommonDataModelTest::TestSetup10ParallelRSIN()
 
 void CommonDataModelTest::TestSetup10ParallelRPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -396,7 +397,7 @@ void CommonDataModelTest::TestSetup10ParallelRPULSE()
 
 void CommonDataModelTest::TestSetup11ParallelRCDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -426,7 +427,7 @@ void CommonDataModelTest::TestSetup11ParallelRCDC()
 
 void CommonDataModelTest::TestSetup11ParallelRCSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -456,7 +457,7 @@ void CommonDataModelTest::TestSetup11ParallelRCSIN()
 
 void CommonDataModelTest::TestSetup11ParallelRCPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -486,7 +487,7 @@ void CommonDataModelTest::TestSetup11ParallelRCPULSE()
 
 void CommonDataModelTest::TestSetup12ParallelRLDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -516,7 +517,7 @@ void CommonDataModelTest::TestSetup12ParallelRLDC()
 
 void CommonDataModelTest::TestSetup12ParallelRLSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -546,7 +547,7 @@ void CommonDataModelTest::TestSetup12ParallelRLSIN()
 
 void CommonDataModelTest::TestSetup12ParallelRLPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -576,7 +577,7 @@ void CommonDataModelTest::TestSetup12ParallelRLPULSE()
 
 void CommonDataModelTest::TestSetup12ParallelRLSINCentered()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -606,7 +607,7 @@ void CommonDataModelTest::TestSetup12ParallelRLSINCentered()
 
 void CommonDataModelTest::TestSetup13SeriesRLCDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -642,7 +643,7 @@ void CommonDataModelTest::TestSetup13SeriesRLCDC()
 
 void CommonDataModelTest::TestSetup13SeriesRLCSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -678,7 +679,7 @@ void CommonDataModelTest::TestSetup13SeriesRLCSIN()
 
 void CommonDataModelTest::TestSetup13SeriesRLCPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -714,7 +715,7 @@ void CommonDataModelTest::TestSetup13SeriesRLCPULSE()
 
 void CommonDataModelTest::TestSetup14ParallelRLCDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -747,7 +748,7 @@ void CommonDataModelTest::TestSetup14ParallelRLCDC()
 
 void CommonDataModelTest::TestSetup14ParallelRLCSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -780,7 +781,7 @@ void CommonDataModelTest::TestSetup14ParallelRLCSIN()
 
 void CommonDataModelTest::TestSetup14ParallelRLCPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -813,7 +814,7 @@ void CommonDataModelTest::TestSetup14ParallelRLCPULSE()
 
 void CommonDataModelTest::TestSetup15SwitchRCDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -847,7 +848,7 @@ void CommonDataModelTest::TestSetup15SwitchRCDC()
 
 void CommonDataModelTest::TestSetup15SwitchRCSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -881,7 +882,7 @@ void CommonDataModelTest::TestSetup15SwitchRCSIN()
 
 void CommonDataModelTest::TestSetup15SwitchRCPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -915,7 +916,7 @@ void CommonDataModelTest::TestSetup15SwitchRCPULSE()
 
 void CommonDataModelTest::TestSetup16Comprehensive1DC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -959,7 +960,7 @@ void CommonDataModelTest::TestSetup16Comprehensive1DC()
 
 void CommonDataModelTest::TestSetup16Comprehensive1SIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -1003,7 +1004,7 @@ void CommonDataModelTest::TestSetup16Comprehensive1SIN()
 
 void CommonDataModelTest::TestSetup16Comprehensive1PULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -1047,7 +1048,7 @@ void CommonDataModelTest::TestSetup16Comprehensive1PULSE()
 
 void CommonDataModelTest::TestSetup17BasicDiodeDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -1080,7 +1081,7 @@ void CommonDataModelTest::TestSetup17BasicDiodeDC()
 
 void CommonDataModelTest::TestSetup17BasicDiodeSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -1113,7 +1114,7 @@ void CommonDataModelTest::TestSetup17BasicDiodeSIN()
 
 void CommonDataModelTest::TestSetup17BasicDiodePULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -1153,7 +1154,7 @@ void CommonDataModelTest::TestSetup17BasicDiodePULSE()
 //{
 //
 //  //10. Comprehensive1
-//  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+//  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 //
 //  //-----------------------------------------------------------
 //  //Nodes
@@ -1212,7 +1213,7 @@ void CommonDataModelTest::TestSetup17BasicDiodePULSE()
 
 void CommonDataModelTest::TestSetup18RCSeriesDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -1243,7 +1244,7 @@ void CommonDataModelTest::TestSetup18RCSeriesDCCurrent()
 
 void CommonDataModelTest::TestSetup18RCSeriesSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -1274,7 +1275,7 @@ void CommonDataModelTest::TestSetup18RCSeriesSINCurrent()
 
 void CommonDataModelTest::TestSetup18RCSeriesPulseCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -1305,7 +1306,7 @@ void CommonDataModelTest::TestSetup18RCSeriesPulseCurrent()
 
 void CommonDataModelTest::TestSetup19RCParallelDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1336,7 +1337,7 @@ void CommonDataModelTest::TestSetup19RCParallelDCCurrent()
 
 void CommonDataModelTest::TestSetup19RCParallelSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1367,7 +1368,7 @@ void CommonDataModelTest::TestSetup19RCParallelSINCurrent()
 
 void CommonDataModelTest::TestSetup19RCParallelPulseCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1398,7 +1399,7 @@ void CommonDataModelTest::TestSetup19RCParallelPulseCurrent()
 
 void CommonDataModelTest::TestSetup20SeriesCapDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
   //-----------------------------------------------------------
   //Nodes
@@ -1435,7 +1436,7 @@ void CommonDataModelTest::TestSetup20SeriesCapDC()
 
 void CommonDataModelTest::TestSetup20SeriesCapSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1473,7 +1474,7 @@ void CommonDataModelTest::TestSetup20SeriesCapSIN()
 
 void CommonDataModelTest::TestSetup20SeriesCapPulse()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1511,7 +1512,7 @@ void CommonDataModelTest::TestSetup20SeriesCapPulse()
 
 void CommonDataModelTest::TestSetup21ParallelRDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1540,7 +1541,7 @@ void CommonDataModelTest::TestSetup21ParallelRDCCurrent()
 
 void CommonDataModelTest::TestSetup21ParallelRSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1569,7 +1570,7 @@ void CommonDataModelTest::TestSetup21ParallelRSINCurrent()
 
 void CommonDataModelTest::TestSetup21ParallelRPulseCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1598,7 +1599,7 @@ void CommonDataModelTest::TestSetup21ParallelRPulseCurrent()
 
 void CommonDataModelTest::TestSetup22CurrentCompDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1633,7 +1634,7 @@ void CommonDataModelTest::TestSetup22CurrentCompDC()
 
 void CommonDataModelTest::TestSetup22CurrentCompSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1668,7 +1669,7 @@ void CommonDataModelTest::TestSetup22CurrentCompSIN()
 
 void CommonDataModelTest::TestSetup22CurrentCompPulse()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1703,7 +1704,7 @@ void CommonDataModelTest::TestSetup22CurrentCompPulse()
 
 void CommonDataModelTest::TestSetup23SeriesRLDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1735,7 +1736,7 @@ void CommonDataModelTest::TestSetup23SeriesRLDCCurrent()
 
 void CommonDataModelTest::TestSetup23SeriesRLSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1767,7 +1768,7 @@ void CommonDataModelTest::TestSetup23SeriesRLSINCurrent()
 
 void CommonDataModelTest::TestSetup23SeriesRLPULSECurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1799,7 +1800,7 @@ void CommonDataModelTest::TestSetup23SeriesRLPULSECurrent()
 
 void CommonDataModelTest::TestSetup24ParallelRLDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1830,7 +1831,7 @@ void CommonDataModelTest::TestSetup24ParallelRLDCCurrent()
 
 void CommonDataModelTest::TestSetup24ParallelRLSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1861,7 +1862,7 @@ void CommonDataModelTest::TestSetup24ParallelRLSINCurrent()
 
 void CommonDataModelTest::TestSetup24ParallelRLPULSECurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1892,7 +1893,7 @@ void CommonDataModelTest::TestSetup24ParallelRLPULSECurrent()
 
 void CommonDataModelTest::TestSetup25BasicDiodeDCCurrent()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1926,7 +1927,7 @@ void CommonDataModelTest::TestSetup25BasicDiodeDCCurrent()
 
 void CommonDataModelTest::TestSetup25BasicDiodeSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1960,7 +1961,7 @@ void CommonDataModelTest::TestSetup25BasicDiodeSINCurrent()
 
 void CommonDataModelTest::TestSetup25BasicDiodePULSECurrent()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -1994,7 +1995,7 @@ void CommonDataModelTest::TestSetup25BasicDiodePULSECurrent()
 
 void CommonDataModelTest::TestSetup26SwitchRCDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2029,7 +2030,7 @@ void CommonDataModelTest::TestSetup26SwitchRCDCCurrent()
 
 void CommonDataModelTest::TestSetup26SwitchRCSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2064,7 +2065,7 @@ void CommonDataModelTest::TestSetup26SwitchRCSINCurrent()
 
 void CommonDataModelTest::TestSetup26SwitchRCPULSECurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2099,7 +2100,7 @@ void CommonDataModelTest::TestSetup26SwitchRCPULSECurrent()
 
 void CommonDataModelTest::TestSetup27SeriesRLCDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2136,7 +2137,7 @@ void CommonDataModelTest::TestSetup27SeriesRLCDCCurrent()
 
 void CommonDataModelTest::TestSetup27SeriesRLCSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2173,7 +2174,7 @@ void CommonDataModelTest::TestSetup27SeriesRLCSINCurrent()
 
 void CommonDataModelTest::TestSetup27SeriesRLCPULSECurrent()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2210,7 +2211,7 @@ void CommonDataModelTest::TestSetup27SeriesRLCPULSECurrent()
 
 void CommonDataModelTest::TestSetup28ParallelRLCDCCurrent()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2244,7 +2245,7 @@ void CommonDataModelTest::TestSetup28ParallelRLCDCCurrent()
 
 void CommonDataModelTest::TestSetup28ParallelRLCSINCurrent()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2278,7 +2279,7 @@ void CommonDataModelTest::TestSetup28ParallelRLCSINCurrent()
 
 void CommonDataModelTest::TestSetup28ParallelRLCPULSECurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2312,7 +2313,7 @@ void CommonDataModelTest::TestSetup28ParallelRLCPULSECurrent()
 
 void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionDC()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2340,7 +2341,7 @@ void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionDC()
 
 void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2368,7 +2369,7 @@ void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionSIN()
 
 void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionPULSE()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2396,7 +2397,7 @@ void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionPULSE()
 
 void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionDC()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
   //-----------------------------------------------------------
   //Nodes
@@ -2424,7 +2425,7 @@ void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionDC()
 void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionSIN()
 {
   
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2452,7 +2453,7 @@ void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionSIN()
 
 void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionPULSE()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2480,7 +2481,7 @@ void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionPULSE()
 
 void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionDC()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2507,7 +2508,7 @@ void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionDC()
 
 void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionSIN()
 {  
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2534,7 +2535,7 @@ void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionSIN()
 
 void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2561,7 +2562,7 @@ void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionPULSE()
 
 void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2588,7 +2589,7 @@ void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionDC()
 
 void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2615,7 +2616,7 @@ void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionSIN()
 
 void CommonDataModelTest::TestSetup32ParallelCurrrentSourceAdditionPULSE()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2642,7 +2643,7 @@ void CommonDataModelTest::TestSetup32ParallelCurrrentSourceAdditionPULSE()
 
 void CommonDataModelTest::TestSetup33SeriesCapDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2680,7 +2681,7 @@ void CommonDataModelTest::TestSetup33SeriesCapDCCurrent()
 
 void CommonDataModelTest::TestSetup33SeriesCapSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2718,7 +2719,7 @@ void CommonDataModelTest::TestSetup33SeriesCapSINCurrent()
 
 void CommonDataModelTest::TestSetup33SeriesCapPulseCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2756,7 +2757,7 @@ void CommonDataModelTest::TestSetup33SeriesCapPulseCurrent()
 
 void CommonDataModelTest::TestSetup34ParallelCapDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2790,7 +2791,7 @@ void CommonDataModelTest::TestSetup34ParallelCapDC()
 
 void CommonDataModelTest::TestSetup34ParallelCapSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2824,7 +2825,7 @@ void CommonDataModelTest::TestSetup34ParallelCapSIN()
 
 void CommonDataModelTest::TestSetup34ParallelCapPulse()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2858,7 +2859,7 @@ void CommonDataModelTest::TestSetup34ParallelCapPulse()
 
 void CommonDataModelTest::TestSetup35ParallelCapDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2892,7 +2893,7 @@ void CommonDataModelTest::TestSetup35ParallelCapDCCurrent()
 
 void CommonDataModelTest::TestSetup35ParallelCapSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2926,7 +2927,7 @@ void CommonDataModelTest::TestSetup35ParallelCapSINCurrent()
 
 void CommonDataModelTest::TestSetup35ParallelCapPulseCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2960,7 +2961,7 @@ void CommonDataModelTest::TestSetup35ParallelCapPulseCurrent()
 
 void CommonDataModelTest::TestSetup36SeriesIndDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -2998,7 +2999,7 @@ void CommonDataModelTest::TestSetup36SeriesIndDC()
 
 void CommonDataModelTest::TestSetup36SeriesIndSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3036,7 +3037,7 @@ void CommonDataModelTest::TestSetup36SeriesIndSIN()
 
 void CommonDataModelTest::TestSetup36SeriesIndPulse()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3074,7 +3075,7 @@ void CommonDataModelTest::TestSetup36SeriesIndPulse()
 
 void CommonDataModelTest::TestSetup37SeriesIndDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3112,7 +3113,7 @@ void CommonDataModelTest::TestSetup37SeriesIndDCCurrent()
 
 void CommonDataModelTest::TestSetup37SeriesIndSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3150,7 +3151,7 @@ void CommonDataModelTest::TestSetup37SeriesIndSINCurrent()
 
 void CommonDataModelTest::TestSetup37SeriesIndPulseCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3188,7 +3189,7 @@ void CommonDataModelTest::TestSetup37SeriesIndPulseCurrent()
 
 void CommonDataModelTest::TestSetup38ParallelIndDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3222,7 +3223,7 @@ void CommonDataModelTest::TestSetup38ParallelIndDC()
 
 void CommonDataModelTest::TestSetup38ParallelIndSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3256,7 +3257,7 @@ void CommonDataModelTest::TestSetup38ParallelIndSIN()
 
 void CommonDataModelTest::TestSetup38ParallelIndPulse()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3290,7 +3291,7 @@ void CommonDataModelTest::TestSetup38ParallelIndPulse()
 
 void CommonDataModelTest::TestSetup39ParallelIndDCCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3324,7 +3325,7 @@ void CommonDataModelTest::TestSetup39ParallelIndDCCurrent()
 
 void CommonDataModelTest::TestSetup39ParallelIndSINCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3358,7 +3359,7 @@ void CommonDataModelTest::TestSetup39ParallelIndSINCurrent()
 
 void CommonDataModelTest::TestSetup39ParallelIndPulseCurrent()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3392,7 +3393,7 @@ void CommonDataModelTest::TestSetup39ParallelIndPulseCurrent()
 
 void CommonDataModelTest::TestSetup40BadDiodeDC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3421,7 +3422,7 @@ void CommonDataModelTest::TestSetup40BadDiodeDC()
 
 void CommonDataModelTest::TestSetup40BadDiodeSIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3450,7 +3451,7 @@ void CommonDataModelTest::TestSetup40BadDiodeSIN()
 
 void CommonDataModelTest::TestSetup40BadDiodePulse()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3480,7 +3481,7 @@ void CommonDataModelTest::TestSetup40BadDiodePulse()
 
 void CommonDataModelTest::TestSetup41ValidationComprehensive1DC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3546,7 +3547,7 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1DC()
 
 void CommonDataModelTest::TestSetup41ValidationComprehensive1SIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3612,7 +3613,7 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1SIN()
 
 void CommonDataModelTest::TestSetup41ValidationComprehensive1Pulse()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3678,7 +3679,7 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1Pulse()
 
 void CommonDataModelTest::TestSetup41ValidationComprehensive1SINCentered()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -3744,7 +3745,7 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1SINCentered()
 
 void CommonDataModelTest::TestSetup42ValidationComprehensive2DC()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3808,7 +3809,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2DC()
 
 void CommonDataModelTest::TestSetup42ValidationComprehensive2SIN()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3872,7 +3873,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2SIN()
 
 void CommonDataModelTest::TestSetup42ValidationComprehensive2Pulse()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
   
 
   //-----------------------------------------------------------
@@ -3936,7 +3937,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2Pulse()
 
 void CommonDataModelTest::TestSetup42ValidationComprehensive2SINCentered()
 {
-  SEFluidCircuit& fluidCircuit = m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit& fluidCircuit = m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -4047,30 +4048,30 @@ void CommonDataModelTest::TestPreProcess1(double dT, int i)
   {
     double dPressure1 = 20;
     double dPressure2 = 10;
-    m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
-    m_Circuits.GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
+    m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
+    m_Circuits->GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
   }
   if(MULTISOURCEFLOW)
   {
     double dFlow1 = 3;
     double dFlow2 = 2;
-    m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
-    m_Circuits.GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
+    m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
+    m_Circuits->GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
   }
   if(PRESSURESOURCE)
   {
     double dPressure = 20;
-    m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure,PressureUnit::Pa);
+    m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure,PressureUnit::Pa);
   }
   if(FLOWSOURCE)
   {
     double dFlow = 3;
-    m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);
+    m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);
   }
   if(false)  //manually set negative DC flow if desired
   {
     double dFlow = -3;
-    m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);
+    m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);
   }
   //Switch Test
   if(SWITCHPRESENT)
@@ -4079,22 +4080,22 @@ void CommonDataModelTest::TestPreProcess1(double dT, int i)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
+        m_Circuits->GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
+        m_Circuits->GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
     else if(i==9||i==15)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
+        m_Circuits->GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
+        m_Circuits->GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
 
@@ -4152,28 +4153,28 @@ void CommonDataModelTest::TestPreProcess2(double dT, int i)
   {
     double dPressure1 = 20+20*sin(dT);
     double dPressure2 = 10+10*sin(dT);
-    m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
-    m_Circuits.GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
+    m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
+    m_Circuits->GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
   }
   if(MULTISOURCEFLOW)
   {
     double dFlow1 = 3*sin(dT);
     double dFlow2 = 2*sin(dT);
-    m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
-    m_Circuits.GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
+    m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
+    m_Circuits->GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
   }
   //Sinusoidal source
   if(PRESSURESOURCE)
     //Modify the pressure source
   {
     double dPressure = 20+20*sin(dT);
-    m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure,PressureUnit::Pa);  // need to adjust this so path 4 isn't always the source path
+    m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure,PressureUnit::Pa);  // need to adjust this so path 4 isn't always the source path
   }
   if(FLOWSOURCE)
     //Modify the flow source
   {
     double dFlow = 3*sin(dT);  //can go negative to test negative flows
-    m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);  // need to adjust this so path 4 isn't always the source path
+    m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);  // need to adjust this so path 4 isn't always the source path
   }
 
   //Switch Test
@@ -4183,22 +4184,22 @@ void CommonDataModelTest::TestPreProcess2(double dT, int i)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
+        m_Circuits->GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
+        m_Circuits->GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
     else if(i==9||i==15)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
+        m_Circuits->GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
+        m_Circuits->GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
 
@@ -4267,27 +4268,27 @@ void CommonDataModelTest::TestPreProcess3(double dT, int i)
       if(PRESSURESOURCE)
       {
         double dPressure = 20;
-        m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure,PressureUnit::Pa);
+        m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure,PressureUnit::Pa);
       }
 
       if(FLOWSOURCE)
       {
         double dFlow = 3;
-        m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);
+        m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);
       }
       if(MULTISOURCEPRESSURE)
       {
         double dPressure1 = 20;
         double dPressure2 = 10;
-        m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
-        m_Circuits.GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
+        m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
+        m_Circuits->GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
       }
       if(MULTISOURCEFLOW)
       {
         double dFlow1 = 3;
         double dFlow2 = 2;
-        m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
-        m_Circuits.GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
+        m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
+        m_Circuits->GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
       }
     }
     else
@@ -4295,26 +4296,26 @@ void CommonDataModelTest::TestPreProcess3(double dT, int i)
       if(PRESSURESOURCE)
       {
          double dPressure = 0;
-        m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure, PressureUnit::Pa);
+        m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure, PressureUnit::Pa);
       }
       if(FLOWSOURCE)
       {
         double dFlow = 0;
-        m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);
+        m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);
       }
       if(MULTISOURCEPRESSURE)
       {
         double dPressure1 = 0;
         double dPressure2 = 0;
-        m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
-        m_Circuits.GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
+        m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
+        m_Circuits->GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
       }
       if(MULTISOURCEFLOW)
       {
         double dFlow1 = 0;
         double dFlow2 = 0;
-        m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
-        m_Circuits.GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
+        m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
+        m_Circuits->GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
       }
     }
   }
@@ -4325,22 +4326,22 @@ void CommonDataModelTest::TestPreProcess3(double dT, int i)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
+        m_Circuits->GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
+        m_Circuits->GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
     else if(i==9||i==15)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
+        m_Circuits->GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
+        m_Circuits->GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
 
@@ -4398,28 +4399,28 @@ void CommonDataModelTest::TestPreProcess4(double dT, int i)
   {
     double dPressure1 = 20*sin(dT);
     double dPressure2 = 10*sin(dT);
-    m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
-    m_Circuits.GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
+    m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure1,PressureUnit::Pa);
+    m_Circuits->GetFluidPath("Path3")->GetNextPressureSource().SetValue(dPressure2,PressureUnit::Pa);
   }
   if(MULTISOURCEFLOW)
   {
     double dFlow1 = 3*sin(dT);
     double dFlow2 = 2*sin(dT);
-    m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
-    m_Circuits.GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
+    m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow1,VolumePerTimeUnit::m3_Per_s);
+    m_Circuits->GetFluidPath("Path8")->GetNextFlowSource().SetValue(dFlow2,VolumePerTimeUnit::m3_Per_s);
   }
   //Sinusoidal source
   if(PRESSURESOURCE)
     //Modify the pressure source
   {
     double dPressure = 20*sin(dT);
-    m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure,PressureUnit::Pa);  // need to adjust this so path 4 isn't always the source path
+    m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure,PressureUnit::Pa);  // need to adjust this so path 4 isn't always the source path
   }
   if(FLOWSOURCE)
     //Modify the flow source
   {
     double dFlow = 3*sin(dT);  //can go negative to test negative flows
-    m_Circuits.GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);  // need to adjust this so path 4 isn't always the source path
+    m_Circuits->GetFluidPath("Path7")->GetNextFlowSource().SetValue(dFlow,VolumePerTimeUnit::m3_Per_s);  // need to adjust this so path 4 isn't always the source path
   }
 
   //Switch Test
@@ -4429,22 +4430,22 @@ void CommonDataModelTest::TestPreProcess4(double dT, int i)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
+        m_Circuits->GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
+        m_Circuits->GetFluidPath("Path2")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
     else if(i==9||i==15)
     {
       if(dT<5)
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
+        m_Circuits->GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Open);
       }
       else
       {
-        m_Circuits.GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
+        m_Circuits->GetFluidPath("Path3")->SetNextSwitch(cdm::eGate::Closed);
       }
     }
 
@@ -4465,7 +4466,7 @@ void CommonDataModelTest::BasicCircuitPreProcess(double dT)
   //    Only assign a value for Next if you're changing it.
   //    Never change "current" values, only next.
   double dPressure = 20+20*sin(dT);
-  m_Circuits.GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure, PressureUnit::Pa);
+  m_Circuits->GetFluidPath("Path1")->GetNextPressureSource().SetValue(dPressure, PressureUnit::Pa);
 }
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -4488,7 +4489,7 @@ void CommonDataModelTest::BasicCircuitTest(const std::string& outputDirectory)
  
 
   //Test Circuit
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
 
   //-----------------------------------------------------------
   //Nodes
@@ -4545,11 +4546,11 @@ void CommonDataModelTest::BasicCircuitTest(const std::string& outputDirectory)
       serialized = true;
       std::string pbaDir = outputDirectory + "\\BasicCircuit.pba";
       TestCircuitSerialization(pbaDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
 
-  m_Circuits.Clear();
+  m_Circuits->Clear();
   std::string sOutputFile = outputDirectory + "\\BasicCircuit.txt";
   trk1.WriteTrackToFile(sOutputFile.c_str());
 }
@@ -5229,7 +5230,7 @@ void CommonDataModelTest::RunTest(const std::string& outputDirectory, const std:
   double currentTime_s = 0.0;
   DataTrack trk1;
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
-  SEFluidCircuit* fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
 
   //Set up the circuit
   //Circuit setup should be done before RunTest is called
@@ -5274,7 +5275,7 @@ void CommonDataModelTest::RunTest(const std::string& outputDirectory, const std:
       serialized = true;
       std::string pbaDir = outputDirectory + "\\" + testName + ".pba";
       TestCircuitSerialization(pbaDir); 
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
 
     currentTime_s += timeStep_s;
@@ -5287,15 +5288,15 @@ void CommonDataModelTest::RunTest(const std::string& outputDirectory, const std:
       trk1.WriteTrackToFile(sOutputFile.c_str());
     }
   }
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::TestCircuitSerialization(const std::string& fileName)
 {
-  m_Circuits.SaveFile(fileName);
-  if (!m_Circuits.LoadFile(fileName))
+  m_Circuits->SaveFile(fileName);
+  if (!m_Circuits->LoadFile(fileName))
   {
-    m_Circuits.Clear();
-    m_Circuits.Error("Unable to load file " + fileName,"TestCircuitSerialization");
+    m_Circuits->Clear();
+    m_Circuits->Error("Unable to load file " + fileName,"TestCircuitSerialization");
   }
 }

@@ -445,7 +445,7 @@ void CommonDataModelTest::TestCircuitHeatTemperatureAndFlows(SETestSuite& testSu
   TimingProfile pTimer;
   pTimer.Start("Test");
 
-  SEThermalCircuit& circuit = m_Circuits.CreateThermalCircuit("TestCircuit");
+  SEThermalCircuit& circuit = m_Circuits->CreateThermalCircuit("TestCircuit");
   // Left Nodes
   SEThermalCircuitNode& l1 = circuit.CreateNode("Left1");
   l1.GetNextTemperature().SetValue(10., TemperatureUnit::C);

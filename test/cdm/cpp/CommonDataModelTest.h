@@ -1,16 +1,17 @@
 // The following tests will be exported and runnable
 
 #include "CommonDataModel.h"
-#include "circuit/SECircuitManager.h"
-#include "circuit/fluid/SEFluidCircuit.h"
-#include "circuit/fluid/SEFluidCircuitCalculator.h"
-#include "compartment/fluid/SEFluidCompartment.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
-#include "utils/testing/SETestCase.h"
-#include "utils/testing/SETestSuite.h"
-
+class SEFluidCircuit;
+class SECircuitManager;
+class SEGasCompartment;
+class SELiquidCompartment;
+class SEThermalCompartment;
+class SECompartmentManager;
+class SESubstanceManager;
+class SEGasSubstanceQuantity;
+class SELiquidSubstanceQuantity;
+class SETestSuite;
+class SETestCase;
 
 
 #define CDM_TEST_DECL
@@ -356,7 +357,7 @@ protected:
   void FluidPreProcess(SEFluidCircuit& c, double dT);
   void TestCircuitSerialization(const std::string& fileName);
 
-  SECircuitManager m_Circuits;
+  SECircuitManager* m_Circuits;
 
 
   //////////////////

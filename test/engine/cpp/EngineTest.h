@@ -12,8 +12,8 @@ specific language governing permissions and limitations under the License.
 
 // The following tests will be exported and runnable
 #include <math.h>
+class PulseController;
 #include "PulsePhysiologyEngine.h"
-#include "Controller/Controller.h"
 
 #define ENGINE_TEST_DECL
 #ifdef SHARED_ENGINE_TEST
@@ -30,6 +30,7 @@ specific language governing permissions and limitations under the License.
   #endif
 #endif
 
+class SESubstance;
 class SETestSuite;
 class HowToTracker;
 

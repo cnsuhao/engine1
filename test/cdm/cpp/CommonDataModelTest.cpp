@@ -11,17 +11,29 @@ specific language governing permissions and limitations under the License.
 **************************************************************************************/
 
 #include "CommonDataModelTest.h"
-#include "utils/FileUtils.h"
-#include "compartment/SECompartmentManager.h"
 
-CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger()), m_Circuits(m_Logger)
+#include "circuit/SECircuitManager.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
+#include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SEFluidCompartment.h"
+#include "compartment/thermal/SEThermalCompartment.h"
+#include "compartment/substances/SEGasSubstanceQuantity.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "utils/FileUtils.h"
+#include "utils/testing/SETestCase.h"
+#include "utils/testing/SETestSuite.h"
+
+CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger())
 {
+  m_Circuits = new SECircuitManager(m_Logger);
   myLogger = true;
   FillFunctionMap();
 }
 
-CommonDataModelTest::CommonDataModelTest(Logger* logger) : Loggable(logger), m_Circuits(logger)
+CommonDataModelTest::CommonDataModelTest(Logger* logger) : Loggable(logger)
 {
+  m_Circuits = new SECircuitManager(m_Logger);
   myLogger = false;
   FillFunctionMap();
 }
@@ -261,9 +273,9 @@ void CommonDataModelTest::FillFunctionMap()
 void CommonDataModelTest::TestCompartmentSerialization(SECompartmentManager& mgr, const std::string& filename)
 {
   mgr.SaveFile(filename);
-  if(!mgr.LoadFile(filename, &m_Circuits))
+  if(!mgr.LoadFile(filename, m_Circuits))
   {
-    m_Circuits.Clear();
-    m_Circuits.Error("Unable to load file " + filename, "TestCompartmentSerialization");
+    m_Circuits->Clear();
+    m_Circuits->Error("Unable to load file " + filename, "TestCompartmentSerialization");
   }
 }
