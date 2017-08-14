@@ -1,10 +1,9 @@
-
+# These are eclipse build dirs, if you use that sort of thing
 /cdm/build/
 /engine/build/
 /schema/build/
 /test/build/
 /sdk/howto/build/
 
-/verification/
 
 

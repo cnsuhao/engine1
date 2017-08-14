@@ -73,8 +73,7 @@ set(SCHEMA_DST "${CMAKE_BINARY_DIR}/schema")
 
 set(protobuf_BUILD_TESTS OFF CACHE TYPE INTERNAL FORCE)
 set(protobuf_BUILD_EXAMPLES OFF CACHE TYPE INTERNAL FORCE)
-add_subdirectory("${protobuf_DIR}/cmake" "${protobuf_DIR}-build" EXCLUDE_FROM_ALL)  
-set_target_properties(HowToDriver libprotobuf-lite libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+add_subdirectory("${protobuf_DIR}/cmake" "${protobuf_DIR}-build" EXCLUDE_FROM_ALL)
 add_subdirectory(${log4cpp_DIR} ${log4cpp_DIR}-build)
 add_subdirectory(schema)
 add_subdirectory(cdm)
@@ -83,6 +82,8 @@ add_subdirectory(test)
 add_subdirectory(sdk)
 add_subdirectory(verification)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
+# Take some projects out of the build
+set_target_properties(HowToDriver libprotobuf-lite libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc js_embed PROPERTIES FOLDER protobufs)
