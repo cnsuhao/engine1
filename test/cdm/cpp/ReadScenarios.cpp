@@ -44,7 +44,7 @@ void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)
 {
   TimingProfile pTimer;
   std::string testName = "ReadScenarios";
-  m_Logger->ResetLogFile(rptDirectory + "\\" + testName + ".log");
+  m_Logger->ResetLogFile(rptDirectory + "/" + testName + ".log");
   SESubstanceManager subMgr(m_Logger);
   subMgr.LoadSubstanceDirectory();
   SEScenario scenario(subMgr);
@@ -52,26 +52,11 @@ void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)
   SECompartmentManager cmptMgr(subMgr);
 
   std::string dir = GetCurrentWorkingDirectory();
-  dir.append("\\..\\verification\\Scenarios");
+  dir.append("/verification/scenarios");
 
   SETestReport testReport(m_Logger);
   SETestSuite&  testSuite = testReport.CreateTestSuite();
   testSuite.SetName(testName);
-
-  std::vector<SESystem*> physiology;
-  physiology.push_back(new SEBloodChemistrySystem(m_Logger));
-  physiology.push_back(new SECardiovascularSystem(m_Logger));
-  physiology.push_back(new SEEndocrineSystem(m_Logger));
-  physiology.push_back(new SEEnergySystem(m_Logger));
-  physiology.push_back(new SERenalSystem(m_Logger));
-  physiology.push_back(new SEGastrointestinalSystem(m_Logger));
-  physiology.push_back(new SERespiratorySystem(m_Logger));
-  physiology.push_back(new SEDrugSystem(m_Logger));
-  physiology.push_back(new SETissueSystem(m_Logger));
-  std::vector<SESystem*> equipment;
-  equipment.push_back(new SEAnesthesiaMachine(subMgr));
-  equipment.push_back(new SEElectroCardioGram(m_Logger));
-  equipment.push_back(new SEInhaler(subMgr));
 
   std::vector<std::string> files;
   ListFiles(dir, files, ".pba");
@@ -94,52 +79,7 @@ void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)
         {
           if (!scenario.IsValid())
             testCase.AddFailure(*it + " is not a valid scenario!");
-
-          //if (scenario.GetInitialParameters().HasPatientFile())
-          //{
-          //  SEPatient patient(m_Logger);
-          //  patient.LoadFile(scenario.GetInitialParameters().GetPatientFile());
-
-          //  PhysiologyEngineTrack trk(patient, subMgr, cmptMgr, physiology, equipment);
-          //  for (SEDataRequest* dr : scenario.GetRequestedData())
-          //  {
-          //    SECompartmentDataRequest*cmptDR = dynamic_cast<SECompartmentDataRequest*>(dr);
-          //    if (cmptDR != nullptr)
-          //    {
-          //      // I need to make the cmpt that this is pulling data off of, I don't care what the value is
-          //      // just need to make sure it can get it
-          //      switch (cmptDR->GetType())
-          //      {
-          //      case CDM::enumCompartmentType::Gas:
-          //        if(!cmptMgr.HasGasCompartment(cmptDR->GetCompartment()))
-          //          cmptMgr.CreateGasCompartment(cmptDR->GetCompartment());
-          //        if (cmptDR->HasSubstance())
-          //          cmptMgr.AddGasCompartmentSubstance(*cmptDR->GetSubstance());
-          //        break;
-          //      case CDM::enumCompartmentType::Liquid:
-          //        if (!cmptMgr.HasLiquidCompartment(cmptDR->GetCompartment()))
-          //          cmptMgr.CreateLiquidCompartment(cmptDR->GetCompartment());
-          //        if (cmptDR->HasSubstance())
-          //          cmptMgr.AddLiquidCompartmentSubstance(*cmptDR->GetSubstance());
-          //        break;
-          //      case CDM::enumCompartmentType::Thermal:
-          //        if (!cmptMgr.HasThermalCompartment(cmptDR->GetCompartment()))
-          //          cmptMgr.CreateThermalCompartment(cmptDR->GetCompartment());
-          //        break;
-          //      case CDM::enumCompartmentType::Tissue:
-          //        if (!cmptMgr.HasTissueCompartment(cmptDR->GetCompartment()))
-          //          cmptMgr.CreateTissueCompartment(cmptDR->GetCompartment());
-          //        break;
-          //      default:
-          //        testCase.AddFailure("Unhandled compartment type :" + cmptDR->GetType());
-          //      }
-          //    }
-
-          //    if(!trk.ProcessRequest(*dr))
-          //      testCase.AddFailure("Could not hook up the following data request " + cmptDR->GetName());
-          //  }
-          //}
-
+          // todo check to see that all compartment, substances, property names are valid
         }
         else
         {

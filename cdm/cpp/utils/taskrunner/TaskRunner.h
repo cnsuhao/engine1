@@ -42,7 +42,7 @@ public:
     void EchoProgress(bool echo) { m_echoPercentComplete = echo; }
     virtual void ReportTaskComplete() override;
 
-private:
+protected:
     void PrintProgress();
 
     mutable std::recursive_mutex m_taskQueueMutex;  ///< Mutex used to synchronize concurrent access to the task queue

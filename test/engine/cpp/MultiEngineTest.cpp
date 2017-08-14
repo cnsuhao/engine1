@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 
 #include "Controller/Controller.h"
 #include "utils/taskrunner/TaskRunner.h"
-#include "utils/taskrunner/Task.h"
 #include "utils/FileUtils.h"
 
 #include "scenario/SEScenarioExec.h"

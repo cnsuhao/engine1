@@ -406,7 +406,7 @@ public class SETestDriver
         {
           for(String result : job.resultsFiles.split(","))
           {
-            job.baselineFiles.add(job.baselineDirectory+"/"+result+".zip");
+            job.baselineFiles.add(job.baselineDirectory+"/"+result+".txt");
             job.computedFiles.add(job.computedDirectory+"/"+result+".txt");
           }
         }
@@ -418,7 +418,7 @@ public class SETestDriver
           }
           else
           {
-            job.baselineFiles.add(job.baselineDirectory+"/"+job.name+".zip");
+            job.baselineFiles.add(job.baselineDirectory+"/"+job.name+".txt");
             job.computedFiles.add(job.computedDirectory+"/"+job.name+".txt");
           }
         }
@@ -495,7 +495,7 @@ public class SETestDriver
     String baseline = job.baselineDirectory;
     for(int i=0; i<dirs.length-1; i++)
       baseline+="/"+dirs[i];
-    baseline+="/"+dirs[dirs.length-1]+"Results.zip";
+    baseline+="/"+dirs[dirs.length-1]+"Results.txt";
     job.baselineFiles.add(baseline);
     String output = job.computedDirectory;
     for(int i=0; i<dirs.length; i++)
