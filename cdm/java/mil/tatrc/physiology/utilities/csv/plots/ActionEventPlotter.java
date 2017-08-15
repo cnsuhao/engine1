@@ -81,9 +81,9 @@ public class ActionEventPlotter implements Plotter
     //fill PlotJob with needed data if it doesn't exist
     PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
-    {job.dataPath = job.verificationDirectory+"/Current Baseline/";}
+    {job.dataPath = job.verificationDirectory;}
     if(job.logPath == null || job.logPath.isEmpty())
-    {job.logPath = job.verificationDirectory+"/Current Baseline/";}
+    {job.logPath = job.verificationDirectory;}
     if(job.scenarioPath == null || job.scenarioPath.isEmpty())
     {job.scenarioPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())

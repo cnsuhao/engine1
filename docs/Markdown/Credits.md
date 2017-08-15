@@ -13,14 +13,6 @@ Usage: Cross-platform build process using compiler-independent methods.
 
 ---
 
-## <a href="http://www.codesynthesis.com/">Code Synthesis</a>
-
-Usage: XML data binding compiler to C++.
-
-<img src="./Images/Credits/CodeSynthesis.png" alt="CodeSynthesis" align="left"> <br> <br> <br>
-
----
-
 ## <a href="http://eigen.tuxfamily.org/index.php?title=Main_Page">Eigen</a>
 
 Usage: Matrix manipulation and linear algebra solver for the circuit solver, substance transporter, and saturation calcuations.
@@ -37,17 +29,17 @@ Usage: Logging.
 
 ---
 
-## <a href="http://www.jfree.org/jfreechart/">JFreeChart</a>
+## <a href="https://developers.google.com/protocol-buffers/">Google Protobuf</a>
 
-Usage: Creating image plots of output data.
+Usage: Serialization.
 
-<img src="./Images/Credits/SourceForge.png" alt="SourceForge" align="left"> <br> <br> <br> <br> <br> <br> <br>
+<img src="https://developers.google.com/site-assets/logo-github.svg" alt="GitHub" align="left"> <br> <br> <br> <br> <br> <br> <br>
 
 ---
 
-## <a href="http://jchart2d.sourceforge.net/">JChart2D</a>
+## <a href="http://www.jfree.org/jfreechart/">JFreeChart</a>
 
-Usage: Creating realtime plots of output data.
+Usage: Creating image plots of output data.
 
 <img src="./Images/Credits/SourceForge.png" alt="SourceForge" align="left"> <br> <br> <br> <br> <br> <br> <br>
 
