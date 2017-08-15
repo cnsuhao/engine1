@@ -1,4 +1,4 @@
-/**************************************************************************************
+h/**************************************************************************************
 Copyright 2015 Applied Research Associates, Inc.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the License
@@ -19,12 +19,12 @@ specific language governing permissions and limitations under the License.
 
 int main(int argc, char* argv[])
 {
-  std::string cdmDir = ".\\test_results\\unit_tests\\cdm";
-  Logger cdmLogger(cdmDir + "\\CDMUnitTests.log");
+  std::string cdmDir = "./test_results/unit_tests/cdm";
+  Logger cdmLogger(cdmDir + "/CDMUnitTests.log");
   CommonDataModelTest cdmTest(&cdmLogger);
 
-  std::string peDir = ".\\test_results\\unit_tests\\pulse";
-  Logger peLogger(peDir + "\\PulseUnitTests.log");
+  std::string peDir = "./test_results/unit_tests/pulse";
+  Logger peLogger(peDir + "/PulseUnitTests.log");
   PulseEngineTest peTest(&peLogger);
 
   if (argc == 1)
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
       //peTest.AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(peDir);
 
       // Our CV Characterization Driver  (Not part of the test suite)
-      //std::string cvDir = ".\\test_results\\unit_tests\\pulse\\CVTuningTests";
+      //std::string cvDir = "./test_results/unit_tests/pulse/CVTuningTests";
       //MKDIR(cvDir.c_str());
       //peTest.CardiovascularCircuitScaleTests(cvDir);
 
@@ -311,9 +311,9 @@ int main(int argc, char* argv[])
   }
   else
   {
-    if (cdmTest.RunTest(argv[1], ".\\test_results\\unit_tests\\cdm"))
+    if (cdmTest.RunTest(argv[1], "./test_results/unit_tests/cdm"))
       return 0;
-    //if (peTest.RunTest(argv[1], ".\\test_results\\unit_tests\\pulse"))
+    //if (peTest.RunTest(argv[1], "./test_results/unit_tests/pulse"))
     //  return 0;
   }
   return 1;

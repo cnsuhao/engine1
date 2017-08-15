@@ -21,11 +21,11 @@ void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
 {
   TimingProfile pTimer;
   std::string testName = "ReadPatientDirectory";
-  Logger logger(rptDirectory + "\\" + testName+".log");
+  Logger logger(rptDirectory + "/" + testName+".log");
   SEPatient obj (&logger);
 
   std::string dir = GetCurrentWorkingDirectory();  
-  dir.append("\\patients");
+  dir.append("/patients");
 
   SETestReport testReport(&logger);
   SETestSuite&  testSuite = testReport.CreateTestSuite();
@@ -46,5 +46,5 @@ void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
       testCase.SetName(obj.GetName());
     }
   }
-  testReport.WriteFile(rptDirectory +"\\"+testName+"Report.pba");
+  testReport.WriteFile(rptDirectory +"/"+testName+"Report.pba");
 }

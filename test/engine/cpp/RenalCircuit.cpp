@@ -38,7 +38,7 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   DataTrack     graphTrk;
   std::ofstream graphFile;
 
-  PulseController pc(sTestDirectory + "\\RenalCircuitAndTransportTest.log");
+  PulseController pc(sTestDirectory + "/RenalCircuitAndTransportTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::On);
@@ -145,8 +145,8 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
 
     if (i == 0)
     {
-      graphTrk.CreateFile(std::string(sTestDirectory + "\\RenalTransportOutput.txt").c_str(), graphFile);
-      circiutTrk.CreateFile(std::string(sTestDirectory + "\\RenalCircuitOutput.txt").c_str(), circuitFile);
+      graphTrk.CreateFile(std::string(sTestDirectory + "/RenalTransportOutput.txt").c_str(), graphFile);
+      circiutTrk.CreateFile(std::string(sTestDirectory + "/RenalCircuitOutput.txt").c_str(), circuitFile);
     }
     graphTrk.StreamTrackToFile(graphFile);
     circiutTrk.StreamTrackToFile(circuitFile);
@@ -164,7 +164,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
 {
   TimingProfile tmr;
   tmr.Start("Test");
-  PulseController pc(sTestDirectory + "\\RenalFeedbackTest.log");
+  PulseController pc(sTestDirectory + "/RenalFeedbackTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::On);
@@ -450,7 +450,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
     }
     }
   }
-  trk.WriteTrackToFile(std::string(sTestDirectory + "\\" + sTestName + ".txt").c_str());
+  trk.WriteTrackToFile(std::string(sTestDirectory + "/" + sTestName + ".txt").c_str());
   std::stringstream ss;
   ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run " << sTestName << "CircuitAndTransportTest";
   pc.GetLogger()->Info(ss.str(), "RenalFeedbackTest");
@@ -479,7 +479,7 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
 
   TimingProfile tmr;
   tmr.Start("Test");
-  PulseController pc(sTestDirectory + "\\RenalSystemTest.log");
+  PulseController pc(sTestDirectory + "/RenalSystemTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::On);
@@ -687,7 +687,7 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
       }
     }
   }
-  trk.WriteTrackToFile(std::string(sTestDirectory + "\\" + sTestName + ".txt").c_str());
+  trk.WriteTrackToFile(std::string(sTestDirectory + "/" + sTestName + ".txt").c_str());
   std::stringstream ss;
   ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run " << sTestName << "SecretionandUrinatingTest";
   pc.GetLogger()->Info(ss.str(), "RenalSystemTest");

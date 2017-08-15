@@ -94,5 +94,5 @@ void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)
       testCase.SetName(*it);
     }
   }
-  testReport.WriteFile(rptDirectory + "\\" + testName + "Report.pba");  
+  testReport.WriteFile(rptDirectory + "/" + testName + "Report.pba");  
 }

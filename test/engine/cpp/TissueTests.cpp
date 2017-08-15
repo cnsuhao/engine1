@@ -297,7 +297,7 @@ void PulseEngineTest::AlveolarOxygenDiffusionTest(const std::string& rptDirector
   SEGasCompartment& gcmpt = pc.GetCompartments().CreateGasCompartment("gcmpt");
 
   DataTrack trk1;
-  std::string rptFile = rptDirectory + "\\AlveolarOxygenDiffusionTest.txt";
+  std::string rptFile = rptDirectory + "/AlveolarOxygenDiffusionTest.txt";
   double time = 0.0;
 
   double liquidVol_mL = 1000.0;
@@ -353,7 +353,7 @@ void PulseEngineTest::AlveolarCarbonDioxideDiffusionTest(const std::string& rptD
   Tissue& tsu = (Tissue&)pc.GetTissue();
 
   DataTrack trk2;
-  std::string rptFile = rptDirectory + "\\AlveolarCarbonDioxideDiffusionTest.txt";
+  std::string rptFile = rptDirectory + "/AlveolarCarbonDioxideDiffusionTest.txt";
   
   double timestep_s = 1.0 / 90;
   pc.GetSubstances().LoadSubstanceDirectory();
@@ -432,7 +432,7 @@ void PulseEngineTest::InstantPlusSimpleDiffusionTest(const std::string& rptDirec
   SELiquidCompartment& cmpt4 = pc.GetCompartments().CreateLiquidCompartment("cmpt4");
 
   DataTrack trk;
-  std::string rptFile = rptDirectory + "\\InstantPlusSimpleDiffusionTest.txt";
+  std::string rptFile = rptDirectory + "/InstantPlusSimpleDiffusionTest.txt";
   double time = 0.0;
 
   double permeabilityCoefficient21_mL_Per_s = 5.0;
@@ -542,7 +542,7 @@ void PulseEngineTest::SimpleDiffusionTwoCompartmentTest(const std::string& rptDi
   SELiquidCompartment& cmpt2_EC = pc.GetCompartments().CreateLiquidCompartment("cmpt2_EC");
 
   DataTrack trk2;
-  std::string rptFile = rptDirectory + "\\SimpleDiffusionTwoCompartmentTest.txt";
+  std::string rptFile = rptDirectory + "/SimpleDiffusionTwoCompartmentTest.txt";
   double time = 0.0;
 
   double ecVol_mL = 40.0;
@@ -626,7 +626,7 @@ void PulseEngineTest::SimpleDiffusionFourCompartmentTest(const std::string& rptD
   SELiquidCompartment& cmpt4_LQ = pc.GetCompartments().CreateLiquidCompartment("cmpt4_LQ");
 
   DataTrack trk3;
-  std::string rptFile = rptDirectory + "\\SimpleDiffusionFourCompartmentTest.txt";
+  std::string rptFile = rptDirectory + "/SimpleDiffusionFourCompartmentTest.txt";
   double time = 0.0;
 
   // Initialize
@@ -719,7 +719,7 @@ void PulseEngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDirecto
   pc.GetSubstances().AddActiveSubstance(*sub);
 
   DataTrack trk4;
-  std::string rptFile = rptDirectory + "\\SimpleDiffusionHierarchyTest.txt";
+  std::string rptFile = rptDirectory + "/SimpleDiffusionHierarchyTest.txt";
   double time = 0.0;
 
   SELiquidCompartment& L0C0 = pc.GetCompartments().CreateLiquidCompartment("L0C0");
@@ -851,7 +851,7 @@ void PulseEngineTest::FacilitatedDiffusionTest(const std::string& rptDirectory)
   SELiquidCompartment& vascular = pc.GetCompartments().CreateLiquidCompartment("Vascular");
 
   DataTrack trk1;
-  std::string   rptFile = rptDirectory + "\\FacilitatedDiffusionTest.txt";
+  std::string   rptFile = rptDirectory + "/FacilitatedDiffusionTest.txt";
   double time = 0.0;
 
   tissueExtracellular.GetVolume().SetValue(45.0, VolumeUnit::mL);
@@ -967,7 +967,7 @@ void PulseEngineTest::GenericExcretionTest(SETestSuite& testSuite)
 void PulseEngineTest::DiffusionClearanceExcretionTests(const std::string& rptDirectory)
 {
 
-  m_Logger->ResetLogFile(rptDirectory + "\\DiffusionClearanceExcretionTests.log");
+  m_Logger->ResetLogFile(rptDirectory + "/DiffusionClearanceExcretionTests.log");
   // Set up our test report
   
   SETestReport testReport = SETestReport(m_Logger);
@@ -996,5 +996,5 @@ void PulseEngineTest::DiffusionClearanceExcretionTests(const std::string& rptDir
   //ts7.SetName("GenericExcretionTest");
   //GenericExcretionTest(ts8);
 
-  //testReport.WriteFile(rptDirectory + "\\GasCompartmentTest.pba");
+  //testReport.WriteFile(rptDirectory + "/GasCompartmentTest.pba");
 }

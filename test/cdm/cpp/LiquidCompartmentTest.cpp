@@ -1349,7 +1349,7 @@ void CommonDataModelTest::LiquidCompartmentTest(const std::string& rptDirectory)
   m_PercentTolerance = 2.0;
   m_OutDirectory = rptDirectory;
 
-  m_Logger->ResetLogFile(rptDirectory + "\\LiquidCompartmentTest.log");
+  m_Logger->ResetLogFile(rptDirectory + "/LiquidCompartmentTest.log");
   SETestReport testReport(m_Logger);
 
   SESubstanceManager subMgr(m_Logger);
@@ -1379,5 +1379,5 @@ void CommonDataModelTest::LiquidCompartmentTest(const std::string& rptDirectory)
   UpdateLiquidLinks.SetName("UpdateLiquidLinks");
   TestUpdateLiquidLinks(UpdateLiquidLinks, subMgr);
 
-  testReport.WriteFile(rptDirectory + "\\LiquidCompartmentTestReport.pba");
+  testReport.WriteFile(rptDirectory + "/LiquidCompartmentTestReport.pba");
 }

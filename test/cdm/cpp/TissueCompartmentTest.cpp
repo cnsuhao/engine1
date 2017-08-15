@@ -35,7 +35,7 @@ void CommonDataModelTest::TissueCompartmentTest(const std::string& rptDirectory)
 {
   TimingProfile pTimer;
 
-  m_Logger->ResetLogFile(rptDirectory + "\\TissueCompartmentTest.log");
+  m_Logger->ResetLogFile(rptDirectory + "/TissueCompartmentTest.log");
   SESubstanceManager subMgr(m_Logger);
   subMgr.LoadSubstanceDirectory();
 
@@ -162,5 +162,5 @@ void CommonDataModelTest::TissueCompartmentTest(const std::string& rptDirectory)
 
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Serialization"), TimeUnit::s);
 
-  testReport.WriteFile(rptDirectory + "\\TissueCompartmentTestReport.pba");
+  testReport.WriteFile(rptDirectory + "/TissueCompartmentTestReport.pba");
 }

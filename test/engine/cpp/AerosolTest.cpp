@@ -37,7 +37,7 @@ specific language governing permissions and limitations under the License.
 
 void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
 {
-  m_Logger->ResetLogFile(sOutputDirectory + "\\AerosolTest.log");
+  m_Logger->ResetLogFile(sOutputDirectory + "/AerosolTest.log");
 
   SETestReport testReport = SETestReport(m_Logger);
 
@@ -201,7 +201,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   SizeIndependentDepositionEfficencyCoefficientsTest(zhangDispersion, zhangSubstance, 0.25368, 0.3399, 0.00013825, 0.00022882);
   DepositionFractionTest(zhangDispersion, zhangSubstance, 0.353503, 0.478626, 0.000102784, 8.27909e-05);
 
-  testReport.WriteFile(sOutputDirectory + "\\AerosolTestReport.pba");
+  testReport.WriteFile(sOutputDirectory + "/AerosolTestReport.pba");
 }
 
 void PulseEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestSuite& suite, SESubstance& substance, 
@@ -445,7 +445,7 @@ void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& su
     trk.Track("RightAlveoliParticulateDeposited_ug", time, rightAlveoliParticulate == nullptr ? 0 : rightAlveoliParticulate->GetMassDeposited(MassUnit::ug));
 
     if (i == 0)
-      trk.CreateFile(std::string(".\\test_results\\unit_tests\\Pulse\\"+substance.GetName()+"DepositionFraction.txt").c_str(), file);
+      trk.CreateFile(std::string("./test_results/unit_tests/Pulse/"+substance.GetName()+"DepositionFraction.txt").c_str(), file);
     trk.StreamTrackToFile(file);
     
     time += deltaT_s;

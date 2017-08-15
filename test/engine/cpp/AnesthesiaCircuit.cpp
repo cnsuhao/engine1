@@ -50,7 +50,7 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   std::ofstream fileCircuit;
   std::ofstream fileGraph;
   
-  PulseController pc(sTestDirectory + "\\AnesthesiaMachineCircuitAndTransportTest.log");
+  PulseController pc(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -80,8 +80,8 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   {
     amCircuit = &pc.GetCircuits().GetAnesthesiaMachineCircuit();
     amGraph = &pc.GetCompartments().GetAnesthesiaMachineGraph();
-    sCircuitFileName = "\\AnesthesiaMachineCircuitOutput.txt";
-    sTransportFileName = "\\AnesthesiaMachineTransportOutput.txt";
+    sCircuitFileName = "/AnesthesiaMachineCircuitOutput.txt";
+    sTransportFileName = "/AnesthesiaMachineTransportOutput.txt";
 
     //Allow things to flow to ground, since the respiratory circuit isn't here
     //This approximates the total respiratory system resistance
@@ -95,8 +95,8 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
 
     amCircuit = &pc.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
     amGraph = &pc.GetCompartments().GetRespiratoryAndAnesthesiaMachineGraph();
-    sCircuitFileName = "\\RespiratoryAndAnesthesiaMachineCircuitOutput.txt";
-    sTransportFileName = "\\RespiratoryAndAnesthesiaMachineTransportOutput.txt";
+    sCircuitFileName = "/RespiratoryAndAnesthesiaMachineCircuitOutput.txt";
+    sTransportFileName = "/RespiratoryAndAnesthesiaMachineTransportOutput.txt";
 
     //Precharge the stomach to prevent negative volume
     amCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());

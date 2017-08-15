@@ -37,7 +37,7 @@ specific language governing permissions and limitations under the License.
 //This test holds EnvironmentSkin and EnvironmentCore sources constant and varies BMR
 void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc(sTestDirectory + "\\InternalTemperatureVariableBMRCircuitTest.log");
+  PulseController pc(sTestDirectory + "/InternalTemperatureVariableBMRCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -100,7 +100,7 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
     outTrk.Track(time_s, m_TCircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\InternalTemperatureVariableBMRCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableBMRCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -111,7 +111,7 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
 //This test holds BMR and EnvironmentCore sources constant and varies EnvironmentSkin
 void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc(sTestDirectory + "\\InternalTemperatureVariableSkinCircuitTest.log");
+  PulseController pc(sTestDirectory + "/InternalTemperatureVariableSkinCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -197,7 +197,7 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
     outTrk.Track(time_s, m_TCircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\InternalTemperatureVariableSkinCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableSkinCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -208,7 +208,7 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
 //This test holds BMR and EnvironmentSkin sources constant and varies EnvironmentCore
 void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc(sTestDirectory + "\\InternalTemperatureVariableCoreCircuitTest.log");
+  PulseController pc(sTestDirectory + "/InternalTemperatureVariableCoreCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -293,7 +293,7 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
     outTrk.Track(time_s, m_TCircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\InternalTemperatureVariableCoreCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableCoreCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -304,7 +304,7 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
 //This test uses a constant BMR in place of the Energy circuit and varies ambient temperature
 void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc(sTestDirectory + "\\EnvironmentVariableTemperatureCircuitTest.log");
+  PulseController pc(sTestDirectory + "/EnvironmentVariableTemperatureCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -417,7 +417,7 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
     outTrk.Track(time_s, m_ECircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\EnvironmentVariableTemperatureCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/EnvironmentVariableTemperatureCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -428,7 +428,7 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
 //This test uses both the Environment and Energy circuits, varying both BMR and ambient temp
 void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc(sTestDirectory + "\\CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
+  PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -571,7 +571,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
     outTrk.Track(time_s, m_TECircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -582,7 +582,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
 //This test verifies that the Skin temperature drops when drastically lowering other values
 void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc(sTestDirectory + "\\CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
+  PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -665,7 +665,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
     outTrk.Track(time_s, m_TECircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\CombinedInternalAndEnvironmentSkinTempDropCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -676,7 +676,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
 //This test compares Environment circuit output to ISO data
 void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestDirectory)
 {
-  PulseController pc(sTestDirectory + "\\EnvironmentTemperatureInput.log");
+  PulseController pc(sTestDirectory + "/EnvironmentTemperatureInput.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -774,6 +774,6 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
     trk.Track("EvaporativeHeatLoss(W/m^2)", i, dEvaporativeHeatLoss_WPerM2[i]);
   }
 
-  std::string sOutputFile = sTestDirectory + "\\EnvironmentISO7730Comparison.txt";
+  std::string sOutputFile = sTestDirectory + "/EnvironmentISO7730Comparison.txt";
   trk.WriteTrackToFile(sOutputFile.c_str());
 }
