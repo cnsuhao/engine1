@@ -122,11 +122,11 @@ else()
       CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
   endif()
 
-  install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
+  install(FILES ${xerces_INSTALL}/lib/libprotobuf.a
     CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libprotobufd.lib
+  install(FILES ${xerces_INSTALL}/lib/libprotobufd.a
     CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
-  install(FILES ${xerces_INSTALL}/lib/libprotobuf.lib
+  install(FILES ${xerces_INSTALL}/lib/libprotobuf.a
     CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
 endif()
 
