@@ -546,6 +546,7 @@ Note, that patient should be in Cardiac Arrest before performing CPR
 PatientAction {
   ChestCompressionForceScale {
     ForceScale { Scalar0To1 {Value: 0.73} }
+....ForcePeriod { ScalarTime {Value: 0.2 Unit: "s"} }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -693,7 +694,7 @@ The AdminRoute can be one of:
 The Substance element should be set to a name of any of the %Substances.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PatientAction {
-  SubstanceBolus { 
+  SubstanceBolus {
     AdministrationRoute: Intravenous
     Substance: "Succinylcholine"
     Concentration { ScalarMassPerVolume {Value: 4820.0 Unit: "ug/mL"} }
@@ -710,7 +711,7 @@ The Substance Compound element should be set to a name of any of the %Substances
 Set Rate to 0 to remove Action
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PatientAction {
-  SubstanceCompoundInfusion { 
+  SubstanceCompoundInfusion {
     SubstanceCompound: "Saline"
     BagVolume { ScalarVolume {Value: 500.0 Unit: "mL"} }
     Rate { ScalarVolumePerTime {Value: 100.0 Unit: "mL/min"} }
@@ -750,23 +751,35 @@ Patient cannot be intubated to be connected as Mask <br>
 Anesthesia machine will be disconneted if patient is then intubated. <br>
 Cannot have inhaler and anesthesia machine on at the same time <br>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  Configuration {
+AnyAction {
+  AnesthesiaMachineAction {
     Configuration {
-      Connection: Mask
-      InletFlow { ScalarVolumePerTime {Value: 5.0 Unit: "L/min"} }
-      InspiratoryExpiratoryRatio { Scalar {Value="0.5"} }
-      OxygenFraction { Scalar0To1 {Value="0.25"} }
-      OxygenSource: Wall
-      PositiveEndExpiredPressure { ScalarPressure { Value: 1.0 Unit: "cmH2O"} }
-      PrimaryGas: Nitrogen      
-      RespiratoryRate { ScalarFrequency {Value: 16.0 Unit: "1/min"} }
-      VentilatorPressure { ScalarPressure { Value: 10.5 Unit: "cmH2O"} }
-      OxygenBottleOne {
-        Volume { ScalarVolume {Value: 660.0 Unit: "L"} }
-      }
-      OxygenBottleTwo {
-        Volume { ScalarVolume {Value: 700.0 Unit: "L"} }
+      Configuration {
+        Connection: Tube
+        InletFlow { ScalarVolumePerTime {Value: 5.0 Unit: "L/min"} }
+        InspiratoryExpiratoryRatio {Value: 0.5}
+        OxygenFraction {Scalar0To1 {Value: 0.23} }
+        OxygenSource: Wall
+        PositiveEndExpiredPressure { ScalarPressure {Value: 1.0 Unit: "cmH2O"} }
+        PrimaryGas: Nitrogen
+        RespiratoryRate { ScalarFrequency {Value: 16.0 Unit: "1/min"} }
+        VentilatorPressure { ScalarPressure {Value: 10.5 Unit: "cmH2O"} }
+        LeftChamber {
+          State: On
+          SubstanceFraction { Scalar0To1 {Value: 0.04} }
+          Substance: "Desflurane"
+        }
+        RightChamber {
+          State: On
+          SubstanceFraction { Scalar0To1 {Value: 0.04} }
+          Substance: "Desflurane"
+        }
+        OxygenBottleOne {
+          Volume { ScalarVolume {Value: 660.0 Unit: "L"} }
+        }
+        OxygenBottleTwo {
+          Volume { ScalarVolume {Value: 660.0 Unit: "L"} }
+        }
       }
     }
   }
@@ -986,7 +999,7 @@ FATAL: Cannot have inhaler and anesthesia machine on at the same time
 InhalerAction {
   Configuration {
     Configuration {
-      Substance: "Oxygen"
+      Substance: "Albuterol"
       MeteredDose { ScalarMass {Value: 90.0 Unit: "ug"} }
       NozzleLoss { Scalar0To1 {Value: 0.04} }
       SpacerVolume { ScalarVolume {Value: 0.1 Unit: "L"} }
