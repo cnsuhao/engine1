@@ -263,7 +263,7 @@ bool SESubstanceManager::LoadSubstanceDirectory()
   cdir = opendir("./substances/compounds");
 #else
   sdir = opendir(std::string(workingDirectory + std::string("/substances/")).c_str());
-  sdir = opendir(std::string(workingDirectory + std::string("/substances/compounds/")).c_str());
+  cdir = opendir(std::string(workingDirectory + std::string("/substances/compounds/")).c_str());
 #endif
 
   cdm::SubstanceData* subData;
@@ -277,16 +277,24 @@ bool SESubstanceManager::LoadSubstanceDirectory()
       ss << workingDirectory << "/substances/" << ent->d_name;
       if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
       {
-        std::ifstream input(ss.str());
-        std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
-
-        //Info("Reading substance file : ./substances/" + ent->d_name);
-
-        subData = new cdm::SubstanceData();
-        if (!google::protobuf::TextFormat::ParseFromString(fmsg, subData))
+        try
         {
-          succeed = false;
-          Error("Unable to read substance " + ss.str());
+          //Info("Reading substance file : " + ss.str());
+          std::ifstream input(ss.str());
+          std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+
+          subData = new cdm::SubstanceData();
+          if (!google::protobuf::TextFormat::ParseFromString(fmsg, subData))
+          {
+            succeed = false;
+            Error("Unable to read substance " + ss.str());
+            delete subData;
+            continue;
+          }
+        }
+        catch(...)
+        {
+          Info("I caught something in "+ss.str());
           delete subData;
           continue;
         }
