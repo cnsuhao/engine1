@@ -1,7 +1,8 @@
 
 # The Pulse Physiology Engine
 
-This project uses the Apache License 2.0 @ref License
+Distributed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
+See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/master/NOTICE">NOTICE</a> file for details.
 
 @insert ./docs/markdown/MainPageFAQ.md
 
@@ -37,7 +38,9 @@ The latest code base includes the following notable updates:
 - Converted reporting from emailing to write html reports to the test directory
   - Removes SMTP server requirement
   - Will help with external automated testing
-- Removed verification data set (very large) from source repository
+- Moved the verification data set (very large) from source repository to a data server integrated with CMake
+- Updates to ensure no 3rd party software license compliance issues for certain commercial applications
+- Conversion of the data model from XML to google protocol buffers
 
 (Interested in a previous @ref version?)
 
@@ -46,12 +49,8 @@ The latest code base includes the following notable updates:
 ## Planned Improvements
 
 Near Term:
-- Optimizations to the data model with google protocol buffers
 - C# interface support
 - Integration with CTest
-- Utilize external data configurations to manage the large verification data set
-- Updates to ensure no 3rd party software license compliance issues for certain commercial applications
-
 Long Term:
 - Public Continuous Integration Server and CDash Server for improved verification and validation
 - Pull/Merge request process for methodology changes

@@ -46,9 +46,6 @@ public class Proto2Doxygen
 			File dDir = new File(args[1]);
 			dDir.mkdir();
 			
-			processFile("C:/Programming/physiology/src/schema/proto/cdm/Patient.proto", sDir, dDir);
-
-
 			List<String> found = FileUtils.findFiles(sDir.getAbsolutePath(), "proto", true);      
 			for (String fName : found)
 			{        
@@ -202,23 +199,33 @@ public class Proto2Doxygen
 		}
 		inFile.close();
 
+		String[] path = fName.split("[\\\\/]");
+		String proto_file = path[path.length-1];
+		String new_file_name = proto_file.substring(0, proto_file.lastIndexOf('.'));
+		new_file_name = dDir.getAbsolutePath()+"/"+new_file_name+".ixx";
+		File dstFile = new File(new_file_name);
+		if(dstFile.exists())
+			dstFile.delete();
+			
+	  PrintWriter writer=new PrintWriter(new_file_name, "UTF-8");
 		for(Message m : messages)
 		{
-			System.out.println("/**");
-			System.out.println(" * @defgroup "+m.name+" "+m.name);
+			writer.println("/**");
+			writer.println(" * @defgroup "+m.name+" "+m.name);
 			if(!m.comment.isEmpty())
-				System.out.println(" * "+m.comment);
-			System.out.println(" * @{");
+				writer.println(" * "+m.comment);
+			writer.println(" * @{");
 			for(Property p : m.properties)
 			{
-				System.out.println(" * @defgroup "+m.name+"_"+p.name+" "+p.name);
+				writer.println(" * @defgroup "+m.name+"_"+p.name+" "+p.name);
 				if(!p.comment.isEmpty())
-					System.out.println(" * "+p.comment);
+					writer.println(" * "+p.comment);
 			}
-			System.out.println(" * @}");
-			System.out.println(" */");
-			System.out.println();
+			writer.println(" * @}");
+			writer.println(" */");
+			writer.println();
 		}
+		writer.close();
 	}
 	
 	protected static String cleanComment(String str)

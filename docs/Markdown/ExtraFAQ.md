@@ -54,7 +54,7 @@ our team plans to work with the user community and stakeholders to ensure
 the engine becomes the standard in physiology modeling.
 
 During the first year of the project, our team made many important decisions 
-regarding system architecture and the open source @ref License structure to ensure 
+regarding system architecture and the open source license structure (Apache 2.0) to ensure 
 long-term use. Our system architecture was developed in a way that will make 
 the system easy to extend for new models and external interfaces. The license 
 structure allows for both open-source and proprietary applications to promote 
