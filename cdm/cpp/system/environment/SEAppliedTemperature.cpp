@@ -135,9 +135,9 @@ cdm::eSwitch SEAppliedTemperature::GetState() const
 {
   return m_State;
 }
-void SEAppliedTemperature::SetState(cdm::eSwitch onOff)
+void SEAppliedTemperature::SetState(cdm::eSwitch state)
 {
-  m_State = onOff;
+  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
 }
 
 

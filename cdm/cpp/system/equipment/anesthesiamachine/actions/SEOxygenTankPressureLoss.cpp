@@ -26,7 +26,7 @@ SEOxygenTankPressureLoss::~SEOxygenTankPressureLoss()
 void SEOxygenTankPressureLoss::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  m_State = (cdm::eSwitch)-1;
+  m_State = cdm::eSwitch::Off;
 }
 
 bool SEOxygenTankPressureLoss::IsValid() const

@@ -50,7 +50,7 @@ void SEDynamicStabilization::Load(const cdm::DynamicStabilizationData& src, SEDy
 void SEDynamicStabilization::Serialize(const cdm::DynamicStabilizationData& src, SEDynamicStabilization& dst)
 {
   dst.Clear();
-  dst.m_TrackingStabilization = src.trackingstabilization();
+  dst.TrackStabilization(src.trackingstabilization());
   if(src.has_restingconvergence())
     SEDynamicStabilizationEngineConvergence::Load(src.restingconvergence(), dst.GetRestingConvergence());
   if (src.has_feedbackconvergence())
@@ -230,7 +230,7 @@ bool SEDynamicStabilization::Stabilize(PhysiologyEngine& engine, const SEDynamic
   // Execute System initialization time
   SEEngineTracker* tracker = engine.GetEngineTracker();
   cdm::eSwitch track = m_TrackingStabilization;
-  if (track&&tracker == nullptr)
+  if (tracker == nullptr)
   {
     track = cdm::eSwitch::Off;
     Warning("PhysiologyEngineTrack not provided by engine, not tracking data to file");
@@ -270,7 +270,7 @@ bool SEDynamicStabilization::Stabilize(PhysiologyEngine& engine, const SEDynamic
       tracker->SetupRequests();
     stablizationTime_s += dT_s;
     m_currentTime_s += dT_s;
-    if (track)
+    if (track==cdm::eSwitch::On)
       tracker->TrackData(m_currentTime_s);
     if (m_LogProgress)
     {

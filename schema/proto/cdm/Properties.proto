@@ -18,8 +18,9 @@ enum eGate
 
 enum eSwitch
 {
-  Off = 0;
-  On  = 1;
+  NullSwitch = 0;
+  Off        = 1;
+  On         = 2;
 }
 
 enum eCharge

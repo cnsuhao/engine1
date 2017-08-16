@@ -77,7 +77,7 @@ cdm::eSwitch SENeedleDecompression::GetState() const
 }
 void SENeedleDecompression::SetState(cdm::eSwitch state)
 {
-  m_State = state;
+  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
 }
 
 cdm::eSide SENeedleDecompression::GetSide() const

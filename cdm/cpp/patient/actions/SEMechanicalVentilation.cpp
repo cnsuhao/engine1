@@ -136,7 +136,7 @@ cdm::eSwitch SEMechanicalVentilation::GetState() const
 }
 void SEMechanicalVentilation::SetState(cdm::eSwitch state)
 {
-  m_State = state;
+  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
 }
 
 bool SEMechanicalVentilation::HasFlow() const

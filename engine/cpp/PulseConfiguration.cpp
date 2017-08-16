@@ -596,7 +596,7 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
   if (src.has_drugsconfiguration())
   {
     const pulse::ConfigurationData_DrugsConfigurationData& config = src.drugsconfiguration();
-    dst.m_PDEnabled = config.pdmodel();
+    dst.UsePDModel(config.pdmodel());
   }
   
   // Energy

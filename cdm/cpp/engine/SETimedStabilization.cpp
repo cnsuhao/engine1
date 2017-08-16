@@ -157,7 +157,7 @@ void SETimedStabilization::Load(const cdm::TimedStabilizationData& src, SETimedS
 void SETimedStabilization::Serialize(const cdm::TimedStabilizationData& src, SETimedStabilization& dst)
 {
   dst.Clear();
-  dst.m_TrackingStabilization = src.trackingstabilization();
+  dst.TrackStabilization(src.trackingstabilization());
   if(src.has_restingstabilizationtime())
     SEScalarTime::Load(src.restingstabilizationtime(), dst.GetRestingStabilizationTime());
   if(src.has_feedbackstabilizationtime())

@@ -40,7 +40,7 @@ void SEEngineStabilization::LogProgress(bool b)
 
 void SEEngineStabilization::TrackStabilization(cdm::eSwitch state)
 {
-  m_TrackingStabilization = state;
+  m_TrackingStabilization = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
 }
 bool SEEngineStabilization::IsTrackingStabilization()
 {

@@ -105,7 +105,7 @@ cdm::eSwitch SEAnesthesiaMachineChamber::GetState() const
 }
 void SEAnesthesiaMachineChamber::SetState(cdm::eSwitch state)
 {
-  m_State = state;
+  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
 }
 
 bool SEAnesthesiaMachineChamber::HasSubstanceFraction() const

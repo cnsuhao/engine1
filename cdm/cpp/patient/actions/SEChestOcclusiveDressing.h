@@ -34,7 +34,7 @@ protected:
 public:
 
   virtual cdm::eSwitch GetState() const { return m_State; }
-  virtual void SetState(cdm::eSwitch s) { m_State = s; }
+  virtual void SetState(cdm::eSwitch s) { m_State = (s == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : s; }
 
   virtual cdm::eSide GetSide() const;
   virtual void SetSide(cdm::eSide LeftOrRight);

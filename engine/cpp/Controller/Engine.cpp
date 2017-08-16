@@ -129,7 +129,7 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
     }
   }
   m_AirwayMode = peState->airwaymode();
-  m_Intubation = peState->intubation();
+  m_Intubation = peState->intubation()==cdm::eSwitch::NullSwitch ? cdm::eSwitch::Off : peState->intubation();
    
   /// Patient //  
   if (!peState->has_patient())

@@ -207,6 +207,8 @@ void PulseController::SetAirwayMode(pulse::eAirwayMode mode)
 }
 void PulseController::SetIntubation(cdm::eSwitch s)
 {
+  if (s == cdm::eSwitch::NullSwitch)
+    s = cdm::eSwitch::Off;
   if (m_Intubation == s)
     return;// do nazing!
   if (m_AirwayMode == pulse::eAirwayMode::Inhaler)

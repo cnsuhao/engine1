@@ -69,7 +69,7 @@ public:
   virtual void RemoveDynamicStabilization();
 
   virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == cdm::eSwitch::On; }
-  virtual void EnableWritePatientBaselineFile(cdm::eSwitch s) { m_WritePatientBaselineFile = s; }
+  virtual void EnableWritePatientBaselineFile(cdm::eSwitch s) { m_WritePatientBaselineFile = (s==cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : s; }
 
   virtual bool HasAutoSerialization() const;
   virtual SEAutoSerialization& GetAutoSerialization();
@@ -308,7 +308,7 @@ protected:
   ////////////
 public:
   virtual bool IsPDEnabled() const { return m_PDEnabled==cdm::eSwitch::On; }
-  virtual void UsePDModel(cdm::eSwitch s) { m_PDEnabled = s; }
+  virtual void UsePDModel(cdm::eSwitch s) { m_PDEnabled = (s == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::On : s; }
 protected:
   cdm::eSwitch m_PDEnabled;
 
@@ -480,7 +480,7 @@ protected:
   ////////////
 public:
   virtual bool IsRenalEnabled() const { return m_RenalEnabled==cdm::eSwitch::On; }
-  virtual void EnableRenal(cdm::eSwitch s) { m_RenalEnabled = s; } 
+  virtual void EnableRenal(cdm::eSwitch s) { m_RenalEnabled = (s == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::On : s; }
 
   virtual bool HasPlasmaSodiumConcentrationSetPoint() const;
   virtual SEScalarMassPerVolume& GetPlasmaSodiumConcentrationSetPoint();
@@ -604,7 +604,7 @@ protected:
   /////////////
 public:
   virtual bool IsTissueEnabled() const { return m_TissueEnabled==cdm::eSwitch::On; }
-  virtual void EnableTissue(cdm::eSwitch s) { m_TissueEnabled = s; }
+  virtual void EnableTissue(cdm::eSwitch s) { m_TissueEnabled = (s == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::On : s; }
 protected:
   cdm::eSwitch m_TissueEnabled;
 };

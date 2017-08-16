@@ -111,7 +111,7 @@ cdm::eSwitch SEAutoSerialization::GetPeriodTimeStamps() const
 }
 void SEAutoSerialization::SetPeriodTimeStamps(cdm::eSwitch v)
 {
-  m_PeriodTimeStamps = v;
+  m_PeriodTimeStamps = (v == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : v;
 }
 
 cdm::eSwitch SEAutoSerialization::GetAfterActions() const
@@ -120,7 +120,7 @@ cdm::eSwitch SEAutoSerialization::GetAfterActions() const
 }
 void SEAutoSerialization::SetAfterActions(cdm::eSwitch v)
 {
-  m_AfterActions = v;
+  m_AfterActions = (v == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : v;
 }
 
 cdm::eSwitch SEAutoSerialization::GetReloadState() const
@@ -129,7 +129,7 @@ cdm::eSwitch SEAutoSerialization::GetReloadState() const
 }
 void SEAutoSerialization::SetReloadState(cdm::eSwitch v)
 {
-  m_ReloadState = v;
+  m_ReloadState = (v == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : v;
 }
 
 std::string SEAutoSerialization::GetDirectory() const

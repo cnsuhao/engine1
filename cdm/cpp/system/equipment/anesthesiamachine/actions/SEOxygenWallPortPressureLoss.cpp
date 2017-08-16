@@ -26,7 +26,7 @@ SEOxygenWallPortPressureLoss::~SEOxygenWallPortPressureLoss()
 void SEOxygenWallPortPressureLoss::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  m_State = (cdm::eSwitch)-1;
+  m_State = cdm::eSwitch::Off;
 }
 
 bool SEOxygenWallPortPressureLoss::IsValid() const

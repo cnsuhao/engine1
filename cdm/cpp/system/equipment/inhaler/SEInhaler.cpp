@@ -149,7 +149,7 @@ cdm::eSwitch SEInhaler::GetState() const
 }
 void SEInhaler::SetState(cdm::eSwitch state)
 {
-  m_State = state;
+  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
 }
 
 bool SEInhaler::HasMeteredDose() const
