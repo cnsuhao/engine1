@@ -71,7 +71,7 @@ public class HowTo_RunScenario
     // Create a log file for this example (by default, a Pulse.log will be made)
     // NOTE the engine will have its own log, so there is a Java log and an Engine log!!
     // You don't have to have a Java log, but if you want to, this is how you can do it.
-    Log.setFileName("HowTo_StaticEngineDriver.log");
+    Log.setFileName("./test_results/scenarios/HowTo_StaticEngineDriver.log");
     // Note there is a single singleton logger in Java, but a log per engine in C++
     // i.e. in Java, multiple engines will write to the same log, where as in C++, each engine will write to its own log
     // The listener and callback objects are unique to this engine
@@ -90,8 +90,8 @@ public class HowTo_RunScenario
     // the scenario file, 
     // the name and location of a results file
     // an optional callback that will be called so you can get the latest data values and do some custom logic
-//    String pba = FileUtils.readFile("./verification/scenarios/patient/BasicStandard.pba");
-//    pe.runScenario("./test_results/scenarios/patient/BasicStandard.log", pba,"./test_results/scenarios/patient/BasicStandardResults.txt", null);// No Callback, just write out the file
+    String pba = FileUtils.readFile("./verification/scenarios/patient/BasicStandard.pba");
+    pe.runScenario("./test_results/scenarios/patient/BasicStandard.log", pba,"./test_results/scenarios/patient/BasicStandardResults.txt", null);// No Callback, just write out the file
     
     // You could create and provide an SEScenario object as well
     SEScenario sce = new SEScenario(pe.substanceManager);
