@@ -1,11 +1,9 @@
-Scenario XML Files {#ScenarioXMLFile} 
+Scenario Files {#ScenarioFile} 
 ==================
 
 The engine can be used to simulate various physiological scenarios.
 The Common Data Model (CDM) provides a Scenario structure that can contain a set of instructions that can be used to drive the engine. 
-Below you can see :
-- How a scenario is structured in XSD Schema
-- XML examples of all the actions, conditions, assessments supported
+Below you can see how the content of a scenario file is structured along with examples of all the actions, conditions, assessments supported
 
 A Scenario is a 'canned' instruction set with requested data to be output in a comma delimited file that is executed by the engine and will produce the same results data.
 'FATAL' is used below to note boundary cases that will result in a fatal exception, stopping the engine.
@@ -16,55 +14,85 @@ The @ref Toolkit, also provides example scenario files and can also execute scen
 An example of a basic scenario file is shown below.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<?xml version="1.0" encoding="UTF-8"?>
-<Scenario xmlns="uri:/mil/tatrc/physiology/datamodel" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsdVersion="v16.12" contentVersion="BioGears_6.0.1-beta" xsi:schemaLocation="">
-  <Name>InitialStableState</Name>
-  <Description>Start the engine at a state, this is for debugging said state</Description>
-  <EngineStateFile>./states/StandardMale@0s.xml</EngineStateFile>
-  
-  <DataRequests>
-      <DataRequest xsi:type="PhysiologySystemDataRequestData" Name="HeartRate" Unit="1/min"/>
-      <DataRequest xsi:type="PhysiologySystemDataRequestData" Name="RespirationRate" Unit="1/min"/>
-    <DataRequest xsi:type="PhysiologySystemDataRequestData" Name="OxygenSaturation" Unit="unitless"/>
+Name: "BasicScenario"
+Description: "Examples of the DataRequest structure."
+InitialParameters { PatientFile:"StandardMale.pba" }
 
-      <DataRequest xsi:type="GasCompartmentDataRequestData" Compartment="Carina"       Substance="Oxygen"        Name="PartialPressure" Unit="cmH2O" Precision="0"/>
-      <DataRequest xsi:type="GasCompartmentDataRequestData" Compartment="Carina"       Substance="CarbonDioxide" Name="PartialPressure" Unit="cmH2O" Precision="1"/>
-          
-      <DataRequest xsi:type="LiquidCompartmentDataRequestData" Compartment="Aorta"     Substance="Oxygen"        Name="PartialPressure" Unit="mmHg" Precision="1"/>
-      <DataRequest xsi:type="LiquidCompartmentDataRequestData" Compartment="Aorta"     Substance="CarbonDioxide" Name="PartialPressure" Unit="mmHg" Precision="1"/>
-  </DataRequests>
-   
-  <Action xsi:type="AdvanceTimeData">
-    <Time value="2" unit="min"/>		
-  </Action>
-</Scenario>
+# Base system data required for all scenario verification
+DataRequestManager
+{
+  DataRequest { Category:Patient    PropertyName:"Weight"                            Unit:"kg"          DecimalFormat{Precision:1} }
+  
+  DataRequest { Category:Physiology PropertyName:"HeartRate"                         Unit:"1/min"       DecimalFormat{Precision:2} }
+  DataRequest { Category:Physiology PropertyName:"SystolicArterialPressure"          Unit:"mmHg"        DecimalFormat{Precision:0} }
+  DataRequest { Category:Physiology PropertyName:"DiastolicArterialPressure"         Unit:"mmHg"        DecimalFormat{Precision:1} 
+  DataRequest { Category:Physiology PropertyName:"TotalLungVolume"                   Unit:"L"           DecimalFormat{Precision:2} }
+  DataRequest { Category:Physiology PropertyName:"RespirationRate"                   Unit:"1/min"       DecimalFormat{Precision:2} }
+  DataRequest { Category:Physiology PropertyName:"OxygenSaturation"                  Unit:"unitless"    DecimalFormat{Precision:3} }
+
+  DataRequest { Category:GasCompartment CompartmentName:"Lung"                                PropertyName:"Pressure"        Unit:"cmH2O" DecimalFormat{Precision:0} }
+  DataRequest { Category:GasCompartment CompartmentName:"Lung"  SubstanceName:"Oxygen"        PropertyName:"PartialPressure" Unit:"mmHg"  DecimalFormat{Precision:0} }
+
+  DataRequest { Category:LiquidCompartment CompartmentName:"Aorta"     SubstanceName:"Oxygen"        PropertyName:"PartialPressure" Unit:"mmHg"  DecimalFormat{Precision:1} }
+  DataRequest { Category:LiquidCompartment CompartmentName:"Aorta"     SubstanceName:"CarbonDioxide" PropertyName:"PartialPressure" Unit:"mmHg"  DecimalFormat{Precision:1} }
+  DataRequest { Category:LiquidCompartment CompartmentName:"VenaCava"  SubstanceName:"Oxygen"        PropertyName:"PartialPressure" Unit:"mmHg"  DecimalFormat{Precision:1} }
+  DataRequest { Category:LiquidCompartment CompartmentName:"VenaCava"  SubstanceName:"CarbonDioxide" PropertyName:"PartialPressure" Unit:"mmHg"  DecimalFormat{Precision:1} }
+
+  DataRequest { Category:Substance  SubstanceName:"Oxygen"         PropertyName:"AlveolarTransfer"    Unit:"mL/s" DecimalFormat{Precision:2} }
+  DataRequest { Category:Substance  SubstanceName:"CarbonDioxide"  PropertyName:"AlveolarTransfer"    Unit:"mL/s" DecimalFormat{Precision:2} }
+
+}
+
+AnyAction
+{
+  AdvanceTime 
+  {
+    Time { ScalarTime {Value: 2.0  Unit: "min"} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The scenario allows for a name and description, but this is not used in execution.
 The scenario contains the following execution information:
-- What engine state to use
+- Patient File and optional conditions OR An engine state file to start at
 - A list of values to return from the engine
 - A list of actions to execute over the course of the run
 
 - - -
 
+## Engine state to use
+
+Skip any stabilization and start the engine at any point in time from a previous run.
+There are initial states (just after it is stable) for every patient in the bin/states folder
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Name: "BasicScenario"
+Description: "Examples of the DataRequest structure."
+EngineStateFile :"./states/StandardMale@0s.pba" 
+
+# Next comes data requests (See Below)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ## Patient File and optional conditions
 
 While it is recommened to use an Engine State when running a scenario, you do have the option to initialize the engine with a Patient File and optional conditions.
-The specified patient file refers to an XML file containing @ref Patient_PatientData information.
-Replace the <EngineStateFile> tag with the <InitialParameters> tag like this:
+The specified patient file refers to a file containing @ref Patient_PatientData information.
+Replace the EngineStateFile section with an InitialParameters like this:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<?xml version="1.0" encoding="UTF-8"?>
-<Scenario xmlns="uri:/mil/tatrc/physiology/datamodel" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsdVersion="v16.12" contentVersion="BioGears_6.0.1-beta" xsi:schemaLocation="">
-    <Name>Anemia30</Name>
-    <Description>Anemia onset, leading to 30% reduction in hemoblogin content</Description>
-    <InitialParameters>
-          <PatientFile>StandardMale.xml</PatientFile>
-          <Condition xsi:type="ChronicAnemiaData">
-              <ReductionFactor value="0.3"/>
-          </Condition>
-      </InitialParameters>
+Name: "Anemia30"
+Description: "Anemia onset, leading to 30% reduction in hemoglobin content."
+InitialParameters { PatientFile:"StandardMale.pba"
+  AnyCondition{
+    PatientCondition {
+      ChronicAnemia {
+        ReductionFactor { Scalar0To1 {Value: 0.3} }
+      }
+    }
+  }
+} 
+
+# Next comes data requests (See Below)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Patient Conditions
@@ -75,9 +103,11 @@ The following are links to the Condition class specification along with XML exam
 #### Chronic Anemia
 @copybrief PatientConditions_ChronicAnemiaData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientCondition {
-  ChronicAnemia {
-    ReductionFactor { Scalar0To1 {Value: 0.3} }
+AnyCondition{ 
+  PatientCondition {
+    ChronicAnemia {
+      ReductionFactor { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -143,10 +173,9 @@ PatientCondition {
   }
 }
 
-or
+#or
 
-<!-- file must be in the ./bin/nutrition directory -->
-jbw
+# file must be in the ./bin/nutrition directory
 PatientCondition {
   ConsumeMeal {
     Meal {
@@ -211,10 +240,9 @@ EnvironmentCondition {
   }
 }
 
-or
+#or
 
-<!-- file must be in the ./bin/environments directory -->
-jbw
+#File must be in the ./bin/environments directory 
 EnvironmentCondition {
   InitialEnvironmentConditions {
     Conditions {
@@ -238,7 +266,7 @@ At this time, you do not need to specify the system name.
 The Name attribute should be set to a System Property name. (e.g., HeartRate)
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<DataRequest xsi:type="PhysiologySystemDataRequestData" Name="HeartRate" Unit="1/min" />
+DataRequest { Category:Physiology PropertyName:"HeartRate"                         Unit:"1/min" }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Compartment Data
@@ -254,19 +282,19 @@ The Name attribute should be set to a Compartment Property name.
 The Substance attribute is optional, and the if used the name will refer to a substance quantity property.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<DataRequest xsi:type="GasCompartmentDataRequestData" Compartment="LeftAlveoli" Name="Pressure" Unit="cmH2O"/>		
+DataRequest { Category:GasCompartment CompartmentName:"Lungs"                          PropertyName:"Pressure"        Unit:"cmH2O" }	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<DataRequest xsi:type="GasCompartmentDataRequestData" Compartment="LeftAlveoli" Substance="Oxygen" Name="PartialPressure" Unit="mmHg"/>
+DataRequest { Category:GasCompartment CompartmentName:"Lungs" SubstanceName:"Oxygen" PropertyName:"PartialPressure" Unit:"mmHg" }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<DataRequest xsi:type="LiquidCompartmentDataRequestData" Compartment="Aorta" Name="Pressure" Unit="mmHg" />
+DataRequest { Category:LiquidCompartment CompartmentName:"Aorta"                       PropertyName:"Pressure" Unit:"mmHg" }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<DataRequest xsi:type="LiquidCompartmentDataRequestData" Compartment="Aorta" Substance="Oxygen" Name="PartialPressure" Unit="mmHg"/>
+DataRequest { Category:LiquidCompartment CompartmentName:"Aorta" SubstanceName:"Oxygen" PropertyName:"PartialPressure" Unit:"mmHg" }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Environment Data
@@ -274,7 +302,7 @@ The Substance attribute is optional, and the if used the name will refer to a su
 Environment System data refers to all the data specified by @ref Environment_EnvironmentData and its derived types.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<DataRequest xsi:type="EnvironmentDataRequestData"  Name="ConvectiveHeatLoss"    Unit="W"          Precision="2"/>
+DataRequest { Category:Environment PropertyName:"AirDensity"                      Unit:"g/mL" }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Equipment Data
@@ -282,7 +310,11 @@ Environment System data refers to all the data specified by @ref Environment_Env
 System level data from a piece of equipment
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<DataRequest xsi:type="EquipmentDataRequestData"  Type="ECG" Name="Lead3ElectricPotential"    Unit="mV"          Precision="0"/>
+DataRequest { Category:AnesthesiaMachine PropertyName:"InletFlow"                 Unit:"mL/min" }
+
+DataRequest { Category:ECG PropertyName:"Lead3ElectricPotential"                  Unit:"1/min" }
+
+DataRequest { Category:Inhaler PropertyName:"MeteredDose"                         Unit:"ug" }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Substance Data
@@ -290,11 +322,11 @@ System level data from a piece of equipment
 Substance data is provided about a substance and its current state in the body and on specific anatomy compartments
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<DataRequest xsi:type="SubstanceDataRequestData" Substance="Morphine" Name="PlasmaConcentration" Unit="ug/mL"/>
+DataRequest { Category:Substance  SubstanceName:"Oxygen"         PropertyName:"AlveolarTransfer"    Unit:"mL/s" }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<DataRequest xsi:type="SubstanceDataRequestData" Substance="Morphine" Compartment="LeftKidneyTissue" Name="MassCleared" Unit="ug"/>
+DataRequest { Category:Substance  SubstanceName:"CarbonDioxide"  PropertyName:"AlveolarTransfer"    Unit:"mL/s" }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -320,9 +352,17 @@ AdvanceTime
 #### Serialize State
 @copybrief Scenario_SerializeStateData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<Action xsi:type="SerializeStateData" Type="Save">
-		<Filename></Filename><!-- No Filename, engine is going to auto generate a name, something like : StandardMale@0s.xml -->		
-  </Action>
+Serialize
+{
+ Type: Save
+ Filename: State.pba # If no filename is provided, engine is going to auto generate a name, something like : StandardMale@0s.xml
+}
+
+Serialize
+{
+ Type: Load
+ Filename: State.pba
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -436,10 +476,9 @@ PatientAction {
   }
 }
 
-or
+#or
 
-<!-- file must be in the ./bin/nutrition directory -->
-jbw
+# File must be in the ./bin/nutrition directory -->
 PatientAction {
   ConsumeNutrients {
     NutritionFile { "Soylent.pba" }
