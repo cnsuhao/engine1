@@ -90,8 +90,8 @@ public class HowTo_RunScenario
     // the scenario file, 
     // the name and location of a results file
     // an optional callback that will be called so you can get the latest data values and do some custom logic
-    String pba = FileUtils.readFile("../verification/Scenarios/Basic/Basic1.pba");
-    pe.runScenario("./Scenarios/Basic/Basic1.log", pba,"./Scenarios/Basic/Basic1Results.txt", null);// No Callback, just write out the file
+//    String pba = FileUtils.readFile("./verification/scenarios/patient/BasicStandard.pba");
+//    pe.runScenario("./test_results/scenarios/patient/BasicStandard.log", pba,"./test_results/scenarios/patient/BasicStandardResults.txt", null);// No Callback, just write out the file
     
     // You could create and provide an SEScenario object as well
     SEScenario sce = new SEScenario(pe.substanceManager);
@@ -106,12 +106,12 @@ public class HowTo_RunScenario
     hr.setUnit(FrequencyUnit.Per_min.toString());
     sce.getDataRequestManager().getRequestedData().add(hr);
     SEDataRequest rr = new SEDataRequest();
-    hr.setCategory(eCategory.Physiology);
+    rr.setCategory(eCategory.Physiology);
     rr.setPropertyName("RespirationRate");
     rr.setUnit(FrequencyUnit.Per_min.toString());
     sce.getDataRequestManager().getRequestedData().add(rr);
     SEDataRequest tlv = new SEDataRequest();   
-    hr.setCategory(eCategory.Physiology); 
+    tlv.setCategory(eCategory.Physiology); 
     tlv.setPropertyName("TotalLungVolume");
     tlv.setUnit(VolumeUnit.mL.toString());
     sce.getDataRequestManager().getRequestedData().add(tlv);
@@ -119,7 +119,7 @@ public class HowTo_RunScenario
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);
     sce.getActions().add(adv);
-    pe.runScenario("./Scenarios/HowToStaticEngine.log",sce,"./Scenarios/HowToStaticEngineResults.pba", new MyCallback(pe,1.0));// Callback with new data every simulated second
+    pe.runScenario("./test_results/scenarios/HowToStaticEngine.log",sce,"./test_results/scenarios/HowToStaticEngineResults.pba", new MyCallback(pe,1.0));// Callback with new data every simulated second
     
     // Note if your engine is running in another thread, you can call pe.cancelScenario to halt the engine
     

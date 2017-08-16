@@ -5,11 +5,11 @@
 
 // Include the various types you will be using in your code
 #include "patient/actions/SESubstanceBolus.h"
-#include "system/equipment/Anesthesia/SEAnesthesiaMachine.h"
-#include "system/equipment/Anesthesia/SEAnesthesiaMachineOxygenBottle.h"
-#include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/Anesthesia/actions/SEMaskLeak.h"
-#include "system/equipment/Anesthesia/actions/SEOxygenWallPortPressureLoss.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "system/equipment/anesthesiamachine/actions/SEMaskLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEOxygenWallPortPressureLoss.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SERespiratorySystem.h"

@@ -141,19 +141,19 @@ protected:
   SEScalar*                         m_MichaelisCoefficient;
 
   SESubstanceAerosolization*        m_Aerosolization;
-  SEScalarMassPerVolume*             m_BloodConcentration;
-  SEScalarMass*                      m_MassInBody;
-  SEScalarMass*                      m_MassInBlood;
-  SEScalarMass*                      m_MassInTissue;
-  SEScalarMassPerVolume*             m_PlasmaConcentration;
-  SEScalarMass*                      m_SystemicMassCleared;
-  SEScalarMassPerVolume*             m_TissueConcentration;
+  SEScalarMassPerVolume*            m_BloodConcentration;
+  SEScalarMass*                     m_MassInBody;
+  SEScalarMass*                     m_MassInBlood;
+  SEScalarMass*                     m_MassInTissue;
+  SEScalarMassPerVolume*            m_PlasmaConcentration;
+  SEScalarMass*                     m_SystemicMassCleared;
+  SEScalarMassPerVolume*            m_TissueConcentration;
 
   SEScalarVolumePerTime*            m_AlveolarTransfer;
   SEScalarVolumePerTimePressure*    m_DiffusingCapacity;
-  SEScalar0To1*                  m_EndTidalFraction;
+  SEScalar0To1*                     m_EndTidalFraction;
   SEScalarPressure*                 m_EndTidalPressure;
-  SEScalar*                          m_RelativeDiffusionCoefficient;
+  SEScalar*                         m_RelativeDiffusionCoefficient;
   SEScalarInversePressure*          m_SolubilityCoefficient;
 
   SESubstanceClearance*             m_Clearance;

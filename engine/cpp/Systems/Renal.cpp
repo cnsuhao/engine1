@@ -1741,7 +1741,7 @@ void Renal::ConsumeMeal(double elapsedTime_s)
 
     SEScalarMass massCleared_mg;
     massCleared_mg.SetValue(volumeCleared_mL * aortaConcentration_mg_Per_mL, MassUnit::mg);
-//  AMB m_data.GetCircuits().DistributeBloodAndTissueMass(*sub, massCleared_mg);
+//  m_data.GetCircuits().DistributeBloodAndTissueMass(*sub, massCleared_mg);
   }
 
   //Don't bother updating the bladder because it will get the proper concentrations during stabilization

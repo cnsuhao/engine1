@@ -372,25 +372,25 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nat
   std::string stream;
   switch (type)
   {
-    case 0:// PFT
-    {
-      SEPulmonaryFunctionTest pft(engineJNI->eng->GetLogger());
-      engineJNI->eng->GetPatientAssessment(pft);
-      stream = pft.Save();
-      break;
-    }
-    case 1: // CBC
+    case 0: // CBC
     {
       SECompleteBloodCount cbc(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(cbc);
       stream = cbc.Save();
       break;
     }
-    case 2: // CMP
+    case 1: // CMP
     {
       SEComprehensiveMetabolicPanel cmp(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(cmp);
       stream = cmp.Save();
+      break;
+    }
+    case 2:// PFT
+    {
+      SEPulmonaryFunctionTest pft(engineJNI->eng->GetLogger());
+      engineJNI->eng->GetPatientAssessment(pft);
+      stream = pft.Save();
       break;
     }
     case 3: // U

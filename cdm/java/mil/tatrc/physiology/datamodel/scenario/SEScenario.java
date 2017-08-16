@@ -19,6 +19,7 @@ import com.kitware.physiology.cdm.Properties.eSwitch;
 import com.kitware.physiology.cdm.Scenario.AnyActionData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
 import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
+import com.kitware.physiology.pulse.Engine;
 
 import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.actions.SEAdvanceTime;
@@ -26,8 +27,6 @@ import mil.tatrc.physiology.datamodel.datarequests.*;
 import mil.tatrc.physiology.datamodel.patient.actions.SEBronchoconstriction;
 import mil.tatrc.physiology.datamodel.patient.actions.SENeedleDecompression;
 import mil.tatrc.physiology.datamodel.patient.actions.SEPatientAssessmentRequest;
-import mil.tatrc.physiology.datamodel.patient.assessments.SECompleteBloodCount;
-import mil.tatrc.physiology.datamodel.patient.assessments.SEPatientAssessment;
 import mil.tatrc.physiology.datamodel.patient.conditions.SEChronicAnemia;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.FrequencyUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.PressureUnit;
@@ -128,12 +127,31 @@ public class SEScenario
     
     String searchDir;
     if(args.length==0)
-      searchDir="./verification/Scenarios";
+      searchDir="./verification/scenarios/validation/drugs";
     else
       searchDir=args[0];
     List<String> files=FileUtils.findFiles(searchDir, ".pba", true);
     for(String file : files)
     {
+    	
+    	String pba = FileUtils.readFile(file);
+      if(pba==null)
+      {
+        Log.error("Could not read file : "+file);
+        continue;
+      }
+      Engine.ScenarioData.Builder pBuilder = Engine.ScenarioData.newBuilder();
+      try
+      {
+      	TextFormat.getParser().merge(pba, pBuilder);
+      	Log.info("Good Pulse scenario");
+      	continue;
+      }
+      catch(Exception ex)
+      {
+      	Log.warn("Not a Pulse scenario ",ex);
+      }
+    	
       Log.info("Testing scenario file "+file);
       SEScenario sce1 = new SEScenario(mgr);
       try{

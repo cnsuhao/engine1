@@ -28,10 +28,10 @@ int main()
   //HowToExercise();
   //HowToHemorrhage();
   //HowToLobarPneumonia();
-//  HowToMechanicalVentilation();
+  //HowToMechanicalVentilation();
   //HowToPulmonaryFunctionTest();
   //HowToSmoke();
-//  HowToTensionPneumothorax();
+  HowToTensionPneumothorax();
 
   // This one does not really run, is a pure example
   //HowToRunScenario();

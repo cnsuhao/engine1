@@ -29,7 +29,7 @@ import org.apache.poi.xssf.usermodel.*;
 import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.Properties.ScalarData;
 
-public abstract class ValdiationTool
+public abstract class ValidationTool
 {
   public static void main(String[] args)
   {
@@ -43,7 +43,7 @@ public abstract class ValdiationTool
   protected String HEADER_PREPEND="";
   protected RunConfiguration cfg;
   
-  public ValdiationTool()
+  public ValidationTool()
   {
     cfg = new RunConfiguration();
   }
@@ -1035,7 +1035,6 @@ public abstract class ValdiationTool
     }
   }
   
-  
   // TODO this should also cross check that we have everything accounted for with assessments too
   protected void CrossCheckValidationWithSchema(List<String> properties, List<ValidationRow> eData, String sheetName)
   {
@@ -1052,9 +1051,9 @@ public abstract class ValdiationTool
     try
     {
       if(TABLE_TYPE.equals("System"))
-        c = Class.forName("mil.tatrc.physiology.datamodel.bind."+sheetName+"SystemData");
+        c = Class.forName("com.kitware.physiology.cdm.Physiology."+sheetName+"SystemData");
       else if(TABLE_TYPE.equalsIgnoreCase("Patient"))
-        c = Class.forName("mil.tatrc.physiology.datamodel.bind.PatientData");
+        c = Class.forName("com.kitware.physiology.cdm.Patient.PatientData");
       else
         throw new RuntimeException("Unknown table type "+TABLE_TYPE);
     }
