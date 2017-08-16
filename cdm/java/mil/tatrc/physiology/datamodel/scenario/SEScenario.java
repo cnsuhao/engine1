@@ -137,7 +137,7 @@ public class SEScenario
     
     String searchDir;
     if(args.length==0)
-      searchDir="./verification/Scenarios/Drug";
+      searchDir="./verification/Scenarios";
     else
       searchDir=args[0];
     List<String> files=FileUtils.findFiles(searchDir, ".pba", true);
