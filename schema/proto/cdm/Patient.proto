@@ -32,9 +32,9 @@ message PatientData
     FunctionalIncontinence           = 12;/**<< @brief Uncontrolled bladder release due to a full bladder. */
     Hypercapnia                      = 13;/**<< @brief State at which the arterial carbon dioxide partial pressure has exceeded 60 mmHg. */
     Hyperglycemia                    = 14;/**<< @brief An excess of glucose in the bloodstream (> 200 mg/dL). */
-    Hyperthermia                     = 15;/**<< @brief The condition of having a body temperature greatly above normal (> 38° C). */
+    Hyperthermia                     = 15;/**<< @brief The condition of having a body temperature greatly above normal (> 38 C). */
     Hypoglycemia                     = 16;/**<< @brief Low glucose in the bloodstream (< 70 mg/dL). */
-    Hypothermia                      = 17;/**<< @brief The condition of having a body temperature greatly below normal (< 35° C). */
+    Hypothermia                      = 17;/**<< @brief The condition of having a body temperature greatly below normal (< 35 C). */
     Hypoxia                          = 18;/**<< @brief State at which the arterial oxygen partial pressure has fallen below 65 mmHg. */       
     HypovolemicShock                 = 19;/**<< @brief The blood volume has dropped below 65% of its normal value. */
     IntracranialHypertension         = 20;/**<< @brief Intracranial pressure is greater than 25 mmHg. */

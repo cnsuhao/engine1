@@ -67,7 +67,7 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   DataTrack outTrk;
   std::ofstream file;
 
-  PulseController pc(sTestDirectory + "\\" + tName + ".log");
+  PulseController pc(sTestDirectory + "/" + tName + ".log");
   pc.GetLogger()->Info("Running " + tName);
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
@@ -141,7 +141,7 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\" + tName + ".txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/" + tName + ".txt").c_str(), file);
     }
 
     time_s += timeStep_s;

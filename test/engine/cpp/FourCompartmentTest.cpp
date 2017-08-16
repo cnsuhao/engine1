@@ -58,27 +58,27 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   std::string outputName;
   if (!usingAcidBase && !usingProductionConsumption && !usingDiffusion)
   {
-    outputName = "\\FourCompartmentTestSimple";
+    outputName = "/FourCompartmentTestSimple";
   }
   else if (usingAcidBase && !usingProductionConsumption && !usingDiffusion)
   {
-    outputName = "\\AcidBaseFourCompartmentTest";
+    outputName = "/AcidBaseFourCompartmentTest";
   }
   else if (!usingAcidBase && !usingProductionConsumption && usingDiffusion)
   {
-    outputName = "\\FiveCompartmentTestWithDiffusion";
+    outputName = "/FiveCompartmentTestWithDiffusion";
   }
   else if (usingAcidBase && usingProductionConsumption && !usingDiffusion)
   {
-    outputName = "\\AcidBaseFourCompartmentTestWithProductionConsumption";
+    outputName = "/AcidBaseFourCompartmentTestWithProductionConsumption";
   }
   else if (usingAcidBase && !usingProductionConsumption && usingDiffusion)
   {
-    outputName = "\\AcidBaseFiveCompartmentTestWithDiffusion";
+    outputName = "/AcidBaseFiveCompartmentTestWithDiffusion";
   }
   else if (usingAcidBase && usingProductionConsumption && usingDiffusion)
   {
-    outputName = "\\AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion";
+    outputName = "/AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion";
   }
   m_Logger->ResetLogFile(rptDirectory + outputName + ".log");
   std::ofstream file;

@@ -44,7 +44,7 @@ void PulseEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
 
   DataTrack trk;
 
-  PulseController pc(rptDirectory + "\\AcidBaseMath.log");
+  PulseController pc(rptDirectory + "/AcidBaseMath.log");
   SaturationCalculator& c = pc.GetSaturationCalculator();
   SESubstanceManager& subMgr = pc.GetSubstances();
 
@@ -109,7 +109,7 @@ void PulseEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
   bool compareBeforeAfter = false;
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "\\AcidBaseMath.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseMath.txt";
 
   unsigned int testID = 0;
 
@@ -287,7 +287,7 @@ void PulseEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   // It’s making sure the solver gives the same answer when it's feed back the previous answer.
 
   DataTrack trk;
-  PulseController pc(rptDirectory + "\\AcidBaseFeedback.log");
+  PulseController pc(rptDirectory + "/AcidBaseFeedback.log");
   SaturationCalculator& c = pc.GetSaturationCalculator();
   SESubstanceManager& subMgr = pc.GetSubstances();
 
@@ -342,7 +342,7 @@ void PulseEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "\\AcidBaseFeedback.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseFeedback.txt";
 
   c.SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
 
@@ -400,7 +400,7 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   // Did not test negatives because the engine already has checks for negative mass and concentrations. 
 
   DataTrack trk;
-  PulseController pc(rptDirectory + "\\AcidBaseLimits.log");
+  PulseController pc(rptDirectory + "/AcidBaseLimits.log");
   SaturationCalculator& c = pc.GetSaturationCalculator();
   SESubstanceManager& subMgr = pc.GetSubstances();
 
@@ -453,7 +453,7 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "\\AcidBaseLimits.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseLimits.txt";
 
   c.SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
 
@@ -596,12 +596,12 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
 void PulseEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
 {
   DataTrack trk;
-  PulseController pc(rptDirectory + "\\AcidBaseExtreme.log");
+  PulseController pc(rptDirectory + "/AcidBaseExtreme.log");
   SaturationCalculator& c = pc.GetSaturationCalculator();
   SESubstanceManager& subMgr = pc.GetSubstances();
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "\\AcidBaseExtreme.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseExtreme.txt";
 
 
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
@@ -1252,7 +1252,7 @@ void PulseEngineTest::AcidBaseBloodGasTest(PulseController& pc, bloodType bloodC
 
 void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
 {
-  PulseController pc(sOutputDirectory + "\\AcidBaseBloodGasTests.log");
+  PulseController pc(sOutputDirectory + "/AcidBaseBloodGasTests.log");
 
   // Set up our test report
   SETestReport testReport = SETestReport(pc.GetLogger());
@@ -1268,8 +1268,8 @@ void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
   //AcidBaseBloodGasTest(pc, METABOLIC_ACIDOSIS, testSuite, sOutputDirectory);
   //AcidBaseBloodGasTest(pc, RESPIRATORY_ALKALOSIS, testSuite, sOutputDirectory);
 
-  std::string results = sOutputDirectory + "\\AcidBaseBloodGasTests.txt";
+  std::string results = sOutputDirectory + "/AcidBaseBloodGasTests.txt";
   pc.GetDataTrack().WriteTrackToFile(results.c_str());
 
-  testReport.WriteFile(sOutputDirectory + "\\AcidBaseBloodGasTestsReport.pba");
+  testReport.WriteFile(sOutputDirectory + "/AcidBaseBloodGasTestsReport.pba");
 }

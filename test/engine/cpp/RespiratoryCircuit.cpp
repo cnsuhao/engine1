@@ -42,7 +42,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   std::ofstream fileGraph;
   std::ofstream fAerosolGraph;
 
-  PulseController pc(sTestDirectory + "\\RespiratoryCircuitAndTransportTest.log");
+  PulseController pc(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -62,8 +62,8 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
     rCircuit = &pc.GetCircuits().GetRespiratoryCircuit();
     rGraph = &pc.GetCompartments().GetRespiratoryGraph();
     aGraph = nullptr;
-    sCircuitFileName = "\\RespiratoryCircuitOutput.txt";
-    sTransportFileName = "\\RespiratoryTransportOutput.txt";
+    sCircuitFileName = "/RespiratoryCircuitOutput.txt";
+    sTransportFileName = "/RespiratoryTransportOutput.txt";
     sAerosolTxptFileName = "";
   }
   else if (config == RespiratoryWithInhaler)
@@ -71,9 +71,9 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
     rCircuit = &pc.GetCircuits().GetRespiratoryAndInhalerCircuit();
     rGraph = &pc.GetCompartments().GetRespiratoryAndInhalerGraph();
     aGraph = &pc.GetCompartments().GetAerosolAndInhalerGraph();
-    sCircuitFileName = "\\RespiratoryAndInhalerCircuitOutput.txt";
-    sTransportFileName = "\\RespiratoryAndInhalerTransportOutput.txt";
-    sAerosolTxptFileName = "\\AerosolInhalerTransportOutput.txt";
+    sCircuitFileName = "/RespiratoryAndInhalerCircuitOutput.txt";
+    sTransportFileName = "/RespiratoryAndInhalerTransportOutput.txt";
+    sAerosolTxptFileName = "/AerosolInhalerTransportOutput.txt";
 
     // Get an aerosolized substance
     SESubstance* albuterol = pc.GetSubstances().GetSubstance("Albuterol");
@@ -94,8 +94,8 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
     rCircuit = &pc.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit();
     rGraph = &pc.GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph();
     aGraph = nullptr;
-    sCircuitFileName = "\\RespiratoryAndMechanicalVentilatorCircuitOutput.txt";
-    sTransportFileName = "\\RespiratoryAndMechanicalVentilatorTransportOutput.txt";
+    sCircuitFileName = "/RespiratoryAndMechanicalVentilatorCircuitOutput.txt";
+    sTransportFileName = "/RespiratoryAndMechanicalVentilatorTransportOutput.txt";
     sAerosolTxptFileName = "";
   }
   else
@@ -189,7 +189,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
 {
   TimingProfile tmr;
   tmr.Start("Test");
-  PulseController pc(sTestDirectory + "\\RespiratoryDriverTest.log");
+  PulseController pc(sTestDirectory + "/RespiratoryDriverTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
   pc.m_Config->EnableRenal(cdm::eSwitch::Off);
@@ -296,7 +296,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
       DriverPressure_cmH2O = DriverPressure_cmH2O - PressureIncrement_cmH2O;
     }
   }
-  trk1.WriteTrackToFile(std::string(sTestDirectory + "\\RespiratoryDriverOutput.txt").c_str());
+  trk1.WriteTrackToFile(std::string(sTestDirectory + "/RespiratoryDriverOutput.txt").c_str());
   std::stringstream ss;
   ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
   pc.GetLogger()->Info(ss.str(), "RespiratoryDriverTest");

@@ -19,6 +19,10 @@ import java.util.Set;
 
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eConnection;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eOxygenSource;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.ePrimaryGas;
+import com.kitware.physiology.cdm.PatientAssessments.PatientAssessmentData.eType;
 import com.kitware.physiology.cdm.Properties.eSide;
 import com.kitware.physiology.cdm.Properties.eSwitch;
 import com.kitware.physiology.cdm.Scenario.AnyActionData;
@@ -28,9 +32,20 @@ import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
 import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.actions.SEAdvanceTime;
 import mil.tatrc.physiology.datamodel.datarequests.*;
+import mil.tatrc.physiology.datamodel.patient.actions.SEBronchoconstriction;
 import mil.tatrc.physiology.datamodel.patient.actions.SENeedleDecompression;
+import mil.tatrc.physiology.datamodel.patient.actions.SEPatientAssessmentRequest;
+import mil.tatrc.physiology.datamodel.patient.assessments.SECompleteBloodCount;
+import mil.tatrc.physiology.datamodel.patient.assessments.SEPatientAssessment;
+import mil.tatrc.physiology.datamodel.patient.conditions.SEChronicAnemia;
+import mil.tatrc.physiology.datamodel.properties.CommonUnits.FrequencyUnit;
+import mil.tatrc.physiology.datamodel.properties.CommonUnits.PressureUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
+import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumePerTimeUnit;
+import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumeUnit;
+import mil.tatrc.physiology.datamodel.substance.SESubstance;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
+import mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions.SEAnesthesiaMachineConfiguration;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.SimpleEquals;
@@ -47,6 +62,12 @@ public class SEScenario
     	s.setName("Test");
     	s.setDescription("Description");
     	s.getInitialParameters().setPatientFile("StandardMale.pba");
+    	
+   	
+    	SEChronicAnemia cond = new SEChronicAnemia();
+    	cond.getReductionFactor().setValue(0.5);
+    	s.getInitialParameters().getConditions().add(cond);
+    	
     	SEDataRequest dr = new SEDataRequest();
     	dr.setCategory(eCategory.Physiology);
     	dr.setPropertyName("Weight");
@@ -57,6 +78,38 @@ public class SEScenario
     	adv.getTime().setValue(320,TimeUnit.s);
     	s.getActions().add(adv);
     	SENeedleDecompression nd = new SENeedleDecompression();
+    	
+    	SEBronchoconstriction bc = new SEBronchoconstriction();
+    	bc.getSeverity().setValue(0.5);
+    	s.getActions().add(bc);
+    	
+    	SESubstance sub = mgr.getSubstance("Oxygen");
+      SEAnesthesiaMachineConfiguration anes = new SEAnesthesiaMachineConfiguration();
+      anes.getConfiguration().setConnection(eConnection.Tube);
+      anes.getConfiguration().getInletFlow().setValue(5.0, VolumePerTimeUnit.L_Per_min);
+      anes.getConfiguration().getInspiratoryExpiratoryRatio().setValue(0.5);
+      anes.getConfiguration().getOxygenFraction().setValue(0.23);
+      anes.getConfiguration().setOxygenSource(eOxygenSource.Wall);
+      anes.getConfiguration().getPositiveEndExpiredPressure().setValue(1.0, PressureUnit.cmH2O);
+      anes.getConfiguration().setPrimaryGas(ePrimaryGas.Nitrogen);
+      anes.getConfiguration().getRespiratoryRate().setValue(16.0, FrequencyUnit.Per_min);
+      anes.getConfiguration().getVentilatorPressure().setValue(10.5, PressureUnit.cmH2O);      
+      anes.getConfiguration().getOxygenBottleOne().getVolume().setValue(660.0, VolumeUnit.L);
+      anes.getConfiguration().getOxygenBottleTwo().getVolume().setValue(660.0, VolumeUnit.L);      
+      anes.getConfiguration().getRightChamber().setState(eSwitch.On);
+      anes.getConfiguration().getRightChamber().setSubstance(sub); 
+      anes.getConfiguration().getRightChamber().getSubstanceFraction().setValue(0.5);
+      anes.getConfiguration().getLeftChamber().setState(eSwitch.On);
+      anes.getConfiguration().getLeftChamber().setSubstance(sub);
+      s.getActions().add(anes);
+      
+      //SECompleteBloodCount cbc = new SECompleteBloodCount();
+      //SEPatientAssessment ass = new SEPatientAssessment();
+      //s.getActions().add(cbc);
+      SEPatientAssessmentRequest pa = new SEPatientAssessmentRequest();
+      pa.setType(eType.ComprehensiveMetabolicPanel);
+      s.getActions().add(pa);
+    	
     	nd.setState(eSwitch.On);
     	nd.setSide(eSide.Left);
     	s.getActions().add(nd);
@@ -84,7 +137,7 @@ public class SEScenario
     
     String searchDir;
     if(args.length==0)
-      searchDir="./verification/Scenarios";
+      searchDir="./verification/Scenarios/Drug";
     else
       searchDir=args[0];
     List<String> files=FileUtils.findFiles(searchDir, ".pba", true);

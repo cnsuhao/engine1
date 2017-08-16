@@ -60,7 +60,7 @@ public class PlotDriver
         return;
       }
       
-      me.processConfigFile(configFile.getAbsolutePath(),cfg.getDataDirectory());
+      me.processConfigFile(configFile,cfg);
     }
     //Plotting from two results files (compare-type plotting)
     else
@@ -170,10 +170,9 @@ public class PlotDriver
   }
 
   //Reading from config file for validation ("pretty graphs")
-  public void processConfigFile(String configFile, String dataDir)
-  {
-  	String[] path = configFile.split("[\\\\/]");
-  	this.name = path[path.length-1];
+  public void processConfigFile(File configFile, RunConfiguration cfg)
+  {  	
+    this.name = configFile.getName();
     this.name = this.name.substring(0, this.name.lastIndexOf('.'));
     Log.setFileName("./test_results/"+this.name+".log");
     
@@ -234,7 +233,7 @@ public class PlotDriver
         }
         
         PlotJob job = new PlotJob();
-        job.verificationDirectory=dataDir+"/verification/Scenarios/Patient";
+        job.verificationDirectory=cfg.getVerificationDirectory()+"/scenarios/patient";
         //job2groups.put(job, currentGroup);
         if (key.charAt(0) == '-')
         {
@@ -342,7 +341,7 @@ public class PlotDriver
               continue;
             } 
             else if(key.equalsIgnoreCase("VerificationDir"))
-            {job.verificationDirectory = dataDir+"/verification/Scenarios/"+value; continue;}
+            {job.verificationDirectory = cfg.getVerificationDirectory()+"/scenarios/"+value; continue;}
             else if(key.equalsIgnoreCase("Title"))
             {job.titleOverride = value; continue;}    
             else if(key.equalsIgnoreCase("OutputFilename"))
@@ -377,12 +376,14 @@ public class PlotDriver
             {job.X2Label = value; continue;}
             else if(key.equalsIgnoreCase("Y2Label"))
             {job.Y2Label = value; continue;}
-            else if(key.equalsIgnoreCase("ExperimentalData"))
-            {job.experimentalData = dataDir+"/"+value; continue;}
+            else if(key.equalsIgnoreCase("ValidationData"))
+            {job.experimentalData = cfg.getValidationDirectory()+"/"+value; continue;}
             else if(key.equalsIgnoreCase("DataFileOverride"))
             {job.dataFile = value; continue;}
-            else if(key.equalsIgnoreCase("DataPathOverride"))
-            {job.dataPath = dataDir+"/"+value; continue;}
+            else if(key.equalsIgnoreCase("DataPathValidationOverride"))
+            {job.dataPath = cfg.getValidationDirectory()+"/"+value; continue;}
+            else if(key.equalsIgnoreCase("DataPathVerificationOverride"))
+            {job.dataPath = cfg.getVerificationDirectory()+"/"+value; continue;}
             else if(key.equalsIgnoreCase("PFTFile"))
             {job.PFTFile = value; continue;}
             else if(key.equalsIgnoreCase("OutputOverride"))
