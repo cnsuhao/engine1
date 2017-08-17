@@ -102,7 +102,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         return false;
       }
       m_Anemia = new SEChronicAnemia();
-      cData->mutable_patientcondition()->set_allocated_chronicanemia(SEChronicAnemia::Unload(*m_Anemia));
+      cData->mutable_patientcondition()->set_allocated_chronicanemia(SEChronicAnemia::Unload(*a));
       SEChronicAnemia::Load(cData->mutable_patientcondition()->chronicanemia(), *m_Anemia);
       return true;
     }
@@ -117,7 +117,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         return false;
       }
       m_COPD = new SEChronicObstructivePulmonaryDisease();
-      cData->mutable_patientcondition()->set_allocated_chronicobstructivepulmonarydisease(SEChronicObstructivePulmonaryDisease::Unload(*m_COPD));
+      cData->mutable_patientcondition()->set_allocated_chronicobstructivepulmonarydisease(SEChronicObstructivePulmonaryDisease::Unload(*copd));
       SEChronicObstructivePulmonaryDisease::Load(cData->mutable_patientcondition()->chronicobstructivepulmonarydisease(), *m_COPD);
       return true;
     }
@@ -135,7 +135,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (vsd != nullptr)
       {
         m_ChronicVentricularSystolicDysfunction = new SEChronicVentricularSystolicDysfunction();
-        cData->mutable_patientcondition()->set_allocated_chronicventricularsystolicdysfunction(SEChronicVentricularSystolicDysfunction::Unload(*m_ChronicVentricularSystolicDysfunction));
+        cData->mutable_patientcondition()->set_allocated_chronicventricularsystolicdysfunction(SEChronicVentricularSystolicDysfunction::Unload(*vsd));
         SEChronicVentricularSystolicDysfunction::Load(cData->mutable_patientcondition()->chronicventricularsystolicdysfunction(), *m_ChronicVentricularSystolicDysfunction);
         return true;
       }
@@ -154,7 +154,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         return false;
       }
       m_PericardialEffusion = new SEChronicPericardialEffusion();
-      cData->mutable_patientcondition()->set_allocated_chronicpericardialeffusion(SEChronicPericardialEffusion::Unload(*m_PericardialEffusion));
+      cData->mutable_patientcondition()->set_allocated_chronicpericardialeffusion(SEChronicPericardialEffusion::Unload(*pe));
       SEChronicPericardialEffusion::Load(cData->mutable_patientcondition()->chronicpericardialeffusion(), *m_PericardialEffusion);
       return true;
     }
@@ -169,7 +169,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         return false;
       }
       m_RenalStenosis = new SEChronicRenalStenosis();
-      cData->mutable_patientcondition()->set_allocated_chronicrenalstenosis(SEChronicRenalStenosis::Unload(*m_RenalStenosis));
+      cData->mutable_patientcondition()->set_allocated_chronicrenalstenosis(SEChronicRenalStenosis::Unload(*r));
       SEChronicRenalStenosis::Load(cData->mutable_patientcondition()->chronicrenalstenosis(), *m_RenalStenosis);
       return true;
     }
@@ -184,7 +184,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         return false;
       }
       m_ConsumeMeal = new SEConsumeMeal();
-      cData->mutable_patientcondition()->set_allocated_consumemeal(SEConsumeMeal::Unload(*m_ConsumeMeal));
+      cData->mutable_patientcondition()->set_allocated_consumemeal(SEConsumeMeal::Unload(*g));
       SEConsumeMeal::Load(cData->mutable_patientcondition()->consumemeal(), *m_ConsumeMeal);
       return true;
     }
@@ -199,7 +199,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         return false;
       }
       m_ImpairedAlveolarExchange = new SEImpairedAlveolarExchange();
-      cData->mutable_patientcondition()->set_allocated_impairedalveolarexchange(SEImpairedAlveolarExchange::Unload(*m_ImpairedAlveolarExchange));
+      cData->mutable_patientcondition()->set_allocated_impairedalveolarexchange(SEImpairedAlveolarExchange::Unload(*iae));
       SEImpairedAlveolarExchange::Load(cData->mutable_patientcondition()->impairedalveolarexchange(), *m_ImpairedAlveolarExchange);
       return true;
     }
@@ -214,7 +214,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         return false;
       }
       m_LobarPneumonia = new SELobarPneumonia();
-      cData->mutable_patientcondition()->set_allocated_lobarpneumonia(SELobarPneumonia::Unload(*m_LobarPneumonia));
+      cData->mutable_patientcondition()->set_allocated_lobarpneumonia(SELobarPneumonia::Unload(*lp));
       SELobarPneumonia::Load(cData->mutable_patientcondition()->lobarpneumonia(), *m_LobarPneumonia);
       return true;
     }
@@ -232,7 +232,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         return false;
       }
       m_InitialEnvironmentConditions = new SEInitialEnvironmentConditions(m_Substances);
-      cData->mutable_environmentcondition()->set_allocated_initialenvironmentconditions(SEInitialEnvironmentConditions::Unload(*m_InitialEnvironmentConditions));
+      cData->mutable_environmentcondition()->set_allocated_initialenvironmentconditions(SEInitialEnvironmentConditions::Unload(*ie));
       SEInitialEnvironmentConditions::Load(cData->mutable_environmentcondition()->initialenvironmentconditions(), *m_InitialEnvironmentConditions);
       return true;
     }

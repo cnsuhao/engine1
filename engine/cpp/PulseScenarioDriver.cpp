@@ -9,20 +9,21 @@
 
 bool PulseScenarioDriver::Configure(int argc, char* argv[])
 {
-    if (argc <= 1)
-    {
-        std::cerr << "Need scenario file or config file to execute" << std::endl;
-        return false;
-    }
+  if (argc <= 1)
+  {
+    std::cerr << "Need scenario file or config file to execute" << std::endl;
+    return false;
+  }
+  m_file = argv[1];
 
-    for (int i = 2; i < argc; ++i)
+  for (int i = 2; i < argc; ++i)
+  {
+    std::string argument(argv[i]);
+    if (argument.at(0) == '-')
     {
-        std::string argument(argv[i]);
-        if (argument.at(0) == '-')
-        {
-            m_arguments.insert(argument.substr(1));
-        }
+      m_arguments.insert(argument.substr(1));
     }
+  }
   return true;
 }
 

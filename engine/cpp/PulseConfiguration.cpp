@@ -587,7 +587,8 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
   if (src.has_drugsconfiguration())
   {
     const pulse::ConfigurationData_DrugsConfigurationData& config = src.drugsconfiguration();
-    dst.UsePDModel(config.pdmodel());
+    if(config.pdmodel()!=cdm::eSwitch::NullSwitch)
+      dst.UsePDModel(config.pdmodel());
   }
   
   // Energy
@@ -698,7 +699,8 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
   {
     const pulse::ConfigurationData_RenalConfigurationData& config = src.renalconfiguration();
 
-    dst.EnableRenal(config.enablerenal());
+    if (config.enablerenal() != cdm::eSwitch::NullSwitch)
+      dst.EnableRenal(config.enablerenal());
 
     if (config.has_plasmasodiumconcentrationsetpoint())
       SEScalarMassPerVolume::Load(config.plasmasodiumconcentrationsetpoint(),dst.GetPlasmaSodiumConcentrationSetPoint());
@@ -756,7 +758,8 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
   if (src.has_tissueconfiguration())
   {
     const pulse::ConfigurationData_TissueConfigurationData& config = src.tissueconfiguration();
-    dst.EnableTissue(config.enabletissue());
+    if (config.enabletissue() != cdm::eSwitch::NullSwitch)
+      dst.EnableTissue(config.enabletissue());
   }
 }
 
@@ -871,8 +874,7 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
 
   // Drugs
   pulse::ConfigurationData_DrugsConfigurationData* drugs = dst.mutable_drugsconfiguration();
-  if(src.IsPDEnabled())
-    drugs->set_pdmodel(src.m_PDEnabled);
+  drugs->set_pdmodel(src.m_PDEnabled);
 
   // Energy
   pulse::ConfigurationData_EnergyConfigurationData* energy = dst.mutable_energyconfiguration();
@@ -940,8 +942,7 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
 
   // Renal
   pulse::ConfigurationData_RenalConfigurationData* renal = dst.mutable_renalconfiguration();
-  if (src.IsRenalEnabled())
-    renal->set_enablerenal(src.m_RenalEnabled);
+  renal->set_enablerenal(src.m_RenalEnabled);
   if (src.HasPlasmaSodiumConcentrationSetPoint())
     renal->set_allocated_plasmasodiumconcentrationsetpoint(SEScalarMassPerVolume::Unload(*src.m_PlasmaSodiumConcentrationSetPoint));
   if (src.HasLeftGlomerularFilteringSurfaceAreaBaseline())
@@ -988,8 +989,7 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
 
   // Tissue
   pulse::ConfigurationData_TissueConfigurationData* tissue = dst.mutable_tissueconfiguration();
-  if (src.IsTissueEnabled())
-    tissue->set_enabletissue(src.m_TissueEnabled);
+  tissue->set_enabletissue(src.m_TissueEnabled);
 }
 
 
