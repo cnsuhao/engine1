@@ -18,22 +18,15 @@ PulseScenarioExec::~PulseScenarioExec()
   
 }
 
-bool PulseScenarioExec::Execute(const SEScenario& scenario, const std::string& resultsFile, SEScenarioCustomExec* cExec)
+bool PulseScenarioExec::Execute(const PulseScenario& scenario, const std::string& resultsFile, SEScenarioCustomExec* cExec)
 {
-  try
-  {    
-    bool success = SEScenarioExec::Execute(scenario, resultsFile, cExec);
-    return success;
-  }
-  catch (CommonDataModelException& ex)
-  {
-    Error(ex.what());
-  }
-  catch (...)
-  {
-    Error("Caught unknown exception, ending simulation");
-  }
-  return false;
+  // If any configuration parameters were provided, use them over what we had
+  if (scenario.HasConfiguration())
+    m_EngineConfiguration = scenario.GetConfiguration();
+  //if (m_PulseConfiguration->HasAutoSerialization())
+  //  CreateFilePath(m_PulseConfiguration->GetAutoSerialization()->GetDirectory());// Note method assumes you have a file and it ignores it
+  bool success = SEScenarioExec::Execute(scenario, resultsFile, cExec);
+  return success;
 }
 
 bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::string& resultsFile, SEScenarioCustomExec* cExec)
@@ -57,13 +50,7 @@ bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::stri
       rFile = scenarioFile;
       rFile += ".txt";
     }
-    // If any configuration parameters were provided, use them over what we had
-    if (scenario.HasConfiguration())
-      m_EngineConfiguration = &scenario.GetConfiguration();
-    //if (m_PulseConfiguration->HasAutoSerialization())
-    //  CreateFilePath(m_PulseConfiguration->GetAutoSerialization()->GetDirectory());// Note method assumes you have a file and it ignores it
-    bool success = SEScenarioExec::Execute(scenario, rFile, cExec);
-    return success;
+    return Execute(scenario, rFile, cExec);
   }
   catch (CommonDataModelException& ex)
   {

@@ -32,7 +32,7 @@ public:
   JNIEnv*    jniEnv;
   jobject    jniObj;
   DataTrack* trk;
-  SEScenarioExec* exec;
+  PulseScenarioExec* exec;
   bool       firstUpdate;
   int        update_cnt;
   int        updateFrequency_cnt;

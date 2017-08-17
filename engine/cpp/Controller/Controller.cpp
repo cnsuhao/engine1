@@ -121,17 +121,22 @@ bool PulseController::Initialize(const PulseConfiguration* config)
 
   Info("Initializing Configuration");
   m_Config->Initialize(); // Load up Defaults
-  if (config != nullptr)
-  {
-    Info("Merging Provided Configuration");
-    m_Config->Merge(*config);
-  }
 
   // Now, Let's see if there is anything to merge into our base configuration
   Info("Merging OnDisk Configuration");
   PulseConfiguration cFile(*m_Substances);
   cFile.LoadFile("PulseConfiguration.pba");
   m_Config->Merge(cFile);
+
+  // Now, override anything with a configuration provided by the user or scenario
+  if (config != nullptr)
+  {
+    Info("Merging Provided Configuration");
+    m_Config->Merge(*config);
+  }
+
+  if (!m_Config->IsPDEnabled())
+    Info("PD IS DISABLED!!!!");
 
   // Now we can check the config
   if (m_Config->IsWritingPatientBaselineFile())

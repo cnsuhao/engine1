@@ -25,7 +25,7 @@ void SEActionManager::Clear()
   m_AnesthesiaMachineActions.Clear();
   m_EnvironmentActions.Clear();
   m_InhalerActions.Clear();
-  m_ProcessedActions.Clear();// amb Does this delete?
+  m_ProcessedActions.Clear();
 }
 
 void SEActionManager::Load(const cdm::ActionListData& src, SEActionManager& dst)
@@ -87,7 +87,7 @@ bool SEActionManager::ProcessAction(const SEAction& action)
   {
     m_ss << "Not including action due to processing error : " << action;
     Error(m_ss);
-    m_ProcessedActions.mutable_anyaction()->RemoveLast();// amb does this delete?
+    m_ProcessedActions.mutable_anyaction()->RemoveLast();
   }
   return bRet;
 }

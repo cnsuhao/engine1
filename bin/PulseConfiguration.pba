@@ -1,6 +1,4 @@
 #This will change the time step
-TimeStep { 
-  ScalarTime { Value: 0.02 Unit: "s" }
-}
-
-DrugsConfiguration { PDModel: Off }
+#TimeStep { 
+#  ScalarTime { Value: 0.02 Unit: "s" }
+#}
