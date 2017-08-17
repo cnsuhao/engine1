@@ -273,6 +273,7 @@ public class SEScenario
    
     for(AnyActionData aData : src.getAnyActionList())
       dst.actions.add(SEAction.ANY2CDM(aData,dst.subMgr)); 
+    dst.deriveActionTimes();
   }
   
   public static ScenarioData unload(SEScenario src)
@@ -390,5 +391,16 @@ public class SEScenario
   public SESubstanceManager getSubstanceManager()
   {
     return this.subMgr;
+  }
+  
+  public void deriveActionTimes()
+  {
+  	double time_s=0;
+  	for(SEAction a : this.actions)
+  	{
+  		a.getScenarioTime().setValue(time_s, TimeUnit.s);
+  		if(a instanceof SEAdvanceTime)
+  			time_s += ((SEAdvanceTime)a).getTime().getValue(TimeUnit.s);
+  	}
   }
 }

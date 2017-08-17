@@ -33,7 +33,7 @@ public class CSVComparePlotter
       }
       else
       {
-        Log.fatal("Expected inputs : [expected results file path] [computed results file path] [percentDifference] [time to start comparing at] [track differences] [output folder] [zip results]");
+        Log.fatal("Expected inputs : [expected results file path] [computed results file path] [percentDifference] [time to start comparing at] [track differences] [output folder] [results file]");
         return;
       }
     }
@@ -43,15 +43,15 @@ public class CSVComparePlotter
     File expected = new File(args[0]);
     if(!expected.exists())
     {
-      // Check to see if there is a zip available
-      String eZip = args[0].replaceAll(".txt", ".zip");
-      expected = new File(eZip);
+      // Check to see if there is a result file available
+      String rFile = args[0].replaceAll(".txt", ".txt");
+      expected = new File(rFile);
       if(!expected.exists())
       {
         Log.error("Expected file does not exist "+args[0]);
         Log.info("I am going to try to plot the computed");
       }
-      args[0] = eZip;
+      args[0] = rFile;
     }
     File computed = new File(args[1]);
     if(!computed.exists())

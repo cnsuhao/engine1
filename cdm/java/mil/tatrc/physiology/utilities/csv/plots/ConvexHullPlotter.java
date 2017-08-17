@@ -108,9 +108,9 @@ public class ConvexHullPlotter implements Plotter
     //fill PlotJob with needed data if it doesn't exist
     PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
-    {job.dataPath = job.verificationDirectory+"/Current Baseline/";}
+    {job.dataPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
-    {job.dataFile = job.name + "Results.zip";}
+    {job.dataFile = job.name + "Results.txt";}
     
     //Get data contents for all headers
     if (data.isEmpty() || data == null)

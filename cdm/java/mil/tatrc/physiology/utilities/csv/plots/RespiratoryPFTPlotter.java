@@ -71,15 +71,15 @@ public class RespiratoryPFTPlotter implements Plotter
     //fill PlotJob with needed data if it doesn't exist
     PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
-    {job.dataPath = job.verificationDirectory+"/Current Baseline/";}
+    {job.dataPath = job.verificationDirectory+"/";}
     if(job.logPath == null || job.logPath.isEmpty())
-    {job.logPath = job.verificationDirectory+"/Current Baseline/";}
+    {job.logPath = job.verificationDirectory+"/";}
     if(job.scenarioPath == null || job.scenarioPath.isEmpty())
     {job.scenarioPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
-    {job.dataFile = job.name + "Results.zip";}
+    {job.dataFile = job.name + "Results.txt";}
     if(job.logFile == null || job.logFile.isEmpty())
-    {job.logFile = job.name + "Results.log";}
+    {job.logFile = job.name + ".log";}
     if(job.scenarioFile == null || job.scenarioFile.isEmpty())
     {job.scenarioFile = job.name + ".pba";}
     
@@ -114,7 +114,7 @@ public class RespiratoryPFTPlotter implements Plotter
         try
         {
           this.pft = new SEPulmonaryFunctionTest();
-          this.pft.readFile(job.verificationDirectory+"/Current Baseline/"+job.PFTFile);
+          this.pft.readFile(job.verificationDirectory+"/"+job.PFTFile);
           
           SEFunctionVolumeVsTime points = this.pft.getLungVolumePlot();
                    
