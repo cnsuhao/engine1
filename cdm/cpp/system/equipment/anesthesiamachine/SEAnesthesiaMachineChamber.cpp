@@ -33,7 +33,8 @@ void SEAnesthesiaMachineChamber::Load(const cdm::AnesthesiaMachineData_ChamberDa
 void SEAnesthesiaMachineChamber::Serialize(const cdm::AnesthesiaMachineData_ChamberData& src, SEAnesthesiaMachineChamber& dst)
 {
   dst.Clear();
-  dst.SetState(src.state());
+  if (src.state() != cdm::eSwitch::NullSwitch)
+    dst.SetState(src.state());
   if (src.has_substancefraction())
     SEScalar0To1::Load(src.substancefraction(), dst.GetSubstanceFraction());
   

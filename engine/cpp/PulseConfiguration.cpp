@@ -475,7 +475,8 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
   }
   if (src.has_autoserialization())
     SEAutoSerialization::Load(src.autoserialization(), dst.GetAutoSerialization());
-  dst.EnableWritePatientBaselineFile(src.writepatientbaselinefile());
+  if (src.writepatientbaselinefile() != cdm::eSwitch::NullSwitch)
+    dst.EnableWritePatientBaselineFile(src.writepatientbaselinefile());
 
   //Barorecptors
   if (src.has_baroreceptorconfiguration())

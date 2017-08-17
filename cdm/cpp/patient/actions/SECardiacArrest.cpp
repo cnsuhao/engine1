@@ -37,7 +37,8 @@ void SECardiacArrest::Load(const cdm::CardiacArrestData& src, SECardiacArrest& d
 void SECardiacArrest::Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
 {
   SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetState(src.state());
+  if (src.state() != cdm::eSwitch::NullSwitch)
+    dst.SetState(src.state());
 }
 
 cdm::CardiacArrestData* SECardiacArrest::Unload(const SECardiacArrest& src)

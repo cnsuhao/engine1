@@ -41,7 +41,8 @@ void SEDynamicStabilization::Load(const cdm::DynamicStabilizationData& src, SEDy
 void SEDynamicStabilization::Serialize(const cdm::DynamicStabilizationData& src, SEDynamicStabilization& dst)
 {
   dst.Clear();
-  dst.TrackStabilization(src.trackingstabilization());
+  if (src.trackingstabilization() != cdm::eSwitch::NullSwitch)
+    dst.TrackStabilization(src.trackingstabilization());
   if(src.has_restingconvergence())
     SEDynamicStabilizationEngineConvergence::Load(src.restingconvergence(), dst.GetRestingConvergence());
   if (src.has_feedbackconvergence())

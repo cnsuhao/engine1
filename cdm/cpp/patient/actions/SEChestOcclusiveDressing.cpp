@@ -40,7 +40,8 @@ void SEChestOcclusiveDressing::Serialize(const cdm::ChestOcclusiveDressingData& 
 {
   SEPatientAction::Serialize(src.patientaction(), dst);
   dst.SetSide(src.side());
-  dst.SetState(src.state());
+  if (src.state() != cdm::eSwitch::NullSwitch)
+    dst.SetState(src.state());
 }
 
 cdm::ChestOcclusiveDressingData* SEChestOcclusiveDressing::Unload(const SEChestOcclusiveDressing& src)

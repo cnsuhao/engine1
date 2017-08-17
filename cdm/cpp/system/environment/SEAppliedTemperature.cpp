@@ -47,7 +47,8 @@ void SEAppliedTemperature::Load(const cdm::EnvironmentData_AppliedTemperatureDat
 void SEAppliedTemperature::Serialize(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst)
 {
   dst.Clear();
-  dst.SetState(src.state());
+  if (src.state() != cdm::eSwitch::NullSwitch)
+    dst.SetState(src.state());
   if (src.has_temperature())
     SEScalarTemperature::Load(src.temperature(), dst.GetTemperature());
   if (src.has_surfacearea())

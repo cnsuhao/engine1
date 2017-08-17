@@ -46,7 +46,8 @@ void SEInhaler::Load(const cdm::InhalerData& src, SEInhaler& dst)
 }
 void SEInhaler::Serialize(const cdm::InhalerData& src, SEInhaler& dst)
 {
-  dst.SetState(src.state());
+  if (src.state() != cdm::eSwitch::NullSwitch)
+    dst.SetState(src.state());
   if (src.has_metereddose())
     SEScalarMass::Load(src.metereddose(), dst.GetMeteredDose());
   if (src.has_nozzleloss())

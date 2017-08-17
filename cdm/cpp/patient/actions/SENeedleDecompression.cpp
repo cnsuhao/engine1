@@ -45,7 +45,8 @@ void SENeedleDecompression::Serialize(const cdm::NeedleDecompressionData& src, S
 {
   SEPatientAction::Serialize(src.patientaction(), dst);
   dst.SetSide(src.side());
-  dst.SetState(src.state());
+  if (src.state() != cdm::eSwitch::NullSwitch)
+    dst.SetState(src.state());
 }
 
 cdm::NeedleDecompressionData* SENeedleDecompression::Unload(const SENeedleDecompression& src)

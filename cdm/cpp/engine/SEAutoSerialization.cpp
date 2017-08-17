@@ -53,9 +53,12 @@ void SEAutoSerialization::Serialize(const cdm::AutoSerializationData& src, SEAut
   dst.Clear();
   if (src.has_period())
     SEScalarTime::Load(src.period(), dst.GetPeriod());
-  dst.SetPeriodTimeStamps(src.periodtimestamps());
-  dst.SetAfterActions(src.afteractions());
-  dst.SetReloadState(src.reloadstate());
+  if(src.periodtimestamps()!=cdm::eSwitch::NullSwitch)
+    dst.SetPeriodTimeStamps(src.periodtimestamps());
+  if (src.afteractions() != cdm::eSwitch::NullSwitch)
+    dst.SetAfterActions(src.afteractions());
+  if (src.reloadstate() != cdm::eSwitch::NullSwitch)
+    dst.SetReloadState(src.reloadstate());
   dst.SetDirectory(src.directory());
   dst.SetFileName(src.filename());
 }

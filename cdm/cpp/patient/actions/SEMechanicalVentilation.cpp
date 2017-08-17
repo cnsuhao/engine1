@@ -76,7 +76,8 @@ void SEMechanicalVentilation::Load(const cdm::MechanicalVentilationData& src, SE
 void SEMechanicalVentilation::Serialize(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
 {
   SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetState(src.state());
+  if (src.state() != cdm::eSwitch::NullSwitch)
+    dst.SetState(src.state());
   if (src.has_flow())
     SEScalarVolumePerTime::Load(src.flow(), dst.GetFlow());
   if (src.has_pressure())
