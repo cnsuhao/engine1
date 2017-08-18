@@ -208,6 +208,9 @@ void SESubstanceTransporter<GraphType, FluxUnit, QuantityUnit, ExtensiveUnit, In
         {
           newIntensiveVlaue = 0.0;
         }
+        //We force this value becuase it can get above 1 when there is a disconinuity that causes numerical error.
+        //That generally only occurs when an extreme action or condition is applied.
+        //The balance call after this loop will adjust everything to sum nicely to 1.0.
         q->GetIntensive().ForceValue(newIntensiveVlaue, m_IntensiveUnit);        
       }
     }
