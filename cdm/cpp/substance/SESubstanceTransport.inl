@@ -208,7 +208,7 @@ void SESubstanceTransporter<GraphType, FluxUnit, QuantityUnit, ExtensiveUnit, In
         {
           newIntensiveVlaue = 0.0;
         }
-        q->GetIntensive().SetValue(newIntensiveVlaue, m_IntensiveUnit);        
+        q->GetIntensive().ForceValue(newIntensiveVlaue, m_IntensiveUnit);        
       }
     }
   }

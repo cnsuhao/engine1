@@ -21,6 +21,16 @@ void SEScalar0To1::SetValue(double d, const NoUnit& unitless)
   SEScalar0To1::SetValue(d);
 }
 
+void SEScalar0To1::ForceValue(double d)
+{
+  SEScalar::SetValue(d);
+}
+
+void SEScalar0To1::ForceValue(double d, const NoUnit& unitless)
+{
+  SEScalar::SetValue(d);
+}
+
 void SEScalar0To1::Load(const cdm::Scalar0To1Data& src, SEScalar0To1& dst)
 {
   SEScalar0To1::Serialize(src, dst);

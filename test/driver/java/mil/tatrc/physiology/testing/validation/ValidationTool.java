@@ -22,6 +22,7 @@ import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.RunConfiguration;
 import mil.tatrc.physiology.utilities.StringUtils;
 import mil.tatrc.physiology.utilities.UnitConverter;
+import com.kitware.physiology.cdm.Physiology.*;
 
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.usermodel.*;
@@ -41,6 +42,7 @@ public abstract class ValidationTool
   protected String DEFAULT_FILE;
   protected String TABLE_TYPE;
   protected String HEADER_PREPEND="";
+  protected String VALIDATION_FOLDER;
   protected RunConfiguration cfg;
   
   public ValidationTool()
@@ -141,7 +143,7 @@ public abstract class ValidationTool
       
       // Get a list of all the results files we have to work with
       
-      File vdir = new File("./test_results/scenarios/Validation/");
+      File vdir = new File("./test_results/scenarios/validation/"+VALIDATION_FOLDER+"/");
       String[] vFiles = vdir.list();
       if(vFiles==null || vFiles.length==0)
       {
@@ -183,7 +185,7 @@ public abstract class ValidationTool
           try
           {          
             // Look for a results file
-            CSVContents results = new CSVContents("./test_results/scenarios/Validation/"+resultsName);
+            CSVContents results = new CSVContents("./test_results/scenarios/validation/"+VALIDATION_FOLDER+"/"+resultsName);
             results.readAll(resultData);              
             // Find any assessments
             assessments = new HashMap<String,SEPatientAssessment>();      
@@ -193,7 +195,7 @@ public abstract class ValidationTool
               {
                 try
                 {
-                  SEPatientAssessment ass = SEPatientAssessment.readAssessment("./test_results/scenarios/Validation/"+vFile);
+                  SEPatientAssessment ass = SEPatientAssessment.readAssessment("./test_results/scenarios/validation/"+VALIDATION_FOLDER+"/"+vFile);
                   assessments.put(vFile,ass);
                 }
                 catch(ParseException ex)
@@ -465,11 +467,12 @@ public abstract class ValidationTool
       String line;
       File vDir = new File(destinationDirectory);
       vDir.mkdir();
-      PrintWriter writer = new PrintWriter(destinationDirectory+"/AllValidationTables.md", "UTF-8");
+      String AllTableName = VALIDATION_FOLDER+"ValidationTables.md";
+      PrintWriter writer = new PrintWriter(destinationDirectory+"/"+AllTableName, "UTF-8");
       
       for (String fName : vDir.list())
       {
-        if(fName.equals("AllValidationTables.md"))
+        if(fName.equals(AllTableName))
           continue;
         if(new File(fName).isDirectory())
           continue;
@@ -1051,7 +1054,7 @@ public abstract class ValidationTool
     try
     {
       if(TABLE_TYPE.equals("System"))
-        c = Class.forName("com.kitware.physiology.cdm.Physiology."+sheetName+"SystemData");
+        c = Class.forName("com.kitware.physiology.cdm.Physiology$"+sheetName+"SystemData");
       else if(TABLE_TYPE.equalsIgnoreCase("Patient"))
         c = Class.forName("com.kitware.physiology.cdm.Patient.PatientData");
       else

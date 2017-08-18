@@ -17,6 +17,7 @@ public class PatientValidation extends ValidationTool
     DEFAULT_FILE = "PatientValidationData.xlsx";
     TABLE_TYPE = "Patient";
     HEADER_PREPEND = "Patient";
+    VALIDATION_FOLDER = "patients";
   }
   public static void main(String[] args)
   {

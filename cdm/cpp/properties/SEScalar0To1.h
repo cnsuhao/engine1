@@ -22,5 +22,7 @@ public:
   double GetValue(const NoUnit& unitless) const { return SEScalar::GetValue(); }
   void SetValue(double d);
   void SetValue(double d, const NoUnit& unitless);
+  void ForceValue(double d);
+  void ForceValue(double d, const NoUnit& unitless);
 };
 

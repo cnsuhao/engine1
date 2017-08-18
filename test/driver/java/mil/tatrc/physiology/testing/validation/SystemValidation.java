@@ -14,6 +14,7 @@ public class SystemValidation extends ValidationTool
     DEFAULT_DIRECTORY = cfg.getValidationDirectory();
     DEFAULT_FILE = "SystemValidationData.xlsx";
     TABLE_TYPE = "System";
+    VALIDATION_FOLDER = "systems";
   }
   public static void main(String[] args)
   {

@@ -140,9 +140,27 @@ void SEScalarQuantity<Unit>::SetValue(double d, const Unit& unit)
   m_isinf = (std::isinf(m_value)) ? true : false;
   m_unit = &unit;
 }
+template<typename Unit>
+void SEScalarQuantity<Unit>::ForceValue(double d, const Unit& unit)
+{
+  if (m_readOnly)
+    throw CommonDataModelException("Scalar is marked read-only");
+  m_value = d;
+  m_isnan = (std::isnan(m_value)) ? true : false;
+  m_isinf = (std::isinf(m_value)) ? true : false;
+  m_unit = &unit;
+}
 
 template<typename Unit>
 void SEScalarQuantity<Unit>::SetValue(double d, const CCompoundUnit& unit)
+{
+  const Unit* u = dynamic_cast<const Unit*>(&unit);
+  if (u == nullptr)
+    throw CommonDataModelException("Provided unit is not of proper quantity type");
+  this->SetValue(d, *u);
+}
+template<typename Unit>
+void SEScalarQuantity<Unit>::ForceValue(double d, const CCompoundUnit& unit)
 {
   const Unit* u = dynamic_cast<const Unit*>(&unit);
   if (u == nullptr)

@@ -69,6 +69,7 @@ public:
 
   double GetValue() const;  
   void   SetValue(double d);
+  void   ForceValue(double d);
   
   double Increment(const SEScalar& s);
   double IncrementValue(double d);
@@ -111,7 +112,7 @@ public:
 
   SEUnitScalar() : SEScalar() {}
   virtual ~SEUnitScalar() {}
-
+  
   virtual bool IsValid() const = 0;
   virtual void Invalidate() = 0;
   virtual const CCompoundUnit* GetUnit() const = 0;
@@ -120,6 +121,7 @@ public:
   virtual void Copy(const SEScalar& s) = 0;
   virtual double GetValue(const CCompoundUnit& unit) const = 0;
   virtual void   SetValue(double d, const CCompoundUnit& unit) = 0;
+  virtual void   ForceValue(double d, const CCompoundUnit& unit) = 0;
   virtual double IncrementValue(double d, const CCompoundUnit& unit) = 0;
   
 protected:
@@ -148,6 +150,7 @@ protected:
 
   virtual double GetValue(const CCompoundUnit& unit) const;
   virtual void   SetValue(double d, const CCompoundUnit& unit);
+  virtual void   ForceValue(double d, const CCompoundUnit& unit);
   virtual double IncrementValue(double d, const CCompoundUnit& unit);
 
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const;
@@ -164,6 +167,9 @@ public:
   
   void SetValue(double d) = delete;// Must provide a unit
   virtual void SetValue(double d, const Unit& unit);
+
+  void ForceValue(double d) = delete;// Must provide a unit
+  virtual void ForceValue(double d, const Unit& unit);
 
   double IncrementValue(double d) = delete;// Must provide a unit
   virtual double IncrementValue(double d, const Unit& unit);

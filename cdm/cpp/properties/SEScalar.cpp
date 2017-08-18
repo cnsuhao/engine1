@@ -155,6 +155,14 @@ void SEScalar::SetValue(double d)
   m_isnan = (std::isnan(m_value)) ? true : false;
   m_isinf = (std::isinf(m_value)) ? true : false;
 }
+void SEScalar::ForceValue(double d)
+{
+  if (m_readOnly)
+    throw CommonDataModelException("Scalar is marked read-only");
+  m_value = d;
+  m_isnan = (std::isnan(m_value)) ? true : false;
+  m_isinf = (std::isinf(m_value)) ? true : false;
+}
 
 double SEScalar::Increment(const SEScalar& s)
 {

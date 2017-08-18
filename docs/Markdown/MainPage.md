@@ -48,10 +48,8 @@ The latest code base includes the following notable updates:
 
 ## Planned Improvements
 
-Near Term:
 - C# interface support
 - Integration with CTest
-Long Term:
 - Public Continuous Integration Server and CDash Server for improved verification and validation
 - Pull/Merge request process for methodology changes
 - Modularity improvements for model swapping
