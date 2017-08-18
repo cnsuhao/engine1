@@ -21,7 +21,7 @@ public class SEAppliedTemperature
     temperature=null;
     surfaceArea=null;
     surfaceAreaFraction=null;
-    state = null;
+    state = eSwitch.Off;
   }
 
   public void copy(SEAppliedTemperature other)
@@ -45,7 +45,7 @@ public class SEAppliedTemperature
 
   public void reset()
   {
-    state = null;
+    state = eSwitch.Off;
     if (temperature != null)
       temperature.invalidate();
     if (surfaceArea != null)
@@ -58,7 +58,7 @@ public class SEAppliedTemperature
   public static void load(AppliedTemperatureData src, SEAppliedTemperature dst)
   {
     dst.reset();
-    if(src.getState()!=eSwitch.UNRECOGNIZED)
+    if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
       dst.state = src.getState();
     if(src.hasTemperature())
       SEScalarTemperature.load(src.getTemperature(), dst.getTemperature());
@@ -77,8 +77,7 @@ public class SEAppliedTemperature
 
   protected static void unload(SEAppliedTemperature src, AppliedTemperatureData.Builder dst)
   {
-    if (src.hasState())
-      dst.setState(src.state);
+    dst.setState(src.state);
     if(src.hasTemperature())
       dst.setTemperature(SEScalarTemperature.unload(src.temperature));
     if(src.hasSurfaceArea())
@@ -92,13 +91,9 @@ public class SEAppliedTemperature
   {
     return state;
   }
-  public void setState(eSwitch onOrOff)
+  public void setState(eSwitch s)
   {
-    state = onOrOff;
-  }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
   
   public boolean hasTemperature()

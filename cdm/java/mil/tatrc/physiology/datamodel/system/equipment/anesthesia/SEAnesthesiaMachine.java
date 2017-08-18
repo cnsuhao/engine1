@@ -131,7 +131,7 @@ public class SEAnesthesiaMachine implements SESystem
   public static void load(AnesthesiaMachineData src, SEAnesthesiaMachine dst, SESubstanceManager subMgr)
   {
     dst.reset();
-    if (src.getConnection()!=eConnection.UNRECOGNIZED)
+    if (src.getConnection()!=eConnection.UNRECOGNIZED && src.getConnection()!=eConnection.NullConnection)
       dst.setConnection(src.getConnection());
     if (src.hasInletFlow())
       SEScalarVolumePerTime.load(src.getInletFlow(), dst.getInletFlow());
@@ -139,11 +139,11 @@ public class SEAnesthesiaMachine implements SESystem
       SEScalar.load(src.getInspiratoryExpiratoryRatio(), dst.getInspiratoryExpiratoryRatio());
     if (src.hasOxygenFraction())
       SEScalar0To1.load(src.getOxygenFraction(), dst.getOxygenFraction());
-    if (src.getOxygenSource()!=eOxygenSource.UNRECOGNIZED)
+    if (src.getOxygenSource()!=eOxygenSource.UNRECOGNIZED && src.getOxygenSource()!=eOxygenSource.NullSource)
       dst.setOxygenSource(src.getOxygenSource());
     if (src.hasPositiveEndExpiredPressure())
       SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
-    if (src.getPrimaryGas()!=ePrimaryGas.UNRECOGNIZED)
+    if (src.getPrimaryGas()!=ePrimaryGas.UNRECOGNIZED && src.getPrimaryGas()!=ePrimaryGas.NullGas)
       dst.setPrimaryGas(src.getPrimaryGas());
     if (src.hasRespiratoryRate())
       SEScalarFrequency.load(src.getRespiratoryRate(), dst.getRespiratoryRate());
@@ -216,7 +216,7 @@ public class SEAnesthesiaMachine implements SESystem
   }
   public void setConnection(eConnection c)
   {
-    this.connection = c;
+    connection = (c == eConnection.NullConnection) ? eConnection.Off : c;
   }
   public boolean hasConnection()
   {
@@ -272,9 +272,9 @@ public class SEAnesthesiaMachine implements SESystem
   {
     return oxygenSource;
   }
-  public void setOxygenSource(eOxygenSource oxygenSource)
+  public void setOxygenSource(eOxygenSource os)
   {
-    this.oxygenSource = oxygenSource;
+  	oxygenSource = (os == eOxygenSource.NullSource) ? eOxygenSource.NoSource : os;
   }
   public boolean hasOxygenSource()
   {
@@ -302,9 +302,9 @@ public class SEAnesthesiaMachine implements SESystem
   {
     return primaryGas;
   }
-  public void setPrimaryGas(ePrimaryGas primaryGas)
+  public void setPrimaryGas(ePrimaryGas pg)
   {
-    this.primaryGas = primaryGas;
+  	primaryGas = (pg == ePrimaryGas.NullGas) ? ePrimaryGas.NoGas : pg;
   }
   public boolean hasPrimaryGas()
   {

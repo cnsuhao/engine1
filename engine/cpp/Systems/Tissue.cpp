@@ -108,6 +108,7 @@ void Tissue::Initialize()
   // Get total tissue resting values for substances
   SETissueCompartment* tissue;
   SELiquidCompartment* vascular;
+  m_RestingFluidMass_kg = 0;
   m_RestingTissueGlucose_g = 0.0;
   for (auto tissueVascular : m_TissueToVascular)
   {

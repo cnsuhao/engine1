@@ -47,7 +47,7 @@ public class SETimedStabilization
   
   public static void load(TimedStabilizationData src, SETimedStabilization dst) 
   {
-    if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED)
+    if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED && src.getTrackingStabilization()!=eSwitch.NullSwitch)
       dst.trackingStabilization=src.getTrackingStabilization();
     if(src.hasRestingStabilizationTime())
       SEScalarTime.load(src.getRestingStabilizationTime(),dst.getRestingStabilizationTime());
@@ -68,8 +68,7 @@ public class SETimedStabilization
   
   protected static void unload(SETimedStabilization src, TimedStabilizationData.Builder dst)
   {
-    if(src.hasTrackingStabilization())
-      dst.setTrackingStabilization(src.trackingStabilization);
+    dst.setTrackingStabilization(src.trackingStabilization);
     if(src.hasRestingStabilizationTime())
       dst.setRestingStabilizationTime(SEScalarTime.unload(src.restingStabilizationTime));
     if(src.hasFeedbackStabilizationTime())
@@ -80,17 +79,13 @@ public class SETimedStabilization
     }
   }
   
-  public boolean hasTrackingStabilization()
-  {
-    return this.trackingStabilization!=null;
-  }
   public eSwitch isTrackingStabilization()
   {
     return this.trackingStabilization;
   }
   public void TrackStabilization(eSwitch b)
   {
-    this.trackingStabilization=b;
+  	this.trackingStabilization = (b==eSwitch.NullSwitch) ? eSwitch.Off : b;
   }
   
   public boolean hasRestingStabilizationTime()

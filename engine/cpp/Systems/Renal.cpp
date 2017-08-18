@@ -1353,8 +1353,8 @@ void Renal::CalculateVitalSigns()
       if (renalPlasmaFlow_mL_Per_s != 0)
         filtrationFraction = GetLeftGlomerularFiltrationRate(VolumePerTimeUnit::mL_Per_s) / renalPlasmaFlow_mL_Per_s;
       
-      //If the flow is ~0, this can get weird
-      LIMIT(filtrationFraction, 0.0, 1.0);
+      //If the flow is ~0 or negative, this can get weird
+      filtrationFraction = LIMIT(filtrationFraction, 0.0, 1.0);
       GetLeftFiltrationFraction().SetValue(filtrationFraction);
     }
     else
@@ -1414,8 +1414,8 @@ void Renal::CalculateVitalSigns()
       if (renalPlasmaFlow_mL_Per_s != 0.0)
         filtrationFraction = GetRightGlomerularFiltrationRate().GetValue(VolumePerTimeUnit::mL_Per_s) / renalPlasmaFlow_mL_Per_s;
 
-      //If the flow is ~0, this can get weird
-      LIMIT(filtrationFraction, 0.0, 1.0);
+      //If the flow is ~0 or negative, this can get weird
+      filtrationFraction = LIMIT(filtrationFraction, 0.0, 1.0);
       GetRightFiltrationFraction().SetValue(filtrationFraction);
     }
   }
@@ -1463,6 +1463,7 @@ void Renal::CalculateVitalSigns()
   double filtrationFraction = 0.0;
   if (GetRenalPlasmaFlow().GetValue(VolumePerTimeUnit::mL_Per_s) != 0.0)
     filtrationFraction = GetGlomerularFiltrationRate().GetValue(VolumePerTimeUnit::mL_Per_s) / GetRenalPlasmaFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
+  filtrationFraction = LIMIT(filtrationFraction, 0.0, 1.0);
   GetFiltrationFraction().SetValue(filtrationFraction);
 
   // Do running averages for events

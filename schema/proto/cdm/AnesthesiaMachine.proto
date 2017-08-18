@@ -17,26 +17,29 @@ message AnesthesiaMachineData
   /** @brief An enumeration for the primary gas used by the machine. */
   enum eOxygenSource
   {
-    NoSource  = 0;
-    Wall      = 1;
-    BottleOne = 2;
-    BottleTwo = 3;
+    NullSource   = 0;/**<< Signals not provided, or no change */
+    NoSource     = 1;
+    Wall         = 2;
+    BottleOne    = 3;
+    BottleTwo    = 4;
   }
 
   /** @brief An enumeration for the primary gas used by the machine. */
   enum ePrimaryGas
   {
-    NoGas    = 0;
-    Air      = 1;
-    Nitrogen = 2;
+    NullGas  = 0;/**<< Signals not provided, or no change */
+    NoGas    = 1;
+    Air      = 2;
+    Nitrogen = 3;
   }
 
   /** @brief An enumeration for the primary gas used by the machine. */
   enum eConnection
   {
-    Off  = 0;
-    Mask = 1;
-    Tube = 2;
+    NullConnection = 0;/**<< Signals not provided, or no change */
+    Off            = 1;
+    Mask           = 2;
+    Tube           = 3;
   }
   
   /** @brief An active machine event, and how long it has been active */

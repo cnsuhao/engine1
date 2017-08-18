@@ -34,13 +34,13 @@ public class SEMechanicalVentilation extends SEPatientAction
   {
     flow = null;
     pressure = null;
-    state = null;
+    state = eSwitch.Off;
     this.gasFractions=new ArrayList<SESubstanceFractionAmount>();
   }
 
   public void reset()
   {
-    state = null;
+    state = eSwitch.Off;
     if (flow != null)
       flow.invalidate();
     if (pressure != null)
@@ -72,11 +72,6 @@ public class SEMechanicalVentilation extends SEPatientAction
   
   public boolean isValid()
   {
-    if (!hasState())
-    {
-      Log.error("Mechanical Ventilation must have state.");
-      return false;
-    }
     if (getState() == eSwitch.Off)
       return true;
     if (!hasGasFraction())
@@ -108,7 +103,7 @@ public class SEMechanicalVentilation extends SEPatientAction
   public static void load(MechanicalVentilationData src, SEMechanicalVentilation dst, SESubstanceManager substances)
   {
     SEPatientAction.load(src.getPatientAction(), dst);   
-    if(src.getState()!=eSwitch.UNRECOGNIZED)
+    if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
     	dst.setState(src.getState());
     if (src.hasFlow())
       SEScalarVolumePerTime.load(src.getFlow(),dst.getFlow());
@@ -140,8 +135,7 @@ public class SEMechanicalVentilation extends SEPatientAction
 
   protected static void unload(SEMechanicalVentilation src, MechanicalVentilationData.Builder dst)
   {
-    if (src.hasState())
-      dst.setState(src.state);
+    dst.setState(src.state);
     if (src.hasFlow())
       dst.setFlow(SEScalarVolumePerTime.unload(src.flow));
     if (src.hasPressure())
@@ -155,13 +149,9 @@ public class SEMechanicalVentilation extends SEPatientAction
   {
     return state;
   }
-  public void setState(eSwitch state)
+  public void setState(eSwitch s)
   {
-    this.state = state;
-  }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
 
   public boolean hasFlow()

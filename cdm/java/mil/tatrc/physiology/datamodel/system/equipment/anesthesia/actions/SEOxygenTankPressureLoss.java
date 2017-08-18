@@ -11,24 +11,24 @@ public class SEOxygenTankPressureLoss extends SEAnesthesiaMachineAction
 
   public SEOxygenTankPressureLoss()
   {
-    state = eSwitch.On;
+    state = eSwitch.Off;
   }
 
   public void reset()
   {
     super.reset();
-    state = eSwitch.On;
+    state = eSwitch.Off;
   }
 
   public boolean isValid()
   {
-    return hasState();
+    return true;
   }
 
   public static void load(OxygenTankPressureLossData src, SEOxygenTankPressureLoss dst)
   {
     SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
-    if (src.getState()!=eSwitch.UNRECOGNIZED)
+    if (src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
       dst.setState(src.getState());
   }
   public static OxygenTankPressureLossData unload(SEOxygenTankPressureLoss src)
@@ -40,8 +40,7 @@ public class SEOxygenTankPressureLoss extends SEAnesthesiaMachineAction
   protected static void unload(SEOxygenTankPressureLoss src, OxygenTankPressureLossData.Builder dst)
   {
     SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
-    if (src.hasState())
-      dst.setState(src.state);
+    dst.setState(src.state);
   }
 
   /*
@@ -51,17 +50,9 @@ public class SEOxygenTankPressureLoss extends SEAnesthesiaMachineAction
   {
     return state;
   }
-  public void setState(eSwitch state)
+  public void setState(eSwitch s)
   {
-    this.state = state;
-  }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
-  }
-  public void invalidateState()
-  {
-    state = null;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
 
   public String toString()

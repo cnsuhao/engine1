@@ -18,14 +18,14 @@ public class SEAnesthesiaMachineChamber
 
   public SEAnesthesiaMachineChamber()
   {
-    this.state = null;
+    this.state = eSwitch.Off;
     this.substance = null;
     this.substanceFraction = null;
   }
 
   public void reset()
   {
-    state = null;
+    state = eSwitch.Off;
     if (substanceFraction != null)
       substanceFraction.invalidate();
   }
@@ -42,7 +42,7 @@ public class SEAnesthesiaMachineChamber
   public static void load( AnesthesiaMachineData.ChamberData src, SEAnesthesiaMachineChamber dst, SESubstanceManager subMgr)
   {
     dst.reset();
-    if (src.getState() != eSwitch.UNRECOGNIZED)
+    if (src.getState() != eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
       dst.setState(src.getState());
     if (src.getSubstance()!=null)
       dst.setSubstance(subMgr.getSubstance(src.getSubstance()));
@@ -59,8 +59,7 @@ public class SEAnesthesiaMachineChamber
   {
     if(src.hasSubstance())
       dst.setSubstance(src.substance.getName());
-    if (src.hasState())
-      dst.setState(src.state);
+    dst.setState(src.state);
     if (src.hasSubstanceFraction())
       dst.setSubstanceFraction(SEScalar0To1.unload(src.substanceFraction));
   }
@@ -69,13 +68,9 @@ public class SEAnesthesiaMachineChamber
   {
     return state;
   }
-  public void setState(eSwitch state)
+  public void setState(eSwitch s)
   {
-    this.state = state;
-  }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
 
   public boolean hasSubstanceFraction()
@@ -105,7 +100,7 @@ public class SEAnesthesiaMachineChamber
   public String toString()
   {
       return "Anesthesia Machine Chamber"
-      + "\n\tState: " + (hasState()?getState():"NotProvided")
+      + "\n\tState: " + getState()
       + "\n\tSubstance Fraction: " + getSubstanceFraction()
       + "\n\tSubstance: " + (hasSubstance()?getSubstance().getName():"NotProvided");
   }

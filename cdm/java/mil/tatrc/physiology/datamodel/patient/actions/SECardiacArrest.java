@@ -12,7 +12,7 @@ public class SECardiacArrest extends SEPatientAction
   
   public SECardiacArrest()
   {
-    state = null;
+    state = eSwitch.Off;
   }
   
   public void copy(SECardiacArrest other)
@@ -26,18 +26,18 @@ public class SECardiacArrest extends SEPatientAction
   public void reset()
   {
     super.reset();
-    state = null;
+    state = eSwitch.Off;
   }
   
   public boolean isValid()
   {
-    return hasState();
+    return true;
   }
   
   public static void load(CardiacArrestData src, SECardiacArrest dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.getState()!=eSwitch.UNRECOGNIZED)
+    if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
     	dst.state = src.getState();
   }
   
@@ -51,23 +51,16 @@ public class SECardiacArrest extends SEPatientAction
   protected static void unload(SECardiacArrest src, CardiacArrestData.Builder dst)
   {
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    if (src.hasState())
-      dst.setState(src.state);
+    dst.setState(src.state);
   }
   
   public eSwitch getState()
   {
     return state;
   }
-  
-  public void setState(eSwitch onOrOff)
+  public void setState(eSwitch s)
   {
-    state = onOrOff;
-  }
-  
-  public boolean hasState()
-  {
-    return state==null||state==eSwitch.UNRECOGNIZED ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
   
   public String toString()

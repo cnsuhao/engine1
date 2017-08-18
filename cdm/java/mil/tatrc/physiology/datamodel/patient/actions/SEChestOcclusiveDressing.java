@@ -15,7 +15,7 @@ public class SEChestOcclusiveDressing extends SEPatientAction
   public SEChestOcclusiveDressing()
   {
     side = null;
-    state = null;
+    state = eSwitch.Off;
   }
   
   public void copy(SEChestOcclusiveDressing other)
@@ -30,19 +30,19 @@ public class SEChestOcclusiveDressing extends SEPatientAction
   public void reset()
   {
     super.reset();
-    state = null;
+    state = eSwitch.Off;
     side = null;
   }
   
   public boolean isValid()
   {
-    return hasSide() && hasState();
+    return hasSide();
   }
   
   public static void load(ChestOcclusiveDressingData src, SEChestOcclusiveDressing dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.getState()!=eSwitch.UNRECOGNIZED)
+    if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
     	dst.state = src.getState();
     if(src.getSide()!=eSide.UNRECOGNIZED)
     	dst.side = src.getSide();
@@ -58,8 +58,7 @@ public class SEChestOcclusiveDressing extends SEPatientAction
   protected static void unload(SEChestOcclusiveDressing src, ChestOcclusiveDressingData.Builder dst)
   {
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    if (src.hasState())
-      dst.setState(src.state);
+    dst.setState(src.state);
     if (src.hasSide())
       dst.setSide(src.side);
   }
@@ -81,13 +80,9 @@ public class SEChestOcclusiveDressing extends SEPatientAction
   {
     return state;
   }
-  public void setState(eSwitch onOrOff)
+  public void setState(eSwitch s)
   {
-    state = onOrOff;
-  }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
   
   public String toString()

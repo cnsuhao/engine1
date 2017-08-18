@@ -25,7 +25,7 @@ public class SEInhaler implements SESystem
   
   public void clear()
   {
-    state = null;
+    state = eSwitch.Off;
     meteredDose = null;
     nozzleLoss = null;
     spacerVolume = null;
@@ -34,7 +34,7 @@ public class SEInhaler implements SESystem
 
   public void reset()
   {
-    state = null;
+    state = eSwitch.Off;
     if (meteredDose != null)
       meteredDose.invalidate();
     if (nozzleLoss != null)
@@ -57,7 +57,7 @@ public class SEInhaler implements SESystem
 
   public static void load(InhalerData src, SEInhaler dst, SESubstanceManager subMgr)
   {
-    if (src.getState()!=eSwitch.UNRECOGNIZED)
+    if (src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
       dst.setState(src.getState());
     if (src.hasMeteredDose())
       SEScalarMass.load(src.getMeteredDose(),dst.getMeteredDose());
@@ -76,8 +76,7 @@ public class SEInhaler implements SESystem
   }
   protected static void unload(SEInhaler src, InhalerData.Builder dst)
   {
-    if (src.hasState())
-      dst.setState(src.state);
+    dst.setState(src.state);
     if (src.hasMeteredDose())
       dst.setMeteredDose(SEScalarMass.unload(src.meteredDose));
     if (src.hasNozzleLoss())
@@ -92,13 +91,9 @@ public class SEInhaler implements SESystem
   {
     return state;
   }
-  public void setState(eSwitch state)
+  public void setState(eSwitch s)
   {
-    this.state = state;
-  }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
 
   public boolean hasMeteredDose()
@@ -150,6 +145,7 @@ public class SEInhaler implements SESystem
   public String toString()
   {
     String str = "Inhaler:";
+    str += "\n\tState: " + getState();
     str += "\n\tMetered Dose: "; str += this.hasMeteredDose()?this.getMeteredDose():"Not Supplied";
     str += "\n\tNozzle Loss: "; str += this.hasNozzleLoss()?this.getNozzleLoss():"Not Supplied";
     str += "\n\tSpacer Volume: "; str += this.hasSpacerVolume()?this.getSpacerVolume():"Not Supplied";    

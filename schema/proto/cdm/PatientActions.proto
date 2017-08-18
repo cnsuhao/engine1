@@ -47,7 +47,7 @@ message PatientActionData
 message PatientAssessmentRequestData
 {
   PatientActionData                         PatientAction                   = 1;
-  PatientAssessmentData.eType               type                            = 2;
+  PatientAssessmentData.eType               Type                            = 2;
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */

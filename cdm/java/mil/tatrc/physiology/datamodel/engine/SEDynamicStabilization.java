@@ -47,7 +47,7 @@ public class SEDynamicStabilization
   
   public static void load(DynamicStabilizationData src, SEDynamicStabilization dst) 
   {
-    if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED)
+    if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED && src.getTrackingStabilization()!=eSwitch.NullSwitch)
       dst.trackingStabilization=src.getTrackingStabilization();
     if(src.hasRestingConvergence())
       SEDynamicStabilizationEngineConvergence.load(src.getRestingConvergence(),dst.getRestingConvergence());
@@ -66,8 +66,7 @@ public class SEDynamicStabilization
   }
   protected static void unload(SEDynamicStabilization src, DynamicStabilizationData.Builder dst)
   {
-    if(src.hasTrackingStabilization())
-      dst.setTrackingStabilization(src.trackingStabilization);
+    dst.setTrackingStabilization(src.trackingStabilization);
     if(src.hasRestingConvergence())
       dst.setRestingConvergence(SEDynamicStabilizationEngineConvergence.unload(src.restingConvergence));
     if(src.hasFeedbackConvergence())
@@ -78,17 +77,13 @@ public class SEDynamicStabilization
     }
   }
   
-  public boolean hasTrackingStabilization()
-  {
-    return this.trackingStabilization!=null;
-  }
   public eSwitch isTrackingStabilization()
   {
     return this.trackingStabilization;
   }
   public void TrackStabilization(eSwitch b)
   {
-    this.trackingStabilization=b;
+    this.trackingStabilization = (b==eSwitch.NullSwitch) ? eSwitch.Off : b;
   }
   
   public boolean hasRestingConvergence()
