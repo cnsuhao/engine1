@@ -284,7 +284,7 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
 
 std::unique_ptr<google::protobuf::Message> PulseEngine::SaveState(const std::string& filename)
 {
-  std::unique_ptr<pulse::StateData> state(new pulse::StateData());
+  pulse::StateData* state = new pulse::StateData();
 
   state->set_airwaymode(m_AirwayMode);
   state->set_intubation(m_Intubation);
@@ -336,7 +336,8 @@ std::unique_ptr<google::protobuf::Message> PulseEngine::SaveState(const std::str
     ascii_ostream.close();
   }
 
-  return state;
+  std::unique_ptr<google::protobuf::Message> msg(state);
+  return msg;
 }
 
 bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
