@@ -160,38 +160,42 @@ void Environment::StateChange()
   if (m_AmbientGases == nullptr ||m_AmbientAerosols == nullptr)
     return;
 
-  // Add Gases to the environment
-  //Check to make sure fractions sum to 1.0  
-  double totalFraction = 0.0;
-  for (auto s : GetConditions().GetAmbientGases())
+  if (GetConditions().GetAmbientGases().size() > 0)
   {
-    SESubstance& sub = s->GetSubstance();
-    totalFraction += s->GetFractionAmount().GetValue();
-    m_data.GetSubstances().AddActiveSubstance(sub);
+    // Add Gases to the environment
+    //Check to make sure fractions sum to 1.0  
+    double totalFraction = 0.0;
+    for (auto s : GetConditions().GetAmbientGases())
+    {
+      SESubstance& sub = s->GetSubstance();
+      totalFraction += s->GetFractionAmount().GetValue();
+      m_data.GetSubstances().AddActiveSubstance(sub);
+    }
+    if (std::abs(1.0 - totalFraction) > 1e-6) //Allow for a little bit of numerical error
+    {
+      /// \error Fatal: Total ambient/environment gas volume fractions must sum to 1.0.
+      std::stringstream ss;
+      ss << "Total ambient/environment gas volume fractions must sum to 1.0. Current total fraction is " << totalFraction;
+      Fatal(ss);
+    }
+    // Reset what we have
+    for (SEGasSubstanceQuantity* subQ : m_AmbientGases->GetSubstanceQuantities())
+      subQ->SetToZero();
+    //Update the substance values on the Ambient Node based on the Action/File settings
+    //We want to set an ambient volume fraction for all active gases
+    for (SESubstanceFraction* subFrac : GetConditions().GetAmbientGases())
+    {
+      SEGasSubstanceQuantity* subQ = m_AmbientGases->GetSubstanceQuantity(subFrac->GetSubstance());
+      subQ->GetVolumeFraction().Set(subFrac->GetFractionAmount());
+      //Set substance volumes to be infinite when compartment/node volume is also infinite
+      subQ->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+    }
+    m_AmbientGases->GetPressure().Set(GetConditions().GetAtmosphericPressure());
+    m_AmbientGases->Balance(BalanceGasBy::VolumeFraction);
   }
-  if (std::abs(1.0 - totalFraction) > 1e-6) //Allow for a little bit of numerical error
-  {
-    /// \error Fatal: Total ambient/environment gas volume fractions must sum to 1.0.
-    std::stringstream ss;
-    ss << "Total ambient/environment gas volume fractions must sum to 1.0. Current total fraction is " << totalFraction;
-    Fatal(ss);
-  }
-  // Reset what we have
-  for (SEGasSubstanceQuantity* subQ : m_AmbientGases->GetSubstanceQuantities())
-    subQ->SetToZero();
-  //Update the substance values on the Ambient Node based on the Action/File settings
-  //We want to set an ambient volume fraction for all active gases
-  for(SESubstanceFraction* subFrac : GetConditions().GetAmbientGases())
-  {    
-    SEGasSubstanceQuantity* subQ = m_AmbientGases->GetSubstanceQuantity(subFrac->GetSubstance());
-    subQ->GetVolumeFraction().Set(subFrac->GetFractionAmount());
-    //Set substance volumes to be infinite when compartment/node volume is also infinite
-    subQ->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
-  }
-  m_AmbientGases->GetPressure().Set(GetConditions().GetAtmosphericPressure());
-  m_AmbientGases->Balance(BalanceGasBy::VolumeFraction);
-
-  // Add aerosols to the environment
+  // Add aerosols to the environment compartment
+  // Note we made the design decision that if you want to get rid of a sub
+  // you need to provide a zero concentration.
   for (auto s : GetConditions().GetAmbientAerosols())
   {
     SESubstance& sub = s->GetSubstance();

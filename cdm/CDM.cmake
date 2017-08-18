@@ -97,7 +97,7 @@ source_group("System\\Environment\\Conditions" FILES ${ENVIRONMENT_CONDITION_FIL
 list(APPEND SOURCE ${ENVIRONMENT_CONDITION_FILES}) 
 # System\Equipment
 file(GLOB ANESTHESIA_FILES "cpp/system/equipment/anesthesiamachine/*.h" "cpp/system/equipment/anesthesiamachine/*.cpp")
-source_group("System\\Equipment\\anesthesiamachine" FILES ${ANESTHESIA_FILES})
+source_group("System\\Equipment\\AnesthesiaMachine" FILES ${ANESTHESIA_FILES})
 file(GLOB ANESTHESIA_ACTION_FILES "cpp/system/equipment/anesthesiamachine/actions/*.h" "cpp/system/equipment/anesthesiamachine/actions/*.cpp")
 source_group("System\\Equipment\\AnesthesiaMachine\\Actions" FILES ${ANESTHESIA_ACTION_FILES})
 file(GLOB ECG_FILES "cpp/system/equipment/electrocardiogram/*.h" "cpp/system/equipment/electrocardiogram/*.cpp")

@@ -118,7 +118,7 @@ void SESubstanceBolus::ToString(std::ostream &str) const
   str  << "\n\tDose: "; HasDose()? str << *m_Dose : str << "No Dose Set";
   str  << "\n\tConcentration: "; HasConcentration()? str << *m_Concentration : str << "NaN";
   str << "\n\tSubstance: " << m_Substance.GetName();
-  str  << "\n\tAdministration Route: " << GetAdminRoute();
+  str  << "\n\tAdministration Route: " << cdm::SubstanceBolusData_eAdministrationRoute_Name(GetAdminRoute());
   str << std::flush;
 }
 

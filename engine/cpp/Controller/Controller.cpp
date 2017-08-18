@@ -198,7 +198,7 @@ void PulseController::SetAirwayMode(pulse::eAirwayMode mode)
     m_Compartments->UpdateAirwayGraph();
   m_AirwayMode = mode;
   std::stringstream ss;
-  ss << "Airway Mode : " << m_AirwayMode;
+  ss << "Airway Mode : " << pulse::eAirwayMode_Name(m_AirwayMode);
   Info(ss);
 }
 void PulseController::SetIntubation(cdm::eSwitch s)

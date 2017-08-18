@@ -80,7 +80,7 @@ void SEChestOcclusiveDressing::ToString(std::ostream &str) const
   str << "Patient Action : Chest Occlusive Dressing"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tState: " << m_State;
-  str << "\n\tSide: "; HasSide()? str << GetSide() : str << "Not Set"; 
+  str << "\n\tState: " << cdm::eSwitch_Name(m_State);
+  str << "\n\tSide: "; HasSide()? str << cdm::eSide_Name(GetSide()) : str << "Not Set"; 
   str<<std::flush;
 }

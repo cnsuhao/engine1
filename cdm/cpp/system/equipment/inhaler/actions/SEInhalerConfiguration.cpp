@@ -108,7 +108,7 @@ void SEInhalerConfiguration::ToString(std::ostream &str) const
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;
   if (HasConfiguration())
   {
-    str << "\n\tState: " << m_Configuration->GetState();
+    str << "\n\tState: " << cdm::eSwitch_Name(m_Configuration->GetState());
     str << "\n\tMetered Dose: "; m_Configuration->HasMeteredDose() ? str << m_Configuration->GetMeteredDose() : str << "NaN";
     str << "\n\tNozzle Loss: "; m_Configuration->HasNozzleLoss() ? str << m_Configuration->GetNozzleLoss() : str << "NaN";
     str << "\n\tSpacerVolume: "; m_Configuration->HasSpacerVolume() ? str << m_Configuration->GetSpacerVolume() : str << "NaN";

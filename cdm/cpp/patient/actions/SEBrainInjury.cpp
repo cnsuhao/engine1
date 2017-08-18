@@ -85,6 +85,6 @@ void SEBrainInjury::ToString(std::ostream &str) const
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << "\n\tType: "<< GetType();
+  str << "\n\tType: "<< cdm::BrainInjuryData_eType_Name(GetType());
   str << std::flush;
 }

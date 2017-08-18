@@ -60,6 +60,6 @@ void SEOxygenWallPortPressureLoss::ToString(std::ostream &str) const
   str << "Anesthesia Machine Action : Oxygen Wall Port Pressure Loss"; 
   if(HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tState: " << IsActive();
+  str << "\n\tState: " << cdm::eSwitch(m_State);
   str << std::flush;
 }

@@ -110,25 +110,25 @@ void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;
   if (HasConfiguration())
   {
-    str << "\n\tConnection: " << m_Configuration->GetConnection();
+    str << "\n\tConnection: " << cdm::AnesthesiaMachineData_eConnection_Name(m_Configuration->GetConnection());
     str << "\n\tInlet Flow Rate: "; m_Configuration->HasInletFlow() ? str << m_Configuration->GetInletFlow() : str << "NaN";
     str << "\n\tInspiratoryExpiratory Ratio: "; m_Configuration->HasInspiratoryExpiratoryRatio() ? str << m_Configuration->GetInspiratoryExpiratoryRatio() : str << "NaN";
     str << "\n\tOxygen Fraction: "; m_Configuration->HasOxygenFraction() ? str << m_Configuration->GetOxygenFraction() : str << "NaN";
-    str << "\n\tOxygen Source: " << m_Configuration->GetOxygenSource();
+    str << "\n\tOxygen Source: " << cdm::AnesthesiaMachineData_eOxygenSource_Name(m_Configuration->GetOxygenSource());
     str << "\n\tPositive End Expired Pressure: "; m_Configuration->HasPositiveEndExpiredPressure() ? str << m_Configuration->GetPositiveEndExpiredPressure() : str << "NaN";
-    str << "\n\tPrimary Gas: " << m_Configuration->GetPrimaryGas();
+    str << "\n\tPrimary Gas: " << cdm::AnesthesiaMachineData_ePrimaryGas_Name(m_Configuration->GetPrimaryGas());
     str << "\n\tRelief Valve Pressure: "; m_Configuration->HasReliefValvePressure() ? str << m_Configuration->GetReliefValvePressure() : str << "NaN";
     str << "\n\tRespiratory Rate: "; m_Configuration->HasRespiratoryRate() ? str << m_Configuration->GetRespiratoryRate() : str << "NaN";
     str << "\n\tVentilator Pressure: "; m_Configuration->HasVentilatorPressure() ? str << m_Configuration->GetVentilatorPressure() : str << "NaN";
     if (m_Configuration->HasLeftChamber())
     {
-      str << "\n\tLeftChamberState: " << m_Configuration->GetLeftChamber().GetState();
+      str << "\n\tLeftChamberState: " << cdm::eSwitch_Name(m_Configuration->GetLeftChamber().GetState());
       str << "\n\tLeftChamberSubstance: "; m_Configuration->GetLeftChamber().HasSubstance() ? str << m_Configuration->GetLeftChamber().GetSubstance()->GetName() : str << "Not Set";
       str << "\n\tLeftChamberSubstanceAmount: "; m_Configuration->GetLeftChamber().HasSubstanceFraction() ? str << m_Configuration->GetLeftChamber().GetSubstanceFraction() : str << "Not Set";
     }
     if (m_Configuration->HasRightChamber())
     {
-      str << "\n\tRightChamberState: " << m_Configuration->GetRightChamber().GetState();
+      str << "\n\tRightChamberState: " << cdm::eSwitch_Name(m_Configuration->GetRightChamber().GetState());
       str << "\n\tRightChamberSubstance: "; m_Configuration->GetRightChamber().HasSubstance() ? str << m_Configuration->GetRightChamber().GetSubstance()->GetName() : str << "Not Set";
       str << "\n\tRightChamberSubstanceAmount: "; m_Configuration->GetRightChamber().HasSubstanceFraction() ? str << m_Configuration->GetRightChamber().GetSubstanceFraction() : str << "Not Set";
     }

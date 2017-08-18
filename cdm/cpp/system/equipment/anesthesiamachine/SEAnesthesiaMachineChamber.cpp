@@ -38,7 +38,7 @@ void SEAnesthesiaMachineChamber::Serialize(const cdm::AnesthesiaMachineData_Cham
   if (src.has_substancefraction())
     SEScalar0To1::Load(src.substancefraction(), dst.GetSubstanceFraction());
   
-  if (src.substance() != nullptr)
+  if (!src.substance().empty())
   {
     dst.m_Substance = dst.m_Substances.GetSubstance(src.substance());
     if (dst.m_Substance == nullptr)

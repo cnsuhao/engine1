@@ -236,7 +236,7 @@ void SEMechanicalVentilation::ToString(std::ostream &str) const
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
 
-  str << "\n\tState: " << GetState();
+  str << "\n\tState: " << cdm::eSwitch_Name(GetState());
   str << "\n\tFlow: ";  HasFlow() ? str << *m_Flow : str << "Not Set";
   str << "\n\tPressure: "; HasPressure() ? str << *m_Pressure : str << "Not Set";
   if (HasGasFraction())

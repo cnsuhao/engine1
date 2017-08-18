@@ -65,7 +65,7 @@ elseif(TYPE STREQUAL "doxygen")
   # These are run above
   #execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.validation.SystemValidation)
   #execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.testing.validation.PatientValidation)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.DoxygenPreprocessor @CMAKE_SOURCE_DIR@/docs/Markdown ./docs/markdown ./test_results/tables)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.DoxygenPreprocessor @CMAKE_SOURCE_DIR@/docs/Markdown ./docs/markdown)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.DoxygenPreprocessor @CMAKE_SOURCE_DIR@/docs/Methodology ./docs/markdown ./test_results/tables)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.Proto2Doxygen @CMAKE_SOURCE_DIR@/schema/proto ./docs/markdown)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -Xmx900m -classpath "${JAVA_CLASSPATH}" mil.tatrc.physiology.datamodel.doxygen.CDM2MD ./docs/markdown)

@@ -236,10 +236,10 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
   }
 }
 
-bool SEEnvironmentalConditions::LoadFile(const std::string& patientFile)
+bool SEEnvironmentalConditions::LoadFile(const std::string& filename)
 {
   cdm::EnvironmentData_ConditionsData src;
-  std::ifstream file_stream(patientFile, std::ios::in);
+  std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
   if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
     return false;

@@ -56,8 +56,8 @@ void SESerializeState::ToString(std::ostream &str) const
 {  
   if(HasComment())
     str<<"\n\tComment : "<<m_Comment;
-  str << "Type : " << m_Type;
-  str << "Filename : " << m_Filename;
+  str << "\n\tType : " << cdm::SerializeStateData_eSerializationType_Name(m_Type);
+  str << "\n\tFilename : " << m_Filename;
 }
 
 cdm::SerializeStateData_eSerializationType SESerializeState::GetType() const

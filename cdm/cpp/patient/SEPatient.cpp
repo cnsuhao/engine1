@@ -265,7 +265,7 @@ void SEPatient::Serialize(const cdm::PatientData& src, SEPatient& dst)
     if(e.has_duration())
       SEScalarTime::Load(e.duration(),time);
     {
-      dst.m_ss << "Active Patient event " << e.event() << " does not have time associated with it";
+      dst.m_ss << "Active Patient event " << cdm::PatientData_eEvent_Name(e.event()) << " does not have time associated with it";
       dst.Warning(dst.m_ss);
       time.SetValue(0, TimeUnit::s);
     }

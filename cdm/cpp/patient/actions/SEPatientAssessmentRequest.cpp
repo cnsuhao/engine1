@@ -65,6 +65,6 @@ void SEPatientAssessmentRequest::ToString(std::ostream &str) const
   str << "Patient Action : Assessment Request"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str  << "\n\tType: "<<GetType();
+  str  << "\n\tType: "<< cdm::PatientAssessmentData_eType_Name(GetType());
   str  << std::flush;
 }
