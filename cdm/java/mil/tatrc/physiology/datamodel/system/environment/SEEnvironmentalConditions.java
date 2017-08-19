@@ -86,7 +86,7 @@ public class SEEnvironmentalConditions
   public void copy(SEEnvironmentalConditions from)
   {
     this.reset();
-    if(from.hasSurroundingType())
+    if(from.surroundingType != eSurroundingType.NullSurrounding)
       this.setSurroundingType(from.surroundingType);
     if(from.hasAirDensity())
       this.getAirDensity().set(from.getAirDensity());
@@ -212,8 +212,7 @@ public class SEEnvironmentalConditions
   }
   protected static void unload(SEEnvironmentalConditions src, EnvironmentData.ConditionsData.Builder dst)
   {
-    if (src.hasSurroundingType())
-      dst.setSurroundingType(src.surroundingType);
+    dst.setSurroundingType(src.surroundingType);
     if (src.hasAirDensity())
       dst.setAirDensity(SEScalarMassPerVolume.unload(src.airDensity));
     if (src.hasAirVelocity())
@@ -244,15 +243,10 @@ public class SEEnvironmentalConditions
   {
     return surroundingType;
   }
-  public void setSurroundingType(eSurroundingType surroundingType)
+  public void setSurroundingType(eSurroundingType st)
   {
-    this.surroundingType = surroundingType;
+    this.surroundingType = (st==eSurroundingType.UNRECOGNIZED) ? null : st;
   }
-  public boolean hasSurroundingType()
-  {
-    return surroundingType == null ? false : true;
-  }
-  
   public SEScalarMassPerVolume getAirDensity()
   {
     if (airDensity == null)
@@ -474,7 +468,7 @@ public class SEEnvironmentalConditions
   public String toString()
   {
       String str = "Envriomental Conditions:" 
-          + "\n\tSurroundingType: " + (hasSurroundingType()?getSurroundingType():"None")
+          + "\n\tSurroundingType: " + getSurroundingType()
           + "\n\tAirDensity: " + (hasAirDensity()?getAirDensity():"None")
           + "\n\tAirVelocity: " + (hasAirVelocity()?getAirVelocity():"None")
           + "\n\tAmbientTemperature: " + (hasAmbientTemperature()?getAmbientTemperature():"None")

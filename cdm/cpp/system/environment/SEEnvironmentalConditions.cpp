@@ -17,7 +17,7 @@
 
 SEEnvironmentalConditions::SEEnvironmentalConditions(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
-  m_SurroundingType = cdm::EnvironmentData_eSurroundingType_Air;
+  m_SurroundingType = cdm::EnvironmentData_eSurroundingType_NullSurrounding;
 
   m_AirDensity=nullptr;
   m_AirVelocity = nullptr;
@@ -37,7 +37,7 @@ SEEnvironmentalConditions::~SEEnvironmentalConditions()
 
 void SEEnvironmentalConditions::Clear()
 {
-  m_SurroundingType = cdm::EnvironmentData_eSurroundingType_Air;
+  m_SurroundingType = cdm::EnvironmentData_eSurroundingType_NullSurrounding;
   SAFE_DELETE(m_AirDensity);
   SAFE_DELETE(m_AirVelocity);
   SAFE_DELETE(m_AmbientTemperature);
@@ -180,7 +180,8 @@ void SEEnvironmentalConditions::Serialize(const SEEnvironmentalConditions& src, 
 
 void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
 {
-  SetSurroundingType(from.m_SurroundingType);
+  if(from.m_SurroundingType != cdm::EnvironmentData_eSurroundingType_NullSurrounding)
+    SetSurroundingType(from.m_SurroundingType);
   COPY_PROPERTY(AirDensity);
   COPY_PROPERTY(AirVelocity);
   COPY_PROPERTY(AmbientTemperature);

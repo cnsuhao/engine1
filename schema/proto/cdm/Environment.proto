@@ -9,8 +9,9 @@ message EnvironmentData
 {
   enum eSurroundingType
   {
-    Air   = 0;
-    Water = 1;
+    NullSurrounding = 0;
+    Air             = 1;
+    Water           = 2;
   }
   
   message ConditionsData

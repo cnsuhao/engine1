@@ -21,13 +21,13 @@
 
 SEAnesthesiaMachine::SEAnesthesiaMachine(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {
-  m_Connection = cdm::AnesthesiaMachineData_eConnection_Off;
+  m_Connection = cdm::AnesthesiaMachineData_eConnection_NullConnection;
   m_InletFlow = nullptr;
   m_InspiratoryExpiratoryRatio = nullptr;
   m_OxygenFraction = nullptr;
-  m_OxygenSource = cdm::AnesthesiaMachineData_eOxygenSource_NoSource;
+  m_OxygenSource = cdm::AnesthesiaMachineData_eOxygenSource_NullSource;
   m_PositiveEndExpiredPressure = nullptr;
-  m_PrimaryGas = cdm::AnesthesiaMachineData_ePrimaryGas_NoGas;  
+  m_PrimaryGas = cdm::AnesthesiaMachineData_ePrimaryGas_NullGas;  
   m_RespiratoryRate = nullptr;
   m_ReliefValvePressure = nullptr;
   m_VentilatorPressure = nullptr;
@@ -50,13 +50,13 @@ void SEAnesthesiaMachine::Clear()
   m_EventHandler = nullptr;
   m_EventState.clear();
   m_EventDuration_s.clear();
-  m_Connection = cdm::AnesthesiaMachineData_eConnection_Off;
+  m_Connection = cdm::AnesthesiaMachineData_eConnection_NullConnection;
   SAFE_DELETE(m_InletFlow);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
   SAFE_DELETE(m_OxygenFraction);
-  m_OxygenSource = cdm::AnesthesiaMachineData_eOxygenSource_NoSource;
+  m_OxygenSource = cdm::AnesthesiaMachineData_eOxygenSource_NullSource;
   SAFE_DELETE(m_PositiveEndExpiredPressure);
-  m_PrimaryGas = cdm::AnesthesiaMachineData_ePrimaryGas_NoGas;
+  m_PrimaryGas = cdm::AnesthesiaMachineData_ePrimaryGas_NullGas;
   SAFE_DELETE(m_RespiratoryRate);
   SAFE_DELETE(m_ReliefValvePressure);
   SAFE_DELETE(m_VentilatorPressure);
@@ -68,7 +68,8 @@ void SEAnesthesiaMachine::Clear()
 
 void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
 {
-  SetConnection(from.m_Connection);
+  if(from.m_Connection!=cdm::AnesthesiaMachineData_eConnection_NullConnection)
+    SetConnection(from.m_Connection);
   // Copy EventHandler? I don't think so...
   for (auto e : from.m_EventState)
       m_EventState[e.first] = e.second;
@@ -77,9 +78,11 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
   COPY_PROPERTY(InletFlow);
   COPY_PROPERTY(InspiratoryExpiratoryRatio);
   COPY_PROPERTY(OxygenFraction);
-  SetOxygenSource(from.m_OxygenSource);
+  if (from.m_OxygenSource != cdm::AnesthesiaMachineData_eOxygenSource_NullSource)
+    SetOxygenSource(from.m_OxygenSource);
   COPY_PROPERTY(PositiveEndExpiredPressure);
-  SetPrimaryGas(from.m_PrimaryGas);
+  if (from.m_PrimaryGas != cdm::AnesthesiaMachineData_ePrimaryGas_NullGas)
+    SetPrimaryGas(from.m_PrimaryGas);
   COPY_PROPERTY(RespiratoryRate);
   COPY_PROPERTY(ReliefValvePressure);
   COPY_PROPERTY(VentilatorPressure);
@@ -123,8 +126,7 @@ void SEAnesthesiaMachine::Load(const cdm::AnesthesiaMachineData& src, SEAnesthes
 void SEAnesthesiaMachine::Serialize(const cdm::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst)
 {
   dst.Clear();
-  if(src.connection() != cdm::AnesthesiaMachineData_eConnection_NullConnection)
-    dst.SetConnection(src.connection());
+  dst.SetConnection(src.connection());
   if(src.has_inletflow())
     SEScalarVolumePerTime::Load(src.inletflow(), dst.GetInletFlow());
   if (src.has_inspiratoryexpiratoryratio())
@@ -132,12 +134,10 @@ void SEAnesthesiaMachine::Serialize(const cdm::AnesthesiaMachineData& src, SEAne
   if (src.has_oxygenfraction())
     SEScalar0To1::Load(src.oxygenfraction(), dst.GetOxygenFraction());
 
-  if(src.oxygensource() != cdm::AnesthesiaMachineData_eOxygenSource_NullSource)
-    dst.SetOxygenSource(src.oxygensource());
+  dst.SetOxygenSource(src.oxygensource());
   if (src.has_positiveendexpiredpressure())
     SEScalarPressure::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
-  if(src.primarygas() != cdm::AnesthesiaMachineData_ePrimaryGas_NullGas)
-    dst.SetPrimaryGas(src.primarygas());
+  dst.SetPrimaryGas(src.primarygas());
 
   if (src.has_respiratoryrate())
     SEScalarFrequency::Load(src.respiratoryrate(), dst.GetRespiratoryRate());
@@ -287,7 +287,7 @@ void SEAnesthesiaMachine::SetEvent(cdm::AnesthesiaMachineData_eEvent type, bool 
         m_ss << "Relief valve active - pressure exceeded";
         break;
       default:
-        m_ss << "Anesthesia Machine Event On : " << type;//TODO CDM::enumAnesthesiaMachineEvent::_xsd_enumAnesthesiaMachineEvent_literals_[type];
+        m_ss << "Anesthesia Machine Event On : " << cdm::AnesthesiaMachineData_eEvent_Name(type);
       }
     }
     else
@@ -304,7 +304,7 @@ void SEAnesthesiaMachine::SetEvent(cdm::AnesthesiaMachineData_eEvent type, bool 
         m_ss << "Relief valve inactive - pressure below setting";
         break;
       default:
-        m_ss << "Anesthesia Machine Event Off : " << type;// TODO CDM::enumAnesthesiaMachineEvent::_xsd_enumAnesthesiaMachineEvent_literals_[type];
+        m_ss << "Anesthesia Machine Event Off : " << cdm::AnesthesiaMachineData_eEvent_Name(type);
       }
     }
     Info(m_ss);
@@ -344,7 +344,7 @@ void SEAnesthesiaMachine::ForwardEvents(SEEventHandler* handler)
 
 void SEAnesthesiaMachine::SetConnection(cdm::AnesthesiaMachineData_eConnection c)
 {
-  (c == cdm::AnesthesiaMachineData_eConnection_NullConnection) ? m_Connection = cdm::AnesthesiaMachineData_eConnection_Off : m_Connection = c;
+  m_Connection = c;
 }
 cdm::AnesthesiaMachineData_eConnection SEAnesthesiaMachine::GetConnection() const
 {
@@ -408,7 +408,7 @@ cdm::AnesthesiaMachineData_eOxygenSource SEAnesthesiaMachine::GetOxygenSource() 
 }
 void SEAnesthesiaMachine::SetOxygenSource(cdm::AnesthesiaMachineData_eOxygenSource src)
 {
-  (src == cdm::AnesthesiaMachineData_eOxygenSource_NullSource) ? m_OxygenSource = cdm::AnesthesiaMachineData_eOxygenSource_NoSource : m_OxygenSource = src;
+  m_OxygenSource = src;
 }
 
 bool SEAnesthesiaMachine::HasPositiveEndExpiredPressure() const
@@ -434,7 +434,7 @@ cdm::AnesthesiaMachineData_ePrimaryGas SEAnesthesiaMachine::GetPrimaryGas() cons
 }
 void SEAnesthesiaMachine::SetPrimaryGas(cdm::AnesthesiaMachineData_ePrimaryGas gas)
 {
-  (gas == cdm::AnesthesiaMachineData_ePrimaryGas_NullGas) ? m_PrimaryGas = cdm::AnesthesiaMachineData_ePrimaryGas_NoGas : m_PrimaryGas = gas;
+  m_PrimaryGas = gas;
 }
 
 bool SEAnesthesiaMachine::HasRespiratoryRate() const
