@@ -298,8 +298,11 @@ void BloodChemistry::Process()
 
   double totalFlow_mL_Per_min = m_data.GetCardiovascular().GetCardiacOutput(VolumePerTimeUnit::mL_Per_min);
   double shuntFlow_mL_Per_min = m_data.GetCardiovascular().GetPulmonaryMeanShuntFlow(VolumePerTimeUnit::mL_Per_min);
-  double shunt = shuntFlow_mL_Per_min / totalFlow_mL_Per_min;
-  GetShuntFraction().SetValue(shunt);
+  double shunt = 0.0;
+  if (totalFlow_mL_Per_min > 0.0)
+  {
+    shunt = shuntFlow_mL_Per_min / totalFlow_mL_Per_min;
+  }
 
   CheckBloodGasLevels();
 
