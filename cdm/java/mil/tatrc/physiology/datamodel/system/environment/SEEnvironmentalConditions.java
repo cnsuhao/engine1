@@ -212,7 +212,8 @@ public class SEEnvironmentalConditions
   }
   protected static void unload(SEEnvironmentalConditions src, EnvironmentData.ConditionsData.Builder dst)
   {
-    dst.setSurroundingType(src.surroundingType);
+  	if(src.hasSurroundingType())
+  		dst.setSurroundingType(src.surroundingType);
     if (src.hasAirDensity())
       dst.setAirDensity(SEScalarMassPerVolume.unload(src.airDensity));
     if (src.hasAirVelocity())
@@ -239,6 +240,10 @@ public class SEEnvironmentalConditions
       dst.addAmbientAerosol(SESubstanceConcentration.unload(ambSub));
   }
   
+  public boolean hasSurroundingType()
+  {
+    return surroundingType != null;
+  }
   public eSurroundingType getSurroundingType()
   {
     return surroundingType;

@@ -13,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData.eLead;
+import com.kitware.physiology.cdm.Environment.EnvironmentData.eSurroundingType;
 import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
 import com.kitware.physiology.cdm.Properties.eCharge;
@@ -1069,7 +1070,7 @@ public class DataSetReader
 
     if(property.equals("SurroundingType"))
     {
-//      env.setSurroundingType(EnumSurroundingType.fromValue(value));
+      env.setSurroundingType(eSurroundingType.valueOf(value));
       return true;
     }
     if(property.equals("AirDensity"))

@@ -68,7 +68,8 @@ public class SETimedStabilization
   
   protected static void unload(SETimedStabilization src, TimedStabilizationData.Builder dst)
   {
-    dst.setTrackingStabilization(src.trackingStabilization);
+  	if(src.trackingStabilization!=null)
+  		dst.setTrackingStabilization(src.trackingStabilization);
     if(src.hasRestingStabilizationTime())
       dst.setRestingStabilizationTime(SEScalarTime.unload(src.restingStabilizationTime));
     if(src.hasFeedbackStabilizationTime())

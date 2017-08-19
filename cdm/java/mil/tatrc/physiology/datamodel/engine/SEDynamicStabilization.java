@@ -66,7 +66,8 @@ public class SEDynamicStabilization
   }
   protected static void unload(SEDynamicStabilization src, DynamicStabilizationData.Builder dst)
   {
-    dst.setTrackingStabilization(src.trackingStabilization);
+  	if(src.trackingStabilization!=null)
+      dst.setTrackingStabilization(src.trackingStabilization);
     if(src.hasRestingConvergence())
       dst.setRestingConvergence(SEDynamicStabilizationEngineConvergence.unload(src.restingConvergence));
     if(src.hasFeedbackConvergence())
