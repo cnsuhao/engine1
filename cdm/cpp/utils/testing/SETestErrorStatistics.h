@@ -4,7 +4,9 @@
 #pragma once
 class SETestCase;
 class SETestSuite;
+PROTO_PUSH
 #include "bind/cdm/TestReport.pb.h"
+PROTO_POP
 
 // This data class is intended for use in array based data
 // Each value in the array is compared and can be tracked

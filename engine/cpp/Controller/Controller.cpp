@@ -35,7 +35,9 @@
   #pragma warning( push )
   #pragma warning( disable : 4267)
 #endif
+PROTO_PUSH
 #include "bind/engine/Engine.pb.h"
+PROTO_POP
 #if defined(_MSC_VER)
   #pragma warning( pop )
 #endif

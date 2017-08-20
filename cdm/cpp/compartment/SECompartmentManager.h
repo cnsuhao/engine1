@@ -9,7 +9,9 @@
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
+PROTO_PUSH
 #include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 
 class CDM_DECL SECompartmentManager : public Loggable
 {

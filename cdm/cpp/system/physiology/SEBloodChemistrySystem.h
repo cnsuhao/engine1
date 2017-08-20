@@ -3,7 +3,6 @@
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/cdm/Physiology.pb.h"
 
 /** @copydoc Physiology_BloodChemistrySystemData
   @nosubgrouping */

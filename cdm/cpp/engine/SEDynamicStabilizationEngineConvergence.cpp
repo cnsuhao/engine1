@@ -3,7 +3,9 @@
 
 #include "stdafx.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
+PROTO_PUSH
 #include "bind/cdm/Engine.pb.h"
+PROTO_POP
 
 SEDynamicStabilizationEngineConvergence::SEDynamicStabilizationEngineConvergence(Logger *logger) : Loggable(logger), m_DataRequestMgr(logger)
 {

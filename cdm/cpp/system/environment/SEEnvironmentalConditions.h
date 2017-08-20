@@ -3,7 +3,9 @@
 
 #pragma once
 #include "system/SESystem.h"
+PROTO_PUSH
 #include "bind/cdm/EnvironmentConditions.pb.h"
+PROTO_POP
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceConcentration.h"

@@ -4,7 +4,6 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
-#include "bind/engine/EnginePhysiology.pb.h"
 #include "utils/RunningAverage.h"
 class SECompleteBloodCount;
 class SEComprehensiveMetabolicPanel;

@@ -20,6 +20,32 @@ inline size_t _Hash_value(_InIt _Begin, _InIt _End)
   return (_Val);
 }
 
+/* The following warnings have been disabled while building the protobuf libraries and compiler. You may have to disable some of them in your own project as well, or live with them.
+    C4018 - 'expression' : signed/unsigned mismatch
+    C4146 - unary minus operator applied to unsigned type, result still unsigned
+    C4244 - Conversion from 'type1' to 'type2', possible loss of data.
+    C4251 - 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2'
+    C4267 - Conversion from 'size_t' to 'type', possible loss of data.
+    C4305 - 'identifier' : truncation from 'type1' to 'type2'
+    C4355 - 'this' : used in base member initializer list
+    C4800 - 'type' : forcing value to bool 'true' or 'false' (performance warning)
+    C4996 - 'function': was declared deprecated
+*/
+
+#if defined(_MSC_VER)
+  #define PROTO_PUSH \
+    __pragma(warning(push)) \
+    __pragma(warning(disable:4018 4146 4244 4251 4267 4305 4800 4996))
+#else
+  #define PROTO_PUSH
+#endif
+
+#if defined(_MSC_VER)
+  #define PROTO_POP __pragma(warning(pop)) 
+#else
+  #define PROTO_POP
+#endif
+
 #define DEFINE_STATIC_STRING(name) static constexpr char const* name = #name;
 #define DEFINE_STATIC_STRING_EX(name,value) static constexpr char const* name = #value;
 

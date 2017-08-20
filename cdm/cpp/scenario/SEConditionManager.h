@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 #include "substance/SESubstanceManager.h"
 //Patient Conditions
 #include "patient/conditions/SEChronicAnemia.h"

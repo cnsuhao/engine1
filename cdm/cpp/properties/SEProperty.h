@@ -2,6 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 class CDM_DECL SEProperty
 {

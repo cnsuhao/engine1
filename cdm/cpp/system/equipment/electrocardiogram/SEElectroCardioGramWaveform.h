@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+PROTO_PUSH
 #include "bind/cdm/ElectroCardioGram.pb.h"
+PROTO_POP
 
 class CDM_DECL SEElectroCardioGramWaveform : public Loggable
 {

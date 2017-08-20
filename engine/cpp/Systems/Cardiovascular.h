@@ -4,7 +4,6 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SECardiovascularSystem.h"
-#include "bind/engine/EnginePhysiology.pb.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 
 class SELiquidCompartmentGraph;

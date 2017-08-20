@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+PROTO_PUSH
 #include "bind/cdm/PatientAssessments.pb.h"
+PROTO_POP
 
 /**
  * @brief

@@ -3,7 +3,9 @@
 
 #pragma once
 #include "properties/SEDecimalFormat.h"
+PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 class SESubstanceManager;
 class CCompoundUnit;
 class SEDecimalFormat;

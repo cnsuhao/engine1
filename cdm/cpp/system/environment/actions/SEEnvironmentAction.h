@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "scenario/SEAction.h"
+PROTO_PUSH
 #include "bind/cdm/EnvironmentActions.pb.h"
+PROTO_POP
 
 class CDM_DECL SEEnvironmentAction : public SEAction
 {

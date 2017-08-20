@@ -5,7 +5,9 @@
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
+PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
+PROTO_POP
 
 
 #define CIRCUIT_LEDGER_TEMPLATE typename NodeType, typename PathType, typename CircuitType

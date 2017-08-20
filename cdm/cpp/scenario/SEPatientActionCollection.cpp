@@ -657,7 +657,11 @@ void SEPatientActionCollection::RemoveChestCompression()
 }
 bool SEPatientActionCollection::HasChestCompressionForce() const
 {
-  return m_ChestCompression == nullptr ? false : m_ChestCompression->IsActive();
+  if (m_ChestCompression == nullptr)
+    return false;
+  if (dynamic_cast<SEChestCompressionForce*>(m_ChestCompression) == nullptr)
+    return false;
+  return m_ChestCompression->IsActive();
 }
 SEChestCompressionForce* SEPatientActionCollection::GetChestCompressionForce() const
 {
@@ -665,7 +669,11 @@ SEChestCompressionForce* SEPatientActionCollection::GetChestCompressionForce() c
 }
 bool SEPatientActionCollection::HasChestCompressionForceScale() const
 {
-  return m_ChestCompression == nullptr ? false : m_ChestCompression->IsActive();
+  if (m_ChestCompression == nullptr)
+    return false;
+  if (dynamic_cast<SEChestCompressionForceScale*>(m_ChestCompression) == nullptr)
+    return false;
+  return m_ChestCompression->IsActive();
 }
 SEChestCompressionForceScale* SEPatientActionCollection::GetChestCompressionForceScale() const
 {

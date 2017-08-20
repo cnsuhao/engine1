@@ -3,7 +3,9 @@
 
 #pragma once
 #include "system/SESystem.h"
+PROTO_PUSH
 #include "bind/cdm/Inhaler.pb.h"
+PROTO_POP
 class Serializer; 
 class SESubstance;
 class SESubstanceManager;

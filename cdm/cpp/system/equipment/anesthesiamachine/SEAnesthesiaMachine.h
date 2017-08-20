@@ -3,7 +3,9 @@
 
 #pragma once
 #include "system/SESystem.h"
+PROTO_PUSH
 #include "bind/cdm/AnesthesiaMachine.pb.h"
+PROTO_POP
 class SEEventHandler;
 class SESubstanceManager;
 class SEAnesthesiaMachineChamber;

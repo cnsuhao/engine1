@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "bind/cdm/Physiology.pb.h"
+#include "system/SESystem.h"
 
 class CDM_DECL SEPupillaryResponse
 {

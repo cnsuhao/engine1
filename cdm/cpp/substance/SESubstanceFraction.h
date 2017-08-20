@@ -5,7 +5,9 @@ See accompanying NOTICE file for details.*/
 class SESubstance;
 class SESubstanceManager;
 class SEEnvironmentalConditions;
+PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 class CDM_DECL SESubstanceFraction : public Loggable
 {

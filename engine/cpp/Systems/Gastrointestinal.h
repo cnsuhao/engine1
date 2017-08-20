@@ -4,7 +4,6 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEGastrointestinalSystem.h"
-#include "bind/engine/EnginePhysiology.pb.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolumePerTime.h"
 

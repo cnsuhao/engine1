@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 class CDM_DECL SESubstanceTissuePharmacokinetics : public Loggable
 {

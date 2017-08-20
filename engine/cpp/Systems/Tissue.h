@@ -4,7 +4,6 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SETissueSystem.h"
-#include "bind/engine/EnginePhysiology.pb.h"
 
 /**
  * @brief This class encapsulates logic necessary to connect independent systems together.

@@ -8,7 +8,9 @@ class SEAction;
 #include "scenario/SEAnesthesiaMachineActionCollection.h"
 #include "scenario/SEEnvironmentActionCollection.h"
 #include "scenario/SEInhalerActionCollection.h"
+PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 
 class CDM_DECL SEActionManager : public Loggable
 {

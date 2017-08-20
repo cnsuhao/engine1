@@ -3,7 +3,9 @@
 
 #pragma once
 #include "Controller/System.h"
+PROTO_PUSH
 #include "bind/engine/EngineEnvironment.pb.h"
+PROTO_POP
 #include "system/environment/SEEnvironment.h"
 
 /**

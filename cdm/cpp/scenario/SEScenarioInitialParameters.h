@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 #include "engine/SEEngineConfiguration.h"
 #include "patient/SEPatient.h"
 #include "scenario/SECondition.h"

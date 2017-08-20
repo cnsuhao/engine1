@@ -11,8 +11,10 @@ class SEEnvironmentalConditions;
 class SEElectroCardioGramWaveformInterpolator;
 #include "engine/SEEngineConfiguration.h"
 PULSE_BIND_DECL(ConfigurationData)
+PROTO_PUSH
 #include "bind/engine/Engine.pb.h"
 #include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 /**
 * @brief %Pulse specific configuration parameters for all systems/equipment

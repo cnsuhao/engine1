@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "scenario/SEAction.h"
+PROTO_PUSH
 #include "bind/cdm/AnesthesiaMachineActions.pb.h"
+PROTO_POP
 #include "substance/SESubstanceManager.h"
 
 class CDM_DECL SEAnesthesiaMachineAction : public SEAction

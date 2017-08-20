@@ -5,7 +5,9 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/equipment/inhaler/SEInhaler.h"
+PROTO_PUSH
 #include "bind/engine/EngineEquipment.pb.h"
+PROTO_POP
 
 /**
 * @brief 

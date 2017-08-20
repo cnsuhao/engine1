@@ -3,7 +3,6 @@
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/cdm/Physiology.pb.h"
 #include "system/physiology/SEPupillaryResponse.h"
 
 class CDM_DECL SENervousSystem : public SESystem

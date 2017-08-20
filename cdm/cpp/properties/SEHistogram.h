@@ -4,7 +4,6 @@
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
-#include "bind/cdm/Properties.pb.h"
 
 class CDM_DECL SEHistogram : public SEProperty
 {

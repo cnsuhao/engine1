@@ -4,7 +4,6 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEEndocrineSystem.h"
-#include "bind/engine/EnginePhysiology.pb.h"
 #include "properties/SEScalarMass.h"
 
 /**

@@ -4,7 +4,6 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SERespiratorySystem.h"
-#include "bind/engine/EnginePhysiology.pb.h"
 #include "patient/SEPatient.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "utils/RunningAverage.h"

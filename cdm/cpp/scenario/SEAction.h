@@ -3,8 +3,10 @@
 
 #pragma once
 class SESubstanceManager;
+PROTO_PUSH
 #include "bind/cdm/Actions.pb.h"
 #include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 
 class CDM_DECL SEAction : public Loggable
 {

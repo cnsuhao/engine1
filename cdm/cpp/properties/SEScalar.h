@@ -4,7 +4,6 @@
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
-#include "bind/cdm/Properties.pb.h"
 
 #define ZERO_APPROX 1e-10
 

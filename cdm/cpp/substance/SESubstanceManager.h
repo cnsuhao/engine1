@@ -4,7 +4,9 @@
 #pragma once
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceCompound.h"
+PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 class CDM_DECL SESubstanceManager : public Loggable
 {

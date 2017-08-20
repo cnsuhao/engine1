@@ -3,7 +3,9 @@
 
 #pragma once
 #include "system/physiology/SEPupillaryResponse.h"
+PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 class CDM_DECL SESubstancePharmacodynamics : Loggable
 {

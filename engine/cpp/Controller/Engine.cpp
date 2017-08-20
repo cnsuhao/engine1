@@ -1,7 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
+PROTO_PUSH
 #include "bind/engine/EngineState.pb.h"
+PROTO_POP
 #include "Controller/Engine.h"
 #include "patient/SEPatient.h"
 #include "circuit/SECircuit.h"

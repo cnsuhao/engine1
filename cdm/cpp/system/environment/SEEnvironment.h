@@ -3,7 +3,9 @@
 
 #pragma once
 #include "system/SESystem.h"
+PROTO_PUSH
 #include "bind/cdm/Environment.pb.h"
+PROTO_POP
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"
 #include "system/environment/SEEnvironmentalConditions.h"

@@ -4,7 +4,9 @@
 #pragma once
 class SEAnesthesiaMachine;
 class SESubstanceManager;
+PROTO_PUSH
 #include "bind/cdm/AnesthesiaMachine.pb.h"
+PROTO_POP
 
 class CDM_DECL SEAnesthesiaMachineOxygenBottle : Loggable
 {

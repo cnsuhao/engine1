@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+PROTO_PUSH
 #include "bind/cdm/PatientNutrition.pb.h"
+PROTO_POP
 
 class CDM_DECL SENutrition : public Loggable
 {

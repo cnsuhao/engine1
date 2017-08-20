@@ -4,7 +4,6 @@
 #pragma once
 #include "system/SESystem.h"
 #include "patient/SENutrition.h"
-#include "bind/cdm/Physiology.pb.h"
 
 class CDM_DECL SEGastrointestinalSystem : public SESystem
 {

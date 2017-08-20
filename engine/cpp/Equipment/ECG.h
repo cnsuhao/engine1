@@ -4,7 +4,9 @@
 
 #pragma once
 #include "Controller/System.h"
+PROTO_PUSH
 #include "bind/engine/EngineEquipment.pb.h"
+PROTO_POP
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 

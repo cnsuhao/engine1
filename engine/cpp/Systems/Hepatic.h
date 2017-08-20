@@ -4,7 +4,6 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEHepaticSystem.h"
-#include "bind/engine/EnginePhysiology.pb.h"
 
 /**
  * @copydoc Physiology_HepaticystemData

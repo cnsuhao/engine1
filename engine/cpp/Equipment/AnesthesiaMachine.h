@@ -4,7 +4,9 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+PROTO_PUSH
 #include "bind/engine/EngineEquipment.pb.h"
+PROTO_POP
 class SEAnesthesiaMachineActionCollection;
 
 /**

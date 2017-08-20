@@ -1,7 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
+PROTO_PUSH
 #include "bind/cdm/Environment.pb.h"
+PROTO_POP
 
 class CDM_DECL SEActiveConditioning : public Loggable
 {

@@ -4,7 +4,9 @@
 #pragma once
 class SEEventHandler;
 class SENutrition;
+PROTO_PUSH
 #include "bind/cdm/Patient.pb.h"
+PROTO_POP
 
 class CDM_DECL SEPatient : public Loggable
 {

@@ -3,7 +3,9 @@
 
 #pragma once
 class SESubstanceManager;
+PROTO_PUSH
 #include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 class CDM_DECL SESystem : public Loggable
 {
