@@ -73,9 +73,6 @@ list(APPEND SOURCE ${PROPERTY_FILES})
 file(GLOB SCENARIO_FILES "cpp/scenario/*.h" "cpp/scenario/*.cpp")
 source_group("Scenario" FILES ${SCENARIO_FILES})
 list(APPEND SOURCE ${SCENARIO_FILES}) 
-file(GLOB SCENARIO_DATA_REQUEST_FILES "cpp/scenario/requests/*.h" "cpp/scenario/requests/*.cpp")
-source_group("Scenario\\Data Requests" FILES ${SCENARIO_DATA_REQUEST_FILES})
-list(APPEND SOURCE ${SCENARIO_DATA_REQUEST_FILES}) 
 # Engine
 file(GLOB ENGINE_FILES "cpp/engine/*.h" "cpp/engine/*.cpp")
 source_group("Engine" FILES ${ENGINE_FILES})
@@ -99,15 +96,15 @@ file(GLOB ENVIRONMENT_CONDITION_FILES "cpp/system/environment/conditions/*.h" "c
 source_group("System\\Environment\\Conditions" FILES ${ENVIRONMENT_CONDITION_FILES})
 list(APPEND SOURCE ${ENVIRONMENT_CONDITION_FILES}) 
 # System\Equipment
-file(GLOB ANESTHESIA_FILES "cpp/system/equipment/Anesthesia/*.h" "cpp/system/equipment/Anesthesia/*.cpp")
-source_group("System\\Equipment\\Anesthesia" FILES ${ANESTHESIA_FILES})
-file(GLOB ANESTHESIA_ACTION_FILES "cpp/system/equipment/Anesthesia/actions/*.h" "cpp/system/equipment/Anesthesia/actions/*.cpp")
-source_group("System\\Equipment\\Anesthesia\\Actions" FILES ${ANESTHESIA_ACTION_FILES})
-file(GLOB ECG_FILES "cpp/system/equipment/ElectroCardioGram/*.h" "cpp/system/equipment/ElectroCardioGram/*.cpp")
+file(GLOB ANESTHESIA_FILES "cpp/system/equipment/anesthesiamachine/*.h" "cpp/system/equipment/anesthesiamachine/*.cpp")
+source_group("System\\Equipment\\AnesthesiaMachine" FILES ${ANESTHESIA_FILES})
+file(GLOB ANESTHESIA_ACTION_FILES "cpp/system/equipment/anesthesiamachine/actions/*.h" "cpp/system/equipment/anesthesiamachine/actions/*.cpp")
+source_group("System\\Equipment\\AnesthesiaMachine\\Actions" FILES ${ANESTHESIA_ACTION_FILES})
+file(GLOB ECG_FILES "cpp/system/equipment/electrocardiogram/*.h" "cpp/system/equipment/electrocardiogram/*.cpp")
 source_group("System\\Equipment\\ECG" FILES ${ECG_FILES})
-file(GLOB INHALER_FILES "cpp/system/equipment/Inhaler/*.h" "cpp/system/equipment/Inhaler/*.cpp")
+file(GLOB INHALER_FILES "cpp/system/equipment/inhaler/*.h" "cpp/system/equipment/inhaler/*.cpp")
 source_group("System\\Equipment\\Inhaler" FILES ${INHALER_FILES})
-file(GLOB INHALER_ACTION_FILES "cpp/system/equipment/Inhaler/actions/*.h" "cpp/system/equipment/Inhaler/actions/*.cpp")
+file(GLOB INHALER_ACTION_FILES "cpp/system/equipment/inhaler/actions/*.h" "cpp/system/equipment/inhaler/actions/*.cpp")
 source_group("System\\Equipment\\Inhaler\\Actions" FILES ${INHALER_ACTION_FILES})
 
 list(APPEND SOURCE ${ANESTHESIA_FILES}) 
@@ -131,7 +128,7 @@ file(GLOB UTILS_UCE_FILES "cpp/utils/unitconversion/*.h" "cpp/utils/unitconversi
 list(REMOVE_ITEM UTILS_UCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utils/unitconversion/UnitConversionDriver.cpp)
 source_group("Utils\\UnitConversion" FILES ${UTILS_UCE_FILES})
 # Utils\TaskRunner
-file(GLOB UTILS_TASKRUNNER_FILES "cpp/utils/TaskRunner/*.h" "cpp/utils/TaskRunner/*.cpp")
+file(GLOB UTILS_TASKRUNNER_FILES "cpp/utils/taskrunner/*.h" "cpp/utils/taskrunner/*.cpp")
 source_group("Utils\\TaskRunner" FILES ${UTILS_TASKRUNNER_FILES})
 list(APPEND SOURCE ${UTILS_TASKRUNNER_FILES}) 
 #file(GLOB UTILS_XPSTL_FILES "cpp/utils/xpstl/*.h" "cpp/utils/xpstl/*.cpp")
@@ -142,14 +139,16 @@ list(APPEND SOURCE ${UTILS_UCE_FILES})
 #list(APPEND SOURCE ${UTILS_XPSTL_FILES}) 
 
 # The DLL we are building
-add_library(CommonDataModel SHARED ${SOURCE})
+add_library(CommonDataModel ${SOURCE})
 # Preprocessor Definitions and Include Paths
 # Common Compile Flags
 set(CDM_FLAGS)
 set(CDM_FLAGS "${CDM_FLAGS} -D EIGEN_MPL2_ONLY")
-set(CDM_FLAGS "${CDM_FLAGS} -D COMMONDATAMODEL_EXPORTS")
 set(CDM_FLAGS "${CDM_FLAGS} -D UNICODE")
 set(CDM_FLAGS "${CDM_FLAGS} -D _UNICODE")
+if(${BUILD_SHARED_LIBS}) 
+  set(CDM_FLAGS "${CDM_FLAGS} -D SHARED_CDM")
+endif()
 if(MSVC)
   set(CDM_FLAGS "${CDM_FLAGS} -Zm215")
   if(EX_PLATFORM EQUAL 64)
@@ -158,12 +157,12 @@ if(MSVC)
   endif()
   
 endif(MSVC)
+target_include_directories(CommonDataModel PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
 target_include_directories(CommonDataModel PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/)
 target_include_directories(CommonDataModel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 target_include_directories(CommonDataModel PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_include_directories(CommonDataModel PRIVATE ${LOG4CPP_INCLUDE_DIR})
-target_include_directories(CommonDataModel PRIVATE ${XercesC_INCLUDE_DIR})
-target_include_directories(CommonDataModel PRIVATE ${XSD_INCLUDE_DIR})
+target_include_directories(CommonDataModel PRIVATE ${PROTOBUF_INCLUDE_DIR})
 if(WIN32)
   target_include_directories(CommonDataModel PRIVATE ${DIRENT_INCLUDE_DIR})
 endif()
@@ -175,26 +174,29 @@ endif()
 target_link_libraries(CommonDataModel DataModelBindings)
 target_link_libraries(CommonDataModel log4cpp)
 
-add_custom_command(TARGET CommonDataModel POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModel> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
-if(WIN32)# Copy dll files to the bin
-  install(TARGETS CommonDataModel 
-          RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
-          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(TARGETS CommonDataModel 
-          RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
-          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(TARGETS CommonDataModel 
-          RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
-          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
-else()# Copy so files to the bin
-  install(TARGETS CommonDataModel 
-          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
-  install(TARGETS CommonDataModel 
-          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
-  install(TARGETS CommonDataModel 
-          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+if(${BUILD_SHARED_LIBS})
+  add_custom_command(TARGET CommonDataModel POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
+                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModel> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
+
+  if(WIN32)# Copy dll files to the bin
+    install(TARGETS CommonDataModel 
+            RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(TARGETS CommonDataModel 
+            RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(TARGETS CommonDataModel 
+            RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  else()# Copy so files to the bin
+    install(TARGETS CommonDataModel 
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+    install(TARGETS CommonDataModel 
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+    install(TARGETS CommonDataModel 
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+  endif()
 endif()
 # Copy lib/so files to the sdk/lib
 install(TARGETS CommonDataModel         

@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
@@ -30,43 +21,45 @@ SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::~SEFluidCompartmentLink()
 }
 
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-bool SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Load(const CDM::FluidCompartmentLinkData& in, SECircuitManager* circuits)
+void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Serialize(const cdm::FluidCompartmentLinkData& src, SEFluidCompartmentLink& dst, SECircuitManager* circuits)
 {
-  if (!SECompartmentLink::Load(in,circuits))
-    return false;
-  if (in.Path().present())
+  SECompartmentLink::Serialize(src.link(), dst);
+
+  if (!src.link().path().empty())
   {
     if (circuits == nullptr)
     {
-      Error("Link is mapped to circuit path, "+in.Path().get()+", but no circuit manager was provided, cannot load");
-      return false;
+      dst.Error("Link is mapped to circuit path, "+ src.link().path() +", but no circuit manager was provided, cannot load");
+      return;
     }
-    SEFluidCircuitPath* path = circuits->GetFluidPath(in.Path().get());
+    SEFluidCircuitPath* path = circuits->GetFluidPath(src.link().path());
     if (path == nullptr)
     {
-      Error("Link is mapped to circuit path, " + in.Path().get() + ", but provided circuit manager did not have that path");
-      return false;
+      dst.Error("Link is mapped to circuit path, " + src.link().path() + ", but provided circuit manager did not have that path");
+      return;
     }
-    MapPath(*path);
+    dst.MapPath(*path);
   }
   else
   {
-    if (in.Flow().present())
-      const_cast<SEScalarVolumePerTime&>(GetFlow()).Load(in.Flow().get());
+    if (src.has_flow())
+      SEScalarVolumePerTime::Load(src.flow(), dst.GetFlow());
   }
-  return true;
 }
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Unload(CDM::FluidCompartmentLinkData& data)
+void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Serialize(const SEFluidCompartmentLink& src, cdm::FluidCompartmentLinkData& dst)
 {
-  SECompartmentLink::Unload(data);
-  data.SourceCompartment(m_SourceCmpt.GetName());
-  data.TargetCompartment(m_TargetCmpt.GetName());
-  if (m_Path != nullptr)
-    data.Path(m_Path->GetName());
-  // Even if you have a path, I am unloading everything, this makes the xml actually usefull...
-  if (HasFlow())
-    data.Flow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(GetFlow().Unload()));  
+  SECompartmentLink::Serialize(src,*dst.mutable_link());
+  dst.mutable_link()->set_sourcecompartment(src.m_SourceCmpt.GetName());
+  dst.mutable_link()->set_targetcompartment(src.m_TargetCmpt.GetName());
+  if (src.m_Path != nullptr)
+    dst.mutable_link()->set_path(src.m_Path->GetName());
+  // Yeah, I know
+  // But, these will only modify member variables if they are being used as temporary variables
+  // Even if you have a path, I am unloading everything, this makes the pba actually usefull...
+  SEFluidCompartmentLink& mutable_src = const_cast<SEFluidCompartmentLink&>(src);
+  if (src.HasFlow())
+    dst.set_allocated_flow(SEScalarVolumePerTime::Unload(mutable_src.GetFlow()));
 }
 
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>

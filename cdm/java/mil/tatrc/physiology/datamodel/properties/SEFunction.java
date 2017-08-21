@@ -1,22 +1,20 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.properties;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
+import org.jfree.util.Log;
+
+import com.google.protobuf.Internal.DoubleList;
+import com.kitware.physiology.cdm.Properties.ArrayData;
+import com.kitware.physiology.cdm.Properties.DoubleArrayData;
+import com.kitware.physiology.cdm.Properties.DoubleArrayData.Builder;
+import com.kitware.physiology.cdm.Properties.FunctionData;
+
 import mil.tatrc.physiology.datamodel.SEEqualOptions;
-import mil.tatrc.physiology.datamodel.bind.FunctionData;
 import mil.tatrc.physiology.datamodel.exceptions.InvalidUnitException;
 import mil.tatrc.physiology.utilities.DoubleUtils;
 import mil.tatrc.physiology.utilities.StringUtils;
@@ -49,84 +47,6 @@ public class SEFunction
     return true;
   }
   
-  public static synchronized boolean equals(double[] from, double[] to)
-  {
-    return equals(from, "", to, "", null);
-  }
-  public static synchronized boolean equals(double[] from, double[] to, SEEqualOptions options)
-  {
-    return equals(from, "", to, "", options);
-  }
-  public static synchronized boolean equals(double[] from, double[] to, SEEqualOptions options, String name)
-  {
-    return equals(from, "", to, "", options, name);
-  }
-  public static synchronized boolean equals(double[] from, String fromUnits, double[] to, String toUnits, SEEqualOptions options)
-  {
-    return equals(from, fromUnits, to, toUnits, options, null);
-  }
-  public static synchronized boolean equals(double[] from, String fromUnits, double[] to, String toUnits, SEEqualOptions options, String name)
-  {
-    if (from == to)
-      return true;
-    if (from == null || to == null)
-      return false;
-
-    if (name == null)
-      name = "SEArray";
-
-    if (from == null || to == null)
-    {
-      if (options != null)
-        options.track(name, from, to);
-      return false;
-    }
-
-    boolean equals = true;
-    boolean forceReturn = true;
-    if (options != null)
-    {
-      options.pushTrack(name);
-      forceReturn = options.returnOnFirstDiff;
-    }
-
-    if (from.length != to.length)
-    {
-      if (options != null)
-      {
-        options.track("length", from.length, to.length);
-        options.trackToMap();
-      }
-      return false;
-    }
-
-    if (!UnitConverter.isCompatibleWithUnit(fromUnits, toUnits))
-    {
-      if (options != null)
-      {
-        options.track("units incompatible", fromUnits, toUnits);
-        options.trackToMap();
-      }
-      return false;
-    }
-
-    for (int i = 0; i < to.length; i++)
-    {
-      if (!DoubleUtils.equals(from[i], fromUnits, to[i], toUnits, options))
-      {
-        if (options != null)
-          options.track("Array[" + i + "]", from[i], fromUnits, to[i], toUnits);
-        if (forceReturn)
-          return false;
-        equals = false;
-      }
-    }
-
-    if (options != null)
-      options.trackToMap();
-    return equals;
-  }
-  
   public int hashCode()
   {
     int code=1;
@@ -139,52 +59,30 @@ public class SEFunction
     return code;
   }
 
-  public boolean loadData(Object data) throws ClassCastException
+  public static void load(FunctionData src, SEFunction dest)
   {
-    if (data instanceof FunctionData)
-      return load((FunctionData) data);
-    else if (data instanceof SEFunction)
-      return set((SEFunction) data);
-    return false;
+    if (src == null)
+      return;
+    dest.setDependent(SEArray.toArray(src.getDependent().getValueList()),src.getDependentUnit());
+    dest.setIndependent(SEArray.toArray(src.getIndependent().getValueList()),src.getIndependentUnit());
+    if(!dest.isValid())
+      Log.error("Invalid function has been loaded");
   }
-
-  public boolean load(FunctionData in)
+  public static FunctionData unload(SEFunction src)
   {
-    if(!isValidDependentUnit(in.getDependentUnit()))
-      return false;
-    if(!isValidIndependentUnit(in.getIndependentUnit()))
-      return false;
-    this.dependentUnit=in.getDependentUnit();
-    this.dependent=SEArray.toArray(in.getDependent().getDoubleList());
-    
-    this.independentUnit=in.getIndependentUnit();
-    this.independent=SEArray.toArray(in.getIndependent().getDoubleList());
-    return this.isValid();
-  }
-
-  public Object unloadData()
-  {
-    return unload();
-  }
-  
-  public FunctionData unload()
-  {
-    if(!this.isValid())
+    if(!src.isValid())
       return null;
-    FunctionData to = CDMSerializer.objFactory.createFunctionData();
-    unload(to);
-    return to;
+    FunctionData.Builder dst = FunctionData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-
-  protected void unload(FunctionData to)
+  protected static void unload(SEFunction src, FunctionData.Builder dst)
   {
-    to.setDependentUnit(this.dependentUnit);
-    to.setDependent(CDMSerializer.objFactory.createDoubleArray());
-    SEArray.toList(to.getDependent().getDoubleList(),this.dependent);
+    dst.setDependentUnit(src.dependentUnit);
+    SEArray.toData(dst.getDependentBuilder(),src.dependent);
     
-    to.setIndependentUnit(this.independentUnit);
-    to.setIndependent(CDMSerializer.objFactory.createDoubleArray());
-    SEArray.toList(to.getIndependent().getDoubleList(),this.independent);
+    dst.setIndependentUnit(src.independentUnit);
+    SEArray.toData(dst.getIndependentBuilder(),src.independent);
   }
   
   public boolean isValid()
@@ -287,7 +185,7 @@ public class SEFunction
     }
 
     boolean equals = true;
-    if (!SEFunction.equals(from.dependent, from.dependentUnit, to.dependent, to.dependentUnit, options, "Dependent"))
+    if (!SEArray.equals(from.dependent, from.dependentUnit, to.dependent, to.dependentUnit, options, "Dependent"))
     {
       if (forceReturn)
       {
@@ -298,7 +196,7 @@ public class SEFunction
       equals = false;
     }
 
-    if (!SEFunction.equals(from.independent, from.independentUnit, to.independent, to.independentUnit, options, "Independent"))
+    if (!SEArray.equals(from.independent, from.independentUnit, to.independent, to.independentUnit, options, "Independent"))
     {
       if (forceReturn)
       {

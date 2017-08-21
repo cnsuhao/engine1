@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 
@@ -19,8 +10,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceConcentration.h"
 
-#include "system/environment/SEActiveCooling.h"
-#include "system/environment/SEActiveHeating.h"
+#include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"
 
 #include "properties/SEScalarVolume.h"
@@ -28,7 +18,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarPowerPerAreaTemperatureToTheFourth.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarHeatCapacitancePerAmount.h"
@@ -43,7 +33,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarLength.h"
 
-Environment::Environment(BioGears& bg) : SEEnvironment(bg.GetSubstances()), m_data(bg)
+Environment::Environment(PulseController& data) : SEEnvironment(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -85,7 +75,7 @@ void Environment::Clear()
 //--------------------------------------------------------------------------------------------------
 void Environment::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   //Initialize all System Data outputs (inputs should be populated elsewhere)
   GetConvectiveHeatLoss().SetValue(0.0, PowerUnit::W);
@@ -105,25 +95,27 @@ void Environment::Initialize()
   m_PatientEquivalentDiameter_m = pow(Convert(patientMass_g / patientDensity_g_Per_mL, VolumeUnit::mL, VolumeUnit::m3) / (pi*patientHeight_m), 0.5);
 }
 
-bool Environment::Load(const CDM::BioGearsEnvironmentData& in)
+void Environment::Load(const pulse::EnvironmentData& src, Environment& dst)
 {
-  if (!SEEnvironment::Load(in))
-    return false;
-  BioGearsSystem::LoadState();
-  m_PatientEquivalentDiameter_m = in.PatientEquivalentDiameter_m();
-  StateChange();
-  return true;
+  Environment::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::BioGearsEnvironmentData* Environment::Unload() const
+void Environment::Serialize(const pulse::EnvironmentData& src, Environment& dst)
 {
-  CDM::BioGearsEnvironmentData* data = new CDM::BioGearsEnvironmentData();
-  Unload(*data);
-  return data;
+  SEEnvironment::Serialize(src.common(), dst);
+  dst.m_PatientEquivalentDiameter_m = src.patientequivalentdiameter_m();
 }
-void Environment::Unload(CDM::BioGearsEnvironmentData& data) const
+
+pulse::EnvironmentData* Environment::Unload(const Environment& src)
 {
-  SEEnvironment::Unload(data);
-  data.PatientEquivalentDiameter_m(m_PatientEquivalentDiameter_m);
+  pulse::EnvironmentData* dst = new pulse::EnvironmentData();
+  Environment::Serialize(src, *dst);
+  return dst;
+}
+void Environment::Serialize(const Environment& src, pulse::EnvironmentData& dst)
+{
+  SEEnvironment::Serialize(src, *dst.mutable_common());
+  dst.set_patientequivalentdiameter_m(src.m_PatientEquivalentDiameter_m);
 }
 
 void Environment::SetUp()
@@ -135,24 +127,24 @@ void Environment::SetUp()
   //Circuits
   m_EnvironmentCircuit = &m_data.GetCircuits().GetExternalTemperatureCircuit();
   //Compartments
-  m_AmbientGases = m_data.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
-  m_AmbientAerosols = m_data.GetCompartments().GetLiquidCompartment(BGE::EnvironmentCompartment::Ambient);
+  m_AmbientGases = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+  m_AmbientAerosols = m_data.GetCompartments().GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
   //Nodes
-  m_ThermalEnvironment = m_EnvironmentCircuit->GetNode(BGE::ExternalTemperatureNode::Ambient);
-  m_SkinNode = m_EnvironmentCircuit->GetNode(BGE::ExternalTemperatureNode::ExternalSkin);
-  m_ClothingNode = m_EnvironmentCircuit->GetNode(BGE::ExternalTemperatureNode::Clothing);
-  m_EnclosureNode = m_EnvironmentCircuit->GetNode(BGE::ExternalTemperatureNode::Enclosure);
+  m_ThermalEnvironment = m_EnvironmentCircuit->GetNode(pulse::ExternalTemperatureNode::Ambient);
+  m_SkinNode = m_EnvironmentCircuit->GetNode(pulse::ExternalTemperatureNode::ExternalSkin);
+  m_ClothingNode = m_EnvironmentCircuit->GetNode(pulse::ExternalTemperatureNode::Clothing);
+  m_EnclosureNode = m_EnvironmentCircuit->GetNode(pulse::ExternalTemperatureNode::Enclosure);
   //Paths
-  m_SkinToClothing = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ExternalSkinToClothing);
-  m_ActiveHeatTransferRatePath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::GroundToClothing);
-  m_ActiveTemperaturePath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::GroundToActive);
-  m_ActiveSwitchPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ActiveToClothing);
-  m_ClothingToEnclosurePath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ClothingToEnclosure);
-  m_GroundToEnclosurePath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::GroundToEnclosure);
-  m_ClothingToEnvironmentPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ClothingToEnvironment);
-  m_GroundToEnvironmentPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::GroundToEnvironment);
-  m_EnvironmentSkinToGroundPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ExternalSkinToGround);
-  m_EnvironmentCoreToGroundPath = m_EnvironmentCircuit->GetPath(BGE::ExternalTemperaturePath::ExternalCoreToGround);
+  m_SkinToClothing = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ExternalSkinToClothing);
+  m_ActiveHeatTransferRatePath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::GroundToClothing);
+  m_ActiveTemperaturePath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::GroundToActive);
+  m_ActiveSwitchPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ActiveToClothing);
+  m_ClothingToEnclosurePath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ClothingToEnclosure);
+  m_GroundToEnclosurePath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::GroundToEnclosure);
+  m_ClothingToEnvironmentPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ClothingToEnvironment);
+  m_GroundToEnvironmentPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::GroundToEnvironment);
+  m_EnvironmentSkinToGroundPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ExternalSkinToGround);
+  m_EnvironmentCoreToGroundPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ExternalCoreToGround);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -168,38 +160,42 @@ void Environment::StateChange()
   if (m_AmbientGases == nullptr ||m_AmbientAerosols == nullptr)
     return;
 
-  // Add Gases to the environment
-  //Check to make sure fractions sum to 1.0  
-  double totalFraction = 0.0;
-  for (auto s : GetConditions().GetAmbientGases())
+  if (GetConditions().GetAmbientGases().size() > 0)
   {
-    SESubstance& sub = s->GetSubstance();
-    totalFraction += s->GetFractionAmount().GetValue();
-    m_data.GetSubstances().AddActiveSubstance(sub);
+    // Add Gases to the environment
+    //Check to make sure fractions sum to 1.0  
+    double totalFraction = 0.0;
+    for (auto s : GetConditions().GetAmbientGases())
+    {
+      SESubstance& sub = s->GetSubstance();
+      totalFraction += s->GetFractionAmount().GetValue();
+      m_data.GetSubstances().AddActiveSubstance(sub);
+    }
+    if (std::abs(1.0 - totalFraction) > 1e-6) //Allow for a little bit of numerical error
+    {
+      /// \error Fatal: Total ambient/environment gas volume fractions must sum to 1.0.
+      std::stringstream ss;
+      ss << "Total ambient/environment gas volume fractions must sum to 1.0. Current total fraction is " << totalFraction;
+      Fatal(ss);
+    }
+    // Reset what we have
+    for (SEGasSubstanceQuantity* subQ : m_AmbientGases->GetSubstanceQuantities())
+      subQ->SetToZero();
+    //Update the substance values on the Ambient Node based on the Action/File settings
+    //We want to set an ambient volume fraction for all active gases
+    for (SESubstanceFraction* subFrac : GetConditions().GetAmbientGases())
+    {
+      SEGasSubstanceQuantity* subQ = m_AmbientGases->GetSubstanceQuantity(subFrac->GetSubstance());
+      subQ->GetVolumeFraction().Set(subFrac->GetFractionAmount());
+      //Set substance volumes to be infinite when compartment/node volume is also infinite
+      subQ->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+    }
+    m_AmbientGases->GetPressure().Set(GetConditions().GetAtmosphericPressure());
+    m_AmbientGases->Balance(BalanceGasBy::VolumeFraction);
   }
-  if (std::abs(1.0 - totalFraction) > 1e-6) //Allow for a little bit of numerical error
-  {
-    /// \error Fatal: Total ambient/environment gas volume fractions must sum to 1.0.
-    std::stringstream ss;
-    ss << "Total ambient/environment gas volume fractions must sum to 1.0. Current total fraction is " << totalFraction;
-    Fatal(ss);
-  }
-  // Reset what we have
-  for (SEGasSubstanceQuantity* subQ : m_AmbientGases->GetSubstanceQuantities())
-    subQ->SetToZero();
-  //Update the substance values on the Ambient Node based on the Action/File settings
-  //We want to set an ambient volume fraction for all active gases
-  for(SESubstanceFraction* subFrac : GetConditions().GetAmbientGases())
-  {    
-    SEGasSubstanceQuantity* subQ = m_AmbientGases->GetSubstanceQuantity(subFrac->GetSubstance());
-    subQ->GetVolumeFraction().Set(subFrac->GetFractionAmount());
-    //Set substance volumes to be infinite when compartment/node volume is also infinite
-    subQ->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
-  }
-  m_AmbientGases->GetPressure().Set(GetConditions().GetAtmosphericPressure());
-  m_AmbientGases->Balance(BalanceGasBy::VolumeFraction);
-
-  // Add aerosols to the environment
+  // Add aerosols to the environment compartment
+  // Note we made the design decision that if you want to get rid of a sub
+  // you need to provide a zero concentration.
   for (auto s : GetConditions().GetAmbientAerosols())
   {
     SESubstance& sub = s->GetSubstance();
@@ -218,8 +214,8 @@ void Environment::AtSteadyState()
 {
   if (m_data.GetState() == EngineState::AtInitialStableState)
   {
-    if (m_data.GetConditions().HasInitialEnvironment())
-      ProcessChange(*m_data.GetConditions().GetInitialEnvironment());
+    if (m_data.GetConditions().HasInitialEnvironmentConditions())
+      ProcessChange(*m_data.GetConditions().GetInitialEnvironmentConditions());
   }
 }
 
@@ -299,7 +295,7 @@ void Environment::ProcessActions()
   //Set the temperature source to zero
   m_ActiveTemperaturePath->GetNextTemperatureSource().SetValue(0.0, TemperatureUnit::K);
   //Open the switch
-  m_ActiveSwitchPath->SetNextSwitch(CDM::enumOpenClosed::Open);    
+  m_ActiveSwitchPath->SetNextSwitch(cdm::eGate::Open);    
 
   if (!m_EnvironmentActions->HasThermalApplication())
   {
@@ -320,7 +316,7 @@ void Environment::ProcessActions()
 
   if (ta->HasActiveHeating())
   {
-    SEActiveHeating& ah = ta->GetActiveHeating();
+    SEActiveConditioning& ah = ta->GetActiveHeating();
     if (ah.HasSurfaceArea() && ah.HasSurfaceAreaFraction())
     {
       ///\error Warning: SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.
@@ -359,7 +355,7 @@ void Environment::ProcessActions()
   dEffectiveAreaFraction = 0.0;
   if (ta->HasActiveCooling())
   {
-    SEActiveCooling& ac = ta->GetActiveCooling();
+    SEActiveConditioning& ac = ta->GetActiveCooling();
     if (ac.HasSurfaceArea() && ac.HasSurfaceAreaFraction())
     {
       ///\error Warning: SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.
@@ -445,7 +441,7 @@ void Environment::ProcessActions()
     m_ActiveTemperaturePath->GetNextTemperatureSource().SetValue(dAppliedTemperature_K, TemperatureUnit::K);
 
     //Close the switch
-    m_ActiveSwitchPath->SetNextSwitch(CDM::enumOpenClosed::Closed);
+    m_ActiveSwitchPath->SetNextSwitch(cdm::eGate::Closed);
   }
 }
 
@@ -504,7 +500,7 @@ void Environment::CalculateSupplementalValues()
 
 
   //Water convective heat transfer properties
-  if (GetConditions().GetSurroundingType() == CDM::enumSurroundingType::Water)
+  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
   {
     double dWaterTemperature_C = GetConditions().GetAmbientTemperature(TemperatureUnit::C);
     double dT = Convert(dWaterTemperature_C, TemperatureUnit::C, TemperatureUnit::K) / 298.15;
@@ -526,7 +522,7 @@ void Environment::CalculateSupplementalValues()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateRadiation()
 {  
-  if (GetConditions().GetSurroundingType() == CDM::enumSurroundingType::Water)
+  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
   {
     //Submerged - therefore, no radiation
     
@@ -593,7 +589,7 @@ void Environment::CalculateConvection()
 {
   double dConvectiveHeatTransferCoefficient_WPerM2_K = 0.0;
 
-  if (GetConditions().GetSurroundingType() == CDM::enumSurroundingType::Water)
+  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
   {
     //Submerged - therefore, convection is most important
     double dClothingTemperature_K = m_ClothingNode->GetTemperature().GetValue(TemperatureUnit::K);
@@ -657,7 +653,7 @@ void Environment::CalculateConvection()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateEvaporation()
 {  
-  if (GetConditions().GetSurroundingType() == CDM::enumSurroundingType::Water)
+  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
   {
     //Submerged - therefore, no evaporation
 

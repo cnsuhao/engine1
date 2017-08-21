@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarAmountPerTime.h"
@@ -19,15 +10,6 @@ AmountPerTimeUnit AmountPerTimeUnit::umol_Per_s("umol/s");
 AmountPerTimeUnit AmountPerTimeUnit::mmol_Per_min("mmol/min");
 AmountPerTimeUnit AmountPerTimeUnit::pmol_Per_min("pmol/min");
 AmountPerTimeUnit AmountPerTimeUnit::umol_Per_min("umol/min");
-
-CDM::ScalarAmountPerTimeData* SEScalarAmountPerTime::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarAmountPerTimeData* data(new CDM::ScalarAmountPerTimeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool AmountPerTimeUnit::IsValidUnit(const std::string& unit)
 {
@@ -63,4 +45,26 @@ const AmountPerTimeUnit& AmountPerTimeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid AmountPerTime unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarAmountPerTime::Load(const cdm::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
+{
+  SEScalarAmountPerTime::Serialize(src, dst);
+}
+void SEScalarAmountPerTime::Serialize(const cdm::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
+{
+  SEScalarQuantity<AmountPerTimeUnit>::Serialize(src.scalaramountpertime(), dst);
+}
+
+cdm::ScalarAmountPerTimeData* SEScalarAmountPerTime::Unload(const SEScalarAmountPerTime& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarAmountPerTimeData* dst = new cdm::ScalarAmountPerTimeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarAmountPerTime::Serialize(const SEScalarAmountPerTime& src, cdm::ScalarAmountPerTimeData& dst)
+{
+  SEScalarQuantity<AmountPerTimeUnit>::Serialize(src, *dst.mutable_scalaramountpertime());
 }

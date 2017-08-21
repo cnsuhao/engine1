@@ -1,18 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 #define _USE_MATH_DEFINES
 
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
@@ -21,9 +13,10 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "substance/SESubstanceFraction.h"
 #include "utils/DataTrack.h"
+#include "utils/TimingProfile.h"
 #include <math.h>
 
 
@@ -38,7 +31,7 @@ specific language governing permissions and limitations under the License.
 /// and variable values for the circuit elements.The outputs are the resultant flows and pressures
 /// on the circuit nodes and paths. These are then stored in a file in sTestDirectory
 //--------------------------------------------------------------------------------------------------
-void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, const std::string&  sTestDirectory)
+void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, const std::string&  sTestDirectory)
 {
   TimingProfile tmr;
   tmr.Start("Test");
@@ -48,24 +41,24 @@ void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryCon
   std::ofstream fileCircuit;
   std::ofstream fileGraph;
   
-  BioGears bg(sTestDirectory + "\\AnesthesiaMachineCircuitAndTransportTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
-  SEEnvironmentalConditions env(bg.GetSubstances());
-  env.LoadFile("./environments/Standard.xml");
-  SEGasCompartment* cEnv = bg.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
+  PulseController pc(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
+  SEEnvironmentalConditions env(pc.GetSubstances());
+  env.LoadFile("./environments/Standard.pba");
+  SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {
-    bg.GetSubstances().AddActiveSubstance(subFrac->GetSubstance());
+    pc.GetSubstances().AddActiveSubstance(subFrac->GetSubstance());
     cEnv->GetSubstanceQuantity(subFrac->GetSubstance())->GetVolumeFraction().Set(subFrac->GetFractionAmount());
   }
-  bg.GetSubstances().InitializeGasCompartments();
+  pc.GetSubstances().InitializeGasCompartments();
 
   //set environment pressure
-  SEFluidCircuitNode* nEnvironment = bg.GetCircuits().GetFluidNode(BGE::EnvironmentNode::Ambient);
+  SEFluidCircuitNode* nEnvironment = pc.GetCircuits().GetFluidNode(pulse::EnvironmentNode::Ambient);
   nEnvironment->GetPressure().Set(env.GetAtmosphericPressure());
   nEnvironment->GetNextPressure().Set(env.GetAtmosphericPressure());
   
@@ -76,31 +69,31 @@ void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryCon
   std::string sTransportFileName;
   if (config == AnesthesiaMachineSolo)
   {
-    amCircuit = &bg.GetCircuits().GetAnesthesiaMachineCircuit();
-    amGraph = &bg.GetCompartments().GetAnesthesiaMachineGraph();
-    sCircuitFileName = "\\AnesthesiaMachineCircuitOutput.txt";
-    sTransportFileName = "\\AnesthesiaMachineTransportOutput.txt";
+    amCircuit = &pc.GetCircuits().GetAnesthesiaMachineCircuit();
+    amGraph = &pc.GetCompartments().GetAnesthesiaMachineGraph();
+    sCircuitFileName = "/AnesthesiaMachineCircuitOutput.txt";
+    sTransportFileName = "/AnesthesiaMachineTransportOutput.txt";
 
     //Allow things to flow to ground, since the respiratory circuit isn't here
     //This approximates the total respiratory system resistance
-    SEFluidCircuitPath* AnesthesiaConnectionToEnvironment = amCircuit->GetPath(BGE::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
+    SEFluidCircuitPath* AnesthesiaConnectionToEnvironment = amCircuit->GetPath(pulse::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
     AnesthesiaConnectionToEnvironment->GetResistanceBaseline().SetValue(1.5, FlowResistanceUnit::cmH2O_s_Per_L);
     AnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(1.5, FlowResistanceUnit::cmH2O_s_Per_L);
   }
   else if (config == RespiratoryWithAnesthesiaMachine)
   {
-    bg.GetSubstances().InitializeGasCompartments();
+    pc.GetSubstances().InitializeGasCompartments();
 
-    amCircuit = &bg.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
-    amGraph = &bg.GetCompartments().GetRespiratoryAndAnesthesiaMachineGraph();
-    sCircuitFileName = "\\RespiratoryAndAnesthesiaMachineCircuitOutput.txt";
-    sTransportFileName = "\\RespiratoryAndAnesthesiaMachineTransportOutput.txt";
+    amCircuit = &pc.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
+    amGraph = &pc.GetCompartments().GetRespiratoryAndAnesthesiaMachineGraph();
+    sCircuitFileName = "/RespiratoryAndAnesthesiaMachineCircuitOutput.txt";
+    sTransportFileName = "/RespiratoryAndAnesthesiaMachineTransportOutput.txt";
 
     //Precharge the stomach to prevent negative volume
-    amCircuit->GetNode(BGE::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());
-    amCircuit->GetNode(BGE::RespiratoryNode::Stomach)->GetPressure().Set(env.GetAtmosphericPressure());
+    amCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());
+    amCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetPressure().Set(env.GetAtmosphericPressure());
 
-    SEFluidCircuitPath *driverPath = amCircuit->GetPath(BGE::RespiratoryPath::EnvironmentToRespiratoryMuscle);
+    SEFluidCircuitPath *driverPath = amCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
     driverPath->GetPressureSourceBaseline().SetValue(-12.0, PressureUnit::cmH2O);
     driverPath->GetNextPressureSource().SetValue(-12.0, PressureUnit::cmH2O);
   }
@@ -110,14 +103,14 @@ void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryCon
   }
   
   // Pull Pressure Source Paths
-  SEFluidCircuitPath* EnvironmentToVentilatorPath = amCircuit->GetPath(BGE::AnesthesiaMachinePath::EnvironmentToVentilator);
-  SEFluidCircuitPath* EnvironmentToReliefValve = amCircuit->GetPath(BGE::AnesthesiaMachinePath::EnvironmentToReliefValve);
-  SEFluidCircuitPath* GasSourceToGasInlet = amCircuit->GetPath(BGE::AnesthesiaMachinePath::GasSourceToGasInlet);
-  SEFluidCircuitPath* SelectorToEnvironment = amCircuit->GetPath(BGE::AnesthesiaMachinePath::SelectorToEnvironment);
-  SEFluidCircuitPath* EnvironmentToGasSource = amCircuit->GetPath(BGE::AnesthesiaMachinePath::EnvironmentToGasSource);
+  SEFluidCircuitPath* EnvironmentToVentilatorPath = amCircuit->GetPath(pulse::AnesthesiaMachinePath::EnvironmentToVentilator);
+  SEFluidCircuitPath* EnvironmentToReliefValve = amCircuit->GetPath(pulse::AnesthesiaMachinePath::EnvironmentToReliefValve);
+  SEFluidCircuitPath* GasSourceToGasInlet = amCircuit->GetPath(pulse::AnesthesiaMachinePath::GasSourceToGasInlet);
+  SEFluidCircuitPath* SelectorToEnvironment = amCircuit->GetPath(pulse::AnesthesiaMachinePath::SelectorToEnvironment);
+  SEFluidCircuitPath* EnvironmentToGasSource = amCircuit->GetPath(pulse::AnesthesiaMachinePath::EnvironmentToGasSource);
 
-  SEGasTransporter txpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, bg.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, bg.GetLogger());
+  SEGasTransporter txpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, pc.GetLogger());
+  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
   
   //Execution parameters
   double time = 0;
@@ -165,15 +158,15 @@ void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryCon
   fileGraph.close();
   std::stringstream ss;
   ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-  bg.GetLogger()->Info(ss.str(), "AnesthesiaMachineCircuitAndTransportTest");
+  pc.GetLogger()->Info(ss.str(), "AnesthesiaMachineCircuitAndTransportTest");
 }
 
-void BioGearsEngineTest::AnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   AnesthesiaMachineCircuitAndTransportTest(AnesthesiaMachineSolo, sTestDirectory);
 }
 
-void BioGearsEngineTest::RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   AnesthesiaMachineCircuitAndTransportTest(RespiratoryWithAnesthesiaMachine, sTestDirectory);
 }

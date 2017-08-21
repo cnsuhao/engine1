@@ -608,14 +608,6 @@ Investigations into the effects of biological variability and parameter (inputs 
 
 # Appendices
 
-## Data Model Implementation
-
-BioGears
-
-BioGearsConfiguration
-
-BioGearsEngine
-
 ## Acronyms
 
 CDM - Common Data Model

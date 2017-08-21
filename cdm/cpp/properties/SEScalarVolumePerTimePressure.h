@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarVolumePerTimePressureData.hxx"
 
-class DLL_DECL VolumePerTimePressureUnit : public CCompoundUnit
+class CDM_DECL VolumePerTimePressureUnit : public CCompoundUnit
 {
 public:
   VolumePerTimePressureUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -29,11 +19,15 @@ public:
   static const VolumePerTimePressureUnit mL_Per_min_mmHg;
 };
 
-class DLL_DECL SEScalarVolumePerTimePressure : public SEScalarQuantity<VolumePerTimePressureUnit>
+class CDM_DECL SEScalarVolumePerTimePressure : public SEScalarQuantity<VolumePerTimePressureUnit>
 {
 public:
   SEScalarVolumePerTimePressure() {}
   virtual ~SEScalarVolumePerTimePressure() {}
 
-  CDM::ScalarVolumePerTimePressureData* Unload() const;
+  static void Load(const cdm::ScalarVolumePerTimePressureData& src, SEScalarVolumePerTimePressure& dst);
+  static cdm::ScalarVolumePerTimePressureData* Unload(const SEScalarVolumePerTimePressure& src);
+protected:
+  static void Serialize(const cdm::ScalarVolumePerTimePressureData& src, SEScalarVolumePerTimePressure& dst);
+  static void Serialize(const SEScalarVolumePerTimePressure& src, cdm::ScalarVolumePerTimePressureData& dst);
 };

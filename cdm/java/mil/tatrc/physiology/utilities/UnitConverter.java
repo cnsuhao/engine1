@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.utilities;
 
@@ -32,34 +23,13 @@ public class UnitConverter
   /** Loads Unit Conversion DLL */
   static
   {
-//    String UCEDefsPath = System.getProperty("user.dir") + "/UCEDefs.txt";
-//    String UCEDefsHomePath = System.getProperty("user.home") + "/UCEDefs.txt";
-    
-//    try{Files.copy(new File(UCEDefsPath).toPath(), new File(UCEDefsHomePath).toPath(), REPLACE_EXISTING);}
-//    catch (IOException e){}
+  	String location = System.getProperty("user.dir")+"/release";
+    if (System.getProperty("sun.arch.data.model").equals("32"))
+      location += "32";
     List<String>libs = new ArrayList<String>();
-    if(System.getProperty("os.name").toLowerCase().startsWith("win"))
-    {
-      if(!FileUtils.loadLibrary("xerces-c_3_1"))      // This is for building code synthesis with xcode
-        throw new RuntimeException("Could not find xerces library");    
-      libs.add("log4cpp");
-    }
-    else if (System.getProperty("os.name").toLowerCase().startsWith("mac"))
-    {
-      libs.add("libxerces-c-3.1");
-      libs.add("liblog4cpp");
-    }
-    else
-      libs.add("liblog4cpp");
-    libs.add("DataModelBindings");
-    libs.add("CommonDataModel");
-    libs.add("CommonDataModelUnitTests");
-    libs.add("CommonDataModelJNI");          
-    if(!FileUtils.loadLibraries(libs))
+    libs.add("PulseJNI");
+    if(!FileUtils.loadLibraries(libs,location))
       throw new RuntimeException("Could not find all dependent libraries : " + libs);
-    
-//    try{ Files.delete(new File(UCEDefsHomePath).toPath());}
-//    catch (Exception e){}
   }
   
   /**
@@ -78,7 +48,7 @@ public class UnitConverter
       return false;
     }
 
-    nativeInitialize(workingDirectory);
+    //nativeInitialize(workingDirectory);
 
     return true;
   }

@@ -1,34 +1,25 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-
-#include "bind/enumBioGearsAirwayMode.hxx"
-#include "system/equipment/Anesthesia/SEAnesthesiaMachine.h"
-#include "bind/BioGearsAnesthesiaMachineData.hxx"
-
+#include "Controller/System.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+PROTO_PUSH
+#include "bind/engine/EngineEquipment.pb.h"
+PROTO_POP
 class SEAnesthesiaMachineActionCollection;
 
 /**
  * @brief 
  * Generic anesthesia machine for positive pressure ventilation.
  */    
-class BIOGEARS_API AnesthesiaMachine : public SEAnesthesiaMachine, public BioGearsSystem
+class PULSE_DECL AnesthesiaMachine : public SEAnesthesiaMachine, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend PulseController;
+  friend class PulseEngineTest;
 protected:
-  AnesthesiaMachine(BioGears& bg);
-  BioGears& m_data;
+  AnesthesiaMachine(PulseController& pc);
+  PulseController& m_data;
 
 public:
   virtual ~AnesthesiaMachine();
@@ -38,11 +29,11 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsAnesthesiaMachineData& in);
-  virtual CDM::BioGearsAnesthesiaMachineData* Unload() const;
+  static void Load(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst);
+  static pulse::AnesthesiaMachineData* Unload(const AnesthesiaMachine& src);
 protected:
-  virtual void Unload(CDM::BioGearsAnesthesiaMachineData& data) const;
+  static void Serialize(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst);
+  static void Serialize(const AnesthesiaMachine& src, pulse::AnesthesiaMachineData& dst);
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
@@ -57,8 +48,8 @@ public:
   void CalculateScrubber();
 
   // Extending some functionality to these base class methods
-  // We will update the BioGears Airway mode when these are called
-  virtual void SetConnection(CDM::enumAnesthesiaMachineConnection::value c);
+  // We will update the Pulse Airway mode when these are called
+  virtual void SetConnection(cdm::AnesthesiaMachineData_eConnection c);
   virtual void InvalidateConnection();
 
 private:

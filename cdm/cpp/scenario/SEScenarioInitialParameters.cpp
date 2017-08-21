@@ -1,31 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "scenario/SEScenarioInitialParameters.h"
-#include "bind/ScenarioInitialParametersData.hxx"
-#include "engine/PhysiologyEngineConfiguration.h"
-#include "bind/PhysiologyEngineConfigurationData.hxx"
-#include "substance/SESubstanceManager.h"
-
-#include "patient/SEPatient.h"
-#include "bind/PatientData.hxx"
-// Conditions
-#include "scenario/SECondition.h"
-#include "bind/ConditionData.hxx"
 
 SEScenarioInitialParameters::SEScenarioInitialParameters(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
-  m_Configuration = nullptr;
   m_Patient = nullptr;
   Clear();
 }
@@ -39,54 +19,44 @@ void SEScenarioInitialParameters::Clear()
 {
   m_PatientFile = "";
   SAFE_DELETE(m_Patient);
-  SAFE_DELETE(m_Configuration);
   DELETE_VECTOR(m_Conditions);
 }
 
-bool SEScenarioInitialParameters::Load(const CDM::ScenarioInitialParametersData& in)
+void SEScenarioInitialParameters::Load(const cdm::ScenarioData_InitialParametersData& src, SEScenarioInitialParameters& dst)
 {
-  Clear();
-  
-  if (in.Configuration().present())
-    GetConfiguration().Load(in.Configuration().get());
-
-  if (in.PatientFile().present())
-    m_PatientFile = in.PatientFile().get();
-  else if (in.Patient().present())
-    GetPatient().Load(in.Patient().get());
+  SEScenarioInitialParameters::Serialize(src, dst);
+}
+void SEScenarioInitialParameters::Serialize(const cdm::ScenarioData_InitialParametersData& src, SEScenarioInitialParameters& dst)
+{
+  dst.Clear();
+ 
+  if (src.has_patient())
+    SEPatient::Load(src.patient(), dst.GetPatient());
   else
+    dst.SetPatientFile(src.patientfile());
+
+  for (int i=0; i<src.anycondition_size(); i++)
   {
-    Error("No patient provided");
-    return false;
+    SECondition* c = SECondition::Load(src.anycondition()[i], dst.m_SubMgr);
+    if (c != nullptr)
+      dst.m_Conditions.push_back(c);
   }
-
-  for (unsigned int i = 0; i < in.Condition().size(); i++)
-  {    
-    SECondition* c = SECondition::newFromBind(in.Condition()[i], m_SubMgr);
-    if (c!=nullptr)
-      m_Conditions.push_back(c);
-  }
-
-  return IsValid();
 }
 
-CDM::ScenarioInitialParametersData*  SEScenarioInitialParameters::Unload() const
+cdm::ScenarioData_InitialParametersData* SEScenarioInitialParameters::Unload(const SEScenarioInitialParameters& src)
 {
-  CDM::ScenarioInitialParametersData* data = new CDM::ScenarioInitialParametersData();
-  Unload(*data);
-  return data;
+  cdm::ScenarioData_InitialParametersData* dst = new cdm::ScenarioData_InitialParametersData();
+  SEScenarioInitialParameters::Serialize(src,*dst);
+  return dst;
 }
-
-void SEScenarioInitialParameters::Unload(CDM::ScenarioInitialParametersData& data) const
+void SEScenarioInitialParameters::Serialize(const SEScenarioInitialParameters& src, cdm::ScenarioData_InitialParametersData& dst)
 {
-  if (HasPatientFile())
-    data.PatientFile(m_PatientFile);
-  else if (HasPatient())
-    data.Patient(std::unique_ptr<CDM::PatientData>(m_Patient->Unload()));
-  for (SECondition* c : m_Conditions)  
-    data.Condition().push_back(std::unique_ptr<CDM::ConditionData>(c->Unload()));
-  if (HasConfiguration())
-    data.Configuration(std::unique_ptr<CDM::PhysiologyEngineConfigurationData>(m_Configuration->Unload()));
+  if (src.HasPatientFile())
+    dst.set_patientfile(src.m_PatientFile);
+  else if (src.HasPatient())
+    dst.set_allocated_patient(SEPatient::Unload(*src.m_Patient));
+  for (SECondition* c : src.m_Conditions)
+    dst.mutable_anycondition()->AddAllocated(SECondition::Unload(*c));
 }
 
 bool SEScenarioInitialParameters::IsValid() const
@@ -96,28 +66,6 @@ bool SEScenarioInitialParameters::IsValid() const
   return true;
 }
 
-bool SEScenarioInitialParameters::HasConfiguration() const
-{
-  return m_Configuration != nullptr;
-}
-PhysiologyEngineConfiguration& SEScenarioInitialParameters::GetConfiguration()
-{
-  if (m_Configuration == nullptr)
-    m_Configuration = new PhysiologyEngineConfiguration(GetLogger());
-  return *m_Configuration;
-}
-const PhysiologyEngineConfiguration* SEScenarioInitialParameters::GetConfiguration() const
-{
-  return m_Configuration;
-}
-void SEScenarioInitialParameters::SetConfiguration(const PhysiologyEngineConfiguration& config)
-{
-  CDM_COPY((&config),(&GetConfiguration()));
-}
-void SEScenarioInitialParameters::InvalidateConfiguration()
-{
-  SAFE_DELETE(m_Configuration);
-}
 
 std::string SEScenarioInitialParameters::GetPatientFile() const
 {
@@ -148,9 +96,11 @@ const SEPatient* SEScenarioInitialParameters::GetPatient() const
 {
   return m_Patient;
 }
-void SEScenarioInitialParameters::SetPatient(const SEPatient& patient)
+void SEScenarioInitialParameters::CopyPatient(const SEPatient& patient)
 {
-  CDM_COPY((&patient),(&GetPatient()));  
+  cdm::PatientData* p = SEPatient::Unload(patient);
+  SEPatient::Load(*p, GetPatient());
+  delete p;
 }
 bool SEScenarioInitialParameters::HasPatient() const
 {
@@ -161,11 +111,11 @@ void SEScenarioInitialParameters::InvalidatePatient()
     SAFE_DELETE(m_Patient);
 }
 
-void SEScenarioInitialParameters::AddCondition(const SECondition& c)
+void SEScenarioInitialParameters::CopyCondition(const SECondition& condition)
 {
-  CDM::ConditionData* bind = c.Unload();
-  m_Conditions.push_back(SECondition::newFromBind(*bind,m_SubMgr));
-  delete bind;
+  cdm::AnyConditionData* c = SECondition::Unload(condition);
+  m_Conditions.push_back(SECondition::Load(*c,m_SubMgr));
+  delete c;
 }
 const std::vector<SECondition*>& SEScenarioInitialParameters::GetConditions() const
 {

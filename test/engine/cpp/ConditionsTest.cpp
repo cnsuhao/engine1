@@ -1,15 +1,6 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
-#include "BioGearsEngineTest.h"
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+#include "EngineTest.h"
 #include "CommonDataModel.h"
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
@@ -17,9 +8,9 @@ specific language governing permissions and limitations under the License.
 #include "patient/conditions/SEChronicAnemia.h"
 
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 
-void BioGearsEngineTest::ConditionCombinations(const std::string& rptDirectory)
+void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
 {
   Logger log("ConditionsPermutationsReport.log");
   std::vector<SECondition*> testConditions;
@@ -60,13 +51,13 @@ void BioGearsEngineTest::ConditionCombinations(const std::string& rptDirectory)
          ss << "NoConditions";
       SETestCase& testCase = testSuite.CreateTestCase();
       log.Info(ss);
-      std::unique_ptr<PhysiologyEngine> physEng = CreateBioGearsEngine(&log);
-      if (!physEng->InitializeEngine("StandardMale.xml",&sceConditions))
+      std::unique_ptr<PhysiologyEngine> physEng = CreatePulseEngine(&log);
+      if (!physEng->InitializeEngine("StandardMale.pba",&sceConditions))
       {
         testCase.AddFailure("Unable to stabilize condition permutation");
       }  
     }
   }
-  testReport.WriteFile("ConditionsPermutationsReport.xml");
+  testReport.WriteFile("ConditionsPermutationsReport.pba");
   DELETE_VECTOR(testConditions);
 }

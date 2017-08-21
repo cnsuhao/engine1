@@ -1,23 +1,13 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.doxygen;
 
 import java.io.*;
+import java.util.List;
 
+import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 
-/**
- * 
- */
 public class DoxygenPreprocessor
 {
   public static void main(String[] args)
@@ -25,9 +15,9 @@ public class DoxygenPreprocessor
     Log.setFileName("DoxygenPreprocessor.log");
     try
     {
-      if(args.length!=2)
+      if(args.length!=2 && args.length!=3)
       {
-        Log.info("Command arguments are : <Directory of files to process> <Directory to place processed files>");
+        Log.info("Command arguments are : <Directory of files to process> <Directory to place processed files> <OPTIONAL Directory where to find tables for insert tags>");
         return;
       }
       File srcDir = new File(args[0]);
@@ -39,12 +29,18 @@ public class DoxygenPreprocessor
       File sDir = new File(args[0]);
       File dDir = new File(args[1]);
       dDir.mkdir();
-      
-      for (String fName : srcDir.list())
+      File tDir;
+      if(args.length==3)
+      	tDir = new File(args[2]);
+      else
+      	tDir = sDir;
+
+			List<String> found = FileUtils.findFiles(sDir.getAbsolutePath(), "md", true);      
+			for (String fName : found)
       {        
         if(new File(fName).isDirectory())
           continue;// Not making this recursive at this point
-        processFile(fName, sDir, dDir);
+        processFile(fName, tDir, dDir);
       }      
     }
     catch (Exception ex)
@@ -53,13 +49,19 @@ public class DoxygenPreprocessor
     }
   }
   
-  protected static void processFile(String fName, File sDir, File dDir) throws IOException
+  protected static void processFile(String fName, File tDir, File dDir) throws IOException
   {
   	String line;
-	  Log.info("Processing file : "+sDir.getPath()+"/"+fName);
-	  FileReader in = new FileReader(sDir.getPath()+"/"+fName);
+	  Log.info("Processing file : "+fName);
+	  FileReader in = new FileReader(fName);
 	  BufferedReader inFile = new BufferedReader(in);
-	  PrintWriter writer = new PrintWriter(dDir.getAbsolutePath()+"/"+fName, "UTF-8");
+	  
+	  String[] path = fName.split("[\\\\/]");
+		String src_file_name = path[path.length-1];
+		src_file_name = src_file_name.substring(0, src_file_name.lastIndexOf('.'));
+		src_file_name = dDir.getAbsolutePath()+"/"+src_file_name+".md";
+	  PrintWriter writer = new PrintWriter(src_file_name, "UTF-8");
+	  
 	  while ((line = inFile.readLine()) != null)
 	  {
 	    if(line.indexOf("@insert")>-1)
@@ -69,7 +71,7 @@ public class DoxygenPreprocessor
 	      if(!f.exists())
 	      {// Try to process this file so it is in the dst directory
 	      	String inserting = iName.substring(iName.lastIndexOf("/")+1);
-	      	processFile(inserting,sDir,dDir);
+	      	processFile(tDir.getAbsolutePath()+"/"+inserting,tDir,dDir);
 	      }
 	      Log.info("inserting "+iName);
 	      try

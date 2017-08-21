@@ -1,43 +1,13 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "scenario/SEScenario.h"
-#include "scenario/SEScenarioInitialParameters.h"
-#include "bind/ScenarioInitialParametersData.hxx"
-#include "scenario/SEScenarioAutoSerialization.h"
-#include "bind/ScenarioAutoSerializationData.hxx"
-#include "Serializer.h"
-
-#include "engine/PhysiologyEngineConfiguration.h"
-
-// Requests
-#include "scenario/requests/SEDataRequest.h"
-#include "bind/DataRequestData.hxx"
-// Conditions
-#include "scenario/SECondition.h"
-#include "bind/ConditionData.hxx"
-// Actions
-#include "scenario/SEAction.h"
-#include "bind/ActionData.hxx"
-// Collections
-#include "scenario/SEPatientActionCollection.h"
-#include "scenario/SEAnesthesiaMachineActionCollection.h"
-#include "scenario/SEEnvironmentActionCollection.h"
+#include <google/protobuf/text_format.h>
 
 SEScenario::SEScenario(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr), m_DataRequestMgr(subMgr.GetLogger())
 {
   m_InitialParameters = nullptr;
-  m_AutoSerialization = nullptr;
   Clear();
 }
 
@@ -52,79 +22,69 @@ void SEScenario::Clear()
   m_Description = "";
   m_EngineStateFile = "";
   SAFE_DELETE(m_InitialParameters);
-  SAFE_DELETE(m_AutoSerialization);
   DELETE_VECTOR(m_Actions);
   m_DataRequestMgr.Clear();
 }
 
-bool SEScenario::Load(const CDM::ScenarioData& in)
+void SEScenario::Load(const cdm::ScenarioData& src, SEScenario& dst)
 {
-  Clear();
-  if(in.Name().present())
-    m_Name=in.Name().get();
-  if(in.Description().present())
-    m_Description=in.Description().get();  
-  if (in.EngineStateFile().present())
-    SetEngineStateFile(in.EngineStateFile().get());
-  else if (in.InitialParameters().present())
-  {
-    GetInitialParameters().Load(in.InitialParameters().get());
-  }
+  SEScenario::Serialize(src, dst);
+}
+void SEScenario::Serialize(const cdm::ScenarioData& src, SEScenario& dst)
+{
+  dst.Clear();
+  dst.SetName(src.name());
+  dst.SetDescription(src.description());
+
+  if (src.has_initialparameters())
+    SEScenarioInitialParameters::Load(src.initialparameters(), dst.GetInitialParameters());
   else
   {
-    Error("No State or Initial Parameters provided");
-    return false;
+    dst.SetEngineStateFile(src.enginestatefile());
   }
-  if (in.AutoSerialization().present())
-    GetAutoSerialization().Load(in.AutoSerialization().get());
-  if(in.DataRequests().present())
-    m_DataRequestMgr.Load(in.DataRequests().get(), m_SubMgr);
-  for (unsigned int i = 0; i < in.Action().size(); i++)
-  {
-    SEAction* a = SEAction::newFromBind(in.Action()[i], m_SubMgr);
-    if (a != nullptr)
-      m_Actions.push_back(a);
-  }
-  return IsValid();
+  
+  if (src.has_datarequestmanager())
+    SEDataRequestManager::Load(src.datarequestmanager(), dst.GetDataRequestManager(), dst.m_SubMgr);
+
+  for (int i = 0; i<src.anyaction_size(); i++)
+      dst.m_Actions.push_back(SEAction::Load(src.anyaction()[i], dst.m_SubMgr));
 }
 
-CDM::ScenarioData*  SEScenario::Unload() const
+cdm::ScenarioData* SEScenario::Unload(const SEScenario& src)
 {
-  CDM::ScenarioData* data = new CDM::ScenarioData();
-  Unload(*data);
-  return data;
+  cdm::ScenarioData* dst = new cdm::ScenarioData();
+  SEScenario::Serialize(src,*dst);
+  return dst;
 }
-
-void SEScenario::Unload(CDM::ScenarioData& data) const
+void SEScenario::Serialize(const SEScenario& src, cdm::ScenarioData& dst)
 {
-  data.Name(m_Name);
-  data.Description(m_Description);
-  if (HasEngineStateFile())
-    data.EngineStateFile(m_EngineStateFile);
-  else if (HasInitialParameters())
-    data.InitialParameters(std::unique_ptr<CDM::ScenarioInitialParametersData>(m_InitialParameters->Unload()));
-  if (HasAutoSerialization())
-    data.AutoSerialization(std::unique_ptr<CDM::ScenarioAutoSerializationData>(m_AutoSerialization->Unload()));
-  data.DataRequests(std::unique_ptr<CDM::DataRequestsData>(m_DataRequestMgr.Unload()));
-  for (SEAction* a : m_Actions)
-    data.Action().push_back(std::unique_ptr<CDM::ActionData>(a->Unload()));
+  dst.set_name(src.m_Name);
+  dst.set_description(src.m_Description);
+
+  if (src.HasEngineStateFile())
+    dst.set_enginestatefile(src.m_EngineStateFile);
+  else if (src.HasInitialParameters())
+    dst.set_allocated_initialparameters(SEScenarioInitialParameters::Unload(*src.m_InitialParameters));
+
+  dst.set_allocated_datarequestmanager(SEDataRequestManager::Unload(src.m_DataRequestMgr));
+
+  for (SEAction* a :src.m_Actions)
+    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*a));
 }
 
 bool SEScenario::LoadFile(const std::string& scenarioFile)
 {
-  CDM::ScenarioData* pData;
-  std::unique_ptr<CDM::ObjectData> data;
-
-  data=Serializer::ReadFile(scenarioFile,GetLogger());
-  pData = dynamic_cast<CDM::ScenarioData*>(data.get());
-  if(pData==nullptr)
-  {
-    std::stringstream ss;
-    ss<<"Scenario file could not be read : "<<scenarioFile<<std::endl;
-    Error(ss);
+  cdm::ScenarioData src;
+  std::ifstream file_stream(scenarioFile, std::ios::in);
+  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
     return false;
-  }
-  return Load(*pData);
+  SEScenario::Load(src, *this);
+  return true;
+
+  // If its a binary string in the file...
+  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
+  //src.ParseFromIstream(&binary_istream);
 }
 
 bool SEScenario::IsValid() const
@@ -211,30 +171,11 @@ void SEScenario::InvalidateInitialParameters()
   SAFE_DELETE(m_InitialParameters);
 }
 
-bool SEScenario::HasAutoSerialization() const
-{
-  return m_AutoSerialization == nullptr ? false : m_AutoSerialization->IsValid();
-}
-SEScenarioAutoSerialization& SEScenario::GetAutoSerialization()
-{
-  if (m_AutoSerialization == nullptr)
-    m_AutoSerialization = new SEScenarioAutoSerialization(GetLogger());
-  return *m_AutoSerialization;
-}
-const SEScenarioAutoSerialization* SEScenario::GetAutoSerialization() const
-{
-  return m_AutoSerialization;
-}
-void SEScenario::RemoveAutoSerialization()
-{
-  SAFE_DELETE(m_AutoSerialization);
-}
-
 void SEScenario::AddAction(const SEAction& a)
 {
-  CDM::ActionData* bind = a.Unload();
-  m_Actions.push_back(SEAction::newFromBind(*bind, m_SubMgr));
-  delete bind;
+  cdm::AnyActionData* any = SEAction::Unload(a);
+  m_Actions.push_back(SEAction::Load(*any, m_SubMgr));
+  delete any;
 }
 const std::vector<SEAction*>& SEScenario::GetActions() const
 {

@@ -1,28 +1,32 @@
 // The following tests will be exported and runnable
 
-#include "bind/biogears-cdm.hxx"
 #include "CommonDataModel.h"
-#include "circuit/SECircuitManager.h"
-#include "circuit/fluid/SEFluidCircuit.h"
-#include "circuit/fluid/SEFluidCircuitCalculator.h"
-#include "compartment/fluid/SEFluidCompartment.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
-#include "utils/testing/SETestCase.h"
-#include "utils/testing/SETestSuite.h"
+class SEFluidCircuit;
+class SECircuitManager;
+class SEGasCompartment;
+class SELiquidCompartment;
+class SEThermalCompartment;
+class SECompartmentManager;
+class SESubstanceManager;
+class SEGasSubstanceQuantity;
+class SELiquidSubstanceQuantity;
+class SETestSuite;
+class SETestCase;
 
 
-#if defined(__clang__)
-#define TEST_DECL
-#elif defined(__gnu_linux__)
-#define TEST_DECL  __attribute__ ((visibility ("default")))
-#else
-#ifdef TEST_EXPORTS
-#define TEST_DECL __declspec(dllexport)
-#else
-#define TEST_DECL __declspec(dllimport)
-#endif
+#define CDM_TEST_DECL
+#ifdef SHARED_CDM_TEST
+  #if defined (__clang__)
+   #define CDM_TEST_DECL
+  #elif defined(__gnu_linux__)
+    #define CDM_TEST_DECL __attribute__ ((visibility ("default")))
+  #else
+    #ifdef SHARED_CDM_TEST
+      #define CDM_TEST_DECL __declspec(dllexport)
+    #else
+      #define CDM_TEST_DECL __declspec(dllimport)
+    #endif
+  #endif
 #endif
 
 enum enumCDMTestSourceType
@@ -33,7 +37,7 @@ enum enumCDMTestSourceType
   ZEROCENTEREDSIN
 };
 
-class TEST_DECL CommonDataModelTest : public Loggable
+class CDM_TEST_DECL CommonDataModelTest : public Loggable
 {
 public:
   CommonDataModelTest();
@@ -353,7 +357,7 @@ protected:
   void FluidPreProcess(SEFluidCircuit& c, double dT);
   void TestCircuitSerialization(const std::string& fileName);
 
-  SECircuitManager m_Circuits;
+  SECircuitManager* m_Circuits;
 
 
   //////////////////

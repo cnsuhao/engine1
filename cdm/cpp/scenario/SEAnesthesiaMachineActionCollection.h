@@ -1,46 +1,31 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 
 #include "substance/SESubstanceManager.h"
-#include "system/equipment/Anesthesia/SEAnesthesiaMachine.h"
-#include "system/equipment/Anesthesia/actions/SEOxygenTankPressureLoss.h"
-#include "system/equipment/Anesthesia/actions/SEOxygenWallPortPressureLoss.h"
-#include "system/equipment/Anesthesia/actions/SEExpiratoryValveLeak.h"
-#include "system/equipment/Anesthesia/actions/SEExpiratoryValveObstruction.h"
-#include "system/equipment/Anesthesia/actions/SEInspiratoryValveLeak.h"
-#include "system/equipment/Anesthesia/actions/SEInspiratoryValveObstruction.h"
-#include "system/equipment/Anesthesia/actions/SEMaskLeak.h"
-#include "system/equipment/Anesthesia/actions/SESodaLimeFailure.h"
-#include "system/equipment/Anesthesia/actions/SETubeCuffLeak.h"
-#include "system/equipment/Anesthesia/actions/SEVaporizerFailure.h"
-#include "system/equipment/Anesthesia/actions/SEVentilatorPressureLoss.h"
-#include "system/equipment/Anesthesia/actions/SEYPieceDisconnect.h"
-#include "system/equipment/Anesthesia/actions/SEAnesthesiaMachineConfiguration.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesiamachine/actions/SEOxygenTankPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEOxygenWallPortPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveObstruction.h"
+#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveObstruction.h"
+#include "system/equipment/anesthesiamachine/actions/SEMaskLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SESodaLimeFailure.h"
+#include "system/equipment/anesthesiamachine/actions/SETubeCuffLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEVaporizerFailure.h"
+#include "system/equipment/anesthesiamachine/actions/SEVentilatorPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEYPieceDisconnect.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
 
-class DLL_DECL SEAnesthesiaMachineActionCollection : public Loggable
+class CDM_DECL SEAnesthesiaMachineActionCollection : public Loggable
 {
-public:
-
+  friend class SEActionManager;
+protected:
   SEAnesthesiaMachineActionCollection(SESubstanceManager&);
+public:
   ~SEAnesthesiaMachineActionCollection();
-
-  void Clear();
-
-  void Unload(std::vector<CDM::ActionData*>& to);
-
-  bool ProcessAction(const SEAnesthesiaMachineAction& action);
-  bool ProcessAction(const CDM::AnesthesiaMachineActionData& action);
 
   // STATE ACTION
   bool HasConfiguration() const;
@@ -53,7 +38,7 @@ public:
   SEOxygenTankPressureLoss* GetOxygenTankPressureLoss() const;
   void RemoveOxygenTankPressureLoss();
 
-  bool HasOxygenWallPortPressureLoss();
+  bool HasOxygenWallPortPressureLoss() const;
   SEOxygenWallPortPressureLoss* GetOxygenWallPortPressureLoss();
   void RemoveOxygenWallPortPressureLoss();
 
@@ -100,7 +85,9 @@ public:
   void RemoveYPieceDisconnect();
   
 protected:
-  bool IsValid(const SEAnesthesiaMachineAction& action);
+  void Clear();
+  static void Serialize(const SEAnesthesiaMachineActionCollection& src, cdm::ActionListData& dst);
+  bool ProcessAction(const SEAnesthesiaMachineAction& action, cdm::AnyAnesthesiaMachineActionData& any);
 
   SEAnesthesiaMachineConfiguration*           m_Configuration;
   //Anesthesia Machine Incidents
@@ -119,5 +106,4 @@ protected:
   SEYPieceDisconnect*                         m_YPieceDisconnect;
   // General
   SESubstanceManager& m_Substances;
-  std::stringstream m_ss;
 };

@@ -1,21 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "utils/testing/SETestCase.h"
 class SETestReport;
 
-CDM_BIND_DECL(TestSuite)
-class DLL_DECL SETestSuite : public Loggable
+class CDM_DECL SETestSuite : public Loggable
 {
   friend SETestReport;
 protected:
@@ -26,10 +16,11 @@ public:
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
 
-  bool Load(const CDM::TestSuite& in);
-  std::unique_ptr<CDM::TestSuite> Unload() const;
+  static void Load(const cdm::TestReportData_TestSuiteData& src, SETestSuite& dst);
+  static cdm::TestReportData_TestSuiteData* Unload(const SETestSuite& src);
 protected:
-  void Unload(CDM::TestSuite& data) const;
+  static void Serialize(const cdm::TestReportData_TestSuiteData& src, SETestSuite& dst);
+  static void Serialize(const SETestSuite& src, cdm::TestReportData_TestSuiteData& dst);
 
 public:
 
@@ -45,11 +36,9 @@ public:
 
   SETestCase& CreateTestCase();
   const std::vector<SETestCase*>&  GetTestCases() const;
-  
-  int                 GetNumberOfErrors() const;
 
-  int                  GetNumberOfTests() const;
-                
+  size_t GetNumberOfErrors() const;
+
 protected:
 
   bool m_Performed;

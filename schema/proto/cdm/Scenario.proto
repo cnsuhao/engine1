@@ -1,0 +1,100 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Actions.proto";
+import "cdm/Properties.proto";
+import "cdm/Patient.proto";
+import "cdm/PatientActions.proto";
+import "cdm/PatientConditions.proto";
+import "cdm/EnvironmentActions.proto";
+import "cdm/EnvironmentConditions.proto";
+import "cdm/AnesthesiaMachineActions.proto";
+import "cdm/InhalerActions.proto";
+
+message DataRequestData
+{
+  enum eCategory
+  {
+    Patient            = 0;
+    Physiology         = 1;
+    Environment        = 2;
+    GasCompartment     = 3;
+    LiquidCompartment  = 4;
+    ThermalCompartment = 5;
+    TissueCompartment  = 6;
+    Substance          = 7;
+    AnesthesiaMachine  = 8;
+    ECG                = 9;
+    Inhaler            = 10;
+  }
+  DecimalFormatData                DecimalFormat             = 1;/**<<@brief If writing to a file, specify the decimal formatting */
+  eCategory                        Category                  = 2;/**<<@brief A category assocated with the Name */
+  string                           CompartmentName           = 3;/**<<@brief The compartment name the property could be associated with */
+  string                           SubstanceName             = 4;/**<<@brief The substance name the property could be associated with */
+  string                           PropertyName              = 5;/**<<@brief The name of the property requested */
+  string                           Unit                      = 6;/**<<@brief If writing to a file, the unit the data will be in. */
+}
+message DataRequestManagerData
+{
+  string                           ResultsFilename           = 1;
+  double                           SamplesPerSecond          = 2;
+  DecimalFormatData                DefaultDecimalFormatting  = 3;
+  DecimalFormatData                OverrideDecimalFormatting = 4;
+  repeated DataRequestData         DataRequest               = 5;
+}
+
+message AnyConditionData
+{
+  oneof Condition
+  {
+    AnyPatientConditionData        PatientCondition          = 1;
+    AnyEnvironmentConditionData    EnvironmentCondition      = 2;
+  }
+}
+message ConditionListData
+{
+  repeated AnyConditionData        AnyCondition              = 1;
+}
+
+message AnyActionData
+{
+  oneof Action
+  {
+    AdvanceTimeData                AdvanceTime               = 1;
+    SerializeStateData             Serialize                 = 2;
+    AnyPatientActionData           PatientAction             = 3;
+    AnyEnvironmentActionData       EnvironmentAction         = 4;
+    AnyAnesthesiaMachineActionData AnesthesiaMachineAction   = 5;
+    AnyInhalerActionData           InhalerAction             = 6;
+  }
+}
+message ActionListData
+{
+  repeated AnyActionData           AnyAction                 = 1;
+}
+
+message ScenarioData
+{
+  message InitialParametersData
+  {
+    oneof PatientType
+    {
+      PatientData                  Patient                   = 1;
+      string                       PatientFile               = 2;
+    }
+    repeated AnyConditionData      AnyCondition              = 3;
+  }
+  
+  
+  
+  string                           Name                      = 1;
+  string                           Description               = 2;
+  oneof                            StartType
+  {
+    string                         EngineStateFile           = 3;
+    InitialParametersData          InitialParameters         = 4;
+  }
+  DataRequestManagerData           DataRequestManager        = 5;
+  repeated AnyActionData           AnyAction                 = 6;
+}

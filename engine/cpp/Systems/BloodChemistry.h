@@ -1,20 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-
-#include "../Controller/BioGearsSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
-#include "bind/BioGearsBloodChemistrySystemData.hxx"
 #include "utils/RunningAverage.h"
 class SECompleteBloodCount;
 class SEComprehensiveMetabolicPanel;
@@ -23,17 +12,17 @@ class SEComprehensiveMetabolicPanel;
  * @brief @copydoc Physiology_BloodChemistrySystemData
  * The Blood Chemistry System holds the system-level blood substance data that is computed on the compartment level by other systems.
  * @details
- * The goal of the blood chemistry system in the BioGears engine is complete analysis on the blood at any given point during the simulation.
+ * The goal of the blood chemistry system in the Pulse engine is complete analysis on the blood at any given point during the simulation.
  * The blood chemistry system houses all of the blood concentrations and compositions needed to assess a patient's health. This system is under development
  * and will be improved in future releases to include more substances that can provide clinician level details and assessments, such as a CBC and blood panel.
  */           
-class BIOGEARS_API BloodChemistry : public SEBloodChemistrySystem, public BioGearsSystem
+class PULSE_DECL BloodChemistry : public SEBloodChemistrySystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend PulseController;
+  friend class PulseEngineTest;
 protected:
-  BloodChemistry(BioGears& bg);
-  BioGears& m_data;
+  BloodChemistry(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~BloodChemistry();
@@ -43,11 +32,11 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  bool Load(const CDM::BioGearsBloodChemistrySystemData& in);                                  
-  CDM::BioGearsBloodChemistrySystemData* Unload() const;
+  static void Load(const pulse::BloodChemistrySystemData& src, BloodChemistry& dst);
+  static pulse::BloodChemistrySystemData* Unload(const BloodChemistry& src);
 protected:
-  void Unload(CDM::BioGearsBloodChemistrySystemData& data) const;
+  static void Serialize(const pulse::BloodChemistrySystemData& src, BloodChemistry& dst);
+  static void Serialize(const BloodChemistry& src, pulse::BloodChemistrySystemData& dst);
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

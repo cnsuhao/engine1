@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "SEEnvironmentCondition.h"
 
@@ -32,20 +23,40 @@ bool SEEnvironmentCondition::IsValid() const
   return SECondition::IsValid();
 }
 
-bool SEEnvironmentCondition::Load(const CDM::EnvironmentConditionData& in)
+void SEEnvironmentCondition::Serialize(const cdm::EnvironmentConditionData& src, SEEnvironmentCondition& dst)
 {
-  SECondition::Load(in);
-  return true;
+  SECondition::Serialize(src.condition(), dst);
 }
 
-CDM::EnvironmentConditionData* SEEnvironmentCondition::Unload() const
+void SEEnvironmentCondition::Serialize(const SEEnvironmentCondition& src, cdm::EnvironmentConditionData& dst)
 {
-  CDM::EnvironmentConditionData* data = new CDM::EnvironmentConditionData();
-  Unload(*data);
-  return data;
+  SECondition::Serialize(src, *dst.mutable_condition());
 }
 
-void SEEnvironmentCondition::Unload(CDM::EnvironmentConditionData& data) const
+#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+SEEnvironmentCondition* SEEnvironmentCondition::Load(const cdm::AnyEnvironmentConditionData& any, SESubstanceManager& subMgr)
 {
-  SECondition::Unload(data);
+  switch (any.Condition_case())
+  {
+    case cdm::AnyEnvironmentConditionData::ConditionCase::kInitialEnvironmentConditions:
+    {
+      SEInitialEnvironmentConditions* a = new SEInitialEnvironmentConditions(subMgr);
+      SEInitialEnvironmentConditions::Load(any.initialenvironmentconditions(), *a);
+      return a;
+    }
+  }
+  subMgr.Error("Unknown action type : " + any.Condition_case());
+  return nullptr;
+}
+cdm::AnyEnvironmentConditionData* SEEnvironmentCondition::Unload(const SEEnvironmentCondition& action)
+{
+  cdm::AnyEnvironmentConditionData* any = new cdm::AnyEnvironmentConditionData();
+  const SEInitialEnvironmentConditions* cec = dynamic_cast<const SEInitialEnvironmentConditions*>(&action);
+  if (cec != nullptr)
+  {
+    any->set_allocated_initialenvironmentconditions(SEInitialEnvironmentConditions::Unload(*cec));
+    return any;
+  }
+  delete any;
+  return nullptr;
 }

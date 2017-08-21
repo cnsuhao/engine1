@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "Eigen/Core"
 #include "utils/TimingProfile.h"
-#include "bind/enumOpenClosed.hxx"
 #include "circuit/SECircuit.h"
 #include "utils/SmartEnum.h"
 
@@ -21,7 +11,7 @@ specific language governing permissions and limitations under the License.
 #define CIRCUIT_CALCULATOR_TYPES CircuitType,NodeType,PathType,CapacitanceUnit,FluxUnit,InductanceUnit,PotentialUnit,QuantityUnit,ResistanceUnit
 
 // These are the Eigen Solvers we can use for solving our circuits
-struct DLL_DECL EigenCircuitSolver
+struct CDM_DECL EigenCircuitSolver
 {
   enum Type { Direct, PartialPivLu, FullPivLu, JacobiSvd, HouseholderQr, Ldlt, Llt, SparseLU, SparseQR, BiCGSTAB, ConjugateGradient };
   SMART_ENUM(EigenCircuitSolver, Type, 11);

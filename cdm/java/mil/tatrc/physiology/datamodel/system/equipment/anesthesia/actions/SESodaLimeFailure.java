@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.SodaLimeFailureData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.SodaLimeFailureData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SESodaLimeFailure extends SEAnesthesiaMachineAction
@@ -38,25 +28,23 @@ public class SESodaLimeFailure extends SEAnesthesiaMachineAction
     return hasSeverity();
   }
   
-  public boolean load(SodaLimeFailureData in)
+  public static void load(SodaLimeFailureData src, SESodaLimeFailure dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
-  
-  public SodaLimeFailureData unload()
+  public static SodaLimeFailureData unload(SESodaLimeFailure src)
   {
-    SodaLimeFailureData data = CDMSerializer.objFactory.createSodaLimeFailureData();
-    unload(data);
-    return data;
+    SodaLimeFailureData.Builder dst = SodaLimeFailureData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(SodaLimeFailureData data)
+  protected static void unload(SESodaLimeFailure src, SodaLimeFailureData.Builder dst)
   {
-    super.unload(data);
-    if (hasSeverity())
-      data.setSeverity(severity.unload());
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   /*

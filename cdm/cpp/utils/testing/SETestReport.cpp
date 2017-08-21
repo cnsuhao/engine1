@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/TestReport.hxx"
 #include "utils/testing/SETestReport.h"
-
+#include <google/protobuf/text_format.h>
 
 SETestReport::SETestReport(Logger* logger) : Loggable(logger)
 {
@@ -33,56 +23,49 @@ void SETestReport::Reset()
 {
 }
 
-bool SETestReport::Load(const CDM::TestReportData& in)
+void SETestReport::Load(const cdm::TestReportData& src, SETestReport& dst)
 {
-  Reset();
+  SETestReport::Serialize(src, dst);
+}
+void SETestReport::Serialize(const cdm::TestReportData& src, SETestReport& dst)
+{
+  dst.Clear();
 
   SETestSuite* sx;
-  CDM::TestSuite* sData;
-  for(unsigned int i=0; i<in.TestSuite().size(); i++)
+  for (int i = 0; i < src.testsuite_size(); i++)
   {
-    sData=(CDM::TestSuite*)&in.TestSuite().at(i);
-    if(sData!=nullptr)
-    {
-      sx=new SETestSuite(GetLogger());
-      sx->Load(*sData);
-    }
-    m_testSuite.push_back(sx);
-  }
-
-  return true;
-}
-
-std::unique_ptr<CDM::TestReportData>  SETestReport::Unload() const
-{
-  std::unique_ptr<CDM::TestReportData> data(new CDM::TestReportData());
-  Unload(*data);
-  return data;
-}
-
-void SETestReport::Unload(CDM::TestReportData& data) const
-{
-  for(unsigned int i=0; i<m_testSuite.size(); i++)
-  {
-    data.TestSuite().push_back(*m_testSuite.at(i)->Unload());
+    sx = new SETestSuite(dst.GetLogger());
+    SETestSuite::Load(src.testsuite(i), *sx);
+    dst.m_testSuite.push_back(sx);
   }
 }
 
+cdm::TestReportData* SETestReport::Unload(const SETestReport& src)
+{
+  cdm::TestReportData* dst = new cdm::TestReportData();
+  SETestReport::Serialize(src,*dst);
+  return dst;
+}
+void SETestReport::Serialize(const SETestReport& src, cdm::TestReportData& dst)
+{
+  for (auto ts : src.m_testSuite)
+    dst.mutable_testsuite()->AddAllocated(SETestSuite::Unload(*ts));
+}
 
 bool SETestReport::WriteFile(const std::string& fileName)
 { 
-  xml_schema::namespace_infomap map;
-  map[""].name = "uri:/mil/tatrc/physiology/datamodel";
-  map[""].schema = "BioGears.xsd";
-
   try
   {
-    std::ofstream outFile;
-    outFile.open(fileName);
-    std::unique_ptr<CDM::TestReportData> unloaded = Unload();
-    CDM::TestReport(outFile, *unloaded, map);
+    std::string content;
+    cdm::TestReportData* pbuff = SETestReport::Unload(*this);
+    google::protobuf::TextFormat::PrintToString(*pbuff, &content);
+    std::ofstream ascii_ostream(fileName, std::ios::out | std::ios::trunc);
+    ascii_ostream << content;
+    ascii_ostream.flush();
+    ascii_ostream.close();
+    delete pbuff;
   }
-  catch (const xml_schema::exception& e)
+  catch (std::exception e)
   {
     Error(e.what());
     return false;

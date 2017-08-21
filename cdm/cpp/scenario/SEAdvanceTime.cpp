@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "scenario/SEAdvanceTime.h"
 #include "properties/SEScalarTime.h"
-#include "bind/ScalarTimeData.hxx"
 
 SEAdvanceTime::SEAdvanceTime() : SEAction()
 {
@@ -36,25 +26,27 @@ bool SEAdvanceTime::IsValid() const
   return HasTime() && m_Time->IsValid();
 }
 
-bool SEAdvanceTime::Load(const CDM::AdvanceTimeData& in)
+void SEAdvanceTime::Load(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst)
 {
-  SEAction::Load(in);
-  GetTime().Load(in.Time());
-  return true;
+  SEAdvanceTime::Serialize(src, dst);
+}
+void SEAdvanceTime::Serialize(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst)
+{
+  dst.Clear();
+  if (src.has_time())
+    SEScalarTime::Load(src.time(), dst.GetTime());
 }
 
-CDM::AdvanceTimeData* SEAdvanceTime::Unload() const
+cdm::AdvanceTimeData* SEAdvanceTime::Unload(const SEAdvanceTime& src)
 {
-  CDM::AdvanceTimeData* data = new CDM::AdvanceTimeData();
-  Unload(*data);
-  return data;
+  cdm::AdvanceTimeData* dst = new cdm::AdvanceTimeData();
+  SEAdvanceTime::Serialize(src, *dst);
+  return dst;
 }
-
-void SEAdvanceTime::Unload(CDM::AdvanceTimeData& data) const
+void SEAdvanceTime::Serialize(const SEAdvanceTime& src, cdm::AdvanceTimeData& dst)
 {
-  SEAction::Unload(data);
-  if(HasTime())
-    data.Time(std::unique_ptr<CDM::ScalarTimeData>(m_Time->Unload())); 
+  if (src.HasTime())
+    dst.set_allocated_time(SEScalarTime::Unload(*src.m_Time));
 }
 
 void SEAdvanceTime::ToString(std::ostream &str) const

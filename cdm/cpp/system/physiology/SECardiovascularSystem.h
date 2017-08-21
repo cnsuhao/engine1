@@ -1,21 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/CardiovascularSystemData.hxx"
-#include "bind/enumHeartRhythm.hxx"
 
-class DLL_DECL SECardiovascularSystem : public SESystem
+class CDM_DECL SECardiovascularSystem : public SESystem
 {
 public:
 
@@ -26,10 +15,12 @@ public:
   
   virtual const SEScalar* GetScalar(const std::string& name);
   
-  virtual bool Load(const CDM::CardiovascularSystemData& in);
-  virtual CDM::CardiovascularSystemData* Unload() const;
-protected:
-  virtual void Unload(CDM::CardiovascularSystemData& data) const;
+  static void Load(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst);    
+  static cdm::CardiovascularSystemData* Unload(const SECardiovascularSystem& src);            
+protected:                                                                                    
+  static void Serialize(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst);
+  static void Serialize(const SECardiovascularSystem& src, cdm::CardiovascularSystemData& dst);
+
 public:
 
   virtual bool HasArterialPressure() const;
@@ -65,17 +56,15 @@ public:
   virtual double GetDiastolicArterialPressure(const PressureUnit& unit) const;
 
   virtual bool HasHeartEjectionFraction() const;
-  virtual SEScalarFraction& GetHeartEjectionFraction();
+  virtual SEScalar0To1& GetHeartEjectionFraction();
   virtual double GetHeartEjectionFraction() const;
 
   virtual bool HasHeartRate() const;
   virtual SEScalarFrequency& GetHeartRate();
   virtual double GetHeartRate(const FrequencyUnit& unit) const;
 
-  virtual CDM::enumHeartRhythm::value GetHeartRhythm() const;
-  virtual void SetHeartRhythm(CDM::enumHeartRhythm::value Rhythm);
-  virtual bool HasHeartRhythm() const;
-  virtual void InvalidateHeartRhythm();
+  virtual cdm::eHeartRhythm GetHeartRhythm() const;
+  virtual void SetHeartRhythm(cdm::eHeartRhythm Rhythm);
 
   virtual bool HasHeartStrokeVolume() const;
   virtual SEScalarVolume& GetHeartStrokeVolume();
@@ -163,9 +152,9 @@ protected:
   SEScalarVolumePerTime*                 m_CerebralBloodFlow;
   SEScalarPressure*                      m_CerebralPerfusionPressure;
   SEScalarPressure*                      m_DiastolicArterialPressure;
-  SEScalarFraction*                      m_HeartEjectionFraction;
+  SEScalar0To1*                          m_HeartEjectionFraction;
   SEScalarFrequency*                     m_HeartRate;
-  CDM::enumHeartRhythm::value            m_HeartRhythm;
+  cdm::eHeartRhythm                      m_HeartRhythm;
   SEScalarVolume*                        m_HeartStrokeVolume;  
   SEScalarPressure*                      m_IntracranialPressure;
   SEScalarPressure*                      m_MeanArterialPressure;
@@ -180,7 +169,7 @@ protected:
   SEScalarVolumePerTime*                 m_PulmonaryMeanCapillaryFlow;
   SEScalarVolumePerTime*                 m_PulmonaryMeanShuntFlow;
   SEScalarPressure*                      m_PulmonarySystolicArterialPressure;
-  SEScalarFlowResistance*           m_PulmonaryVascularResistance;
+  SEScalarFlowResistance*                m_PulmonaryVascularResistance;
   SEScalarPressureTimePerVolumeArea*     m_PulmonaryVascularResistanceIndex;
   SEScalarPressure*                      m_PulsePressure;
   SEScalarPressure*                      m_SystolicArterialPressure;

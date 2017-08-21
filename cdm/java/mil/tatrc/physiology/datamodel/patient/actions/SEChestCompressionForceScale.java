@@ -1,26 +1,17 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ChestCompressionForceScaleData;
+import com.kitware.physiology.cdm.PatientActions.ChestCompressionForceScaleData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
-public class SEChestCompressionForceScale extends SEChestCompression
+public class SEChestCompressionForceScale extends SEPatientAction
 {
   protected SEScalar0To1 forceScale;
-  protected SEScalarTime     forcePeriod;   
+  protected SEScalarTime forcePeriod;   
   
   public SEChestCompressionForceScale()
   {
@@ -61,29 +52,29 @@ public class SEChestCompressionForceScale extends SEChestCompression
     return hasForceScale() && hasForcePeriod();
   }
   
-  public boolean load(ChestCompressionForceScaleData in)
+  public static void load(ChestCompressionForceScaleData src, SEChestCompressionForceScale dst)
   {
-    super.load(in);
-    getForceScale().load(in.getForceScale());
-    if(getForcePeriod()!=null)
-      getForcePeriod().load(in.getForcePeriod());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasForceScale())
+      SEScalar0To1.load(src.getForceScale(),dst.getForceScale());
+    if(src.hasForcePeriod())
+      SEScalarTime.load(src.getForcePeriod(),dst.getForcePeriod());
   }
   
-  public ChestCompressionForceScaleData unload()
+  public static ChestCompressionForceScaleData unload(SEChestCompressionForceScale src)
   {
-    ChestCompressionForceScaleData data = CDMSerializer.objFactory.createChestCompressionForceScaleData();
-    unload(data);
-    return data;
+    ChestCompressionForceScaleData.Builder dst = ChestCompressionForceScaleData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ChestCompressionForceScaleData data)
+  protected static void unload(SEChestCompressionForceScale src, ChestCompressionForceScaleData.Builder dst)
   {
-    super.unload(data);
-    if (hasForceScale())
-      data.setForceScale(forceScale.unload());
-    if (hasForcePeriod())
-      data.setForcePeriod(forcePeriod.unload());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasForceScale())
+      dst.setForceScale(SEScalar0To1.unload(src.forceScale));
+    if (src.hasForcePeriod())
+      dst.setForcePeriod(SEScalarTime.unload(src.forcePeriod));
   }
   
   public boolean hasForceScale()

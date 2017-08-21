@@ -1,22 +1,13 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
-
-#include "bind/enumCircuitType.hxx"
-CDM_BIND_DECL(CircuitManagerData);
+PROTO_PUSH
+#include "bind/cdm/Circuit.pb.h"
+PROTO_POP
 
 
 #define CIRCUIT_LEDGER_TEMPLATE typename NodeType, typename PathType, typename CircuitType
@@ -45,7 +36,7 @@ public:
 #define FLUID_LEDGER_TYPES SEFluidCircuitNode,SEFluidCircuitPath,SEFluidCircuit
 #define THERMAL_LEDGER_TYPES SEThermalCircuitNode,SEThermalCircuitPath,SEThermalCircuit
 
-class DLL_DECL SECircuitManager : public Loggable
+class CDM_DECL SECircuitManager : public Loggable
 {
 public:
   SECircuitManager(Logger* logger);
@@ -53,10 +44,15 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::CircuitManagerData& in);
-  virtual CDM::CircuitManagerData* Unload() const;
+  virtual void StateChange() { };
+  bool LoadFile(const std::string& filename);
+  void SaveFile(const std::string& filename);
+
+  static void Load(const cdm::CircuitManagerData& src, SECircuitManager& dst);
+  static cdm::CircuitManagerData* Unload(const SECircuitManager& src);
 protected:
-  void Unload(CDM::CircuitManagerData& data) const;
+  static void Serialize(const cdm::CircuitManagerData& src, SECircuitManager& dst);
+  static void Serialize(const SECircuitManager& src, cdm::CircuitManagerData& dst);
 
 public:
   void SetReadOnly(bool b);  

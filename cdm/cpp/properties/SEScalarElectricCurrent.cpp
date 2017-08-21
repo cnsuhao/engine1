@@ -1,28 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricCurrent.h"
 
 const ElectricCurrentUnit ElectricCurrentUnit::A("A");
-
-CDM::ScalarElectricCurrentData* SEScalarElectricCurrent::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarElectricCurrentData* data(new CDM::ScalarElectricCurrentData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool ElectricCurrentUnit::IsValidUnit(const std::string& unit)
 {
@@ -38,4 +20,26 @@ const ElectricCurrentUnit& ElectricCurrentUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid ElectricCurrent unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarElectricCurrent::Load(const cdm::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
+{
+  SEScalarElectricCurrent::Serialize(src, dst);
+}
+void SEScalarElectricCurrent::Serialize(const cdm::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
+{
+  SEScalarQuantity<ElectricCurrentUnit>::Serialize(src.scalarelectriccurrent(), dst);
+}
+
+cdm::ScalarElectricCurrentData* SEScalarElectricCurrent::Unload(const SEScalarElectricCurrent& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarElectricCurrentData* dst = new cdm::ScalarElectricCurrentData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarElectricCurrent::Serialize(const SEScalarElectricCurrent& src, cdm::ScalarElectricCurrentData& dst)
+{
+  SEScalarQuantity<ElectricCurrentUnit>::Serialize(src, *dst.mutable_scalarelectriccurrent());
 }

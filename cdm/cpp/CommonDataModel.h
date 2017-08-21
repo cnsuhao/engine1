@@ -1,31 +1,21 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
  
 #pragma once
 
-#if defined (__clang__)
-    #define DLL_DECL
-    #define STL_DECL
-#elif defined(__gnu_linux__)
-    #define DLL_DECL __attribute__ ((visibility ("default")))
-    #define STL_DECL extern
-#else
-    #ifdef COMMONDATAMODEL_EXPORTS
-      #define DLL_DECL __declspec(dllexport)
-        #define STL_DECL
-    #else
-      #define DLL_DECL __declspec(dllimport)
-        #define STL_DECL extern
-    #endif
+#define CDM_DECL
+#ifdef SHARED_CDM
+  #if defined (__clang__)
+      #define CDM_DECL
+  #elif defined(__gnu_linux__)
+      #define CDM_DECL __attribute__ ((visibility ("default")))
+  #else
+      #ifdef SHARED_CDM
+        #define CDM_DECL __declspec(dllexport)
+      #else
+        #define CDM_DECL __declspec(dllimport)
+      #endif
+  #endif
 #endif
 
 #if (0)
@@ -34,9 +24,7 @@ specific language governing permissions and limitations under the License.
 #define DEBUGOUT(x) 
 #endif
 
-#define CDM mil::tatrc::physiology::datamodel
-//using namespace mil::tatrc::phsyiology::datamodel;
-#define CDM_BIND_DECL(type) namespace mil{ namespace tatrc{ namespace physiology{ namespace datamodel { class type; } } } }
+#define CDM_BIND_DECL(type) namespace cdm { class type; }
 
 #include <memory>
 #include <stdio.h>
@@ -128,7 +116,7 @@ class CCompoundUnit;
 
 class SEScalar; class SEUnitScalar; class SEGenericScalar; class NoUnit;
 class SEScalar0To1; 
-class SEScalarNeg1To1;
+class SEScalarNegative1To1;
 class SEScalarAmount; class AmountUnit;
 class SEScalarAmountPerMass; class AmountPerMassUnit;
 class SEScalarAmountPerTime; class AmountPerTimeUnit;
@@ -149,7 +137,7 @@ class SEScalarFlowElastance; class FlowElastanceUnit;
 class SEScalarFlowInertance; class FlowInertanceUnit;
 class SEScalarFlowResistance; class FlowResistanceUnit;
 class SEScalarForce; class ForceUnit;
-class SEScalarFraction;
+class SEScalar0To1;
 class SEScalarFrequency; class FrequencyUnit;
 class SEScalarHeatCapacitance; class HeatCapacitanceUnit;
 class SEScalarHeatCapacitancePerAmount; class HeatCapacitancePerAmountUnit;

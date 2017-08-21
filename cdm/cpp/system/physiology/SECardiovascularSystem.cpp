@@ -1,40 +1,19 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "substance/SESubstanceManager.h"
-#include "properties/SEScalarFraction.h"
-#include "bind/ScalarFractionData.hxx"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
-#include "bind/ScalarFrequencyData.hxx"
 #include "properties/SEScalarPressure.h"
-#include "bind/ScalarPressureData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 #include "properties/SEScalarFlowResistance.h"
-#include "bind/ScalarFlowResistanceData.hxx"
-#include "bind/enumHeartRhythm.hxx"
 #include "properties/SEScalarPressurePerVolume.h"
-#include "bind/ScalarPressurePerVolumeData.hxx"
 #include "properties/SEScalarPressureTimePerArea.h"
-#include "bind/ScalarPressureTimePerAreaData.hxx"
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
-#include "bind/ScalarPressureTimePerVolumeAreaData.hxx"
 #include "properties/SEScalarVolumePerTimeArea.h"
-#include "bind/ScalarVolumePerTimeAreaData.hxx"
-
 
 SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger)
 {
@@ -48,7 +27,7 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_DiastolicArterialPressure = nullptr;
   m_HeartEjectionFraction = nullptr;
   m_HeartRate = nullptr;
-  m_HeartRhythm = (CDM::enumHeartRhythm::value) - 1;
+  m_HeartRhythm = cdm::eHeartRhythm::NormalSinus;
   m_HeartStrokeVolume = nullptr; 
   m_IntracranialPressure = nullptr;
   m_MeanArterialPressure = nullptr;
@@ -89,7 +68,7 @@ void SECardiovascularSystem::Clear()
   SAFE_DELETE(m_DiastolicArterialPressure);
   SAFE_DELETE(m_HeartEjectionFraction);
   SAFE_DELETE(m_HeartRate);
-  m_HeartRhythm = (CDM::enumHeartRhythm::value) - 1;
+  m_HeartRhythm = cdm::eHeartRhythm::NormalSinus;
   SAFE_DELETE(m_HeartStrokeVolume);
   SAFE_DELETE(m_IntracranialPressure);
   SAFE_DELETE(m_MeanArterialPressure);
@@ -174,145 +153,141 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SECardiovascularSystem::Load(const CDM::CardiovascularSystemData& in)
+void SECardiovascularSystem::Load(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst)
 {
-  SESystem::Load(in);
-
-  if(in.ArterialPressure().present())
-    GetArterialPressure().Load(in.ArterialPressure().get());
-  if(in.BloodVolume().present())
-    GetBloodVolume().Load(in.BloodVolume().get());
-  if(in.CardiacIndex().present())
-    GetCardiacIndex().Load(in.CardiacIndex().get());
-  if (in.CardiacOutput().present())
-    GetCardiacOutput().Load(in.CardiacOutput().get());
-  if (in.CentralVenousPressure().present())
-    GetCentralVenousPressure().Load(in.CentralVenousPressure().get());
-  if (in.CerebralBloodFlow().present())
-    GetCerebralBloodFlow().Load(in.CerebralBloodFlow().get());
-  if (in.CerebralPerfusionPressure().present())
-    GetCerebralPerfusionPressure().Load(in.CerebralPerfusionPressure().get());
-  if(in.DiastolicArterialPressure().present())
-    GetDiastolicArterialPressure().Load(in.DiastolicArterialPressure().get());  
-  if(in.HeartEjectionFraction().present())
-    GetHeartEjectionFraction().Load(in.HeartEjectionFraction().get());
-  if(in.HeartRate().present())
-    GetHeartRate().Load(in.HeartRate().get());
-  if (in.HeartRhythm().present())
-    SetHeartRhythm(in.HeartRhythm().get());
-  if(in.HeartStrokeVolume().present())
-    GetHeartStrokeVolume().Load(in.HeartStrokeVolume().get());
-  if (in.IntracranialPressure().present())
-    GetIntracranialPressure().Load(in.IntracranialPressure().get());
-  if (in.MeanArterialPressure().present())
-    GetMeanArterialPressure().Load(in.MeanArterialPressure().get());
-  if (in.MeanArterialCarbonDioxidePartialPressure().present())
-    GetMeanArterialCarbonDioxidePartialPressure().Load(in.MeanArterialCarbonDioxidePartialPressure().get());
-  if (in.MeanArterialCarbonDioxidePartialPressureDelta().present())
-    GetMeanArterialCarbonDioxidePartialPressureDelta().Load(in.MeanArterialCarbonDioxidePartialPressureDelta().get());
-  if (in.MeanCentralVenousPressure().present())
-    GetMeanCentralVenousPressure().Load(in.MeanCentralVenousPressure().get());
-  if (in.MeanSkinFlow().present())
-    GetMeanSkinFlow().Load(in.MeanSkinFlow().get());
-  if (in.PulmonaryArterialPressure().present())
-    GetPulmonaryArterialPressure().Load(in.PulmonaryArterialPressure().get());
-  if (in.PulmonaryCapillariesWedgePressure().present())
-    GetPulmonaryCapillariesWedgePressure().Load(in.PulmonaryCapillariesWedgePressure().get());
-  if(in.PulmonaryDiastolicArterialPressure().present())
-    GetPulmonaryDiastolicArterialPressure().Load(in.PulmonaryDiastolicArterialPressure().get());
-  if(in.PulmonaryMeanArterialPressure().present())
-    GetPulmonaryMeanArterialPressure().Load(in.PulmonaryMeanArterialPressure().get());
-  if(in.PulmonaryMeanCapillaryFlow().present())
-    GetPulmonaryMeanCapillaryFlow().Load(in.PulmonaryMeanCapillaryFlow().get());
-  if(in.PulmonaryMeanShuntFlow().present())
-    GetPulmonaryMeanShuntFlow().Load(in.PulmonaryMeanShuntFlow().get());
-  if(in.PulmonarySystolicArterialPressure().present())
-    GetPulmonarySystolicArterialPressure().Load(in.PulmonarySystolicArterialPressure().get());
-  if(in.PulmonaryVascularResistance().present())
-    GetPulmonaryVascularResistance().Load(in.PulmonaryVascularResistance().get());
-  if (in.PulmonaryVascularResistanceIndex().present())
-    GetPulmonaryVascularResistanceIndex().Load(in.PulmonaryVascularResistanceIndex().get());
-  if (in.PulsePressure().present())
-    GetPulsePressure().Load(in.PulsePressure().get());
-  if (in.SystemicVascularResistance().present())
-    GetSystemicVascularResistance().Load(in.SystemicVascularResistance().get());
-  if(in.SystolicArterialPressure().present())
-    GetSystolicArterialPressure().Load(in.SystolicArterialPressure().get());
-
-  return true;
+  SECardiovascularSystem::Serialize(src, dst);
+}
+void SECardiovascularSystem::Serialize(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst)
+{
+  dst.Clear();
+  if (src.has_arterialpressure())
+    SEScalarPressure::Load(src.arterialpressure(), dst.GetArterialPressure());
+  if (src.has_bloodvolume())
+    SEScalarVolume::Load(src.bloodvolume(), dst.GetBloodVolume());
+  if (src.has_cardiacindex())
+    SEScalarVolumePerTimeArea::Load(src.cardiacindex(), dst.GetCardiacIndex());
+  if (src.has_cardiacoutput())
+    SEScalarVolumePerTime::Load(src.cardiacoutput(), dst.GetCardiacOutput());
+  if (src.has_centralvenouspressure())
+    SEScalarPressure::Load(src.centralvenouspressure(), dst.GetCentralVenousPressure());
+  if (src.has_cerebralbloodflow())
+    SEScalarVolumePerTime::Load(src.cerebralbloodflow(), dst.GetCerebralBloodFlow());
+  if (src.has_cerebralperfusionpressure())
+    SEScalarPressure::Load(src.cerebralperfusionpressure(), dst.GetCerebralPerfusionPressure());
+  if (src.has_diastolicarterialpressure())
+    SEScalarPressure::Load(src.diastolicarterialpressure(), dst.GetDiastolicArterialPressure());
+  if (src.has_heartejectionfraction())
+    SEScalar0To1::Load(src.heartejectionfraction(), dst.GetHeartEjectionFraction());
+  if (src.has_heartrate())
+    SEScalarFrequency::Load(src.heartrate(), dst.GetHeartRate());
+  dst.SetHeartRhythm(src.heartrhythm());
+  if (src.has_heartstrokevolume())
+    SEScalarVolume::Load(src.heartstrokevolume(), dst.GetHeartStrokeVolume());
+  if (src.has_intracranialpressure())
+    SEScalarPressure::Load(src.intracranialpressure(), dst.GetIntracranialPressure());
+  if (src.has_meanarterialpressure())
+    SEScalarPressure::Load(src.meanarterialpressure(), dst.GetMeanArterialPressure());
+  if (src.has_meanarterialcarbondioxidepartialpressure())
+    SEScalarPressure::Load(src.meanarterialcarbondioxidepartialpressure(), dst.GetMeanArterialCarbonDioxidePartialPressure());
+  if (src.has_meanarterialcarbondioxidepartialpressuredelta())
+    SEScalarPressure::Load(src.meanarterialcarbondioxidepartialpressuredelta(), dst.GetMeanArterialCarbonDioxidePartialPressureDelta());
+  if (src.has_meancentralvenouspressure())
+    SEScalarPressure::Load(src.meancentralvenouspressure(), dst.GetMeanCentralVenousPressure());
+  if (src.has_meanskinflow())
+    SEScalarVolumePerTime::Load(src.meanskinflow(), dst.GetMeanSkinFlow());
+  if (src.has_pulmonaryarterialpressure())
+    SEScalarPressure::Load(src.pulmonaryarterialpressure(), dst.GetPulmonaryArterialPressure());
+  if (src.has_pulmonarycapillarieswedgepressure())
+    SEScalarPressure::Load(src.pulmonarycapillarieswedgepressure(), dst.GetPulmonaryCapillariesWedgePressure());
+  if (src.has_pulmonarydiastolicarterialpressure())
+    SEScalarPressure::Load(src.pulmonarydiastolicarterialpressure(), dst.GetPulmonaryDiastolicArterialPressure());
+  if (src.has_pulmonarymeanarterialpressure())
+    SEScalarPressure::Load(src.pulmonarymeanarterialpressure(), dst.GetPulmonaryMeanArterialPressure());
+  if (src.has_pulmonarymeancapillaryflow())
+    SEScalarVolumePerTime::Load(src.pulmonarymeancapillaryflow(), dst.GetPulmonaryMeanCapillaryFlow());
+  if (src.has_pulmonarymeanshuntflow())
+    SEScalarVolumePerTime::Load(src.pulmonarymeanshuntflow(), dst.GetPulmonaryMeanShuntFlow());
+  if (src.has_pulmonarysystolicarterialpressure())
+    SEScalarPressure::Load(src.pulmonarysystolicarterialpressure(), dst.GetPulmonarySystolicArterialPressure());
+  if (src.has_pulmonaryvascularresistance())
+    SEScalarFlowResistance::Load(src.pulmonaryvascularresistance(), dst.GetPulmonaryVascularResistance());
+  if (src.has_pulmonaryvascularresistanceindex())
+    SEScalarPressureTimePerVolumeArea::Load(src.pulmonaryvascularresistanceindex(), dst.GetPulmonaryVascularResistanceIndex());
+  if (src.has_pulsepressure())
+    SEScalarPressure::Load(src.pulsepressure(), dst.GetPulsePressure());
+  if (src.has_systemicvascularresistance())
+    SEScalarFlowResistance::Load(src.systemicvascularresistance(), dst.GetSystemicVascularResistance());
+  if (src.has_systolicarterialpressure())
+    SEScalarPressure::Load(src.systolicarterialpressure(), dst.GetSystolicArterialPressure());
 }
 
-CDM::CardiovascularSystemData* SECardiovascularSystem::Unload() const
+cdm::CardiovascularSystemData* SECardiovascularSystem::Unload(const SECardiovascularSystem& src)
 {
-  CDM::CardiovascularSystemData* data = new CDM::CardiovascularSystemData();
-  Unload(*data);
-  return data;
+  cdm::CardiovascularSystemData* dst = new cdm::CardiovascularSystemData();
+  SECardiovascularSystem::Serialize(src, *dst);
+  return dst;
 }
-
-void SECardiovascularSystem::Unload(CDM::CardiovascularSystemData& data) const
+void SECardiovascularSystem::Serialize(const SECardiovascularSystem& src, cdm::CardiovascularSystemData& dst)
 {
-  SESystem::Unload(data);
-
-  if(m_ArterialPressure!=nullptr)
-    data.ArterialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_ArterialPressure->Unload())); 
-  if(m_BloodVolume!=nullptr)
-    data.BloodVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_BloodVolume->Unload())); 
-  if(m_CardiacIndex !=nullptr)
-    data.CardiacIndex(std::unique_ptr<CDM::ScalarVolumePerTimeAreaData>(m_CardiacIndex->Unload()));
-  if (m_CardiacOutput != nullptr)
-    data.CardiacOutput(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_CardiacOutput->Unload()));
-  if(m_CentralVenousPressure!=nullptr)
-    data.CentralVenousPressure(std::unique_ptr<CDM::ScalarPressureData>(m_CentralVenousPressure->Unload())); 
-  if (m_CerebralBloodFlow != nullptr)
-    data.CerebralBloodFlow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_CerebralBloodFlow->Unload()));
-  if (m_CerebralPerfusionPressure != nullptr)
-    data.CerebralPerfusionPressure(std::unique_ptr<CDM::ScalarPressureData>(m_CerebralPerfusionPressure->Unload()));
-  if(m_DiastolicArterialPressure!=nullptr)
-    data.DiastolicArterialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_DiastolicArterialPressure->Unload())); 
-  if(m_HeartEjectionFraction!=nullptr)
-    data.HeartEjectionFraction(std::unique_ptr<CDM::ScalarFractionData>(m_HeartEjectionFraction->Unload())); 
-  if(m_HeartRate!=nullptr)
-    data.HeartRate(std::unique_ptr<CDM::ScalarFrequencyData>(m_HeartRate->Unload()));
-  if (HasHeartRhythm())
-    data.HeartRhythm(m_HeartRhythm);
-  if (m_HeartStrokeVolume != nullptr)
-    data.HeartStrokeVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_HeartStrokeVolume->Unload()));
-  if (m_IntracranialPressure != nullptr)
-    data.IntracranialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_IntracranialPressure->Unload()));
-  if (m_MeanArterialPressure != nullptr)
-    data.MeanArterialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_MeanArterialPressure->Unload()));
-  if (m_MeanArterialCarbonDioxidePartialPressure != nullptr)
-    data.MeanArterialCarbonDioxidePartialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_MeanArterialCarbonDioxidePartialPressure->Unload()));
-  if (m_MeanArterialCarbonDioxidePartialPressureDelta != nullptr)
-    data.MeanArterialCarbonDioxidePartialPressureDelta(std::unique_ptr<CDM::ScalarPressureData>(m_MeanArterialCarbonDioxidePartialPressureDelta->Unload()));
-  if (m_MeanCentralVenousPressure != nullptr)
-    data.MeanCentralVenousPressure(std::unique_ptr<CDM::ScalarPressureData>(m_MeanCentralVenousPressure->Unload()));
-  if (m_MeanSkinFlow != nullptr)
-    data.MeanSkinFlow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_MeanSkinFlow->Unload()));
-  if (m_PulmonaryArterialPressure != nullptr)
-    data.PulmonaryArterialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulmonaryArterialPressure->Unload()));
-  if (m_PulmonaryCapillariesWedgePressure != nullptr)
-    data.PulmonaryCapillariesWedgePressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulmonaryCapillariesWedgePressure->Unload())); 
-  if(m_PulmonaryDiastolicArterialPressure!=nullptr)
-    data.PulmonaryDiastolicArterialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulmonaryDiastolicArterialPressure->Unload())); 
-  if(m_PulmonaryMeanArterialPressure!=nullptr)
-    data.PulmonaryMeanArterialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulmonaryMeanArterialPressure->Unload())); 
-  if(m_PulmonaryMeanCapillaryFlow!=nullptr)
-    data.PulmonaryMeanCapillaryFlow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_PulmonaryMeanCapillaryFlow->Unload())); 
-  if(m_PulmonaryMeanShuntFlow!=nullptr)
-    data.PulmonaryMeanShuntFlow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_PulmonaryMeanShuntFlow->Unload())); 
-  if(m_PulmonarySystolicArterialPressure!=nullptr)
-    data.PulmonarySystolicArterialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulmonarySystolicArterialPressure->Unload())); 
-  if(m_PulmonaryVascularResistance !=nullptr)
-    data.PulmonaryVascularResistance(std::unique_ptr<CDM::ScalarFlowResistanceData>(m_PulmonaryVascularResistance->Unload()));
-  if (m_PulmonaryVascularResistanceIndex != nullptr)
-    data.PulmonaryVascularResistanceIndex(std::unique_ptr<CDM::ScalarPressureTimePerVolumeAreaData>(m_PulmonaryVascularResistanceIndex->Unload()));
-  if (m_PulsePressure != nullptr)
-    data.PulsePressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulsePressure->Unload()));
-  if (m_SystemicVascularResistance != nullptr)
-    data.SystemicVascularResistance(std::unique_ptr<CDM::ScalarFlowResistanceData>(m_SystemicVascularResistance->Unload()));
-  if(m_SystolicArterialPressure!=nullptr)
-    data.SystolicArterialPressure(std::unique_ptr<CDM::ScalarPressureData>(m_SystolicArterialPressure->Unload()));
+  if (src.HasArterialPressure())
+    dst.set_allocated_arterialpressure(SEScalarPressure::Unload(*src.m_ArterialPressure));
+  if (src.HasBloodVolume())
+    dst.set_allocated_bloodvolume(SEScalarVolume::Unload(*src.m_BloodVolume));
+  if (src.HasCardiacIndex())
+    dst.set_allocated_cardiacindex(SEScalarVolumePerTimeArea::Unload(*src.m_CardiacIndex));
+  if (src.HasCardiacOutput())
+    dst.set_allocated_cardiacoutput(SEScalarVolumePerTime::Unload(*src.m_CardiacOutput));
+  if (src.HasCentralVenousPressure())
+    dst.set_allocated_centralvenouspressure(SEScalarPressure::Unload(*src.m_CentralVenousPressure));
+  if (src.HasCerebralBloodFlow())
+    dst.set_allocated_cerebralbloodflow(SEScalarVolumePerTime::Unload(*src.m_CerebralBloodFlow));
+  if (src.HasCerebralPerfusionPressure())
+    dst.set_allocated_cerebralperfusionpressure(SEScalarPressure::Unload(*src.m_CerebralPerfusionPressure));
+  if (src.HasDiastolicArterialPressure())
+    dst.set_allocated_diastolicarterialpressure(SEScalarPressure::Unload(*src.m_DiastolicArterialPressure));
+  if (src.HasHeartEjectionFraction())
+    dst.set_allocated_heartejectionfraction(SEScalar0To1::Unload(*src.m_HeartEjectionFraction));
+  if (src.HasHeartRate())
+    dst.set_allocated_heartrate(SEScalarFrequency::Unload(*src.m_HeartRate));
+  dst.set_heartrhythm(src.m_HeartRhythm);
+  if (src.HasHeartStrokeVolume())
+    dst.set_allocated_heartstrokevolume(SEScalarVolume::Unload(*src.m_HeartStrokeVolume));
+  if (src.HasIntracranialPressure())
+    dst.set_allocated_intracranialpressure(SEScalarPressure::Unload(*src.m_IntracranialPressure));
+  if (src.HasMeanArterialPressure())
+    dst.set_allocated_meanarterialpressure(SEScalarPressure::Unload(*src.m_MeanArterialPressure));
+  if (src.HasMeanArterialCarbonDioxidePartialPressure())
+    dst.set_allocated_meanarterialcarbondioxidepartialpressure(SEScalarPressure::Unload(*src.m_MeanArterialCarbonDioxidePartialPressure));
+  if (src.HasMeanArterialCarbonDioxidePartialPressureDelta())
+    dst.set_allocated_meanarterialcarbondioxidepartialpressuredelta(SEScalarPressure::Unload(*src.m_MeanArterialCarbonDioxidePartialPressureDelta));
+  if (src.HasMeanCentralVenousPressure())
+    dst.set_allocated_meancentralvenouspressure(SEScalarPressure::Unload(*src.m_MeanCentralVenousPressure));
+  if (src.HasMeanSkinFlow())
+    dst.set_allocated_meanskinflow(SEScalarVolumePerTime::Unload(*src.m_MeanSkinFlow));
+  if (src.HasPulmonaryArterialPressure())
+    dst.set_allocated_pulmonaryarterialpressure(SEScalarPressure::Unload(*src.m_PulmonaryArterialPressure));
+  if (src.HasPulmonaryCapillariesWedgePressure())
+    dst.set_allocated_pulmonarycapillarieswedgepressure(SEScalarPressure::Unload(*src.m_PulmonaryCapillariesWedgePressure));
+  if (src.HasPulmonaryDiastolicArterialPressure())
+    dst.set_allocated_pulmonarydiastolicarterialpressure(SEScalarPressure::Unload(*src.m_PulmonaryDiastolicArterialPressure));
+  if (src.HasPulmonaryMeanArterialPressure())
+    dst.set_allocated_pulmonarymeanarterialpressure(SEScalarPressure::Unload(*src.m_PulmonaryMeanArterialPressure));
+  if (src.HasPulmonaryMeanCapillaryFlow())
+    dst.set_allocated_pulmonarymeancapillaryflow(SEScalarVolumePerTime::Unload(*src.m_PulmonaryMeanCapillaryFlow));
+  if (src.HasPulmonaryMeanShuntFlow())
+    dst.set_allocated_pulmonarymeanshuntflow(SEScalarVolumePerTime::Unload(*src.m_PulmonaryMeanShuntFlow));
+  if (src.HasPulmonarySystolicArterialPressure())
+    dst.set_allocated_pulmonarysystolicarterialpressure(SEScalarPressure::Unload(*src.m_PulmonarySystolicArterialPressure));
+  if (src.HasPulmonaryVascularResistance())
+    dst.set_allocated_pulmonaryvascularresistance(SEScalarFlowResistance::Unload(*src.m_PulmonaryVascularResistance));
+  if (src.HasPulmonaryVascularResistanceIndex())
+    dst.set_allocated_pulmonaryvascularresistanceindex(SEScalarPressureTimePerVolumeArea::Unload(*src.m_PulmonaryVascularResistanceIndex));
+  if (src.HasPulsePressure())
+    dst.set_allocated_pulsepressure(SEScalarPressure::Unload(*src.m_PulsePressure));
+  if (src.HasSystemicVascularResistance())
+    dst.set_allocated_systemicvascularresistance(SEScalarFlowResistance::Unload(*src.m_SystemicVascularResistance));
+  if (src.HasSystolicArterialPressure())
+    dst.set_allocated_systolicarterialpressure(SEScalarPressure::Unload(*src.m_SystolicArterialPressure));
 }
 
 bool SECardiovascularSystem::HasArterialPressure() const
@@ -455,10 +430,10 @@ bool SECardiovascularSystem::HasHeartEjectionFraction() const
 {
   return m_HeartEjectionFraction==nullptr?false:m_HeartEjectionFraction->IsValid();
 }
-SEScalarFraction& SECardiovascularSystem::GetHeartEjectionFraction()
+SEScalar0To1& SECardiovascularSystem::GetHeartEjectionFraction()
 {
   if(m_HeartEjectionFraction==nullptr)
-    m_HeartEjectionFraction=new SEScalarFraction();
+    m_HeartEjectionFraction=new SEScalar0To1();
   return *m_HeartEjectionFraction;
 }
 double SECardiovascularSystem::GetHeartEjectionFraction() const
@@ -485,21 +460,13 @@ double SECardiovascularSystem::GetHeartRate(const FrequencyUnit& unit) const
   return m_HeartRate->GetValue(unit);
 }
 
-CDM::enumHeartRhythm::value SECardiovascularSystem::GetHeartRhythm() const
+cdm::eHeartRhythm SECardiovascularSystem::GetHeartRhythm() const
 {
   return m_HeartRhythm;
 }
-void SECardiovascularSystem::SetHeartRhythm(CDM::enumHeartRhythm::value rhythm)
+void SECardiovascularSystem::SetHeartRhythm(cdm::eHeartRhythm rhythm)
 {
   m_HeartRhythm = rhythm;
-}
-bool SECardiovascularSystem::HasHeartRhythm()const
-{
-  return m_HeartRhythm == ((CDM::enumHeartRhythm::value) - 1) ? false : true;
-}
-void SECardiovascularSystem::InvalidateHeartRhythm()
-{
-  m_HeartRhythm = (CDM::enumHeartRhythm::value) - 1;
 }
 
 bool SECardiovascularSystem::HasHeartStrokeVolume() const

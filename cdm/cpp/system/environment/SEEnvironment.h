@@ -1,30 +1,18 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/EnvironmentData.hxx"
-#include "bind/enumSurroundingType.hxx"
-class SESubstance;
-class SESubstanceFraction;
-class SESubstanceManager;
-class SEEnvironmentalConditions;
-class SEEnvironmentChange;
-class SEInitialEnvironment;
-class SEActiveHeating;
-class SEActiveCooling;
-class SEAppliedTemperature;
+PROTO_PUSH
+#include "bind/cdm/Environment.pb.h"
+PROTO_POP
+#include "system/environment/SEActiveConditioning.h"
+#include "system/environment/SEAppliedTemperature.h"
+#include "system/environment/SEEnvironmentalConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 
-class DLL_DECL SEEnvironment : public SESystem
+class CDM_DECL SEEnvironment : public SESystem
 {
 public:
 
@@ -33,20 +21,21 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::EnvironmentData& in);
-  virtual CDM::EnvironmentData* Unload() const;
+  static void Load(const cdm::EnvironmentData& src, SEEnvironment& dst);
+  static cdm::EnvironmentData* Unload(const SEEnvironment& src);
 protected:
-  virtual void Unload(CDM::EnvironmentData& data) const;
+  static void Serialize(const cdm::EnvironmentData& src, SEEnvironment& dst);
+  static void Serialize(const SEEnvironment& src, cdm::EnvironmentData& dst);
 
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Action
   */
-  virtual bool ProcessChange(const SEEnvironmentChange& action);
+  virtual bool ProcessChange(const SEChangeEnvironmentConditions& action);
 
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Condition
   */
-  virtual bool ProcessChange(const SEInitialEnvironment& change);
+  virtual bool ProcessChange(const SEInitialEnvironmentConditions& change);
 
   /** @name StateChange
   *   @brief - This method is called when ever there is a state change
@@ -54,18 +43,19 @@ protected:
   *            Engine specific methodology can then update their logic.
   */
   virtual void StateChange() {};
+
 public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual bool HasActiveHeating() const;
-  virtual SEActiveHeating& GetActiveHeating();
-  virtual const SEActiveHeating* GetActiveHeating() const;
+  virtual SEActiveConditioning& GetActiveHeating();
+  virtual const SEActiveConditioning* GetActiveHeating() const;
   virtual void RemoveActiveHeating();
 
   virtual bool HasActiveCooling() const;
-  virtual SEActiveCooling& GetActiveCooling();
-  virtual const SEActiveCooling* GetActiveCooling() const;
+  virtual SEActiveConditioning& GetActiveCooling();
+  virtual const SEActiveConditioning* GetActiveCooling() const;
   virtual void RemoveActiveCooling();
 
   virtual bool HasAppliedTemperature() const;
@@ -113,18 +103,18 @@ public:
 protected:
 
   SEScalarPower*                    m_ConvectiveHeatLoss;
-  SEScalarHeatConductancePerArea*    m_ConvectiveHeatTranferCoefficient;
+  SEScalarHeatConductancePerArea*   m_ConvectiveHeatTranferCoefficient;
   SEScalarPower*                    m_EvaporativeHeatLoss;
-  SEScalarHeatConductancePerArea*    m_EvaporativeHeatTranferCoefficient;
+  SEScalarHeatConductancePerArea*   m_EvaporativeHeatTranferCoefficient;
   SEScalarPower*                    m_RadiativeHeatLoss;
-  SEScalarHeatConductancePerArea*    m_RadiativeHeatTranferCoefficient;
+  SEScalarHeatConductancePerArea*   m_RadiativeHeatTranferCoefficient;
   SEScalarPower*                    m_RespirationHeatLoss;
   SEScalarPower*                    m_SkinHeatLoss;
 
-  SEActiveHeating*                  m_ActiveHeating;
-  SEActiveCooling*                  m_ActiveCooling;
+  SEActiveConditioning*             m_ActiveHeating;
+  SEActiveConditioning*             m_ActiveCooling;
   SEAppliedTemperature*             m_AppliedTemperature;
   SEEnvironmentalConditions*        m_Conditions;
 
   SESubstanceManager&               m_Substances;
-};                  
+};

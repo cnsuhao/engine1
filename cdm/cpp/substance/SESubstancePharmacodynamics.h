@@ -1,20 +1,13 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(SubstancePharmacodynamicsData)
 #include "system/physiology/SEPupillaryResponse.h"
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
-class DLL_DECL SESubstancePharmacodynamics : Loggable
+class CDM_DECL SESubstancePharmacodynamics : Loggable
 {
 public:
 
@@ -26,18 +19,19 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::SubstancePharmacodynamicsData& in);
-  virtual CDM::SubstancePharmacodynamicsData* Unload() const;
+  static void Load(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst);
+  static cdm::SubstanceData_PharmacodynamicsData* Unload(const SESubstancePharmacodynamics& src);
 protected:
-  virtual void Unload(CDM::SubstancePharmacodynamicsData& data) const;
+  static void Serialize(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst);
+  static void Serialize(const SESubstancePharmacodynamics& src, cdm::SubstanceData_PharmacodynamicsData& dst);
 
 public:
   virtual bool HasBronchodilation() const;
-  virtual SEScalarFraction& GetBronchodilation();
+  virtual SEScalarNegative1To1& GetBronchodilation();
   virtual double GetBronchodilation() const;
 
   virtual bool HasDiastolicPressureModifier() const;
-  virtual SEScalarFraction& GetDiastolicPressureModifier();
+  virtual SEScalarNegative1To1& GetDiastolicPressureModifier();
   virtual double GetDiastolicPressureModifier() const;
 
   virtual bool HasEC50() const;
@@ -49,11 +43,11 @@ public:
   virtual double GetEMaxShapeParameter() const;
 
   virtual bool HasHeartRateModifier() const;
-  virtual SEScalarFraction& GetHeartRateModifier();
+  virtual SEScalarNegative1To1& GetHeartRateModifier();
   virtual double GetHeartRateModifier() const;
 
   virtual bool HasNeuromuscularBlock() const;
-  virtual SEScalarFraction& GetNeuromuscularBlock();
+  virtual SEScalarNegative1To1& GetNeuromuscularBlock();
   virtual double GetNeuromuscularBlock() const;
 
   virtual bool HasPupillaryResponse() const;
@@ -62,38 +56,38 @@ public:
   virtual void RemovePupillaryResponse();
 
   virtual bool HasRespirationRateModifier() const;
-  virtual SEScalarFraction& GetRespirationRateModifier();
+  virtual SEScalarNegative1To1& GetRespirationRateModifier();
   virtual double GetRespirationRateModifier() const;
 
   virtual bool HasSedation() const;
-  virtual SEScalarFraction& GetSedation();
+  virtual SEScalarNegative1To1& GetSedation();
   virtual double GetSedation() const;
 
   virtual bool HasSystolicPressureModifier() const;
-  virtual SEScalarFraction& GetSystolicPressureModifier();
+  virtual SEScalarNegative1To1& GetSystolicPressureModifier();
   virtual double GetSystolicPressureModifier() const;
 
   virtual bool HasTidalVolumeModifier() const;
-  virtual SEScalarFraction& GetTidalVolumeModifier();
+  virtual SEScalarNegative1To1& GetTidalVolumeModifier();
   virtual double GetTidalVolumeModifier() const;
 
   virtual bool HasTubularPermeabilityModifier() const;
-  virtual SEScalarFraction& GetTubularPermeabilityModifier();
+  virtual SEScalarNegative1To1& GetTubularPermeabilityModifier();
   virtual double GetTubularPermeabilityModifier() const;
 
 protected:
   virtual void CalculateDerived();
 
-  SEScalarFraction*          m_Bronchodilation;
-  SEScalarFraction*          m_DiastolicPressureModifier;
-  SEScalarMassPerVolume*     m_EC50;
-  SEScalar*                  m_EMaxShapeParameter;
-  SEScalarFraction*          m_HeartRateModifier;
-  SEScalarFraction*          m_NeuromuscularBlock;
-  SEPupillaryResponse*       m_PupillaryResponse;
-  SEScalarFraction*          m_RespirationRateModifier;
-  SEScalarFraction*          m_Sedation;
-  SEScalarFraction*          m_SystolicPressureModifier;
-  SEScalarFraction*          m_TidalVolumeModifier;
-  SEScalarFraction*          m_TubularPermeabilityModifier;
+  SEScalarNegative1To1*          m_Bronchodilation;
+  SEScalarNegative1To1*          m_DiastolicPressureModifier;
+  SEScalarMassPerVolume*         m_EC50;
+  SEScalar*                      m_EMaxShapeParameter;
+  SEScalarNegative1To1*          m_HeartRateModifier;
+  SEScalarNegative1To1*          m_NeuromuscularBlock;
+  SEPupillaryResponse*           m_PupillaryResponse;
+  SEScalarNegative1To1*          m_RespirationRateModifier;
+  SEScalarNegative1To1*          m_Sedation;
+  SEScalarNegative1To1*          m_SystolicPressureModifier;
+  SEScalarNegative1To1*          m_TidalVolumeModifier;
+  SEScalarNegative1To1*          m_TubularPermeabilityModifier;
 };

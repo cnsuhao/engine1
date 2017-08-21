@@ -1,23 +1,15 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
- **************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.substance.quantity;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.LiquidSubstanceQuantityData;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.AmountPerVolumeUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.MassPerAmountUnit;
 import mil.tatrc.physiology.datamodel.properties.SEScalarAmountPerVolume;
-import mil.tatrc.physiology.datamodel.properties.SEScalarFraction;
+
+import com.kitware.physiology.cdm.SubstanceQuantity.GasSubstanceQuantityData;
+import com.kitware.physiology.cdm.SubstanceQuantity.LiquidSubstanceQuantityData;
+
+import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.properties.SEScalarMass;
 import mil.tatrc.physiology.datamodel.properties.SEScalarMassPerVolume;
 import mil.tatrc.physiology.datamodel.properties.SEScalarPressure;
@@ -33,7 +25,7 @@ public class SELiquidSubstanceQuantity extends SESubstanceQuantity
   protected SEScalarMass            massExcreted;
   protected SEScalarAmountPerVolume molarity;
   protected SEScalarPressure        partialPressure;
-  protected SEScalarFraction        saturation;
+  protected SEScalar0To1            saturation;
 
   public SELiquidSubstanceQuantity(SESubstance s)
   {
@@ -69,51 +61,51 @@ public class SELiquidSubstanceQuantity extends SESubstanceQuantity
       saturation.invalidate();
   }
 
-  public boolean load(LiquidSubstanceQuantityData in)
+  public static void load(LiquidSubstanceQuantityData src, SELiquidSubstanceQuantity dst)
   {
-    super.load(in);
-    if (in.getConcentration() != null) 
-      getConcentration().load(in.getConcentration()); 
-    if (in.getMass() != null) 
-      getMass().load(in.getMass()); 
-    if(in.getMassCleared()!=null)
-      getMassCleared().load(in.getMassCleared());
-    if(in.getMassDeposited()!=null)
-      getMassDeposited().load(in.getMassDeposited());
-    if(in.getMassExcreted()!=null)
-      getMassExcreted().load(in.getMassExcreted());        
-    if (in.getPartialPressure() != null) 
-      getPartialPressure().load(in.getPartialPressure()); 
-    if (in.getSaturation() != null) 
-      getSaturation().load(in.getSaturation()); 
-  
-    return true;
+    SESubstanceQuantity.load(src.getSubstanceQuantity(),dst);
+    if (src.hasConcentration()) 
+      SEScalarMassPerVolume.load(src.getConcentration(),dst.getConcentration()); 
+    if (src.hasMass()) 
+      SEScalarMass.load(src.getMass(),dst.getMass()); 
+    if (src.hasMassCleared())
+      SEScalarMass.load(src.getMassCleared(),dst.getMassCleared());
+    if (src.hasMassDeposited())
+      SEScalarMass.load(src.getMassDeposited(),dst.getMassDeposited());
+    if (src.hasMassExcreted())
+      SEScalarMass.load(src.getMassExcreted(),dst.getMassExcreted());        
+    if (src.hasMolarity())
+    	SEScalarAmountPerVolume.load(src.getMolarity(),dst.getMolarity());        
+    if (src.hasPartialPressure()) 
+      SEScalarPressure.load(src.getPartialPressure(),dst.getPartialPressure()); 
+    if (src.hasSaturation()) 
+      SEScalar0To1.load(src.getSaturation(),dst.getSaturation());
   }
-
-  public LiquidSubstanceQuantityData unload()
+  public static LiquidSubstanceQuantityData unload(SELiquidSubstanceQuantity src)
   {
-    LiquidSubstanceQuantityData data = CDMSerializer.objFactory.createLiquidSubstanceQuantityData();
-    unload(data);
-    return data;
+    LiquidSubstanceQuantityData.Builder dst = LiquidSubstanceQuantityData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-
-  protected void unload(LiquidSubstanceQuantityData data)
+  protected static void unload(SELiquidSubstanceQuantity src, LiquidSubstanceQuantityData.Builder dst)
   {
-    super.unload(data);
-    if (hasConcentration())
-      data.setConcentration(concentration.unload());
-    if (hasMass())
-      data.setMass(mass.unload());
-    if(hasMassCleared())
-      data.setMassCleared(this.massCleared.unload());
-    if(hasMassDeposited())
-      data.setMassDeposited(this.massDeposited.unload());
-    if(hasMassExcreted())
-      data.setMassExcreted(this.massExcreted.unload());    
-    if (hasPartialPressure())
-      data.setPartialPressure(partialPressure.unload());
-    if (hasSaturation())
-      data.setSaturation(saturation.unload());   
+    SESubstanceQuantity.unload(src,dst.getSubstanceQuantityBuilder());
+    if (src.hasConcentration())
+      dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration));
+    if (src.hasMass())
+      dst.setMass(SEScalarMass.unload(src.mass));
+    if (src.hasMassCleared())
+      dst.setMassCleared(SEScalarMass.unload(src.massCleared));
+    if (src.hasMassDeposited())
+      dst.setMassDeposited(SEScalarMass.unload(src.massDeposited));
+    if (src.hasMassExcreted())
+      dst.setMassExcreted(SEScalarMass.unload(src.massExcreted));    
+    if (src.hasMolarity())
+      dst.setMolarity(SEScalarAmountPerVolume.unload(src.molarity));    
+    if (src.hasPartialPressure())
+      dst.setPartialPressure(SEScalarPressure.unload(src.partialPressure));
+    if (src.hasSaturation())
+      dst.setSaturation(SEScalar0To1.unload(src.saturation));   
   }  
 
   public boolean hasConcentration()
@@ -189,10 +181,10 @@ public class SELiquidSubstanceQuantity extends SESubstanceQuantity
   {
     return saturation == null ? false : saturation.isValid();
   }
-  public SEScalarFraction getSaturation()
+  public SEScalar0To1 getSaturation()
   {
     if (saturation == null)
-      saturation = new SEScalarFraction();
+      saturation = new SEScalar0To1();
     return saturation;
   }
 }

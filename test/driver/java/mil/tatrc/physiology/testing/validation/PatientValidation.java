@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.testing.validation;
 
 import java.io.PrintWriter;
@@ -17,15 +8,16 @@ import java.util.Arrays;
 import mil.tatrc.physiology.datamodel.patient.SEPatient;
 import mil.tatrc.physiology.utilities.Log;
 
-public class PatientValidation extends ValdiationTool
+public class PatientValidation extends ValidationTool
 {
   public PatientValidation()
   {
     DEST_DIRECTORY = "./test_results/tables/";
-    DEFAULT_DIRECTORY = cfg.getDataDirectory()+"/test/validation/";
+    DEFAULT_DIRECTORY = cfg.getValidationDirectory();
     DEFAULT_FILE = "PatientValidationData.xlsx";
     TABLE_TYPE = "Patient";
     HEADER_PREPEND = "Patient";
+    VALIDATION_FOLDER = "patients";
   }
   public static void main(String[] args)
   {
@@ -53,7 +45,7 @@ public class PatientValidation extends ValdiationTool
       writer.println("### "+patient.getName());
       writer.println("|Property Name                     |Value     ");
       writer.println("|---                               |---       ");
-      writer.println("|Sex                               |"+patient.getSex().value());
+      writer.println("|Sex                               |"+patient.getSex());
       writer.println("|Age                               |"+patient.getAge());
       writer.println("|Weight                            |"+patient.getWeight());
       writer.println("|Height                            |"+patient.getHeight());

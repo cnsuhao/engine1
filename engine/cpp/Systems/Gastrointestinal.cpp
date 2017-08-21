@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "Gastrointestinal.h"
@@ -22,7 +13,7 @@ specific language governing permissions and limitations under the License.
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "properties/SEScalar.h"
 #include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarPressure.h"
@@ -37,7 +28,7 @@ specific language governing permissions and limitations under the License.
 
 //#define logMeal
 
-Gastrointestinal::Gastrointestinal(BioGears& bg) : SEGastrointestinalSystem(bg.GetLogger()), m_data(bg)
+Gastrointestinal::Gastrointestinal(PulseController& data) : SEGastrointestinalSystem(data.GetLogger()), m_data(data)
 {
   Clear();
   /* Move to a unit test
@@ -79,13 +70,16 @@ void Gastrointestinal::Clear()
 //--------------------------------------------------------------------------------------------------
 void Gastrointestinal::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
+  m_DecrementNutrients = false;
   if (m_data.GetConfiguration().HasDefaultStomachContents())
   {
     // We are going to initialize the body with 2 meals so we process the default meal twice
     // 1 meal about 5hrs ago, and one meal at the start of the scenario  
-    CDM_COPY((m_data.GetConfiguration().GetDefaultStomachContents()), (&GetStomachContents()));
+    const cdm::NutritionData* dsc = SENutrition::Unload(*m_data.GetConfiguration().GetDefaultStomachContents());
+    SENutrition::Load(*dsc,GetStomachContents());
+    delete dsc;
     m_data.GetPatient().GetWeight().IncrementValue(2 * m_StomachContents->GetWeight(MassUnit::g), MassUnit::g);
     // Now digest the contents
     DigestStomachNutrients(5 * 60 * 60);//hrs to seconds (note decrement is off, so the stomach will stay full)    
@@ -97,39 +91,42 @@ void Gastrointestinal::Initialize()
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeCalcium]    = m_SmallIntestineChymeCalcium->GetMass(MassUnit::ug);
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeSodium]     = m_SmallIntestineChymeSodium->GetMass(MassUnit::ug);
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeUrea]       = m_SmallIntestineChymeUrea->GetMass(MassUnit::ug);
+
 }
 
-bool Gastrointestinal::Load(const CDM::BioGearsGastrointestinalSystemData& in)
+void Gastrointestinal::Load(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst)
 {
-  if (!SEGastrointestinalSystem::Load(in))
-    return false;
-  BioGearsSystem::LoadState();
-  m_DecrementNutrients = true;
-  return true;
+  Gastrointestinal::Serialize(src, dst);
+  dst.SetUp();
+  // We assume state is from after all stabilization
+  dst.m_DecrementNutrients = true;
 }
-CDM::BioGearsGastrointestinalSystemData* Gastrointestinal::Unload() const
+void Gastrointestinal::Serialize(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst)
 {
-  CDM::BioGearsGastrointestinalSystemData* data = new CDM::BioGearsGastrointestinalSystemData();
-  Unload(*data);
-  return data;
+  SEGastrointestinalSystem::Serialize(src.common(), dst);
 }
-void Gastrointestinal::Unload(CDM::BioGearsGastrointestinalSystemData& data) const
+
+pulse::GastrointestinalSystemData* Gastrointestinal::Unload(const Gastrointestinal& src)
 {
-  SEGastrointestinalSystem::Unload(data);
+  pulse::GastrointestinalSystemData* dst = new pulse::GastrointestinalSystemData();
+  Gastrointestinal::Serialize(src, *dst);
+  return dst;
+}
+void Gastrointestinal::Serialize(const Gastrointestinal& src, pulse::GastrointestinalSystemData& dst)
+{
+  SEGastrointestinalSystem::Serialize(src, *dst.mutable_common());
 }
 
 void Gastrointestinal::SetUp()
 {
   m_ConsumeRate = false;
-  m_DecrementNutrients = false;
-
   m_WaterDigestionRate.SetValue(m_data.GetConfiguration().GetWaterDigestionRate(VolumePerTimeUnit::mL_Per_s), VolumePerTimeUnit::mL_Per_s);
   m_CalciumDigestionRate.SetValue(m_data.GetConfiguration().GetCalciumDigestionRate(MassPerTimeUnit::g_Per_s), MassPerTimeUnit::g_Per_s);
 
-  m_GItoCVPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(BGE::ChymePath::SmallIntestineC1ToSmallIntestine1);
-  m_GutT1ToGroundPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(BGE::ChymePath::GutT1ToGround);
+  m_GItoCVPath                    = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::SmallIntestineC1ToSmallIntestine1);
+  m_GutT1ToGroundPath             = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::GutT1ToGround);
 
-  m_SmallIntestineChyme = m_data.GetCompartments().GetLiquidCompartment(BGE::ChymeCompartment::SmallIntestine);
+  m_SmallIntestineChyme           = m_data.GetCompartments().GetLiquidCompartment(pulse::ChymeCompartment::SmallIntestine);
   m_SmallIntestineChymeGlucose    = m_SmallIntestineChyme->GetSubstanceQuantity(m_data.GetSubstances().GetGlucose());
   m_SmallIntestineChymeTristearin = m_SmallIntestineChyme->GetSubstanceQuantity(m_data.GetSubstances().GetTristearin());
   m_SmallIntestineChymeCalcium    = m_SmallIntestineChyme->GetSubstanceQuantity(m_data.GetSubstances().GetCalcium());
@@ -168,7 +165,9 @@ void Gastrointestinal::AtSteadyState()
       // Remove the default meal weight from the patient
       m_data.GetPatient().GetWeight().IncrementValue(-m_StomachContents->GetWeight(MassUnit::g), MassUnit::g);
       // Overwrite meal contents into our stomach
-      CDM_COPY((&meal), (m_StomachContents));
+      const cdm::MealData* m = SEMeal::Unload(meal);
+      SENutrition::Load(m->nutrition(), GetStomachContents());
+      delete m;
       if (!m_StomachContents->HasWater() || m_StomachContents->GetWater().IsZero())
         m_StomachContents->GetWater().SetValue(m_secretionRate_mL_Per_s*m_dT_s, VolumeUnit::mL);//Add a time steps worth of water if empty
       // Increase our weight by the meal
@@ -641,7 +640,7 @@ void Gastrointestinal::AbsorbMeal(double duration_min)
 /// Gastrointestinal Preprocess function
 ///
 /// \details
-/// The current BioGears implementation has no functionality in the process function for Gastrointestinal.
+/// The current Pulse implementation has no functionality in the process function for Gastrointestinal.
 //--------------------------------------------------------------------------------------------------
 void Gastrointestinal::Process()
 {
@@ -653,7 +652,7 @@ void Gastrointestinal::Process()
 /// Gastrointestinal postprocess function
 ///
 /// \details
-/// The current BioGears implementation has no specific postprocess functionality.
+/// The current Pulse implementation has no specific postprocess functionality.
 //--------------------------------------------------------------------------------------------------
 void Gastrointestinal::PostProcess()
 {

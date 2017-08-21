@@ -1,20 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/SubstanceFractionData.hxx"
-#include "properties/SEScalarFraction.h"
-#include "bind/ScalarFractionData.hxx"
+#include "properties/SEScalar0To1.h"
 #include "substance/SESubstance.h"
 
 SESubstanceFraction::SESubstanceFraction(SESubstance& substance) : m_Substance(substance)
@@ -32,34 +21,38 @@ void SESubstanceFraction::Clear()
   SAFE_DELETE(m_FractionAmount);
 }
 
-bool SESubstanceFraction::Load(const CDM::SubstanceFractionData& in)
+void SESubstanceFraction::Load(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst)
 {
-  GetFractionAmount().Load(in.FractionAmount());
-  return true;
+  SESubstanceFraction::Serialize(src, dst);
+}
+void SESubstanceFraction::Serialize(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst)
+{
+  dst.Clear();
+  if (src.has_amount())
+    SEScalar0To1::Load(src.amount(), dst.GetFractionAmount());
 }
 
-CDM::SubstanceFractionData* SESubstanceFraction::Unload() const
+cdm::SubstanceData_FractionAmountData* SESubstanceFraction::Unload(const SESubstanceFraction& src)
 {
-  CDM::SubstanceFractionData* data = new CDM::SubstanceFractionData();
-  Unload(*data);
-  return data;
+  cdm::SubstanceData_FractionAmountData* dst = new cdm::SubstanceData_FractionAmountData();
+  SESubstanceFraction::Serialize(src, *dst);
+  return dst;
 }
-
-void SESubstanceFraction::Unload(CDM::SubstanceFractionData& data) const
+void SESubstanceFraction::Serialize(const SESubstanceFraction& src, cdm::SubstanceData_FractionAmountData& dst)
 {
-  data.Name(m_Substance.GetName());
-  if (HasFractionAmount())
-    data.FractionAmount(std::unique_ptr<CDM::ScalarFractionData>(m_FractionAmount->Unload()));
+  dst.set_name(src.m_Substance.GetName());
+  if (src.HasFractionAmount())
+    dst.set_allocated_amount(SEScalar0To1::Unload(*src.m_FractionAmount));
 }
 
 bool SESubstanceFraction::HasFractionAmount() const
 {
   return m_FractionAmount==nullptr?false:m_FractionAmount->IsValid();
 }
-SEScalarFraction& SESubstanceFraction::GetFractionAmount()
+SEScalar0To1& SESubstanceFraction::GetFractionAmount()
 {
   if(m_FractionAmount==nullptr)
-    m_FractionAmount = new SEScalarFraction();
+    m_FractionAmount = new SEScalar0To1();
   return *m_FractionAmount;
 }
 double SESubstanceFraction::GetFractionAmount() const

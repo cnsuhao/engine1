@@ -1,21 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEChestCompressionForceScale.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 #include "properties/SEScalarTime.h"
-#include "bind/ScalarTimeData.hxx"
 
 SEChestCompressionForceScale::SEChestCompressionForceScale() : SEChestCompression()
 {
@@ -45,29 +34,32 @@ bool SEChestCompressionForceScale::IsActive() const
   return IsValid() ? !m_ForceScale->IsZero() : false;
 }
 
-bool SEChestCompressionForceScale::Load(const CDM::ChestCompressionForceScaleData& in)
+void SEChestCompressionForceScale::Load(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
 {
-  SEChestCompression::Load(in);
-  GetForceScale().Load(in.ForceScale());
-  if (in.ForcePeriod().present())
-    GetForcePeriod().Load(in.ForcePeriod().get());
-  return true;
+  SEChestCompressionForceScale::Serialize(src, dst);
+}
+void SEChestCompressionForceScale::Serialize(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_forcescale())
+    SEScalar0To1::Load(src.forcescale(), dst.GetForceScale());
+  if (src.has_forceperiod())
+    SEScalarTime::Load(src.forceperiod(), dst.GetForcePeriod());
 }
 
-CDM::ChestCompressionForceScaleData* SEChestCompressionForceScale::Unload() const
+cdm::ChestCompressionForceScaleData* SEChestCompressionForceScale::Unload(const SEChestCompressionForceScale& src)
 {
-  CDM::ChestCompressionForceScaleData*data(new CDM::ChestCompressionForceScaleData());
-  Unload(*data);
-  return data;
+  cdm::ChestCompressionForceScaleData* dst = new cdm::ChestCompressionForceScaleData();
+  SEChestCompressionForceScale::Serialize(src, *dst);
+  return dst;
 }
-
-void SEChestCompressionForceScale::Unload(CDM::ChestCompressionForceScaleData& data) const
+void SEChestCompressionForceScale::Serialize(const SEChestCompressionForceScale& src, cdm::ChestCompressionForceScaleData& dst)
 {
-  SEChestCompression::Unload(data);
-  if (m_ForceScale != nullptr)
-    data.ForceScale(std::unique_ptr<CDM::Scalar0To1Data>(m_ForceScale->Unload()));
-  if (m_ForcePeriod != nullptr)
-    data.ForcePeriod(std::unique_ptr<CDM::ScalarTimeData>(m_ForcePeriod->Unload()));
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasForceScale())
+    dst.set_allocated_forcescale(SEScalar0To1::Unload(*src.m_ForceScale));
+  if (src.HasForcePeriod())
+    dst.set_allocated_forceperiod(SEScalarTime::Unload(*src.m_ForcePeriod));
 }
 
 bool SEChestCompressionForceScale::HasForceScale() const

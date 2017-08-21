@@ -1,21 +1,12 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
 
 SEPatientAssessmentRequest::SEPatientAssessmentRequest() : SEPatientAction()
 {
-  m_Type=(CDM::enumPatientAssessment::value)-1;
+  m_Type=cdm::PatientAssessmentData_eType_CompleteBloodCount;
 }
 
 SEPatientAssessmentRequest::~SEPatientAssessmentRequest()
@@ -26,12 +17,12 @@ SEPatientAssessmentRequest::~SEPatientAssessmentRequest()
 void SEPatientAssessmentRequest::Clear()
 {
   SEPatientAction::Clear();
-  m_Type=(CDM::enumPatientAssessment::value)-1;
+  m_Type=cdm::PatientAssessmentData_eType_CompleteBloodCount;
 }
 
 bool SEPatientAssessmentRequest::IsValid() const
 {
-  return SEPatientAction::IsValid() && HasType();
+  return SEPatientAction::IsValid();
 }
 
 bool SEPatientAssessmentRequest::IsActive() const
@@ -39,50 +30,41 @@ bool SEPatientAssessmentRequest::IsActive() const
   return IsValid();
 }
 
-bool SEPatientAssessmentRequest::Load(const CDM::PatientAssessmentRequestData& in)
+void SEPatientAssessmentRequest::Load(const cdm::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst)
 {
-  SEPatientAction::Load(in);
-  m_Type=in.Type();
-  return true;
+  SEPatientAssessmentRequest::Serialize(src, dst);
+}
+void SEPatientAssessmentRequest::Serialize(const cdm::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetType(src.type());
 }
 
-CDM::PatientAssessmentRequestData* SEPatientAssessmentRequest::Unload() const
+cdm::PatientAssessmentRequestData* SEPatientAssessmentRequest::Unload(const SEPatientAssessmentRequest& src)
 {
-  CDM::PatientAssessmentRequestData*data(new CDM::PatientAssessmentRequestData());
-  Unload(*data);
-  return data;
+  cdm::PatientAssessmentRequestData* dst = new cdm::PatientAssessmentRequestData();
+  SEPatientAssessmentRequest::Serialize(src, *dst);
+  return dst;
+}
+void SEPatientAssessmentRequest::Serialize(const SEPatientAssessmentRequest& src, cdm::PatientAssessmentRequestData& dst)
+{
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_type(src.m_Type);
 }
 
-void SEPatientAssessmentRequest::Unload(CDM::PatientAssessmentRequestData& data) const
-{
-  SEPatientAction::Unload(data);
-  if(HasType())
-    data.Type(m_Type);
-}
-
-
-CDM::enumPatientAssessment::value SEPatientAssessmentRequest::GetType() const
+cdm::PatientAssessmentData_eType SEPatientAssessmentRequest::GetType() const
 {
   return m_Type;
 }
-void SEPatientAssessmentRequest::SetType(CDM::enumPatientAssessment::value Type)
+void SEPatientAssessmentRequest::SetType(cdm::PatientAssessmentData_eType Type)
 {
   m_Type = Type;
 }
-bool SEPatientAssessmentRequest::HasType() const
-{
-  return m_Type==((CDM::enumPatientAssessment::value)-1)?false:true;
-}
-void SEPatientAssessmentRequest::InvalidateType()
-{
-  m_Type = (CDM::enumPatientAssessment::value)-1;
-}
-
 void SEPatientAssessmentRequest::ToString(std::ostream &str) const
 {
   str << "Patient Action : Assessment Request"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str  << "\n\tType: "; HasType()? str << GetType() : str << "Not Set";
-  str << std::flush;
+  str  << "\n\tType: "<< cdm::PatientAssessmentData_eType_Name(GetType());
+  str  << std::flush;
 }

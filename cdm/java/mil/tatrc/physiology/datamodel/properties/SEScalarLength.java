@@ -1,19 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarLengthData;
+import com.kitware.physiology.cdm.Properties.ScalarLengthData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.LengthUnit;
 
 /**
@@ -53,6 +44,23 @@ public class SEScalarLength extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarLengthData src, SEScalarLength dst)
+  {
+    SEScalar.load(src.getScalarLength(),dst);
+  }
+  public static ScalarLengthData unload(SEScalarLength src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarLengthData.Builder dst = ScalarLengthData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarLength src, ScalarLengthData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarLengthBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -79,18 +87,6 @@ public class SEScalarLength extends SEScalar
     return this.getValue(unit.toString());
   }
   
-  
-
-  public ScalarLengthData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarLengthData to = CDMSerializer.objFactory.createScalarLengthData();
-    unload(to);
-    return to;
-  }
-
   public boolean validUnit(String unit)
   {
     if(LengthUnit.validUnit(unit))

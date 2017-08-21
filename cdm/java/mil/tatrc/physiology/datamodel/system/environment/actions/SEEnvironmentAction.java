@@ -1,19 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.system.environment.actions;
 
-import mil.tatrc.physiology.datamodel.bind.EnvironmentActionData;
-import mil.tatrc.physiology.datamodel.scenario.actions.SEAction;
+import org.jfree.util.Log;
+
+import com.kitware.physiology.cdm.EnvironmentActions.EnvironmentActionData;
+import com.kitware.physiology.cdm.EnvironmentActions.AnyEnvironmentActionData;
+
+import mil.tatrc.physiology.datamodel.actions.SEAction;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 
 public abstract class SEEnvironmentAction extends SEAction
 {
@@ -34,15 +29,54 @@ public abstract class SEEnvironmentAction extends SEAction
     super.reset();
   }
   
-  public boolean load(EnvironmentActionData in)
+  public static void load(EnvironmentActionData src, SEEnvironmentAction dst) 
   {
-    super.load(in);
-    return true;
+    SEAction.load(src.getAction(), dst);
+  }
+  protected static void unload(SEEnvironmentAction src, EnvironmentActionData.Builder dst)
+  {
+    SEAction.unload(src, dst.getActionBuilder());
   }
   
-  protected void unload(EnvironmentActionData data)
+  public static SEEnvironmentAction ANY2CDM(AnyEnvironmentActionData c, SESubstanceManager subMgr) 
   {
-    super.unload(data);
+    switch(c.getActionCase())
+    {
+    case CONDITIONS:
+    {
+      SEChangeEnvironmentConditions dst = new SEChangeEnvironmentConditions();
+      SEChangeEnvironmentConditions.load(c.getConditions(), dst, subMgr);
+      return dst;
+    }
+    case THERMALAPPLICATION:
+    {
+      SEThermalApplication dst = new SEThermalApplication();
+      SEThermalApplication.load(c.getThermalApplication(), dst);
+      return dst;
+    }
+    case ACTION_NOT_SET:
+      Log.warn("AnyEnvironmentActionData was empty...was that intended?");
+      return null;
+    }
+    Log.error("Unsupported Environment Action type "+c.getActionCase());
+    return null;
+  }
+  public static AnyEnvironmentActionData CDM2ANY(SEEnvironmentAction c)
+  {
+    AnyEnvironmentActionData.Builder dst = AnyEnvironmentActionData.newBuilder();
+    
+    if(c instanceof SEChangeEnvironmentConditions)
+    {
+      dst.setConditions(SEChangeEnvironmentConditions.unload((SEChangeEnvironmentConditions)c));
+      return dst.build();
+    }
+    if(c instanceof SEThermalApplication)
+    {
+      dst.setThermalApplication(SEThermalApplication.unload((SEThermalApplication)c));
+      return dst.build();
+    }
+    Log.error("Unsupported Environment Action type "+c);
+    return dst.build();
   }
   
   public abstract String toString();

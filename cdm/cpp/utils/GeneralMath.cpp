@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include <sstream>
@@ -20,7 +11,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -92,7 +83,7 @@ void GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMass
 void GeneralMath::CalculateHenrysLawConcentration(const SESubstance& substance, const SEScalarPressure& partialPressure, SEScalarMassPerVolume& concentration, Logger* logger)
 {
   double pp_mmHg = partialPressure.GetValue(PressureUnit::mmHg);
-  if (substance.GetState() != CDM::enumSubstanceState::Gas)
+  if (substance.GetState() != cdm::SubstanceData_eState_Gas)
     throw CommonDataModelException("Cannot calculate a molarity by Henry's law from partial pressure of a non gaseous substance in a liquid");
   if (pp_mmHg < 0.0)
   {
@@ -131,7 +122,7 @@ void GeneralMath::CalculateOsmolality(const SEScalarAmountPerVolume& sodiumMolar
 /// \brief
 /// Calculates the partial pressure of a substance in gas based on the volumeFraction * pressure
 //--------------------------------------------------------------------------------------------------
-void GeneralMath::CalculatePartialPressureInGas(const SEScalarFraction& volumeFraction, const SEScalarPressure& pressure, SEScalarPressure& partialPressure, Logger* logger)
+void GeneralMath::CalculatePartialPressureInGas(const SEScalar0To1& volumeFraction, const SEScalarPressure& pressure, SEScalarPressure& partialPressure, Logger* logger)
 {
   double VolumeFraction = volumeFraction.GetValue();
   double pressure_cmH2O = pressure.GetValue(PressureUnit::cmH2O);
@@ -151,7 +142,7 @@ void GeneralMath::CalculatePartialPressureInGas(const SEScalarFraction& volumeFr
 //--------------------------------------------------------------------------------------------------
 void GeneralMath::CalculatePartialPressureInLiquid(const SESubstance& substance, const SEScalarMassPerVolume& concentration, SEScalarPressure& partialPressure, Logger* logger)
 {
-  if (substance.GetState() != CDM::enumSubstanceState::Gas)
+  if (substance.GetState() != cdm::SubstanceData_eState_Gas)
     throw CommonDataModelException("Cannot calculate a partial pressure of a non gaseous substance in a liquid");
   double concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   if (concentration_ug_Per_mL < 0.0)
@@ -244,7 +235,7 @@ void GeneralMath::Combinations(std::vector<int> maxValues, std::vector<std::vect
 {
   int Oidx = 0;
   int numVals = 1;
-  int Olength = maxValues.size();
+  size_t Olength = maxValues.size();
   std::vector<int> *current, *next;
 
   for (int i = 0; i < Olength; i++)

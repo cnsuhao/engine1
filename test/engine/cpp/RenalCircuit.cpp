@@ -1,18 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #define _USE_MATH_DEFINES
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
+#include "Controller/Controller.h"
 #include <math.h>
 #include "Systems/Renal.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -24,10 +16,10 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarVolumePerTimePressureArea.h"
-#include "properties/SEScalarFraction.h"
-#include "bind/enumOnOff.hxx"
+#include "properties/SEScalar0To1.h"
+#include "utils/TimingProfile.h"
 
-void BioGearsEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirectory)
 {
   TimingProfile tmr;
   tmr.Start("Test");
@@ -37,54 +29,54 @@ void BioGearsEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDi
   DataTrack     graphTrk;
   std::ofstream graphFile;
 
-  BioGears bg(sTestDirectory + "\\RenalCircuitAndTransportTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::On);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(sTestDirectory + "/RenalCircuitAndTransportTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::On);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
   // Renal needs these tissue compartments
   // Let's make them manually, without the tissue circuit
-  bg.GetCompartments().CreateTissueCompartment(BGE::TissueCompartment::LeftKidney);
-  bg.GetCompartments().CreateTissueCompartment(BGE::TissueCompartment::RightKidney);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::LeftKidneyExtracellular);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::RightKidneyExtracellular);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::LeftKidneyIntracellular);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::RightKidneyIntracellular);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::On);// This needs to be on for making the tissue to extravascular mapping
-  bg.GetCompartments().StateChange();
+  pc.GetCompartments().CreateTissueCompartment(pulse::TissueCompartment::LeftKidney);
+  pc.GetCompartments().CreateTissueCompartment(pulse::TissueCompartment::RightKidney);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyExtracellular);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyExtracellular);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyIntracellular);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
+  pc.m_Config->EnableTissue(cdm::eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
+  pc.GetCompartments().StateChange();
   //Add just N2
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetN2());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetN2());
   SEScalarMassPerVolume N2_ug_per_mL;
   N2_ug_per_mL.SetValue(0.5, MassPerVolumeUnit::ug_Per_mL);
-  bg.GetSubstances().SetSubstanceConcentration(bg.GetSubstances().GetN2(), bg.GetCompartments().GetUrineLeafCompartments(), N2_ug_per_mL);
-  bg.GetSubstances().SetSubstanceConcentration(bg.GetSubstances().GetN2(), bg.GetCompartments().GetVascularLeafCompartments(), N2_ug_per_mL);
+  pc.GetSubstances().SetSubstanceConcentration(pc.GetSubstances().GetN2(), pc.GetCompartments().GetUrineLeafCompartments(), N2_ug_per_mL);
+  pc.GetSubstances().SetSubstanceConcentration(pc.GetSubstances().GetN2(), pc.GetCompartments().GetVascularLeafCompartments(), N2_ug_per_mL);
 
   //Get the renal stuff
-  SEFluidCircuit& rCircuit = bg.GetCircuits().GetRenalCircuit();
-  SELiquidCompartmentGraph& rGraph = bg.GetCompartments().GetRenalGraph();
+  SEFluidCircuit& rCircuit = pc.GetCircuits().GetRenalCircuit();
+  SELiquidCompartmentGraph& rGraph = pc.GetCompartments().GetRenalGraph();
 
-  SEFluidCircuitNode *Ground = rCircuit.GetNode(BGE::RenalNode::Ground);
+  SEFluidCircuitNode *Ground = rCircuit.GetNode(pulse::RenalNode::Ground);
 
-  SEFluidCircuitNode *LeftRenalArtery = rCircuit.GetNode(BGE::RenalNode::LeftRenalArtery);
-  SEFluidCircuitNode *RightRenalArtery = rCircuit.GetNode(BGE::RenalNode::RightRenalArtery);
-  SEFluidCircuitNode *LeftRenalVein = rCircuit.GetNode(BGE::RenalNode::LeftRenalVein);
-  SEFluidCircuitNode *RightRenalVein = rCircuit.GetNode(BGE::RenalNode::RightRenalVein);
+  SEFluidCircuitNode *LeftRenalArtery = rCircuit.GetNode(pulse::RenalNode::LeftRenalArtery);
+  SEFluidCircuitNode *RightRenalArtery = rCircuit.GetNode(pulse::RenalNode::RightRenalArtery);
+  SEFluidCircuitNode *LeftRenalVein = rCircuit.GetNode(pulse::RenalNode::LeftRenalVein);
+  SEFluidCircuitNode *RightRenalVein = rCircuit.GetNode(pulse::RenalNode::RightRenalVein);
 
-  SELiquidCompartment* cLeftRenalArtery = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftRenalArtery);
-  SELiquidCompartment* cRightRenalArtery = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightRenalArtery);
+  SELiquidCompartment* cLeftRenalArtery = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftRenalArtery);
+  SELiquidCompartment* cRightRenalArtery = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightRenalArtery);
 
   //Set up the N2 source to keep a constant concentrations to supply the system
   LeftRenalArtery->GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   LeftRenalArtery->GetNextVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   cLeftRenalArtery->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
-  cLeftRenalArtery->GetSubstanceQuantity(bg.GetSubstances().GetN2())->GetMass().SetValue(std::numeric_limits<double>::infinity(), MassUnit::mg);
+  cLeftRenalArtery->GetSubstanceQuantity(pc.GetSubstances().GetN2())->GetMass().SetValue(std::numeric_limits<double>::infinity(), MassUnit::mg);
   cLeftRenalArtery->Balance(BalanceLiquidBy::Concentration);
 
   RightRenalArtery->GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   RightRenalArtery->GetNextVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   cRightRenalArtery->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
-  cRightRenalArtery->GetSubstanceQuantity(bg.GetSubstances().GetN2())->GetMass().SetValue(std::numeric_limits<double>::infinity(), MassUnit::mg);
+  cRightRenalArtery->GetSubstanceQuantity(pc.GetSubstances().GetN2())->GetMass().SetValue(std::numeric_limits<double>::infinity(), MassUnit::mg);
   cRightRenalArtery->Balance(BalanceLiquidBy::Concentration);
 
   SEFluidCircuitPath &RightAortaSourcePath = rCircuit.CreatePath(*Ground, *RightRenalArtery, "RightAortaSource");
@@ -118,8 +110,8 @@ void BioGearsEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDi
   double amplitude_cmH2O = 6.0;
   double yOffset = 75.0;
 
-  SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, bg.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, bg.GetLogger());
+  SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
+  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, pc.GetLogger());
   for (unsigned int i = 0; i < runTime_min * 60.0 / deltaT_s; i++)
   {
     // Drive the circuit
@@ -144,8 +136,8 @@ void BioGearsEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDi
 
     if (i == 0)
     {
-      graphTrk.CreateFile(std::string(sTestDirectory + "\\RenalTransportOutput.txt").c_str(), graphFile);
-      circiutTrk.CreateFile(std::string(sTestDirectory + "\\RenalCircuitOutput.txt").c_str(), circuitFile);
+      graphTrk.CreateFile(std::string(sTestDirectory + "/RenalTransportOutput.txt").c_str(), graphFile);
+      circiutTrk.CreateFile(std::string(sTestDirectory + "/RenalCircuitOutput.txt").c_str(), circuitFile);
     }
     graphTrk.StreamTrackToFile(graphFile);
     circiutTrk.StreamTrackToFile(circuitFile);
@@ -154,67 +146,67 @@ void BioGearsEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDi
   circuitFile.close();
   std::stringstream ss;
   ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-  bg.GetLogger()->Info(ss.str(), "RenalCircuitAndTransportTest");
+  pc.GetLogger()->Info(ss.str(), "RenalCircuitAndTransportTest");
 }
 
 // runs renal system at constant MAP to test TGF feedback function
-// Resistance values at 80 & 180 mmHg are used for the resistance bounds in BioGears Circuits
-void BioGearsEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::string& sTestDirectory, const std::string& sTestName)
+// Resistance values at 80 & 180 mmHg are used for the resistance bounds in Pulse Circuits
+void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::string& sTestDirectory, const std::string& sTestName)
 {
   TimingProfile tmr;
   tmr.Start("Test");
-  BioGears bg(sTestDirectory + "\\RenalFeedbackTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::On);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(sTestDirectory + "/RenalFeedbackTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::On);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
   // Renal needs these tissue compartments
   // Let's make them manually, without the tissue circuit
-  bg.GetCompartments().CreateTissueCompartment(BGE::TissueCompartment::LeftKidney);
-  bg.GetCompartments().CreateTissueCompartment(BGE::TissueCompartment::RightKidney);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::LeftKidneyExtracellular);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::RightKidneyExtracellular);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::LeftKidneyIntracellular);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::RightKidneyIntracellular);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::On);// This needs to be on for making the tissue to extravascular mapping
-  bg.GetCompartments().StateChange();
-  SEPatient* patient = (SEPatient*)&bg.GetPatient();
+  pc.GetCompartments().CreateTissueCompartment(pulse::TissueCompartment::LeftKidney);
+  pc.GetCompartments().CreateTissueCompartment(pulse::TissueCompartment::RightKidney);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyExtracellular);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyExtracellular);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyIntracellular);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
+  pc.m_Config->EnableTissue(cdm::eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
+  pc.GetCompartments().StateChange();
+  SEPatient* patient = (SEPatient*)&pc.GetPatient();
 
-  SEFluidCircuit& rCircuit = bg.GetCircuits().GetRenalCircuit();
-  SELiquidCompartmentGraph& rGraph = bg.GetCompartments().GetRenalGraph();
+  SEFluidCircuit& rCircuit = pc.GetCircuits().GetRenalCircuit();
+  SELiquidCompartmentGraph& rGraph = pc.GetCompartments().GetRenalGraph();
 
   // Renal needs these present for Gluconeogenesis
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetLactate());
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetGlucose());
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetPotassium());
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetUrea());
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetSodium());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetLactate());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetGlucose());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetPotassium());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetUrea());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetSodium());
 
-  SEFluidCircuitNode *Ground = rCircuit.GetNode(BGE::RenalNode::Ground);
-  SEFluidCircuitNode *LeftRenalArtery = rCircuit.GetNode(BGE::RenalNode::LeftRenalArtery);
-  SEFluidCircuitNode *RightRenalArtery = rCircuit.GetNode(BGE::RenalNode::RightRenalArtery);
-  SEFluidCircuitNode *LeftRenalVein = rCircuit.GetNode(BGE::RenalNode::LeftRenalVein);
-  SEFluidCircuitNode *RightRenalVein = rCircuit.GetNode(BGE::RenalNode::RightRenalVein);
+  SEFluidCircuitNode *Ground = rCircuit.GetNode(pulse::RenalNode::Ground);
+  SEFluidCircuitNode *LeftRenalArtery = rCircuit.GetNode(pulse::RenalNode::LeftRenalArtery);
+  SEFluidCircuitNode *RightRenalArtery = rCircuit.GetNode(pulse::RenalNode::RightRenalArtery);
+  SEFluidCircuitNode *LeftRenalVein = rCircuit.GetNode(pulse::RenalNode::LeftRenalVein);
+  SEFluidCircuitNode *RightRenalVein = rCircuit.GetNode(pulse::RenalNode::RightRenalVein);
 
-  SELiquidCompartment* cLeftRenalArtery = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftRenalArtery);
-  SELiquidCompartment* cRightRenalArtery = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightRenalArtery);
+  SELiquidCompartment* cLeftRenalArtery = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftRenalArtery);
+  SELiquidCompartment* cRightRenalArtery = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightRenalArtery);
 
-  bg.GetSubstances().GetSodium().GetBloodConcentration().SetValue(bg.GetConfiguration().GetPlasmaSodiumConcentrationSetPoint(MassPerVolumeUnit::g_Per_L), MassPerVolumeUnit::g_Per_L);
-  bg.GetSubstances().SetSubstanceConcentration(bg.GetSubstances().GetSodium(), bg.GetCompartments().GetUrineLeafCompartments(), bg.GetSubstances().GetSodium().GetBloodConcentration());
-  bg.GetSubstances().SetSubstanceConcentration(bg.GetSubstances().GetSodium(), bg.GetCompartments().GetVascularLeafCompartments(), bg.GetSubstances().GetSodium().GetBloodConcentration());
+  pc.GetSubstances().GetSodium().GetBloodConcentration().SetValue(pc.GetConfiguration().GetPlasmaSodiumConcentrationSetPoint(MassPerVolumeUnit::g_Per_L), MassPerVolumeUnit::g_Per_L);
+  pc.GetSubstances().SetSubstanceConcentration(pc.GetSubstances().GetSodium(), pc.GetCompartments().GetUrineLeafCompartments(), pc.GetSubstances().GetSodium().GetBloodConcentration());
+  pc.GetSubstances().SetSubstanceConcentration(pc.GetSubstances().GetSodium(), pc.GetCompartments().GetVascularLeafCompartments(), pc.GetSubstances().GetSodium().GetBloodConcentration());
 
   //Set up the sodium concentration on the source to keep a constant concentrations to supply the system
   LeftRenalArtery->GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   LeftRenalArtery->GetNextVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   cLeftRenalArtery->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
-  cLeftRenalArtery->GetSubstanceQuantity(bg.GetSubstances().GetSodium())->GetConcentration().SetValue(4.5, MassPerVolumeUnit::g_Per_L); //tubules sodium concentration in engine
+  cLeftRenalArtery->GetSubstanceQuantity(pc.GetSubstances().GetSodium())->GetConcentration().SetValue(4.5, MassPerVolumeUnit::g_Per_L); //tubules sodium concentration in engine
   cLeftRenalArtery->Balance(BalanceLiquidBy::Concentration);
 
   RightRenalArtery->GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   RightRenalArtery->GetNextVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   cRightRenalArtery->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
-  cRightRenalArtery->GetSubstanceQuantity(bg.GetSubstances().GetSodium())->GetConcentration().SetValue(4.5, MassPerVolumeUnit::g_Per_L); //tubules sodium concentration in engine
+  cRightRenalArtery->GetSubstanceQuantity(pc.GetSubstances().GetSodium())->GetConcentration().SetValue(4.5, MassPerVolumeUnit::g_Per_L); //tubules sodium concentration in engine
   cRightRenalArtery->Balance(BalanceLiquidBy::Concentration);
 
   SEFluidCircuitPath &RightAortaSourcePath = rCircuit.CreatePath(*Ground, *RightRenalArtery, "RightAortaSource");
@@ -222,22 +214,22 @@ void BioGearsEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::st
   SEFluidCircuitPath &RightVenaCavaSourcePath = rCircuit.CreatePath(*Ground, *RightRenalVein, "RightVenaCavaSource");
   SEFluidCircuitPath &LeftVenaCavaSourcePath = rCircuit.CreatePath(*Ground, *LeftRenalVein, "LeftVenaCavaSource");
 
-  SEFluidCircuitPath* LeftAfferentArterioleToGlomerularCapillaries = rCircuit.GetPath(BGE::RenalPath::LeftAfferentArterioleToGlomerularCapillaries);
-  SEFluidCircuitPath* LeftGlomerularCapillariesToNetGlomerularCapillaries = rCircuit.GetPath(BGE::RenalPath::LeftGlomerularCapillariesToNetGlomerularCapillaries);
-  SEFluidCircuitPath* LeftBowmansCapsulesToNetBowmansCapsules = rCircuit.GetPath(BGE::RenalPath::LeftBowmansCapsulesToNetBowmansCapsules);
-  SEFluidCircuitPath* LeftTubulesToNetTubules = rCircuit.GetPath(BGE::RenalPath::LeftTubulesToNetTubules);
-  SEFluidCircuitPath* LeftNetTubulesToNetPeritubularCapillaries = rCircuit.GetPath(BGE::RenalPath::LeftNetTubulesToNetPeritubularCapillaries);
-  SEFluidCircuitPath* LeftPeritubularCapillariesToNetPeritubularCapillaries = rCircuit.GetPath(BGE::RenalPath::LeftPeritubularCapillariesToNetPeritubularCapillaries);
+  SEFluidCircuitPath* LeftAfferentArterioleToGlomerularCapillaries = rCircuit.GetPath(pulse::RenalPath::LeftAfferentArterioleToGlomerularCapillaries);
+  SEFluidCircuitPath* LeftGlomerularCapillariesToNetGlomerularCapillaries = rCircuit.GetPath(pulse::RenalPath::LeftGlomerularCapillariesToNetGlomerularCapillaries);
+  SEFluidCircuitPath* LeftBowmansCapsulesToNetBowmansCapsules = rCircuit.GetPath(pulse::RenalPath::LeftBowmansCapsulesToNetBowmansCapsules);
+  SEFluidCircuitPath* LeftTubulesToNetTubules = rCircuit.GetPath(pulse::RenalPath::LeftTubulesToNetTubules);
+  SEFluidCircuitPath* LeftNetTubulesToNetPeritubularCapillaries = rCircuit.GetPath(pulse::RenalPath::LeftNetTubulesToNetPeritubularCapillaries);
+  SEFluidCircuitPath* LeftPeritubularCapillariesToNetPeritubularCapillaries = rCircuit.GetPath(pulse::RenalPath::LeftPeritubularCapillariesToNetPeritubularCapillaries);
 
-  SEFluidCircuitPath* RightAfferentArterioleToGlomerularCapillaries = rCircuit.GetPath(BGE::RenalPath::RightAfferentArterioleToGlomerularCapillaries);
-  SEFluidCircuitPath* RightGlomerularCapillariesToNetGlomerularCapillaries = rCircuit.GetPath(BGE::RenalPath::RightGlomerularCapillariesToNetGlomerularCapillaries);
-  SEFluidCircuitPath* RightBowmansCapsulesToNetBowmansCapsules = rCircuit.GetPath(BGE::RenalPath::RightBowmansCapsulesToNetBowmansCapsules);
-  SEFluidCircuitPath* RightTubulesToNetTubules = rCircuit.GetPath(BGE::RenalPath::RightTubulesToNetTubules);
-  SEFluidCircuitPath* RightNetTubulesToNetPeritubularCapillaries = rCircuit.GetPath(BGE::RenalPath::RightNetTubulesToNetPeritubularCapillaries);
-  SEFluidCircuitPath* RightPeritubularCapillariesToNetPeritubularCapillaries = rCircuit.GetPath(BGE::RenalPath::RightPeritubularCapillariesToNetPeritubularCapillaries);
+  SEFluidCircuitPath* RightAfferentArterioleToGlomerularCapillaries = rCircuit.GetPath(pulse::RenalPath::RightAfferentArterioleToGlomerularCapillaries);
+  SEFluidCircuitPath* RightGlomerularCapillariesToNetGlomerularCapillaries = rCircuit.GetPath(pulse::RenalPath::RightGlomerularCapillariesToNetGlomerularCapillaries);
+  SEFluidCircuitPath* RightBowmansCapsulesToNetBowmansCapsules = rCircuit.GetPath(pulse::RenalPath::RightBowmansCapsulesToNetBowmansCapsules);
+  SEFluidCircuitPath* RightTubulesToNetTubules = rCircuit.GetPath(pulse::RenalPath::RightTubulesToNetTubules);
+  SEFluidCircuitPath* RightNetTubulesToNetPeritubularCapillaries = rCircuit.GetPath(pulse::RenalPath::RightNetTubulesToNetPeritubularCapillaries);
+  SEFluidCircuitPath* RightPeritubularCapillariesToNetPeritubularCapillaries = rCircuit.GetPath(pulse::RenalPath::RightPeritubularCapillariesToNetPeritubularCapillaries);
 
-  SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, bg.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, bg.GetLogger());
+  SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
+  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, pc.GetLogger());
 
   DataTrack trk;
   double time_s = 0.0;
@@ -261,10 +253,10 @@ void BioGearsEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::st
   LeftVenaCavaSourcePath.GetPressureSourceBaseline().SetValue(venaCavaPressure_mmHg, PressureUnit::mmHg);
 
   // Simple system setup  
-  Renal& bgRenal = (Renal&)bg.GetRenal();
+  Renal& bgRenal = (Renal&)pc.GetRenal();
   bgRenal.Initialize();  
   // Renal needs this
-  bg.GetBloodChemistry().GetHematocrit().SetValue(0.45817);
+  pc.GetBloodChemistry().GetHematocrit().SetValue(0.45817);
 
   //Update the circuit
   rCircuit.SetNextAndCurrentFromBaselines();
@@ -272,7 +264,7 @@ void BioGearsEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::st
   calc.Process(rCircuit, deltaT_s);//Preprocess wants a circuit full of data, need to calc it once
 
   //This can't think it doing resting stabilization, or it will just keep overwriting the TGF setpoint
-  bg.m_State = EngineState::Active;
+  pc.m_State = EngineState::Active;
 
   //Do it every 10 mmHg between 80 and 200
   for (double MAP = 70.0; MAP <= 200.0; MAP += 10.0)
@@ -309,7 +301,7 @@ void BioGearsEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::st
     for (unsigned int i = 0; i < 3e6; i++)
     {
       //Flag beginning of cardiac cycle - this will make it just use the current value instead of a running average
-      patient->SetEvent(CDM::enumPatientEvent::StartOfCardiacCycle, true, eventTime);
+      patient->SetEvent(cdm::PatientData_eEvent_StartOfCardiacCycle, true, eventTime);
 
       GFRSteady = false;
       RBFSteady = false;
@@ -449,17 +441,17 @@ void BioGearsEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::st
     }
     }
   }
-  trk.WriteTrackToFile(std::string(sTestDirectory + "\\" + sTestName + ".txt").c_str());
+  trk.WriteTrackToFile(std::string(sTestDirectory + "/" + sTestName + ".txt").c_str());
   std::stringstream ss;
   ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run " << sTestName << "CircuitAndTransportTest";
-  bg.GetLogger()->Info(ss.str(), "RenalFeedbackTest");
+  pc.GetLogger()->Info(ss.str(), "RenalFeedbackTest");
 }
 
-void BioGearsEngineTest::RenalTGFFeedbackTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalTGFFeedbackTest(const std::string& sTestDirectory)
 {
   RenalFeedbackTest(TGF, sTestDirectory, "RenalTGFFeedbackOutput");
 }
-void BioGearsEngineTest::RenalTGFandUPRFeedbackTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalTGFandUPRFeedbackTest(const std::string& sTestDirectory)
 {
   RenalFeedbackTest(TGFandUPR, sTestDirectory, "RenalTGFandUPRFeedbackOutput");
 }
@@ -473,85 +465,85 @@ void BioGearsEngineTest::RenalTGFandUPRFeedbackTest(const std::string& sTestDire
 /// seconds. After stabilization time has run compute osmolarity/lality
 /// output potassium blood concentration levels and osmolarity/lality, check against data.
 //--------------------------------------------------------------------------------------------------
-void BioGearsEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string& sTestDirectory, const std::string& sTestName)
+void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string& sTestDirectory, const std::string& sTestName)
 {
 
   TimingProfile tmr;
   tmr.Start("Test");
-  BioGears bg(sTestDirectory + "\\RenalSystemTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::On);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(sTestDirectory + "/RenalSystemTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::On);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
   // Renal needs these tissue compartments
   // Let's make them manually, without the tissue circuit
-  bg.GetCompartments().CreateTissueCompartment(BGE::TissueCompartment::LeftKidney);
-  bg.GetCompartments().CreateTissueCompartment(BGE::TissueCompartment::RightKidney);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::LeftKidneyExtracellular);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::RightKidneyExtracellular);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::LeftKidneyIntracellular);
-  bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::RightKidneyIntracellular);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::On);// This needs to be on for making the tissue to extravascular mapping
-  bg.GetCompartments().StateChange();
-  SEPatient* patient = (SEPatient*)&bg.GetPatient();
-  SESubstance& potassium = bg.GetSubstances().GetPotassium();
+  pc.GetCompartments().CreateTissueCompartment(pulse::TissueCompartment::LeftKidney);
+  pc.GetCompartments().CreateTissueCompartment(pulse::TissueCompartment::RightKidney);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyExtracellular);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyExtracellular);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyIntracellular);
+  pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
+  pc.m_Config->EnableTissue(cdm::eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
+  pc.GetCompartments().StateChange();
+  SEPatient* patient = (SEPatient*)&pc.GetPatient();
+  SESubstance& potassium = pc.GetSubstances().GetPotassium();
 
   // Renal needs these present for Gluconeogenesis
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetPotassium());
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetSodium());
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetLactate());
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetGlucose());
-  bg.GetSubstances().AddActiveSubstance(bg.GetSubstances().GetUrea());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetPotassium());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetSodium());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetLactate());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetGlucose());
+  pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetUrea());
 
   // Removing const in order to fill out and test
-  //SERenalSystem &RenalSystem = bg.GetRenal();
-  Renal& bgRenal = (Renal&)bg.GetRenal();
+  //SERenalSystem &RenalSystem = pc.GetRenal();
+  Renal& bgRenal = (Renal&)pc.GetRenal();
   bgRenal.Initialize();
 
   // VIPs only
-  SEFluidCircuit& RenalCircuit = bg.GetCircuits().GetRenalCircuit();
-  SELiquidCompartmentGraph& rGraph = bg.GetCompartments().GetRenalGraph();
+  SEFluidCircuit& RenalCircuit = pc.GetCircuits().GetRenalCircuit();
+  SELiquidCompartmentGraph& rGraph = pc.GetCompartments().GetRenalGraph();
 
   //Initialize potassium to baseline:
   double baselinePotassiumConcentration_g_Per_dl = 0.0185;
   SEScalarMassPerVolume K_g_Per_dL;
   K_g_Per_dL.SetValue(baselinePotassiumConcentration_g_Per_dl, MassPerVolumeUnit::g_Per_dL);   //set to normal concentration values
-  bg.GetSubstances().SetSubstanceConcentration(bg.GetSubstances().GetPotassium(), bg.GetCompartments().GetUrineLeafCompartments(), K_g_Per_dL);
-  bg.GetSubstances().SetSubstanceConcentration(bg.GetSubstances().GetPotassium(), bg.GetCompartments().GetVascularLeafCompartments(), K_g_Per_dL);
+  pc.GetSubstances().SetSubstanceConcentration(pc.GetSubstances().GetPotassium(), pc.GetCompartments().GetUrineLeafCompartments(), K_g_Per_dL);
+  pc.GetSubstances().SetSubstanceConcentration(pc.GetSubstances().GetPotassium(), pc.GetCompartments().GetVascularLeafCompartments(), K_g_Per_dL);
 
   //Initialize sodium
   SEScalarMassPerVolume Na_g_Per_dL;
-  Na_g_Per_dL.SetValue(bg.GetConfiguration().GetPlasmaSodiumConcentrationSetPoint(MassPerVolumeUnit::g_Per_dL), MassPerVolumeUnit::g_Per_dL);
-  bg.GetSubstances().SetSubstanceConcentration(bg.GetSubstances().GetSodium(), bg.GetCompartments().GetUrineLeafCompartments(), Na_g_Per_dL);
-  bg.GetSubstances().SetSubstanceConcentration(bg.GetSubstances().GetSodium(), bg.GetCompartments().GetVascularLeafCompartments(), Na_g_Per_dL);
+  Na_g_Per_dL.SetValue(pc.GetConfiguration().GetPlasmaSodiumConcentrationSetPoint(MassPerVolumeUnit::g_Per_dL), MassPerVolumeUnit::g_Per_dL);
+  pc.GetSubstances().SetSubstanceConcentration(pc.GetSubstances().GetSodium(), pc.GetCompartments().GetUrineLeafCompartments(), Na_g_Per_dL);
+  pc.GetSubstances().SetSubstanceConcentration(pc.GetSubstances().GetSodium(), pc.GetCompartments().GetVascularLeafCompartments(), Na_g_Per_dL);
 
   //Initialize the things in BloodChemistry Renal needs
-  bg.GetBloodChemistry().GetHematocrit().SetValue(0.45817);
-  bg.GetSubstances().GetSodium().GetBloodConcentration().SetValue(bg.GetConfiguration().GetPlasmaSodiumConcentrationSetPoint(MassPerVolumeUnit::g_Per_L), MassPerVolumeUnit::g_Per_L);
+  pc.GetBloodChemistry().GetHematocrit().SetValue(0.45817);
+  pc.GetSubstances().GetSodium().GetBloodConcentration().SetValue(pc.GetConfiguration().GetPlasmaSodiumConcentrationSetPoint(MassPerVolumeUnit::g_Per_L), MassPerVolumeUnit::g_Per_L);
 
   //Renal nodes
-  SEFluidCircuitNode* ReferenceNode = RenalCircuit.GetNode(BGE::RenalNode::Ground);
-  SEFluidCircuitNode* RightRenalArteryNode = RenalCircuit.GetNode(BGE::RenalNode::RightRenalArtery);
-  SEFluidCircuitNode* RightRenalVenaCavaConnectionNode = RenalCircuit.GetNode(BGE::RenalNode::RightVenaCavaConnection);
-  SEFluidCircuitNode* LeftRenalArteryNode = RenalCircuit.GetNode(BGE::RenalNode::LeftRenalArtery);
-  SEFluidCircuitNode* LeftRenalVenaCavaConnectionNode = RenalCircuit.GetNode(BGE::RenalNode::LeftVenaCavaConnection);
-  SEFluidCircuitNode* LeftUreterNode = RenalCircuit.GetNode(BGE::RenalNode::LeftUreter);
-  SEFluidCircuitNode* RightUreterNode = RenalCircuit.GetNode(BGE::RenalNode::RightUreter);
-  SEFluidCircuitNode* Bladder = RenalCircuit.GetNode(BGE::RenalNode::Bladder);
-  SEFluidCircuitNode* RightPeritubularCapillariesNode = RenalCircuit.GetNode(BGE::RenalNode::RightPeritubularCapillaries);
-  SEFluidCircuitNode* LeftPeritubularCapillariesNode = RenalCircuit.GetNode(BGE::RenalNode::LeftPeritubularCapillaries);
+  SEFluidCircuitNode* ReferenceNode = RenalCircuit.GetNode(pulse::RenalNode::Ground);
+  SEFluidCircuitNode* RightRenalArteryNode = RenalCircuit.GetNode(pulse::RenalNode::RightRenalArtery);
+  SEFluidCircuitNode* RightRenalVenaCavaConnectionNode = RenalCircuit.GetNode(pulse::RenalNode::RightVenaCavaConnection);
+  SEFluidCircuitNode* LeftRenalArteryNode = RenalCircuit.GetNode(pulse::RenalNode::LeftRenalArtery);
+  SEFluidCircuitNode* LeftRenalVenaCavaConnectionNode = RenalCircuit.GetNode(pulse::RenalNode::LeftVenaCavaConnection);
+  SEFluidCircuitNode* LeftUreterNode = RenalCircuit.GetNode(pulse::RenalNode::LeftUreter);
+  SEFluidCircuitNode* RightUreterNode = RenalCircuit.GetNode(pulse::RenalNode::RightUreter);
+  SEFluidCircuitNode* Bladder = RenalCircuit.GetNode(pulse::RenalNode::Bladder);
+  SEFluidCircuitNode* RightPeritubularCapillariesNode = RenalCircuit.GetNode(pulse::RenalNode::RightPeritubularCapillaries);
+  SEFluidCircuitNode* LeftPeritubularCapillariesNode = RenalCircuit.GetNode(pulse::RenalNode::LeftPeritubularCapillaries);
 
   //Renal/vascular compartments
-  SELiquidCompartment* BladderCompartment = bg.GetCompartments().GetLiquidCompartment(BGE::UrineCompartment::Bladder);
-  SELiquidCompartment* RightUreterCompartment = bg.GetCompartments().GetLiquidCompartment(BGE::UrineCompartment::RightUreter);
-  SELiquidCompartment* LeftUreterCompartment = bg.GetCompartments().GetLiquidCompartment(BGE::UrineCompartment::LeftUreter);
-  SELiquidCompartment* RightArteryCompartment = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightRenalArtery);
-  SELiquidCompartment* LeftArteryCompartment = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftRenalArtery);
-  SELiquidCompartment* RightAfferentArterioleCompartment = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightAfferentArteriole);
-  SELiquidCompartment* LeftAfferentArterioleCompartment = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftAfferentArteriole);
-  SELiquidCompartment* RightPeritubularCapillariesCompartment = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightPeritubularCapillaries);
-  SELiquidCompartment* LeftPeritubularCapillariesCompartment = bg.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftPeritubularCapillaries);
+  SELiquidCompartment* BladderCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::UrineCompartment::Bladder);
+  SELiquidCompartment* RightUreterCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::UrineCompartment::RightUreter);
+  SELiquidCompartment* LeftUreterCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::UrineCompartment::LeftUreter);
+  SELiquidCompartment* RightArteryCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightRenalArtery);
+  SELiquidCompartment* LeftArteryCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftRenalArtery);
+  SELiquidCompartment* RightAfferentArterioleCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightAfferentArteriole);
+  SELiquidCompartment* LeftAfferentArterioleCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftAfferentArteriole);
+  SELiquidCompartment* RightPeritubularCapillariesCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPeritubularCapillaries);
+  SELiquidCompartment* LeftPeritubularCapillariesCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPeritubularCapillaries);
 
   //Renal paths
   SEFluidCircuitPath &RightAortaSourcePath = RenalCircuit.CreatePath(*ReferenceNode, *RightRenalArteryNode, "RightAortaSourcePath");
@@ -559,8 +551,8 @@ void BioGearsEngineTest::RenalSystemTest(RenalSystems systemtest, const std::str
   SEFluidCircuitPath &LeftAortaSourcePath = RenalCircuit.CreatePath(*ReferenceNode, *LeftRenalArteryNode, "LeftAortaSourcePath");
   SEFluidCircuitPath &LeftVenaCavaSourcePath = RenalCircuit.CreatePath(*ReferenceNode, *LeftRenalVenaCavaConnectionNode, "LeftVenaCavaSourcePath");
 
-  SEFluidCircuitCalculator calc(bg.GetLogger());
-  SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, bg.GetLogger());
+  SEFluidCircuitCalculator calc(pc.GetLogger());
+  SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
 
   double deltaT_s = 1.0 / 90.0;
   double time_s = 0.0;
@@ -614,8 +606,8 @@ void BioGearsEngineTest::RenalSystemTest(RenalSystems systemtest, const std::str
       initialPotassiumConcentration_g_Per_dL = baselinePotassiumConcentration_g_Per_dl*(1 + percentIncrease);
 
       //set concentrations
-      LeftArteryCompartment->GetSubstanceQuantity(bg.GetSubstances().GetPotassium())->GetConcentration().SetValue(initialPotassiumConcentration_g_Per_dL, MassPerVolumeUnit::g_Per_dL);
-      RightArteryCompartment->GetSubstanceQuantity(bg.GetSubstances().GetPotassium())->GetConcentration().SetValue(initialPotassiumConcentration_g_Per_dL, MassPerVolumeUnit::g_Per_dL);
+      LeftArteryCompartment->GetSubstanceQuantity(pc.GetSubstances().GetPotassium())->GetConcentration().SetValue(initialPotassiumConcentration_g_Per_dL, MassPerVolumeUnit::g_Per_dL);
+      RightArteryCompartment->GetSubstanceQuantity(pc.GetSubstances().GetPotassium())->GetConcentration().SetValue(initialPotassiumConcentration_g_Per_dL, MassPerVolumeUnit::g_Per_dL);
       LeftArteryCompartment->Balance(BalanceLiquidBy::Concentration);
       RightArteryCompartment->Balance(BalanceLiquidBy::Concentration);
       break;
@@ -636,7 +628,7 @@ void BioGearsEngineTest::RenalSystemTest(RenalSystems systemtest, const std::str
       {
         case Urinating:
         {
-          bg.GetActions().GetPatientActions().HasUrinate();
+          pc.GetActions().GetPatientActions().HasUrinate();
           bgRenal.Urinate();
           break;
         }
@@ -686,17 +678,17 @@ void BioGearsEngineTest::RenalSystemTest(RenalSystems systemtest, const std::str
       }
     }
   }
-  trk.WriteTrackToFile(std::string(sTestDirectory + "\\" + sTestName + ".txt").c_str());
+  trk.WriteTrackToFile(std::string(sTestDirectory + "/" + sTestName + ".txt").c_str());
   std::stringstream ss;
   ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run " << sTestName << "SecretionandUrinatingTest";
-  bg.GetLogger()->Info(ss.str(), "RenalSystemTest");
+  pc.GetLogger()->Info(ss.str(), "RenalSystemTest");
 }
 
-void BioGearsEngineTest::RenalSecretionTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalSecretionTest(const std::string& sTestDirectory)
 {
   RenalSystemTest(Secretion, sTestDirectory, "RenalSecretionOutput");
 }
-void BioGearsEngineTest::RenalUrinateTest(const std::string& sTestDirectory)
+void PulseEngineTest::RenalUrinateTest(const std::string& sTestDirectory)
 {
   RenalSystemTest(Urinating, sTestDirectory, "RenalUrinateOutput");
 }

@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
- **************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.substance.quantity;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.GasSubstanceQuantityData;
-import mil.tatrc.physiology.datamodel.properties.SEScalarFraction;
+import com.kitware.physiology.cdm.SubstanceQuantity.GasSubstanceQuantityData;
+
+import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.properties.SEScalarPressure;
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolume;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
@@ -23,7 +13,7 @@ public class SEGasSubstanceQuantity extends SESubstanceQuantity
 {
   protected SEScalarPressure      partialPressure;
   protected SEScalarVolume        volume;
-  protected SEScalarFraction      volumeFraction;
+  protected SEScalar0To1          volumeFraction;
 
   public SEGasSubstanceQuantity(SESubstance s)
   {
@@ -44,35 +34,31 @@ public class SEGasSubstanceQuantity extends SESubstanceQuantity
       volumeFraction.invalidate();  
   }
 
-  public boolean load(GasSubstanceQuantityData in)
+  public static void load(GasSubstanceQuantityData src, SEGasSubstanceQuantity dst)
   {
-    super.load(in);
-    if (in.getPartialPressure() != null) 
-      getPartialPressure().load(in.getPartialPressure()); 
-    if (in.getVolume() != null) 
-      getVolume().load(in.getVolume()); 
-    if (in.getVolumeFraction() != null) 
-      getVolumeFraction().load(in.getVolumeFraction()); 
-
-    return true;
+    SESubstanceQuantity.load(src.getSubstanceQuantity(),dst);
+    if (src.hasPartialPressure()) 
+      SEScalarPressure.load(src.getPartialPressure(),dst.getPartialPressure()); 
+    if (src.hasVolume()) 
+      SEScalarVolume.load(src.getVolume(),dst.getVolume()); 
+    if (src.hasVolumeFraction()) 
+      SEScalar0To1.load(src.getVolumeFraction(),dst.getVolumeFraction()); 
   }
-
-  public GasSubstanceQuantityData unload()
+  public static GasSubstanceQuantityData unload(SEGasSubstanceQuantity src)
   {
-    GasSubstanceQuantityData data = CDMSerializer.objFactory.createGasSubstanceQuantityData();
-    unload(data);
-    return data;
+    GasSubstanceQuantityData.Builder dst = GasSubstanceQuantityData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-
-  protected void unload(GasSubstanceQuantityData data)
+  protected static void unload(SEGasSubstanceQuantity src, GasSubstanceQuantityData.Builder dst)
   {
-    super.unload(data);
-    if (hasPartialPressure())
-      data.setPartialPressure(partialPressure.unload());
-    if (hasVolume())
-      data.setVolume(volume.unload());
-    if (hasVolumeFraction())
-      data.setVolumeFraction(volumeFraction.unload());    
+    SESubstanceQuantity.unload(src,dst.getSubstanceQuantityBuilder());
+    if (src.hasPartialPressure())
+      dst.setPartialPressure(SEScalarPressure.unload(src.partialPressure));
+    if (src.hasVolume())
+      dst.setVolume(SEScalarVolume.unload(src.volume));
+    if (src.hasVolumeFraction())
+      dst.setVolumeFraction(SEScalar0To1.unload(src.volumeFraction));    
   }  
 
   public boolean hasPartialPressure()
@@ -101,10 +87,10 @@ public class SEGasSubstanceQuantity extends SESubstanceQuantity
   {
     return volumeFraction == null ? false : volumeFraction.isValid();
   }
-  public SEScalarFraction getVolumeFraction()
+  public SEScalar0To1 getVolumeFraction()
   {
     if (volumeFraction == null)
-      volumeFraction = new SEScalarFraction();
+      volumeFraction = new SEScalar0To1();
     return volumeFraction;
   }
 }

@@ -1,24 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "BloodChemistry.h"
-#include "bind/RunningAverageData.hxx"
 
 #include "patient/SEPatient.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
@@ -37,7 +27,7 @@ specific language governing permissions and limitations under the License.
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
 
-BloodChemistry::BloodChemistry(BioGears& bg) : SEBloodChemistrySystem(bg.GetLogger()), m_data(bg)
+BloodChemistry::BloodChemistry(PulseController& data) : SEBloodChemistrySystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -88,7 +78,7 @@ void BloodChemistry::Clear()
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
   GetBloodDensity().SetValue(1050, MassPerVolumeUnit::kg_Per_m3);
   GetBloodSpecificHeat().SetValue(3617, HeatCapacitancePerMassUnit::J_Per_K_kg);
   GetVolumeFractionNeutralLipidInPlasma().SetValue(0.0023);
@@ -104,26 +94,31 @@ void BloodChemistry::Initialize()
   Process();// Calculate the initial system values
 }
 
-bool BloodChemistry::Load(const CDM::BioGearsBloodChemistrySystemData& in)
+void BloodChemistry::Load(const pulse::BloodChemistrySystemData& src, BloodChemistry& dst)
 {
-  if (!SEBloodChemistrySystem::Load(in))
-    return false;
-  m_ArterialOxygen_mmHg.Load(in.ArterialOxygenAverage_mmHg());
-  m_ArterialCarbonDioxide_mmHg.Load(in.ArterialCarbonDioxideAverage_mmHg());
-  BioGearsSystem::LoadState(); 
-  return true;
+  BloodChemistry::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::BioGearsBloodChemistrySystemData* BloodChemistry::Unload() const
+void BloodChemistry::Serialize(const pulse::BloodChemistrySystemData& src, BloodChemistry& dst)
 {
-  CDM::BioGearsBloodChemistrySystemData* data = new CDM::BioGearsBloodChemistrySystemData();
-  Unload(*data);
-  return data;
+  SEBloodChemistrySystem::Serialize(src.common(), dst);
+  if (!src.has_arterialoxygenaverage_mmhg()) { dst.Fatal("Missing ArterialOxygen_mmHg","BloodChemistry::Serialize"); }
+  RunningAverage::Load(src.arterialoxygenaverage_mmhg(), dst.m_ArterialOxygen_mmHg);
+  if (!src.has_arterialcarbondioxideaverage_mmhg()) { dst.Fatal("Missing ArterialCarbonDioxide_mmHg", "BloodChemistry::Serialize"); }
+  RunningAverage::Load(src.arterialcarbondioxideaverage_mmhg(), dst.m_ArterialCarbonDioxide_mmHg);
 }
-void BloodChemistry::Unload(CDM::BioGearsBloodChemistrySystemData& data) const
+
+pulse::BloodChemistrySystemData* BloodChemistry::Unload(const BloodChemistry& src)
 {
-  SEBloodChemistrySystem::Unload(data);
-  data.ArterialOxygenAverage_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_ArterialOxygen_mmHg.Unload()));
-  data.ArterialCarbonDioxideAverage_mmHg(std::unique_ptr<CDM::RunningAverageData>(m_ArterialCarbonDioxide_mmHg.Unload()));
+  pulse::BloodChemistrySystemData* dst = new pulse::BloodChemistrySystemData();
+  BloodChemistry::Serialize(src,*dst);
+  return dst;
+}
+void BloodChemistry::Serialize(const BloodChemistry& src, pulse::BloodChemistrySystemData& dst)
+{
+  SEBloodChemistrySystem::Serialize(src, *dst.mutable_common());
+  dst.set_allocated_arterialoxygenaverage_mmhg(RunningAverage::Unload(src.m_ArterialOxygen_mmHg));
+  dst.set_allocated_arterialcarbondioxideaverage_mmhg(RunningAverage::Unload(src.m_ArterialCarbonDioxide_mmHg));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -135,7 +130,7 @@ void BloodChemistry::Unload(CDM::BioGearsBloodChemistrySystemData& data) const
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::SetUp()
 {
-  const BioGearsConfiguration& ConfigData = m_data.GetConfiguration();
+  const PulseConfiguration& ConfigData = m_data.GetConfiguration();
   m_redBloodCellVolume_mL = ConfigData.GetMeanCorpuscularVolume(VolumeUnit::mL);
   m_HbPerRedBloodCell_ug_Per_ct = ConfigData.GetMeanCorpuscularHemoglobin(MassPerAmountUnit::ug_Per_ct);
 
@@ -155,15 +150,15 @@ void BloodChemistry::SetUp()
   SESubstance* tristearin = &m_data.GetSubstances().GetTristearin();
   SESubstance* urea = &m_data.GetSubstances().GetUrea();
 
-  m_aorta = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Aorta);
+  m_aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
   m_aortaO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_aortaCO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_aortaBicarbonate = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetHCO3());
 
-  m_brainO2 = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-  m_myocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+  m_brainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+  m_myocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
 
-  m_venaCava = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::VenaCava);
+  m_venaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
   m_venaCavaO2 = m_venaCava->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_venaCavaCO2 = m_venaCava->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_venaCavaAcetoacetate = m_venaCava->GetSubstanceQuantity(*acetoacetate);
@@ -181,11 +176,11 @@ void BloodChemistry::SetUp()
   m_venaCavaTristearin = m_venaCava->GetSubstanceQuantity(*tristearin);
   m_venaCavaUrea = m_venaCava->GetSubstanceQuantity(*urea);
 
-  SELiquidCompartment* pulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::PulmonaryArteries);
+  SELiquidCompartment* pulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries);
   m_pulmonaryArteriesO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_pulmonaryArteriesCO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 
-  SELiquidCompartment* pulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::PulmonaryVeins);
+  SELiquidCompartment* pulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins);
   m_pulmonaryVeinsO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_pulmonaryVeinsCO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 
@@ -202,7 +197,7 @@ void BloodChemistry::AtSteadyState()
 /// Blood Chemistry Preprocess method
 ///
 /// \details
-/// The current BioGears implementation has no functionality in the preprocess function for blood chemistry.
+/// The current Pulse implementation has no functionality in the preprocess function for blood chemistry.
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::PreProcess()
 {
@@ -303,8 +298,11 @@ void BloodChemistry::Process()
 
   double totalFlow_mL_Per_min = m_data.GetCardiovascular().GetCardiacOutput(VolumePerTimeUnit::mL_Per_min);
   double shuntFlow_mL_Per_min = m_data.GetCardiovascular().GetPulmonaryMeanShuntFlow(VolumePerTimeUnit::mL_Per_min);
-  double shunt = shuntFlow_mL_Per_min / totalFlow_mL_Per_min;
-  GetShuntFraction().SetValue(shunt);
+  double shunt = 0.0;
+  if (totalFlow_mL_Per_min > 0.0)
+  {
+    shunt = shuntFlow_mL_Per_min / totalFlow_mL_Per_min;
+  }
 
   CheckBloodGasLevels();
 
@@ -326,7 +324,7 @@ void BloodChemistry::Process()
 /// Blood Chemistry postprocess method
 ///
 /// \details
-/// The current BioGears implementation has no specific postprocess functionality.
+/// The current Pulse implementation has no specific postprocess functionality.
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::PostProcess()
 {
@@ -350,7 +348,7 @@ void BloodChemistry::CheckBloodGasLevels()
   m_ArterialOxygen_mmHg.Sample(m_aortaO2->GetPartialPressure(PressureUnit::mmHg));
   m_ArterialCarbonDioxide_mmHg.Sample(m_aortaCO2->GetPartialPressure(PressureUnit::mmHg));
   //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 
-  if (patient.IsEventActive(CDM::enumPatientEvent::StartOfCardiacCycle))
+  if (patient.IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
   {
     double arterialOxygen_mmHg = m_ArterialOxygen_mmHg.Value();
     double arterialCarbonDioxide_mmHg = m_ArterialCarbonDioxide_mmHg.Value();
@@ -363,42 +361,42 @@ void BloodChemistry::CheckBloodGasLevels()
       if (arterialCarbonDioxide_mmHg >= hypercapniaFlag)
       {
         /// \event Patient: Hypercapnia. The carbon dioxide partial pressure has risen above 60 mmHg. The patient is now hypercapnic.
-        patient.SetEvent(CDM::enumPatientEvent::Hypercapnia, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::PatientData_eEvent_Hypercapnia, true, m_data.GetSimulationTime());
 
         if (arterialCarbonDioxide_mmHg > carbonDioxideToxicity)
         {
           m_ss << "Arterial Carbon Dioxide partial pressure is " << arterialCarbonDioxide_mmHg << ". This is beyond 80 mmHg triggering extreme Hypercapnia, patient is in an irreversible state.";
           Warning(m_ss);
           /// \irreversible The carbon dioxide partial pressure is greater than 80 mmHg. 
-          patient.SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
         }
       }
-      else if (patient.IsEventActive(CDM::enumPatientEvent::Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))
+      else if (patient.IsEventActive(cdm::PatientData_eEvent_Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))
       {
         /// \event Patient: End Hypercapnia. The carbon dioxide partial pressure has fallen below 57 mmHg. The patient is no longer considered to be hypercapnic.
         /// This event is triggered if the patient was hypercapnic and is now considered to be recovered.
-        patient.SetEvent(CDM::enumPatientEvent::Hypercapnia, false, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::PatientData_eEvent_Hypercapnia, false, m_data.GetSimulationTime());
       }
 
       // hypoxia check
       if (arterialOxygen_mmHg <= hypoxiaFlag)
       {
         /// \event Patient: Hypoxia Event. The oxygen partial pressure has fallen below 65 mmHg, indicating that the patient is hypoxic.
-        patient.SetEvent(CDM::enumPatientEvent::Hypoxia, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::PatientData_eEvent_Hypoxia, true, m_data.GetSimulationTime());
 
         if (arterialOxygen_mmHg < hypoxiaIrreversible)
         {
           m_ss << "Arterial Oxygen partial pressure is " << arterialOxygen_mmHg << ". This is below 15 mmHg triggering extreme Hypoxia, patient is in an irreversible state.";
           Warning(m_ss);
           /// \irreversible Arterial oxygen partial pressure has been critically reduced to below 15 mmHg.
-          patient.SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
         }
       }
       else if (arterialOxygen_mmHg > (hypoxiaFlag + 3))
       {
         /// \event Patient: End Hypoxia Event. The oxygen partial pressure has rise above 68 mmHg. If this occurs when the patient is hypoxic, it will reverse the hypoxic event.
         /// The patient is no longer considered to be hypoxic.
-        patient.SetEvent(CDM::enumPatientEvent::Hypoxia, false, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::PatientData_eEvent_Hypoxia, false, m_data.GetSimulationTime());
       }
     }
 
@@ -417,70 +415,70 @@ void BloodChemistry::CheckBloodGasLevels()
     if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 21.0)
     {     
       /// \event Patient: Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a dangerously low level.
-      patient.SetEvent(CDM::enumPatientEvent::BrainOxygenDeficit, true, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::PatientData_eEvent_BrainOxygenDeficit, true, m_data.GetSimulationTime());
 
       // Irreversible damage occurs if the deficit has gone on too long
-      if (patient.GetEventDuration(CDM::enumPatientEvent::BrainOxygenDeficit, TimeUnit::s) > 1800)
+      if (patient.GetEventDuration(cdm::PatientData_eEvent_BrainOxygenDeficit, TimeUnit::s) > 1800)
       {
         m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the danger threshold for " <<
-          patient.GetEventDuration(CDM::enumPatientEvent::BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
+          patient.GetEventDuration(cdm::PatientData_eEvent_BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
         Warning(m_ss);
         /// \irreversible Brain oxygen pressure has been dangerously low for more than 30 minutes.
-        patient.SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
       }
 
       // If the O2 tension is below a critical threshold, the irreversible damage occurs more quickly
       if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 10.0)
       {
         /// \event Patient: Critical Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a critically low level.
-        patient.SetEvent(CDM::enumPatientEvent::CriticalBrainOxygenDeficit, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::PatientData_eEvent_CriticalBrainOxygenDeficit, true, m_data.GetSimulationTime());
       }
       else if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) > 12.0)
       {
         /// \event Patient: End Brain Oxygen Deficit Event. The oxygen partial pressure has risen above 12 mmHg in the brain. If this occurs when the patient has a critical brain oxygen deficit event, it will reverse the event.
         /// The brain is not in a critical oxygen deficit.
-        patient.SetEvent(CDM::enumPatientEvent::CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::PatientData_eEvent_CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
       }
 
       // Irreversible damage occurs if the critical deficit has gone on too long
-      if (patient.GetEventDuration(CDM::enumPatientEvent::CriticalBrainOxygenDeficit, TimeUnit::s) > 600)
+      if (patient.GetEventDuration(cdm::PatientData_eEvent_CriticalBrainOxygenDeficit, TimeUnit::s) > 600)
       {
         m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the critical threshold for " <<
-          patient.GetEventDuration(CDM::enumPatientEvent::BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
+          patient.GetEventDuration(cdm::PatientData_eEvent_BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
         Warning(m_ss);
         /// \irreversible Brain oxygen pressure has been critically low for more than 10 minutes.
-        patient.SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) > 25.0)
     {
       /// \event Patient: End Brain Oxygen Deficit Event. The oxygen partial pressure has risen above 25 mmHg in the brain. If this occurs when the patient has a brain oxygen deficit event, it will reverse the event.
       /// The brain is getting oxygen.
-      patient.SetEvent(CDM::enumPatientEvent::BrainOxygenDeficit, false, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::PatientData_eEvent_BrainOxygenDeficit, false, m_data.GetSimulationTime());
       // The critical deficit event is also set to false just in case there is an unrealistically rapid transition in oxygen partial pressure.
-      patient.SetEvent(CDM::enumPatientEvent::CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::PatientData_eEvent_CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
     }
 
     //Myocardium Oxygen Check
     if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 5)
     {
       /// \event Patient: The heart is not receiving enough oxygen. Coronary arteries should dilate to increase blood flow to the heart.
-      patient.SetEvent(CDM::enumPatientEvent::MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::PatientData_eEvent_MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());
 
-      if (patient.GetEventDuration(CDM::enumPatientEvent::MyocardiumOxygenDeficit, TimeUnit::s) > 2400)  // \cite murry1986preconditioning
+      if (patient.GetEventDuration(cdm::PatientData_eEvent_MyocardiumOxygenDeficit, TimeUnit::s) > 2400)  // \cite murry1986preconditioning
       {
-        m_ss << "Myocardium oxygen partial pressure is  " << m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) << " and has been sustained for " << patient.GetEventDuration(CDM::enumPatientEvent::MyocardiumOxygenDeficit, TimeUnit::s) <<
+        m_ss << "Myocardium oxygen partial pressure is  " << m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) << " and has been sustained for " << patient.GetEventDuration(cdm::PatientData_eEvent_MyocardiumOxygenDeficit, TimeUnit::s) <<
           "patient heart muscle has experienced necrosis and is in an irreversible state.";
         Warning(m_ss);
         /// \irreversible Heart has not been receiving enough oxygen for more than 40 min.
-        patient.SetEvent(CDM::enumPatientEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) > 8)
     {
       /// \event Patient: End Myocardium Oxygen Event. The heart is now receiving enough oxygen. If this occurs when the patient has a heart oxygen deficit event, it will reverse the event.
       /// The brain is getting oxygen.
-      patient.SetEvent(CDM::enumPatientEvent::MyocardiumOxygenDeficit, false, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::PatientData_eEvent_MyocardiumOxygenDeficit, false, m_data.GetSimulationTime());
     }
   }
 }
@@ -491,11 +489,11 @@ void BloodChemistry::CheckBloodGasLevels()
 ///
 /// \details
 /// Sets data on the metabolic panel object to create the metabolic panel.  
-/// Uses information from the chem 14 substances that are in %BioGears (see @ref bloodchemistry-assessments)
+/// Uses information from the chem 14 substances that are in %Pulse (see @ref bloodchemistry-assessments)
 //--------------------------------------------------------------------------------------------------
 bool BloodChemistry::CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp)
 {
-  cmp.Reset();
+  cmp.Clear();
   cmp.GetAlbumin().Set(m_data.GetSubstances().GetAlbumin().GetBloodConcentration());
   //cmp.GetALP().SetValue();
   //cmp.GetALT().SetValue();
@@ -531,7 +529,7 @@ bool BloodChemistry::CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabol
 //--------------------------------------------------------------------------------------------------
 bool BloodChemistry::CalculateCompleteBloodCount(SECompleteBloodCount& cbc)
 {
-  cbc.Reset();
+  cbc.Clear();
   cbc.GetHematocrit().Set(GetHematocrit());
   cbc.GetHemoglobin().Set(m_data.GetSubstances().GetHb().GetBloodConcentration());
   cbc.GetPlateletCount().SetValue(325000, AmountPerVolumeUnit::ct_Per_uL);  // Hardcoded for now, don't support PlateletCount yet

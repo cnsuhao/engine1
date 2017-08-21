@@ -1,20 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(ActionData);
 class SESubstanceManager;
+PROTO_PUSH
+#include "bind/cdm/Actions.pb.h"
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 
-class DLL_DECL SEAction : public Loggable
+class CDM_DECL SEAction : public Loggable
 {
 public:
 
@@ -29,12 +23,13 @@ public:
   *  This method will encapsulate that logic in a single function */
   virtual bool IsActive() const { return IsValid(); }
 
-  static SEAction* newFromBind(const CDM::ActionData& action, SESubstanceManager& substances);
-
-  virtual bool Load(const CDM::ActionData& in);
-  virtual CDM::ActionData* Unload() const;
+  /** Create a new action based on the binding object, load that data into the new action, and return said action */
+  static SEAction* Load(const cdm::AnyActionData& action, SESubstanceManager& subMgr);
+  /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
+  static cdm::AnyActionData* Unload(const SEAction& action);
 protected:
-  void Unload(CDM::ActionData& data) const;
+  static void Serialize(const cdm::ActionData& src, SEAction& dst);
+  static void Serialize(const SEAction& src, cdm::ActionData& dst);
 
 public:
 

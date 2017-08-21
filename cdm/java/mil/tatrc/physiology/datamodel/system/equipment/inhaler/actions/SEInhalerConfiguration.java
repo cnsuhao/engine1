@@ -1,20 +1,12 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.system.equipment.inhaler.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.InhalerConfigurationData;
-import mil.tatrc.physiology.datamodel.substance.SESubstance;
+import org.jfree.util.Log;
+
+import com.kitware.physiology.cdm.InhalerActions.InhalerConfigurationData;
+
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.datamodel.system.equipment.inhaler.SEInhaler;
 
@@ -57,30 +49,33 @@ public class SEInhalerConfiguration extends SEInhalerAction
     return hasConfiguration() || hasConfigurationFile();
   }
   
-  public boolean load(InhalerConfigurationData in, SESubstanceManager subMgr)
+  public static void load(InhalerConfigurationData src, SEInhalerConfiguration dst, SESubstanceManager subMgr)
   {
-    super.load(in);
-    if(in.getConfiguration()!=null)
-      getConfiguration().load(in.getConfiguration(),subMgr);
-    else if(in.getConfigurationFile()!=null)
-      this.configurationFile=in.getConfigurationFile();
-    return isValid();
+    dst.reset();
+    switch(src.getOptionCase())
+    {
+    case CONFIGURATIONFILE:
+      dst.configurationFile = src.getConfigurationFile();
+      break;
+    case CONFIGURATION:
+      SEInhaler.load(src.getConfiguration(),dst.getConfiguration(),subMgr);
+      break;
+    default:
+    	Log.error("Unknown InhalerConfiguationData OptionCase");
+    }
   }
-  
-  public InhalerConfigurationData unload()
+  public static InhalerConfigurationData unload(SEInhalerConfiguration src)
   {
-    InhalerConfigurationData data = CDMSerializer.objFactory.createInhalerConfigurationData();
-    unload(data);
-    return data;
+    InhalerConfigurationData.Builder dst = InhalerConfigurationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(InhalerConfigurationData data)
+  protected static void unload(SEInhalerConfiguration src, InhalerConfigurationData.Builder dst)
   {
-    super.unload(data);
-    if(this.hasConfiguration())
-      data.setConfiguration(this.configuration.unload());
-    else if(this.hasConfigurationFile())
-      data.setConfigurationFile(this.configurationFile);
+    if(src.hasConfiguration())
+      dst.setConfiguration(SEInhaler.unload(src.configuration));
+    else if(src.hasConfigurationFile())
+      dst.setConfigurationFile(src.configurationFile);
   }
   
   public boolean hasConfiguration()
@@ -112,15 +107,11 @@ public class SEInhalerConfiguration extends SEInhalerAction
     String str = "Inhaler Configuration";
     if(hasConfiguration())
     {
-      str += "\n\tState: "; str += this.configuration.hasState()?this.configuration.getState():"Not Supplied";
-      str += "\n\tMetered Dose: "; str += this.configuration.hasMeteredDose()?this.configuration.getMeteredDose():"Not Supplied";
-      str += "\n\tNozzle Loss: "; str += this.configuration.hasNozzleLoss()?this.configuration.getNozzleLoss():"Not Supplied";
-      str += "\n\tSpacer Volume: "; str += this.configuration.hasSpacerVolume()?this.configuration.getSpacerVolume():"Not Supplied";    
-      str += "\n\tSubstance: "; str += this.configuration.hasSubstance()?this.configuration.getSubstance().getName():"Not Supplied";
+      str += configuration.toString();
     }
     
     if(this.hasConfigurationFile())
-      str +="\n\tFile: "+this.configurationFile;
+      str +="\n\tInhaler File: "+this.configurationFile;
     
     return str;
   }

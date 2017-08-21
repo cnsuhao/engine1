@@ -1,17 +1,7 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "../Controller/BioGearsSystem.h"
 #include "system/physiology/SETissueSystem.h"
 struct error_functor;
 
@@ -19,21 +9,21 @@ struct error_functor;
 * @brief
 * The %SaturationCalculator class holds the blood gas distribution model.
 */
-class BIOGEARS_API SaturationCalculator : public Loggable
+class PULSE_DECL SaturationCalculator : public Loggable
 {
 protected:
   friend error_functor;
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend PulseController;
+  friend class PulseEngineTest;
 
-  SaturationCalculator(BioGears& bg);
-  BioGears& m_data;
+  SaturationCalculator(PulseController& data);
+  PulseController& m_data;
 public:
   virtual ~SaturationCalculator();
 
   void Initialize(SESubstanceManager& substances);
 
-  void SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalarFraction& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate);
+  void SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalar0To1& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate);
   void CalculateBloodGasDistribution(SELiquidCompartment& cmpt);
   void CalculateCarbonMonoxideSpeciesDistribution(SELiquidCompartment& cmpt);
 

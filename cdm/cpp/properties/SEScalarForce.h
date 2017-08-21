@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarForceData.hxx"
 
-class DLL_DECL ForceUnit : public CCompoundUnit
+class CDM_DECL ForceUnit : public CCompoundUnit
 {
 public:
   ForceUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -28,11 +18,15 @@ public:
   static const ForceUnit dyn;
 };
 
-class DLL_DECL SEScalarForce : public SEScalarQuantity<ForceUnit>
+class CDM_DECL SEScalarForce : public SEScalarQuantity<ForceUnit>
 {
 public:
   SEScalarForce() {}
   virtual ~SEScalarForce() {}
 
-  CDM::ScalarForceData* Unload() const;
+  static void Load(const cdm::ScalarForceData& src, SEScalarForce& dst);
+  static cdm::ScalarForceData* Unload(const SEScalarForce& src);
+protected:
+  static void Serialize(const cdm::ScalarForceData& src, SEScalarForce& dst);
+  static void Serialize(const SEScalarForce& src, cdm::ScalarForceData& dst);
 };

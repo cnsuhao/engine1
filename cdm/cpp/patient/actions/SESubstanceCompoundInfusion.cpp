@@ -1,22 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
 #include "substance/SESubstanceCompound.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 
 SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompound& compound) : SESubstanceAdministration(), m_Compound(compound)
 {
@@ -37,14 +26,6 @@ void SESubstanceCompoundInfusion::Clear()
   // m_Compound=nullptr; Keeping mapping!!
 }
 
-bool SESubstanceCompoundInfusion::Load(const CDM::SubstanceCompoundInfusionData& in)
-{
-  SESubstanceAdministration::Load(in);
-  GetRate().Load(in.Rate());
-  GetBagVolume().Load(in.BagVolume());
-  return true;
-}
-
 bool SESubstanceCompoundInfusion::IsValid() const
 {
   return SESubstanceAdministration::IsValid() && HasRate() && HasBagVolume();
@@ -55,21 +36,33 @@ bool SESubstanceCompoundInfusion::IsActive() const
   return IsValid() ? !m_Rate->IsZero() : false;
 }
 
-CDM::SubstanceCompoundInfusionData* SESubstanceCompoundInfusion::Unload() const
+void SESubstanceCompoundInfusion::Load(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
 {
-  CDM::SubstanceCompoundInfusionData*data(new CDM::SubstanceCompoundInfusionData());
-  Unload(*data);
-  return data;
+  SESubstanceCompoundInfusion::Serialize(src, dst);
+}
+void SESubstanceCompoundInfusion::Serialize(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_rate())
+    SEScalarVolumePerTime::Load(src.rate(), dst.GetRate());
+  if (src.has_bagvolume())
+    SEScalarVolume::Load(src.bagvolume(), dst.GetBagVolume());
 }
 
-void SESubstanceCompoundInfusion::Unload(CDM::SubstanceCompoundInfusionData& data) const
+cdm::SubstanceCompoundInfusionData* SESubstanceCompoundInfusion::Unload(const SESubstanceCompoundInfusion& src)
 {
-  SESubstanceAdministration::Unload(data);
-  if(m_Rate!=nullptr)
-    data.Rate(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_Rate->Unload()));
-  if(m_BagVolume!=nullptr)
-    data.BagVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_BagVolume->Unload()));
-  data.SubstanceCompound(m_Compound.GetName());
+  cdm::SubstanceCompoundInfusionData* dst = new cdm::SubstanceCompoundInfusionData();
+  SESubstanceCompoundInfusion::Serialize(src, *dst);
+  return dst;
+}
+void SESubstanceCompoundInfusion::Serialize(const SESubstanceCompoundInfusion& src, cdm::SubstanceCompoundInfusionData& dst)
+{
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_substancecompound(src.m_Compound.GetName());
+  if (src.HasRate())
+    dst.set_allocated_rate(SEScalarVolumePerTime::Unload(*src.m_Rate));
+  if (src.HasBagVolume())
+    dst.set_allocated_bagvolume(SEScalarVolume::Unload(*src.m_BagVolume));
 }
 
 bool SESubstanceCompoundInfusion::HasRate() const

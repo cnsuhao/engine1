@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/TissueSystemData.hxx"
 
-class DLL_DECL SETissueSystem : public SESystem
+class CDM_DECL SETissueSystem : public SESystem
 {
 public:
 
@@ -25,10 +15,11 @@ public:
   
   virtual const SEScalar* GetScalar(const std::string& name);
   
-  virtual bool Load(const CDM::TissueSystemData& in);
-  virtual CDM::TissueSystemData* Unload() const;
+  static void Load(const cdm::TissueSystemData& src, SETissueSystem& dst);
+  static cdm::TissueSystemData* Unload(const SETissueSystem& src);
 protected:
-  virtual void Unload(CDM::TissueSystemData& data) const;
+  static void Serialize(const cdm::TissueSystemData& src, SETissueSystem& dst);
+  static void Serialize(const SETissueSystem& src, cdm::TissueSystemData& dst);
 
 public:
 
@@ -68,7 +59,7 @@ protected:
   SEScalarVolume*         m_IntracellularFluidVolume;//planned
   SEScalar*               m_IntracellularFluidPH;
   SEScalarVolumePerTime*  m_OxygenConsumptionRate;
-  SEScalar*                m_RespiratoryExchangeRatio;
+  SEScalar*               m_RespiratoryExchangeRatio;
 
 
 };

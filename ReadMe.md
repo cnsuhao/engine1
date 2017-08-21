@@ -1,7 +1,7 @@
-Simulation Engine 
-=================
+Pulse Physiology Engine 
+======================
 
-A C++ based simulation engine for human and animal physiology simulation.
+The Pulse Physiology engine is a C++ based simulation engine for human and animal physiology.
 It is intended to provide accurate and consistent physiology data to medical education, research, and training technologies. 
 The libraries built (*.dll/*.so) can be integrated with standalone applications, hardware simulators and sensor interfaces, and other physiology models of all fidelities.
 
@@ -22,6 +22,7 @@ While the provided cmake superbuild automatically pulls many libraries it needs 
 you will still need to have the following tools installed (along with your choice of C++ compiler) :
 
 ### CMake
+Currently, the code requires CMake 3.7 or greater to properly build
 Go to the cmake website, `https://cmake.org/download`, and download the appropriate distribution.
 Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 
@@ -86,11 +87,12 @@ cd builds
 cmake -DCMAKE_BUILD_TYPE:STRING=Release ../src
 # Build the install target/project
 # On Linux/OSX/MinGW 
-make install 
+make && make install 
 # For MSVC
 # Open the OuterBuild.sln and build the INSTALL project (It will build everything!)
-# When the build is complete, MSVC users can close the OuterBuild solution, and open the Engine.sln located in the InnerBuild directory.
-# Unix based systems can also change to this directory for building as well to build specific engine components
+# When the build is complete, MSVC users can close the OuterBuild solution, and open the Pulse.sln located in the Pulse directory.
+# Unix based systems should also cd into this directory for building
+cd Pulse
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Running and Testing
@@ -101,18 +103,15 @@ The code base provides a few driver programs to execute the physiology libraries
 
 ### Scenario Driver
 
-The Scenario Driver is a simple C++ driver that reads a scenario XML file and creates a CSV file with results.
-See <a href="/_scenario_x_m_l_file.html">here</a> for more info.
-
-You will need to download the latest scenario/verification zip <a href="https://github.com/BioGearsEngine/Engine/releases/download/6.1.1-beta/BioGears_6.1.1-beta-verification-all.zip">here</a> and put in a directory named 'verification' at the root of your source tree.
-In the near future, we will link the verification data to this repository, so it will be downloaded automatically.
+The Scenario Driver is a simple C++ driver that reads a scenario proto text files (*.pba) and creates a CSV file with results.
+See <a href="/_scenario_p_b_a_file.html">here</a> for more info.
 
 To run the driver, change directory in your cmd/bash shell to the build/install/bin directory and execute the following :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-# First ensure the release directory (or debug if that is what you are running) is on your path
+# First ensure the release directory (or debug if that is what you are running) is on your path, so we can see the executable
 PATH=%PATH%;./release # for windows
 PATH=$PATH:./release # for linux
-ScenarioDriver ../verification/Scenarios/Patient/BasicStandard.xml 
+ScenarioDriver BasicStandard.xml 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <b> .csv and .log files will be placed in the bin directory </b>
 
@@ -123,11 +122,9 @@ If you are going to run the SceanrioDriver through visual studio follow these st
   - You probably want to do this for all configuration in the solution
 - Click on 'Configuration Options->Debugging' on the left tree in the properties dialog
 - Put the directory to your bin directory as the 'Working Directory'
-- Enter the relative path to the associated directory containing the dlls for your selected configuration into the 'Environment' field.
-  - For example, this is what you would enter to run against the 64bit release dll's: PATH=PATH;./release
-  - and this is what you would enter to run against the 32bit release dll's : PATH=PATH;./release32
+- Put in the full path (or relative to the bin directory) of the scenario file you wish to run
   
-<b> You will also want to do this for the UnitTestDriver if you want to run that through visual studio as well. </b>
+<b> You will also need to set the working directory for the UnitTestDriver if you want to run that through visual studio as well. </b>
 
 ### Java Based Testing Suite
 
@@ -141,6 +138,11 @@ To run the test driver, change directory in your cmd/bash shell to the build/ins
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 cmake -DTYPE:STRING=[option] -P run.cmake 
+# There is also .bat and .sh scripts to make this a little easier
+# You can type
+run [option]
+# or, on Linux
+./run.sh [option]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Where [option] can be one of the following :
@@ -171,6 +173,11 @@ To generate the documentation, perform the following steps:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 cmake -DTYPE:STRING=doxygen -P run.cmake 
+# There is also .bat and .sh scripts to make this a little easier
+# You can type
+run doxygen
+# or, on Linux
+./run.sh doxygen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Creating the Software Development Kit (SDK)

@@ -1,0 +1,28 @@
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+
+#pragma once
+class Pulse;
+#include "circuit/SECircuitContainer.h"
+#include "Serializer.h"
+
+class Pulse_API PulseInterCircuitConnections : public SECircuitContainer
+{
+public:
+
+  PulseInterCircuitConnections(Pulse& data);
+  virtual ~PulseInterCircuitConnections();
+
+  void Reset();
+  void Clear();
+  bool IsValid();
+
+  bool LoadInterCircuitConnections(const std::string& circuitFile, Serializer& serlializer);
+
+  SEInterCircuitConnection*  GetRespiratoryAnesthesiaMachineInterCircuitConnection();
+
+protected:
+
+  Pulse*   m_Data;
+  SEInterCircuitConnection*  m_RespiratoryAnesthesiaMachineInterCircuitConnection;
+};

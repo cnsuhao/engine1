@@ -1,47 +1,40 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.system.environment;
 
 import java.util.*;
 
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.Environment.EnvironmentData;
+import com.kitware.physiology.cdm.Environment.EnvironmentData.eSurroundingType;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+
+import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumSubstanceState;
-import mil.tatrc.physiology.datamodel.bind.EnumSurroundingType;
-import mil.tatrc.physiology.datamodel.bind.EnvironmentalConditionsData;
-import mil.tatrc.physiology.datamodel.bind.SubstanceConcentrationData;
-import mil.tatrc.physiology.datamodel.bind.SubstanceFractionData;
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceCompound;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceConcentration;
-import mil.tatrc.physiology.datamodel.substance.SESubstanceFraction;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceFractionAmount;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 
 public class SEEnvironmentalConditions
 {
-  protected EnumSurroundingType             surroundingType;
-  protected SEScalarMassPerVolume            airDensity;
-  protected SEScalarLengthPerTime            airVelocity;
+  protected eSurroundingType                surroundingType;
+  protected SEScalarMassPerVolume           airDensity;
+  protected SEScalarLengthPerTime           airVelocity;
   protected SEScalarTemperature             ambientTemperature;
   protected SEScalarPressure                atmosphericPressure;
   protected SEScalarHeatResistanceArea      clothingResistance;
-  protected SEScalarFraction                emissivity;
-  protected SEScalarTemperature              meanRadiantTemperature;
-  protected SEScalarFraction                relativeHumidity;
-  protected SEScalarTemperature              respirationAmbientTemperature;
+  protected SEScalar0To1                    emissivity;
+  protected SEScalarTemperature             meanRadiantTemperature;
+  protected SEScalar0To1                    relativeHumidity;
+  protected SEScalarTemperature             respirationAmbientTemperature;
 
-  protected List<SESubstanceFraction>       ambientGases;
+  protected List<SESubstanceFractionAmount> ambientGases;
   protected List<SESubstanceConcentration>  ambientAerosols;
   
   
@@ -59,7 +52,7 @@ public class SEEnvironmentalConditions
     this.relativeHumidity=null;
     this.respirationAmbientTemperature=null;
 
-    this.ambientGases=new ArrayList<SESubstanceFraction>();
+    this.ambientGases=new ArrayList<SESubstanceFractionAmount>();
     this.ambientAerosols=new ArrayList<SESubstanceConcentration>();
 
   }
@@ -93,7 +86,7 @@ public class SEEnvironmentalConditions
   public void copy(SEEnvironmentalConditions from)
   {
     this.reset();
-    if(from.hasSurroundingType())
+    if(from.surroundingType != eSurroundingType.NullSurrounding)
       this.setSurroundingType(from.surroundingType);
     if(from.hasAirDensity())
       this.getAirDensity().set(from.getAirDensity());
@@ -116,12 +109,12 @@ public class SEEnvironmentalConditions
     
     if(from.ambientGases!=null)
     {
-      SESubstanceFraction mine;
-      for(SESubstanceFraction sf : from.ambientGases)
+      SESubstanceFractionAmount mine;
+      for(SESubstanceFractionAmount sf : from.ambientGases)
       {
         mine=this.createAmbientGas(sf.getSubstance());
-        if(sf.hasFractionAmount())
-          mine.getFractionAmount().set(sf.getFractionAmount());
+        if(sf.hasAmount())
+          mine.getAmount().set(sf.getAmount());
       }
     }    
     
@@ -137,122 +130,128 @@ public class SEEnvironmentalConditions
     }    
   }
   
-  public boolean load(EnvironmentalConditionsData in, SESubstanceManager substances)
+  public void readFile(String fileName, SESubstanceManager mgr) throws ParseException
   {
-    this.reset();
-    if (in.getSurroundingType() != null)
-      setSurroundingType(in.getSurroundingType());
-    if (in.getAirDensity() != null)
-      getAirDensity().load(in.getAirDensity());
-    if (in.getAirVelocity() != null)
-      getAirVelocity().load(in.getAirVelocity());
-    if (in.getAmbientTemperature() != null)
-      getAmbientTemperature().load(in.getAmbientTemperature());
-    if (in.getAtmosphericPressure() != null)
-      getAtmosphericPressure().load(in.getAtmosphericPressure());
-    if (in.getClothingResistance() != null)
-      getClothingResistance().load(in.getClothingResistance());
-    if (in.getEmissivity() != null)
-      getEmissivity().load(in.getEmissivity());
-    if (in.getMeanRadiantTemperature() != null)
-      getMeanRadiantTemperature().load(in.getMeanRadiantTemperature());
-    if (in.getRelativeHumidity() != null)
-      getRelativeHumidity().load(in.getRelativeHumidity());
-    if (in.getRespirationAmbientTemperature() != null)
-      getRespirationAmbientTemperature().load(in.getRespirationAmbientTemperature());
+    EnvironmentData.ConditionsData.Builder builder = EnvironmentData.ConditionsData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    SEEnvironmentalConditions.load(builder.build(), this, mgr);
+  }
+  public void writeFile(String fileName)
+  {
+    FileUtils.writeFile(fileName, SEEnvironmentalConditions.unload(this).toString());
+  }
+  
+  public static void load(EnvironmentData.ConditionsData src, SEEnvironmentalConditions dst, SESubstanceManager substances)
+  {
+    dst.reset();
+    if (src.getSurroundingType() != eSurroundingType.UNRECOGNIZED)
+      dst.setSurroundingType(src.getSurroundingType());
+    if (src.hasAirDensity())
+      SEScalarMassPerVolume.load(src.getAirDensity(),dst.getAirDensity());
+    if (src.hasAirVelocity())
+      SEScalarLengthPerTime.load(src.getAirVelocity(),dst.getAirVelocity());
+    if (src.hasAmbientTemperature())
+      SEScalarTemperature.load(src.getAmbientTemperature(),dst.getAmbientTemperature());
+    if (src.hasAtmosphericPressure())
+      SEScalarPressure.load(src.getAtmosphericPressure(),dst.getAtmosphericPressure());
+    if (src.hasClothingResistance())
+      SEScalarHeatResistanceArea.load(src.getClothingResistance(),dst.getClothingResistance());
+    if (src.hasEmissivity())
+      SEScalar0To1.load(src.getEmissivity(),dst.getEmissivity());
+    if (src.hasMeanRadiantTemperature())
+      SEScalarTemperature.load(src.getMeanRadiantTemperature(),dst.getMeanRadiantTemperature());
+    if (src.hasRelativeHumidity())
+      SEScalar0To1.load(src.getRelativeHumidity(),dst.getRelativeHumidity());
+    if (src.hasRespirationAmbientTemperature())
+      SEScalarTemperature.load(src.getRespirationAmbientTemperature(),dst.getRespirationAmbientTemperature());
     
     SESubstance sub;
-    if(in.getAmbientGas()!=null)
+    if(src.getAmbientGasList()!=null)
     {
-      for(SubstanceFractionData subData : in.getAmbientGas())
+      for(SubstanceData.FractionAmountData subData : src.getAmbientGasList())
       {
         sub = substances.getSubstance(subData.getName());
         if(sub == null)
         {
-          Log.error("Substance does not exist : "+subData.getName());
-          return false;
+          Log.error("Substance does not exist for ambient gas : "+subData.getName());
+          continue;
         }
-        if(sub.getState() != EnumSubstanceState.GAS)
+        if(sub.getState() != SubstanceData.eState.Gas)
         {
           Log.error("Environment Ambient Gas must be a gas, "+subData.getName()+" is not a gas...");
-          return false;
+          continue;
         }
-        this.createAmbientGas(sub).getFractionAmount().load(subData.getFractionAmount());
+        SEScalar0To1.load(subData.getAmount(),dst.createAmbientGas(sub).getAmount());
       }
     }
     
-    if(in.getAmbientAerosol()!=null)
+    if(src.getAmbientAerosolList()!=null)
     {
-      for(SubstanceConcentrationData subData : in.getAmbientAerosol())
+      for(SubstanceData.ConcentrationData subData : src.getAmbientAerosolList())
       {
         sub = substances.getSubstance(subData.getName());
         if(sub == null)
         {
-          Log.error("Substance does not exist : "+subData.getName());
-          return false;
+          Log.error("Substance does not exist for ambient aerosol : "+subData.getName());
+          continue;
         }
-        if(sub.getState() != EnumSubstanceState.SOLID && sub.getState() != EnumSubstanceState.LIQUID)
+        if(sub.getState() != SubstanceData.eState.Solid && sub.getState() != SubstanceData.eState.Liquid)
         {
           Log.error("Environment Ambient Aerosol must be a liquid or a gas, "+subData.getName()+" is neither...");
-          return false;
+          continue;
         }
-        this.createAmbientAerosol(sub).getConcentration().load(subData.getConcentration());
+        SEScalarMassPerVolume.load(subData.getConcentration(),dst.createAmbientAerosol(sub).getConcentration());
       }
     }
-    
-    return true;
   }
-  
-  public EnvironmentalConditionsData unload()
+  public static EnvironmentData.ConditionsData unload(SEEnvironmentalConditions src)
   {
-    EnvironmentalConditionsData data = CDMSerializer.objFactory.createEnvironmentalConditionsData();
-    unload(data);
-    return data;
+    EnvironmentData.ConditionsData.Builder dst = EnvironmentData.ConditionsData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(EnvironmentalConditionsData data)
+  protected static void unload(SEEnvironmentalConditions src, EnvironmentData.ConditionsData.Builder dst)
   {
-    if (hasSurroundingType())
-      data.setSurroundingType(surroundingType);
-    if (airDensity != null)
-      data.setAirDensity(airDensity.unload());
-    if (airVelocity != null)
-      data.setAirVelocity(airVelocity.unload());
-    if (ambientTemperature != null)
-      data.setAmbientTemperature(ambientTemperature.unload());
-    if (atmosphericPressure != null)
-      data.setAtmosphericPressure(atmosphericPressure.unload());    
-    if (clothingResistance != null)
-      data.setClothingResistance(clothingResistance.unload());
-    if (emissivity != null)
-        data.setEmissivity(emissivity.unload());  
-    if (meanRadiantTemperature != null)
-        data.setMeanRadiantTemperature(meanRadiantTemperature.unload());
-    if (relativeHumidity != null)
-        data.setRelativeHumidity(relativeHumidity.unload());
-    if (respirationAmbientTemperature != null)
-        data.setRespirationAmbientTemperature(respirationAmbientTemperature.unload());    
+  	if(src.hasSurroundingType())
+  		dst.setSurroundingType(src.surroundingType);
+    if (src.hasAirDensity())
+      dst.setAirDensity(SEScalarMassPerVolume.unload(src.airDensity));
+    if (src.hasAirVelocity())
+      dst.setAirVelocity(SEScalarLengthPerTime.unload(src.airVelocity));
+    if (src.hasAmbientTemperature())
+      dst.setAmbientTemperature(SEScalarTemperature.unload(src.ambientTemperature));
+    if (src.hasAtmosphericPressure())
+      dst.setAtmosphericPressure(SEScalarPressure.unload(src.atmosphericPressure));    
+    if (src.hasClothingResistance())
+      dst.setClothingResistance(SEScalarHeatResistanceArea.unload(src.clothingResistance));
+    if (src.hasEmissivity())
+      dst.setEmissivity(SEScalar0To1.unload(src.emissivity));  
+    if (src.hasMeanRadiantTemperature())
+      dst.setMeanRadiantTemperature(SEScalarTemperature.unload(src.meanRadiantTemperature));
+    if (src.hasRelativeHumidity())
+      dst.setRelativeHumidity(SEScalar0To1.unload(src.relativeHumidity));
+    if (src.hasRespirationAmbientTemperature())
+      dst.setRespirationAmbientTemperature(SEScalarTemperature.unload(src.respirationAmbientTemperature));    
     
-    for(SESubstanceFraction ambSub : this.ambientGases)
-      data.getAmbientGas().add(ambSub.unload());
+    for(SESubstanceFractionAmount ambSub : src.ambientGases)
+      dst.addAmbientGas(SESubstanceFractionAmount.unload(ambSub));
     
-    for(SESubstanceConcentration ambSub : this.ambientAerosols)
-      data.getAmbientAerosol().add(ambSub.unload());
+    for(SESubstanceConcentration ambSub : src.ambientAerosols)
+      dst.addAmbientAerosol(SESubstanceConcentration.unload(ambSub));
   }
   
-  public EnumSurroundingType getSurroundingType()
+  public boolean hasSurroundingType()
+  {
+    return surroundingType != null;
+  }
+  public eSurroundingType getSurroundingType()
   {
     return surroundingType;
   }
-  public void setSurroundingType(EnumSurroundingType surroundingType)
+  public void setSurroundingType(eSurroundingType st)
   {
-    this.surroundingType = surroundingType;
+    this.surroundingType = (st==eSurroundingType.UNRECOGNIZED) ? null : st;
   }
-  public boolean hasSurroundingType()
-  {
-    return surroundingType == null ? false : true;
-  }
-  
   public SEScalarMassPerVolume getAirDensity()
   {
     if (airDensity == null)
@@ -308,10 +307,10 @@ public class SEEnvironmentalConditions
     return clothingResistance == null ? false : clothingResistance.isValid();
   }
   
-  public SEScalarFraction getEmissivity()
+  public SEScalar0To1 getEmissivity()
   {
       if (emissivity == null)
-        emissivity = new SEScalarFraction();
+        emissivity = new SEScalar0To1();
       return emissivity;
   }
   public boolean hasEmissivity()
@@ -330,10 +329,10 @@ public class SEEnvironmentalConditions
     return meanRadiantTemperature == null ? false : meanRadiantTemperature.isValid();
   }
   
-  public SEScalarFraction getRelativeHumidity()
+  public SEScalar0To1 getRelativeHumidity()
   {
     if (relativeHumidity == null)
-      relativeHumidity = new SEScalarFraction();
+      relativeHumidity = new SEScalar0To1();
     return relativeHumidity;
   }
   public boolean hasRelativeHumidity()
@@ -352,20 +351,20 @@ public class SEEnvironmentalConditions
     return respirationAmbientTemperature == null ? false : respirationAmbientTemperature.isValid();
   }
   
-  public SESubstanceFraction createAmbientGas(SESubstance substance)
+  public SESubstanceFractionAmount createAmbientGas(SESubstance substance)
   {
     return getAmbientGas(substance);
   }
-  public SESubstanceFraction getAmbientGas(SESubstance substance)
+  public SESubstanceFractionAmount getAmbientGas(SESubstance substance)
   {
-    for(SESubstanceFraction sf : this.ambientGases)
+    for(SESubstanceFractionAmount sf : this.ambientGases)
     {
       if(sf.getSubstance().getName().equals(substance.getName()))
       {        
         return sf;
       }
     }    
-    SESubstanceFraction sf = new SESubstanceFraction(substance);    
+    SESubstanceFractionAmount sf = new SESubstanceFractionAmount(substance);    
     this.ambientGases.add(sf);
     return sf;
   }
@@ -375,7 +374,7 @@ public class SEEnvironmentalConditions
   }
   public boolean hasAmbientGas(SESubstance substance)
   {
-    for(SESubstanceFraction sf : this.ambientGases)
+    for(SESubstanceFractionAmount sf : this.ambientGases)
     {
       if(sf.getSubstance()==substance)
       {        
@@ -384,13 +383,13 @@ public class SEEnvironmentalConditions
     }
     return false;
   }
-  public List<SESubstanceFraction> getAmbientGas()
+  public List<SESubstanceFractionAmount> getAmbientGas()
   {
     return this.ambientGases;
   }
   public void removeAmbientGas(SESubstance substance)
   {
-    for(SESubstanceFraction sf : this.ambientGases)
+    for(SESubstanceFractionAmount sf : this.ambientGases)
     {
       if(sf.getSubstance()==substance)
       {
@@ -461,12 +460,12 @@ public class SEEnvironmentalConditions
         icon.remove();
     }    
     
-    SESubstanceFraction sf;
-    Iterator<SESubstanceFraction> ifrac = this.ambientGases.iterator();
+    SESubstanceFractionAmount sf;
+    Iterator<SESubstanceFractionAmount> ifrac = this.ambientGases.iterator();
     while(ifrac.hasNext())
     {
       sf=ifrac.next();
-      if(sf.getFractionAmount().getValue()==0)
+      if(sf.getAmount().getValue()==0)
         ifrac.remove();
     }    
   }
@@ -474,7 +473,7 @@ public class SEEnvironmentalConditions
   public String toString()
   {
       String str = "Envriomental Conditions:" 
-          + "\n\tSurroundingType: " + (hasSurroundingType()?getSurroundingType():"None")
+          + "\n\tSurroundingType: " + getSurroundingType()
           + "\n\tAirDensity: " + (hasAirDensity()?getAirDensity():"None")
           + "\n\tAirVelocity: " + (hasAirVelocity()?getAirVelocity():"None")
           + "\n\tAmbientTemperature: " + (hasAmbientTemperature()?getAmbientTemperature():"None")
@@ -484,7 +483,7 @@ public class SEEnvironmentalConditions
           + "\n\tMeanRadiantTemperature: " + (hasMeanRadiantTemperature()?getMeanRadiantTemperature():"None")
           + "\n\tRelativeHumidity: " + (hasRelativeHumidity()?getRelativeHumidity():"None")
           + "\n\tRespirationAmbientTemperature: " + (hasRespirationAmbientTemperature()?getRespirationAmbientTemperature():"None");
-      for(SESubstanceFraction sf : this.ambientGases)
+      for(SESubstanceFractionAmount sf : this.ambientGases)
         str += "\n\t"+sf.toString();
       for(SESubstanceConcentration sc : this.ambientAerosols)
       str += "\n\t"+sc.toString();

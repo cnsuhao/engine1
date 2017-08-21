@@ -1,16 +1,7 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
-#include "BioGearsEngineHowTo.h"
+#include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
 #include "patient/SEPatient.h"
@@ -19,7 +10,7 @@ specific language governing permissions and limitations under the License.
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SEEnergySystem.h"
 #include "system/physiology/SERespiratorySystem.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarForce.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMass.h"
@@ -29,7 +20,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "engine/PhysiologyEngineTrack.h"
+#include "engine/SEEngineTracker.h"
 #include "compartment/SECompartmentManager.h"
 #include "utils/SEEventHandler.h"
 #include "patient/actions/SECardiacArrest.h"
@@ -49,12 +40,12 @@ class MyListener : public SEEventHandler
 {
 public:
   MyListener(Logger* logger) : SEEventHandler(logger) {};
-  virtual void HandlePatientEvent(CDM::enumPatientEvent::value type, bool active, const SEScalarTime* time) override
+  virtual void HandlePatientEvent(cdm::PatientData_eEvent type, bool active, const SEScalarTime* time) override
   {
     GetLogger()->Info(std::stringstream() <<"Recieved Patient Event : " << type);
   }
 
-  virtual void HandleAnesthesiaMachineEvent(CDM::enumAnesthesiaMachineEvent::value type, bool active, const SEScalarTime* time) override
+  virtual void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time) override
   {
     GetLogger()->Info(std::stringstream() <<"Recieved Anesthesia Machine Event : " << type);
   }
@@ -73,30 +64,30 @@ public:
 void HowToCPR()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> bg = CreateBioGearsEngine("HowToCPR.log");
-  bg->GetLogger()->Info("HowToCPR");
-  if (!bg->LoadState("./states/StandardMale@0s.xml"))
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToCPR.log");
+  pe->GetLogger()->Info("HowToCPR");
+  if (!pe->LoadStateFile("./states/StandardMale@0s.pba"))
   {
-    bg->GetLogger()->Error("Could not load state, check the error");
+    pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
   // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*bg);
+  HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   // Physiology System Names are defined on the System Objects 
   // defined in the Physiology.xsd file
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("HeartRate", FrequencyUnit::Per_min);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("SystolicArterialPressure", PressureUnit::mmHg);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("DiastolicArterialPressure", PressureUnit::mmHg);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("MeanArterialPressure", PressureUnit::mmHg);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("HeartStrokeVolume", VolumeUnit::mL);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("HeartEjectionFraction");
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("CardiacOutput",VolumePerTimeUnit::mL_Per_min);
-  bg->GetEngineTrack()->GetDataRequestManager().CreateLiquidCompartmentDataRequest().Set(BGE::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartEjectionFraction");
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput",VolumePerTimeUnit::mL_Per_min);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
 
-  bg->GetEngineTrack()->GetDataRequestManager().SetResultsFilename("HowToCPR.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToCPR.txt");
 
   // This is the total amount of time that CPR will be administered in seconds
   double durationOfCPR_Seconds = 120;
@@ -111,37 +102,37 @@ void HowToCPR()
   // (60 beats per minute) the chest will be compressed for 0.3 seconds
   double percentOn = .3;
 
-  bg->GetLogger()->Info("The patient is nice and healthy");
-  bg->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << bg->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << bg->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() <<"Stroke Volume : " << bg->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL) << VolumeUnit::mL);
-  bg->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << bg->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  bg->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << bg->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << bg->GetCardiovascularSystem()->GetHeartEjectionFraction());;
+  pe->GetLogger()->Info("The patient is nice and healthy");
+  pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() <<"Stroke Volume : " << pe->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL) << VolumeUnit::mL);
+  pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << pe->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());;
 
   tracker.AdvanceModelTime(50);
 
   // Put the patient into cardiac arrest
   SECardiacArrest c;
-  bg->ProcessAction(c);
+  pe->ProcessAction(c);
   
-  bg->GetLogger()->Info("Giving the patient Cardiac Arrest.");
+  pe->GetLogger()->Info("Giving the patient Cardiac Arrest.");
 
   // Let's add a listener which will print any state changes that patient undergoes
-  MyListener l(bg->GetLogger());
-  bg->GetPatient().ForwardEvents(&l);
+  MyListener l(pe->GetLogger());
+  pe->GetPatient().ForwardEvents(&l);
   
   tracker.AdvanceModelTime(10);
 
-  bg->GetLogger()->Info("It has been 10s since the administration, not doing well...");
-  bg->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << bg->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << bg->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() <<"Stroke Volume : " << bg->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL) << VolumeUnit::mL);
-  bg->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << bg->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  bg->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << bg->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << bg->GetCardiovascularSystem()->GetHeartEjectionFraction());;
+  pe->GetLogger()->Info("It has been 10s since the administration, not doing well...");
+  pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() <<"Stroke Volume : " << pe->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL) << VolumeUnit::mL);
+  pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << pe->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());;
 
 
   // After patient's heart is not beating, start doing CPR
@@ -164,14 +155,14 @@ void HowToCPR()
   // so the chest will be compressed on the next calculation from the engine.
   bool pulseState = true;
   
-  bg->GetLogger()->Info("Patient is in asystole. Begin performing CPR");
+  pe->GetLogger()->Info("Patient is in asystole. Begin performing CPR");
   while (timer1 < durationOfCPR_Seconds) // CPR is administered in this loop. It is time based, so after timer1 has exceeded the specified duration of CPR it will stop. set pulseState to true so that it will only exit AFTER a compression has been removed
   {
     if (pulseState) // check if the chest is supposed to be compressed. If yes...
     {
             // This calls the CPR function in the Cardiovascular system.  It sets the chest compression at the specified force.
       chestCompression.GetForce().SetValue(compressionForce_Newtons, ForceUnit::N);
-      bg->ProcessAction(chestCompression);
+      pe->ProcessAction(chestCompression);
 
             // Time is advanced until it is time to remove the compression
       tracker.AdvanceModelTime(timeOn);
@@ -186,7 +177,7 @@ void HowToCPR()
     {
             // This removes the chest compression by specifying the applied force as 0 N
       chestCompression.GetForce().SetValue(0, ForceUnit::N);
-      bg->ProcessAction(chestCompression);
+      pe->ProcessAction(chestCompression);
             
             // Time is advanced until it is time to compress the chest again
       tracker.AdvanceModelTime(timeOff);
@@ -204,17 +195,17 @@ void HowToCPR()
   {
         // If it is compressed, set force to 0 to turn off
     chestCompression.GetForce().SetValue(0, ForceUnit::N);
-    bg->ProcessAction(chestCompression);
+    pe->ProcessAction(chestCompression);
   }
 
   // Do one last output to show status after CPR.
-  bg->GetLogger()->Info("Check on the patient's status after CPR has been performed");
-  bg->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << bg->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << bg->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() <<"Stroke Volume : " << bg->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL) << VolumeUnit::mL);
-  bg->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << bg->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  bg->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << bg->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << bg->GetCardiovascularSystem()->GetHeartEjectionFraction());
-  bg->GetLogger()->Info("Finished");
+  pe->GetLogger()->Info("Check on the patient's status after CPR has been performed");
+  pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() <<"Stroke Volume : " << pe->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL) << VolumeUnit::mL);
+  pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << pe->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());
+  pe->GetLogger()->Info("Finished");
 }

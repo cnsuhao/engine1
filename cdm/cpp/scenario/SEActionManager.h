@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 class SESubstanceManager;
@@ -17,8 +8,11 @@ class SEAction;
 #include "scenario/SEAnesthesiaMachineActionCollection.h"
 #include "scenario/SEEnvironmentActionCollection.h"
 #include "scenario/SEInhalerActionCollection.h"
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 
-class DLL_DECL SEActionManager : public Loggable
+class CDM_DECL SEActionManager : public Loggable
 {
 public:
 
@@ -27,25 +21,33 @@ public:
 
   void Clear();
 
-  void Unload(std::vector<CDM::ActionData*>& to);
+  static void Load(const cdm::ActionListData& src, SEActionManager& dst);
+  static cdm::ActionListData* Unload(const SEActionManager& src);
+protected:
+  static void Serialize(const cdm::ActionListData& src, SEActionManager& dst);
+  static void Serialize(const SEActionManager& src, cdm::ActionListData& dst);
 
-  bool ProcessAction(const SEAction& action);
-  bool ProcessAction(const CDM::ActionData& in);
+public:
 
-  SEEnvironmentActionCollection& GetEnvironmentActions() { return m_EnvironmentActions; }
-  SEPatientActionCollection& GetPatientActions() { return m_PatientActions; }
+  bool ProcessAction(const SEAction& action);// Will make a copy
+
+  SEPatientActionCollection&           GetPatientActions()           { return m_PatientActions; }
+  SEEnvironmentActionCollection&       GetEnvironmentActions()       { return m_EnvironmentActions; }
   SEAnesthesiaMachineActionCollection& GetAnesthesiaMachineActions() { return m_AnesthesiaMachineActions; }
-  SEInhalerActionCollection& GetInhalerActions() { return m_InhalerActions; }
+  SEInhalerActionCollection&           GetInhalerActions()           { return m_InhalerActions; }
+
+  // This is here in case you want to take all the actions from an engine and write them out so you can reproduce the same engine state later
+  const cdm::ActionListData& GetActionList() { return m_ProcessedActions; }// I don't really have anything that does that yet...
 
 protected:
 
   SESubstanceManager&                 m_Substances;
-  SEEnvironmentActionCollection       m_EnvironmentActions;
   SEPatientActionCollection           m_PatientActions;
+  SEEnvironmentActionCollection       m_EnvironmentActions;
   SEAnesthesiaMachineActionCollection m_AnesthesiaMachineActions;
   SEInhalerActionCollection           m_InhalerActions;
 
-  std::vector<CDM::ActionData*>       m_ProcessedActions;
+  cdm::ActionListData                 m_ProcessedActions;
   
   std::stringstream m_ss;
 };

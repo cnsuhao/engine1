@@ -1,21 +1,8 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEHistogram.h"
-#include "bind/HistogramData.hxx"
-#include "bind/DoubleArray.hxx"
-#include "bind/DoubleList.hxx"
-#include "properties/SEScalar.h"//Utils
 
 static std::stringstream err;
 
@@ -55,52 +42,62 @@ void SEHistogram::Invalidate()
   Clear();
 }
 
-bool SEHistogram::Load(const CDM::HistogramData& in)
+void SEHistogram::Load(const cdm::HistogramData& src, SEHistogram& dst)
 {
-  Clear();  
-  for(unsigned int i=0; i<in.Dependent().DoubleList().size(); i++)
-    m_Dependent.push_back(in.Dependent().DoubleList()[i]);
-  for (unsigned int i = 0; i<in.Independent().DoubleList().size(); i++)
-    m_Independent.push_back(in.Independent().DoubleList()[i]);
-  return IsValid();
+  SEHistogram::Serialize(src, dst);
+
+  if (!src.histogram().dependentunit().empty())
+  {
+    if (src.histogram().dependentunit() != "unitless")
+      throw CommonDataModelException("CDM::Histogram API is intended to be unitless, You are trying to load a dependent axis with a unit defined");
+  }
+  if (!src.histogram().independentunit().empty())
+  {
+    if (src.histogram().independentunit() != "unitless")
+      throw CommonDataModelException("CDM::Histogram API is intended to be unitless, You are trying to load an independent axis with a unit defined");
+  }
+}
+void SEHistogram::Serialize(const cdm::HistogramData& src, SEHistogram& dst)
+{
+  dst.Clear();
+  for (int i = 0; i<src.histogram().dependent().value_size(); i++)
+    dst.m_Dependent.push_back(src.histogram().dependent().value(i));
+  for (int i = 0; i<src.histogram().independent().value_size(); i++)
+    dst.m_Independent.push_back(src.histogram().independent().value(i));
 }
 
-CDM::HistogramData*  SEHistogram::Unload() const
+cdm::HistogramData* SEHistogram::Unload(const SEHistogram& src)
 {
-  if(!IsValid())
+  if (!src.IsValid())
     return nullptr;
-  CDM::HistogramData* data(new CDM::HistogramData());
-  Unload(*data);
-  return data;
+  cdm::HistogramData* dst = new cdm::HistogramData();
+  SEHistogram::Serialize(src, *dst);
+  return dst;
 }
-
-void SEHistogram::Unload(CDM::HistogramData& data) const
+void SEHistogram::Serialize(const SEHistogram& src, cdm::HistogramData& dst)
 {
-  data.Dependent(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  data.Dependent().DoubleList(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  data.Independent(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  data.Independent().DoubleList(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  for(unsigned int i=0; i<m_Dependent.size(); i++)
-    data.Dependent().DoubleList().push_back(m_Dependent[i]);
-  for (unsigned int i = 0; i<m_Independent.size(); i++)
-    data.Independent().DoubleList().push_back(m_Independent[i]);
+  for (size_t i = 0; i<src.m_Dependent.size(); i++)
+  {
+    dst.mutable_histogram()->mutable_dependent()->add_value(src.m_Dependent[i]);
+    dst.mutable_histogram()->mutable_independent()->add_value(src.m_Independent[i]);
+  }
 }
 
-unsigned int SEHistogram::NumberOfBins() const
+size_t SEHistogram::NumberOfBins() const
 {
   if(IsValid())
     return m_Dependent.size();
   return 0;
 }
 
-unsigned int SEHistogram::NumberOfBoundaries() const
+size_t SEHistogram::NumberOfBoundaries() const
 {
   if (IsValid())
     return m_Independent.size();
   return 0;
 }
 
-double SEHistogram::GetDependentValue(unsigned int index) const
+double SEHistogram::GetDependentValue(size_t index) const
 {
   if (index >= m_Dependent.size())
     throw CommonDataModelException("Dependent index out of bounds");
@@ -116,7 +113,7 @@ const std::vector<double>& SEHistogram::GetDependent() const
   return m_Dependent;
 }
 
-double SEHistogram::GetIndependentValue(unsigned int index) const
+double SEHistogram::GetIndependentValue(size_t index) const
 {
   if (index >= m_Independent.size())
     throw CommonDataModelException("Independent index out of bounds");

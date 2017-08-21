@@ -1,20 +1,8 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEFunction.h"
-#include "bind/FunctionData.hxx"
-#include "bind/DoubleArray.hxx"
-#include "bind/DoubleList.hxx"
 #include "properties/SEScalar.h"//Utils
 
 static std::stringstream err;
@@ -49,46 +37,55 @@ void SEFunction::Invalidate()
   Clear();
 }
 
-bool SEFunction::Load(const CDM::FunctionData& in)
+void SEFunction::Load(const cdm::FunctionData& src, SEFunction& dst)
 {
-  Clear();  
-  for(unsigned int i=0; i<in.Dependent().DoubleList().size(); i++)
-    m_Dependent.push_back(in.Dependent().DoubleList()[i]);
-  for (unsigned int i = 0; i<in.Independent().DoubleList().size(); i++)
-    m_Independent.push_back(in.Independent().DoubleList()[i]);
-  return IsValid();
-}
+  SEFunction::Serialize(src, dst);
 
-CDM::FunctionData*  SEFunction::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::FunctionData* data(new CDM::FunctionData());
-  Unload(*data);
-  return data;
-}
-
-void SEFunction::Unload(CDM::FunctionData& data) const
-{
-  data.Dependent(std::unique_ptr<CDM::DoubleArray>(new CDM::DoubleArray()));
-  data.Dependent().DoubleList(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  data.Independent(std::unique_ptr<CDM::DoubleArray>(new CDM::DoubleArray()));
-  data.Independent().DoubleList(std::unique_ptr<CDM::DoubleList>(new CDM::DoubleList()));
-  for(unsigned int i=0; i<m_Dependent.size(); i++)
+  if (!src.dependentunit().empty())
   {
-    data.Dependent().DoubleList().push_back(m_Dependent[i]);
-    data.Independent().DoubleList().push_back(m_Independent[i]);
+    if (src.dependentunit() != "unitless")
+      throw CommonDataModelException("CDM::Function API is intended to be unitless, You are trying to load a dependent axis with a unit defined");
+  }
+  if (!src.independentunit().empty())
+  {
+    if (src.independentunit() != "unitless")
+      throw CommonDataModelException("CDM::Function API is intended to be unitless, You are trying to load an independent axis with a unit defined");
+  }
+}
+void SEFunction::Serialize(const cdm::FunctionData& src, SEFunction& dst)
+{
+  dst.Clear();
+  for (int i = 0; i<src.dependent().value_size(); i++)
+    dst.m_Dependent.push_back(src.dependent().value(i));
+  for (int i = 0; i<src.independent().value_size(); i++)
+    dst.m_Independent.push_back(src.independent().value(i));
+}
+
+cdm::FunctionData* SEFunction::Unload(const SEFunction& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::FunctionData* dst = new cdm::FunctionData();
+  SEFunction::Serialize(src, *dst);
+  return dst;
+}
+void SEFunction::Serialize(const SEFunction& src, cdm::FunctionData& dst)
+{
+  for (size_t i = 0; i<src.m_Dependent.size(); i++)
+  {
+    dst.mutable_dependent()->add_value(src.m_Dependent[i]);
+    dst.mutable_independent()->add_value(src.m_Independent[i]);
   }
 }
 
-unsigned int SEFunction::Length()
+size_t SEFunction::Length()
 {
   if(IsValid())
     return m_Independent.size();
   return 0;
 }
 
-double SEFunction::GetDependentValue(unsigned int index)
+double SEFunction::GetDependentValue(size_t index)
 {
   if (index >= m_Dependent.size())
     throw CommonDataModelException("Dependent index out of bounds");
@@ -100,7 +97,7 @@ std::vector<double>& SEFunction::GetDependent()
   return m_Dependent;
 }
 
-double SEFunction::GetIndependentValue(unsigned int index)
+double SEFunction::GetIndependentValue(size_t index)
 {
   if (index >= m_Independent.size())
     throw CommonDataModelException("Independent index out of bounds");

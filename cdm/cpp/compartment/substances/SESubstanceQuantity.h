@@ -1,20 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "substance/SESubstance.h"
-CDM_BIND_DECL(SubstanceQuantityData)
+//#include "bind/cdm/SubstanceQuantity.pb.h"
+PROTO_PUSH 
+#include "bind/cdm/SubstanceQuantity.pb.h" 
+PROTO_POP
 
-class DLL_DECL SESubstanceQuantity : public Loggable
+class CDM_DECL SESubstanceQuantity : public Loggable
 {
 public:
   SESubstanceQuantity(SESubstance& sub) : Loggable(sub.GetLogger()), m_Substance(sub) {};
@@ -23,10 +17,9 @@ public:
   virtual void Clear() = 0; //clear memory
   virtual void Invalidate() = 0;
 
-  virtual bool Load(const CDM::SubstanceQuantityData& in);
-  virtual CDM::SubstanceQuantityData* Unload() = 0;
 protected:
-  virtual void Unload(CDM::SubstanceQuantityData& data);
+  static void Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst);
+  static void Serialize(const SESubstanceQuantity& src, cdm::SubstanceQuantityData& dst);
 
 public:
   

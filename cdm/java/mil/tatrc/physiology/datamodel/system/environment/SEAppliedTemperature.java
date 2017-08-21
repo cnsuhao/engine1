@@ -1,37 +1,27 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
- **************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.system.environment;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.AppliedTemperatureData;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
+import com.kitware.physiology.cdm.Environment.EnvironmentData.AppliedTemperatureData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
+
+import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.properties.SEScalarArea;
-import mil.tatrc.physiology.datamodel.properties.SEScalarFraction;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTemperature;
 
 public class SEAppliedTemperature
 {
   protected SEScalarTemperature temperature;
   protected SEScalarArea        surfaceArea;
-  protected SEScalarFraction    surfaceAreaFraction;
-  protected EnumOnOff           state;
+  protected SEScalar0To1        surfaceAreaFraction;
+  protected eSwitch             state;
 
   public SEAppliedTemperature() 
   {
     temperature=null;
     surfaceArea=null;
     surfaceAreaFraction=null;
-    state = null;
+    state = eSwitch.Off;
   }
 
   public void copy(SEAppliedTemperature other)
@@ -55,7 +45,7 @@ public class SEAppliedTemperature
 
   public void reset()
   {
-    state = null;
+    state = eSwitch.Off;
     if (temperature != null)
       temperature.invalidate();
     if (surfaceArea != null)
@@ -65,53 +55,47 @@ public class SEAppliedTemperature
   }
 
 
-  public boolean load(AppliedTemperatureData in)
+  public static void load(AppliedTemperatureData src, SEAppliedTemperature dst)
   {
-    reset();
-    if(in.getState()!=null)
-      this.state = in.getState();
-    getTemperature().load(in.getTemperature());
-    if(in.getSurfaceArea()!=null)
-      getSurfaceArea().load(in.getSurfaceArea());
-    if(in.getSurfaceAreaFraction()!=null)
-      getSurfaceAreaFraction().load(in.getSurfaceAreaFraction());
-
-    return true;
+    dst.reset();
+    if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
+      dst.state = src.getState();
+    if(src.hasTemperature())
+      SEScalarTemperature.load(src.getTemperature(), dst.getTemperature());
+    if(src.hasSurfaceArea())
+      SEScalarArea.load(src.getSurfaceArea(), dst.getSurfaceArea());
+    if(src.hasSurfaceAreaFraction())
+      SEScalar0To1.load(src.getSurfaceAreaFraction(), dst.getSurfaceAreaFraction());
   }
 
-  public AppliedTemperatureData unload()
+  public static AppliedTemperatureData unload(SEAppliedTemperature src)
   {
-    AppliedTemperatureData data = CDMSerializer.objFactory.createAppliedTemperatureData();
-    unload(data);
-    return data;
+    AppliedTemperatureData.Builder dst = AppliedTemperatureData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
 
-  protected void unload(AppliedTemperatureData data)
+  protected static void unload(SEAppliedTemperature src, AppliedTemperatureData.Builder dst)
   {
-    if (hasState())
-      data.setState(state);
-    data.setTemperature(this.temperature.unload());
-    if(hasSurfaceArea())
-      data.setSurfaceArea(this.surfaceArea.unload());
-    if(hasSurfaceAreaFraction())
-      data.setSurfaceAreaFraction(this.surfaceAreaFraction.unload());
+    dst.setState(src.state);
+    if(src.hasTemperature())
+      dst.setTemperature(SEScalarTemperature.unload(src.temperature));
+    if(src.hasSurfaceArea())
+      dst.setSurfaceArea(SEScalarArea.unload(src.surfaceArea));
+    if(src.hasSurfaceAreaFraction())
+      dst.setSurfaceAreaFraction(SEScalar0To1.unload(src.surfaceAreaFraction));
   }
   
 
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff onOrOff)
+  public void setState(eSwitch s)
   {
-    state = onOrOff;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
-  }
-
-
+  
   public boolean hasTemperature()
   {
     return temperature == null ? false : temperature.isValid();
@@ -138,10 +122,10 @@ public class SEAppliedTemperature
   {
     return surfaceAreaFraction == null ? false : surfaceAreaFraction.isValid();
   }
-  public SEScalarFraction getSurfaceAreaFraction()
+  public SEScalar0To1 getSurfaceAreaFraction()
   {
     if (surfaceAreaFraction == null)
-      surfaceAreaFraction = new SEScalarFraction();
+      surfaceAreaFraction = new SEScalar0To1();
     return surfaceAreaFraction;
   }
 

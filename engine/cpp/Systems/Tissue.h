@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "../Controller/BioGearsSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SETissueSystem.h"
-#include "bind/BioGearsTissueSystemData.hxx"
 
 /**
  * @brief This class encapsulates logic necessary to connect independent systems together.
@@ -22,13 +12,13 @@ specific language governing permissions and limitations under the License.
  * To capture this behavior, the System Interactions methodology was introduced. 
  * The primary function of this system is to capture the substance transport that occurs between systems.
  */  
-class BIOGEARS_API Tissue : public SETissueSystem, public BioGearsSystem
+class PULSE_DECL Tissue : public SETissueSystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend PulseController;
+  friend class PulseEngineTest;
 protected:
-  Tissue(BioGears& bg);
-  BioGears& m_data;
+  Tissue(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~Tissue();
@@ -38,11 +28,12 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsTissueSystemData& in);
-  virtual CDM::BioGearsTissueSystemData* Unload() const;
+  static void Load(const pulse::TissueSystemData& src, Tissue& dst);
+  static pulse::TissueSystemData* Unload(const Tissue& src);
 protected:
-  virtual void Unload(CDM::BioGearsTissueSystemData& data) const;
+  static void Serialize(const pulse::TissueSystemData& src, Tissue& dst);
+  static void Serialize(const Tissue& src, pulse::TissueSystemData& dst);
+
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
   void SetUp();
 

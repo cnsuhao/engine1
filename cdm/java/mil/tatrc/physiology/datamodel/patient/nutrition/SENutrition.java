@@ -1,21 +1,18 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.patient.nutrition;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.NutritionData;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.Environment.EnvironmentData;
+import com.kitware.physiology.cdm.PatientNutrition.NutritionData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarMass;
 import mil.tatrc.physiology.datamodel.properties.SEScalarMassPerTime;
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolume;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
+import mil.tatrc.physiology.datamodel.system.environment.SEEnvironmentalConditions;
+import mil.tatrc.physiology.utilities.FileUtils;
 
 public class SENutrition 
 {
@@ -65,6 +62,17 @@ public class SENutrition
       water.invalidate();    
   }
   
+  public void readFile(String fileName) throws ParseException
+  {
+    NutritionData.Builder builder = NutritionData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    SENutrition.load(builder.build(), this);
+  }
+  public void writeFile(String fileName)
+  {
+    FileUtils.writeFile(fileName, SENutrition.unload(this).toString());
+  }
+  
   public void copy(SENutrition from)
   {
     this.reset();
@@ -88,56 +96,55 @@ public class SENutrition
       this.getWater().set(from.getWater());
   }
   
-  public boolean load(NutritionData in)
+  public static void load(NutritionData src, SENutrition dst)
   {
-    if (in.getCarbohydrate() != null)
-      getCarbohydrate().load(in.getCarbohydrate());
-    if (in.getCarbohydrateDigestionRate() != null)
-      getCarbohydrateDigestionRate().load(in.getCarbohydrateDigestionRate());
-    if (in.getFat() != null)
-      getFat().load(in.getFat());
-    if (in.getFatDigestionRate() != null)
-      getFatDigestionRate().load(in.getFatDigestionRate());
-    if (in.getProtein() != null)
-      getProtein().load(in.getProtein());
-    if (in.getProteinDigestionRate() != null)
-      getProteinDigestionRate().load(in.getProteinDigestionRate());
-    if (in.getCalcium() != null)
-      getCalcium().load(in.getCalcium());  
-    if (in.getSodium() != null)
-      getSodium().load(in.getSodium());  
-    if (in.getWater() != null)
-      getWater().load(in.getWater());
-    return true;
+    if (src.hasCarbohydrate())
+      SEScalarMass.load(src.getCarbohydrate(),dst.getCarbohydrate());
+    if (src.hasCarbohydrateDigestionRate())
+      SEScalarMassPerTime.load(src.getCarbohydrateDigestionRate(),dst.getCarbohydrateDigestionRate());
+    if (src.hasFat())
+      SEScalarMass.load(src.getFat(),dst.getFat());
+    if (src.hasFatDigestionRate())
+      SEScalarMassPerTime.load(src.getFatDigestionRate(),dst.getFatDigestionRate());
+    if (src.hasProtein())
+      SEScalarMass.load(src.getProtein(),dst.getProtein());
+    if (src.hasProteinDigestionRate())
+      SEScalarMassPerTime.load(src.getProteinDigestionRate(),dst.getProteinDigestionRate());
+    if (src.hasCalcium())
+      SEScalarMass.load(src.getCalcium(),dst.getCalcium()); 
+    if (src.hasSodium())
+      SEScalarMass.load(src.getSodium(),dst.getSodium()); 
+    if (src.hasWater())
+      SEScalarVolume.load(src.getWater(),dst.getWater());
   }
   
-  public NutritionData unload()
+  public static NutritionData unload(SENutrition src)
   {
-    NutritionData data = CDMSerializer.objFactory.createNutritionData();
-    unload(data);
-    return data;
+    NutritionData.Builder dst = NutritionData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(NutritionData data)
+  protected static void unload(SENutrition src, NutritionData.Builder dst)
   {
-    if (carbohydrate != null)
-      data.setCarbohydrate(carbohydrate.unload());
-    if (carbohydrateDigestionRate != null)
-      data.setCarbohydrateDigestionRate(carbohydrateDigestionRate.unload());
-    if (fat != null)
-      data.setFat(fat.unload());
-    if (fatDigestionRate != null)
-      data.setFatDigestionRate(fatDigestionRate.unload());
-    if (protein != null)
-      data.setProtein(protein.unload());
-    if (proteinDigestionRate != null)
-      data.setProteinDigestionRate(proteinDigestionRate.unload());
-    if (sodium != null)
-      data.setSodium(sodium.unload());  
-    if (calcium != null)
-      data.setCalcium(calcium.unload());  
-    if (water != null)
-      data.setWater(water.unload());
+    if (src.hasCarbohydrate())
+      dst.setCarbohydrate(SEScalarMass.unload(src.carbohydrate));
+    if (src.hasCarbohydrateDigestionRate())
+      dst.setCarbohydrateDigestionRate(SEScalarMassPerTime.unload(src.carbohydrateDigestionRate));
+    if (src.hasFat())
+      dst.setFat(SEScalarMass.unload(src.fat));
+    if (src.hasFatDigestionRate())
+      dst.setFatDigestionRate(SEScalarMassPerTime.unload(src.fatDigestionRate));
+    if (src.hasProtein())
+      dst.setProtein(SEScalarMass.unload(src.protein));
+    if (src.hasProteinDigestionRate())
+      dst.setProteinDigestionRate(SEScalarMassPerTime.unload(src.proteinDigestionRate));
+    if (src.hasSodium())
+      dst.setSodium(SEScalarMass.unload(src.sodium));  
+    if (src.hasCalcium())
+      dst.setCalcium(SEScalarMass.unload(src.calcium));  
+    if (src.hasWater())
+      dst.setWater(SEScalarVolume.unload(src.water));
   }    
   
   public SEScalarMass getCarbohydrate()

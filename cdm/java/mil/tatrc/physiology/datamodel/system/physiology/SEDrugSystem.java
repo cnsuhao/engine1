@@ -1,34 +1,24 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
- **************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.DrugSystemData;
+import com.kitware.physiology.cdm.Physiology.DrugSystemData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
 public class SEDrugSystem extends SEPhysiologySystem implements SESystem
 {
-  protected SEScalarFraction    bronchodilationLevel;
-  protected SEScalarFrequency   heartRateChange;
-  protected SEScalarPressure    meanBloodPressureChange;
-  protected SEScalarFraction    neuromuscularBlockLevel;
-  protected SEScalarPressure    pulsePressureChange;
-  protected SEPupillaryResponse pupillaryResponse;
-  protected SEScalarFrequency   respirationRateChange;
-  protected SEScalarFraction    sedationLevel;
-  protected SEScalarVolume      tidalVolumeChange;
-  protected SEScalarFraction    tubularPermeabilityChange;
+  protected SEScalarNegative1To1 bronchodilationLevel;
+  protected SEScalarFrequency    heartRateChange;
+  protected SEScalarPressure     meanBloodPressureChange;
+  protected SEScalar0To1         neuromuscularBlockLevel;
+  protected SEScalarPressure     pulsePressureChange;
+  protected SEPupillaryResponse  pupillaryResponse;
+  protected SEScalarFrequency    respirationRateChange;
+  protected SEScalar0To1         sedationLevel;
+  protected SEScalarVolume       tidalVolumeChange;
+  protected SEScalarNegative1To1 tubularPermeabilityChange;
 
   public SEDrugSystem()
   {
@@ -68,67 +58,65 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
       tubularPermeabilityChange.invalidate();
   }
 
-  public boolean load(DrugSystemData in)
+  public static void load(DrugSystemData src, SEDrugSystem dst)
   {
-    if (in.getBronchodilationLevel() != null)
-      getBronchodilationLevel().load(in.getBronchodilationLevel());
-    if (in.getHeartRateChange() != null)
-      getHeartRateChange().load(in.getHeartRateChange());
-    if (in.getMeanBloodPressureChange() != null)
-      getMeanBloodPressureChange().load(in.getMeanBloodPressureChange());
-    if (in.getNeuromuscularBlockLevel() != null)
-      getNeuromuscularBlockLevel().load(in.getNeuromuscularBlockLevel());
-    if (in.getPulsePressureChange() != null)
-      getPulsePressureChange().load(in.getPulsePressureChange());
-    if (in.getPupillaryResponse() != null)
-      getPupillaryResponse().load(in.getPupillaryResponse());
-    if (in.getRespirationRateChange() != null)
-      getRespirationRateChange().load(in.getRespirationRateChange());
-    if (in.getSedationLevel() != null)
-      getSedationLevel().load(in.getSedationLevel());
-    if (in.getTidalVolumeChange() != null)
-      getTidalVolumeChange().load(in.getTidalVolumeChange());
-    if (in.getTubularPermeabilityChange() != null)
-      getTubularPermeabilityChange().load(in.getTubularPermeabilityChange());
-
-    return true;
+    if (src.hasBronchodilationLevel())
+    	SEScalarNegative1To1.load(src.getBronchodilationLevel(),dst.getBronchodilationLevel());
+    if (src.hasHeartRateChange())
+      SEScalarFrequency.load(src.getHeartRateChange(),dst.getHeartRateChange());
+    if (src.hasMeanBloodPressureChange())
+      SEScalarPressure.load(src.getMeanBloodPressureChange(),dst.getMeanBloodPressureChange());
+    if (src.hasNeuromuscularBlockLevel())
+      SEScalar0To1.load(src.getNeuromuscularBlockLevel(),dst.getNeuromuscularBlockLevel());
+    if (src.hasPulsePressureChange())
+      SEScalarPressure.load(src.getPulsePressureChange(),dst.getPulsePressureChange());
+    if (src.hasPupillaryResponse())
+      SEPupillaryResponse.load(src.getPupillaryResponse(),dst.getPupillaryResponse());
+    if (src.hasRespirationRateChange())
+      SEScalarFrequency.load(src.getRespirationRateChange(),dst.getRespirationRateChange());
+    if (src.hasSedationLevel())
+      SEScalar0To1.load(src.getSedationLevel(),dst.getSedationLevel());
+    if (src.hasTidalVolumeChange())
+      SEScalarVolume.load(src.getTidalVolumeChange(),dst.getTidalVolumeChange());
+    if (src.hasTubularPermeabilityChange())
+    	SEScalarNegative1To1.load(src.getTubularPermeabilityChange(),dst.getTubularPermeabilityChange());
   }
 
-  public DrugSystemData unload()
+  public static DrugSystemData unload(SEDrugSystem src)
   {
-    DrugSystemData data = CDMSerializer.objFactory.createDrugSystemData();
-    unload(data);
-    return data;
+    DrugSystemData.Builder dst = DrugSystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
 
-  protected void unload(DrugSystemData data)
+  protected static void unload(SEDrugSystem src, DrugSystemData.Builder dst)
   {
-    if (bronchodilationLevel != null)
-      data.setBronchodilationLevel(bronchodilationLevel.unload());
-    if (heartRateChange != null)
-      data.setHeartRateChange(heartRateChange.unload());
-    if (meanBloodPressureChange != null)
-      data.setMeanBloodPressureChange(meanBloodPressureChange.unload());
-    if (neuromuscularBlockLevel != null)
-      data.setNeuromuscularBlockLevel(neuromuscularBlockLevel.unload());
-    if (pulsePressureChange != null)
-      data.setPulsePressureChange(pulsePressureChange.unload());
-    if (pupillaryResponse != null)
-      data.setPupillaryResponse(pupillaryResponse.unload());
-    if (respirationRateChange != null)
-      data.setRespirationRateChange(respirationRateChange.unload());
-    if (sedationLevel != null)
-      data.setSedationLevel(sedationLevel.unload());
-    if (tidalVolumeChange != null)
-      data.setTidalVolumeChange(tidalVolumeChange.unload());
-    if (tubularPermeabilityChange != null)
-      data.setTubularPermeabilityChange(tubularPermeabilityChange.unload());
+    if (src.hasBronchodilationLevel())
+      dst.setBronchodilationLevel(SEScalarNegative1To1.unload(src.getBronchodilationLevel()));
+    if (src.hasHeartRateChange())
+      dst.setHeartRateChange(SEScalarFrequency.unload(src.getHeartRateChange()));
+    if (src.hasMeanBloodPressureChange())
+      dst.setMeanBloodPressureChange(SEScalarPressure.unload(src.getMeanBloodPressureChange()));
+    if (src.hasNeuromuscularBlockLevel())
+      dst.setNeuromuscularBlockLevel(SEScalar0To1.unload(src.getNeuromuscularBlockLevel()));
+    if (src.hasPulsePressureChange())
+      dst.setPulsePressureChange(SEScalarPressure.unload(src.getPulsePressureChange()));
+    if (src.hasPupillaryResponse())
+      dst.setPupillaryResponse(SEPupillaryResponse.unload(src.getPupillaryResponse()));
+    if (src.hasRespirationRateChange())
+      dst.setRespirationRateChange(SEScalarFrequency.unload(src.getRespirationRateChange()));
+    if (src.hasSedationLevel())
+      dst.setSedationLevel(SEScalar0To1.unload(src.getSedationLevel()));
+    if (src.hasTidalVolumeChange())
+      dst.setTidalVolumeChange(SEScalarVolume.unload(src.getTidalVolumeChange()));
+    if (src.hasTubularPermeabilityChange())
+      dst.setTubularPermeabilityChange(SEScalarNegative1To1.unload(src.getTubularPermeabilityChange()));
   }
   
-  public SEScalarFraction getBronchodilationLevel()
+  public SEScalarNegative1To1 getBronchodilationLevel()
   {
     if (bronchodilationLevel == null)
-      bronchodilationLevel = new SEScalarFraction();
+      bronchodilationLevel = new SEScalarNegative1To1();
     return bronchodilationLevel;
   }
   public boolean hasBronchodilationLevel()
@@ -158,10 +146,10 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
     return meanBloodPressureChange == null ? false : meanBloodPressureChange.isValid();
   }
   
-  public SEScalarFraction getNeuromuscularBlockLevel()
+  public SEScalar0To1 getNeuromuscularBlockLevel()
   {
     if (neuromuscularBlockLevel == null)
-      neuromuscularBlockLevel = new SEScalarFraction();
+      neuromuscularBlockLevel = new SEScalar0To1();
     return neuromuscularBlockLevel;
   }
   public boolean hasNeuromuscularBlockLevel()
@@ -202,10 +190,10 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
     return respirationRateChange == null ? false : respirationRateChange.isValid();
   }
   
-  public SEScalarFraction getSedationLevel()
+  public SEScalar0To1 getSedationLevel()
   {
     if (sedationLevel == null)
-      sedationLevel = new SEScalarFraction();
+      sedationLevel = new SEScalar0To1();
     return sedationLevel;
   }
   public boolean hasSedationLevel()
@@ -224,10 +212,10 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
     return tidalVolumeChange == null ? false : tidalVolumeChange.isValid();
   }
   
-  public SEScalarFraction getTubularPermeabilityChange()
+  public SEScalarNegative1To1 getTubularPermeabilityChange()
   {
     if (tubularPermeabilityChange == null)
-      tubularPermeabilityChange = new SEScalarFraction();
+      tubularPermeabilityChange = new SEScalarNegative1To1();
     return tubularPermeabilityChange;
   }
   public boolean hasTubularPermeabilityChange()

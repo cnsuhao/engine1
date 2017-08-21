@@ -1,31 +1,21 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ChestOcclusiveDressingData;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.EnumSide;
+import com.kitware.physiology.cdm.PatientActions.ChestOcclusiveDressingData;
+import com.kitware.physiology.cdm.Properties.eSide;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
 public class SEChestOcclusiveDressing extends SEPatientAction
 {
-  protected EnumSide side;
-  protected EnumOnOff state;
+  protected eSide side;
+  protected eSwitch state;
   
   public SEChestOcclusiveDressing()
   {
     side = null;
-    state = null;
+    state = eSwitch.Off;
   }
   
   public void copy(SEChestOcclusiveDressing other)
@@ -40,44 +30,44 @@ public class SEChestOcclusiveDressing extends SEPatientAction
   public void reset()
   {
     super.reset();
-    state = null;
+    state = eSwitch.Off;
     side = null;
   }
   
   public boolean isValid()
   {
-    return hasSide() && hasState();
+    return hasSide();
   }
   
-  public boolean load(ChestOcclusiveDressingData in)
+  public static void load(ChestOcclusiveDressingData src, SEChestOcclusiveDressing dst)
   {
-    super.load(in);
-    state = in.getState();
-    side = in.getSide();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
+    	dst.state = src.getState();
+    if(src.getSide()!=eSide.UNRECOGNIZED)
+    	dst.side = src.getSide();
   }
   
-  public ChestOcclusiveDressingData unload()
+  public static ChestOcclusiveDressingData unload(SEChestOcclusiveDressing src)
   {
-    ChestOcclusiveDressingData data = CDMSerializer.objFactory.createChestOcclusiveDressingData();
-    unload(data);
-    return data;
+    ChestOcclusiveDressingData.Builder dst = ChestOcclusiveDressingData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ChestOcclusiveDressingData data)
+  protected static void unload(SEChestOcclusiveDressing src, ChestOcclusiveDressingData.Builder dst)
   {
-    super.unload(data);
-    if (hasState())
-      data.setState(state);
-    if (hasSide())
-      data.setSide(side);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    dst.setState(src.state);
+    if (src.hasSide())
+      dst.setSide(src.side);
   }
   
-  public EnumSide getSide()
+  public eSide getSide()
   {
     return side;
   }
-  public void setSide(EnumSide leftOrRight)
+  public void setSide(eSide leftOrRight)
   {
     side = leftOrRight;
   }
@@ -86,17 +76,13 @@ public class SEChestOcclusiveDressing extends SEPatientAction
     return side == null ? false : true;
   }
   
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff onOrOff)
+  public void setState(eSwitch s)
   {
-    state = onOrOff;
-  }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
   
   public String toString()

@@ -1,19 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "bind/PupillaryResponseData.hxx"
+#include "system/SESystem.h"
 
-class DLL_DECL SEPupillaryResponse
+class CDM_DECL SEPupillaryResponse
 {
 public:
 
@@ -23,30 +14,31 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::PupillaryResponseData& in);
-  virtual CDM::PupillaryResponseData* Unload() const;
-protected:
-  virtual void Unload(CDM::PupillaryResponseData& data) const;
 
+  static void Load(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst);
+  static cdm::PupillaryResponseData* Unload(const SEPupillaryResponse& src);
+protected:
+  static void Serialize(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst);
+  static void Serialize(const SEPupillaryResponse& src, cdm::PupillaryResponseData& dst);
+  
 public:
 
   virtual bool HasReactivityModifier() const;
-  virtual SEScalarNeg1To1& GetReactivityModifier();
+  virtual SEScalarNegative1To1& GetReactivityModifier();
   virtual double GetReactivityModifier() const;
 
   virtual bool HasShapeModifier() const;
-  virtual SEScalarNeg1To1& GetShapeModifier();
+  virtual SEScalarNegative1To1& GetShapeModifier();
   virtual double GetShapeModifier() const;
 
   virtual bool HasSizeModifier() const;
-  virtual SEScalarNeg1To1& GetSizeModifier();
+  virtual SEScalarNegative1To1& GetSizeModifier();
   virtual double GetSizeModifier() const;
 
 protected:
 
-  SEScalarNeg1To1* m_ReactivityModifier;
-  SEScalarNeg1To1* m_ShapeModifier;
-  SEScalarNeg1To1* m_SizeModifier;
+  SEScalarNegative1To1* m_ReactivityModifier;
+  SEScalarNegative1To1* m_ShapeModifier;
+  SEScalarNegative1To1* m_SizeModifier;
 
 };

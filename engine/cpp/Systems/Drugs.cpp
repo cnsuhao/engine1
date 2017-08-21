@@ -1,14 +1,5 @@
-﻿/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+﻿/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "Drugs.h"
@@ -27,7 +18,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarVolume.h"
@@ -42,9 +33,9 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarAmountPerMass.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
-#include "properties/SEScalarNeg1To1.h"
+#include "properties/SEScalarNegative1To1.h"
 
-Drugs::Drugs(BioGears& bg) : SEDrugSystem(bg.GetLogger()), m_data(bg)
+Drugs::Drugs(PulseController& data) : SEDrugSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -63,7 +54,6 @@ void Drugs::Clear()
   m_liverVascular    = nullptr;
   m_liverTissue      = nullptr;
   m_IVToVenaCava     = nullptr;
-  DELETE_MAP_SECOND(m_BolusAdministrations);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -72,7 +62,7 @@ void Drugs::Clear()
 //--------------------------------------------------------------------------------------------------
 void Drugs::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 
   GetBronchodilationLevel().SetValue(0.0);
   GetHeartRateChange().SetValue(0.0, FrequencyUnit::Per_min);
@@ -87,42 +77,27 @@ void Drugs::Initialize()
   GetTubularPermeabilityChange().SetValue(0);
 }
 
-bool Drugs::Load(const CDM::BioGearsDrugSystemData& in)
+void Drugs::Load(const pulse::DrugSystemData& src, Drugs& dst)
 {
-  if (!SEDrugSystem::Load(in))
-    return false;
-  BioGearsSystem::LoadState();
-  for (const CDM::SubstanceBolusStateData& bData : in.BolusAdministration())
-  {
-    SESubstance* sub = m_data.GetSubstances().GetSubstance(bData.Substance());
-    if (sub == nullptr)
-    {
-      /// \error Error: Unable to find substance for IV bolus administration
-      m_ss << "Unable to find substance " << bData.Substance();
-      Error(m_ss, "Drugs::Load::BolusAdministration");
-      return false;
-    }
-    SESubstanceBolusState* bolusState = new SESubstanceBolusState(*sub);
-    m_BolusAdministrations[sub] = bolusState;
-    bolusState->Load(bData);
-  }
-  return true;
+  Drugs::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::BioGearsDrugSystemData* Drugs::Unload() const
+void Drugs::Serialize(const pulse::DrugSystemData& src, Drugs& dst)
 {
-  CDM::BioGearsDrugSystemData* data = new CDM::BioGearsDrugSystemData();
-  Unload(*data);
-  return data;
+  SEDrugSystem::Serialize(src.common(), dst);
 }
-void Drugs::Unload(CDM::BioGearsDrugSystemData& data) const
+
+pulse::DrugSystemData* Drugs::Unload(const Drugs& src)
 {
-  SEDrugSystem::Unload(data);
-  for (auto itr : m_BolusAdministrations)
-  {
-    if(itr.second != nullptr)
-      data.BolusAdministration().push_back(std::unique_ptr<CDM::SubstanceBolusStateData>(itr.second->Unload()));
-  }
+  pulse::DrugSystemData* dst = new pulse::DrugSystemData();
+  Drugs::Serialize(src, *dst);
+  return dst;
 }
+void Drugs::Serialize(const Drugs& src, pulse::DrugSystemData& dst)
+{
+  SEDrugSystem::Serialize(src, *dst.mutable_common());
+}
+
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -134,14 +109,13 @@ void Drugs::Unload(CDM::BioGearsDrugSystemData& data) const
 void Drugs::SetUp()
 {
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  m_muscleIntracellular = m_data.GetCompartments().GetLiquidCompartment(BGE::ExtravascularCompartment::MuscleIntracellular);
-  m_aortaVascular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Aorta);
-  m_venaCavaVascular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::VenaCava);
-  m_fatTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Fat);
-  m_liverVascular = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Liver);
-  m_liverTissue = m_data.GetCompartments().GetTissueCompartment(BGE::TissueCompartment::Liver);
-  m_IVToVenaCava = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(BGE::CardiovascularPath::IVToVenaCava);
-  DELETE_MAP_SECOND(m_BolusAdministrations);
+  m_muscleIntracellular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::MuscleIntracellular);
+  m_aortaVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
+  m_venaCavaVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
+  m_fatTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat);
+  m_liverVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver);
+  m_liverTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver);
+  m_IVToVenaCava = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::IVToVenaCava);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -223,12 +197,7 @@ void Drugs::AdministerSubstanceBolus()
   {    
     sub = b.first;
     bolus = b.second;
-    bolusState = m_BolusAdministrations[b.first];
-    if (bolusState == nullptr)
-    {
-      bolusState = new SESubstanceBolusState(*b.first);
-      m_BolusAdministrations[b.first] = bolusState;     
-    }
+    bolusState = &bolus->GetState();
     dose_mL = bolus->GetDose().GetValue(VolumeUnit::mL);
     if (bolusState->GetAdministeredDose().GetValue(VolumeUnit::mL)>=dose_mL)
     {
@@ -239,13 +208,13 @@ void Drugs::AdministerSubstanceBolus()
 
     switch (bolus->GetAdminRoute())
     {
-    case CDM::enumBolusAdministration::Intraarterial:
+    case cdm::SubstanceBolusData_eAdministrationRoute_Intraarterial:
       subQ = m_aortaVascular->GetSubstanceQuantity(*sub);
       break;
-    case CDM::enumBolusAdministration::Intravenous:
+    case cdm::SubstanceBolusData_eAdministrationRoute_Intravenous:
       subQ = m_venaCavaVascular->GetSubstanceQuantity(*sub);
       break;
-    case CDM::enumBolusAdministration::Intramuscular:
+    case cdm::SubstanceBolusData_eAdministrationRoute_Intramuscular:
       subQ = m_muscleIntracellular->GetSubstanceQuantity(*sub);            
       break;
     default:
@@ -266,11 +235,7 @@ void Drugs::AdministerSubstanceBolus()
   }
   // Remove any bolus that are complete
   for (const SESubstance* s : completedBolus)
-  {
     m_data.GetActions().GetPatientActions().RemoveSubstanceBolus(*s);
-    delete m_BolusAdministrations[s];
-    m_BolusAdministrations[s] = nullptr;
-  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -442,7 +407,7 @@ void Drugs::CalculatePartitionCoefficients()
         continue;
       
       SESubstancePhysicochemicals& pk = sub->GetPK().GetPhysicochemicals();
-      CDM::enumSubstanceIonicState::value IonicState = pk.GetIonicState();
+      cdm::SubstanceData_eIonicState IonicState = pk.GetIonicState();
       double AcidDissociationConstant = pk.GetAcidDissociationConstant().GetValue();
       double P = exp(log(10) * pk.GetLogP().GetValue()); //Getting P from logP value
       if (tissue == m_fatTissue)
@@ -450,15 +415,15 @@ void Drugs::CalculatePartitionCoefficients()
         P = 1.115 * pk.GetLogP().GetValue() - 1.35;
         P = exp(log(10) * P);
       }
-      if (pk.GetBindingProtein() == CDM::enumSubstanceBindingProtein::AAG)
+      if (pk.GetBindingProtein() == cdm::SubstanceData_eBindingProtein_AAG)
       {
         TissueToPlasmaProteinRatio = tissue->GetTissueToPlasmaAlphaAcidGlycoproteinRatio().GetValue();
       }
-      else if (pk.GetBindingProtein() == CDM::enumSubstanceBindingProtein::Albumin)
+      else if (pk.GetBindingProtein() == cdm::SubstanceData_eBindingProtein_Albumin)
       {
         TissueToPlasmaProteinRatio = tissue->GetTissueToPlasmaAlbuminRatio().GetValue();
       }
-      else if (pk.GetBindingProtein() == CDM::enumSubstanceBindingProtein::Lipoprotein)
+      else if (pk.GetBindingProtein() == cdm::SubstanceData_eBindingProtein_Lipoprotein)
       {
         TissueToPlasmaProteinRatio = tissue->GetTissueToPlasmaLipoproteinRatio().GetValue();
       }
@@ -473,7 +438,7 @@ void Drugs::CalculatePartitionCoefficients()
         Fatal(ss);
       }
       //Based on the ionic state, the partition coefficient equation and/or pH effect equations are varied.
-      if (IonicState == CDM::enumSubstanceIonicState::Base)
+      if (IonicState == cdm::SubstanceData_eIonicState_Base)
       {
         IntracellularPHEffects = pow(10.0, (AcidDissociationConstant - IntracellularPH));
         PHEffectPower = PlasmaPH - AcidDissociationConstant;
@@ -485,14 +450,14 @@ void Drugs::CalculatePartitionCoefficients()
       }
       else
       {
-        if (IonicState == CDM::enumSubstanceIonicState::Acid)
+        if (IonicState == cdm::SubstanceData_eIonicState_Acid)
         {
           PHEffectPower = IntracellularPH - AcidDissociationConstant;
           IntracellularPHEffects = 1.0 + pow(10.0, PHEffectPower);
           PHEffectPower = PlasmaPH - AcidDissociationConstant;
           PlasmaPHEffects = 1.0 + pow(10.0, PHEffectPower);
         }
-        else if (IonicState == CDM::enumSubstanceIonicState::WeakBase)
+        else if (IonicState == cdm::SubstanceData_eIonicState_WeakBase)
         {
           PHEffectPower = AcidDissociationConstant - IntracellularPH;
           IntracellularPHEffects = 1.0 + pow(10.0, PHEffectPower);
@@ -602,6 +567,12 @@ void Drugs::CalculateDrugEffects()
   double deltaMeanPressure_mmHg = (2 * deltaDiastolicBP_mmHg + deltaSystolicBP_mmHg) / 3;
 
   double deltaPulsePressure_mmHg = (deltaSystolicBP_mmHg - deltaDiastolicBP_mmHg);
+
+  //Bound things that are fractions
+  sedationLevel = LIMIT(sedationLevel, 0.0, 1.0);
+  bronchodilationLevel = LIMIT(bronchodilationLevel, -1.0, 1.0);
+  neuromuscularBlockLevel = LIMIT(neuromuscularBlockLevel, 0.0, 1.0);
+  deltaTubularPermeability = LIMIT(deltaTubularPermeability, -1.0, 1.0);
 
   //Set values on the CDM System Values
   GetHeartRateChange().SetValue(deltaHeartRate_Per_min, FrequencyUnit::Per_min);

@@ -1,20 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "substance/SESubstanceCompound.h"
-#include "bind/SubstanceCompoundData.hxx"
 #include "substance/SESubstanceConcentration.h"
-#include "bind/SubstanceConcentrationData.hxx"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarMassPerVolume.h"
 
@@ -35,53 +24,50 @@ void SESubstanceCompound::Clear()
   m_cComponents.clear();
 }
 
-bool SESubstanceCompound::Load(const CDM::SubstanceCompoundData& in, const SESubstanceManager& subMgr)
+void SESubstanceCompound::Load(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
 {
-  Clear();
-  m_Name=in.Name();
+  SESubstanceCompound::Serialize(src, dst, subMgr);
+}
+void SESubstanceCompound::Serialize(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
+{
+  dst.Clear();
+  dst.m_Name = src.name();
 
   std::string err;
-  
-  SESubstance* substance=nullptr;
+
+  SESubstance* substance = nullptr;
   SESubstanceConcentration* cc;
-  CDM::SubstanceConcentrationData* ccData;
-  for(unsigned int i=0; i<in.Component().size(); i++)
+  for (int i = 0; i<src.component_size(); i++)
   {
-    ccData=(CDM::SubstanceConcentrationData*)&in.Component().at(i);
-    substance=subMgr.GetSubstance(ccData->Name());
-    if(substance==nullptr)
+    const cdm::SubstanceData_ConcentrationData& cData = src.component(i);
+    substance = subMgr.GetSubstance(cData.name());
+    if (substance == nullptr)
     {
-      /// \error Could not load find substance compound component for specified substance
-      err = "Could not load find substance compound component : ";
-      err+= ccData->Name();
-      Error(err,"SESubstanceCompound::Load");
-      return false;
+      /// \fatal Could not load find substance compound component for specified substance
+      dst.Fatal("Could not load find substance compound component : "+cData.name(), "SESubstanceCompound::Load");
+      continue;
     }
-    cc=new SESubstanceConcentration(*substance);
-    cc->Load(*ccData);
-    m_Components.push_back(cc);
-    m_cComponents.push_back(cc);
-  }    
-  return true;
-}
-
-CDM::SubstanceCompoundData*  SESubstanceCompound::Unload() const
-{
-  CDM::SubstanceCompoundData* data = new CDM::SubstanceCompoundData();
-  Unload(*data);
-  return data;
-}
-
-void SESubstanceCompound::Unload(CDM::SubstanceCompoundData& data) const
-{
-  if(HasName())
-    data.Name(m_Name);
-
-  for(unsigned int i=0; i<m_Components.size(); i++)
-  {
-    data.Component().push_back(*m_Components.at(i)->Unload());
+    cc = new SESubstanceConcentration(*substance);
+    SESubstanceConcentration::Load(cData, *cc);
+    dst.m_Components.push_back(cc);
+    dst.m_cComponents.push_back(cc);
   }
-};
+}
+
+cdm::SubstanceData_CompoundData* SESubstanceCompound::Unload(const SESubstanceCompound& src)
+{
+  cdm::SubstanceData_CompoundData* dst = new cdm::SubstanceData_CompoundData();
+  SESubstanceCompound::Serialize(src,*dst);
+  return dst;
+}
+void SESubstanceCompound::Serialize(const SESubstanceCompound& src, cdm::SubstanceData_CompoundData& dst)
+{
+  if (src.HasName())
+    dst.set_name(src.m_Name);
+
+  for (SESubstanceConcentration* c : src.m_Components)
+    dst.mutable_component()->AddAllocated(SESubstanceConcentration::Unload(*c));
+}
 
 std::string SESubstanceCompound::GetName() const
 {

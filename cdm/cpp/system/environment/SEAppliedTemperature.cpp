@@ -1,33 +1,19 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "system/environment/SEAppliedTemperature.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/AppliedTemperatureData.hxx"
 #include "properties/SEScalarArea.h"
-#include "bind/ScalarAreaData.hxx"
-#include "properties/SEScalarFraction.h"
-#include "bind/ScalarFractionData.hxx"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPower.h"
-#include "bind/ScalarPowerData.hxx"
 #include "properties/SEScalarTemperature.h"
-#include "bind/ScalarTemperatureData.hxx"
 
 SEAppliedTemperature::SEAppliedTemperature(Logger* logger) : Loggable(logger)
 {
   m_Temperature = nullptr;
   m_SurfaceArea = nullptr;
   m_SurfaceAreaFraction = nullptr;
-  m_State = CDM::enumOnOff::On;
+  m_State = cdm::eSwitch::Off;
 }
 
 SEAppliedTemperature::~SEAppliedTemperature()
@@ -40,7 +26,7 @@ void SEAppliedTemperature::Clear()
   SAFE_DELETE(m_Temperature);
   SAFE_DELETE(m_SurfaceArea);
   SAFE_DELETE(m_SurfaceAreaFraction);
-  m_State = CDM::enumOnOff::On;
+  m_State = cdm::eSwitch::Off;
 }
 
 const SEScalar* SEAppliedTemperature::GetScalar(const std::string& name)
@@ -54,35 +40,38 @@ const SEScalar* SEAppliedTemperature::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEAppliedTemperature::Load(const CDM::AppliedTemperatureData& in)
+void SEAppliedTemperature::Load(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst)
 {
-  Clear();
-  if (in.State().present())
-    m_State = in.State().get();
-  if (in.Temperature().present())
-    GetTemperature().Load(in.Temperature().get());
-  if (in.SurfaceArea().present())
-    GetSurfaceArea().Load(in.SurfaceArea().get());
-  if (in.SurfaceAreaFraction().present())
-    GetSurfaceAreaFraction().Load(in.SurfaceAreaFraction().get());
-  return true;
+  SEAppliedTemperature::Serialize(src, dst);
+}
+void SEAppliedTemperature::Serialize(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst)
+{
+  dst.Clear();
+  if (src.state() != cdm::eSwitch::NullSwitch)
+    dst.SetState(src.state());
+  if (src.has_temperature())
+    SEScalarTemperature::Load(src.temperature(), dst.GetTemperature());
+  if (src.has_surfacearea())
+    SEScalarArea::Load(src.surfacearea(), dst.GetSurfaceArea());
+  if (src.has_surfaceareafraction())
+    SEScalar0To1::Load(src.surfaceareafraction(), dst.GetSurfaceAreaFraction());
 }
 
-CDM::AppliedTemperatureData* SEAppliedTemperature::Unload() const
+cdm::EnvironmentData_AppliedTemperatureData* SEAppliedTemperature::Unload(const SEAppliedTemperature& src)
 {
-  CDM::AppliedTemperatureData* data = new CDM::AppliedTemperatureData();
-  Unload(*data);
-  return data;
+  cdm::EnvironmentData_AppliedTemperatureData* dst = new cdm::EnvironmentData_AppliedTemperatureData();
+  SEAppliedTemperature::Serialize(src, *dst);
+  return dst;
 }
-void SEAppliedTemperature::Unload(CDM::AppliedTemperatureData& data) const
+void SEAppliedTemperature::Serialize(const SEAppliedTemperature& src, cdm::EnvironmentData_AppliedTemperatureData& dst)
 {
-  if (HasTemperature())
-    data.Temperature(std::unique_ptr<CDM::ScalarTemperatureData>(m_Temperature->Unload()));
-  if (HasSurfaceArea())
-    data.SurfaceArea(std::unique_ptr<CDM::ScalarAreaData>(m_SurfaceArea->Unload()));
-  if (HasSurfaceAreaFraction())
-    data.SurfaceAreaFraction(std::unique_ptr<CDM::ScalarFractionData>(m_SurfaceAreaFraction->Unload()));
-  data.State(m_State);
+  dst.set_state(src.m_State);
+  if (src.HasTemperature())
+    dst.set_allocated_temperature(SEScalarTemperature::Unload(*src.m_Temperature));
+  if (src.HasSurfaceArea())
+    dst.set_allocated_surfacearea(SEScalarArea::Unload(*src.m_SurfaceArea));
+  if (src.HasSurfaceAreaFraction())
+    dst.set_allocated_surfaceareafraction(SEScalar0To1::Unload(*src.m_SurfaceAreaFraction));
 }
 
 bool SEAppliedTemperature::HasTemperature() const
@@ -123,10 +112,10 @@ bool SEAppliedTemperature::HasSurfaceAreaFraction() const
 {
   return m_SurfaceAreaFraction == nullptr ? false : m_SurfaceAreaFraction->IsValid();
 }
-SEScalarFraction& SEAppliedTemperature::GetSurfaceAreaFraction()
+SEScalar0To1& SEAppliedTemperature::GetSurfaceAreaFraction()
 {
   if (m_SurfaceAreaFraction == nullptr)
-    m_SurfaceAreaFraction = new SEScalarFraction();
+    m_SurfaceAreaFraction = new SEScalar0To1();
   return *m_SurfaceAreaFraction;
 }
 double SEAppliedTemperature::GetSurfaceAreaFraction() const
@@ -136,13 +125,13 @@ double SEAppliedTemperature::GetSurfaceAreaFraction() const
   return m_SurfaceAreaFraction->GetValue();
 }
 
-CDM::enumOnOff::value SEAppliedTemperature::GetState() const
+cdm::eSwitch SEAppliedTemperature::GetState() const
 {
   return m_State;
 }
-void SEAppliedTemperature::SetState(CDM::enumOnOff::value onOff)
+void SEAppliedTemperature::SetState(cdm::eSwitch state)
 {
-  m_State = onOff;
+  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
 }
 
 
@@ -153,6 +142,6 @@ void SEAppliedTemperature::ToString(std::ostream &str) const
   str << "\n\tTemperature :";         HasTemperature() ? str << *m_Temperature : str << "NaN";
   str << "\n\tSurfaceArea :";         HasSurfaceArea() ? str << *m_SurfaceArea : str << "NaN";
   str << "\n\tSurfaceAreaFraction :"; HasSurfaceAreaFraction() ? str << *m_SurfaceAreaFraction : str << "NaN";
-  str << "\n\tState :" <<  m_State;
+  str << "\n\tState :" <<  cdm::eSwitch_Name(m_State);
   str << std::flush;
 }

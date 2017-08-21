@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "CommonDataModelTest.h"
 #include "utils/testing/SETestReport.h"
@@ -34,7 +25,6 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "utils/DataTrack.h"
-#include "Serializer.h"
 
 //*********************************************************
 //Circuit Setup
@@ -109,13 +99,13 @@ void CommonDataModelTest::FluidPreProcess(SEFluidCircuit& c, double dT)
 
 void CommonDataModelTest::ElectricalCircuitTest(const std::string& sTestDirectory)
 {
-  m_Logger->ResetLogFile(sTestDirectory + "\\ElectricalCircuitTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/ElectricalCircuitTest.log");
   double timeStep_s = 1.0 / 165.0;
   Info("Electric Circuit");
-  SEElectricalCircuit* ElectricalCircuit = &m_Circuits.CreateElectricalCircuit("Electric");
+  SEElectricalCircuit* ElectricalCircuit = &m_Circuits->CreateElectricalCircuit("Electric");
   SEElectricalCircuitCalculator ElectricalCircuitCalculator(m_Logger);
   ElectricalCircuit->StateChange();
-  std::string sOutputFile = sTestDirectory + "\\ElectricalCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/ElectricalCircuit.txt";
   //-----------------------------------------------------------
   //Nodes
   SEElectricalCircuitNode& Node1 = ElectricalCircuit->CreateNode("Node1");
@@ -139,7 +129,7 @@ void CommonDataModelTest::ElectricalCircuitTest(const std::string& sTestDirector
   ElectricalCircuit->StateChange();
 
   // Lock it so you cannot modify Quantity/Potential/Flux values with out a source
-  m_Circuits.SetReadOnly(true);
+  m_Circuits->SetReadOnly(true);
 
   DataTrack trk1;
   bool serialized = false;
@@ -164,24 +154,24 @@ void CommonDataModelTest::ElectricalCircuitTest(const std::string& sTestDirector
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\ElectricalCircuit.xml";
-      TestCircuitSerialization(xmlDir);      
-      ElectricalCircuit = m_Circuits.GetElectricalCircuit("Electric");
+      std::string pbaDir = sTestDirectory + "/ElectricalCircuit.pba";
+      TestCircuitSerialization(pbaDir);      
+      ElectricalCircuit = m_Circuits->GetElectricalCircuit("Electric");
     }
   }
   trk1.WriteTrackToFile(sOutputFile.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::FluidCircuitTest(const std::string& sTestDirectory)
 {
-  m_Logger->ResetLogFile(sTestDirectory + "\\FluidCircuitTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/FluidCircuitTest.log");
   double timeStep_s = 1.0 / 165.0;
   Info("Fluid Circuit");
-  SEFluidCircuit*  fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit*  fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   SEFluidCircuitCalculator      fluidCalculator(m_Logger);
   fluidCircuit->StateChange();
-  std::string sOutputFile = sTestDirectory + "\\FluidCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/FluidCircuit.txt";
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
@@ -205,7 +195,7 @@ void CommonDataModelTest::FluidCircuitTest(const std::string& sTestDirectory)
   fluidCircuit->StateChange();
 
   // Lock it so you cannot modify Quantity/Potential/Flux values with out a source
-  m_Circuits.SetReadOnly(true);
+  m_Circuits->SetReadOnly(true);
 
   DataTrack trk1;
   bool serialized = false;
@@ -230,24 +220,24 @@ void CommonDataModelTest::FluidCircuitTest(const std::string& sTestDirectory)
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\FluidCircuit.xml";
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      std::string pbaDir = sTestDirectory + "/FluidCircuit.pba";
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
   trk1.WriteTrackToFile(sOutputFile.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
 {
-  m_Logger->ResetLogFile(sTestDirectory + "\\ThermalCircuitTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/ThermalCircuitTest.log");
   double timeStep_s = 1.0 / 165.0;
   Info("Thermal Circuit");
-  SEThermalCircuit* ThermalCircuit = &m_Circuits.CreateThermalCircuit("Thermal");
+  SEThermalCircuit* ThermalCircuit = &m_Circuits->CreateThermalCircuit("Thermal");
   SEThermalCircuitCalculator    ThermalCircuitCalculator(m_Logger);
   ThermalCircuit->StateChange();
-  std::string sOutputFile = sTestDirectory + "\\ThermalCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/ThermalCircuit.txt";
   //-----------------------------------------------------------
   //Nodes
   SEThermalCircuitNode& Node1 = ThermalCircuit->CreateNode("Node1");
@@ -271,7 +261,7 @@ void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
   ThermalCircuit->StateChange();
 
   // Lock it so you cannot modify Quantity/Potential/Flux values with out a source
-  m_Circuits.SetReadOnly(true);
+  m_Circuits->SetReadOnly(true);
 
   DataTrack trk1;
   bool serialized = false;
@@ -308,13 +298,13 @@ void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\ThermalCircuit.xml"; 
-      TestCircuitSerialization(xmlDir);
-      ThermalCircuit = m_Circuits.GetThermalCircuit("Thermal");
+      std::string pbaDir = sTestDirectory + "/ThermalCircuit.pba"; 
+      TestCircuitSerialization(pbaDir);
+      ThermalCircuit = m_Circuits->GetThermalCircuit("Thermal");
     }
   }
   trk1.WriteTrackToFile(sOutputFile.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -330,7 +320,7 @@ void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
 void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
 {
   std::cout << "CombinedCircuitTest\n";
-  m_Logger->ResetLogFile(sTestDirectory + "\\CombinedCircuitTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/CombinedCircuitTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
@@ -338,7 +328,7 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
 
   //Master Circuit
-  SEFluidCircuit* MasterCircuit = &m_Circuits.CreateFluidCircuit("Master");
+  SEFluidCircuit* MasterCircuit = &m_Circuits->CreateFluidCircuit("Master");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& MasterNode1 = MasterCircuit->CreateNode("MasterNode1");
@@ -361,7 +351,7 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
   SEFluidCircuitPath& MasterPath1 = MasterCircuit->CreatePath(MasterNode4, MasterNode1, "MasterPath1");
   MasterPath1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
   //Slave Circuit
-   SEFluidCircuit* SlaveCircuit = &m_Circuits.CreateFluidCircuit("Slave");
+   SEFluidCircuit* SlaveCircuit = &m_Circuits->CreateFluidCircuit("Slave");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& SlaveNode1 = SlaveCircuit->CreateNode("SlaveNode1");
@@ -384,7 +374,7 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
   SEFluidCircuitPath& SlavePath1 = SlaveCircuit->CreatePath(SlaveNode4, SlaveNode1, "SlavePath1");
   SlavePath1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
   //Create the combined circuit
-  SEFluidCircuit* CombinedCircuit = &m_Circuits.CreateFluidCircuit("Combined");
+  SEFluidCircuit* CombinedCircuit = &m_Circuits->CreateFluidCircuit("Combined");
   CombinedCircuit->AddCircuit(*MasterCircuit);
   CombinedCircuit->AddCircuit(*SlaveCircuit);
   SEFluidCircuitPath& GroundPath = CombinedCircuit->CreatePath(MasterNode4, SlaveNode4, "GroundPath");
@@ -414,25 +404,25 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\CombinedCircuitTest.xml"; 
-      TestCircuitSerialization(xmlDir);
+      std::string pbaDir = sTestDirectory + "/CombinedCircuitTest.pba"; 
+      TestCircuitSerialization(pbaDir);
       // Loading will create a new circuit, so we need to delete our old ones
       // And hook up to the new ones
-      MasterCircuit = m_Circuits.GetFluidCircuit("Master");
-      SlaveCircuit = m_Circuits.GetFluidCircuit("Slave");
-      CombinedCircuit = m_Circuits.GetFluidCircuit("Combined");
+      MasterCircuit = m_Circuits->GetFluidCircuit("Master");
+      SlaveCircuit = m_Circuits->GetFluidCircuit("Slave");
+      CombinedCircuit = m_Circuits->GetFluidCircuit("Combined");
     }
   }
-  std::string sOutputFile = sTestDirectory + "\\CombinedCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/CombinedCircuit.txt";
   trk1.WriteTrackToFile(sOutputFile.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::InterCircuitComparisonTest(const std::string& sTestDirectory)
 {
   std::cout << "InterComparisonCircuitTest\n";
 
-  m_Logger->ResetLogFile(sTestDirectory + "\\InterCircuitComparisonTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/InterCircuitComparisonTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
@@ -441,7 +431,7 @@ void CommonDataModelTest::InterCircuitComparisonTest(const std::string& sTestDir
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
 
   //Test Circuit
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
@@ -487,21 +477,21 @@ void CommonDataModelTest::InterCircuitComparisonTest(const std::string& sTestDir
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\InterCircuitComparison.xml";
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      std::string pbaDir = sTestDirectory + "/InterCircuitComparison.pba";
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "\\InterCircuitComparison.txt";
+  std::string sOutputFile = sTestDirectory + "/InterCircuitComparison.txt";
   trk1.WriteTrackToFile(sOutputFile.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDirectory)
 {
   std::cout << "InterCircuitIndividualTest\n";
 
-  m_Logger->ResetLogFile(sTestDirectory + "\\InterCircuitIndividualTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/InterCircuitIndividualTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
@@ -510,7 +500,7 @@ void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDir
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
 
   //Circuit 1
-  SEFluidCircuit* fluidCircuit1 = &m_Circuits.CreateFluidCircuit("Fluid1");
+  SEFluidCircuit* fluidCircuit1 = &m_Circuits->CreateFluidCircuit("Fluid1");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit1->CreateNode("Node1");
@@ -537,7 +527,7 @@ void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDir
   Path5.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
   fluidCircuit1->StateChange();
   //Circuit 2
-  SEFluidCircuit* fluidCircuit2 = &m_Circuits.CreateFluidCircuit("Fluid2");
+  SEFluidCircuit* fluidCircuit2 = &m_Circuits->CreateFluidCircuit("Fluid2");
   SEFluidCircuitNode& Node5 = fluidCircuit2->CreateNode("Node5");
   SEFluidCircuitNode& Node6 = fluidCircuit2->CreateNode("Node6");
   fluidCircuit2->AddReferenceNode(Node6);
@@ -571,18 +561,18 @@ void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDir
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\InterCircuitIndividual.xml";
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit1 = m_Circuits.GetFluidCircuit("Fluid1");
-      fluidCircuit2 = m_Circuits.GetFluidCircuit("Fluid2");
+      std::string pbaDir = sTestDirectory + "/InterCircuitIndividual.pba";
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit1 = m_Circuits->GetFluidCircuit("Fluid1");
+      fluidCircuit2 = m_Circuits->GetFluidCircuit("Fluid2");
     }
   }
 
-  std::string sOutputFile = sTestDirectory + "\\InterCircuitIndividual1.txt";
-  std::string sOutputFile2 = sTestDirectory + "\\InterCircuitIndividual2.txt";
+  std::string sOutputFile = sTestDirectory + "/InterCircuitIndividual1.txt";
+  std::string sOutputFile2 = sTestDirectory + "/InterCircuitIndividual2.txt";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   trk2.WriteTrackToFile(sOutputFile2.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -600,7 +590,7 @@ void InterCircuitTest(const std::string& sTestDirectory)
 {
   std::cout << "InterCircuitTest\n";
 
-  m_Logger->ResetLogFile(sTestDirectory + "\\InterCircuitTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/InterCircuitTest.log");
   TimingProfile p;
   double dDT = 1.0/165.0;
   double dT = 0.0;
@@ -648,8 +638,8 @@ void InterCircuitTest(const std::string& sTestDirectory)
     }
   }
 
-  std::string sOutputFile = sTestDirectory + "\\InterCircuit.txt";
-  std::string sOutputFile2 = sTestDirectory + "\\InterCircuit2.txt";
+  std::string sOutputFile = sTestDirectory + "/InterCircuit.txt";
+  std::string sOutputFile2 = sTestDirectory + "/InterCircuit2.txt";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   trk2.WriteTrackToFile(sOutputFile2.c_str());
 
@@ -674,10 +664,10 @@ void CommonDataModelTest::CircuitErrorTest(const std::string& sTestDirectory)
 {
   std::cout << "CircuitErrorTest\n";
   //Setup a basic circuit
-  m_Logger->ResetLogFile(sTestDirectory + "\\CombinedCircuitTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/CombinedCircuitTest.log");
   double timeStep_s = 1.0 / 165.0;
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
@@ -711,7 +701,7 @@ void CommonDataModelTest::CircuitErrorTest(const std::string& sTestDirectory)
   // None, as of yet, moving to templates enforced a lot of stuff
   Path2.GetNextCompliance().SetValue(25, FlowComplianceUnit::m3_Per_Pa);
   Path2.HasValidElements();
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -727,14 +717,14 @@ void CommonDataModelTest::CircuitErrorTest(const std::string& sTestDirectory)
 void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTestDirectory)
 {
   std::cout << "DynamicallyChangingCircuitTest\n";
-  m_Logger->ResetLogFile(sTestDirectory + "\\DynamicallyChangingCircuitTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/DynamicallyChangingCircuitTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   DataTrack trk1;
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
 
   //Test Circuit
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
@@ -807,14 +797,14 @@ void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTes
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\DynamicallyChangingCircuit.xml";
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      std::string pbaDir = sTestDirectory + "/DynamicallyChangingCircuit.pba";
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "\\DynamicallyChangingCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/DynamicallyChangingCircuit.txt";
   trk1.WriteTrackToFile(sOutputFile.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -830,12 +820,12 @@ void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTes
 void CommonDataModelTest::NonZeroReferencePositive(const std::string& sTestDirectory)
 {
   std::cout << "NonZeroReferencePositive\n";
-  m_Logger->ResetLogFile(sTestDirectory + "\\NonZeroReferencePositive.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/NonZeroReferencePositive.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   DataTrack trk1;
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
@@ -882,14 +872,14 @@ void CommonDataModelTest::NonZeroReferencePositive(const std::string& sTestDirec
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\NonZeroReferencePositive.xml";
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      std::string pbaDir = sTestDirectory + "/NonZeroReferencePositive.pba";
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "\\NonZeroReferencePositive.txt";
+  std::string sOutputFile = sTestDirectory + "/NonZeroReferencePositive.txt";
   trk1.WriteTrackToFile(sOutputFile.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -904,12 +894,12 @@ void CommonDataModelTest::NonZeroReferencePositive(const std::string& sTestDirec
 void CommonDataModelTest::NonZeroReferenceNegative(const std::string& sTestDirectory)
 {
   std::cout << "NonZeroReferenceNegative\n";
-  m_Logger->ResetLogFile(sTestDirectory + "\\NonZeroReferenceNegative.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/NonZeroReferenceNegative.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   DataTrack trk1;
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
@@ -956,14 +946,14 @@ void CommonDataModelTest::NonZeroReferenceNegative(const std::string& sTestDirec
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\NonZeroReferenceNegative.xml";
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      std::string pbaDir = sTestDirectory + "/NonZeroReferenceNegative.pba";
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "\\NonZeroReferenceNegative.txt";
+  std::string sOutputFile = sTestDirectory + "/NonZeroReferenceNegative.txt";
   trk1.WriteTrackToFile(sOutputFile.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -980,13 +970,13 @@ void CommonDataModelTest::NonZeroReferenceNegative(const std::string& sTestDirec
 void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirectory)
 {
   std::cout << "PolarizedCapacitorTest\n";
-  m_Logger->ResetLogFile(sTestDirectory + "\\PolarizedCapacitorTest.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/PolarizedCapacitorTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 100.0;
   double currentTime_s = 0.0;
   DataTrack trk1;
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
@@ -1000,7 +990,7 @@ void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirecto
   //Paths
   SEFluidCircuitPath& Path2 = fluidCircuit->CreatePath(Node2, Node1, "Path2");
   Path2.GetNextCompliance().SetValue(1, FlowComplianceUnit::m3_Per_Pa);
-  Path2.SetNextPolarizedState(CDM::enumOpenClosed::Closed);
+  Path2.SetNextPolarizedState(cdm::eGate::Closed);
   Path2.GetSourceNode().GetNextVolume().SetValue(0, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit->CreatePath(Node2, Node3, "Path3");
   Path3.GetNextResistance().SetValue(1, FlowResistanceUnit::Pa_s_Per_m3);
@@ -1035,27 +1025,27 @@ void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirecto
     if (!serialized && currentTime_s > 130)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\NonZeroReferenceNegative.xml";
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      std::string pbaDir = sTestDirectory + "/NonZeroReferenceNegative.pba";
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "\\PolarizedCapacitor.txt";
+  std::string sOutputFile = sTestDirectory + "/PolarizedCapacitor.txt";
   trk1.WriteTrackToFile(sOutputFile.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::PreChargeComplianceZeroVolume(const std::string& sTestDirectory)
 {
   std::cout << "PreChargeComplianceZeroVolume\n";
-  m_Logger->ResetLogFile(sTestDirectory + "\\PreChargeComplianceZeroVolume.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/PreChargeComplianceZeroVolume.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
   DataTrack trk1;
 
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
 
   SEFluidCircuitNode& node1 = fluidCircuit->CreateNode("node1");
   node1.GetPressure().SetValue(10.0, PressureUnit::mmHg);
@@ -1082,27 +1072,27 @@ void CommonDataModelTest::PreChargeComplianceZeroVolume(const std::string& sTest
     if (!serialized && currentTime_s > 0.8)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\PreChargeComplianceZeroVolume.xml"; 
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      std::string pbaDir = sTestDirectory + "/PreChargeComplianceZeroVolume.pba"; 
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile1 = sTestDirectory + "\\PreChargeComplianceZeroVolume.txt";
+  std::string sOutputFile1 = sTestDirectory + "/PreChargeComplianceZeroVolume.txt";
   trk1.WriteTrackToFile(sOutputFile1.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::PreChargeComplianceNonZeroVolume(const std::string& sTestDirectory)
 {
   std::cout << "PreChargeComplianceNonZeroVolume\n";
-  m_Logger->ResetLogFile(sTestDirectory + "\\PreChargeComplianceNonZeroVolume.log");
+  m_Logger->ResetLogFile(sTestDirectory + "/PreChargeComplianceNonZeroVolume.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
   DataTrack trk1;
 
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
 
   SEFluidCircuitNode& node1 = fluidCircuit->CreateNode("node1");
   node1.GetPressure().SetValue(10.0, PressureUnit::mmHg);
@@ -1129,14 +1119,14 @@ void CommonDataModelTest::PreChargeComplianceNonZeroVolume(const std::string& sT
     if (!serialized && currentTime_s > 0.8)
     {
       serialized = true;
-      std::string xmlDir = sTestDirectory + "\\PreChargeComplianceNonZeroVolume.xml"; 
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      std::string pbaDir = sTestDirectory + "/PreChargeComplianceNonZeroVolume.pba"; 
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile2 = sTestDirectory + "\\PreChargeComplianceNonZeroVolume.txt";
+  std::string sOutputFile2 = sTestDirectory + "/PreChargeComplianceNonZeroVolume.txt";
   trk1.WriteTrackToFile(sOutputFile2.c_str());
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory)
@@ -1151,9 +1141,9 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
   
   std::cout << "CircuitLockingTestTest\n";
 
-  m_Logger->ResetLogFile(sOutputDirectory + "\\CircuitLockingTest.log");
+  m_Logger->ResetLogFile(sOutputDirectory + "/CircuitLockingTest.log");
  
-  SEFluidCircuit* fluidCircuit = &m_Circuits.CreateFluidCircuit("Fluid");
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
@@ -1191,7 +1181,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
 
   // No need to calc the circuit since we already set some values on it
   // Lock the circuit
-  m_Circuits.SetReadOnly(true);
+  m_Circuits->SetReadOnly(true);
   std::string type = " Locked Before Serialization";
 
   bool caught = false;
@@ -1389,19 +1379,19 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     if (i == 0)
     {
       // Serialize and try again
-      std::string xmlDir = sOutputDirectory + "\\CircuitLockingCircuit.xml";
-      TestCircuitSerialization(xmlDir);
-      fluidCircuit = m_Circuits.GetFluidCircuit("Fluid");
+      std::string pbaDir = sOutputDirectory + "/CircuitLockingCircuit.pba";
+      TestCircuitSerialization(pbaDir);
+      fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
       type = " Locked After Serialization";
     }
     else if (i == 1)
     {
-      m_Circuits.SetReadOnly(false);
+      m_Circuits->SetReadOnly(false);
       type = " Unlocked";
     }
   }
 
-  std::string sOutputFile = sOutputDirectory + "\\CircuitLockingTestReport.xml";
+  std::string sOutputFile = sOutputDirectory + "/CircuitLockingTestReport.pba";
   testReport.WriteFile(sOutputFile);
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }

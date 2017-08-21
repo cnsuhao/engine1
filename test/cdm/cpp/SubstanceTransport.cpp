@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "CommonDataModelTest.h"
 #include "circuit/fluid/SEFluidCircuit.h"
@@ -24,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
@@ -36,8 +27,8 @@ specific language governing permissions and limitations under the License.
 
 void CommonDataModelTest::LargeFlowTransportTest(const std::string& sTestDirectory)
 {
-  m_Logger->ResetLogFile(sTestDirectory + "\\LargeFlowTransportTest.log");
-  SEFluidCircuit& circuit = m_Circuits.CreateFluidCircuit("Circuit");
+  m_Logger->ResetLogFile(sTestDirectory + "/LargeFlowTransportTest.log");
+  SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("Circuit");
   SEFluidCircuitCalculator CircuitCalculator(m_Logger);
 
   // Only give volumes to node that have mass & concentration
@@ -119,7 +110,7 @@ void CommonDataModelTest::LargeFlowTransportTest(const std::string& sTestDirecto
     }
     outTrk.Probe("TotalMass(g)", totalMass);
     if (time == 0)
-      outTrk.CreateFile(std::string(sTestDirectory + "\\LargeFlowTransport.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/LargeFlowTransport.txt").c_str(), file);
     outTrk.StreamProbesToFile(time, file);
 
     CircuitCalculator.Process(circuit,deltaT);
@@ -130,19 +121,19 @@ void CommonDataModelTest::LargeFlowTransportTest(const std::string& sTestDirecto
     if (!serialized && time > 8.0)
     {
       serialized = true;
-      TestCompartmentSerialization(cmptMgr, sTestDirectory + "/LargeTransportCompartments.xml");
+      TestCompartmentSerialization(cmptMgr, sTestDirectory + "/LargeTransportCompartments.pba");
       graph = cmptMgr.GetLiquidGraph("Graph");
     }
   }
   file.close();
   outTrk.Clear();
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::LiquidTransportTest(const std::string& rptDirectory)
 {
-  Logger logger(rptDirectory + "\\LiquidTransportTest.log");
-  SEFluidCircuit& circuit = m_Circuits.CreateFluidCircuit("Circuit");
+  Logger logger(rptDirectory + "/LiquidTransportTest.log");
+  SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("Circuit");
   SEFluidCircuitCalculator CircuitCalculator(&logger);
 
 
@@ -310,24 +301,24 @@ void CommonDataModelTest::LiquidTransportTest(const std::string& rptDirectory)
     if (!serialized && time > 8.0)
     {
       serialized = true;
-      TestCompartmentSerialization(cmptMgr, rptDirectory + "/LiquidTransportTest.xml");
+      TestCompartmentSerialization(cmptMgr, rptDirectory + "/LiquidTransportTest.pba");
       graph = cmptMgr.GetLiquidGraph("Graph");
     }
     
     if (time == 0)
-      outTrk.CreateFile(std::string(rptDirectory + "\\LiquidTransport.txt").c_str(), file);
+      outTrk.CreateFile(std::string(rptDirectory + "/LiquidTransport.txt").c_str(), file);
     outTrk.StreamProbesToFile(time, file);
     time += deltaT_s;
   }
   file.close();
   outTrk.Clear();
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 
 void CommonDataModelTest::GasTransportTest(const std::string& rptDirectory)
 {
-  Logger logger(rptDirectory + "\\GasTransportTest.log");
-  SEFluidCircuit& circuit = m_Circuits.CreateFluidCircuit("Circuit");
+  Logger logger(rptDirectory + "/GasTransportTest.log");
+  SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("Circuit");
   SEFluidCircuitCalculator CircuitCalculator(&logger);
 
   SEFluidCircuitNode& Ground = circuit.CreateNode("Ground");
@@ -491,17 +482,17 @@ void CommonDataModelTest::GasTransportTest(const std::string& rptDirectory)
     if (!serialized && time > 8.0)
     {
       serialized = true;
-      TestCompartmentSerialization(cmptMgr, rptDirectory + "/GasTransportTest.xml");
+      TestCompartmentSerialization(cmptMgr, rptDirectory + "/GasTransportTest.pba");
       graph = cmptMgr.GetGasGraph("Graph");
     }
 
     if (time == 0)
-      outTrk.CreateFile(std::string(rptDirectory + "\\GasTransport.txt").c_str(), file);
+      outTrk.CreateFile(std::string(rptDirectory + "/GasTransport.txt").c_str(), file);
     outTrk.StreamProbesToFile(time, file);
     time += deltaT_s;
   }
   file.close();
   outTrk.Clear();
-  m_Circuits.Clear();
+  m_Circuits->Clear();
 }
 

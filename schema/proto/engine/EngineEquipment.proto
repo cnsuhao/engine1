@@ -1,0 +1,31 @@
+syntax = "proto3";
+package pulse;
+option java_package = "com.kitware.physiology.pulse";
+
+import "cdm/AnesthesiaMachine.proto";
+import "cdm/ElectroCardioGram.proto";
+import "cdm/Inhaler.proto";
+
+message AnesthesiaMachineData
+{
+  cdm.AnesthesiaMachineData                    Common                         = 1;
+  bool                                         Inhaling                       = 2;
+  double                                       CurrentBreathingCycleTime_s    = 3;
+  double                                       InspirationTime_s              = 4;
+  double                                       OxygenInletVolumeFraction      = 5;
+  double                                       TotalBreathingCycleTime_s      = 6;
+}
+
+message ElectroCardioGramData
+{
+  cdm.ElectroCardioGramData                    Common                         = 1;
+  double                                       HeartRythmTime_s               = 2;
+  double                                       HeartRythmPeriod_s             = 3;
+  cdm.ElectroCardioGramWaveformListData        Waveforms                      = 4;
+}
+
+
+message InhalerData
+{
+  cdm.InhalerData                              Common                         = 1;
+}

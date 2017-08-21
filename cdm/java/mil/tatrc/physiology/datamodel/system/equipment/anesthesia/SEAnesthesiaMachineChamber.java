@@ -1,41 +1,31 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
- **************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.AnesthesiaMachineChamberData;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.properties.SEScalarFraction;
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
+
+import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
-import mil.tatrc.physiology.datamodel.substance.SESubstanceFraction;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceFractionAmount;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 
 public class SEAnesthesiaMachineChamber 
 {
-  protected EnumOnOff state;
+  protected eSwitch state;
   protected SESubstance substance;
-  protected SEScalarFraction substanceFraction;
+  protected SEScalar0To1 substanceFraction;
 
   public SEAnesthesiaMachineChamber()
   {
-    this.state = null;
+    this.state = eSwitch.Off;
     this.substance = null;
     this.substanceFraction = null;
   }
 
   public void reset()
   {
-    state = null;
+    state = eSwitch.Off;
     if (substanceFraction != null)
       substanceFraction.invalidate();
   }
@@ -49,55 +39,48 @@ public class SEAnesthesiaMachineChamber
       this.getSubstanceFraction().set(from.substanceFraction);      
   }
 
-  public boolean load(AnesthesiaMachineChamberData in, SESubstanceManager subMgr)
+  public static void load( AnesthesiaMachineData.ChamberData src, SEAnesthesiaMachineChamber dst, SESubstanceManager subMgr)
   {
-    if (in.getState() != null)
-      setState(in.getState());
-    if (in.getSubstance()!=null)
-      setSubstance(subMgr.getSubstance(in.getSubstance()));
-    if (in.getSubstanceFraction() != null)
-      getSubstanceFraction().load(in.getSubstanceFraction());
-    return true;
+    dst.reset();
+    if (src.getState() != eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
+      dst.setState(src.getState());
+    if (src.getSubstance()!=null)
+      dst.setSubstance(subMgr.getSubstance(src.getSubstance()));
+    if (src.hasSubstanceFraction())
+      SEScalar0To1.load(src.getSubstanceFraction(),dst.getSubstanceFraction());
+  }
+  public static AnesthesiaMachineData.ChamberData unload(SEAnesthesiaMachineChamber src)
+  {
+    AnesthesiaMachineData.ChamberData.Builder dst =  AnesthesiaMachineData.ChamberData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEAnesthesiaMachineChamber src, AnesthesiaMachineData.ChamberData.Builder dst)
+  {
+    if(src.hasSubstance())
+      dst.setSubstance(src.substance.getName());
+    dst.setState(src.state);
+    if (src.hasSubstanceFraction())
+      dst.setSubstanceFraction(SEScalar0To1.unload(src.substanceFraction));
   }
 
-  public AnesthesiaMachineChamberData unload()
-  {
-    AnesthesiaMachineChamberData data = CDMSerializer.objFactory.createAnesthesiaMachineChamberData();
-    unload(data);
-    return data;
-  }
-
-  protected void unload(AnesthesiaMachineChamberData data)
-  {
-    if(hasSubstance())
-      data.setSubstance(this.substance.getName());
-    if (hasState())
-      data.setState(state);
-    if (hasSubstanceFraction())
-      data.setSubstanceFraction(substanceFraction.unload());
-  }
-
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff state)
+  public void setState(eSwitch s)
   {
-    this.state = state;
-  }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
 
   public boolean hasSubstanceFraction()
   {
     return substanceFraction == null ? false : substanceFraction.isValid();
   }
-  public SEScalarFraction getSubstanceFraction()
+  public SEScalar0To1 getSubstanceFraction()
   {
     if (substanceFraction == null)
-      substanceFraction = new SEScalarFraction();
+      substanceFraction = new SEScalar0To1();
     return substanceFraction;
   }
 
@@ -117,7 +100,7 @@ public class SEAnesthesiaMachineChamber
   public String toString()
   {
       return "Anesthesia Machine Chamber"
-      + "\n\tState: " + (hasState()?getState():"NotProvided")
+      + "\n\tState: " + getState()
       + "\n\tSubstance Fraction: " + getSubstanceFraction()
       + "\n\tSubstance: " + (hasSubstance()?getSubstance().getName():"NotProvided");
   }

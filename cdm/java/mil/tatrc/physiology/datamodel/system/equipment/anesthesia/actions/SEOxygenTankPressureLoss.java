@@ -1,83 +1,60 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.OxygenTankPressureLossData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.OxygenTankPressureLossData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
 public class SEOxygenTankPressureLoss extends SEAnesthesiaMachineAction
 {
-  protected EnumOnOff state;
-  
+  protected eSwitch state;
+
   public SEOxygenTankPressureLoss()
   {
-    state = EnumOnOff.ON;
+    state = eSwitch.Off;
   }
-  
+
   public void reset()
   {
     super.reset();
-    state = EnumOnOff.ON;
+    state = eSwitch.Off;
   }
-  
+
   public boolean isValid()
   {
-    return hasState();
+    return true;
   }
-  
-  public boolean load(OxygenTankPressureLossData in)
+
+  public static void load(OxygenTankPressureLossData src, SEOxygenTankPressureLoss dst)
   {
-    super.load(in);
-    if (in.getState() != null)
-      setState(in.getState());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if (src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
+      dst.setState(src.getState());
   }
-  
-  public OxygenTankPressureLossData unload()
+  public static OxygenTankPressureLossData unload(SEOxygenTankPressureLoss src)
   {
-    OxygenTankPressureLossData data = CDMSerializer.objFactory.createOxygenTankPressureLossData();
-    unload(data);
-    return data;
+    OxygenTankPressureLossData.Builder dst = OxygenTankPressureLossData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(OxygenTankPressureLossData data)
+  protected static void unload(SEOxygenTankPressureLoss src, OxygenTankPressureLossData.Builder dst)
   {
-    super.unload(data);
-    if (hasState())
-      data.setState(state);
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    dst.setState(src.state);
   }
-  
+
   /*
    * State
    */
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff state)
+  public void setState(eSwitch s)
   {
-    this.state = state;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
-  }
-  public void invalidateState()
-  {
-    state = null;
-  }
-  
+
   public String toString()
   {
     return "Oxygen Tank Pressure Loss"

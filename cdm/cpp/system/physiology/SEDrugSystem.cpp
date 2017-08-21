@@ -1,30 +1,16 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "system/physiology/SEDrugSystem.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar.h"
-#include "bind/ScalarData.hxx"
-#include "properties/SEScalarFraction.h"
-#include "bind/ScalarFractionData.hxx"
+#include "properties/SEScalar0To1.h"
+#include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarFrequency.h"
-#include "bind/ScalarFrequencyData.hxx"
 #include "properties/SEScalarPressure.h"
-#include "bind/ScalarPressureData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarLength.h"
-#include "bind/ScalarLengthData.hxx"
 
 SEDrugSystem::SEDrugSystem(Logger* logger) : SESystem(logger)
 {
@@ -61,32 +47,63 @@ void SEDrugSystem::Clear()
   SAFE_DELETE(m_TubularPermeabilityChange);
 }
 
-bool SEDrugSystem::Load(const CDM::DrugSystemData& in)
+void SEDrugSystem::Load(const cdm::DrugSystemData& src, SEDrugSystem& dst)
 {
-  SESystem::Load(in);
+  SEDrugSystem::Serialize(src, dst);
+}
+void SEDrugSystem::Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst)
+{
+  dst.Clear();
+  if (src.has_bronchodilationlevel())
+    SEScalarNegative1To1::Load(src.bronchodilationlevel(), dst.GetBronchodilationLevel());
+  if (src.has_heartratechange())
+    SEScalarFrequency::Load(src.heartratechange(), dst.GetHeartRateChange());
+  if (src.has_meanbloodpressurechange())
+    SEScalarPressure::Load(src.meanbloodpressurechange(), dst.GetMeanBloodPressureChange());
+  if (src.has_neuromuscularblocklevel())
+    SEScalar0To1::Load(src.neuromuscularblocklevel(), dst.GetNeuromuscularBlockLevel());
+  if (src.has_pulsepressurechange())
+    SEScalarPressure::Load(src.pulsepressurechange(), dst.GetPulsePressureChange());
+  if (src.has_pupillaryresponse())
+    SEPupillaryResponse::Load(src.pupillaryresponse(), dst.GetPupillaryResponse());
+  if (src.has_respirationratechange())
+    SEScalarFrequency::Load(src.respirationratechange(), dst.GetRespirationRateChange());
+  if (src.has_sedationlevel())
+    SEScalar0To1::Load(src.sedationlevel(), dst.GetSedationLevel());
+  if (src.has_tidalvolumechange())
+    SEScalarVolume::Load(src.tidalvolumechange(), dst.GetTidalVolumeChange());
+  if (src.has_tubularpermeabilitychange())
+    SEScalarNegative1To1::Load(src.tubularpermeabilitychange(), dst.GetTubularPermeabilityChange());
+}
 
-  if (in.BronchodilationLevel().present())
-    GetBronchodilationLevel().Load(in.BronchodilationLevel().get());
-  if (in.HeartRateChange().present())
-    GetHeartRateChange().Load(in.HeartRateChange().get());
-  if (in.MeanBloodPressureChange().present())
-    GetMeanBloodPressureChange().Load(in.MeanBloodPressureChange().get());
-  if (in.NeuromuscularBlockLevel().present())
-    GetNeuromuscularBlockLevel().Load(in.NeuromuscularBlockLevel().get());
-  if (in.PulsePressureChange().present())
-    GetPulsePressureChange().Load(in.PulsePressureChange().get());
-  if (in.PupillaryResponse().present())
-    GetPupillaryResponse().Load(in.PupillaryResponse().get());
-  if (in.RespirationRateChange().present())
-    GetRespirationRateChange().Load(in.RespirationRateChange().get());
-  if (in.SedationLevel().present())
-    GetSedationLevel().Load(in.SedationLevel().get());
-  if (in.TidalVolumeChange().present())
-    GetTidalVolumeChange().Load(in.TidalVolumeChange().get());
-  if (in.TubularPermeabilityChange().present())
-    GetTubularPermeabilityChange().Load(in.TubularPermeabilityChange().get());
-
-  return true;
+cdm::DrugSystemData* SEDrugSystem::Unload(const SEDrugSystem& src)
+{
+  cdm::DrugSystemData* dst = new cdm::DrugSystemData();
+  SEDrugSystem::Serialize(src, *dst);
+  return dst;
+}
+void SEDrugSystem::Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst)
+{
+  if (src.HasBronchodilationLevel())
+    dst.set_allocated_bronchodilationlevel(SEScalarNegative1To1::Unload(*src.m_BronchodilationLevel));
+  if (src.HasHeartRateChange())
+    dst.set_allocated_heartratechange(SEScalarFrequency::Unload(*src.m_HeartRateChange));
+  if (src.HasMeanBloodPressureChange())
+    dst.set_allocated_meanbloodpressurechange(SEScalarPressure::Unload(*src.m_MeanBloodPressureChange));
+  if (src.HasNeuromuscularBlockLevel())
+    dst.set_allocated_neuromuscularblocklevel(SEScalar0To1::Unload(*src.m_NeuromuscularBlockLevel));
+  if (src.HasPulsePressureChange())
+    dst.set_allocated_pulsepressurechange(SEScalarPressure::Unload(*src.m_PulsePressureChange));
+  if (src.HasPupillaryResponse())
+    dst.set_allocated_pupillaryresponse(SEPupillaryResponse::Unload(*src.m_PupillaryResponse));
+  if (src.HasRespirationRateChange())
+    dst.set_allocated_respirationratechange(SEScalarFrequency::Unload(*src.m_RespirationRateChange));
+  if (src.HasSedationLevel())
+    dst.set_allocated_sedationlevel(SEScalar0To1::Unload(*src.m_SedationLevel));
+  if (src.HasTidalVolumeChange())
+    dst.set_allocated_tidalvolumechange(SEScalarVolume::Unload(*src.m_TidalVolumeChange));
+  if (src.HasTubularPermeabilityChange())
+    dst.set_allocated_tubularpermeabilitychange(SEScalarNegative1To1::Unload(*src.m_TubularPermeabilityChange));
 }
 
 const SEScalar* SEDrugSystem::GetScalar(const std::string& name)
@@ -122,47 +139,14 @@ const SEScalar* SEDrugSystem::GetScalar(const std::string& name)
   return nullptr;
 }
 
-CDM::DrugSystemData* SEDrugSystem::Unload() const
-{
-  CDM::DrugSystemData* data = new CDM::DrugSystemData();
-  Unload(*data);
-  return data;
-}
-
-void SEDrugSystem::Unload(CDM::DrugSystemData& data) const
-{
-  SESystem::Unload(data);
-
-  if (m_BronchodilationLevel != nullptr)
-    data.BronchodilationLevel(std::unique_ptr<CDM::ScalarFractionData>(m_BronchodilationLevel->Unload()));
-  if (m_HeartRateChange != nullptr)
-    data.HeartRateChange(std::unique_ptr<CDM::ScalarFrequencyData>(m_HeartRateChange->Unload()));
-  if (m_MeanBloodPressureChange != nullptr)
-    data.MeanBloodPressureChange(std::unique_ptr<CDM::ScalarPressureData>(m_MeanBloodPressureChange->Unload()));
-  if (m_NeuromuscularBlockLevel != nullptr)
-    data.NeuromuscularBlockLevel(std::unique_ptr<CDM::ScalarFractionData>(m_NeuromuscularBlockLevel->Unload()));
-  if (m_PulsePressureChange != nullptr)
-    data.PulsePressureChange(std::unique_ptr<CDM::ScalarPressureData>(m_PulsePressureChange->Unload()));
-  if (m_PupillaryResponse != nullptr)
-    data.PupillaryResponse(std::unique_ptr<CDM::PupillaryResponseData>(m_PupillaryResponse->Unload()));
-  if (m_RespirationRateChange != nullptr)
-    data.RespirationRateChange(std::unique_ptr<CDM::ScalarFrequencyData>(m_RespirationRateChange->Unload()));
-  if (m_SedationLevel != nullptr)
-    data.SedationLevel(std::unique_ptr<CDM::ScalarFractionData>(m_SedationLevel->Unload()));
-  if (m_TidalVolumeChange != nullptr)
-    data.TidalVolumeChange(std::unique_ptr<CDM::ScalarVolumeData>(m_TidalVolumeChange->Unload()));
-  if (m_TubularPermeabilityChange != nullptr)
-    data.TubularPermeabilityChange(std::unique_ptr<CDM::ScalarFractionData>(m_TubularPermeabilityChange->Unload()));
-}
-
 bool SEDrugSystem::HasBronchodilationLevel() const
 {
   return m_BronchodilationLevel == nullptr ? false : m_BronchodilationLevel->IsValid();
 }
-SEScalarFraction& SEDrugSystem::GetBronchodilationLevel()
+SEScalarNegative1To1& SEDrugSystem::GetBronchodilationLevel()
 {
   if (m_BronchodilationLevel == nullptr)
-    m_BronchodilationLevel = new SEScalarFraction();
+    m_BronchodilationLevel = new SEScalarNegative1To1();
   return *m_BronchodilationLevel;
 }
 double SEDrugSystem::GetBronchodilationLevel() const
@@ -210,10 +194,10 @@ bool SEDrugSystem::HasNeuromuscularBlockLevel() const
 {
   return m_NeuromuscularBlockLevel == nullptr ? false : m_NeuromuscularBlockLevel->IsValid();
 }
-SEScalarFraction& SEDrugSystem::GetNeuromuscularBlockLevel()
+SEScalar0To1& SEDrugSystem::GetNeuromuscularBlockLevel()
 {
   if (m_NeuromuscularBlockLevel == nullptr)
-    m_NeuromuscularBlockLevel = new SEScalarFraction();
+    m_NeuromuscularBlockLevel = new SEScalar0To1();
   return *m_NeuromuscularBlockLevel;
 }
 double SEDrugSystem::GetNeuromuscularBlockLevel() const
@@ -280,10 +264,10 @@ bool SEDrugSystem::HasSedationLevel() const
 {
   return m_SedationLevel == nullptr ? false : m_SedationLevel->IsValid();
 }
-SEScalarFraction& SEDrugSystem::GetSedationLevel()
+SEScalar0To1& SEDrugSystem::GetSedationLevel()
 {
   if (m_SedationLevel == nullptr)
-    m_SedationLevel = new SEScalarFraction();
+    m_SedationLevel = new SEScalar0To1();
   return *m_SedationLevel;
 }
 double SEDrugSystem::GetSedationLevel() const
@@ -315,10 +299,10 @@ bool SEDrugSystem::HasTubularPermeabilityChange() const
 {
   return m_TubularPermeabilityChange == nullptr ? false : m_TubularPermeabilityChange->IsValid();
 }
-SEScalarFraction& SEDrugSystem::GetTubularPermeabilityChange()
+SEScalarNegative1To1& SEDrugSystem::GetTubularPermeabilityChange()
 {
   if (m_TubularPermeabilityChange == nullptr)
-    m_TubularPermeabilityChange = new SEScalarFraction();
+    m_TubularPermeabilityChange = new SEScalarNegative1To1();
   return *m_TubularPermeabilityChange;
 }
 double SEDrugSystem::GetTubularPermeabilityChange() const

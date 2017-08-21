@@ -1,4 +1,4 @@
-project(BioGearsSDK)
+project(PulseSDK)
 
 
 file(GLOB SRC_FILES
@@ -11,56 +11,27 @@ add_executable(HowToDriver EXCLUDE_FROM_ALL ${SOURCE})
 
 # Preprocessor Definitions and Include Paths
 set(FLAGS)
-target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/cdm)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include/cdm)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include/bind)
 set_target_properties(HowToDriver PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
 # Dependent Libraries
-if(MSVC)
-  set(D_LIB_FILES
-    lib/debug${EX_CONFIG}/BioGearsEngine.lib
-    lib/debug${EX_CONFIG}/CommonDataModel.lib
-    lib/debug${EX_CONFIG}/DataModelBindings.lib
-    lib/debug${EX_CONFIG}/log4cpp.lib
-    lib/debug${EX_CONFIG}/xerces-c.lib
-  )
-  set(O_LIB_FILES
-    lib/release${EX_CONFIG}/BioGearsEngine.lib
-    lib/release${EX_CONFIG}/CommonDataModel.lib
-    lib/release${EX_CONFIG}/DataModelBindings.lib
-    lib/release${EX_CONFIG}/log4cpp.lib
-    lib/release${EX_CONFIG}/xerces-c.lib
-  )
-elseif(UNIX)  
-  set(D_LIB_FILES
-    "lib/debug${EX_CONFIG}/BioGearsEngine.so"
-    "lib/debug${EX_CONFIG}/CommonDataModel.so"
-    "lib/debug${EX_CONFIG}/DataModelBindings.so"
-    "lib/debug${EX_CONFIG}/log4cpp.so"
-    "lib/debug${EX_CONFIG}/xerces-c.so"
-  )
-  set(O_LIB_FILES
-    "lib/release${EX_CONFIG}/BioGearsEngine.so"
-    "lib/release${EX_CONFIG}/CommonDataModel.so"
-    "lib/release${EX_CONFIG}/DataModelBindings.so"
-    "lib/release${EX_CONFIG}/log4cpp.so"
-    "lib/release${EX_CONFIG}/xerces-c.so"
-  )
-else()
-  set(D_LIB_FILES
-    lib/debug/BioGearsEngine.lib
-    lib/debug/CommonDataModel.lib
-    lib/debug/DataModelBindings.lib
-    lib/debug/log4cpp.lib
-    lib/debug/xerces-c.lib
-  )
-  set(O_LIB_FILES
-    lib/release/BioGearsEngine.lib
-    lib/release/CommonDataModel.lib
-    lib/release/DataModelBindings.lib
-    lib/release/log4cpp.lib
-    lib/release/xerces-c.lib
-  )
-endif()
+
+set(D_LIB_FILES
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/PulseEngine.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/CommonDataModel.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/DataModelBindings.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/log4cpp.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/libprotobufd.lib
+)
+set(O_LIB_FILES
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/PulseEngine.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/CommonDataModel.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/DataModelBindings.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/log4cpp.lib
+  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/libprotobuf.lib
+)
+
 
 foreach(file ${D_LIB_FILES})
 	target_link_libraries(HowToDriver debug ${file})

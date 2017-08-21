@@ -1,35 +1,25 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
- **************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.system.physiology;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnergySystemData;
+import com.kitware.physiology.cdm.Physiology.EnergySystemData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
 public class SEEnergySystem extends SEPhysiologySystem implements SESystem
 {
-  protected SEScalarFraction      achievedExerciseLevel;
+  protected SEScalar0To1          achievedExerciseLevel;
   protected SEScalarTemperature   coreTemperature;
   protected SEScalarAmountPerTime creatinineProductionRate;
   protected SEScalarPressure      exerciseMeanArterialPressureDelta;
-  protected SEScalarFraction      fatigueLevel;
+  protected SEScalar0To1          fatigueLevel;
   protected SEScalarAmountPerTime ketoneProductionRate;
   protected SEScalarAmountPerTime lactateProductionRate;
   protected SEScalarTemperature   skinTemperature;
   protected SEScalarMassPerTime   sweatRate;
   protected SEScalarPower         totalMetabolicRate;
-  protected SEScalarFraction      totalWorkRateLevel;
+  protected SEScalar0To1          totalWorkRateLevel;
 
   public SEEnergySystem()
   {
@@ -72,65 +62,63 @@ public class SEEnergySystem extends SEPhysiologySystem implements SESystem
       totalWorkRateLevel.invalidate();    
   }
 
-  public boolean load(EnergySystemData in)
+  public static void load(EnergySystemData src, SEEnergySystem dst)
   {    
-    if (in.getCoreTemperature() != null)
-      getCoreTemperature().load(in.getCoreTemperature());
-    if (in.getCreatinineProductionRate() != null)
-      getCreatinineProductionRate().load(in.getCreatinineProductionRate());
-    if (in.getExerciseMeanArterialPressureDelta() != null)
-      getExerciseMeanArterialPressureDelta().load(in.getExerciseMeanArterialPressureDelta());
-    if (in.getAchievedExerciseLevel() != null)
-      getAchievedExerciseLevel().load(in.getAchievedExerciseLevel());
-    if (in.getFatigueLevel() != null)
-      getFatigueLevel().load(in.getFatigueLevel());
-    if (in.getKetoneProductionRate() != null)
-      getKetoneProductionRate().load(in.getKetoneProductionRate());
-    if (in.getLactateProductionRate() != null)
-      getLactateProductionRate().load(in.getLactateProductionRate());
-    if (in.getSkinTemperature() != null)
-      getSkinTemperature().load(in.getSkinTemperature());
-    if (in.getSweatRate() != null)
-      getSweatRate().load(in.getSweatRate());
-    if (in.getTotalMetabolicRate() != null)
-      getTotalMetabolicRate().load(in.getTotalMetabolicRate());
-    if (in.getTotalWorkRateLevel() != null)
-      getTotalWorkRateLevel().load(in.getTotalWorkRateLevel());
-    
-    return true;
+    if (src.hasCoreTemperature())
+      SEScalarTemperature.load(src.getCoreTemperature(),dst.getCoreTemperature());
+    if (src.hasCreatinineProductionRate())
+      SEScalarAmountPerTime.load(src.getCreatinineProductionRate(),dst.getCreatinineProductionRate());
+    if (src.hasExerciseMeanArterialPressureDelta())
+      SEScalarPressure.load(src.getExerciseMeanArterialPressureDelta(),dst.getExerciseMeanArterialPressureDelta());
+    if (src.hasAchievedExerciseLevel())
+      SEScalar0To1.load(src.getAchievedExerciseLevel(),dst.getAchievedExerciseLevel());
+    if (src.hasFatigueLevel())
+      SEScalar0To1.load(src.getFatigueLevel(),dst.getFatigueLevel());
+    if (src.hasKetoneProductionRate())
+      SEScalarAmountPerTime.load(src.getKetoneProductionRate(),dst.getKetoneProductionRate());
+    if (src.hasLactateProductionRate())
+      SEScalarAmountPerTime.load(src.getLactateProductionRate(),dst.getLactateProductionRate());
+    if (src.hasSkinTemperature())
+      SEScalarTemperature.load(src.getSkinTemperature(),dst.getSkinTemperature());
+    if (src.hasSweatRate())
+      SEScalarMassPerTime.load(src.getSweatRate(),dst.getSweatRate());
+    if (src.hasTotalMetabolicRate())
+      SEScalarPower.load(src.getTotalMetabolicRate(),dst.getTotalMetabolicRate());
+    if (src.hasTotalWorkRateLevel())
+      SEScalar0To1.load(src.getTotalWorkRateLevel(),dst.getTotalWorkRateLevel());
   }
 
-  public EnergySystemData unload()
+  public static EnergySystemData unload(SEEnergySystem src)
   {
-    EnergySystemData data = CDMSerializer.objFactory.createEnergySystemData();
-    unload(data);
-    return data;
+    EnergySystemData.Builder dst = EnergySystemData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
 
-  protected void unload(EnergySystemData data)
+  protected static void unload(SEEnergySystem src, EnergySystemData.Builder dst)
   {    
-    if (hasCoreTemperature())
-      data.setCoreTemperature(coreTemperature.unload());
-    if (hasCreatinineProductionRate())
-      data.setCreatinineProductionRate(creatinineProductionRate.unload());
-    if (hasExerciseMeanArterialPressureDelta())
-      data.setExerciseMeanArterialPressureDelta(exerciseMeanArterialPressureDelta.unload());
-    if (hasAchievedExerciseLevel())
-      data.setAchievedExerciseLevel(achievedExerciseLevel.unload());
-    if (hasFatigueLevel())
-      data.setFatigueLevel(fatigueLevel.unload());
-    if (hasKetoneProductionRate())
-      data.setKetoneProductionRate(ketoneProductionRate.unload());
-    if (hasLactateProductionRate())
-      data.setLactateProductionRate(lactateProductionRate.unload());
-    if (hasSkinTemperature())
-      data.setSkinTemperature(skinTemperature.unload());
-    if (hasSweatRate())
-      data.setSweatRate(sweatRate.unload());
-    if (hasTotalMetabolicRate())
-      data.setTotalMetabolicRate(totalMetabolicRate.unload());
-    if (hasTotalWorkRateLevel())
-      data.setTotalWorkRateLevel(totalWorkRateLevel.unload());    
+    if (src.hasCoreTemperature())
+      dst.setCoreTemperature(SEScalarTemperature.unload(src.getCoreTemperature()));
+    if (src.hasCreatinineProductionRate())
+      dst.setCreatinineProductionRate(SEScalarAmountPerTime.unload(src.getCreatinineProductionRate()));
+    if (src.hasExerciseMeanArterialPressureDelta())
+      dst.setExerciseMeanArterialPressureDelta(SEScalarPressure.unload(src.getExerciseMeanArterialPressureDelta()));
+    if (src.hasAchievedExerciseLevel())
+      dst.setAchievedExerciseLevel(SEScalar0To1.unload(src.getAchievedExerciseLevel()));
+    if (src.hasFatigueLevel())
+      dst.setFatigueLevel(SEScalar0To1.unload(src.getFatigueLevel()));
+    if (src.hasKetoneProductionRate())
+      dst.setKetoneProductionRate(SEScalarAmountPerTime.unload(src.getKetoneProductionRate()));
+    if (src.hasLactateProductionRate())
+      dst.setLactateProductionRate(SEScalarAmountPerTime.unload(src.getLactateProductionRate()));
+    if (src.hasSkinTemperature())
+      dst.setSkinTemperature(SEScalarTemperature.unload(src.getSkinTemperature()));
+    if (src.hasSweatRate())
+      dst.setSweatRate(SEScalarMassPerTime.unload(src.getSweatRate()));
+    if (src.hasTotalMetabolicRate())
+      dst.setTotalMetabolicRate(SEScalarPower.unload(src.getTotalMetabolicRate()));
+    if (src.hasTotalWorkRateLevel())
+      dst.setTotalWorkRateLevel(SEScalar0To1.unload(src.getTotalWorkRateLevel()));    
   }
 
   public boolean hasCoreTemperature()
@@ -170,10 +158,10 @@ public class SEEnergySystem extends SEPhysiologySystem implements SESystem
   {
     return achievedExerciseLevel == null ? false : achievedExerciseLevel.isValid();
   }
-  public SEScalarFraction getAchievedExerciseLevel()
+  public SEScalar0To1 getAchievedExerciseLevel()
   {
     if (achievedExerciseLevel == null)
-      achievedExerciseLevel = new SEScalarFraction();
+      achievedExerciseLevel = new SEScalar0To1();
     return achievedExerciseLevel;
   }
   
@@ -181,10 +169,10 @@ public class SEEnergySystem extends SEPhysiologySystem implements SESystem
   {
     return fatigueLevel == null ? false : fatigueLevel.isValid();
   }
-  public SEScalarFraction getFatigueLevel()
+  public SEScalar0To1 getFatigueLevel()
   {
     if (fatigueLevel == null)
-      fatigueLevel = new SEScalarFraction();
+      fatigueLevel = new SEScalar0To1();
     return fatigueLevel;
   }
 
@@ -247,10 +235,10 @@ public class SEEnergySystem extends SEPhysiologySystem implements SESystem
   {
     return totalWorkRateLevel == null ? false : totalWorkRateLevel.isValid();
   }
-  public SEScalarFraction getTotalWorkRateLevel()
+  public SEScalar0To1 getTotalWorkRateLevel()
   {
     if (totalWorkRateLevel == null)
-      totalWorkRateLevel = new SEScalarFraction();
+      totalWorkRateLevel = new SEScalar0To1();
     return totalWorkRateLevel;
   }
   

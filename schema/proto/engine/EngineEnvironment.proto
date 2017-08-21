@@ -1,0 +1,11 @@
+syntax = "proto3";
+package pulse;
+option java_package = "com.kitware.physiology.pulse";
+
+import "cdm/Environment.proto";
+
+message EnvironmentData
+{
+  cdm.EnvironmentData   Common                      = 1;
+  double                PatientEquivalentDiameter_m = 2;
+}

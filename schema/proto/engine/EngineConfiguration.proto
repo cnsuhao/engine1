@@ -1,0 +1,199 @@
+syntax = "proto3";
+package pulse;
+option java_package = "com.kitware.physiology.pulse";
+
+import "cdm/Properties.proto";
+import "cdm/Engine.proto";
+import "cdm/Environment.proto";
+import "cdm/PatientNutrition.proto";
+import "cdm/ElectroCardioGram.proto";
+
+message ConfigurationData
+
+{
+  message BaroreceptorConfigurationData
+  {
+    cdm.ScalarData                                     ResponseSlope                                         = 1;
+    cdm.ScalarTimeData                                 HeartRateDistributedTimeDelay                         = 2;
+    cdm.ScalarTimeData                                 HeartElastanceDistributedTimeDelay                    = 3;
+    cdm.ScalarTimeData                                 SystemicResistanceDistributedTimeDelay                = 4;
+    cdm.ScalarTimeData                                 VenousComplianceDistributedTimeDelay                  = 5;
+    cdm.ScalarData                                     NormalizedHeartRateIntercept                          = 6;
+    cdm.ScalarData                                     NormalizedHeartRateSympatheticSlope                   = 7;
+    cdm.ScalarData                                     NormalizedHeartRateParasympatheticSlope               = 8;
+    cdm.ScalarData                                     NormalizedHeartElastanceIntercept                     = 9;
+    cdm.ScalarData                                     NormalizedHeartElastanceSympatheticSlope              = 10;
+    cdm.ScalarData                                     NormalizedResistanceIntercept                         = 11;
+    cdm.ScalarData                                     NormalizedResistanceSympatheticSlope                  = 12;
+    cdm.ScalarData                                     NormalizedComplianceIntercept                         = 13;
+    cdm.ScalarData                                     NormalizedComplianceParasympatheticSlope              = 14;
+  }
+  
+  message BloodChemistryConfigurationData
+  {
+    cdm.ScalarMassPerAmountData                        MeanCorpuscularHemoglobin                             = 1;
+    cdm.ScalarVolumeData                               MeanCorpuscularVolume                                 = 2;
+    cdm.ScalarLengthData                               StandardDiffusionDistance                             = 3;
+    cdm.ScalarAreaPerTimePressureData                  StandardOxygenDiffusionCoefficient                    = 4;
+  }
+  
+  message CardiovascularConfigurationData
+  {
+    cdm.ScalarFlowElastanceData                        LeftHeartElastanceMaximum                             = 1;
+    cdm.ScalarFlowElastanceData                        LeftHeartElastanceMinimum                             = 2;
+    cdm.Scalar0To1Data                                 MinimumBloodVolumeFraction                            = 3;
+    cdm.ScalarFlowElastanceData                        RightHeartElastanceMaximum                            = 4;
+    cdm.ScalarFlowElastanceData                        RightHeartElastanceMinimum                            = 5;
+    cdm.ScalarData                                     StandardPulmonaryCapillaryCoverage                    = 6;
+  }
+  
+  message CircuitConfigurationData
+  {
+    cdm.ScalarFlowResistanceData                       CardiovascularOpenResistance                         = 1;;
+    cdm.ScalarElectricResistanceData                   DefaultClosedElectricResistance                      = 2;;
+    cdm.ScalarElectricResistanceData                   DefaultOpenElectricResistance                        = 3;;
+    cdm.ScalarFlowResistanceData                       DefaultClosedFlowResistance                          = 4;;
+    cdm.ScalarFlowResistanceData                       DefaultOpenFlowResistance                            = 5;;
+    cdm.ScalarHeatResistanceData                       DefaultClosedHeatResistance                          = 6;;
+    cdm.ScalarHeatResistanceData                       DefaultOpenHeatResistance                            = 7;;
+    cdm.ScalarFlowResistanceData                       MachineClosedResistance                              = 8;;
+    cdm.ScalarFlowResistanceData                       MachineOpenResistance                                = 9;;
+    cdm.ScalarFlowResistanceData                       RespiratoryClosedResistance                          = 10;
+    cdm.ScalarFlowResistanceData                       RespiratoryOpenResistance                            = 11;
+  }
+  
+  message ConstantsConfigurationData
+  {
+    cdm.ScalarData                                     OxygenMetabolicConstant                              = 1;
+    cdm.ScalarPowerPerAreaTemperatureToTheFourthData   StefanBoltzmann                                      = 2;
+    cdm.ScalarHeatCapacitancePerAmountData             UniversalGasConstant                                 = 3;
+  }
+  
+  message DrugsConfigurationData
+  {
+    cdm.eSwitch                                        PDModel                                              = 1;
+  }
+  
+  message ECGConfigurationData
+  {
+    oneof ElectroCardioGramInterpolator
+    {
+      string                                           InterpolatorFileName                                 = 1;/**<< @brief */
+      cdm.ElectroCardioGramWaveformListData            Interpolator                                         = 2;/**<< @brief */
+    }
+  }
+  
+  message EnergyConfigurationData
+  {
+    cdm.ScalarHeatCapacitancePerMassData               BodySpecificHeat                                     = 1;
+    cdm.ScalarData                                     CarbonDioxideProductionFromOxygenConsumptionConstant = 2;
+    cdm.ScalarTemperatureData                          CoreTemperatureLow                                   = 3;
+    cdm.ScalarTemperatureData                          CoreTemperatureHigh                                  = 4;
+    cdm.ScalarTemperatureData                          DeltaCoreTemperatureLow                              = 5;
+    cdm.ScalarEnergyPerAmountData                      EnergyPerATP                                         = 6;
+    cdm.ScalarHeatConductanceData                      SweatHeatTransfer                                    = 7;
+    cdm.ScalarEnergyPerMassData                        VaporizationEnergy                                   = 8;
+    cdm.ScalarHeatCapacitancePerMassData               VaporSpecificHeat                                    = 9;
+  }
+  
+  message EnvironmentConfigurationData
+  {
+    oneof Option
+    {
+      cdm.EnvironmentData.ConditionsData               InitialConditions                                    = 1;/**<< @brief An environment conditions object with properties to set in the system environmental conditions. */
+      string                                           InitialConditionsFile                                = 2;/**<< @brief File containing an environment conditions objet with properties to set in the environmental conditions. */
+    }
+    cdm.ScalarMassPerVolumeData                        AirDensity                                           = 3;
+    cdm.ScalarHeatCapacitancePerMassData               AirSpecificHeat                                      = 4;
+    cdm.ScalarMassPerAmountData                        MolarMassOfDryAir                                    = 5;
+    cdm.ScalarMassPerAmountData                        MolarMassOfWaterVapor                                = 6;
+    cdm.ScalarMassPerVolumeData                        WaterDensity                                         = 7;
+  }
+  
+  message GastrointestinalConfigurationData
+  {
+    oneof Option
+    {
+      cdm.NutritionData                                InitialStomachContents                               = 1;/**<< @brief An stomach contents object with properties to set in the system. */
+      string                                           InitialStomachContentsFile                           = 2;/**<< @brief File containing an stomach contents objet with properties to set in the. */
+    }
+    cdm.Scalar0To1Data                                 CalciumAbsorbtionFraction                            = 3;
+    cdm.ScalarMassPerTimeData                          CalciumDigestionRate                                 = 4;
+    cdm.Scalar0To1Data                                 CarbohydrateAbsorbtionFraction                       = 5;
+    cdm.ScalarMassPerTimeData                          DefaultCarbohydrateDigestionRate                     = 6;
+    cdm.ScalarMassPerTimeData                          DefaultFatDigestionRate                              = 7;
+    cdm.ScalarMassPerTimeData                          DefaultProteinDigestionRate                          = 8;
+    cdm.Scalar0To1Data                                 FatAbsorbtionFraction                                = 9;
+    cdm.Scalar0To1Data                                 ProteinToUreaFraction                                = 10;
+    cdm.ScalarVolumePerTimeData                        WaterDigestionRate                                   = 11;
+  }
+  
+  message NervousConfigurationData
+  {
+    cdm.ScalarLengthData                               PupilDiameterBaseline                                = 1;
+  }
+  
+  message RenalConfigurationData
+  {
+    cdm.eSwitch                                        EnableRenal                                          = 1;
+    
+    cdm.ScalarMassPerVolumeData                        PlasmaSodiumConcentrationSetPoint                    = 2;
+    
+    cdm.ScalarAreaData                                 LeftGlomerularFilteringSurfaceAreaBaseline           = 3;
+    cdm.ScalarVolumePerTimePressureAreaData            LeftGlomerularFluidPermeabilityBaseline              = 4;
+    cdm.ScalarAreaData                                 LeftTubularReabsorptionFilteringSurfaceAreaBaseline  = 5;
+    cdm.ScalarVolumePerTimePressureAreaData            LeftTubularReabsorptionFluidPermeabilityBaseline     = 6;
+    
+    cdm.ScalarFlowResistanceData                       MaximumAfferentResistance                            = 7;
+    cdm.ScalarFlowResistanceData                       MinimumAfferentResistance                            = 8;
+    
+    cdm.ScalarAreaData                                 RightGlomerularFilteringSurfaceAreaBaseline          = 9;
+    cdm.ScalarVolumePerTimePressureAreaData            RightGlomerularFluidPermeabilityBaseline             = 10;
+    cdm.ScalarAreaData                                 RightTubularReabsorptionFilteringSurfaceAreaBaseline = 11;
+    cdm.ScalarVolumePerTimePressureAreaData            RightTubularReabsorptionFluidPermeabilityBaseline    = 12;
+    
+    cdm.ScalarMassPerTimeData                          TargetSodiumDelivery                                 = 13;
+  }
+  
+  message RespiratoryConfigurationData
+  {
+    cdm.ScalarPressureData                             CentralControllerCO2PressureSetPoint                 = 1;
+    cdm.ScalarData                                     CentralVentilatoryControllerGain                     = 2;
+    cdm.ScalarPressureData                             PeripheralControllerCO2PressureSetPoint              = 3;
+    cdm.ScalarData                                     PeripheralVentilatoryControllerGain                  = 4;
+    cdm.ScalarInverseVolumeData                        PleuralComplianceSensitivity                         = 5;
+    cdm.ScalarVolumePerTimeData                        PulmonaryVentilationRateMaximum                      = 6;
+    cdm.ScalarVolumeData                               VentilationTidalVolumeIntercept                      = 7;
+    cdm.ScalarPressureData                             VentilatoryOcclusionPressure                         = 8;
+  }
+  
+  message TissueConfigurationData
+  {
+    cdm.eSwitch                                        EnableTissue                                         = 1;
+  }
+  
+  cdm.ScalarTimeData                                   TimeStep                                             = 1;/**<< @brief */
+  oneof StabilizationCriteria
+  {
+    string                                             StabilizationFileName                                = 2;/**<< @brief */
+    cdm.TimedStabilizationData                         TimedStabilization                                   = 3;/**<< @brief */
+    cdm.DynamicStabilizationData                       DynamicStabilization                                 = 4;/**<< @brief */
+  }
+  cdm.eSwitch                                          WritePatientBaselineFile                             = 5;/**<< @brief Inform execution to write out patient object after stabilization completes. */
+  cdm.AutoSerializationData                            AutoSerialization                                    = 6;
+  BaroreceptorConfigurationData                        BaroreceptorConfiguration                            = 7;
+  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 8;
+  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 9;
+  CircuitConfigurationData                             CircuitConfiguration                                 = 10;
+  ConstantsConfigurationData                           ConstantsConfiguration                               = 11;
+  DrugsConfigurationData                               DrugsConfiguration                                   = 12;
+  ECGConfigurationData                                 ECGConfiguration                                     = 13;
+  EnergyConfigurationData                              EnergyConfiguration                                  = 14;
+  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 15;
+  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 16;
+  NervousConfigurationData                             NervousConfiguration                                 = 17;
+  RenalConfigurationData                               RenalConfiguration                                   = 18;
+  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 19;
+  TissueConfigurationData                              TissueConfiguration                                  = 20;
+}
+ 

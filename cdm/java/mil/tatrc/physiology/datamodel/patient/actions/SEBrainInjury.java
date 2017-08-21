@@ -1,27 +1,17 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.BrainInjuryData;
-import mil.tatrc.physiology.datamodel.bind.EnumBrainInjuryType;
-import mil.tatrc.physiology.datamodel.bind.EnumIntubationType;
+import com.kitware.physiology.cdm.PatientActions.BrainInjuryData;
+import com.kitware.physiology.cdm.PatientActions.BrainInjuryData.eType;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEBrainInjury extends SEPatientAction
 {
   protected SEScalar0To1        severity;
-  protected EnumBrainInjuryType type;
+  protected eType type;
   
   public SEBrainInjury()
   {
@@ -54,35 +44,36 @@ public class SEBrainInjury extends SEPatientAction
     return hasSeverity() && hasType();
   }
   
-  public boolean load(BrainInjuryData in) 
+  public static void load(BrainInjuryData src, SEBrainInjury dst) 
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    setType(in.getType());
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.getType()!=eType.UNRECOGNIZED)
+    	dst.setType(src.getType());
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
   
-  public BrainInjuryData unload()
+  public static  BrainInjuryData unload(SEBrainInjury src)
   {
-    BrainInjuryData data = CDMSerializer.objFactory.createBrainInjuryData();
-    unload(data);
-    return data;
+    BrainInjuryData.Builder dst = BrainInjuryData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(BrainInjuryData data)
+  protected static void unload(SEBrainInjury src, BrainInjuryData.Builder dst)
   {
-    super.unload(data);
-    if (severity != null)
-      data.setSeverity(severity.unload());
-    if (type != null)
-      data.setType(this.type);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if(src.hasType())
+      dst.setType(src.type);
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
-  public EnumBrainInjuryType getType()
+  public eType getType()
   {
     return type;
   }
-  public void setType(EnumBrainInjuryType t)
+  public void setType(eType t)
   {
     type = t;
   }

@@ -1,19 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.UseInhalerData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarMass;
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolume;
 
@@ -47,23 +38,21 @@ public class SEUseInhaler extends SEConsciousRespirationCommand
     return true;
   }
   
-  public boolean load(UseInhalerData in)
+  public static void load(UseInhalerData src, SEUseInhaler dst)
   {
-    super.load(in);    
-    return isValid();
+    //SEConsciousRespirationCommand.load(src.getConsciousRespirationCommand(), dst);
   }
   
-  public UseInhalerData unload()
+  public static UseInhalerData unload(SEUseInhaler src)
   {
-    UseInhalerData data = CDMSerializer.objFactory.createUseInhalerData();
-    unload(data);
-    
-    return data;
+    UseInhalerData.Builder dst = UseInhalerData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(UseInhalerData data)
+  protected static void unload(SEUseInhaler src, UseInhalerData.Builder dst)
   {
-    super.unload(data);
+    //SEConsciousRespirationCommand.unload(src, dst.getConsciousRespirationCommand());
   }
   
   public String toString()

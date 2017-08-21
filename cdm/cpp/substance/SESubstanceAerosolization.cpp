@@ -1,25 +1,13 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "substance/SESubstanceAerosolization.h"
-#include "bind/SubstanceAerosolizationData.hxx"
 #include "properties/SEScalarLength.h"
-#include "bind/ScalarLengthData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/ScalarMassPerVolumeData.hxx"
 #include "properties/SEHistogramFractionVsLength.h"
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarNeg1To1.h"
+#include "properties/SEScalarNegative1To1.h"
 
 SESubstanceAerosolization::SESubstanceAerosolization(Logger* logger) : Loggable(logger)
 {
@@ -60,42 +48,46 @@ const SEScalar* SESubstanceAerosolization::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SESubstanceAerosolization::Load(const CDM::SubstanceAerosolizationData& in)
+void SESubstanceAerosolization::Load(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst)
 {
-  Clear();
-  GetBronchioleModifier().Load(in.BronchioleModifier());
-  GetInflammationCoefficient().Load(in.InflammationCoefficient());
-  GetParticulateSizeDistribution().Load(in.ParticulateSizeDistribution());
-  return true;
+  SESubstanceAerosolization::Serialize(src, dst);
+}
+void SESubstanceAerosolization::Serialize(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst)
+{
+  dst.Clear();
+  if (src.has_bronchiolemodifier())
+    SEScalarNegative1To1::Load(src.bronchiolemodifier(), dst.GetBronchioleModifier());
+  if (src.has_inflammationcoefficient())
+    SEScalar0To1::Load(src.inflammationcoefficient(), dst.GetInflammationCoefficient());
+  if (src.has_particulatesizedistribution())
+    SEHistogramFractionVsLength::Load(src.particulatesizedistribution(), dst.GetParticulateSizeDistribution());
 }
 
-CDM::SubstanceAerosolizationData*  SESubstanceAerosolization::Unload() const
+cdm::SubstanceData_AerosolizationData* SESubstanceAerosolization::Unload(const SESubstanceAerosolization& src)
 {
-  if (!IsValid())
-    return nullptr;
-  CDM::SubstanceAerosolizationData* data = new CDM::SubstanceAerosolizationData();
-  Unload(*data);
-  return data;
+  cdm::SubstanceData_AerosolizationData* dst = new cdm::SubstanceData_AerosolizationData();
+  SESubstanceAerosolization::Serialize(src, *dst);
+  return dst;
+}
+void SESubstanceAerosolization::Serialize(const SESubstanceAerosolization& src, cdm::SubstanceData_AerosolizationData& dst)
+{
+  if (src.HasBronchioleModifier())
+    dst.set_allocated_bronchiolemodifier(SEScalarNegative1To1::Unload(*src.m_BronchioleModifier));
+  if (src.HasInflammationCoefficient())
+    dst.set_allocated_inflammationcoefficient(SEScalar0To1::Unload(*src.m_InflammationCoefficient));
+  if (src.HasParticulateSizeDistribution())
+    dst.set_allocated_particulatesizedistribution(SEHistogramFractionVsLength::Unload(*src.m_ParticulateSizeDistribution));
 }
 
-void SESubstanceAerosolization::Unload(CDM::SubstanceAerosolizationData& data) const
-{
-  if (HasBronchioleModifier())
-    data.BronchioleModifier(std::unique_ptr<CDM::ScalarNeg1To1Data>(m_BronchioleModifier->Unload()));
-  if (HasInflammationCoefficient())
-    data.InflammationCoefficient(std::unique_ptr<CDM::Scalar0To1Data>(m_InflammationCoefficient->Unload()));
-  if (HasParticulateSizeDistribution())
-    data.ParticulateSizeDistribution(std::unique_ptr<CDM::HistogramFractionVsLengthData>(m_ParticulateSizeDistribution->Unload()));
-};
 
 bool SESubstanceAerosolization::HasBronchioleModifier() const
 {
   return (m_BronchioleModifier == nullptr) ? false : m_BronchioleModifier->IsValid();
 }
-SEScalarNeg1To1& SESubstanceAerosolization::GetBronchioleModifier()
+SEScalarNegative1To1& SESubstanceAerosolization::GetBronchioleModifier()
 {
   if (m_BronchioleModifier == nullptr)
-    m_BronchioleModifier = new SEScalarNeg1To1();
+    m_BronchioleModifier = new SEScalarNegative1To1();
   return *m_BronchioleModifier;
 }
 double SESubstanceAerosolization::GetBronchioleModifier() const

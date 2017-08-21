@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEChestCompressionForce.h"
 #include "properties/SEScalarForce.h"
-#include "bind/ScalarForceData.hxx"
 
 SEChestCompressionForce::SEChestCompressionForce() : SEChestCompression()
 {
@@ -41,25 +31,28 @@ bool SEChestCompressionForce::IsActive() const
   return IsValid() ? !m_Force->IsZero() : false;
 }
 
-bool SEChestCompressionForce::Load(const CDM::ChestCompressionForceData& in)
+void SEChestCompressionForce::Load(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst)
 {
-  SEChestCompression::Load(in);
-  GetForce().Load(in.Force());
-  return true;
+  SEChestCompressionForce::Serialize(src, dst);
+}
+void SEChestCompressionForce::Serialize(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_force())
+    SEScalarForce::Load(src.force(), dst.GetForce());
 }
 
-CDM::ChestCompressionForceData* SEChestCompressionForce::Unload() const
+cdm::ChestCompressionForceData* SEChestCompressionForce::Unload(const SEChestCompressionForce& src)
 {
-  CDM::ChestCompressionForceData*data(new CDM::ChestCompressionForceData());
-  Unload(*data);
-  return data;
+  cdm::ChestCompressionForceData* dst = new cdm::ChestCompressionForceData();
+  SEChestCompressionForce::Serialize(src, *dst);
+  return dst;
 }
-
-void SEChestCompressionForce::Unload(CDM::ChestCompressionForceData& data) const
+void SEChestCompressionForce::Serialize(const SEChestCompressionForce& src, cdm::ChestCompressionForceData& dst)
 {
-  SEChestCompression::Unload(data);
-  if (m_Force != nullptr)
-    data.Force(std::unique_ptr<CDM::ScalarForceData>(m_Force->Unload()));
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasForce())
+    dst.set_allocated_force(SEScalarForce::Unload(*src.m_Force));
 }
 
 bool SEChestCompressionForce::HasForce() const

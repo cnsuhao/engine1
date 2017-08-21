@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarLength.h"
@@ -19,15 +10,6 @@ const LengthUnit LengthUnit::mm("mm");
 const LengthUnit LengthUnit::um("um");
 const LengthUnit LengthUnit::in("in");
 const LengthUnit LengthUnit::ft("ft");
-
-CDM::ScalarLengthData* SEScalarLength::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarLengthData* data(new CDM::ScalarLengthData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool LengthUnit::IsValidUnit(const std::string& unit)
 {
@@ -63,4 +45,26 @@ const LengthUnit& LengthUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Length unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarLength::Load(const cdm::ScalarLengthData& src, SEScalarLength& dst)
+{
+  SEScalarLength::Serialize(src, dst);
+}
+void SEScalarLength::Serialize(const cdm::ScalarLengthData& src, SEScalarLength& dst)
+{
+  SEScalarQuantity<LengthUnit>::Serialize(src.scalarlength(), dst);
+}
+
+cdm::ScalarLengthData* SEScalarLength::Unload(const SEScalarLength& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarLengthData* dst = new cdm::ScalarLengthData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarLength::Serialize(const SEScalarLength& src, cdm::ScalarLengthData& dst)
+{
+  SEScalarQuantity<LengthUnit>::Serialize(src, *dst.mutable_scalarlength());
 }

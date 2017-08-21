@@ -1,22 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 class SESubstanceClearanceAnatomyEffect;
-CDM_BIND_DECL(SubstanceClearanceData)
-#include "bind/enumCharge.hxx"
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
-enum class RenalDynamic{ Clearance, Regulation };
-class DLL_DECL SESubstanceClearance : public Loggable
+enum class RenalDynamic{ NullDynamic, Clearance, Regulation };
+class CDM_DECL SESubstanceClearance : public Loggable
 {
 public:
 
@@ -28,34 +20,35 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::SubstanceClearanceData& in);
-  virtual CDM::SubstanceClearanceData* Unload() const;
+  static void Load(const cdm::SubstanceData_ClearanceData& src, SESubstanceClearance& dst);
+  static cdm::SubstanceData_ClearanceData* Unload(const SESubstanceClearance& src);
 protected:
-  virtual void Unload(CDM::SubstanceClearanceData& data) const;
+  static void Serialize(const cdm::SubstanceData_ClearanceData& src, SESubstanceClearance& dst);
+  static void Serialize(const SESubstanceClearance& src, cdm::SubstanceData_ClearanceData& dst);
 
 public:
   virtual bool HasSystemic() const { return m_hasSystemic; }
   virtual void SetSystemic(bool b){ m_hasSystemic=b; }
 
-  virtual CDM::enumCharge::value GetChargeInBlood() const;
-  virtual void SetChargeInBlood(CDM::enumCharge::value type);
+  virtual cdm::eCharge GetChargeInBlood() const;
+  virtual void SetChargeInBlood(cdm::eCharge type);
   virtual bool HasChargeInBlood() const;
   virtual void InvalidateChargeInBlood();
 
   virtual bool HasFractionExcretedInFeces() const;
-  virtual SEScalarFraction& GetFractionExcretedInFeces();
+  virtual SEScalar0To1& GetFractionExcretedInFeces();
   virtual double GetFractionExcretedInFeces() const;
 
   virtual bool HasFractionExcretedInUrine() const;
-  virtual SEScalarFraction& GetFractionExcretedInUrine();
+  virtual SEScalar0To1& GetFractionExcretedInUrine();
   virtual double GetFractionExcretedInUrine() const;
 
   virtual bool HasFractionMetabolizedInGut() const;
-  virtual SEScalarFraction& GetFractionMetabolizedInGut();
+  virtual SEScalar0To1& GetFractionMetabolizedInGut();
   virtual double GetFractionMetabolizedInGut() const;
 
   virtual bool HasFractionUnboundInPlasma() const;
-  virtual SEScalarFraction& GetFractionUnboundInPlasma();
+  virtual SEScalar0To1& GetFractionUnboundInPlasma();
   virtual double GetFractionUnboundInPlasma() const;
 
   virtual bool HasGlomerularFilterability() const;
@@ -102,11 +95,11 @@ public:
 protected: 
 
   bool                            m_hasSystemic;
-  CDM::enumCharge::value          m_ChargeInBlood;
-  SEScalarFraction*                m_FractionExcretedInFeces;
-  SEScalarFraction*                m_FractionExcretedInUrine;
-  SEScalarFraction*                m_FractionMetabolizedInGut;
-  SEScalarFraction*                m_FractionUnboundInPlasma;
+  cdm::eCharge          m_ChargeInBlood;
+  SEScalar0To1*                m_FractionExcretedInFeces;
+  SEScalar0To1*                m_FractionExcretedInUrine;
+  SEScalar0To1*                m_FractionMetabolizedInGut;
+  SEScalar0To1*                m_FractionUnboundInPlasma;
   SEScalarVolumePerTimeMass*      m_IntrinsicClearance;
   RenalDynamic                    m_RenalDynamic;
   SEScalarVolumePerTimeMass*      m_RenalClearance;

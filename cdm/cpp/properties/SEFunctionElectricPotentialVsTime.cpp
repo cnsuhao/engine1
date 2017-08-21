@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEFunctionElectricPotentialVsTime.h"
@@ -35,32 +26,33 @@ void SEFunctionElectricPotentialVsTime::Clear()
   m_ElectricPotentialUnit = nullptr;
 }
 
-bool SEFunctionElectricPotentialVsTime::Load(const CDM::FunctionElectricPotentialVsTimeData& in)
+void SEFunctionElectricPotentialVsTime::Load(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
 {
-  if (!SEFunction::Load(in))
-    return false;
-  m_TimeUnit = &TimeUnit::GetCompoundUnit(in.IndependentUnit().get());
-  m_ElectricPotentialUnit = &ElectricPotentialUnit::GetCompoundUnit(in.DependentUnit().get());
-  return IsValid();
+  SEFunctionElectricPotentialVsTime::Serialize(src, dst);
+}
+void SEFunctionElectricPotentialVsTime::Serialize(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
+{
+  SEFunction::Serialize(src.functionelectricpotentialvstime(), dst);
+  dst.m_TimeUnit = &TimeUnit::GetCompoundUnit(src.functionelectricpotentialvstime().independentunit());
+  dst.m_ElectricPotentialUnit = &ElectricPotentialUnit::GetCompoundUnit(src.functionelectricpotentialvstime().dependentunit());
 }
 
-CDM::FunctionElectricPotentialVsTimeData*  SEFunctionElectricPotentialVsTime::Unload() const
+cdm::FunctionElectricPotentialVsTimeData* SEFunctionElectricPotentialVsTime::Unload(const SEFunctionElectricPotentialVsTime& src)
 {
-  if (!IsValid())
+  if (!src.IsValid())
     return nullptr;
-  CDM::FunctionElectricPotentialVsTimeData* data(new CDM::FunctionElectricPotentialVsTimeData());
-  Unload(*data);
-  return data;
+  cdm::FunctionElectricPotentialVsTimeData* dst = new cdm::FunctionElectricPotentialVsTimeData();
+  Serialize(src, *dst);
+  return dst;
 }
-
-void SEFunctionElectricPotentialVsTime::Unload(CDM::FunctionElectricPotentialVsTimeData& data) const
+void SEFunctionElectricPotentialVsTime::Serialize(const SEFunctionElectricPotentialVsTime& src, cdm::FunctionElectricPotentialVsTimeData& dst)
 {
-  SEFunction::Unload(data);
-  data.IndependentUnit(m_TimeUnit->GetString());
-  data.DependentUnit(m_ElectricPotentialUnit->GetString());
+  SEFunction::Serialize(src, *dst.mutable_functionelectricpotentialvstime());
+  dst.mutable_functionelectricpotentialvstime()->set_independentunit(src.m_TimeUnit->GetString());
+  dst.mutable_functionelectricpotentialvstime()->set_dependentunit(src.m_ElectricPotentialUnit->GetString());
 }
 
-double SEFunctionElectricPotentialVsTime::GetTimeValue(unsigned int index, const TimeUnit& unit)
+double SEFunctionElectricPotentialVsTime::GetTimeValue(size_t index, const TimeUnit& unit)
 {
   if (m_TimeUnit==nullptr)
     throw CommonDataModelException("No time units have been set");
@@ -81,7 +73,7 @@ void SEFunctionElectricPotentialVsTime::SetTimeUnit(const TimeUnit& unit)
   m_TimeUnit = &unit;
 }
 
-double SEFunctionElectricPotentialVsTime::GetElectricPotentialValue(unsigned int index, const ElectricPotentialUnit& unit)
+double SEFunctionElectricPotentialVsTime::GetElectricPotentialValue(size_t index, const ElectricPotentialUnit& unit)
 {
   if (m_ElectricPotentialUnit == nullptr)
     throw CommonDataModelException("No electric potential units have been set");
@@ -135,26 +127,37 @@ SEFunctionElectricPotentialVsTime*  SEFunctionElectricPotentialVsTime::Interpola
   //m_Independent;// Original X (Time)
   //m_Dependent;// Original Y (ElectricPotential)
   double x1, x2, y1, y2, xPrime, yPrime;
-  unsigned int newTimeIterator = 0;
-  for (unsigned int i = 0; i < m_Independent.size(); i++)
-  {
-    x1 = GetTimeValue(i,unit); // get the points needed for interpolation.
-    x2 = GetTimeValue(i + 1, unit);
-    y1 = m_Dependent[i];
-    y2 = m_Dependent[i + 1];
+  unsigned int x1Index = 0;
 
-    while (newTime[newTimeIterator] >= x1 && newTime[newTimeIterator] < x2)
+  for (unsigned int newTimeIterator = 0; newTimeIterator < newTime.size(); newTimeIterator++)
+  {
+    xPrime = newTime[newTimeIterator]; // new time point
+    
+    //find x1
+    while (x1Index < m_Independent.size() - 2 &&
+      GetTimeValue(x1Index + 1, unit) <= xPrime)
     {
-      xPrime = newTime[newTimeIterator]; // new time point
-      yPrime = GeneralMath::LinearInterpolator(x1, x2, y1, y2, xPrime); // call general math function LinearInterpolator to find yPrime at xPrime, xPrime must be between x1 and x2
-      fEleP.push_back(yPrime); // populate the voltage vector
-      newTimeIterator++;
-      if (newTimeIterator >= newTime.size())
-        break;
+      x1Index++;
     }
-    if (newTimeIterator >= newTime.size())
-      break;
+
+    // get the points needed for interpolation.
+    x1 = GetTimeValue(x1Index, unit);
+    x2 = GetTimeValue(x1Index + 1, unit);
+    y1 = m_Dependent[x1Index];
+    y2 = m_Dependent[x1Index + 1];
+
+    //Shouldn't need this, but just to be sure we don't go beyond the data
+    if (xPrime > x2)
+    {
+      xPrime = x2;
+    }
+
+    // call general math function LinearInterpolator to find yPrime at xPrime, xPrime must be between x1 and x2
+    yPrime = GeneralMath::LinearInterpolator(x1, x2, y1, y2, xPrime);
+    // populate the voltage vector
+    fEleP.push_back(yPrime);
   }
+
   newFunction->SetElectricPotentialUnit(*m_ElectricPotentialUnit); // 
 
   if (!newFunction->IsValid())

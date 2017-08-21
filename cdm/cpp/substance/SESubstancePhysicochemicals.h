@@ -1,21 +1,12 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(SubstancePhysicochemicalData)
-#include "bind/enumSubstanceIonicState.hxx"
-#include "bind/enumSubstanceBindingProtein.hxx"
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
-class DLL_DECL SESubstancePhysicochemicals : public Loggable
+class CDM_DECL SESubstancePhysicochemicals : public Loggable
 {
 public:
 
@@ -27,18 +18,19 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::SubstancePhysicochemicalData& in);
-  virtual CDM::SubstancePhysicochemicalData* Unload() const;
+  static void Load(const cdm::SubstanceData_PhysicochemicalData& src, SESubstancePhysicochemicals& dst);
+  static cdm::SubstanceData_PhysicochemicalData* Unload(const SESubstancePhysicochemicals& src);
 protected:
-  virtual void Unload(CDM::SubstancePhysicochemicalData& data) const;
+  static void Serialize(const cdm::SubstanceData_PhysicochemicalData& src, SESubstancePhysicochemicals& dst);
+  static void Serialize(const SESubstancePhysicochemicals& src, cdm::SubstanceData_PhysicochemicalData& dst);
 
 public:
   virtual bool HasAcidDissociationConstant() const;
   virtual SEScalar& GetAcidDissociationConstant();
   virtual double GetAcidDissociationConstant() const;
 
-  virtual CDM::enumSubstanceBindingProtein::value GetBindingProtein() const;
-  virtual void SetBindingProtein(CDM::enumSubstanceBindingProtein::value state);
+  virtual cdm::SubstanceData_eBindingProtein GetBindingProtein() const;
+  virtual void SetBindingProtein(cdm::SubstanceData_eBindingProtein state);
   virtual bool HasBindingProtein() const;
   virtual void InvalidateBindingProtein();
 
@@ -47,11 +39,11 @@ public:
   virtual double GetBloodPlasmaRatio() const;
 
   virtual bool HasFractionUnboundInPlasma() const;
-  virtual SEScalarFraction& GetFractionUnboundInPlasma();
+  virtual SEScalar0To1& GetFractionUnboundInPlasma();
   virtual double GetFractionUnboundInPlasma() const;
 
-  virtual CDM::enumSubstanceIonicState::value GetIonicState() const;
-  virtual void SetIonicState(CDM::enumSubstanceIonicState::value state);
+  virtual cdm::SubstanceData_eIonicState GetIonicState() const;
+  virtual void SetIonicState(cdm::SubstanceData_eIonicState state);
   virtual bool HasIonicState() const;
   virtual void InvalidateIonicState();
 
@@ -65,10 +57,10 @@ public:
 
 protected: 
   SEScalar*                                m_AcidDissociationConstant;
-  CDM::enumSubstanceBindingProtein::value m_BindingProtein;
+  cdm::SubstanceData_eBindingProtein       m_BindingProtein;
   SEScalar*                                m_BloodPlasmaRatio;
-  SEScalarFraction*                        m_FractionUnboundInPlasma;
-  CDM::enumSubstanceIonicState::value      m_IonicState;
+  SEScalar0To1*                            m_FractionUnboundInPlasma;
+  cdm::SubstanceData_eIonicState           m_IonicState;
   SEScalar*                                m_LogP;
   SEScalar*                                m_OralAbsorptionRateConstant;
 };

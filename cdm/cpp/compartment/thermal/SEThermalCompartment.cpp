@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "compartment/thermal/SEThermalCompartment.h"
@@ -44,62 +35,71 @@ void SEThermalCompartment::Clear()
   m_Nodes.Clear();
 }
 
-bool SEThermalCompartment::Load(const CDM::ThermalCompartmentData& in, SECircuitManager* circuits)
+void SEThermalCompartment::Load(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits)
 {
-  if (!SECompartment::Load(in, circuits))
-    return false;
-  // Not Loading In/Out HeatTransferRate, those are calculated on demand
-  if (!in.Child().empty())
-    return true;
-  else if (!in.Node().empty())
+  SEThermalCompartment::Serialize(src, dst, circuits);
+}
+void SEThermalCompartment::Serialize(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits)
+{
+  SECompartment::Serialize(src.compartment(), dst);
+  // This compartment has children
+  // We will not load any data as those are calculated on demand based on children
+  if (src.compartment().child_size()>0)
+    return;
+  // Now let's see if we are mapped to a circuit node
+  // If we are, the circuit node(s) hold the data, not us
+  else if (src.compartment().node_size()>0)
   {
     if (circuits == nullptr)
     {
-      Error("Compartment is mapped to circuit nodes, but no circuit manager was provided, cannot load");
-      return false;
+      dst.Error("Compartment is mapped to circuit nodes, but no circuit manager was provided, cannot load");
+      return;
     }
-    for (auto name : in.Node())
+    for (int i=0; i<src.compartment().node_size(); i++)
     {
+      const std::string name = src.compartment().node(i);
       SEThermalCircuitNode* node = circuits->GetThermalNode(name);
       if (node == nullptr)
-      {
-        Error("Compartment is mapped to circuit node, " + name + ", but provided circuit manager did not have that node");
-        return false;
-      }
-      MapNode(*node);
+        dst.Error("Compartment is mapped to circuit node, " + name + ", but provided circuit manager did not have that node");
+      else
+        dst.MapNode(*node);
     }
   }
   else
   {// Only load these if you don't have children or nodes
-    if (in.Heat().present())
-      GetHeat().Load(in.Heat().get());
-    if (in.Temperature().present())
-      GetTemperature().Load(in.Temperature().get());
+    if (src.has_heat())
+      SEScalarEnergy::Load(src.heat(),dst.GetHeat());
+    if (src.has_temperature())
+      SEScalarTemperature::Load(src.temperature(), dst.GetTemperature());
   }
-  return true;
 }
-CDM::ThermalCompartmentData* SEThermalCompartment::Unload()
+
+cdm::ThermalCompartmentData* SEThermalCompartment::Unload(const SEThermalCompartment& src)
 {
-  CDM::ThermalCompartmentData* data = new CDM::ThermalCompartmentData();
-  Unload(*data);
-  return data;
+  cdm::ThermalCompartmentData* dst = new cdm::ThermalCompartmentData();
+  SEThermalCompartment::Serialize(src,*dst);
+  return dst;
 }
-void SEThermalCompartment::Unload(CDM::ThermalCompartmentData& data)
+void SEThermalCompartment::Serialize(const SEThermalCompartment& src, cdm::ThermalCompartmentData& dst)
 {
-  SECompartment::Unload(data);
-  for (SEThermalCompartment* child : m_Children)
-    data.Child().push_back(child->GetName());
-  for (SEThermalCircuitNode* nodes : m_Nodes.GetNodes())
-    data.Node().push_back(nodes->GetName());
-  // Even if you have children or nodes, I am unloading everything, this makes the xml actually usefull...
-  if (HasHeatTransferRateIn())
-    data.HeatTransferRateIn(std::unique_ptr<CDM::ScalarPowerData>(GetHeatTransferRateIn().Unload()));
-  if (HasHeatTransferRateOut())
-    data.HeatTransferRateOut(std::unique_ptr<CDM::ScalarPowerData>(GetHeatTransferRateOut().Unload()));
-  if (HasHeat())
-    data.Heat(std::unique_ptr<CDM::ScalarEnergyData>(GetHeat().Unload()));
-  if (HasTemperature())
-    data.Temperature(std::unique_ptr<CDM::ScalarTemperatureData>(GetTemperature().Unload()));
+  SECompartment::Serialize(src,*dst.mutable_compartment());
+  for (SEThermalCompartment* child : src.m_Children)
+    dst.mutable_compartment()->add_child(child->GetName());
+  for (SEThermalCircuitNode* nodes : src.m_Nodes.GetNodes())
+    dst.mutable_compartment()->add_node(nodes->GetName());
+  // Even if you have children or nodes, I am unloading everything, this makes the pba actually usefull...
+  if (src.HasHeatTransferRateIn())
+    dst.set_allocated_heattransferratein(SEScalarPower::Unload(src.GetHeatTransferRateIn()));
+  if (src.HasHeatTransferRateOut())
+    dst.set_allocated_heattransferrateout(SEScalarPower::Unload(src.GetHeatTransferRateOut()));
+
+  // Yeah, I know
+  // But, these will only modify member variables if they are being used as temporary variables
+  SEThermalCompartment& mutable_src = const_cast<SEThermalCompartment&>(src);
+  if (src.HasHeat())
+    dst.set_allocated_heat(SEScalarEnergy::Unload(mutable_src.GetHeat()));
+  if (src.HasTemperature())
+    dst.set_allocated_temperature(SEScalarTemperature::Unload(mutable_src.GetTemperature()));
 }
 
 const SEScalar* SEThermalCompartment::GetScalar(const std::string& name)
@@ -264,7 +264,7 @@ bool SEThermalCompartment::HasHeatTransferRateIn() const
       return true;
   return false;
 }
-const SEScalarPower& SEThermalCompartment::GetHeatTransferRateIn()
+const SEScalarPower& SEThermalCompartment::GetHeatTransferRateIn() const
 {
   
   if (m_HeatTransferRateIn == nullptr)
@@ -293,7 +293,7 @@ bool SEThermalCompartment::HasHeatTransferRateOut() const
       return true;
   return false;
 }
-const SEScalarPower& SEThermalCompartment::GetHeatTransferRateOut()
+const SEScalarPower& SEThermalCompartment::GetHeatTransferRateOut() const
 {
   if (m_HeatTransferRateOut == nullptr)
     m_HeatTransferRateOut = new SEScalarPower();

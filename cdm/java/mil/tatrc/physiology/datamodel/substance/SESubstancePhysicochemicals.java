@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.substance;
 
@@ -17,19 +8,21 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstanceData.eBindingProtein;
+import com.kitware.physiology.cdm.Substance.SubstanceData.eIonicState;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 
 public class SESubstancePhysicochemicals
 {
-  protected SEScalar                     acidDissociationConstant;
-  protected EnumSubstanceBindingProtein  bindingProtien;
-  protected SEScalar                     bloodPlasmaRatio;
-  protected SEScalarFraction             fractionUnboundInPlasma;
-  protected EnumSubstanceIonicState      ionicState;
-  protected SEScalar                     logP;
-  protected SEScalar                     oralAbsorptionRateConstant;  
+  protected SEScalar         acidDissociationConstant;
+  protected eBindingProtein  bindingProtien;
+  protected SEScalar         bloodPlasmaRatio;
+  protected SEScalar0To1     fractionUnboundInPlasma;
+  protected eIonicState      ionicState;
+  protected SEScalar         logP;
+  protected SEScalar         oralAbsorptionRateConstant;  
     
   public SESubstancePhysicochemicals()
   {
@@ -64,53 +57,48 @@ public class SESubstancePhysicochemicals
     return true;
   }
   
-  public boolean load(SubstancePhysicochemicalData data)
+  public static void load(SubstanceData.PhysicochemicalData src, SESubstancePhysicochemicals dst)
   {
-    this.reset();
-  
-    if(data.getAcidDissociationConstant()!=null)
-      this.getAcidDissociationConstant().load(data.getAcidDissociationConstant());
-    if(data.getBindingProtein()!=null)
-      this.setBindingProtein(data.getBindingProtein());
-    if(data.getBloodPlasmaRatio()!=null)
-      this.getBloodPlasmaRatio().load(data.getBloodPlasmaRatio());
-    if(data.getFractionUnboundInPlasma()!=null)
-      this.getFractionUnboundInPlasma().load(data.getFractionUnboundInPlasma());
-    if(data.getIonicState()!=null)
-      this.setIonicState(data.getIonicState());
-    if(data.getLogP()!=null)
-      this.getLogP().load(data.getLogP());
-    if(data.getOralAbsorptionRateConstant()!=null)
-      this.getOralAbsorptionRateConstant().load(data.getOralAbsorptionRateConstant());
-      
-    return true;
+    dst.reset();
+    if(src.hasAcidDissociationConstant())
+      SEScalar.load(src.getAcidDissociationConstant(),dst.getAcidDissociationConstant());
+    if(src.getBindingProtein()!=eBindingProtein.NullBindingProtein)
+      dst.setBindingProtein(src.getBindingProtein());
+    if(src.hasBloodPlasmaRatio())
+      SEScalar.load(src.getBloodPlasmaRatio(),dst.getBloodPlasmaRatio());
+    if(src.hasFractionUnboundInPlasma())
+      SEScalar0To1.load(src.getFractionUnboundInPlasma(),dst.getFractionUnboundInPlasma());
+    if(src.getIonicState()!=eIonicState.NullIonicState)
+      dst.setIonicState(src.getIonicState());
+    if(src.hasLogP())
+      SEScalar.load(src.getLogP(),dst.getLogP());
+    if(src.hasOralAbsorptionRateConstant())
+      SEScalar.load(src.getOralAbsorptionRateConstant(),dst.getOralAbsorptionRateConstant());      
   }
-  
-  public SubstancePhysicochemicalData unload()
+  public static SubstanceData.PhysicochemicalData unload(SESubstancePhysicochemicals src)
   {
-    if(!isValid())
+    if(!src.isValid())
       return null;
-    SubstancePhysicochemicalData to = CDMSerializer.objFactory.createSubstancePhysicochemicalData();
-    unload(to);
-    return to;
+    SubstanceData.PhysicochemicalData.Builder dst = SubstanceData.PhysicochemicalData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(SubstancePhysicochemicalData to)
+  protected static void unload(SESubstancePhysicochemicals src, SubstanceData.PhysicochemicalData.Builder dst)
   {
-    if(hasAcidDissociationConstant())
-      to.setAcidDissociationConstant(this.acidDissociationConstant.unload());
-    if(hasBindingProtein())
-      to.setBindingProtein(this.bindingProtien);
-    if(hasBloodPlasmaRatio())
-      to.setBloodPlasmaRatio(this.bloodPlasmaRatio.unload());
-    if(hasFractionUnboundInPlasma())
-      to.setFractionUnboundInPlasma(this.fractionUnboundInPlasma.unload());
-    if(hasIonicState())
-      to.setIonicState(this.ionicState);
-    if(hasLogP())
-      to.setLogP(this.logP.unload());
-    if(hasOralAbsorptionRateConstant())
-      to.setOralAbsorptionRateConstant(this.oralAbsorptionRateConstant.unload());    
+    if(src.hasAcidDissociationConstant())
+      dst.setAcidDissociationConstant(SEScalar.unload(src.acidDissociationConstant));
+    if(src.hasBindingProtein())
+      dst.setBindingProtein(src.bindingProtien);
+    if(src.hasBloodPlasmaRatio())
+      dst.setBloodPlasmaRatio(SEScalar.unload(src.bloodPlasmaRatio));
+    if(src.hasFractionUnboundInPlasma())
+      dst.setFractionUnboundInPlasma(SEScalar0To1.unload(src.fractionUnboundInPlasma));
+    if(src.hasIonicState())
+      dst.setIonicState(src.ionicState);
+    if(src.hasLogP())
+      dst.setLogP(SEScalar.unload(src.logP));
+    if(src.hasOralAbsorptionRateConstant())
+      dst.setOralAbsorptionRateConstant(SEScalar.unload(src.oralAbsorptionRateConstant));    
   }
   
   public SEScalar getAcidDissociationConstant() 
@@ -121,9 +109,9 @@ public class SESubstancePhysicochemicals
   }
   public boolean hasAcidDissociationConstant() {return this.acidDissociationConstant==null?false:this.acidDissociationConstant.isValid();}
   
-  public EnumSubstanceBindingProtein  getBindingProtein() { return this.bindingProtien;}
-  public void                setBindingProtein(EnumSubstanceBindingProtein protein){this.bindingProtien=protein;}
-  public boolean             hasBindingProtein(){return this.bindingProtien==null?false:true;}
+  public eBindingProtein getBindingProtein() { return this.bindingProtien;}
+  public void            setBindingProtein(eBindingProtein protein){this.bindingProtien=protein;}
+  public boolean         hasBindingProtein(){return this.bindingProtien==null?false:bindingProtien!=eBindingProtein.NullBindingProtein;}
   
   public SEScalar getBloodPlasmaRatio() 
   { 
@@ -133,17 +121,17 @@ public class SESubstancePhysicochemicals
   }
   public boolean hasBloodPlasmaRatio() {return this.bloodPlasmaRatio==null?false:this.bloodPlasmaRatio.isValid();}
   
-  public SEScalarFraction getFractionUnboundInPlasma() 
+  public SEScalar0To1 getFractionUnboundInPlasma() 
   { 
     if(this.fractionUnboundInPlasma==null)
-      this.fractionUnboundInPlasma=new SEScalarFraction();
+      this.fractionUnboundInPlasma=new SEScalar0To1();
     return this.fractionUnboundInPlasma;
   }
   public boolean hasFractionUnboundInPlasma() {return this.fractionUnboundInPlasma==null?false:this.fractionUnboundInPlasma.isValid();}
   
-  public EnumSubstanceIonicState  getIonicState() { return this.ionicState;}
-  public void                setIonicState(EnumSubstanceIonicState state){this.ionicState=state;}
-  public boolean             hasIonicState(){return this.ionicState==null?false:true;}
+  public eIonicState  getIonicState() { return this.ionicState;}
+  public void         setIonicState(eIonicState state){this.ionicState=state;}
+  public boolean      hasIonicState(){return this.ionicState==null?false:ionicState!=eIonicState.NullIonicState;}
   
   public SEScalar getLogP() 
   { 

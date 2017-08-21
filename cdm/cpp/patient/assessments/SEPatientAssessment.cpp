@@ -1,18 +1,8 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/assessments/SEPatientAssessment.h"
-#include "bind/PatientAssessmentData.hxx"
 
 SEPatientAssessment::SEPatientAssessment(Logger* logger) : Loggable(logger)
 {
@@ -29,25 +19,12 @@ void SEPatientAssessment::Clear()
   
 }
 
-void SEPatientAssessment::Reset()
+void SEPatientAssessment::Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst)
+{
+  dst.Clear();
+}
+
+void SEPatientAssessment::Serialize(const SEPatientAssessment& src, cdm::PatientAssessmentData& dst)
 {
 
 }
-
-bool SEPatientAssessment::Load(const CDM::PatientAssessmentData& in)
-{
-  return true;
-}
-
-CDM::PatientAssessmentData* SEPatientAssessment::Unload()
-{
-  CDM::PatientAssessmentData* data = new CDM::PatientAssessmentData();
-  Unload(*data);
-  return data;
-}
-
-void SEPatientAssessment::Unload(CDM::PatientAssessmentData& data)
-{
-
-}
-

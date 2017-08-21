@@ -1,0 +1,46 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+
+/** @brief Basic Substance Quantity */
+message SubstanceQuantityData
+{
+  string                    Substance                    = 1;/**<< @brief The name of the substance */
+}
+
+/** @brief The quantity of a gas substance in a gas compartment */
+message GasSubstanceQuantityData
+{
+  SubstanceQuantityData     SubstanceQuantity            = 1;/**<< @brief Base Substance */
+  ScalarPressureData        PartialPressure              = 2;/**<< @brief The partial pressure of a substance in the specified compartment.*/
+  ScalarVolumeData          Volume                       = 3;/**<< @brief The total volume of a substance in the specified compartment. */
+  Scalar0To1Data            VolumeFraction               = 4;/**<< @brief The amount of a substcane in the specified comparment as a fraction of all substance volume*/
+}
+
+/** @brief The quantity of a solid,liquid, or gas substance in a liquid compartment */
+message LiquidSubstanceQuantityData
+{
+  SubstanceQuantityData     SubstanceQuantity            = 1;/**<< @brief Base Substance */
+  ScalarMassPerVolumeData   Concentration                = 2;/**<< @brief The concentration of a substance in the specified compartment. */
+  ScalarMassData            Mass                         = 3;/**<< @brief The total mass of a substance in the specified compartment. */
+  ScalarMassData            MassCleared                  = 4;/**<< @brief The total mass of a substance cleared in the specified compartment. */
+  ScalarMassData            MassDeposited                = 5;/**<< @brief The total mass of a substance deposited on the wall of the compartment. */
+  ScalarMassData            MassExcreted                 = 6;/**<< @brief The total mass of a substance excreted in the specified compartment. */
+  ScalarAmountPerVolumeData Molarity                     = 7;/**<< @brief The molarity of a substance in the specified compartment.*/
+  ScalarPressureData        PartialPressure              = 8;/**<< @brief The partial pressure of a substance in the specified compartment.*/
+  Scalar0To1Data            Saturation                   = 9;/**<< @brief The saturation of a substance in the specified compartment. (if applicable, like O2 and CO2) */
+}
+
+/** @brief The quantity of a solid,liquid, or gas substance in a tissue compartment */
+message TissueSubstanceQuantityData
+{
+  SubstanceQuantityData     SubstanceQuantity            = 1;/**<< @brief Base Substance */
+  ScalarMassPerVolumeData   TissueConcentration          = 2;/**<< @brief The total concentration of a substance in the specified tissue compartment. */
+  ScalarAmountPerVolumeData TissueMolarity               = 3;/**<< @brief The total molarity of a substance in the specified tissue compartment. */
+  ScalarMassPerVolumeData   ExtravascularConcentration   = 4;/**<< @brief The concentration of a substance in the specified extravascular compartment space. */
+  ScalarAmountPerVolumeData ExtravascularMolarity        = 5;/**<< @brief The molarity of a substance in the specified extravascular compartment space. */
+  ScalarPressureData        ExtravascularPartialPressure = 6;/**<< @brief The partial pressure of a substance in the specified extravascular compartment space. */
+  Scalar0To1Data            ExtravascularSaturation      = 7;/**<< @brief The saturation of a substance in the specified extravascular compartment space.  (if applicable, like O2 and CO2)*/
+}

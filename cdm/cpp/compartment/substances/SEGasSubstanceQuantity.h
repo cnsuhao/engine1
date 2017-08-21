@@ -1,22 +1,12 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
-#include "bind/GasSubstanceQuantityData.hxx"
 class SEGasCompartment;
 
-class DLL_DECL SEGasSubstanceQuantity : public SESubstanceQuantity, public SEGasTransportSubstance
+class CDM_DECL SEGasSubstanceQuantity : public SESubstanceQuantity, public SEGasTransportSubstance
 {
   friend class SEGasCompartment;
 protected:
@@ -27,10 +17,11 @@ public:
   virtual void Clear();
   virtual void Invalidate();
 
-  virtual bool Load(const CDM::GasSubstanceQuantityData& in);
-  virtual CDM::GasSubstanceQuantityData* Unload();
+  static void Load(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
+  static cdm::GasSubstanceQuantityData* Unload(const SEGasSubstanceQuantity& src);
 protected:
-  virtual void Unload(CDM::GasSubstanceQuantityData& data);
+  static void Serialize(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
+  static void Serialize(const SEGasSubstanceQuantity& src, cdm::GasSubstanceQuantityData& dst);
 
 public:
   virtual void SetToZero();
@@ -45,7 +36,7 @@ public:
   virtual double GetVolume(const VolumeUnit& unit) const;
 
   virtual bool HasVolumeFraction() const;
-  virtual SEScalarFraction& GetVolumeFraction();
+  virtual SEScalar0To1& GetVolumeFraction();
   virtual double GetVolumeFraction() const;
 
 protected:
@@ -55,11 +46,11 @@ protected:
   virtual SEScalarVolume& GetExtensive() { return GetVolume(); }
 
   virtual bool HasIntensive() const { return HasVolumeFraction(); }
-  virtual SEScalarFraction& GetIntensive() { return GetVolumeFraction(); }
+  virtual SEScalar0To1& GetIntensive() { return GetVolumeFraction(); }
 
   SEScalarPressure* m_PartialPressure;
   SEScalarVolume*   m_Volume;
-  SEScalarFraction* m_VolumeFraction;
+  SEScalar0To1* m_VolumeFraction;
 
   SEGasCompartment&        m_Compartment;
   std::vector<SEGasSubstanceQuantity*> m_Children;

@@ -1,0 +1,42 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Environment.proto";
+import "cdm/Actions.proto";
+
+message AnyEnvironmentActionData
+{
+  oneof Action
+  {
+    ChangeEnvironmentConditionsData      Conditions         = 1;
+    ThermalApplicationData               ThermalApplication = 2;
+  }
+}
+
+message EnvironmentActionData
+{
+  ActionData                             Action                  = 1;
+}
+
+/** @brief The environment conditions to change. */
+message ChangeEnvironmentConditionsData
+{
+  EnvironmentActionData                  EnvironmentAction        = 1;
+  oneof Option
+  {
+    EnvironmentData.ConditionsData       Conditions               = 2;/**<< @brief An environment conditions object with properties to set in the system environmental conditions. */
+    string                               ConditionsFile           = 3;/**<< @brief File containing an environment conditions objet with properties to set in the environmental conditions. */
+  }
+}
+
+/** @brief Create an external heat source. */
+message ThermalApplicationData
+{
+  EnvironmentActionData                  EnvironmentAction        = 1;
+  EnvironmentData.ActiveConditioningData ActiveHeating            = 2; /**<< @brief @copybrief Environment_ActiveHeatingData */
+  EnvironmentData.ActiveConditioningData ActiveCooling            = 3; /**<< @brief @copybrief Environment_ActiveCoolingData */
+  EnvironmentData.AppliedTemperatureData AppliedTemperature       = 4; /**<< @brief @copybrief Environment_AppliedTemperatureData */
+  bool                                   AppendToPrevious         = 5; /**<< @brief Appends data provided to the engine without removing currect applications. @details For example if a previous aciton turned on heating, and you wanted to add cooling, set append to true, if you want tto cool and also have the heating off, set to false */
+
+}

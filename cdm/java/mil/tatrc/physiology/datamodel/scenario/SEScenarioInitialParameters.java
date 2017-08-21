@@ -1,38 +1,26 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.scenario;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
-import mil.tatrc.physiology.datamodel.engine.PhysiologyEngineConfiguration;
+import com.kitware.physiology.cdm.Scenario.AnyConditionData;
+import com.kitware.physiology.cdm.Scenario.ScenarioData;
+
+import mil.tatrc.physiology.datamodel.conditions.SECondition;
 import mil.tatrc.physiology.datamodel.patient.SEPatient;
-import mil.tatrc.physiology.datamodel.scenario.conditions.SECondition;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
-import mil.tatrc.physiology.utilities.Log;
 
 public class SEScenarioInitialParameters 
 {
-  protected PhysiologyEngineConfiguration config;
   protected SEPatient                     patient;
   protected String                        patientFile;
   protected List<SECondition>             conditions;
   
   public SEScenarioInitialParameters()
   {
-    this.config = null;
     this.patient = null;
     this.patientFile = "";
     this.conditions = new ArrayList<SECondition>();
@@ -40,68 +28,46 @@ public class SEScenarioInitialParameters
   
   public void reset() 
   {
-    config=null;
     patient=null;
     patientFile = "";
     conditions.clear();
   }
   
-  public boolean load(ScenarioInitialParametersData in, SESubstanceManager substances)
+  public static void load(ScenarioData.InitialParametersData src, SEScenarioInitialParameters dst, SESubstanceManager subMgr)
   {
-    reset();
+    dst.reset();
     
-    if(in.getConfiguration()!=null)
-      getConfiguration().load(in.getConfiguration());
-    if(in.getPatient()!=null)
-      this.getPatient().load(in.getPatient());
-    if(in.getPatientFile()!=null)
-      this.patientFile = in.getPatientFile();    
-    
-    // Conditions
-    try
+    switch(src.getPatientTypeCase())
     {
-      for (ConditionData conditionData : in.getCondition())
-      {   
-        SECondition c = SECondition.bind2CDM(conditionData, substances);
-        if(c==null)
-        {
-          Log.error("Unable to load action "+conditionData.getClass().getName());
-          return false;
-        }
-        else
-          this.conditions.add(c);
-      }
+    case PATIENT:
+    {
+      SEPatient p = new SEPatient();
+      SEPatient.load(src.getPatient(),p);
+      dst.setPatient(p);
+      break;
     }
-    catch (Exception e)
-    {
-      Log.fatal("Unsupported Action type found in scenario file", e);
+    case PATIENTFILE:
+      dst.setPatientFile(src.getPatientFile());
     }
     
-    return isValid();
+    for(AnyConditionData cData : src.getAnyConditionList())
+      dst.conditions.add(SECondition.ANY2CDM(cData, subMgr));
   }
   
-  public ScenarioInitialParametersData unload()
+  public static ScenarioData.InitialParametersData unload(SEScenarioInitialParameters src)
   {
-    ScenarioInitialParametersData data = CDMSerializer.objFactory.createScenarioInitialParametersData();
-    unload(data);
-    return data;
+    ScenarioData.InitialParametersData.Builder dst = ScenarioData.InitialParametersData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(ScenarioInitialParametersData data)
+  protected static void unload(SEScenarioInitialParameters src, ScenarioData.InitialParametersData.Builder dst)
   {
-    if(!isValid())
-    {
-      Log.error("Scenario Invalid, cannot unload to a valid jaxb object");
-      return;
-    }
-    if(hasConfiguration())
-      data.setConfiguration(config.unload());
-    if(hasPatient())
-      data.setPatient(this.patient.unload());
-    if(hasPatientFile())
-      data.setPatientFile(this.patientFile);
-    for(SECondition c : this.conditions)
-      data.getCondition().add(c.unload());    
+    if(src.hasPatient())
+      dst.setPatient(SEPatient.unload(src.patient));
+    if(src.hasPatientFile())
+      dst.setPatientFile(src.patientFile);
+    for(SECondition c : src.conditions)
+      dst.addAnyCondition(SECondition.CDM2ANY(c));    
   }
   
   public boolean isValid()
@@ -109,17 +75,6 @@ public class SEScenarioInitialParameters
     if (!hasPatientFile()&&!hasPatient())
       return false;
    return true;
-  }
-
-  public boolean hasConfiguration()
-  {
-    return config!=null;
-  }
-  public PhysiologyEngineConfiguration getConfiguration()
-  {
-    if(this.config==null)
-      this.config=new PhysiologyEngineConfiguration();
-    return this.config;
   }
   
   public SEPatient getPatient()

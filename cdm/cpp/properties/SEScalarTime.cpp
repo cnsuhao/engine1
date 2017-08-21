@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarTime.h"
@@ -21,16 +12,6 @@ const TimeUnit TimeUnit::hr("hr");
 const TimeUnit TimeUnit::day("day");
 const TimeUnit TimeUnit::yr("yr");
 #pragma pop_macro("Time")
-
-
-CDM::ScalarTimeData* SEScalarTime::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::ScalarTimeData* data(new CDM::ScalarTimeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool TimeUnit::IsValidUnit(const std::string& unit)
 {
@@ -62,4 +43,26 @@ const TimeUnit& TimeUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Amount unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarTime::Load(const cdm::ScalarTimeData& src, SEScalarTime& dst)
+{
+  SEScalarTime::Serialize(src, dst);
+}
+void SEScalarTime::Serialize(const cdm::ScalarTimeData& src, SEScalarTime& dst)
+{
+  SEScalarQuantity<TimeUnit>::Serialize(src.scalartime(), dst);
+}
+
+cdm::ScalarTimeData* SEScalarTime::Unload(const SEScalarTime& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarTimeData* dst = new cdm::ScalarTimeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarTime::Serialize(const SEScalarTime& src, cdm::ScalarTimeData& dst)
+{
+  SEScalarQuantity<TimeUnit>::Serialize(src, *dst.mutable_scalartime());
 }

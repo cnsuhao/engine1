@@ -1,19 +1,8 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "SEConsumeMeal.h"
-#include "bind/ConsumeMealData.hxx"
-#include "bind/MealData.hxx"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolume.h"
@@ -41,30 +30,32 @@ bool SEConsumeMeal::IsValid() const
   return SEPatientCondition::IsValid() && (HasMeal() || HasMealFile());
 }
 
-bool SEConsumeMeal::Load(const CDM::ConsumeMealData& in)
+void SEConsumeMeal::Load(const cdm::ConsumeMealData& src, SEConsumeMeal& dst)
 {
-  SEPatientCondition::Load(in);
-  if (in.Meal().present())
-    GetMeal().Load(in.Meal().get());
-  else if (in.MealFile().present())
-    SetMealFile(in.MealFile().get());
-  return true;
+  SEConsumeMeal::Serialize(src, dst);
+}
+void SEConsumeMeal::Serialize(const cdm::ConsumeMealData& src, SEConsumeMeal& dst)
+{
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
+  if (src.has_meal())
+    SEMeal::Load(src.meal(), dst.GetMeal());
+  else
+    dst.SetMealFile(src.mealfile());
 }
 
-CDM::ConsumeMealData* SEConsumeMeal::Unload() const
+cdm::ConsumeMealData* SEConsumeMeal::Unload(const SEConsumeMeal& src)
 {
-  CDM::ConsumeMealData*data(new CDM::ConsumeMealData());
-  Unload(*data);
-  return data;
+  cdm::ConsumeMealData* dst = new cdm::ConsumeMealData();
+  SEConsumeMeal::Serialize(src, *dst);
+  return dst;
 }
-
-void SEConsumeMeal::Unload(CDM::ConsumeMealData& data) const
+void SEConsumeMeal::Serialize(const SEConsumeMeal& src, cdm::ConsumeMealData& dst)
 {
-  SEPatientCondition::Unload(data);
-  if (HasMeal())
-    data.Meal(std::unique_ptr<CDM::MealData>(m_Meal->Unload()));
-  if (HasMealFile())
-    data.MealFile(m_MealFile);
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
+  if (src.HasMeal())
+    dst.set_allocated_meal(SEMeal::Unload(*src.m_Meal));
+  else if (src.HasMealFile())
+    dst.set_mealfile(src.m_MealFile);
 }
 
 bool SEConsumeMeal::HasMeal() const

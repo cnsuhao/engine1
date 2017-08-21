@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalar0To1.h"
@@ -16,15 +7,6 @@ specific language governing permissions and limitations under the License.
 SEScalar0To1::SEScalar0To1() : SEScalar()
 {
 
-}
-
-CDM::Scalar0To1Data* SEScalar0To1::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::Scalar0To1Data* data(new CDM::Scalar0To1Data());
-  SEScalar::Unload(*data);
-  return data;
 }
 
 void SEScalar0To1::SetValue(double d)
@@ -37,4 +19,36 @@ void SEScalar0To1::SetValue(double d)
 void SEScalar0To1::SetValue(double d, const NoUnit& unitless)
 { 
   SEScalar0To1::SetValue(d);
+}
+
+void SEScalar0To1::ForceValue(double d)
+{
+  SEScalar::SetValue(d);
+}
+
+void SEScalar0To1::ForceValue(double d, const NoUnit& unitless)
+{
+  SEScalar::SetValue(d);
+}
+
+void SEScalar0To1::Load(const cdm::Scalar0To1Data& src, SEScalar0To1& dst)
+{
+  SEScalar0To1::Serialize(src, dst);
+}
+void SEScalar0To1::Serialize(const cdm::Scalar0To1Data& src, SEScalar0To1& dst)
+{
+  SEScalar::Serialize(src.scalar0to1(), dst);
+}
+
+cdm::Scalar0To1Data* SEScalar0To1::Unload(const SEScalar0To1& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::Scalar0To1Data* dst = new cdm::Scalar0To1Data();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalar0To1::Serialize(const SEScalar0To1& src, cdm::Scalar0To1Data& dst)
+{
+  SEScalar::Serialize(src, *dst.mutable_scalar0to1());
 }

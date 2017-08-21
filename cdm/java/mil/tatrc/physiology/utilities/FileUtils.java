@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.utilities;
 
@@ -48,22 +39,17 @@ public class FileUtils
       FileUtils.zipFiles(new String[]{file}, file.replaceAll(".txt", ".zip"));    
   }
   
-  public static boolean loadLibraries(List<String>  libs)
+  public static boolean loadLibraries(List<String> libs, String location)
   {
     boolean b = true;
     for(String lib : libs)
-      b &= loadLibrary(lib);
+      b &= loadLibrary(lib,location);
     return b;
   }
-  public static boolean loadLibrary(String lib)
-  {    
-    String location = System.getProperty("user.dir")+"/release";//"relwithdebinfo"
-    if (System.getProperty("sun.arch.data.model").equals("32"))
-      location += "32";
-
-    return loadLibrary(lib,location);
+  public static boolean loadLibraries(List<String> libs)
+  {
+    return loadLibraries(libs,System.getProperty("user.dir"));
   }
-
   public static boolean loadLibrary(String libName, String location)
   {
     Log.info("Loading native library : "+location+"/"+libName);
@@ -193,20 +179,24 @@ public class FileUtils
     }
   }
   
+  public static String readFile(String fileName)
+  {
+    File f = new File(fileName);
+    return readFile(f);
+  }
+  
   /**
    * Reads from a file into a String.
    *
-   * @param fileName File name to read from (if filename does not end in XML,
-   *        will add XML extension)
+   * @param fileName File name to read from
    *
    * @return String containing file contents, or null if there was an error
    */
-  public static String readFile(String fileName)
+  public static String readFile(File f)
   {
     FileReader reader = null;
     try
     {
-      File f = new File(fileName);
       reader = new FileReader(f);
       char[] buffer = new char[(int) f.length()];
       reader.read(buffer);
@@ -214,7 +204,7 @@ public class FileUtils
     }
     catch (Exception e)
     {
-      Log.error("Could not read XML file " + fileName,e);
+      Log.error("Could not read file " + f.getAbsolutePath(),e);
       return null;
     }
     finally
@@ -985,7 +975,7 @@ public class FileUtils
 
   /**
    * 
-   * @param filename of the zip (including ext.)
+   * @param resultsFilename of the zip (including ext.)
    * @return integer, total unpacked size of all the files that are in the zipfile 
    */
   public static int getUnzippedFileSize(String fileName)

@@ -1,20 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/conditions/SELobarPneumonia.h"
-#include "bind/LobarPneumoniaData.hxx"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SELobarPneumonia::SELobarPneumonia() : SEPatientCondition()
 {
@@ -41,31 +30,36 @@ bool SELobarPneumonia::IsValid() const
   return SEPatientCondition::IsValid() && HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
 }
 
-bool SELobarPneumonia::Load(const CDM::LobarPneumoniaData& in)
+void SELobarPneumonia::Load(const cdm::LobarPneumoniaData& src, SELobarPneumonia& dst)
 {
-  SEPatientCondition::Load(in);
-  GetSeverity().Load(in.Severity());
-  GetLeftLungAffected().Load(in.LeftLungAffected());
-  GetRightLungAffected().Load(in.RightLungAffected());
-  return true;
+  SELobarPneumonia::Serialize(src, dst);
+}
+void SELobarPneumonia::Serialize(const cdm::LobarPneumoniaData& src, SELobarPneumonia& dst)
+{
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
+  if (src.has_leftlungaffected())
+    SEScalar0To1::Load(src.leftlungaffected(), dst.GetLeftLungAffected());
+  if (src.has_rightlungaffected())
+    SEScalar0To1::Load(src.rightlungaffected(), dst.GetRightLungAffected());
 }
 
-CDM::LobarPneumoniaData* SELobarPneumonia::Unload() const
+cdm::LobarPneumoniaData* SELobarPneumonia::Unload(const SELobarPneumonia& src)
 {
-  CDM::LobarPneumoniaData*data(new CDM::LobarPneumoniaData());
-  Unload(*data);
-  return data;
+  cdm::LobarPneumoniaData* dst = new cdm::LobarPneumoniaData();
+  SELobarPneumonia::Serialize(src, *dst);
+  return dst;
 }
-
-void SELobarPneumonia::Unload(CDM::LobarPneumoniaData& data) const
+void SELobarPneumonia::Serialize(const SELobarPneumonia& src, cdm::LobarPneumoniaData& dst)
 {
-  SEPatientCondition::Unload(data);
-  if(m_Severity!=nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload())); 
-  if (m_LeftLungAffected != nullptr)
-    data.LeftLungAffected(std::unique_ptr<CDM::Scalar0To1Data>(m_LeftLungAffected->Unload()));
-  if (m_RightLungAffected != nullptr)
-    data.RightLungAffected(std::unique_ptr<CDM::Scalar0To1Data>(m_RightLungAffected->Unload()));
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+  if (src.HasRightLungAffected())
+    dst.set_allocated_rightlungaffected(SEScalar0To1::Unload(*src.m_RightLungAffected));
+  if (src.HasLeftLungAffected())
+    dst.set_allocated_leftlungaffected(SEScalar0To1::Unload(*src.m_LeftLungAffected));
 }
 
 bool SELobarPneumonia::HasSeverity() const

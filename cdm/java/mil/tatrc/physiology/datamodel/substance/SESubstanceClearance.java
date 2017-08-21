@@ -1,34 +1,23 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.substance;
+import com.kitware.physiology.cdm.Properties.eCharge;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstanceData.RenalClearanceData.DynamicsCase;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
-import mil.tatrc.physiology.datamodel.bind.SubstanceClearanceData.RenalDynamics;
-import mil.tatrc.physiology.datamodel.bind.SubstanceClearanceData.RenalDynamics.Regulation;
-import mil.tatrc.physiology.datamodel.bind.SubstanceClearanceData.Systemic;
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.utilities.Log;
 
 public class SESubstanceClearance
 {
-  protected SEScalarFraction             fractionExcretedInFeces;
-  protected SEScalarFraction             fractionExcretedInUrine;
-  protected SEScalarFraction             fractionMetabolizedInGut;
-  protected SEScalarFraction             fractionUnboundInPlasma;
+  protected SEScalar0To1                 fractionExcretedInFeces;
+  protected SEScalar0To1                 fractionExcretedInUrine;
+  protected SEScalar0To1                 fractionMetabolizedInGut;
+  protected SEScalar0To1                 fractionUnboundInPlasma;
   protected SEScalarVolumePerTimeMass    intrinsicClearance;
   protected SEScalarVolumePerTimeMass    renalClearance;
-  protected EnumCharge                   chargeInBlood;
+  protected eCharge                      chargeInBlood;
   protected SEScalar                     renalReabsorptionRatio;
   protected SEScalarMassPerTime          renalTransportMaximum;
   protected SEScalarMassPerTime          renalFiltrationRate;
@@ -98,168 +87,161 @@ public class SESubstanceClearance
     return true;
   }
   
-  public boolean load(SubstanceClearanceData data)
+  public static void load(SubstanceData.ClearanceData src, SESubstanceClearance dst)
   {
-    this.reset();
+    dst.reset();
     
-    double rc = Double.NaN;
+    double sys_rc = Double.NaN;
     double fuip = Double.NaN;
     
-    if(data.getSystemic()!=null)
+    if(src.hasSystemicClearance())
     {
-      Systemic sys = data.getSystemic();
-      if(sys.getFractionExcretedInFeces()!=null)
-        this.getFractionExcretedInFeces().load(sys.getFractionExcretedInFeces());
-      if(sys.getFractionExcretedInUrine()!=null)
-        this.getFractionExcretedInUrine().load(sys.getFractionExcretedInUrine());
-      if(sys.getFractionMetabolizedInGut()!=null)
-        this.getFractionMetabolizedInGut().load(sys.getFractionMetabolizedInGut());
-      if(sys.getFractionUnboundInPlasma()!=null)
+      SubstanceData.SystemicClearanceData sys = src.getSystemicClearance();
+      if(sys.hasFractionExcretedInFeces())
+        SEScalar0To1.load(sys.getFractionExcretedInFeces(),dst.getFractionExcretedInFeces());
+      if(sys.hasFractionExcretedInUrine())
+        SEScalar0To1.load(sys.getFractionExcretedInUrine(),dst.getFractionExcretedInUrine());
+      if(sys.hasFractionMetabolizedInGut())
+        SEScalar0To1.load(sys.getFractionMetabolizedInGut(),dst.getFractionMetabolizedInGut());
+      if(sys.hasFractionUnboundInPlasma())
       {
-        fuip = sys.getFractionUnboundInPlasma().getValue();
-        this.getFractionUnboundInPlasma().load(sys.getFractionUnboundInPlasma());
+        fuip = sys.getFractionUnboundInPlasma().getScalar0To1().getValue();
+        SEScalar0To1.load(sys.getFractionUnboundInPlasma(),dst.getFractionUnboundInPlasma());
       }
-      if(sys.getIntrinsicClearance()!=null)
-        this.getIntrinsicClearance().load(sys.getIntrinsicClearance());
-      if(sys.getRenalClearance()!=null)
+      if(sys.hasIntrinsicClearance())
+        SEScalarVolumePerTimeMass.load(sys.getIntrinsicClearance(),dst.getIntrinsicClearance());
+      if(sys.hasRenalClearance())
       {
-        rc = sys.getRenalClearance().getValue();
-        this.getRenalClearance().load(sys.getRenalClearance());
+        sys_rc = sys.getRenalClearance().getScalarVolumePerTimeMass().getValue();
+        SEScalarVolumePerTimeMass.load(sys.getRenalClearance(),dst.getRenalClearance());
       }
-      if(sys.getSystemicClearance()!=null)
-        this.getSystemicClearance().load(sys.getSystemicClearance());
+      if(sys.hasSystemicClearance())
+        SEScalarVolumePerTimeMass.load(sys.getSystemicClearance(),dst.getSystemicClearance());
     }
-    if(data.getRenalDynamics()!=null)
+    if(src.hasRenalClearance())
     {
-      SubstanceClearanceData.RenalDynamics rd = data.getRenalDynamics();
-      if(rd.getClearance()!=null)
+      SubstanceData.RenalClearanceData rc = src.getRenalClearance();
+      if(rc.getDynamicsCase() == DynamicsCase.CLEARANCE)
       {
-        if(!Double.isNaN(rc) && rd.getClearance().getValue()!=rc)
+        if(!Double.isNaN(sys_rc) && rc.getClearance().getScalarVolumePerTimeMass().getValue()!=sys_rc)
           Log.error("Different RenalClearance values between Systemic and RenalDynamic, using RenalDynamic");
-        this.getRenalClearance().load(rd.getClearance());
+        SEScalarVolumePerTimeMass.load(rc.getClearance(),dst.getRenalClearance());
       }
-      if(rd.getRegulation()!=null)
+      else if(rc.getDynamicsCase() == DynamicsCase.REGULATION)
       {
-        SubstanceClearanceData.RenalDynamics.Regulation rdr = rd.getRegulation();
-        this.chargeInBlood = rdr.getChargeInBlood();
-        if(rdr.getReabsorptionRatio()!=null)
-          this.getRenalReabsorptionRatio().load(rdr.getReabsorptionRatio());
-        if(rdr.getTransportMaximum()!=null)
-          this.getRenalTransportMaximum().load(rdr.getTransportMaximum());
-        if(rdr.getFractionUnboundInPlasma()!=null)
+        SubstanceData.RenalRegulationData rr = rc.getRegulation();
+        dst.chargeInBlood = rr.getChargeInBlood();
+        if(rr.hasReabsorptionRatio())
+          SEScalar.load(rr.getReabsorptionRatio(),dst.getRenalReabsorptionRatio());
+        if(rr.hasTransportMaximum())
+          SEScalarMassPerTime.load(rr.getTransportMaximum(),dst.getRenalTransportMaximum());
+        if(rr.hasFractionUnboundInPlasma())
         {
-          if(!Double.isNaN(fuip) && rdr.getFractionUnboundInPlasma().getValue()!=fuip)
+          if(!Double.isNaN(fuip) && rr.getFractionUnboundInPlasma().getScalar0To1().getValue()!=fuip)
             Log.error("Different FractionUnboundInPlasma values between Systemic and RenalDynamic, using RenalDynamic");
-          
-          this.getFractionUnboundInPlasma().load(rdr.getFractionUnboundInPlasma());
+          SEScalar0To1.load(rr.getFractionUnboundInPlasma(),dst.getFractionUnboundInPlasma());
         }
       }
-      if(rd.getFiltrationRate()!=null)
-        this.getRenalFiltrationRate().load(rd.getFiltrationRate());
-      if(rd.getReabsorptionRate()!=null)
-        this.getRenalReabsorptionRate().load(rd.getReabsorptionRate());
-      if(rd.getExcretionRate()!=null)
-        this.getRenalExcretionRate().load(rd.getExcretionRate());
-      if(rd.getGlomerularFilterability()!=null)
-        this.getGlomerularFilterability().load(rd.getGlomerularFilterability());           
+      if(rc.hasFiltrationRate())
+        SEScalarMassPerTime.load(rc.getFiltrationRate(),dst.getRenalFiltrationRate());
+      if(rc.hasReabsorptionRate())
+        SEScalarMassPerTime.load(rc.getReabsorptionRate(),dst.getRenalReabsorptionRate());
+      if(rc.hasExcretionRate())
+        SEScalarMassPerTime.load(rc.getExcretionRate(),dst.getRenalExcretionRate());
+      if(rc.hasGlomerularFilterability())
+        SEScalar.load(rc.getGlomerularFilterability(),dst.getGlomerularFilterability());           
     }
-    
-
-    return true;
-  }
-  
-  public SubstanceClearanceData unload()
+  }  
+  public static SubstanceData.ClearanceData unload(SESubstanceClearance src)
   {
-    if(!isValid())
+    if(!src.isValid())
       return null;
-    SubstanceClearanceData to = CDMSerializer.objFactory.createSubstanceClearanceData();
-    unload(to);
-    return to;
+    SubstanceData.ClearanceData.Builder dst = SubstanceData.ClearanceData.newBuilder();
+    SESubstanceClearance.unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(SubstanceClearanceData to)
+  protected static void unload(SESubstanceClearance src, SubstanceData.ClearanceData.Builder dst)
   {    
-    if(hasSystemic())
+    if(src.hasSystemic())
     {
-      Systemic sys = CDMSerializer.objFactory.createSubstanceClearanceDataSystemic();
-      to.setSystemic(sys);
-      if(hasFractionExcretedInFeces())
-        sys.setFractionExcretedInFeces(this.fractionExcretedInFeces.unload());
-      if(hasFractionExcretedInUrine())
-        sys.setFractionExcretedInUrine(this.fractionExcretedInUrine.unload());
-      if(hasFractionMetabolizedInGut())
-        sys.setFractionMetabolizedInGut(this.fractionMetabolizedInGut.unload());
-      if(hasFractionUnboundInPlasma())
-        sys.setFractionUnboundInPlasma(this.fractionUnboundInPlasma.unload());
-      if(hasIntrinsicClearance())
-        sys.setIntrinsicClearance(this.intrinsicClearance.unload());
-      if(hasRenalClearance())
-        sys.setRenalClearance(this.renalClearance.unload());
-      if(hasSystemicClearance())
-        sys.setSystemicClearance(this.systemicClearance.unload());
+      SubstanceData.SystemicClearanceData.Builder sys = dst.getSystemicClearanceBuilder();
+      if(src.hasFractionExcretedInFeces())
+        sys.setFractionExcretedInFeces(SEScalar0To1.unload(src.fractionExcretedInFeces));
+      if(src.hasFractionExcretedInUrine())
+        sys.setFractionExcretedInUrine(SEScalar0To1.unload(src.fractionExcretedInUrine));
+      if(src.hasFractionMetabolizedInGut())
+        sys.setFractionMetabolizedInGut(SEScalar0To1.unload(src.fractionMetabolizedInGut));
+      if(src.hasFractionUnboundInPlasma())
+        sys.setFractionUnboundInPlasma(SEScalar0To1.unload(src.fractionUnboundInPlasma));
+      if(src.hasIntrinsicClearance())
+        sys.setIntrinsicClearance(SEScalarVolumePerTimeMass.unload(src.intrinsicClearance));
+      if(src.hasRenalClearance())
+        sys.setRenalClearance(SEScalarVolumePerTimeMass.unload(src.renalClearance));
+      if(src.hasSystemicClearance())
+        sys.setSystemicClearance(SEScalarVolumePerTimeMass.unload(src.systemicClearance));
+      dst.setSystemicClearance(sys.build());
     }
     
-    if(hasRenalClearance() || hasRenalRegulation())
+    if(src.hasRenalClearance() || src.hasRenalRegulation())
     {  
       // Renal Dynamics
-      RenalDynamics rd = CDMSerializer.objFactory.createSubstanceClearanceDataRenalDynamics();
-      to.setRenalDynamics(rd);
-      if(hasRenalRegulation())
+      SubstanceData.RenalClearanceData.Builder rcd = dst.getRenalClearanceBuilder();
+      
+      if(src.hasRenalRegulation())
       {
-        Regulation rdr = CDMSerializer.objFactory.createSubstanceClearanceDataRenalDynamicsRegulation();
-        rdr.setChargeInBlood(this.chargeInBlood);
-        if(hasRenalReabsorptionRatio())
-          rdr.setReabsorptionRatio(this.renalReabsorptionRatio.unload());
-        if(hasRenalTransportMaximum())
-          rdr.setTransportMaximum(this.renalTransportMaximum.unload());
-        if(hasFractionUnboundInPlasma())
-          rdr.setFractionUnboundInPlasma(this.fractionUnboundInPlasma.unload());        
-        rd.setRegulation(rdr);
+        SubstanceData.RenalRegulationData.Builder rrd = rcd.getRegulationBuilder();
+        rrd.setChargeInBlood(src.chargeInBlood);
+        if(src.hasRenalReabsorptionRatio())
+          rrd.setReabsorptionRatio(SEScalar.unload(src.renalReabsorptionRatio));
+        if(src.hasRenalTransportMaximum())
+          rrd.setTransportMaximum(SEScalarMassPerTime.unload(src.renalTransportMaximum));
+        if(src.hasFractionUnboundInPlasma())
+          rrd.setFractionUnboundInPlasma(SEScalar0To1.unload(src.fractionUnboundInPlasma));     
       }        
       else
       {
-        rd.setClearance(this.renalClearance.unload());       
+        rcd.setClearance(SEScalarVolumePerTimeMass.unload(src.renalClearance)); 
       }    
-      if(hasRenalFiltrationRate())
-        rd.setFiltrationRate(this.renalFiltrationRate.unload());
-      if(hasRenalReabsorptionRate())
-        rd.setReabsorptionRate(this.renalReabsorptionRate.unload());
-      if(hasRenalExcretionRate())
-        rd.setExcretionRate(this.renalExcretionRate.unload());
-      if(hasGlomerularFilterability())
-        rd.setGlomerularFilterability(this.glomerularFilterability.unload());
+      if(src.hasRenalFiltrationRate())
+        rcd.setFiltrationRate(SEScalarMassPerTime.unload(src.renalFiltrationRate));
+      if(src.hasRenalReabsorptionRate())
+        rcd.setReabsorptionRate(SEScalarMassPerTime.unload(src.renalReabsorptionRate));
+      if(src.hasRenalExcretionRate())
+        rcd.setExcretionRate(SEScalarMassPerTime.unload(src.renalExcretionRate));
+      if(src.hasGlomerularFilterability())
+        rcd.setGlomerularFilterability(SEScalar.unload(src.glomerularFilterability));
     }
         
   }
   
-  public SEScalarFraction getFractionExcretedInFeces() 
+  public SEScalar0To1 getFractionExcretedInFeces() 
   { 
     if(this.fractionExcretedInFeces==null)
-      this.fractionExcretedInFeces=new SEScalarFraction();
+      this.fractionExcretedInFeces=new SEScalar0To1();
     return this.fractionExcretedInFeces;
   }
   public boolean hasFractionExcretedInFeces() {return this.fractionExcretedInFeces==null?false:this.fractionExcretedInFeces.isValid();}
   
-  public SEScalarFraction getFractionExcretedInUrine() 
+  public SEScalar0To1 getFractionExcretedInUrine() 
   { 
     if(this.fractionExcretedInUrine==null)
-      this.fractionExcretedInUrine=new SEScalarFraction();
+      this.fractionExcretedInUrine=new SEScalar0To1();
     return this.fractionExcretedInUrine;
   }
   public boolean hasFractionExcretedInUrine() {return this.fractionExcretedInUrine==null?false:this.fractionExcretedInUrine.isValid();}
   
-  public SEScalarFraction getFractionMetabolizedInGut() 
+  public SEScalar0To1 getFractionMetabolizedInGut() 
   { 
     if(this.fractionMetabolizedInGut==null)
-      this.fractionMetabolizedInGut=new SEScalarFraction();
+      this.fractionMetabolizedInGut=new SEScalar0To1();
     return this.fractionMetabolizedInGut;
   }
   public boolean hasFractionMetabolizedInGut() {return this.fractionMetabolizedInGut==null?false:this.fractionMetabolizedInGut.isValid();}
   
-  public SEScalarFraction getFractionUnboundInPlasma() 
+  public SEScalar0To1 getFractionUnboundInPlasma() 
   { 
     if(this.fractionUnboundInPlasma==null)
-      this.fractionUnboundInPlasma=new SEScalarFraction();
+      this.fractionUnboundInPlasma=new SEScalar0To1();
     return this.fractionUnboundInPlasma;
   }
   public boolean hasFractionUnboundInPlasma() {return this.fractionUnboundInPlasma==null?false:this.fractionUnboundInPlasma.isValid();}
@@ -280,8 +262,8 @@ public class SESubstanceClearance
   }
   public boolean hasRenalClearance() {return this.renalClearance==null?false:this.renalClearance.isValid();}
   
-  public EnumCharge getChargeInBlood() { return this.chargeInBlood;}
-  public void       setChargeInBlood(EnumCharge charge){this.chargeInBlood=charge;}
+  public eCharge    getChargeInBlood() { return this.chargeInBlood;}
+  public void       setChargeInBlood(eCharge charge){this.chargeInBlood=charge;}
   public boolean    hasChargeInBlood(){return this.chargeInBlood==null?false:true;}
 
   public SEScalar getRenalReabsorptionRatio() 

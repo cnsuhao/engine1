@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "circuit/SECircuitPath.h"
 #include "circuit/SECircuitNode.h"
-#include "bind/CircuitPathData.hxx"
 
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -37,12 +27,12 @@ SECircuitPath<CIRCUIT_PATH_TYPES>::SECircuitPath(SECircuitNode<PotentialScalar,Q
   m_NextPotentialSource = nullptr;
   m_PotentialSourceBaseline = nullptr;
   m_ValveBreakdownPotential = nullptr;
-  m_Switch=(CDM::enumOpenClosed::value)-1;
-  m_Valve=(CDM::enumOpenClosed::value)-1;
-  m_NextSwitch=(CDM::enumOpenClosed::value)-1;
-  m_NextValve=(CDM::enumOpenClosed::value)-1;
-  m_NextPolarizedState = (CDM::enumOpenClosed::value) - 1;
-  m_PolarizedState = (CDM::enumOpenClosed::value) - 1;
+  m_Switch= cdm::eGate::NullGate;
+  m_Valve= cdm::eGate::NullGate;
+  m_NextSwitch= cdm::eGate::NullGate;
+  m_NextValve= cdm::eGate::NullGate;
+  m_NextPolarizedState = cdm::eGate::NullGate;
+  m_PolarizedState = cdm::eGate::NullGate;
 
   m_NumElements = 0;
   m_NumNextElements = 0;
@@ -64,12 +54,12 @@ SECircuitPath<CIRCUIT_PATH_TYPES>::~SECircuitPath()
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::Clear()
 {
-  m_Switch=(CDM::enumOpenClosed::value)-1;
-  m_Valve=(CDM::enumOpenClosed::value)-1;
-  m_NextSwitch=(CDM::enumOpenClosed::value)-1;
-  m_NextValve=(CDM::enumOpenClosed::value)-1;
-  m_NextPolarizedState = (CDM::enumOpenClosed::value) - 1;
-  m_PolarizedState = (CDM::enumOpenClosed::value) - 1;
+  m_Switch= cdm::eGate::NullGate;
+  m_Valve= cdm::eGate::NullGate;
+  m_NextSwitch= cdm::eGate::NullGate;
+  m_NextValve= cdm::eGate::NullGate;
+  m_NextPolarizedState = cdm::eGate::NullGate;
+  m_PolarizedState = cdm::eGate::NullGate;
   SAFE_DELETE(m_Resistance);
   SAFE_DELETE(m_NextResistance);
   SAFE_DELETE(m_ResistanceBaseline);
@@ -91,41 +81,38 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::Clear()
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
-bool SECircuitPath<CIRCUIT_PATH_TYPES>::Load(const CDM::CircuitPathData& in)
+void SECircuitPath<CIRCUIT_PATH_TYPES>::Serialize(const cdm::CircuitPathData& src, SECircuitPath<CIRCUIT_PATH_TYPES>& dst)
 {
-  Clear();
-  if (in.Switch().present())
-    SetSwitch(in.Switch().get());
-  if (in.NextSwitch().present())
-    SetNextSwitch(in.NextSwitch().get());
-  if (in.Valve().present())
-    SetValve(in.Valve().get());
-  if (in.NextValve().present())
-    SetNextValve(in.NextValve().get());
-  if (in.PolarizedState().present())
-    SetPolarizedState(in.PolarizedState().get());
-  if (in.NextPolarizedState().present())
-    SetNextPolarizedState(in.NextPolarizedState().get());
-  return true;
+  dst.Clear();
+  if (!src.name().empty())
+    dst.m_Name = src.name();
+
+  dst.SetSwitch(src.switch_());
+  dst.SetNextSwitch(src.nextswitch());
+  dst.SetValve(src.valve());
+  dst.SetNextValve(src.nextvalve());
+  dst.SetPolarizedState(src.polarizedstate());
+  dst.SetNextPolarizedState(src.nextpolarizedstate());
 }
+
 template<CIRCUIT_PATH_TEMPLATE>
-void SECircuitPath<CIRCUIT_PATH_TYPES>::Unload(CDM::CircuitPathData& data) const
+void SECircuitPath<CIRCUIT_PATH_TYPES>::Serialize(const SECircuitPath<CIRCUIT_PATH_TYPES>& src, cdm::CircuitPathData& dst)
 {
-  data.Name(m_Name);
-  data.SourceNode(m_SourceNode.GetName());
-  data.TargetNode(m_TargetNode.GetName());
-  if (HasSwitch())
-    data.Switch(m_Switch);
-  if (HasNextSwitch())
-    data.NextSwitch(m_NextSwitch);
-  if (HasValve())
-    data.Valve(m_Valve);
-  if (HasNextValve())
-    data.NextValve(m_NextValve);
-  if (HasPolarizedState())
-    data.PolarizedState(m_PolarizedState);
-  if (HasNextPolarizedState())
-    data.NextPolarizedState(m_NextPolarizedState);
+  dst.set_name(src.m_Name);
+  dst.set_sourcenode(src.m_SourceNode.GetName());
+  dst.set_targetnode(src.m_TargetNode.GetName());
+  if (src.HasSwitch())
+    dst.set_switch_(src.m_Switch);
+  if (src.HasNextSwitch())
+    dst.set_nextswitch(src.m_NextSwitch);
+  if (src.HasValve())
+    dst.set_valve(src.m_Valve);
+  if (src.HasNextValve())
+    dst.set_nextvalve(src.m_NextValve);
+  if (src.HasPolarizedState())
+    dst.set_polarizedstate(src.m_PolarizedState);
+  if (src.HasNextPolarizedState())
+    dst.set_nextpolarizedstate(src.m_NextPolarizedState);
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -215,159 +202,159 @@ bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasValidElements() const
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
-CDM::enumOpenClosed::value SECircuitPath<CIRCUIT_PATH_TYPES>::GetSwitch() const
+cdm::eGate SECircuitPath<CIRCUIT_PATH_TYPES>::GetSwitch() const
 {
   return m_Switch;
 }
 template<CIRCUIT_PATH_TEMPLATE>
-void SECircuitPath<CIRCUIT_PATH_TYPES>::SetSwitch(CDM::enumOpenClosed::value state)
+void SECircuitPath<CIRCUIT_PATH_TYPES>::SetSwitch(cdm::eGate state)
 {
   m_Switch = state;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipSwitch()
 {
-  m_Switch = (m_Switch == CDM::enumOpenClosed::Open) ? CDM::enumOpenClosed::Closed : CDM::enumOpenClosed::Open;
+  m_Switch = (m_Switch == cdm::eGate::Open) ? cdm::eGate::Closed : cdm::eGate::Open;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasSwitch() const
 {
-  return m_Switch==(CDM::enumOpenClosed::value)-1?false:true;
+  return m_Switch== cdm::eGate::NullGate ?false:true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateSwitch()
 {
-  m_Switch = (CDM::enumOpenClosed::value)-1;
+  m_Switch = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
-CDM::enumOpenClosed::value SECircuitPath<CIRCUIT_PATH_TYPES>::GetNextSwitch() const
+cdm::eGate SECircuitPath<CIRCUIT_PATH_TYPES>::GetNextSwitch() const
 {
   return m_NextSwitch;
 }
 template<CIRCUIT_PATH_TEMPLATE>
-void SECircuitPath<CIRCUIT_PATH_TYPES>::SetNextSwitch(CDM::enumOpenClosed::value state)
+void SECircuitPath<CIRCUIT_PATH_TYPES>::SetNextSwitch(cdm::eGate state)
 {
   m_NextSwitch = state;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipNextSwitch()
 {
-  m_NextSwitch = (m_NextSwitch==CDM::enumOpenClosed::Open) ? CDM::enumOpenClosed::Closed : CDM::enumOpenClosed::Open;
+  m_NextSwitch = (m_NextSwitch==cdm::eGate::Open) ? cdm::eGate::Closed : cdm::eGate::Open;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasNextSwitch() const
 {
-  return m_NextSwitch==(CDM::enumOpenClosed::value)-1?false:true;
+  return m_NextSwitch== cdm::eGate::NullGate ?false:true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateNextSwitch()
 {
-  m_NextSwitch = (CDM::enumOpenClosed::value)-1;
+  m_NextSwitch = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
-CDM::enumOpenClosed::value SECircuitPath<CIRCUIT_PATH_TYPES>::GetValve() const
+cdm::eGate SECircuitPath<CIRCUIT_PATH_TYPES>::GetValve() const
 {
   return m_Valve;
 }
 template<CIRCUIT_PATH_TEMPLATE>
-void SECircuitPath<CIRCUIT_PATH_TYPES>::SetValve(CDM::enumOpenClosed::value state)
+void SECircuitPath<CIRCUIT_PATH_TYPES>::SetValve(cdm::eGate state)
 {
   m_Valve = state;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipValve()
 {
-  m_Valve = (m_Valve == CDM::enumOpenClosed::Open) ? CDM::enumOpenClosed::Closed : CDM::enumOpenClosed::Open;
+  m_Valve = (m_Valve == cdm::eGate::Open) ? cdm::eGate::Closed : cdm::eGate::Open;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasValve() const
 {
-  return m_Valve==(CDM::enumOpenClosed::value)-1?false:true;
+  return m_Valve== cdm::eGate::NullGate ?false:true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateValve()
 {
-  m_Valve = (CDM::enumOpenClosed::value)-1;
+  m_Valve = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
-CDM::enumOpenClosed::value SECircuitPath<CIRCUIT_PATH_TYPES>::GetNextValve() const
+cdm::eGate SECircuitPath<CIRCUIT_PATH_TYPES>::GetNextValve() const
 {
   return m_NextValve;
 }
 template<CIRCUIT_PATH_TEMPLATE>
-void SECircuitPath<CIRCUIT_PATH_TYPES>::SetNextValve(CDM::enumOpenClosed::value state)
+void SECircuitPath<CIRCUIT_PATH_TYPES>::SetNextValve(cdm::eGate state)
 {
   m_NextValve = state;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipNextValve()
 {
-  m_NextValve = (m_NextValve == CDM::enumOpenClosed::Open) ? CDM::enumOpenClosed::Closed : CDM::enumOpenClosed::Open;
+  m_NextValve = (m_NextValve == cdm::eGate::Open) ? cdm::eGate::Closed : cdm::eGate::Open;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasNextValve() const
 {
-  return m_NextValve==(CDM::enumOpenClosed::value)-1?false:true;
+  return m_NextValve== cdm::eGate::NullGate ?false:true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateNextValve()
 {
-  m_NextValve = (CDM::enumOpenClosed::value)-1;
+  m_NextValve = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
-CDM::enumOpenClosed::value SECircuitPath<CIRCUIT_PATH_TYPES>::GetNextPolarizedState() const
+cdm::eGate SECircuitPath<CIRCUIT_PATH_TYPES>::GetNextPolarizedState() const
 {
   return m_NextPolarizedState;
 }
 template<CIRCUIT_PATH_TEMPLATE>
-void SECircuitPath<CIRCUIT_PATH_TYPES>::SetNextPolarizedState(CDM::enumOpenClosed::value state)
+void SECircuitPath<CIRCUIT_PATH_TYPES>::SetNextPolarizedState(cdm::eGate state)
 {
   m_NextPolarizedState = state;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipNextPolarizedState()
 {
-  m_NextPolarizedState = (m_NextPolarizedState == CDM::enumOpenClosed::Open) ? CDM::enumOpenClosed::Closed : CDM::enumOpenClosed::Open;
+  m_NextPolarizedState = (m_NextPolarizedState == cdm::eGate::Open) ? cdm::eGate::Closed : cdm::eGate::Open;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasNextPolarizedState() const
 {
-  return m_NextPolarizedState == (CDM::enumOpenClosed::value) - 1 ? false : true;
+  return m_NextPolarizedState == cdm::eGate::NullGate ? false : true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateNextPolarizedState()
 {
-  m_NextPolarizedState = (CDM::enumOpenClosed::value) - 1;
+  m_NextPolarizedState = cdm::eGate::NullGate;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
-CDM::enumOpenClosed::value SECircuitPath<CIRCUIT_PATH_TYPES>::GetPolarizedState() const
+cdm::eGate SECircuitPath<CIRCUIT_PATH_TYPES>::GetPolarizedState() const
 {
   return m_PolarizedState;
 }
 template<CIRCUIT_PATH_TEMPLATE>
-void SECircuitPath<CIRCUIT_PATH_TYPES>::SetPolarizedState(CDM::enumOpenClosed::value state)
+void SECircuitPath<CIRCUIT_PATH_TYPES>::SetPolarizedState(cdm::eGate state)
 {
   m_PolarizedState = state;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::FlipPolarizedState()
 {
-  m_PolarizedState = (m_PolarizedState == CDM::enumOpenClosed::Open) ? CDM::enumOpenClosed::Closed : CDM::enumOpenClosed::Open;
+  m_PolarizedState = (m_PolarizedState == cdm::eGate::Open) ? cdm::eGate::Closed : cdm::eGate::Open;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasPolarizedState() const
 {
-  return m_PolarizedState == (CDM::enumOpenClosed::value) - 1 ? false : true;
+  return m_PolarizedState == cdm::eGate::NullGate ? false : true;
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidatePolarizedState()
 {
-  m_PolarizedState = (CDM::enumOpenClosed::value) - 1;
+  m_PolarizedState = cdm::eGate::NullGate;
 }
 
 

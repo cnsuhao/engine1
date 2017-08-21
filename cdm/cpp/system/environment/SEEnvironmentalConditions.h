@@ -1,33 +1,21 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(EnvironmentalConditionsData)
-#include "bind/enumSurroundingType.hxx"
-class SESubstance;
-class SESubstanceFraction;
-class SESubstanceConcentration;
-class SEEnvironment;
-class SESubstanceManager;
-class SEEnvironmentChange;
-class SEInitialEnvironment;
+PROTO_PUSH
+#include "bind/cdm/EnvironmentConditions.pb.h"
+PROTO_POP
+#include "substance/SESubstanceManager.h"
+#include "substance/SESubstanceFraction.h"
+#include "substance/SESubstanceConcentration.h"
 
-class DLL_DECL SEEnvironmentalConditions : public Loggable
+class CDM_DECL SEEnvironmentalConditions : public Loggable
 {
 protected:
-  friend SEEnvironment;
-  friend SEEnvironmentChange;
-  friend SEInitialEnvironment;
+  friend class SEEnvironment;
+  friend class SEChangeEnvironmentConditions;
+  friend class SEInitialEnvironmentConditions;
 public:
 
   SEEnvironmentalConditions(SESubstanceManager& substances);
@@ -35,10 +23,11 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::EnvironmentalConditionsData& in);
-  virtual CDM::EnvironmentalConditionsData* Unload() const;
+  static void Load(const cdm::EnvironmentData_ConditionsData& src, SEEnvironmentalConditions& dst);
+  static cdm::EnvironmentData_ConditionsData* Unload(const SEEnvironmentalConditions& src);
 protected:
-  virtual void Unload(CDM::EnvironmentalConditionsData& data) const;
+  static void Serialize(const cdm::EnvironmentData_ConditionsData& src, SEEnvironmentalConditions& dst);
+  static void Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentData_ConditionsData& dst);
 
    virtual void Merge(const SEEnvironmentalConditions& from);
 public:
@@ -47,11 +36,8 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-
-  virtual CDM::enumSurroundingType::value GetSurroundingType() const;
-  virtual void SetSurroundingType(CDM::enumSurroundingType::value name);
-  virtual bool HasSurroundingType() const;
-  virtual void InvalidateSurroundingType();
+  virtual cdm::EnvironmentData_eSurroundingType GetSurroundingType() const;
+  virtual void SetSurroundingType(cdm::EnvironmentData_eSurroundingType name);
 
   virtual bool HasAirDensity() const;
   virtual SEScalarMassPerVolume& GetAirDensity();
@@ -74,7 +60,7 @@ public:
   virtual double GetClothingResistance(const HeatResistanceAreaUnit& unit) const;
 
   virtual bool HasEmissivity() const;
-  virtual SEScalarFraction& GetEmissivity();
+  virtual SEScalar0To1& GetEmissivity();
   virtual double GetEmissivity() const;
 
   virtual bool HasMeanRadiantTemperature() const;
@@ -82,7 +68,7 @@ public:
   virtual double GetMeanRadiantTemperature(const TemperatureUnit& unit) const;
 
   virtual bool HasRelativeHumidity() const;
-  virtual SEScalarFraction& GetRelativeHumidity();
+  virtual SEScalar0To1& GetRelativeHumidity();
   virtual double GetRelativeHumidity() const;
 
   virtual bool HasRespirationAmbientTemperature() const;
@@ -109,20 +95,20 @@ public:
 
 protected:
 
-  CDM::enumSurroundingType::value   m_SurroundingType;
+  cdm::EnvironmentData_eSurroundingType        m_SurroundingType;
   
-  SEScalarMassPerVolume*            m_AirDensity;
-  SEScalarLengthPerTime*            m_AirVelocity;
-  SEScalarTemperature*              m_AmbientTemperature;
-  SEScalarPressure*                  m_AtmosphericPressure;
-  SEScalarHeatResistanceArea*        m_ClothingResistance;
-  SEScalarFraction*                  m_Emissivity;
-  SEScalarTemperature*              m_MeanRadiantTemperature;
-  SEScalarFraction*                 m_RelativeHumidity;
-  SEScalarTemperature*              m_RespirationAmbientTemperature;
+  SEScalarMassPerVolume*                       m_AirDensity;
+  SEScalarLengthPerTime*                       m_AirVelocity;
+  SEScalarTemperature*                         m_AmbientTemperature;
+  SEScalarPressure*                            m_AtmosphericPressure;
+  SEScalarHeatResistanceArea*                  m_ClothingResistance;
+  SEScalar0To1*                                m_Emissivity;
+  SEScalarTemperature*                         m_MeanRadiantTemperature;
+  SEScalar0To1*                                m_RelativeHumidity;
+  SEScalarTemperature*                         m_RespirationAmbientTemperature;
 
-  std::vector<SESubstanceFraction*>       m_AmbientGases;
-  std::vector<const SESubstanceFraction*> m_cAmbientGases;
+  std::vector<SESubstanceFraction*>            m_AmbientGases;
+  std::vector<const SESubstanceFraction*>      m_cAmbientGases;
 
   std::vector<SESubstanceConcentration*>       m_AmbientAerosols;
   std::vector<const SESubstanceConcentration*> m_cAmbientAerosols;

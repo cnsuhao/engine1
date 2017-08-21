@@ -1,18 +1,8 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h" 
 #include "circuit/SECircuit.h"
-#include "bind/CircuitData.hxx"
 
 #define ZERO_APPROX 1e-10
 #define OPEN_RESISTANCE 1e100
@@ -49,63 +39,71 @@ void SECircuit<CIRCUIT_TYPES>::Clear()
 }
 
 template<CIRCUIT_TEMPLATE>
-bool SECircuit<CIRCUIT_TYPES>::Load(const CircuitBindType& in, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths)
+void SECircuit<CIRCUIT_TYPES>::Load(const CircuitBindType& src, SECircuit& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths)
+{
+  SECircuit::Serialize(src, dst, nodes, paths);
+  dst.StateChange();
+}
+template<CIRCUIT_TEMPLATE>
+void SECircuit<CIRCUIT_TYPES>::Serialize(const CircuitBindType& src, SECircuit& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths)
 {// note: not clearing here as the derived class needs to clear and call this super class Load last to get the ref node hooked up
-  Clear();
-  m_Name = in.Name();
-  for (auto name : in.Node())
+  dst.Clear();
+  const cdm::CircuitData& srcC = src.circuit();
+  dst.m_Name = srcC.name();
+  for (int i=0; i<srcC.node_size(); i++)
   {
+    const std::string name = srcC.node(i);
     auto idx = nodes.find(name);
     if (idx == nodes.end())
     {
-      Error(m_Name + " could not find node " + name.c_str());
-      return false;
+      dst.Error(dst.m_Name + " could not find node " + name.c_str());
+      return;
     }
-    AddNode(*idx->second);
+    dst.AddNode(*idx->second);
   }
-  for (auto name : in.Path())
+  for (int i = 0; i<srcC.path_size(); i++)
   {
+    const std::string name = srcC.path(i);
     auto idx = paths.find(name);
     if (idx == paths.end())
     {
-      Error(m_Name + " could not find path " + name.c_str());
-      return false;
+      dst.Error(dst.m_Name + " could not find path " + name.c_str());
+      return;
     }
-    AddPath(*idx->second);
+    dst.AddPath(*idx->second);
   }
-  for (auto name : in.ReferenceNode())
+  for (int i = 0; i<srcC.referencenode_size(); i++)
   {
+    const std::string name = srcC.referencenode(i);
     auto idx = nodes.find(name);
     if (idx == nodes.end())
     {
-      Error(m_Name + " could not find reference node " + name.c_str());
-      return false;
+      dst.Error(dst.m_Name + " could not find reference node " + name.c_str());
     }
-    AddReferenceNode(*idx->second);
+    dst.AddReferenceNode(*idx->second);
   }
-  StateChange();
-  return true;
 }
 template<CIRCUIT_TEMPLATE>
-CircuitBindType* SECircuit<CIRCUIT_TYPES>::Unload() const
+CircuitBindType* SECircuit<CIRCUIT_TYPES>::Unload(const SECircuit& src)
 {
-  CircuitBindType* data = new CircuitBindType();
-  Unload(*data);
-  return data;
+  CircuitBindType* dst = new CircuitBindType();
+  Serialize(src,*dst);
+  return dst;
 }
 template<CIRCUIT_TEMPLATE>
-void SECircuit<CIRCUIT_TYPES>::Unload(CircuitBindType& data) const
+void SECircuit<CIRCUIT_TYPES>::Serialize(const SECircuit& src, CircuitBindType& dst)
 {
-  data.Name(m_Name);
-  if (HasReferenceNode())
+  cdm::CircuitData* dstC = dst.mutable_circuit();
+  dstC->set_name(src.m_Name);
+  if (src.HasReferenceNode())
   {
-    for (NodeType* n : m_ReferenceNodes)
-      data.ReferenceNode().push_back(n->GetName());
+    for (NodeType* n : src.m_ReferenceNodes)
+      dstC->add_referencenode(n->GetName());
   }    
-  for (auto* n : m_Nodes)
-    data.Node().push_back(n->GetName());
-  for (auto* p : m_Paths)
-    data.Path().push_back(p->GetName());
+  for (auto* n : src.m_Nodes)
+    dstC->add_node(n->GetName());
+  for (auto* p : src.m_Paths)
+    dstC->add_path(p->GetName());
 }
 
 template<CIRCUIT_TEMPLATE>

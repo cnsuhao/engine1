@@ -1,18 +1,8 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "Nervous.h"
-#include "bind/BioGearsNervousSystemData.hxx"
 #include "patient/SEPatient.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SEPupillaryResponse.h"
@@ -25,8 +15,8 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarPressurePerVolume.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarLength.h"
-#include "properties/SEScalarFraction.h"
-#include "properties/SEScalarNeg1To1.h"
+#include "properties/SEScalar0To1.h"
+#include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalar0To1.h"
 
 #pragma warning(disable:4786)
@@ -34,7 +24,7 @@ specific language governing permissions and limitations under the License.
 
 // #define VERBOSE
 
-Nervous::Nervous(BioGears& bg) : SENervousSystem(bg.GetLogger()), m_data(bg)
+Nervous::Nervous(PulseController& data) : SENervousSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -55,7 +45,7 @@ void Nervous::Clear()
 //--------------------------------------------------------------------------------------------------
 void Nervous::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
   m_FeedbackActive = false;
   GetBaroreceptorHeartRateScale().SetValue(1.0);
   GetBaroreceptorHeartElastanceScale().SetValue(1.0);
@@ -65,30 +55,37 @@ void Nervous::Initialize()
   GetLeftEyePupillaryResponse().GetReactivityModifier().SetValue(0);
   GetRightEyePupillaryResponse().GetSizeModifier().SetValue(0);
   GetRightEyePupillaryResponse().GetReactivityModifier().SetValue(0);
+
+  // Set when feedback is turned on
+  m_ArterialOxygenSetPoint_mmHg = 0;
+  m_ArterialCarbonDioxideSetPoint_mmHg = 0;
 }
 
-bool Nervous::Load(const CDM::BioGearsNervousSystemData& in)
+void Nervous::Load(const pulse::NervousSystemData& src, Nervous& dst)
 {
-  if (!SENervousSystem::Load(in))
-    return false;
-  BioGearsSystem::LoadState();
+  Nervous::Serialize(src, dst);
+  dst.SetUp();
+}
+void Nervous::Serialize(const pulse::NervousSystemData& src, Nervous& dst)
+{
+  SENervousSystem::Serialize(src.common(), dst);
   // We assume state have to be after all stabilization
-  m_FeedbackActive = true;
-  m_ArterialOxygenSetPoint_mmHg = in.ArterialOxygenSetPoint_mmHg();
-  m_ArterialCarbonDioxideSetPoint_mmHg = in.ArterialCarbonDioxideSetPoint_mmHg();
-  return true;
+  dst.m_FeedbackActive = true;
+  dst.m_ArterialOxygenSetPoint_mmHg = src.arterialoxygensetpoint_mmhg();
+  dst.m_ArterialCarbonDioxideSetPoint_mmHg = src.arterialcarbondioxidesetpoint_mmhg();
 }
-CDM::BioGearsNervousSystemData* Nervous::Unload() const
+
+pulse::NervousSystemData* Nervous::Unload(const Nervous& src)
 {
-  CDM::BioGearsNervousSystemData* data = new CDM::BioGearsNervousSystemData();
-  Unload(*data);
-  return data;
+  pulse::NervousSystemData* dst = new pulse::NervousSystemData();
+  Nervous::Serialize(src, *dst);
+  return dst;
 }
-void Nervous::Unload(CDM::BioGearsNervousSystemData& data) const
+void Nervous::Serialize(const Nervous& src, pulse::NervousSystemData& dst)
 {
-  SENervousSystem::Unload(data);
-  data.ArterialOxygenSetPoint_mmHg(m_ArterialOxygenSetPoint_mmHg);
-  data.ArterialCarbonDioxideSetPoint_mmHg(m_ArterialCarbonDioxideSetPoint_mmHg);
+  SENervousSystem::Serialize(src, *dst.mutable_common());
+  dst.set_arterialoxygensetpoint_mmhg(src.m_ArterialOxygenSetPoint_mmHg);
+  dst.set_arterialcarbondioxidesetpoint_mmhg(src.m_ArterialCarbonDioxideSetPoint_mmHg);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -110,10 +107,6 @@ void Nervous::SetUp()
   m_normalizedAlphaCompliance = m_data.GetConfiguration().GetNormalizedComplianceParasympatheticSlope();
   m_normalizedAlphaResistance = m_data.GetConfiguration().GetNormalizedResistanceSympatheticSlope();
   m_normalizedBetaHeartRate   = m_data.GetConfiguration().GetNormalizedHeartRateParasympatheticSlope();
-
-  // Set when feedback is turned on
-  m_ArterialOxygenSetPoint_mmHg = 0;
-  m_ArterialCarbonDioxideSetPoint_mmHg = 0;
 }
 
 void Nervous::AtSteadyState()
@@ -247,24 +240,24 @@ void Nervous::CheckBrainStatus()
   if (icp_mmHg > 25.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypertension. The intracranial pressure has risen above 25 mmHg.
-    m_data.GetPatient().SetEvent(CDM::enumPatientEvent::IntracranialHypertension, true, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_IntracranialHypertension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(CDM::enumPatientEvent::IntracranialHypertension) && icp_mmHg < 24.0)
+  else if (m_data.GetPatient().IsEventActive(cdm::PatientData_eEvent_IntracranialHypertension) && icp_mmHg < 24.0)
   {
     /// \event Patient: End Intracranial Hypertension. The intracranial pressure has fallen below 24 mmHg.
-    m_data.GetPatient().SetEvent(CDM::enumPatientEvent::IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 
   //Intracranial Hypotension
   if (icp_mmHg < 7.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypotension. The intracranial pressure has fallen below 7 mmHg.
-    m_data.GetPatient().SetEvent(CDM::enumPatientEvent::IntracranialHypotension, true, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_IntracranialHypotension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(CDM::enumPatientEvent::IntracranialHypotension) && icp_mmHg > 7.5)
+  else if (m_data.GetPatient().IsEventActive(cdm::PatientData_eEvent_IntracranialHypotension) && icp_mmHg > 7.5)
   {
     /// \event Patient: End Intracranial Hypotension. The intracranial pressure has risen above 7.5 mmHg.
-    m_data.GetPatient().SetEvent(CDM::enumPatientEvent::IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 }
 
@@ -345,19 +338,19 @@ void Nervous::SetPupilEffects()
     {
       double icp_mmHg = m_data.GetCardiovascular().GetIntracranialPressure().GetValue(PressureUnit::mmHg);
 
-      if (b->GetType() == CDM::enumBrainInjuryType::Diffuse)
+      if (b->GetType() == cdm::BrainInjuryData_eType_Diffuse)
       {
         leftPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         leftPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));
         rightPupilSizeResponseLevel = leftPupilSizeResponseLevel;
         rightPupilReactivityResponseLevel = leftPupilReactivityResponseLevel;
       }
-      else if (b->GetType() == CDM::enumBrainInjuryType::LeftFocal)
+      else if (b->GetType() == cdm::BrainInjuryData_eType_LeftFocal)
       {
         leftPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         leftPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));
       }
-      else if(b->GetType() == CDM::enumBrainInjuryType::RightFocal)
+      else if(b->GetType() == cdm::BrainInjuryData_eType_RightFocal)
       {
         rightPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         rightPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));

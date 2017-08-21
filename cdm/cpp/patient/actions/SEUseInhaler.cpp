@@ -1,22 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEUseInhaler.h"
 #include "substance/SESubstance.h"
 #include "properties/SEScalarMass.h"
-#include "bind/ScalarMassData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 
 SEUseInhaler::SEUseInhaler() : SEConsciousRespirationCommand()
 {
@@ -43,24 +32,25 @@ bool SEUseInhaler::IsActive() const
   return SEConsciousRespirationCommand::IsActive();
 }
 
-bool SEUseInhaler::Load(const CDM::UseInhalerData& in)
+void SEUseInhaler::Load(const cdm::ConsciousRespirationData_UseInhalerData& src, SEUseInhaler& dst)
 {
-  SEConsciousRespirationCommand::Load(in);
-  return true;
+  SEUseInhaler::Serialize(src, dst);
+}
+void SEUseInhaler::Serialize(const cdm::ConsciousRespirationData_UseInhalerData& src, SEUseInhaler& dst)
+{
+  dst.Clear();
 }
 
-CDM::UseInhalerData* SEUseInhaler::Unload() const
+cdm::ConsciousRespirationData_UseInhalerData* SEUseInhaler::Unload(const SEUseInhaler& src)
 {
-  CDM::UseInhalerData*data(new CDM::UseInhalerData());
-  Unload(*data);
-  return data;
+  cdm::ConsciousRespirationData_UseInhalerData* dst = new cdm::ConsciousRespirationData_UseInhalerData();
+  SEUseInhaler::Serialize(src, *dst);
+  return dst;
 }
-
-void SEUseInhaler::Unload(CDM::UseInhalerData& data) const
+void SEUseInhaler::Serialize(const SEUseInhaler& src, cdm::ConsciousRespirationData_UseInhalerData& dst)
 {
-  SEConsciousRespirationCommand::Unload(data);
-}
 
+}
 
 void SEUseInhaler::ToString(std::ostream &str) const
 {

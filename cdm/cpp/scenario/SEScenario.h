@@ -1,27 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "bind/DataRequestsData.hxx"
-#include "bind/ScenarioData.hxx"
-class SESubstanceManager;
-class SEAction;
-class SEDataRequest;
-class SEScenarioInitialParameters;
-class SEScenarioAutoSerialization;
-class SEDecimalFormat;
-#include "scenario/requests/SEDataRequestManager.h"
+#include "scenario/SEAction.h"
+#include "scenario/SECondition.h"
+#include "scenario/SEDataRequestManager.h"
+#include "scenario/SEScenarioInitialParameters.h"
+#include "substance/SESubstanceManager.h"
 
-class DLL_DECL SEScenario : public Loggable
+class CDM_DECL SEScenario : public Loggable
 {
 public:
 
@@ -30,13 +17,15 @@ public:
   
   virtual void Clear(); //clear memory
 
-  bool Load(const CDM::ScenarioData& in);
-  CDM::ScenarioData* Unload() const;
+  bool LoadFile(const std::string& scenarioFile);
+
+  static void Load(const cdm::ScenarioData& src, SEScenario& dst);
+  static cdm::ScenarioData* Unload(const SEScenario& src);
 protected:
-  void Unload(CDM::ScenarioData& data)const;
+  static void Serialize(const cdm::ScenarioData& src, SEScenario& dst);
+  static void Serialize(const SEScenario& src, cdm::ScenarioData& dst);
 
 public:
-  bool LoadFile(const std::string& scenarioFile);
   bool IsValid() const;
 
   virtual std::string GetName() const;
@@ -59,17 +48,11 @@ public:
   virtual bool HasInitialParameters() const;
   virtual void InvalidateInitialParameters();
 
-  virtual bool HasAutoSerialization() const;
-  virtual SEScenarioAutoSerialization& GetAutoSerialization();
-  virtual const SEScenarioAutoSerialization* GetAutoSerialization() const;
-  virtual void RemoveAutoSerialization();
-
   virtual void AddAction(const SEAction& action);
   virtual const std::vector<SEAction*>& GetActions() const;
 
   virtual SEDataRequestManager& GetDataRequestManager() { return m_DataRequestMgr; }
   virtual const SEDataRequestManager& GetDataRequestManager() const { return m_DataRequestMgr; }
-
 
 protected:
   SESubstanceManager&                         m_SubMgr;
@@ -77,7 +60,6 @@ protected:
   std::string                                 m_Description;
   std::string                                 m_EngineStateFile;
   SEScenarioInitialParameters*                m_InitialParameters;
-  SEScenarioAutoSerialization*                m_AutoSerialization;
   SEDataRequestManager                        m_DataRequestMgr;
   std::vector<SEAction*>                      m_Actions;
 

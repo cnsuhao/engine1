@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.utilities.csv.plots;
 
 import java.awt.BasicStroke;
@@ -44,15 +35,15 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.PulmonaryFunctionTestData;
-import mil.tatrc.physiology.datamodel.bind.ScenarioData;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
+
+import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.patient.assessments.SEPulmonaryFunctionTest;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.VolumeUnit;
 import mil.tatrc.physiology.datamodel.properties.SEFunctionVolumeVsTime;
 import mil.tatrc.physiology.datamodel.scenario.SEScenario;
-import mil.tatrc.physiology.datamodel.scenario.actions.SEAction;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.utilities.DoubleUtils;
 import mil.tatrc.physiology.utilities.FileUtils;
@@ -80,17 +71,17 @@ public class RespiratoryPFTPlotter implements Plotter
     //fill PlotJob with needed data if it doesn't exist
     PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
-    {job.dataPath = job.verificationDirectory+"/Current Baseline/";}
+    {job.dataPath = job.verificationDirectory+"/";}
     if(job.logPath == null || job.logPath.isEmpty())
-    {job.logPath = job.verificationDirectory+"/Current Baseline/";}
+    {job.logPath = job.verificationDirectory+"/";}
     if(job.scenarioPath == null || job.scenarioPath.isEmpty())
     {job.scenarioPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
-    {job.dataFile = job.name + "Results.zip";}
+    {job.dataFile = job.name + "Results.txt";}
     if(job.logFile == null || job.logFile.isEmpty())
-    {job.logFile = job.name + "Results.log";}
+    {job.logFile = job.name + ".log";}
     if(job.scenarioFile == null || job.scenarioFile.isEmpty())
-    {job.scenarioFile = job.name + ".xml";}
+    {job.scenarioFile = job.name + ".pba";}
     
     //get all events from Log file
     if(!job.skipAllEvents)
@@ -100,18 +91,15 @@ public class RespiratoryPFTPlotter implements Plotter
     
     if (!job.skipAllActions)
     {
-      //Get all actions from scenario file
-      Object obj = CDMSerializer.readFile(job.scenarioPath + job.scenarioFile);
-      if (obj instanceof ScenarioData)
+      try
       {
         this.scenario = new SEScenario(subMgr);
-        this.scenario.load((ScenarioData) obj);
+        this.scenario.readFile(job.scenarioPath + job.scenarioFile);
         actions = scenario.getActions();
       } 
-      else
+      catch(ParseException ex)
       {
-        Log.error("Could not analyze scenario file " + job.scenarioPath
-            + job.scenarioFile);
+        Log.error("Could not analyze scenario file " + job.scenarioPath + job.scenarioFile);
       }
     }
     
@@ -123,11 +111,10 @@ public class RespiratoryPFTPlotter implements Plotter
         double PFTtime_s = action.getScenarioTime().getValue();
         
         //extract data from file
-        Object obj = CDMSerializer.readFile(job.verificationDirectory+"/Current Baseline/"+job.PFTFile);
-        if (obj instanceof PulmonaryFunctionTestData)
+        try
         {
           this.pft = new SEPulmonaryFunctionTest();
-          this.pft.load((PulmonaryFunctionTestData) obj);
+          this.pft.readFile(job.verificationDirectory+"/"+job.PFTFile);
           
           SEFunctionVolumeVsTime points = this.pft.getLungVolumePlot();
                    
@@ -145,9 +132,9 @@ public class RespiratoryPFTPlotter implements Plotter
           PFTData.put("Time", timeValues);
           PFTData.put("Volume", volumeValues);
         }
-        else
+        catch(ParseException ex)
         {
-          Log.error("Couldn't read PFT file.");
+          Log.error("Couldn't read PFT file.",ex);
         }
       }
     }

@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "circuit/electrical/SEElectricalCircuitPath.h"
@@ -30,93 +21,99 @@ void SEElectricalCircuitPath::Clear()
   SECircuitPath::Clear();
 }
 
-bool SEElectricalCircuitPath::Load(const CDM::ElectricalCircuitPathData& in)
+void SEElectricalCircuitPath::Load(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst)
 {
-  SECircuitPath::Load(in);
-  if (in.Resistance().present())
-    GetResistance().Load(in.Resistance().get());
-  if (in.NextResistance().present())
-    GetNextResistance().Load(in.NextResistance().get());
-  if (in.ResistanceBaseline().present())
-    GetResistanceBaseline().Load(in.ResistanceBaseline().get());
-  if (in.Capacitance().present())
-    GetCapacitance().Load(in.Capacitance().get());
-  if (in.NextCapacitance().present())
-    GetNextCapacitance().Load(in.NextCapacitance().get());
-  if (in.CapacitanceBaseline().present())
-    GetCapacitanceBaseline().Load(in.CapacitanceBaseline().get());
-  if (in.Inductance().present())
-    GetInductance().Load(in.Inductance().get());
-  if (in.NextInductance().present())
-    GetNextInductance().Load(in.NextInductance().get());
-  if (in.InductanceBaseline().present())
-    GetInductanceBaseline().Load(in.InductanceBaseline().get());
-  if (in.Current().present())
-    GetCurrent().Load(in.Current().get());
-  if (in.NextCurrent().present())
-    GetNextCurrent().Load(in.NextCurrent().get());
-  if (in.CurrentSource().present())
-    GetCurrentSource().Load(in.CurrentSource().get());
-  if (in.NextCurrentSource().present())
-    GetNextCurrentSource().Load(in.NextCurrentSource().get());
-  if (in.CurrentSourceBaseline().present())
-    GetCurrentSourceBaseline().Load(in.CurrentSourceBaseline().get());
-  if (in.VoltageSource().present())
-    GetVoltageSource().Load(in.VoltageSource().get());
-  if (in.NextVoltageSource().present())
-    GetNextVoltageSource().Load(in.NextVoltageSource().get());
-  if (in.VoltageSourceBaseline().present())
-    GetVoltageSourceBaseline().Load(in.VoltageSourceBaseline().get());
-  if (in.ValveBreakdownVoltage().present())
-    GetValveBreakdownVoltage().Load(in.ValveBreakdownVoltage().get());
+  SEElectricalCircuitPath::Serialize(src, dst);
+}
+void SEElectricalCircuitPath::Serialize(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst)
+{
+  SECircuitPath::Serialize(src.circuitpath(), dst);
+  if (src.has_resistance())
+    SEScalarElectricResistance::Load(src.resistance(), dst.GetResistance());
+  if (src.has_nextresistance())
+    SEScalarElectricResistance::Load(src.nextresistance(), dst.GetNextResistance());
+  if (src.has_resistancebaseline())
+    SEScalarElectricResistance::Load(src.resistancebaseline(), dst.GetResistanceBaseline());
+  if (src.has_capacitance())
+    SEScalarElectricCapacitance::Load(src.capacitance(), dst.GetCapacitance());
+  if (src.has_nextcapacitance())
+    SEScalarElectricCapacitance::Load(src.nextcapacitance(), dst.GetNextCapacitance());
+  if (src.has_capacitancebaseline())
+    SEScalarElectricCapacitance::Load(src.capacitancebaseline(), dst.GetCapacitanceBaseline());
+  if (src.has_inductance())
+    SEScalarElectricInductance::Load(src.inductance(), dst.GetInductance());
+  if (src.has_nextinductance())
+    SEScalarElectricInductance::Load(src.nextinductance(), dst.GetNextInductance());
+  if (src.has_inductancebaseline())
+    SEScalarElectricInductance::Load(src.inductancebaseline(), dst.GetInductanceBaseline());
+  if (src.has_current())
+    SEScalarElectricCurrent::Load(src.current(), dst.GetCurrent());
+  if (src.has_nextcurrent())
+    SEScalarElectricCurrent::Load(src.nextcurrent(), dst.GetNextCurrent());
+  if (src.has_currentsource())
+    SEScalarElectricCurrent::Load(src.currentsource(), dst.GetCurrentSource());
+  if (src.has_nextcurrentsource())
+    SEScalarElectricCurrent::Load(src.nextcurrentsource(), dst.GetNextCurrentSource());
+  if (src.has_currentsourcebaseline())
+    SEScalarElectricCurrent::Load(src.currentsourcebaseline(), dst.GetCurrentSourceBaseline());
+  if (src.has_voltagesource())
+    SEScalarElectricPotential::Load(src.voltagesource(), dst.GetVoltageSource());
+  if (src.has_nextvoltagesource())
+    SEScalarElectricPotential::Load(src.nextvoltagesource(), dst.GetNextVoltageSource());
+  if (src.has_voltagesourcebaseline())
+    SEScalarElectricPotential::Load(src.voltagesourcebaseline(), dst.GetVoltageSourceBaseline());
+  if (src.has_valvebreakdownvoltage())
+    SEScalarElectricPotential::Load(src.valvebreakdownvoltage(), dst.GetValveBreakdownVoltage());
 
-  return HasValidElements();
+  if (!dst.HasValidElements())
+    dst.Warning("Path does not have valid elements");
 }
-CDM::ElectricalCircuitPathData* SEElectricalCircuitPath::Unload() const
+
+cdm::ElectricalCircuitPathData* SEElectricalCircuitPath::Unload(const SEElectricalCircuitPath& src)
 {
-  CDM::ElectricalCircuitPathData* data = new CDM::ElectricalCircuitPathData();
-  Unload(*data);
-  return data;
+  cdm::ElectricalCircuitPathData* dst = new cdm::ElectricalCircuitPathData();
+  SEElectricalCircuitPath::Serialize(src, *dst);
+  return dst;
 }
-void SEElectricalCircuitPath::Unload(CDM::ElectricalCircuitPathData& data) const
+void SEElectricalCircuitPath::Serialize(const SEElectricalCircuitPath& src, cdm::ElectricalCircuitPathData& dst)
 {
-  SECircuitPath::Unload(data);
-  if (HasResistance())
-    data.Resistance(std::unique_ptr<CDM::ScalarElectricResistanceData>(m_Resistance->Unload()));
-  if (HasNextResistance())
-    data.NextResistance(std::unique_ptr<CDM::ScalarElectricResistanceData>(m_NextResistance->Unload()));
-  if (HasResistanceBaseline())
-    data.ResistanceBaseline(std::unique_ptr<CDM::ScalarElectricResistanceData>(m_ResistanceBaseline->Unload()));
-  if (HasCapacitance())
-    data.Capacitance(std::unique_ptr<CDM::ScalarElectricCapacitanceData>(m_Capacitance->Unload()));
-  if (HasNextCapacitance())
-    data.NextCapacitance(std::unique_ptr<CDM::ScalarElectricCapacitanceData>(m_NextCapacitance->Unload()));
-  if (HasCapacitanceBaseline())
-    data.CapacitanceBaseline(std::unique_ptr<CDM::ScalarElectricCapacitanceData>(m_CapacitanceBaseline->Unload()));
-  if (HasInductance())
-    data.Inductance(std::unique_ptr<CDM::ScalarElectricInductanceData>(m_Inductance->Unload()));
-  if (HasNextInductance())
-    data.NextInductance(std::unique_ptr<CDM::ScalarElectricInductanceData>(m_NextInductance->Unload()));
-  if (HasInductanceBaseline())
-    data.InductanceBaseline(std::unique_ptr<CDM::ScalarElectricInductanceData>(m_InductanceBaseline->Unload()));
-  if (HasCurrent())
-    data.Current(std::unique_ptr<CDM::ScalarElectricCurrentData>(m_Flux->Unload()));
-  if (HasNextCurrent())
-    data.NextCurrent(std::unique_ptr<CDM::ScalarElectricCurrentData>(m_NextFlux->Unload()));
-  if (HasCurrentSource())
-    data.CurrentSource(std::unique_ptr<CDM::ScalarElectricCurrentData>(m_FluxSource->Unload()));
-  if (HasNextCurrentSource())
-    data.NextCurrentSource(std::unique_ptr<CDM::ScalarElectricCurrentData>(m_NextFluxSource->Unload()));
-  if (HasCurrentSourceBaseline())
-    data.CurrentSourceBaseline(std::unique_ptr<CDM::ScalarElectricCurrentData>(m_FluxSourceBaseline->Unload()));
-  if (HasVoltageSource())
-    data.VoltageSource(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_PotentialSource->Unload()));
-  if (HasNextVoltageSource())
-    data.NextVoltageSource(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_NextPotentialSource->Unload()));
-  if (HasVoltageSourceBaseline())
-    data.VoltageSourceBaseline(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_PotentialSourceBaseline->Unload()));
-  if (HasValveBreakdownVoltage())
-    data.ValveBreakdownVoltage(std::unique_ptr<CDM::ScalarElectricPotentialData>(m_ValveBreakdownPotential->Unload()));
+  SECircuitPath::Serialize(src, *dst.mutable_circuitpath());
+  if (src.HasResistance())
+    dst.set_allocated_resistance(SEScalarElectricResistance::Unload(*src.m_Resistance));
+  if (src.HasNextResistance())
+    dst.set_allocated_nextresistance(SEScalarElectricResistance::Unload(*src.m_NextResistance));
+  if (src.HasResistanceBaseline())
+    dst.set_allocated_resistancebaseline(SEScalarElectricResistance::Unload(*src.m_ResistanceBaseline));
+  if (src.HasCapacitance())
+    dst.set_allocated_capacitance(SEScalarElectricCapacitance::Unload(*src.m_Capacitance));
+  if (src.HasNextCapacitance())
+    dst.set_allocated_nextcapacitance(SEScalarElectricCapacitance::Unload(*src.m_NextCapacitance));
+  if (src.HasCapacitanceBaseline())
+    dst.set_allocated_capacitancebaseline(SEScalarElectricCapacitance::Unload(*src.m_CapacitanceBaseline));
+  if (src.HasInductance())
+    dst.set_allocated_inductance(SEScalarElectricInductance::Unload(*src.m_Inductance));
+  if (src.HasNextInductance())
+    dst.set_allocated_nextinductance(SEScalarElectricInductance::Unload(*src.m_NextInductance));
+  if (src.HasInductanceBaseline())
+    dst.set_allocated_inductancebaseline(SEScalarElectricInductance::Unload(*src.m_InductanceBaseline));
+  if (src.HasCurrent())
+    dst.set_allocated_current(SEScalarElectricCurrent::Unload(*src.m_Flux));
+  if (src.HasNextCurrent())
+    dst.set_allocated_nextcurrent(SEScalarElectricCurrent::Unload(*src.m_NextFlux));
+  if (src.HasCurrentSource())
+    dst.set_allocated_currentsource(SEScalarElectricCurrent::Unload(*src.m_FluxSource));
+  if (src.HasNextCurrentSource())
+    dst.set_allocated_nextcurrentsource(SEScalarElectricCurrent::Unload(*src.m_NextFluxSource));
+  if (src.HasCurrentSourceBaseline())
+    dst.set_allocated_currentsourcebaseline(SEScalarElectricCurrent::Unload(*src.m_FluxSourceBaseline));
+  if (src.HasVoltageSource())
+    dst.set_allocated_voltagesource(SEScalarElectricPotential::Unload(*src.m_PotentialSource));
+  if (src.HasNextVoltageSource())
+    dst.set_allocated_nextvoltagesource(SEScalarElectricPotential::Unload(*src.m_NextPotentialSource));
+  if (src.HasVoltageSourceBaseline())
+    dst.set_allocated_voltagesourcebaseline(SEScalarElectricPotential::Unload(*src.m_PotentialSourceBaseline));
+  if (src.HasValveBreakdownVoltage())
+    dst.set_allocated_valvebreakdownvoltage(SEScalarElectricPotential::Unload(*src.m_ValveBreakdownPotential));
 }
 
 ////////////////////////////////

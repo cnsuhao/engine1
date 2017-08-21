@@ -1,114 +1,110 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
 #include "compartment/fluid/SEFluidCompartment.h"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
-#include "bind/enumUrineColor.hxx"
-#include "bind/enumClarityIndicator.hxx"
-#include "bind/enumPresenceIndicator.hxx"
 class SEPatient;
 class SERenalSystem;
 class SEAnatomy;
-#include "bind/UrinalysisData.hxx"
 
-class DLL_DECL SEUrinalysis : public SEPatientAssessment
+class CDM_DECL SEUrinalysis : public SEPatientAssessment
 {
 public:
 
   SEUrinalysis(Logger* logger);
   virtual ~SEUrinalysis();
 
-  virtual void Reset();
   virtual void Clear();
 
-  virtual bool Load(const CDM::UrinalysisData& in);
-  virtual CDM::UrinalysisData* Unload();
+  virtual std::string Save() const;
+  virtual void SaveFile(const std::string& filename) const;
+
+  static void Load(const cdm::UrinalysisData& src, SEUrinalysis& dst);
+  static cdm::UrinalysisData* Unload(const SEUrinalysis& src);
 protected:
-  virtual void Unload(CDM::UrinalysisData& data);
+  static void Serialize(const cdm::UrinalysisData& src, SEUrinalysis& dst);
+  static void Serialize(const SEUrinalysis& src, cdm::UrinalysisData& dst);
+
 public:
 
   virtual bool HasColorResult() const;
-  virtual CDM::enumUrineColor::value GetColorResult() const;
-  virtual void SetColorResult(CDM::enumUrineColor::value color);
+  virtual cdm::UrinalysisData_eUrineColor GetColorResult() const;
+  virtual void SetColorResult(cdm::UrinalysisData_eUrineColor color);
   virtual void InvalidateColorResult();
 
   virtual bool HasAppearanceResult() const;
-  virtual CDM::enumClarityIndicator::value GetAppearanceResult() const;
-  virtual void SetAppearanceResult(CDM::enumClarityIndicator::value c);
+  virtual cdm::UrinalysisData_eClarityIndicator GetAppearanceResult() const;
+  virtual void SetAppearanceResult(cdm::UrinalysisData_eClarityIndicator c);
   virtual void InvalidateAppearanceResult();
 
   virtual bool HasGlucoseResult() const;
-  virtual CDM::enumPresenceIndicator::value GetGlucoseResult() const;
-  virtual void SetGlucoseResult(CDM::enumPresenceIndicator::value p);
+  virtual cdm::UrinalysisData_ePresenceIndicator GetGlucoseResult() const;
+  virtual void SetGlucoseResult(cdm::UrinalysisData_ePresenceIndicator p);
   virtual void InvalidateGlucoseResult();
 
   virtual bool HasKetoneResult() const;
-  virtual CDM::enumPresenceIndicator::value GetKetoneResult() const;
-  virtual void SetKetoneResult(CDM::enumPresenceIndicator::value p);
+  virtual cdm::UrinalysisData_ePresenceIndicator GetKetoneResult() const;
+  virtual void SetKetoneResult(cdm::UrinalysisData_ePresenceIndicator p);
   virtual void InvalidateKetoneResult();
   
   virtual bool HasBilirubinResult() const;
   virtual SEScalar& GetBilirubinResult();
+  virtual double GetBilirubinResult() const;
 
   virtual bool HasSpecificGravityResult() const;
   virtual SEScalar& GetSpecificGravityResult();
+  virtual double GetSpecificGravityResult() const;
 
   virtual bool HasBloodResult() const;
-  virtual CDM::enumPresenceIndicator::value GetBloodResult() const;
-  virtual void SetBloodResult(CDM::enumPresenceIndicator::value p);
+  virtual cdm::UrinalysisData_ePresenceIndicator GetBloodResult() const;
+  virtual void SetBloodResult(cdm::UrinalysisData_ePresenceIndicator p);
   virtual void InvalidateBloodResult();
 
   virtual bool HasPHResult() const;
   virtual SEScalar& GetPHResult();
+  virtual double GetPHResult() const;
 
   virtual bool HasProteinResult() const;
-  virtual CDM::enumPresenceIndicator::value GetProteinResult() const;
-  virtual void SetProteinResult(CDM::enumPresenceIndicator::value p);
+  virtual cdm::UrinalysisData_ePresenceIndicator GetProteinResult() const;
+  virtual void SetProteinResult(cdm::UrinalysisData_ePresenceIndicator p);
   virtual void InvalidateProteinResult();
 
   virtual bool HasUrobilinogenResult() const;
   virtual SEScalarMassPerVolume& GetUrobilinogenResult();
+  virtual double GetUrobilinogenResult(const MassPerVolumeUnit& unit) const;
 
   virtual bool HasNitriteResult() const;
-  virtual CDM::enumPresenceIndicator::value GetNitriteResult() const;
-  virtual void SetNitriteResult(CDM::enumPresenceIndicator::value p);
+  virtual cdm::UrinalysisData_ePresenceIndicator GetNitriteResult() const;
+  virtual void SetNitriteResult(cdm::UrinalysisData_ePresenceIndicator p);
   virtual void InvalidateNitriteResult();
 
   virtual bool HasLeukocyteEsteraseResult() const;
-  virtual CDM::enumPresenceIndicator::value GetLeukocyteEsteraseResult() const;
-  virtual void SetLeukocyteEsteraseResult(CDM::enumPresenceIndicator::value p);
+  virtual cdm::UrinalysisData_ePresenceIndicator GetLeukocyteEsteraseResult() const;
+  virtual void SetLeukocyteEsteraseResult(cdm::UrinalysisData_ePresenceIndicator p);
   virtual void InvalidateLeukocyteEsteraseResult();
 
   virtual bool HasMicroscopicResult() const;
   virtual SEUrinalysisMicroscopic& GetMicroscopicResult();
+  virtual const SEUrinalysisMicroscopic* GetMicroscopicResult() const;
   virtual void RemoveMicroscopicResult();
   
 protected:
 
-  CDM::enumUrineColor::value        m_Color;
-  CDM::enumClarityIndicator::value  m_Appearance;
-  CDM::enumPresenceIndicator::value m_Glucose;
-  CDM::enumPresenceIndicator::value m_Ketone;
-  SEScalar*                         m_Bilirubin;
-  SEScalar*                         m_SpecificGravity;
-  CDM::enumPresenceIndicator::value m_Blood;
-  SEScalar*                         m_pH;
-  CDM::enumPresenceIndicator::value m_Protein;
-  SEScalarMassPerVolume*            m_Urobilinogen;
-  CDM::enumPresenceIndicator::value m_Nitrite;
-  CDM::enumPresenceIndicator::value m_LeukocyteEsterase;
+  cdm::UrinalysisData_eUrineColor        m_Color;
+  cdm::UrinalysisData_eClarityIndicator  m_Appearance;
+  cdm::UrinalysisData_ePresenceIndicator m_Glucose;
+  cdm::UrinalysisData_ePresenceIndicator m_Ketone;
+  SEScalar*                              m_Bilirubin;
+  SEScalar*                              m_SpecificGravity;
+  cdm::UrinalysisData_ePresenceIndicator m_Blood;
+  SEScalar*                              m_pH;
+  cdm::UrinalysisData_ePresenceIndicator m_Protein;
+  SEScalarMassPerVolume*                 m_Urobilinogen;
+  cdm::UrinalysisData_ePresenceIndicator m_Nitrite;
+  cdm::UrinalysisData_ePresenceIndicator m_LeukocyteEsterase;
 
-  SEUrinalysisMicroscopic*          m_Microscopic;
+  SEUrinalysisMicroscopic*               m_Microscopic;
 };  

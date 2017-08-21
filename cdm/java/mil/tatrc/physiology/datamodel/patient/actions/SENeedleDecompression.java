@@ -1,30 +1,20 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.EnumSide;
-import mil.tatrc.physiology.datamodel.bind.NeedleDecompressionData;
+import com.kitware.physiology.cdm.PatientActions.NeedleDecompressionData;
+import com.kitware.physiology.cdm.Properties.eSide;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
 public class SENeedleDecompression extends SEPatientAction
 {
-  protected EnumOnOff state;
-  protected EnumSide side;
+  protected eSwitch state;
+  protected eSide side;
   
   public SENeedleDecompression()
   {
-    state = null;
+    state = eSwitch.Off;
     side = null;
   }
   
@@ -40,58 +30,54 @@ public class SENeedleDecompression extends SEPatientAction
   public void reset()
   {
     super.reset();
-    state = null;
+    state = eSwitch.Off;
     side = null;
   }
   
   public boolean isValid()
   {
-    return hasSide() && hasState();
+    return hasSide();
   }
   
-  public boolean load(NeedleDecompressionData in)
+  public static void load(NeedleDecompressionData src, SENeedleDecompression dst)
   {
-    super.load(in);
-    this.state = in.getState();
-    this.side = in.getSide();
-    return true;
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
+    	dst.state = src.getState();
+    if(src.getSide()!=eSide.UNRECOGNIZED)
+    	dst.side = src.getSide();
   }
   
-  public NeedleDecompressionData unload()
+  public static NeedleDecompressionData unload(SENeedleDecompression src)
   {
-    NeedleDecompressionData data = CDMSerializer.objFactory.createNeedleDecompressionData();
-    unload(data);
-    return data;
+    NeedleDecompressionData.Builder dst = NeedleDecompressionData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(NeedleDecompressionData data)
+  protected static void unload(SENeedleDecompression src, NeedleDecompressionData.Builder dst)
   {
-    super.unload(data);
-    if (hasState())
-      data.setState(state);
-    if (hasSide())
-      data.setSide(side);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    dst.setState(src.state);
+    if (src.hasSide())
+      dst.setSide(src.side);
   }
   
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  public void setState(EnumOnOff onOrOff)
+  public void setState(eSwitch s)
   {
-    state = onOrOff;
-  }
-  public boolean hasState()
-  {
-    return state == null ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
   
-  public EnumSide getSide()
+  public eSide getSide()
   {
     return side;
   }
   
-  public void setSide(EnumSide rightOrLeft)
+  public void setSide(eSide rightOrLeft)
   {
     side = rightOrLeft;
   }

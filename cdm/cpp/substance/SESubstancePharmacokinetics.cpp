@@ -1,21 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "substance/SESubstancePharmacokinetics.h"
-#include "bind/SubstancePharmacokineticsData.hxx"
-#include "bind/SubstancePhysicochemicalData.hxx"
-#include "properties/SEScalarFraction.h"
-#include "bind/ScalarFractionData.hxx"
+#include "properties/SEScalar0To1.h"
 
 SESubstancePharmacokinetics::SESubstancePharmacokinetics(Logger* logger) : Loggable(logger)
 {
@@ -51,45 +39,43 @@ const SEScalar* SESubstancePharmacokinetics::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SESubstancePharmacokinetics::Load(const CDM::SubstancePharmacokineticsData& in)
+void SESubstancePharmacokinetics::Load(const cdm::SubstanceData_PharmacokineticsData& src, SESubstancePharmacokinetics& dst)
 {
-  Clear();
+  SESubstancePharmacokinetics::Serialize(src, dst);
+}
+void SESubstancePharmacokinetics::Serialize(const cdm::SubstanceData_PharmacokineticsData& src, SESubstancePharmacokinetics& dst)
+{
+  dst.Clear();
 
-  if (in.Physicochemicals().present())
-    GetPhysicochemicals().Load(in.Physicochemicals().get());
+  if (src.has_physicochemicals())
+    SESubstancePhysicochemicals::Load(src.physicochemicals(), dst.GetPhysicochemicals());
 
   SESubstanceTissuePharmacokinetics* fx;
-  const CDM::SubstanceTissuePharmacokineticsData* fxData;
-  for (unsigned int i = 0; i < in.TissueKinetics().size(); i++)
+  for (int i = 0; i < src.tissuekinetics_size(); i++)
   {
-    fxData = &in.TissueKinetics().at(i);
-    fx = new SESubstanceTissuePharmacokinetics(fxData->Name(), GetLogger());
-    fx->Load(*fxData);
-    m_TissueKinetics[fx->GetName()] = (fx);
+    const cdm::SubstanceData_TissuePharmacokineticsData& fxData = src.tissuekinetics(i);
+    fx = new SESubstanceTissuePharmacokinetics(fxData.name(), dst.GetLogger());
+    SESubstanceTissuePharmacokinetics::Load(fxData, *fx);
+    dst.m_TissueKinetics[fx->GetName()] = (fx);
   }
-    
-  return true;
 }
 
-CDM::SubstancePharmacokineticsData*  SESubstancePharmacokinetics::Unload() const
+cdm::SubstanceData_PharmacokineticsData* SESubstancePharmacokinetics::Unload(const SESubstancePharmacokinetics& src)
 {
-  if (!IsValid())
+  if (!src.IsValid())
     return nullptr;
-  CDM::SubstancePharmacokineticsData* data = new CDM::SubstancePharmacokineticsData();
-  Unload(*data);
-  return data;
+  cdm::SubstanceData_PharmacokineticsData* dst = new cdm::SubstanceData_PharmacokineticsData();
+  SESubstancePharmacokinetics::Serialize(src,*dst);
+  return dst;
 }
-
-void SESubstancePharmacokinetics::Unload(CDM::SubstancePharmacokineticsData& data) const
+void SESubstancePharmacokinetics::Serialize(const SESubstancePharmacokinetics& src, cdm::SubstanceData_PharmacokineticsData& dst)
 {
-  if (HasPhysicochemicals())
-    data.Physicochemicals(std::unique_ptr<CDM::SubstancePhysicochemicalData>(m_Physicochemicals->Unload()));
+  if (src.HasPhysicochemicals())
+    dst.set_allocated_physicochemicals(SESubstancePhysicochemicals::Unload(*src.m_Physicochemicals));
 
-  for (auto itr : m_TissueKinetics)
-  {
-    data.TissueKinetics().push_back(std::unique_ptr<CDM::SubstanceTissuePharmacokineticsData>(itr.second->Unload()));
-  }
-};
+  for (auto itr : src.m_TissueKinetics)
+    dst.mutable_tissuekinetics()->AddAllocated(SESubstanceTissuePharmacokinetics::Unload(*itr.second));
+}
 
 bool SESubstancePharmacokinetics::HasPhysicochemicals() const
 {

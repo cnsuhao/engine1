@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEHistogram.h"
-#include "bind/HistogramFractionVsLengthData.hxx"
 
-class DLL_DECL SEHistogramFractionVsLength : public SEHistogram
+class CDM_DECL SEHistogramFractionVsLength : public SEHistogram
 {
 public:
 
@@ -25,17 +15,18 @@ public:
 
   virtual bool IsVaild() const;
 
-  virtual bool Load(const CDM::HistogramFractionVsLengthData& in);
-  virtual CDM::HistogramFractionVsLengthData* Unload() const;
+  static void Load(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst);
+  static cdm::HistogramFractionVsLengthData* Unload(const SEHistogramFractionVsLength& src);
 protected:
-  virtual void Unload(CDM::HistogramFractionVsLengthData& data) const;
+  static void Serialize(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst);
+  static void Serialize(const SEHistogramFractionVsLength& src, cdm::HistogramFractionVsLengthData& dst);
 public:
 
-  virtual double                     GetFractionValue(unsigned int index) const;
+  virtual double                     GetFractionValue(size_t index) const;
   virtual std::vector<double>&       GetFraction();
   virtual const std::vector<double>& GetFraction() const;
   
-  virtual double                     GetLengthValue(unsigned int index, const LengthUnit& unit)  const;
+  virtual double                     GetLengthValue(size_t index, const LengthUnit& unit)  const;
   virtual std::vector<double>&       GetLength();
   virtual const std::vector<double>& GetLength() const;
   virtual const LengthUnit*          GetLengthUnit()  const;

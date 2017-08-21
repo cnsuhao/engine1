@@ -1,21 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEForcedInhale.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 #include "properties/SEScalarTime.h"
-#include "bind/ScalarTimeData.hxx"
 
 SEForcedInhale::SEForcedInhale() : SEConsciousRespirationCommand()
 {
@@ -45,28 +34,31 @@ bool SEForcedInhale::IsActive() const
   return SEConsciousRespirationCommand::IsActive();
 }
 
-bool SEForcedInhale::Load(const CDM::ForcedInhaleData& in)
+void SEForcedInhale::Load(const cdm::ConsciousRespirationData_ForcedInhaleData& src, SEForcedInhale& dst)
 {
-  SEConsciousRespirationCommand::Load(in);
-  GetInspiratoryCapacityFraction().Load(in.InspiratoryCapacityFraction());
-  GetPeriod().Load(in.Period());
-  return true;
+  SEForcedInhale::Serialize(src, dst);
+}
+void SEForcedInhale::Serialize(const cdm::ConsciousRespirationData_ForcedInhaleData& src, SEForcedInhale& dst)
+{
+  dst.Clear();
+  if (src.has_inspiratorycapacityfraction())
+    SEScalar0To1::Load(src.inspiratorycapacityfraction(), dst.GetInspiratoryCapacityFraction());
+  if (src.has_period())
+    SEScalarTime::Load(src.period(), dst.GetPeriod());
 }
 
-CDM::ForcedInhaleData* SEForcedInhale::Unload() const
+cdm::ConsciousRespirationData_ForcedInhaleData* SEForcedInhale::Unload(const SEForcedInhale& src)
 {
-  CDM::ForcedInhaleData*data(new CDM::ForcedInhaleData());
-  Unload(*data);
-  return data;
+  cdm::ConsciousRespirationData_ForcedInhaleData* dst = new cdm::ConsciousRespirationData_ForcedInhaleData();
+  SEForcedInhale::Serialize(src, *dst);
+  return dst;
 }
-
-void SEForcedInhale::Unload(CDM::ForcedInhaleData& data) const
+void SEForcedInhale::Serialize(const SEForcedInhale& src, cdm::ConsciousRespirationData_ForcedInhaleData& dst)
 {
-  SEConsciousRespirationCommand::Unload(data);
-  if (m_InspiratoryCapacityFraction != nullptr)
-    data.InspiratoryCapacityFraction(std::unique_ptr<CDM::Scalar0To1Data>(m_InspiratoryCapacityFraction->Unload()));
-  if (m_Period != nullptr)
-    data.Period(std::unique_ptr<CDM::ScalarTimeData>(m_Period->Unload()));
+  if (src.HasInspiratoryCapacityFraction())
+    dst.set_allocated_inspiratorycapacityfraction(SEScalar0To1::Unload(*src.m_InspiratoryCapacityFraction));
+  if (src.HasPeriod())
+    dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
 }
 
 bool SEForcedInhale::HasInspiratoryCapacityFraction() const

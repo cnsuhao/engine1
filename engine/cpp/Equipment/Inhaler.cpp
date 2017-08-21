@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 
 #include "stdafx.h"
@@ -19,7 +10,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEUseInhaler.h"
@@ -30,7 +21,7 @@ Constructors
 ========================
 */
 
-Inhaler::Inhaler(BioGears& bg) : SEInhaler(bg.GetSubstances()), m_data(bg)
+Inhaler::Inhaler(PulseController& data) : SEInhaler(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -55,26 +46,29 @@ void Inhaler::Clear()
 //--------------------------------------------------------------------------------------------------
 void Inhaler::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
   m_InhalerDrug = nullptr;
 }
 
-bool Inhaler::Load(const CDM::BioGearsInhalerData& in)
+void Inhaler::Load(const pulse::InhalerData& src, Inhaler& dst)
 {
-  if (!SEInhaler::Load(in))
-    return false;  
-  BioGearsSystem::LoadState();
-  return true;
+  Inhaler::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::BioGearsInhalerData* Inhaler::Unload() const
+void Inhaler::Serialize(const pulse::InhalerData& src, Inhaler& dst)
 {
-  CDM::BioGearsInhalerData* data = new CDM::BioGearsInhalerData();
-  Unload(*data);
-  return data;
+  SEInhaler::Serialize(src.common(), dst);
 }
-void Inhaler::Unload(CDM::BioGearsInhalerData& data) const
+
+pulse::InhalerData* Inhaler::Unload(const Inhaler& src)
 {
-  SEInhaler::Unload(data);
+  pulse::InhalerData* dst = new pulse::InhalerData();
+  Inhaler::Serialize(src, *dst);
+  return dst;
+}
+void Inhaler::Serialize(const Inhaler& src, pulse::InhalerData& dst)
+{
+  SEInhaler::Serialize(src, *dst.mutable_common());
 }
 
 void Inhaler::SetUp()
@@ -82,11 +76,11 @@ void Inhaler::SetUp()
   // Time step - used by inhaler timer
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
 
-  m_AmbientEnv = m_data.GetCompartments().GetGasCompartment(BGE::EnvironmentCompartment::Ambient);
-  m_Mouthpiece = m_data.GetCompartments().GetGasCompartment(BGE::InhalerCompartment::Mouthpiece);
-  m_AerosolMouthpiece = m_data.GetCompartments().GetLiquidCompartment(BGE::InhalerCompartment::Mouthpiece);
+  m_AmbientEnv = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+  m_Mouthpiece = m_data.GetCompartments().GetGasCompartment(pulse::InhalerCompartment::Mouthpiece);
+  m_AerosolMouthpiece = m_data.GetCompartments().GetLiquidCompartment(pulse::InhalerCompartment::Mouthpiece);
  
-  if (m_State == CDM::enumOnOff::On)
+  if (m_State == cdm::eSwitch::On)
   {
     if (m_Substance == nullptr)
     {
@@ -120,14 +114,14 @@ void Inhaler::PreProcess()
 {
   if (m_data.GetActions().GetInhalerActions().HasConfiguration())
   {
-    CDM::enumOnOff::value state = GetState();
+    cdm::eSwitch state = GetState();
     SEInhalerConfiguration* config = m_data.GetActions().GetInhalerActions().GetConfiguration();
     ProcessConfiguration(*config);
     m_data.GetActions().GetInhalerActions().RemoveConfiguration();    
     if (state != m_State)
     {
       m_State = state;
-      Warning("BioGears does not allow you to change inhaler state via the configuration, please use a Conscious Respiration Action. Ignoring the configuration state.");
+      Warning("Pulse does not allow you to change inhaler state via the configuration, please use a Conscious Respiration Action. Ignoring the configuration state.");
     }
   }
   if (m_data.GetActions().GetPatientActions().HasConsciousRespiration())
@@ -143,7 +137,7 @@ void Inhaler::PreProcess()
   }
 
   // ### HANDLE INHALER-BASED UPDATES
-  if (m_State == CDM::enumOnOff::On)
+  if (m_State == cdm::eSwitch::On)
   {
     //  Check to see if there is a substantial mass of substance on the inhaler node.
     //  If not, we'll disconnect the inhaler.    
@@ -152,8 +146,8 @@ void Inhaler::PreProcess()
     {
       Info("Inhaler removed!");
       m_InhalerDrug = nullptr;
-      m_State = CDM::enumOnOff::Off;
-      m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Free);
+      m_State = cdm::eSwitch::Off;
+      m_data.SetAirwayMode(pulse::eAirwayMode::Free);
     }
   }
 }
@@ -181,7 +175,7 @@ void Inhaler::Administer()
 {
   // Check to see if the inhaler is already on. We should not run this method unless the
   //  inhaler is currently off and about to be activated.
-  if (m_State == CDM::enumOnOff::On)
+  if (m_State == cdm::eSwitch::On)
   {
     /// \error: Already processing a Substance Inhalation, ignoring this command.
     Error("Already processing a Substance Inhalation, ignoring this command");
@@ -190,8 +184,8 @@ void Inhaler::Administer()
 
   // Alert the user that the inhaler is actuated
   Info("Inhaler actuated!");
-  m_State = CDM::enumOnOff::On;
-  m_data.SetAirwayMode(CDM::enumBioGearsAirwayMode::Inhaler);
+  m_State = cdm::eSwitch::On;
+  m_data.SetAirwayMode(pulse::eAirwayMode::Inhaler);
 
   // Initialize pressure in the inhaler node to ambient  
   double dAmbientPressure = m_AmbientEnv->GetPressure(PressureUnit::cmH2O);
@@ -205,7 +199,7 @@ void Inhaler::Administer()
   }
   m_Mouthpiece->Balance(BalanceGasBy::VolumeFraction);
 
-  // Add the dose substance to the list of active substances to be tracked in BioGears
+  // Add the dose substance to the list of active substances to be tracked in Pulse
   m_data.GetSubstances().AddActiveSubstance((SESubstance&)*m_Substance);
 
   // Get the inhaler node volume

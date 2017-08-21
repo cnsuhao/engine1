@@ -1,22 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "system/physiology/SETissueSystem.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 
 SETissueSystem::SETissueSystem(Logger* logger) : SESystem(logger)
 {
@@ -64,52 +53,51 @@ const SEScalar* SETissueSystem::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SETissueSystem::Load(const CDM::TissueSystemData& in)
+void SETissueSystem::Load(const cdm::TissueSystemData& src, SETissueSystem& dst)
 {
-  SESystem::Load(in);
-  if (in.CarbonDioxideProductionRate().present())
-    GetCarbonDioxideProductionRate().Load(in.CarbonDioxideProductionRate().get());
-  if (in.ExtracellularFluidVolume().present())
-    GetExtracellularFluidVolume().Load(in.ExtracellularFluidVolume().get());
-  if (in.ExtravascularFluidVolume().present())
-    GetExtravascularFluidVolume().Load(in.ExtravascularFluidVolume().get());
-  if (in.IntracellularFluidPH().present())
-    GetIntracellularFluidPH().Load(in.IntracellularFluidPH().get());
-  if (in.IntracellularFluidVolume().present())
-    GetIntracellularFluidVolume().Load(in.IntracellularFluidVolume().get());
-  if (in.OxygenConsumptionRate().present())
-    GetOxygenConsumptionRate().Load(in.OxygenConsumptionRate().get());
-  if (in.RespiratoryExchangeRatio().present())
-    GetRespiratoryExchangeRatio().Load(in.RespiratoryExchangeRatio().get());
-
-  return true;
+  SETissueSystem::Serialize(src, dst);
+}
+void SETissueSystem::Serialize(const cdm::TissueSystemData& src, SETissueSystem& dst)
+{
+  dst.Clear();
+  if (src.has_carbondioxideproductionrate())
+    SEScalarVolumePerTime::Load(src.carbondioxideproductionrate(), dst.GetCarbonDioxideProductionRate());
+  if (src.has_extracellularfluidvolume())
+    SEScalarVolume::Load(src.extracellularfluidvolume(), dst.GetExtracellularFluidVolume());
+  if (src.has_extravascularfluidvolume())
+    SEScalarVolume::Load(src.extravascularfluidvolume(), dst.GetExtravascularFluidVolume());
+  if (src.has_intracellularfluidph())
+    SEScalar::Load(src.intracellularfluidph(), dst.GetIntracellularFluidPH());
+  if (src.has_intracellularfluidvolume())
+    SEScalarVolume::Load(src.intracellularfluidvolume(), dst.GetIntracellularFluidVolume());
+  if (src.has_oxygenconsumptionrate())
+    SEScalarVolumePerTime::Load(src.oxygenconsumptionrate(), dst.GetOxygenConsumptionRate());
+  if (src.has_respiratoryexchangeratio())
+    SEScalar::Load(src.respiratoryexchangeratio(), dst.GetRespiratoryExchangeRatio());
 }
 
-CDM::TissueSystemData* SETissueSystem::Unload() const
+cdm::TissueSystemData* SETissueSystem::Unload(const SETissueSystem& src)
 {
-  CDM::TissueSystemData* data = new CDM::TissueSystemData();
-  Unload(*data);
-  return data;
+  cdm::TissueSystemData* dst = new cdm::TissueSystemData();
+  SETissueSystem::Serialize(src, *dst);
+  return dst;
 }
-
-void SETissueSystem::Unload(CDM::TissueSystemData& data) const
-{  
-  if (m_CarbonDioxideProductionRate != nullptr)
-    data.CarbonDioxideProductionRate(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_CarbonDioxideProductionRate->Unload()));
-  if (m_ExtracellularFluidVolume != nullptr)
-    data.ExtracellularFluidVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_ExtracellularFluidVolume->Unload()));
-  if (m_ExtravascularFluidVolume != nullptr)
-    data.ExtravascularFluidVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_ExtravascularFluidVolume->Unload()));
-  if (m_IntracellularFluidPH != nullptr)
-    data.IntracellularFluidPH(std::unique_ptr<CDM::ScalarData>(m_IntracellularFluidPH->Unload()));
-  if (m_IntracellularFluidVolume != nullptr)
-    data.IntracellularFluidVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_IntracellularFluidVolume->Unload()));
-  if (m_OxygenConsumptionRate != nullptr)
-    data.OxygenConsumptionRate(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_OxygenConsumptionRate->Unload()));
-  if (m_RespiratoryExchangeRatio != nullptr)
-    data.RespiratoryExchangeRatio(std::unique_ptr<CDM::ScalarData>(m_RespiratoryExchangeRatio->Unload()));
-
-  SESystem::Unload(data);
+void SETissueSystem::Serialize(const SETissueSystem& src, cdm::TissueSystemData& dst)
+{
+  if (src.HasCarbonDioxideProductionRate())
+    dst.set_allocated_carbondioxideproductionrate(SEScalarVolumePerTime::Unload(*src.m_CarbonDioxideProductionRate));
+  if (src.HasExtracellularFluidVolume())
+    dst.set_allocated_extracellularfluidvolume(SEScalarVolume::Unload(*src.m_ExtracellularFluidVolume));
+  if (src.HasExtravascularFluidVolume())
+    dst.set_allocated_extravascularfluidvolume(SEScalarVolume::Unload(*src.m_ExtravascularFluidVolume));
+  if (src.HasIntracellularFluidPH())
+    dst.set_allocated_intracellularfluidph(SEScalar::Unload(*src.m_IntracellularFluidPH));
+  if (src.HasIntracellularFluidVolume())
+    dst.set_allocated_intracellularfluidvolume(SEScalarVolume::Unload(*src.m_IntracellularFluidVolume));
+  if (src.HasOxygenConsumptionRate())
+    dst.set_allocated_oxygenconsumptionrate(SEScalarVolumePerTime::Unload(*src.m_OxygenConsumptionRate));
+  if (src.HasRespiratoryExchangeRatio())
+    dst.set_allocated_respiratoryexchangeratio(SEScalar::Unload(*src.m_RespiratoryExchangeRatio));
 }
 
 bool SETissueSystem::HasCarbonDioxideProductionRate() const

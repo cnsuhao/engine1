@@ -1,15 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
- **************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.utilities.csv.plots;
 
 import java.awt.Color;
@@ -27,7 +17,7 @@ import mil.tatrc.physiology.utilities.csv.CSVContents;
  */
 public class CSVComparePlotter
 {
-  public enum PlotType { FullPlot, FullPlotErrors, FastPlot, FastPlotErrors, MemoryFastPlot}
+  public enum PlotType { NoPlot, FullPlot, FullPlotErrors, FastPlot, FastPlotErrors, MemoryFastPlot}
   public PlotType plotType=PlotType.FastPlot;
 
   public static void main(String[] args) throws IOException, InterruptedException
@@ -43,7 +33,7 @@ public class CSVComparePlotter
       }
       else
       {
-        Log.fatal("Expected inputs : [expected results file path] [computed results file path] [percentDifference] [time to start comparing at] [track differences] [output folder] [zip results]");
+        Log.fatal("Expected inputs : [expected results file path] [computed results file path] [percentDifference] [time to start comparing at] [track differences] [output folder] [results file]");
         return;
       }
     }
@@ -53,15 +43,15 @@ public class CSVComparePlotter
     File expected = new File(args[0]);
     if(!expected.exists())
     {
-      // Check to see if there is a zip available
-      String eZip = args[0].replaceAll(".txt", ".zip");
-      expected = new File(eZip);
+      // Check to see if there is a result file available
+      String rFile = args[0].replaceAll(".txt", ".txt");
+      expected = new File(rFile);
       if(!expected.exists())
       {
         Log.error("Expected file does not exist "+args[0]);
         Log.info("I am going to try to plot the computed");
       }
-      args[0] = eZip;
+      args[0] = rFile;
     }
     File computed = new File(args[1]);
     if(!computed.exists())

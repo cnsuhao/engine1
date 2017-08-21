@@ -1,19 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
- **************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.compartment;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ThermalCompartmentData;
+import com.kitware.physiology.cdm.Compartment.ThermalCompartmentData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarEnergy;
 import mil.tatrc.physiology.datamodel.properties.SEScalarPower;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTemperature;
@@ -46,39 +37,35 @@ public class SEThermalCompartment extends SECompartment
       heat.invalidate();
   }
 
-  public boolean load(ThermalCompartmentData in)
+  public static void load(ThermalCompartmentData src, SEThermalCompartment dst)
   {
-    super.load(in);
-    if (in.getHeatTransferRateIn() != null)
-      getHeatTransferRateIn().load(in.getHeatTransferRateIn());
-    if (in.getHeatTransferRateOut() != null)
-      getHeatTransferRateOut().load(in.getHeatTransferRateOut());
-    if (in.getTemperature() != null)
-      getTemperature().load(in.getTemperature());
-    if (in.getHeat() != null)
-      getHeat().load(in.getHeat());
-
-    return true;
+    SECompartment.load(src.getCompartment(), dst);
+    if (src.hasHeatTransferRateIn())
+      SEScalarPower.load(src.getHeatTransferRateIn(),dst.getHeatTransferRateIn());
+    if (src.hasHeatTransferRateOut())
+      SEScalarPower.load(src.getHeatTransferRateOut(),dst.getHeatTransferRateOut());
+    if (src.hasTemperature())
+      SEScalarTemperature.load(src.getTemperature(),dst.getTemperature());
+    if (src.hasHeat())
+      SEScalarEnergy.load(src.getHeat(),dst.getHeat());
   }
-
-  public ThermalCompartmentData unload()
+  public static ThermalCompartmentData unload(SEThermalCompartment src)
   {
-    ThermalCompartmentData to = CDMSerializer.objFactory.createThermalCompartmentData();
-    unload(to);
-    return to;    
+    ThermalCompartmentData.Builder dst = ThermalCompartmentData.newBuilder();
+    unload(src,dst);
+    return dst.build();    
   }
-
-  protected void unload(ThermalCompartmentData data)
+  protected static void unload(SEThermalCompartment src, ThermalCompartmentData.Builder dst)
   {
-    super.unload(data);
-    if (getHeatTransferRateIn() != null)
-      data.setHeatTransferRateIn(heatTransferRateIn.unload());
-    if (getHeatTransferRateOut() != null)
-      data.setHeatTransferRateOut(heatTransferRateOut.unload());
-    if (getTemperature() != null)
-      data.setTemperature(temperature.unload());
-    if (getHeat() != null)
-      data.setHeat(heat.unload());
+    SECompartment.unload(src,dst.getCompartment());
+    if (src.hasHeatTransferRateIn())
+      dst.setHeatTransferRateIn(SEScalarPower.unload(src.heatTransferRateIn));
+    if (src.hasHeatTransferRateOut())
+      dst.setHeatTransferRateOut(SEScalarPower.unload(src.heatTransferRateOut));
+    if (src.hasTemperature())
+      dst.setTemperature(SEScalarTemperature.unload(src.temperature));
+    if (src.hasHeat())
+      dst.setHeat(SEScalarEnergy.unload(src.heat));
   }
 
   public boolean hasHeatTransferRateIn()

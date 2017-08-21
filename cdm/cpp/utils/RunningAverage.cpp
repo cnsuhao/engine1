@@ -1,19 +1,8 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "utils/RunningAverage.h"
-#include "bind/RunningAverageData.hxx"
-
 
 RunningAverage::RunningAverage()
 {
@@ -25,22 +14,26 @@ RunningAverage::~RunningAverage()
 
 }
 
-bool RunningAverage::Load(const CDM::RunningAverageData& in)
+void RunningAverage::Load(const cdm::RunningAverageData& src, RunningAverage& dst)
 {
-  m_Sum = in.sum();
-  m_NumSamples = in.numSamples();
-  return true;
+  RunningAverage::Serialize(src, dst);
 }
-CDM::RunningAverageData* RunningAverage::Unload() const
+void RunningAverage::Serialize(const cdm::RunningAverageData& src, RunningAverage& dst)
 {
-  CDM::RunningAverageData* data = new CDM::RunningAverageData();
-  Unload(*data);
-  return data;
+  dst.m_Sum = src.sum();
+  dst.m_NumSamples = src.numsamples();
 }
-void RunningAverage::Unload(CDM::RunningAverageData& data) const
+
+cdm::RunningAverageData* RunningAverage::Unload(const RunningAverage& src)
 {
-  data.sum(m_Sum);
-  data.numSamples(m_NumSamples);
+  cdm::RunningAverageData* dst = new cdm::RunningAverageData();
+  RunningAverage::Serialize(src,*dst);
+  return dst;
+}
+void RunningAverage::Serialize(const RunningAverage& src, cdm::RunningAverageData& dst)
+{
+  dst.set_sum(src.m_Sum);
+  dst.set_numsamples(src.m_NumSamples);
 }
 
 void RunningAverage::Reset()

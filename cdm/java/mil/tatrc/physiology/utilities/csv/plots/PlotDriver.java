@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.utilities.csv.plots;
 
 import java.awt.Color;
@@ -53,14 +44,14 @@ public class PlotDriver
         Log.error("Value "+args[0]+" doesn't seem to be a valid config file");
         return;
       }
-      File configFile = new File(cfg.getDataDirectory()+"/test/config/"+args[0]);      
+      File configFile = new File(cfg.getTestConfigDirectory()+"/"+args[0]);      
       if(!configFile.exists())
       {
         Log.error("ConfigFile "+configFile.getAbsolutePath()+" not found");
         return;
       }
       
-      me.processConfigFile(configFile.getAbsolutePath(),cfg.getDataDirectory());
+      me.processConfigFile(configFile,cfg);
     }
     //Plotting from two results files (compare-type plotting)
     else
@@ -170,10 +161,9 @@ public class PlotDriver
   }
 
   //Reading from config file for validation ("pretty graphs")
-  public void processConfigFile(String configFile, String dataDir)
-  {
-  	String[] path = configFile.split("[\\\\/]");
-  	this.name = path[path.length-1];
+  public void processConfigFile(File configFile, RunConfiguration cfg)
+  {  	
+    this.name = configFile.getName();
     this.name = this.name.substring(0, this.name.lastIndexOf('.'));
     Log.setFileName("./test_results/"+this.name+".log");
     
@@ -234,7 +224,7 @@ public class PlotDriver
         }
         
         PlotJob job = new PlotJob();
-        job.verificationDirectory=dataDir+"/verification/Scenarios/Patient";
+        job.verificationDirectory=cfg.getVerificationDirectory()+"/scenarios/patient";
         //job2groups.put(job, currentGroup);
         if (key.charAt(0) == '-')
         {
@@ -342,7 +332,7 @@ public class PlotDriver
               continue;
             } 
             else if(key.equalsIgnoreCase("VerificationDir"))
-            {job.verificationDirectory = dataDir+"/verification/Scenarios/"+value; continue;}
+            {job.verificationDirectory = cfg.getVerificationDirectory()+"/scenarios/"+value; continue;}
             else if(key.equalsIgnoreCase("Title"))
             {job.titleOverride = value; continue;}    
             else if(key.equalsIgnoreCase("OutputFilename"))
@@ -377,12 +367,14 @@ public class PlotDriver
             {job.X2Label = value; continue;}
             else if(key.equalsIgnoreCase("Y2Label"))
             {job.Y2Label = value; continue;}
-            else if(key.equalsIgnoreCase("ExperimentalData"))
-            {job.experimentalData = dataDir+"/"+value; continue;}
+            else if(key.equalsIgnoreCase("ValidationData"))
+            {job.experimentalData = cfg.getValidationDirectory()+"/"+value; continue;}
             else if(key.equalsIgnoreCase("DataFileOverride"))
             {job.dataFile = value; continue;}
-            else if(key.equalsIgnoreCase("DataPathOverride"))
-            {job.dataPath = dataDir+"/"+value; continue;}
+            else if(key.equalsIgnoreCase("DataPathValidationOverride"))
+            {job.dataPath = cfg.getValidationDirectory()+"/"+value; continue;}
+            else if(key.equalsIgnoreCase("DataPathVerificationOverride"))
+            {job.dataPath = cfg.getVerificationDirectory()+"/"+value; continue;}
             else if(key.equalsIgnoreCase("PFTFile"))
             {job.PFTFile = value; continue;}
             else if(key.equalsIgnoreCase("OutputOverride"))
@@ -563,7 +555,7 @@ public class PlotDriver
         //If this is a scenario test, remove "Results" from name and don't add "Test"
           job.logFile = job.name.substring(0,job.name.indexOf("Results"))+".log";
           job.scenarioPath = expectedPath.substring(0,expectedPath.indexOf("Current Baseline"));
-          job.scenarioFile = job.name.substring(0,job.name.indexOf("Results"))+".xml";
+          job.scenarioFile = job.name.substring(0,job.name.indexOf("Results"))+".pba";
           job.hideAELegend = true;
         }
         else
@@ -653,7 +645,7 @@ public class PlotDriver
         //If this is a scenario test, remove "Results" from name and don't add "Test"
         job.logFile = job.name.substring(0,job.name.indexOf("Results"))+".log";
         job.scenarioPath = expectedPath.substring(0,expectedPath.indexOf("Current Baseline"));
-        job.scenarioFile = job.name.substring(0,job.name.indexOf("Results"))+".xml";
+        job.scenarioFile = job.name.substring(0,job.name.indexOf("Results"))+".pba";
         job.hideAELegend = true;
       }
       else

@@ -1,20 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(ConditionData);
 class SESubstanceManager;
+PROTO_PUSH
+#include "bind/cdm/Conditions.pb.h"
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 
-class DLL_DECL SECondition : public Loggable
+class CDM_DECL SECondition : public Loggable
 {
 public:
 
@@ -23,15 +17,16 @@ public:
   
   virtual void Clear();// Deletes all members
  
-  static SECondition* newFromBind(const CDM::ConditionData& condition, SESubstanceManager& substances);
-
-  virtual bool Load(const CDM::ConditionData& in);
-  virtual CDM::ConditionData* Unload() const;
+  /** Create a new action based on the binding object, load that data into the new action, and return said action */
+  static SECondition* Load(const cdm::AnyConditionData& condition, SESubstanceManager& subMgr);
+  /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
+  static cdm::AnyConditionData* Unload(const SECondition& condition);
 protected:
-  void Unload(CDM::ConditionData& data) const;
+  static void Serialize(const cdm::ConditionData& src, SECondition& dst);
+  static void Serialize(const SECondition& src, cdm::ConditionData& dst);
 
 public:
-  /** Test if the action has all data it needs */
+  /** Test if the Condition has all data it needs */
   virtual bool IsValid() const { return true; }
 
   virtual std::string GetName() const = 0;

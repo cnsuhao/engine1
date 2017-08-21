@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/RenalSystemData.hxx"
 
-class DLL_DECL SERenalSystem : public SESystem
+class CDM_DECL SERenalSystem : public SESystem
 {
 public:
 
@@ -24,11 +14,12 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::RenalSystemData& in);
-  virtual CDM::RenalSystemData* Unload() const;
+
+  static void Load(const cdm::RenalSystemData& src, SERenalSystem& dst);
+  static cdm::RenalSystemData* Unload(const SERenalSystem& src);
 protected:
-  virtual void Unload(CDM::RenalSystemData& data) const;
+  static void Serialize(const cdm::RenalSystemData& src, SERenalSystem& dst);
+  static void Serialize(const SERenalSystem& src, cdm::RenalSystemData& dst);
 
 public:
 
@@ -37,7 +28,7 @@ public:
   virtual double GetGlomerularFiltrationRate(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasFiltrationFraction() const;
-  virtual SEScalarFraction& GetFiltrationFraction();
+  virtual SEScalar0To1& GetFiltrationFraction();
   virtual double GetFiltrationFraction() const;
 
   virtual bool HasLeftAfferentArterioleResistance() const;
@@ -81,7 +72,7 @@ public:
   virtual double GetLeftGlomerularFluidPermeability(const VolumePerTimePressureAreaUnit& unit) const;
 
   virtual bool HasLeftFiltrationFraction() const;
-  virtual SEScalarFraction& GetLeftFiltrationFraction();
+  virtual SEScalar0To1& GetLeftFiltrationFraction();
   virtual double GetLeftFiltrationFraction() const;
 
   virtual bool HasLeftNetFiltrationPressure() const;
@@ -177,7 +168,7 @@ public:
   virtual double GetRightGlomerularFluidPermeability(const VolumePerTimePressureAreaUnit& unit) const;
 
   virtual bool HasRightFiltrationFraction() const;
-  virtual SEScalarFraction& GetRightFiltrationFraction();
+  virtual SEScalar0To1& GetRightFiltrationFraction();
   virtual double GetRightFiltrationFraction() const;
 
   virtual bool HasRightNetFiltrationPressure() const;
@@ -250,8 +241,8 @@ public:
 
 protected:
 
-  SEScalarVolumePerTime*             m_GlomerularFiltrationRate; 
-  SEScalarFraction*                   m_FiltrationFraction;
+  SEScalarVolumePerTime*              m_GlomerularFiltrationRate; 
+  SEScalar0To1*                       m_FiltrationFraction;
 
   SEScalarFlowResistance*             m_LeftAfferentArterioleResistance;
   SEScalarPressure*                   m_LeftBowmansCapsulesHydrostaticPressure;
@@ -259,24 +250,24 @@ protected:
   SEScalarFlowResistance*             m_LeftEfferentArterioleResistance;
   SEScalarPressure*                   m_LeftGlomerularCapillariesHydrostaticPressure;
   SEScalarPressure*                   m_LeftGlomerularCapillariesOsmoticPressure;
-  SEScalarVolumePerTimePressure*     m_LeftGlomerularFiltrationCoefficient;
-  SEScalarVolumePerTime*             m_LeftGlomerularFiltrationRate;
+  SEScalarVolumePerTimePressure*      m_LeftGlomerularFiltrationCoefficient;
+  SEScalarVolumePerTime*              m_LeftGlomerularFiltrationRate;
   SEScalarArea*                       m_LeftGlomerularFiltrationSurfaceArea;
-  SEScalarVolumePerTimePressureArea* m_LeftGlomerularFluidPermeability;
-  SEScalarFraction*                   m_LeftFiltrationFraction;
+  SEScalarVolumePerTimePressureArea*  m_LeftGlomerularFluidPermeability;
+  SEScalar0To1*                       m_LeftFiltrationFraction;
   SEScalarPressure*                   m_LeftNetFiltrationPressure;
   SEScalarPressure*                   m_LeftNetReabsorptionPressure;
   SEScalarPressure*                   m_LeftPeritubularCapillariesHydrostaticPressure;
   SEScalarPressure*                   m_LeftPeritubularCapillariesOsmoticPressure;
-  SEScalarVolumePerTimePressure*     m_LeftReabsorptionFiltrationCoefficient;
-  SEScalarVolumePerTime*             m_LeftReabsorptionRate;
+  SEScalarVolumePerTimePressure*      m_LeftReabsorptionFiltrationCoefficient;
+  SEScalarVolumePerTime*              m_LeftReabsorptionRate;
   SEScalarArea*                       m_LeftTubularReabsorptionFiltrationSurfaceArea;
-  SEScalarVolumePerTimePressureArea* m_LeftTubularReabsorptionFluidPermeability;
+  SEScalarVolumePerTimePressureArea*  m_LeftTubularReabsorptionFluidPermeability;
   SEScalarPressure*                   m_LeftTubularHydrostaticPressure;
   SEScalarPressure*                   m_LeftTubularOsmoticPressure;
 
-  SEScalarVolumePerTime*             m_RenalBloodFlow;
-  SEScalarVolumePerTime*             m_RenalPlasmaFlow;
+  SEScalarVolumePerTime*              m_RenalBloodFlow;
+  SEScalarVolumePerTime*              m_RenalPlasmaFlow;
   SEScalarFlowResistance*             m_RenalVascularResistance;
 
   SEScalarFlowResistance*             m_RightAfferentArterioleResistance;
@@ -285,27 +276,27 @@ protected:
   SEScalarFlowResistance*             m_RightEfferentArterioleResistance;
   SEScalarPressure*                   m_RightGlomerularCapillariesHydrostaticPressure;
   SEScalarPressure*                   m_RightGlomerularCapillariesOsmoticPressure;
-  SEScalarVolumePerTimePressure*     m_RightGlomerularFiltrationCoefficient;
-  SEScalarVolumePerTime*             m_RightGlomerularFiltrationRate;
+  SEScalarVolumePerTimePressure*      m_RightGlomerularFiltrationCoefficient;
+  SEScalarVolumePerTime*              m_RightGlomerularFiltrationRate;
   SEScalarArea*                       m_RightGlomerularFiltrationSurfaceArea;
-  SEScalarVolumePerTimePressureArea* m_RightGlomerularFluidPermeability;
-  SEScalarFraction*                   m_RightFiltrationFraction;
+  SEScalarVolumePerTimePressureArea*  m_RightGlomerularFluidPermeability;
+  SEScalar0To1*                       m_RightFiltrationFraction;
   SEScalarPressure*                   m_RightNetFiltrationPressure;
   SEScalarPressure*                   m_RightNetReabsorptionPressure;
   SEScalarPressure*                   m_RightPeritubularCapillariesHydrostaticPressure;
   SEScalarPressure*                   m_RightPeritubularCapillariesOsmoticPressure;
-  SEScalarVolumePerTimePressure*     m_RightReabsorptionFiltrationCoefficient;
-  SEScalarVolumePerTime*             m_RightReabsorptionRate;
+  SEScalarVolumePerTimePressure*      m_RightReabsorptionFiltrationCoefficient;
+  SEScalarVolumePerTime*              m_RightReabsorptionRate;
   SEScalarArea*                       m_RightTubularReabsorptionFiltrationSurfaceArea;
-  SEScalarVolumePerTimePressureArea* m_RightTubularReabsorptionFluidPermeability;
+  SEScalarVolumePerTimePressureArea*  m_RightTubularReabsorptionFluidPermeability;
   SEScalarPressure*                   m_RightTubularHydrostaticPressure;
   SEScalarPressure*                   m_RightTubularOsmoticPressure;
 
-  SEScalarVolumePerTime*             m_UrinationRate;
+  SEScalarVolumePerTime*              m_UrinationRate;
   SEScalarOsmolality*                 m_UrineOsmolality;
   SEScalarOsmolarity*                 m_UrineOsmolarity;
-  SEScalarVolumePerTime*             m_UrineProductionRate;
+  SEScalarVolumePerTime*              m_UrineProductionRate;
   SEScalar*                           m_UrineSpecificGravity;
   SEScalarVolume*                     m_UrineVolume;
-  SEScalarMassPerVolume*             m_UrineUreaNitrogenConcentration;
+  SEScalarMassPerVolume*              m_UrineUreaNitrogenConcentration;
 };

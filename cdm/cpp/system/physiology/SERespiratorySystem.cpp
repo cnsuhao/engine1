@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "system/physiology/SERespiratorySystem.h"
@@ -17,7 +8,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
@@ -118,101 +109,99 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SERespiratorySystem::Load(const CDM::RespiratorySystemData& in)
+void SERespiratorySystem::Load(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst)
 {
-  SESystem::Load(in);
-
-  if (in.AlveolarArterialGradient().present())
-    GetAlveolarArterialGradient().Load(in.AlveolarArterialGradient().get());
-  if (in.CarricoIndex().present())
-    GetCarricoIndex().Load(in.CarricoIndex().get());
-  if (in.EndTidalCarbonDioxideFraction().present())
-    GetEndTidalCarbonDioxideFraction().Load(in.EndTidalCarbonDioxideFraction().get());
-  if (in.EndTidalCarbonDioxidePressure().present())
-    GetEndTidalCarbonDioxidePressure().Load(in.EndTidalCarbonDioxidePressure().get());
-  if (in.ExpiratoryFlow().present())
-    GetExpiratoryFlow().Load(in.ExpiratoryFlow().get());
-  if (in.InspiratoryExpiratoryRatio().present())
-    GetInspiratoryExpiratoryRatio().Load(in.InspiratoryExpiratoryRatio().get());
-  if (in.InspiratoryFlow().present())
-    GetInspiratoryFlow().Load(in.InspiratoryFlow().get());
-  if (in.PulmonaryCompliance().present())
-    GetPulmonaryCompliance().Load(in.PulmonaryCompliance().get());
-  if (in.PulmonaryResistance().present())
-    GetPulmonaryResistance().Load(in.PulmonaryResistance().get());
-  if (in.RespirationDriverPressure().present())
-    GetRespirationDriverPressure().Load(in.RespirationDriverPressure().get());
-  if (in.RespirationMusclePressure().present())
-    GetRespirationMusclePressure().Load(in.RespirationMusclePressure().get());
-  if(in.RespirationRate().present())
-    GetRespirationRate().Load(in.RespirationRate().get()); 
-  if (in.SpecificVentilation().present())
-    GetSpecificVentilation().Load(in.SpecificVentilation().get());
-  if(in.TidalVolume().present())
-    GetTidalVolume().Load(in.TidalVolume().get()); 
-  if(in.TotalAlveolarVentilation().present())
-    GetTotalAlveolarVentilation().Load(in.TotalAlveolarVentilation().get());
-  if (in.TotalDeadSpaceVentilation().present())
-    GetTotalDeadSpaceVentilation().Load(in.TotalDeadSpaceVentilation().get());
-  if (in.TotalLungVolume().present())
-    GetTotalLungVolume().Load(in.TotalLungVolume().get());
-  if(in.TotalPulmonaryVentilation().present())
-    GetTotalPulmonaryVentilation().Load(in.TotalPulmonaryVentilation().get()); 
-  if (in.TranspulmonaryPressure().present())
-    GetTranspulmonaryPressure().Load(in.TranspulmonaryPressure().get());
-
-  return true;
+  SERespiratorySystem::Serialize(src, dst);
+}
+void SERespiratorySystem::Serialize(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst)
+{
+  dst.Clear();
+  if (src.has_alveolararterialgradient())
+    SEScalarPressure::Load(src.alveolararterialgradient(), dst.GetAlveolarArterialGradient());
+  if (src.has_carricoindex())
+    SEScalarPressure::Load(src.carricoindex(), dst.GetCarricoIndex());
+  if (src.has_endtidalcarbondioxidefraction())
+    SEScalar0To1::Load(src.endtidalcarbondioxidefraction(), dst.GetEndTidalCarbonDioxideFraction());
+  if (src.has_endtidalcarbondioxidepressure())
+    SEScalarPressure::Load(src.endtidalcarbondioxidepressure(), dst.GetEndTidalCarbonDioxidePressure());
+  if (src.has_expiratoryflow())
+    SEScalarVolumePerTime::Load(src.expiratoryflow(), dst.GetExpiratoryFlow());
+  if (src.has_inspiratoryexpiratoryratio())
+    SEScalar::Load(src.inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
+  if (src.has_inspiratoryflow())
+    SEScalarVolumePerTime::Load(src.inspiratoryflow(), dst.GetInspiratoryFlow());
+  if (src.has_pulmonarycompliance())
+    SEScalarFlowCompliance::Load(src.pulmonarycompliance(), dst.GetPulmonaryCompliance());
+  if (src.has_pulmonaryresistance())
+    SEScalarFlowResistance::Load(src.pulmonaryresistance(), dst.GetPulmonaryResistance());
+  if (src.has_respirationdriverpressure())
+    SEScalarPressure::Load(src.respirationdriverpressure(), dst.GetRespirationDriverPressure());
+  if (src.has_respirationmusclepressure())
+    SEScalarPressure::Load(src.respirationmusclepressure(), dst.GetRespirationMusclePressure());
+  if (src.has_respirationrate())
+    SEScalarFrequency::Load(src.respirationrate(), dst.GetRespirationRate());
+  if (src.has_specificventilation())
+    SEScalar::Load(src.specificventilation(), dst.GetSpecificVentilation());
+  if (src.has_tidalvolume())
+    SEScalarVolume::Load(src.tidalvolume(), dst.GetTidalVolume());
+  if (src.has_totalalveolarventilation())
+    SEScalarVolumePerTime::Load(src.totalalveolarventilation(), dst.GetTotalAlveolarVentilation());
+  if (src.has_totaldeadspaceventilation())
+    SEScalarVolumePerTime::Load(src.totaldeadspaceventilation(), dst.GetTotalDeadSpaceVentilation());
+  if (src.has_totallungvolume())
+    SEScalarVolume::Load(src.totallungvolume(), dst.GetTotalLungVolume());
+  if (src.has_totalpulmonaryventilation())
+    SEScalarVolumePerTime::Load(src.totalpulmonaryventilation(), dst.GetTotalPulmonaryVentilation());
+  if (src.has_transpulmonarypressure())
+    SEScalarPressure::Load(src.transpulmonarypressure(), dst.GetTranspulmonaryPressure());
 }
 
-CDM::RespiratorySystemData* SERespiratorySystem::Unload() const
+cdm::RespiratorySystemData* SERespiratorySystem::Unload(const SERespiratorySystem& src)
 {
-  CDM::RespiratorySystemData* data = new CDM::RespiratorySystemData();
-  Unload(*data);
-  return data;
+  cdm::RespiratorySystemData* dst = new cdm::RespiratorySystemData();
+  SERespiratorySystem::Serialize(src, *dst);
+  return dst;
 }
-
-void SERespiratorySystem::Unload(CDM::RespiratorySystemData& data) const
+void SERespiratorySystem::Serialize(const SERespiratorySystem& src, cdm::RespiratorySystemData& dst)
 {
-  SESystem::Unload(data);
-
-  if (m_AlveolarArterialGradient != nullptr)
-    data.AlveolarArterialGradient(std::unique_ptr<CDM::ScalarPressureData>(m_AlveolarArterialGradient->Unload()));
-  if (m_CarricoIndex != nullptr)
-    data.CarricoIndex(std::unique_ptr<CDM::ScalarPressureData>(m_CarricoIndex->Unload()));
-  if (m_EndTidalCarbonDioxideFraction != nullptr)
-    data.EndTidalCarbonDioxideFraction(std::unique_ptr<CDM::ScalarFractionData>(m_EndTidalCarbonDioxideFraction->Unload()));
-  if (m_EndTidalCarbonDioxidePressure != nullptr)
-    data.EndTidalCarbonDioxidePressure(std::unique_ptr<CDM::ScalarPressureData>(m_EndTidalCarbonDioxidePressure->Unload()));
-  if (m_ExpiratoryFlow != nullptr)
-    data.ExpiratoryFlow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_ExpiratoryFlow->Unload()));
-  if (m_InspiratoryExpiratoryRatio != nullptr)
-    data.InspiratoryExpiratoryRatio(std::unique_ptr<CDM::ScalarData>(m_InspiratoryExpiratoryRatio->Unload()));
-  if (m_InspiratoryFlow != nullptr)
-    data.InspiratoryFlow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_InspiratoryFlow->Unload()));
-  if (m_PulmonaryCompliance != nullptr)
-    data.PulmonaryCompliance(std::unique_ptr<CDM::ScalarFlowComplianceData>(m_PulmonaryCompliance->Unload()));
-  if (m_PulmonaryResistance != nullptr)
-    data.PulmonaryResistance(std::unique_ptr<CDM::ScalarFlowResistanceData>(m_PulmonaryResistance->Unload()));
-  if (m_RespirationDriverPressure != nullptr)
-    data.RespirationDriverPressure(std::unique_ptr<CDM::ScalarPressureData>(m_RespirationDriverPressure->Unload()));
-  if (m_RespirationMusclePressure != nullptr)
-    data.RespirationMusclePressure(std::unique_ptr<CDM::ScalarPressureData>(m_RespirationMusclePressure->Unload()));
-  if(m_RespirationRate!=nullptr)
-    data.RespirationRate(std::unique_ptr<CDM::ScalarFrequencyData>(m_RespirationRate->Unload()));
-  if (m_SpecificVentilation != nullptr)
-    data.SpecificVentilation(std::unique_ptr<CDM::ScalarData>(m_SpecificVentilation->Unload()));
-  if(m_TidalVolume!=nullptr)
-    data.TidalVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_TidalVolume->Unload()));
-  if(m_TotalAlveolarVentilation!=nullptr)
-    data.TotalAlveolarVentilation(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_TotalAlveolarVentilation->Unload()));
-  if (m_TotalDeadSpaceVentilation != nullptr)
-    data.TotalDeadSpaceVentilation(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_TotalDeadSpaceVentilation->Unload()));
-  if (m_TotalLungVolume != nullptr)
-    data.TotalLungVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_TotalLungVolume->Unload()));
-  if(m_TotalPulmonaryVentilation!=nullptr)
-    data.TotalPulmonaryVentilation(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_TotalPulmonaryVentilation->Unload()));
-  if (m_TranspulmonaryPressure != nullptr)
-    data.TranspulmonaryPressure(std::unique_ptr<CDM::ScalarPressureData>(m_TranspulmonaryPressure->Unload()));
+  if (src.HasAlveolarArterialGradient())
+    dst.set_allocated_alveolararterialgradient(SEScalarPressure::Unload(*src.m_AlveolarArterialGradient));
+  if (src.HasCarricoIndex())
+    dst.set_allocated_carricoindex(SEScalarPressure::Unload(*src.m_CarricoIndex));
+  if (src.HasEndTidalCarbonDioxideFraction())
+    dst.set_allocated_endtidalcarbondioxidefraction(SEScalar0To1::Unload(*src.m_EndTidalCarbonDioxideFraction));
+  if (src.HasEndTidalCarbonDioxidePressure())
+    dst.set_allocated_endtidalcarbondioxidepressure(SEScalarPressure::Unload(*src.m_EndTidalCarbonDioxidePressure));
+  if (src.HasExpiratoryFlow())
+    dst.set_allocated_expiratoryflow(SEScalarVolumePerTime::Unload(*src.m_ExpiratoryFlow));
+  if (src.HasInspiratoryExpiratoryRatio())
+    dst.set_allocated_inspiratoryexpiratoryratio(SEScalar::Unload(*src.m_InspiratoryExpiratoryRatio));
+  if (src.HasInspiratoryFlow())
+    dst.set_allocated_inspiratoryflow(SEScalarVolumePerTime::Unload(*src.m_InspiratoryFlow));
+  if (src.HasPulmonaryCompliance())
+    dst.set_allocated_pulmonarycompliance(SEScalarFlowCompliance::Unload(*src.m_PulmonaryCompliance));
+  if (src.HasPulmonaryResistance())
+    dst.set_allocated_pulmonaryresistance(SEScalarFlowResistance::Unload(*src.m_PulmonaryResistance));
+  if (src.HasRespirationDriverPressure())
+    dst.set_allocated_respirationdriverpressure(SEScalarPressure::Unload(*src.m_RespirationDriverPressure));
+  if (src.HasRespirationMusclePressure())
+    dst.set_allocated_respirationmusclepressure(SEScalarPressure::Unload(*src.m_RespirationMusclePressure));
+  if (src.HasRespirationRate())
+    dst.set_allocated_respirationrate(SEScalarFrequency::Unload(*src.m_RespirationRate));
+  if (src.HasSpecificVentilation())
+    dst.set_allocated_specificventilation(SEScalar::Unload(*src.m_SpecificVentilation));
+  if (src.HasTidalVolume())
+    dst.set_allocated_tidalvolume(SEScalarVolume::Unload(*src.m_TidalVolume));
+  if (src.HasTotalAlveolarVentilation())
+    dst.set_allocated_totalalveolarventilation(SEScalarVolumePerTime::Unload(*src.m_TotalAlveolarVentilation));
+  if (src.HasTotalDeadSpaceVentilation())
+    dst.set_allocated_totaldeadspaceventilation(SEScalarVolumePerTime::Unload(*src.m_TotalDeadSpaceVentilation));
+  if (src.HasTotalLungVolume())
+    dst.set_allocated_totallungvolume(SEScalarVolume::Unload(*src.m_TotalLungVolume));
+  if (src.HasTotalPulmonaryVentilation())
+    dst.set_allocated_totalpulmonaryventilation(SEScalarVolumePerTime::Unload(*src.m_TotalPulmonaryVentilation));
+  if (src.HasTranspulmonaryPressure())
+    dst.set_allocated_transpulmonarypressure(SEScalarPressure::Unload(*src.m_TranspulmonaryPressure));
 }
 
 bool SERespiratorySystem::HasAlveolarArterialGradient() const
@@ -253,10 +242,10 @@ bool SERespiratorySystem::HasEndTidalCarbonDioxideFraction() const
 {
   return m_EndTidalCarbonDioxideFraction == nullptr ? false : m_EndTidalCarbonDioxideFraction->IsValid();
 }
-SEScalarFraction& SERespiratorySystem::GetEndTidalCarbonDioxideFraction()
+SEScalar0To1& SERespiratorySystem::GetEndTidalCarbonDioxideFraction()
 {
   if (m_EndTidalCarbonDioxideFraction == nullptr)
-    m_EndTidalCarbonDioxideFraction = new SEScalarFraction();
+    m_EndTidalCarbonDioxideFraction = new SEScalar0To1();
   return *m_EndTidalCarbonDioxideFraction;
 }
 double SERespiratorySystem::GetEndTidalCarbonDioxideFraction() const

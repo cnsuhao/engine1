@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarLengthPerTime.h"
@@ -19,15 +10,6 @@ const LengthPerTimeUnit LengthPerTimeUnit::m_Per_min("m/min");
 const LengthPerTimeUnit LengthPerTimeUnit::cm_Per_min("cm/min");
 const LengthPerTimeUnit LengthPerTimeUnit::ft_Per_s("ft/s");
 const LengthPerTimeUnit LengthPerTimeUnit::ft_Per_min("ft/min");
-
-CDM::ScalarLengthPerTimeData* SEScalarLengthPerTime::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarLengthPerTimeData* data(new CDM::ScalarLengthPerTimeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool LengthPerTimeUnit::IsValidUnit(const std::string& unit)
 {
@@ -63,4 +45,26 @@ const LengthPerTimeUnit& LengthPerTimeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid LengthPerTime unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarLengthPerTime::Load(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
+{
+  SEScalarLengthPerTime::Serialize(src, dst);
+}
+void SEScalarLengthPerTime::Serialize(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
+{
+  SEScalarQuantity<LengthPerTimeUnit>::Serialize(src.scalarlengthpertime(), dst);
+}
+
+cdm::ScalarLengthPerTimeData* SEScalarLengthPerTime::Unload(const SEScalarLengthPerTime& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarLengthPerTimeData* dst = new cdm::ScalarLengthPerTimeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarLengthPerTime::Serialize(const SEScalarLengthPerTime& src, cdm::ScalarLengthPerTimeData& dst)
+{
+  SEScalarQuantity<LengthPerTimeUnit>::Serialize(src, *dst.mutable_scalarlengthpertime());
 }

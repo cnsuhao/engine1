@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarInverseVolumeData.hxx"
 
-class DLL_DECL InverseVolumeUnit : public CCompoundUnit
+class CDM_DECL InverseVolumeUnit : public CCompoundUnit
 {
 public:
   InverseVolumeUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -27,11 +17,15 @@ public:
   static const InverseVolumeUnit Inverse_mL;
 };
 
-class DLL_DECL SEScalarInverseVolume : public SEScalarQuantity<InverseVolumeUnit>
+class CDM_DECL SEScalarInverseVolume : public SEScalarQuantity<InverseVolumeUnit>
 {
 public:
   SEScalarInverseVolume() {}
   virtual ~SEScalarInverseVolume() {}
 
-  CDM::ScalarInverseVolumeData* Unload() const;
+  static void Load(const cdm::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst);
+  static cdm::ScalarInverseVolumeData* Unload(const SEScalarInverseVolume& src);
+protected:
+  static void Serialize(const cdm::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst);
+  static void Serialize(const SEScalarInverseVolume& src, cdm::ScalarInverseVolumeData& dst);
 };

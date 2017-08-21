@@ -1,25 +1,17 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(SubstanceData)
-#include "bind/enumSubstanceState.hxx"
+PROTO_PUSH 
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceClearance.h"
 #include "substance/SESubstancePharmacokinetics.h"
 #include "substance/SESubstancePharmacodynamics.h"
 
-class DLL_DECL SESubstance : public Loggable
+class CDM_DECL SESubstance : public Loggable
 {
 public:
 
@@ -30,10 +22,11 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::SubstanceData& in);
-  virtual CDM::SubstanceData* Unload() const;
+  static void Load(const cdm::SubstanceData& src, SESubstance& dst);
+  static cdm::SubstanceData* Unload(const SESubstance& src);
 protected:
-  virtual void Unload(CDM::SubstanceData& data) const;
+  static void Serialize(const cdm::SubstanceData& src, SESubstance& dst);
+  static void Serialize(const SESubstance& src, cdm::SubstanceData& dst);
 
 public:
   
@@ -42,8 +35,8 @@ public:
   virtual bool HasName() const;
   virtual void InvalidateName();
 
-  virtual CDM::enumSubstanceState::value GetState() const;
-  virtual void SetState(CDM::enumSubstanceState::value state);
+  virtual cdm::SubstanceData_eState GetState() const;
+  virtual void SetState(cdm::SubstanceData_eState state);
   virtual bool HasState() const;
   virtual void InvalidateState();
 
@@ -108,7 +101,7 @@ public:
   virtual double GetDiffusingCapacity(const VolumePerTimePressureUnit& unit) const;
 
   virtual bool HasEndTidalFraction() const;
-  virtual SEScalarFraction& GetEndTidalFraction();
+  virtual SEScalar0To1& GetEndTidalFraction();
   virtual double GetEndTidalFraction() const;
 
   virtual bool HasEndTidalPressure() const;
@@ -142,7 +135,7 @@ public:
 protected: 
 
   std::string                       m_Name;
-  CDM::enumSubstanceState::value    m_State;
+  cdm::SubstanceData_eState         m_State;
   SEScalarMassPerVolume*            m_Density;
   SEScalarMassPerAmount*            m_MolarMass;
 
@@ -150,19 +143,19 @@ protected:
   SEScalar*                         m_MichaelisCoefficient;
 
   SESubstanceAerosolization*        m_Aerosolization;
-  SEScalarMassPerVolume*             m_BloodConcentration;
-  SEScalarMass*                      m_MassInBody;
-  SEScalarMass*                      m_MassInBlood;
-  SEScalarMass*                      m_MassInTissue;
-  SEScalarMassPerVolume*             m_PlasmaConcentration;
-  SEScalarMass*                      m_SystemicMassCleared;
-  SEScalarMassPerVolume*             m_TissueConcentration;
+  SEScalarMassPerVolume*            m_BloodConcentration;
+  SEScalarMass*                     m_MassInBody;
+  SEScalarMass*                     m_MassInBlood;
+  SEScalarMass*                     m_MassInTissue;
+  SEScalarMassPerVolume*            m_PlasmaConcentration;
+  SEScalarMass*                     m_SystemicMassCleared;
+  SEScalarMassPerVolume*            m_TissueConcentration;
 
   SEScalarVolumePerTime*            m_AlveolarTransfer;
   SEScalarVolumePerTimePressure*    m_DiffusingCapacity;
-  SEScalarFraction*                  m_EndTidalFraction;
+  SEScalar0To1*                     m_EndTidalFraction;
   SEScalarPressure*                 m_EndTidalPressure;
-  SEScalar*                          m_RelativeDiffusionCoefficient;
+  SEScalar*                         m_RelativeDiffusionCoefficient;
   SEScalarInversePressure*          m_SolubilityCoefficient;
 
   SESubstanceClearance*             m_Clearance;

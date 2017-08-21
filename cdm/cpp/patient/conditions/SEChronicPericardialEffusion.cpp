@@ -1,20 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "bind/ChronicPericardialEffusionData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 
 SEChronicPericardialEffusion::SEChronicPericardialEffusion() : SEPatientCondition()
 {
@@ -37,25 +26,28 @@ bool SEChronicPericardialEffusion::IsValid() const
   return SEPatientCondition::IsValid() && HasAccumulatedVolume();
 }
 
-bool SEChronicPericardialEffusion::Load(const CDM::ChronicPericardialEffusionData& in)
+void SEChronicPericardialEffusion::Load(const cdm::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst)
 {
-  SEPatientCondition::Load(in);
-  GetAccumulatedVolume().Load(in.AccumulatedVolume());
-  return true;
+  SEChronicPericardialEffusion::Serialize(src, dst);
+}
+void SEChronicPericardialEffusion::Serialize(const cdm::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst)
+{
+  SEPatientCondition::Serialize(src.patientcondition(), dst);
+  if (src.has_accumulatedvolume())
+    SEScalarVolume::Load(src.accumulatedvolume(), dst.GetAccumulatedVolume());
 }
 
-CDM::ChronicPericardialEffusionData* SEChronicPericardialEffusion::Unload() const
+cdm::ChronicPericardialEffusionData* SEChronicPericardialEffusion::Unload(const SEChronicPericardialEffusion& src)
 {
-  CDM::ChronicPericardialEffusionData*data(new CDM::ChronicPericardialEffusionData());
-  Unload(*data);
-  return data;
+  cdm::ChronicPericardialEffusionData* dst = new cdm::ChronicPericardialEffusionData();
+  SEChronicPericardialEffusion::Serialize(src, *dst);
+  return dst;
 }
-
-void SEChronicPericardialEffusion::Unload(CDM::ChronicPericardialEffusionData& data) const
+void SEChronicPericardialEffusion::Serialize(const SEChronicPericardialEffusion& src, cdm::ChronicPericardialEffusionData& dst)
 {
-  SEPatientCondition::Unload(data);
-  if (m_AccumulatedVolume != nullptr)
-    data.AccumulatedVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_AccumulatedVolume->Unload()));
+  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
+  if (src.HasAccumulatedVolume())
+    dst.set_allocated_accumulatedvolume(SEScalarVolume::Unload(*src.m_AccumulatedVolume));
 }
 
 bool SEChronicPericardialEffusion::HasAccumulatedVolume() const

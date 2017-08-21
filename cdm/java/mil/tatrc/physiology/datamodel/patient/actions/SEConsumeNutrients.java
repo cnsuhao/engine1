@@ -1,19 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ConsumeNutrientsData;
+import com.kitware.physiology.cdm.PatientActions.ConsumeNutrientsData;
+
 import mil.tatrc.physiology.datamodel.patient.nutrition.SENutrition;
 
 public class SEConsumeNutrients extends SEPatientAction
@@ -53,30 +44,33 @@ public class SEConsumeNutrients extends SEPatientAction
     return hasNutrition() || hasNutritionFile();
   }
   
-  public boolean load(ConsumeNutrientsData in)
+  public static void load(ConsumeNutrientsData src, SEConsumeNutrients dst)
   {
-    super.load(in);
-    if(in.getNutrition()!=null)
-      this.nutrition.load(in.getNutrition());
-    else if(in.getNutritionFile()!=null)
-      this.nutritionFile=in.getNutritionFile();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    switch(src.getOptionCase())
+    {
+    case NUTRITION:
+      SENutrition.load(src.getNutrition(), dst.getNutrition());
+      break;
+    case NUTRITIONFILE:
+      dst.setNutritionFile(src.getNutritionFile());
+    }
   }
   
-  public ConsumeNutrientsData unload()
+  public static ConsumeNutrientsData unload(SEConsumeNutrients src)
   {
-    ConsumeNutrientsData data = CDMSerializer.objFactory.createConsumeNutrientsData();
-    unload(data);
-    return data;
+    ConsumeNutrientsData.Builder dst = ConsumeNutrientsData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(ConsumeNutrientsData data)
+  protected static void unload(SEConsumeNutrients src, ConsumeNutrientsData.Builder dst)
   {
-    super.unload(data);
-    if(this.hasNutrition())
-      data.setNutrition(this.nutrition.unload());
-    else if(this.hasNutritionFile())
-      data.setNutritionFile(this.nutritionFile);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if(src.hasNutrition())
+      dst.setNutrition(SENutrition.unload(src.nutrition));
+    else if(src.hasNutritionFile())
+      dst.setNutritionFile(src.nutritionFile);
   }
   
   public boolean hasNutrition()

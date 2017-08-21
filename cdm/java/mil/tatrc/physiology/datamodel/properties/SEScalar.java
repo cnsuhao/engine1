@@ -1,23 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.properties;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
+import com.kitware.physiology.cdm.Properties.ScalarData;
+
 import mil.tatrc.physiology.datamodel.SEEqualOptions;
-import mil.tatrc.physiology.datamodel.bind.ScalarData;
 import mil.tatrc.physiology.datamodel.exceptions.InvalidUnitException;
 import mil.tatrc.physiology.utilities.DoubleUtils;
 import mil.tatrc.physiology.utilities.Log;
@@ -60,51 +51,34 @@ public class SEScalar
     return true;
   }
 
-  public boolean loadData(Object in) throws ClassCastException
+  public static void load(ScalarData src, SEScalar dest)
   {
-    if (in instanceof ScalarData)
-      return load((ScalarData) in);
-    else if (in instanceof SEScalar)
-      return set((SEScalar) in);
-    return false;
-  }
-
-  public boolean load(ScalarData in)
-  {
-    if (in == null)
-      return false;
-    if(in.getUnit()!=null)
-      this.setValue(in.getValue(),in.getUnit());
+    if (src == null)
+      return;
+    if(src.getUnit()!=null)
+      dest.setValue(src.getValue(),src.getUnit());
     else
-      this.setValue(in.getValue());
-    return this.isValid();
+      dest.setValue(src.getValue());
   }
-
-  public Object unloadData()
+  public static ScalarData unload(SEScalar src)
   {
-    return unload();
-  }
-
-  public ScalarData unload()
-  {
-    if(!this.isValid())
+    if(!src.isValid())
       return null;
-    ScalarData to = CDMSerializer.objFactory.createScalarData();
-    unload(to);
-    return to;
+    ScalarData.Builder dst = ScalarData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-
-  protected void unload(ScalarData to)
+  protected static void unload(SEScalar src, ScalarData.Builder dst)
   {
-    if(!this.unit.equals(""))
-      to.setUnit(this.unit);
-    if(this.precision!=-1)
+    if(!src.unit.equals(""))
+      dst.setUnit(src.unit);
+    if(src.precision!=-1)
     {
-      BigDecimal d = new BigDecimal(this.value);
-      to.setValue(Double.valueOf(d.setScale(3, BigDecimal.ROUND_CEILING).toString()));
+      BigDecimal d = new BigDecimal(src.value);
+      dst.setValue(Double.valueOf(d.setScale(3, BigDecimal.ROUND_CEILING).toString()));
     }
     else
-      to.setValue(this.value); 
+      dst.setValue(src.value); 
   }
 
   public boolean equals(Object other)

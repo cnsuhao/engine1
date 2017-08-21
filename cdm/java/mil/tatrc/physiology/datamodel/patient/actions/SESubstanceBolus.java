@@ -1,27 +1,18 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumBolusAdministration;
-import mil.tatrc.physiology.datamodel.bind.SubstanceBolusData;
+import com.kitware.physiology.cdm.PatientActions.SubstanceBolusData;
+import com.kitware.physiology.cdm.PatientActions.SubstanceBolusData.eAdministrationRoute;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarMassPerVolume;
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolume;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
 
-public class SESubstanceBolus extends SESubstanceAdministration
+public class SESubstanceBolus extends SEPatientAction
 {
-  protected EnumBolusAdministration adminRoute;
+  protected eAdministrationRoute adminRoute;
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolume dose;
   protected SESubstance substance;
@@ -68,40 +59,42 @@ public class SESubstanceBolus extends SESubstanceAdministration
     return hasAdminRoute() && hasDose() && hasConcentration() && hasSubstance();
   }
   
-  public boolean load(SubstanceBolusData in)
+  public static void load(SubstanceBolusData src, SESubstanceBolus dst)
   {
-    super.load(in);
-    getDose().load(in.getDose());
-    getConcentration().load(in.getConcentration());
-    adminRoute = in.getAdminRoute();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.hasDose())
+      SEScalarVolume.load(src.getDose(),dst.getDose());
+    if(src.hasConcentration())
+      SEScalarMassPerVolume.load(src.getConcentration(),dst.getConcentration());
+    if(src.getAdministrationRoute()!=eAdministrationRoute.UNRECOGNIZED)
+    	dst.adminRoute = src.getAdministrationRoute();
   }
   
-  public SubstanceBolusData unload()
+  public static SubstanceBolusData unload(SESubstanceBolus src)
   {
-    SubstanceBolusData data = CDMSerializer.objFactory.createSubstanceBolusData();
-    unload(data);
-    return data;
+    SubstanceBolusData.Builder dst = SubstanceBolusData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(SubstanceBolusData data)
+  protected static void unload(SESubstanceBolus src, SubstanceBolusData.Builder dst)
   {
-    super.unload(data);
-    if (dose != null)
-      data.setDose(dose.unload());
-    if (concentration != null)
-      data.setConcentration(concentration.unload());
-    if (hasAdminRoute())
-      data.setAdminRoute(adminRoute);
-    if (hasSubstance())
-      data.setSubstance(substance.getName());
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasDose())
+      dst.setDose(SEScalarVolume.unload(src.dose));
+    if (src.hasConcentration())
+      dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration));
+    if (src.hasAdminRoute())
+      dst.setAdministrationRoute(src.adminRoute);
+    if (src.hasSubstance())
+      dst.setSubstance(src.substance.getName());
   }
 
-  public EnumBolusAdministration getAdminRoute()
+  public eAdministrationRoute getAdminRoute()
   {
     return adminRoute;
   }
-  public void setAdminRoute(EnumBolusAdministration adminRoute)
+  public void setAdminRoute(eAdministrationRoute adminRoute)
   {
     this.adminRoute = adminRoute;
   }

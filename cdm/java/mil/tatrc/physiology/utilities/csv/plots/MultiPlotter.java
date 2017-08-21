@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.utilities.csv.plots;
 
 import java.awt.BasicStroke;
@@ -60,9 +51,9 @@ public class MultiPlotter implements Plotter
     //fill PlotJob with needed data if it doesn't exist
     PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
-    {job.dataPath = job.verificationDirectory+"/Current Baseline/";}
+    {job.dataPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
-    {job.dataFile = job.name + "Results.zip";}
+    {job.dataFile = job.name + "Results.txt";}
     
     //Get data contents for all headers when all data is in one file
     if ((data.isEmpty() || data == null) && job.experimentalData == null)
@@ -152,7 +143,7 @@ public class MultiPlotter implements Plotter
     {
       XYSeries dataSeries;
       if(job.experimentalData != null)
-        dataSeries = plotTool.createXYSeries("BioGears "+job.Y1headers.get(i),data.get(job.X1header),data.get(job.Y1headers.get(i)));
+        dataSeries = plotTool.createXYSeries("Engine "+job.Y1headers.get(i),data.get(job.X1header),data.get(job.Y1headers.get(i)));
       else
         dataSeries = plotTool.createXYSeries(job.Y1headers.get(i),data.get(job.X1header),data.get(job.Y1headers.get(i)));
       dataSet1.addSeries(dataSeries);

@@ -1,0 +1,84 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+
+message AnesthesiaMachineData
+{
+  /** @brief An enumeration for the source of oxygen for the machine. */
+  enum eEvent
+  {
+    OxygenBottleOneExhausted  = 0;
+    OxygenBottleTwoExhausted  = 1;
+    ReliefValveActive         = 2;
+  }
+
+  /** @brief An enumeration for the primary gas used by the machine. */
+  enum eOxygenSource
+  {
+    NullSource   = 0;/**<< Signals not provided, or no change */
+    NoSource     = 1;
+    Wall         = 2;
+    BottleOne    = 3;
+    BottleTwo    = 4;
+  }
+
+  /** @brief An enumeration for the primary gas used by the machine. */
+  enum ePrimaryGas
+  {
+    NullGas  = 0;/**<< Signals not provided, or no change */
+    NoGas    = 1;
+    Air      = 2;
+    Nitrogen = 3;
+  }
+
+  /** @brief An enumeration for the primary gas used by the machine. */
+  enum eConnection
+  {
+    NullConnection = 0;/**<< Signals not provided, or no change */
+    Off            = 1;
+    Mask           = 2;
+    Tube           = 3;
+  }
+  
+  /** @brief An active machine event, and how long it has been active */
+  message ActiveEventData
+  {
+    eEvent                 Event                         = 1; /**<< @brief The active event. */
+    ScalarTimeData         Duration                      = 2; /**<< @brief The duration since last activated. */
+  }
+  
+  /** @brief A vaporization chamber that can be filled with a particular substance for inhalation. */
+  message ChamberData
+  {
+    eSwitch                State                         = 1; /**<< @brief If the chamber is being used or not. */
+    Scalar0To1Data         SubstanceFraction             = 2; /**<< @brief The fraction of the substance supplied by the vaporizer chamber. */
+    string                 Substance                     = 3; /**<< @brief The name of the substance. */
+  }
+  
+  /** @brief A bottle of Oxygen */
+  message OxygenBottleData
+  {
+    ScalarVolumeData       Volume                        = 1; /**<< @brief Amount of oxygen in the bottle. */
+  }
+
+  eConnection              Connection                    = 1; /**<< @copybrief AnesthesiaMachine_eConnection */
+  ScalarVolumePerTimeData  InletFlow                     = 2; /**<< @brief The total fresh gas inlet flow. */      
+  ScalarData               InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
+  Scalar0To1Data           OxygenFraction                = 4; /**<< @brief The fraction of the fresh gas inlet flow that is oxygen. */
+  eOxygenSource            OxygenSource                  = 5; /**<< @brief @copybrief AnesthesiaMachine_eOxygenSource */
+  ScalarPressureData       PositiveEndExpiredPressure    = 6; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
+  ePrimaryGas              PrimaryGas                    = 7; /**<< @brief @copybrief AnesthesiaMachine_ePrimaryGas */      
+  ScalarPressureData       ReliefValvePressure           = 8; /**<< @brief Pressure at while the valve opens to prevent a build up of pressure in the system. */
+  ScalarFrequencyData      RespiratoryRate               = 9; /**<< @brief The prescribed rate of positive-pressure ventilation. */
+  ScalarPressureData       VentilatorPressure            = 10;/**<< @brief The pressure of the ventilator. */
+  
+  ChamberData              LeftChamber                   = 11;/**<< @brief The left chamber of the machine. */  
+  ChamberData              RightChamber                  = 12;/**<< @brief The right chamber of the machine. */    
+  
+  OxygenBottleData         OxygenBottleOne               = 13;/**<< @brief The first bottle attached to the machine. */  
+  OxygenBottleData         OxygenBottleTwo               = 14;/**<< @brief The second bottle attached to the machine. */
+
+  repeated ActiveEventData ActiveEvent                   = 15;/**<< @brief Active events and their duration. */
+}

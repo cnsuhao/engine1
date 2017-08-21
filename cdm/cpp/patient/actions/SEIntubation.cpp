@@ -1,22 +1,12 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEIntubation.h"
-#include "bind/IntubationData.hxx"
 
 SEIntubation::SEIntubation() : SEPatientAction()
 {
-  m_Type = (CDM::enumIntubationType::value) - 1;
+  m_Type = cdm::IntubationData_eType_Off;
 }
 
 SEIntubation::~SEIntubation()
@@ -27,63 +17,55 @@ SEIntubation::~SEIntubation()
 void SEIntubation::Clear()
 {
   SEPatientAction::Clear();
-  m_Type = (CDM::enumIntubationType::value) - 1;
+  m_Type = cdm::IntubationData_eType_Off;
 }
 
 bool SEIntubation::IsValid() const
 {
-  return HasType();
+  return true;
 }
 
 bool SEIntubation::IsActive() const
 {
-  return HasType() && GetType() != CDM::enumIntubationType::Off;
+  return GetType() != cdm::IntubationData_eType_Off;
 }
 
-bool SEIntubation::Load(const CDM::IntubationData& in)
+void SEIntubation::Load(const cdm::IntubationData& src, SEIntubation& dst)
 {
-  SEPatientAction::Load(in);
-  m_Type = in.Type();
-  return true;
+  SEIntubation::Serialize(src, dst);
 }
-
-CDM::IntubationData* SEIntubation::Unload() const
+void SEIntubation::Serialize(const cdm::IntubationData& src, SEIntubation& dst)
 {
-  CDM::IntubationData*data(new CDM::IntubationData());
-  Unload(*data);
-  return data;
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetType(src.type());
 }
 
-void SEIntubation::Unload(CDM::IntubationData& data) const
+cdm::IntubationData* SEIntubation::Unload(const SEIntubation& src)
 {
-  SEPatientAction::Unload(data);
-  if(HasType())
-    data.Type(m_Type);
+  cdm::IntubationData* dst = new cdm::IntubationData();
+  SEIntubation::Serialize(src, *dst);
+  return dst;
+}
+void SEIntubation::Serialize(const SEIntubation& src, cdm::IntubationData& dst)
+{
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_type(src.m_Type);
 }
 
-CDM::enumIntubationType::value SEIntubation::GetType() const
+cdm::IntubationData_eType SEIntubation::GetType() const
 {
   return m_Type;
 }
-void SEIntubation::SetType(CDM::enumIntubationType::value Type)
+void SEIntubation::SetType(cdm::IntubationData_eType Type)
 {
   m_Type = Type;
 }
-bool SEIntubation::HasType() const
-{
-  return m_Type == ((CDM::enumIntubationType::value) - 1) ? false : true;
-}
-void SEIntubation::InvalidateType()
-{
-  m_Type = (CDM::enumIntubationType::value) - 1;
-}
-
 
 void SEIntubation::ToString(std::ostream &str) const
 {
   str << "Patient Action : Intubation";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tType: "; HasType() ? str << GetType() : str << "Not Set";
+  str << "\n\tType: " << cdm::IntubationData_eType_Name(GetType());
   str << std::flush;
 }

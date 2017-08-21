@@ -1,36 +1,27 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.substance;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.physiology.SEPupillaryResponse;
 
 public class SESubstancePharmacodynamics
 {
-  protected SEScalarFraction      bronchodilation;
-  protected SEScalarFraction      diastolicPressureModifier;
+  protected SEScalarNegative1To1  bronchodilation;
+  protected SEScalarNegative1To1  diastolicPressureModifier;
   protected SEScalarMassPerVolume EC50;
   protected SEScalar              EMaxShapeParameter;
-  protected SEScalarFraction      heartRateModifier;
-  protected SEScalarFraction      neuromuscularBlock;
+  protected SEScalarNegative1To1  heartRateModifier;
+  protected SEScalarNegative1To1  neuromuscularBlock;
   protected SEPupillaryResponse   pupillaryResponse;
-  protected SEScalarFraction      respirationRateModifier;
-  protected SEScalarFraction      sedation;
-  protected SEScalarFraction      systolicPressureModifier;
-  protected SEScalarFraction      tidalVolumeModifier;
-  protected SEScalarFraction      tubularPermeabilityModifier;
+  protected SEScalarNegative1To1  respirationRateModifier;
+  protected SEScalarNegative1To1  sedation;
+  protected SEScalarNegative1To1  systolicPressureModifier;
+  protected SEScalarNegative1To1  tidalVolumeModifier;
+  protected SEScalarNegative1To1  tubularPermeabilityModifier;
   
   public SESubstancePharmacodynamics()
   {
@@ -83,87 +74,83 @@ public class SESubstancePharmacodynamics
     return true;
   }
   
-  public boolean load(SubstancePharmacodynamicsData data)
+  public static void load(SubstanceData.PharmacodynamicsData src, SESubstancePharmacodynamics dst)
   {
-    this.reset();
+    dst.reset();
     
-    if(data.getBronchodilation()!=null)
-      this.getBronchodilation().load(data.getBronchodilation());
-    if(data.getDiastolicPressureModifier()!=null)
-      this.getDiastolicPressureModifier().load(data.getDiastolicPressureModifier());
-    if(data.getEC50()!=null)
-      this.getEC50().load(data.getEC50());
-    if(data.getEMaxShapeParameter()!=null)
-      this.getEMaxShapeParameter().load(data.getEMaxShapeParameter());
-    if(data.getHeartRateModifier()!=null)
-      this.getHeartRateModifier().load(data.getHeartRateModifier());
-    if(data.getNeuromuscularBlock()!=null)
-      this.getNeuromuscularBlock().load(data.getNeuromuscularBlock());
-    if(data.getPupillaryResponse()!=null)
-      this.getPupillaryResponse().load(data.getPupillaryResponse());
-    if(data.getRespirationRateModifier()!=null)
-      this.getRespirationRateModifier().load(data.getRespirationRateModifier());
-    if(data.getSedation()!=null)
-      this.getSedation().load(data.getSedation());
-    if(data.getSystolicPressureModifier()!=null)
-      this.getSystolicPressureModifier().load(data.getSystolicPressureModifier());
-    if(data.getTidalVolumeModifier()!=null)
-      this.getTidalVolumeModifier().load(data.getTidalVolumeModifier());
-    if(data.getTubularPermeabilityModifier()!=null)
-      this.getTubularPermeabilityModifier().load(data.getTubularPermeabilityModifier());
-    
-    return true;
+    if(src.hasBronchodilation())
+      SEScalarNegative1To1.load(src.getBronchodilation(),dst.getBronchodilation());
+    if(src.hasDiastolicPressureModifier())
+      SEScalarNegative1To1.load(src.getDiastolicPressureModifier(),dst.getDiastolicPressureModifier());
+    if(src.hasEC50())
+      SEScalarMassPerVolume.load(src.getEC50(),dst.getEC50());
+    if(src.hasEMaxShapeParameter())
+      SEScalar.load(src.getEMaxShapeParameter(),dst.getEMaxShapeParameter());
+    if(src.hasHeartRateModifier())
+      SEScalarNegative1To1.load(src.getHeartRateModifier(),dst.getHeartRateModifier());
+    if(src.hasNeuromuscularBlock())
+      SEScalarNegative1To1.load(src.getNeuromuscularBlock(),dst.getNeuromuscularBlock());
+    if(src.hasPupillaryResponse())
+      SEPupillaryResponse.load(src.getPupillaryResponse(),dst.getPupillaryResponse());
+    if(src.hasRespirationRateModifier())
+      SEScalarNegative1To1.load(src.getRespirationRateModifier(),dst.getRespirationRateModifier());
+    if(src.hasSedation())
+      SEScalarNegative1To1.load(src.getSedation(),dst.getSedation());
+    if(src.hasSystolicPressureModifier())
+      SEScalarNegative1To1.load(src.getSystolicPressureModifier(),dst.getSystolicPressureModifier());
+    if(src.hasTidalVolumeModifier())
+      SEScalarNegative1To1.load(src.getTidalVolumeModifier(),dst.getTidalVolumeModifier());
+    if(src.hasTubularPermeabilityModifier())
+      SEScalarNegative1To1.load(src.getTubularPermeabilityModifier(),dst.getTubularPermeabilityModifier());
   }
-  
-  public SubstancePharmacodynamicsData unload()
+  public static SubstanceData.PharmacodynamicsData unload(SESubstancePharmacodynamics src)
   {
-    if(!isValid())
+    if(!src.isValid())
       return null;
-    SubstancePharmacodynamicsData to = CDMSerializer.objFactory.createSubstancePharmacodynamicsData();
-    unload(to);
-    return to;
+    SubstanceData.PharmacodynamicsData.Builder dst = SubstanceData.PharmacodynamicsData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(SubstancePharmacodynamicsData to)
+  protected static void unload(SESubstancePharmacodynamics src, SubstanceData.PharmacodynamicsData.Builder dst)
   {
-    if(hasBronchodilation())
-      to.setBronchodilation(this.bronchodilation.unload());
-    if(hasDiastolicPressureModifier())
-      to.setDiastolicPressureModifier(this.diastolicPressureModifier.unload());
-    if(hasEC50())
-      to.setEC50(this.EC50.unload());
-    if(hasEMaxShapeParameter())
-      to.setEMaxShapeParameter(this.EMaxShapeParameter.unload());
-    if(hasHeartRateModifier())
-      to.setHeartRateModifier(this.heartRateModifier.unload());
-    if(hasNeuromuscularBlock())
-      to.setNeuromuscularBlock(this.neuromuscularBlock.unload());
-    if(hasPupillaryResponse())
-      to.setPupillaryResponse(this.pupillaryResponse.unload());
-    if(hasRespirationRateModifier())
-      to.setRespirationRateModifier(this.respirationRateModifier.unload());
-    if(hasSedation())
-      to.setSedation(this.sedation.unload());
-    if(hasSystolicPressureModifier())
-      to.setSystolicPressureModifier(this.systolicPressureModifier.unload());
-    if(hasTidalVolumeModifier())
-      to.setTidalVolumeModifier(this.tidalVolumeModifier.unload());
-    if(hasTubularPermeabilityModifier())
-      to.setTubularPermeabilityModifier(this.tubularPermeabilityModifier.unload());
+    if(src.hasBronchodilation())
+      dst.setBronchodilation(SEScalarNegative1To1.unload(src.getBronchodilation()));
+    if(src.hasDiastolicPressureModifier())
+      dst.setDiastolicPressureModifier(SEScalarNegative1To1.unload(src.getDiastolicPressureModifier()));
+    if(src.hasEC50())
+      dst.setEC50(SEScalarMassPerVolume.unload(src.getEC50()));
+    if(src.hasEMaxShapeParameter())
+      dst.setEMaxShapeParameter(SEScalarNegative1To1.unload(src.getEMaxShapeParameter()));
+    if(src.hasHeartRateModifier())
+      dst.setHeartRateModifier(SEScalarNegative1To1.unload(src.getHeartRateModifier()));
+    if(src.hasNeuromuscularBlock())
+      dst.setNeuromuscularBlock(SEScalarNegative1To1.unload(src.getNeuromuscularBlock()));
+    if(src.hasPupillaryResponse())
+      dst.setPupillaryResponse(SEPupillaryResponse.unload(src.getPupillaryResponse()));
+    if(src.hasRespirationRateModifier())
+      dst.setRespirationRateModifier(SEScalarNegative1To1.unload(src.getRespirationRateModifier()));
+    if(src.hasSedation())
+      dst.setSedation(SEScalarNegative1To1.unload(src.getSedation()));
+    if(src.hasSystolicPressureModifier())
+      dst.setSystolicPressureModifier(SEScalarNegative1To1.unload(src.getSystolicPressureModifier()));
+    if(src.hasTidalVolumeModifier())
+      dst.setTidalVolumeModifier(SEScalarNegative1To1.unload(src.getTidalVolumeModifier()));
+    if(src.hasTubularPermeabilityModifier())
+      dst.setTubularPermeabilityModifier(SEScalarNegative1To1.unload(src.getTubularPermeabilityModifier()));
   }
   
-  public SEScalarFraction getBronchodilation() 
+  public SEScalarNegative1To1 getBronchodilation() 
   { 
     if(this.bronchodilation==null)
-      this.bronchodilation=new SEScalarFraction();
+      this.bronchodilation=new SEScalarNegative1To1();
     return this.bronchodilation;
   }
   public boolean      hasBronchodilation() {return this.bronchodilation==null?false:this.bronchodilation.isValid();}
   
-  public SEScalarFraction getDiastolicPressureModifier() 
+  public SEScalarNegative1To1 getDiastolicPressureModifier() 
   { 
     if(this.diastolicPressureModifier==null)
-      this.diastolicPressureModifier=new SEScalarFraction();
+      this.diastolicPressureModifier=new SEScalarNegative1To1();
     return this.diastolicPressureModifier;
   }
   public boolean      hasDiastolicPressureModifier() {return this.diastolicPressureModifier==null?false:this.diastolicPressureModifier.isValid();}
@@ -184,18 +171,18 @@ public class SESubstancePharmacodynamics
   }
   public boolean      hasEMaxShapeParameter() {return this.EMaxShapeParameter==null?false:this.EMaxShapeParameter.isValid();}
   
-  public SEScalarFraction getHeartRateModifier() 
+  public SEScalarNegative1To1 getHeartRateModifier() 
   { 
     if(this.heartRateModifier==null)
-      this.heartRateModifier=new SEScalarFraction();
+      this.heartRateModifier=new SEScalarNegative1To1();
     return this.heartRateModifier;
   }
   public boolean      hasHeartRateModifier() {return this.heartRateModifier==null?false:this.heartRateModifier.isValid();}
   
-  public SEScalarFraction getNeuromuscularBlock() 
+  public SEScalarNegative1To1 getNeuromuscularBlock() 
   { 
     if(this.neuromuscularBlock==null)
-      this.neuromuscularBlock=new SEScalarFraction();
+      this.neuromuscularBlock=new SEScalarNegative1To1();
     return this.neuromuscularBlock;
   }
   public boolean      hasNeuromuscularBlock() {return this.neuromuscularBlock==null?false:this.neuromuscularBlock.isValid();}
@@ -208,42 +195,42 @@ public class SESubstancePharmacodynamics
   }
   public boolean      hasPupillaryResponse() {return this.pupillaryResponse!=null;}
   
-  public SEScalarFraction getRespirationRateModifier() 
+  public SEScalarNegative1To1 getRespirationRateModifier() 
   { 
     if(this.respirationRateModifier==null)
-      this.respirationRateModifier=new SEScalarFraction();
+      this.respirationRateModifier=new SEScalarNegative1To1();
     return this.respirationRateModifier;
   }
   public boolean      hasRespirationRateModifier() {return this.respirationRateModifier==null?false:this.respirationRateModifier.isValid();}
   
-  public SEScalarFraction getSedation() 
+  public SEScalarNegative1To1 getSedation() 
   { 
     if(this.sedation==null)
-      this.sedation=new SEScalarFraction();
+      this.sedation=new SEScalarNegative1To1();
     return this.sedation;
   }
   public boolean      hasSedation() {return this.sedation==null?false:this.sedation.isValid();}
   
-  public SEScalarFraction getSystolicPressureModifier() 
+  public SEScalarNegative1To1 getSystolicPressureModifier() 
   { 
     if(this.systolicPressureModifier==null)
-      this.systolicPressureModifier=new SEScalarFraction();
+      this.systolicPressureModifier=new SEScalarNegative1To1();
     return this.systolicPressureModifier;
   }
   public boolean      hasSystolicPressureModifier() {return this.systolicPressureModifier==null?false:this.systolicPressureModifier.isValid();}
   
-  public SEScalarFraction getTidalVolumeModifier() 
+  public SEScalarNegative1To1 getTidalVolumeModifier() 
   { 
     if(this.tidalVolumeModifier==null)
-      this.tidalVolumeModifier=new SEScalarFraction();
+      this.tidalVolumeModifier=new SEScalarNegative1To1();
     return this.tidalVolumeModifier;
   }
   public boolean      hasTidalVolumeModifier() {return this.tidalVolumeModifier==null?false:this.tidalVolumeModifier.isValid();}
   
-  public SEScalarFraction getTubularPermeabilityModifier() 
+  public SEScalarNegative1To1 getTubularPermeabilityModifier() 
   { 
     if(this.tubularPermeabilityModifier==null)
-      this.tubularPermeabilityModifier=new SEScalarFraction();
+      this.tubularPermeabilityModifier=new SEScalarNegative1To1();
     return this.tubularPermeabilityModifier;
   }
   public boolean      hasTubularPermeabilityModifier() {return this.tubularPermeabilityModifier==null?false:this.tubularPermeabilityModifier.isValid();}

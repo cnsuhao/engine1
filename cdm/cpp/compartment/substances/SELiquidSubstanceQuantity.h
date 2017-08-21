@@ -1,24 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
-#include "bind/LiquidSubstanceQuantityData.hxx"
 class SELiquidCompartment;
 
 enum class BalanceLiquidBy { Mass, Concentration, Molarity, PartialPressure };
 
-class DLL_DECL SELiquidSubstanceQuantity : public SESubstanceQuantity, public SELiquidTransportSubstance
+class CDM_DECL SELiquidSubstanceQuantity : public SESubstanceQuantity, public SELiquidTransportSubstance
 {
   friend class SELiquidCompartment;
 protected:
@@ -29,10 +19,11 @@ public:
   virtual void Clear(); 
   virtual void Invalidate();
 
-  virtual bool Load(const CDM::LiquidSubstanceQuantityData& in);
-  virtual CDM::LiquidSubstanceQuantityData* Unload();
+  static void Load(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
+  static cdm::LiquidSubstanceQuantityData* Unload(const SELiquidSubstanceQuantity& src);
 protected:
-  virtual void Unload(CDM::LiquidSubstanceQuantityData& data);
+  static void Serialize(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
+  static void Serialize(const SELiquidSubstanceQuantity& src, cdm::LiquidSubstanceQuantityData& dst);
 
 public:
   virtual void SetToZero();
@@ -69,7 +60,7 @@ public:
   virtual double GetPartialPressure(const PressureUnit& unit) const;
 
   virtual bool HasSaturation() const;
-  virtual SEScalarFraction& GetSaturation();
+  virtual SEScalar0To1& GetSaturation();
   virtual double GetSaturation() const;
   virtual void SetHemoglobins(SESubstance& Hb, SESubstance& HbO2, SESubstance& HbCO2, SESubstance& HbO2CO2, SESubstance& HbCO);
 
@@ -89,7 +80,7 @@ protected:
   SEScalarMass*            m_MassExcreted;
   SEScalarAmountPerVolume* m_Molarity;
   SEScalarPressure*        m_PartialPressure;
-  SEScalarFraction*        m_Saturation;
+  SEScalar0To1*            m_Saturation;
 
   SELiquidCompartment&     m_Compartment;
   std::vector<SELiquidSubstanceQuantity*> m_Children;

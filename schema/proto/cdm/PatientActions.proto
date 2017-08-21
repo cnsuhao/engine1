@@ -1,0 +1,304 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+import "cdm/Substance.proto";
+import "cdm/PatientNutrition.proto";
+import "cdm/Actions.proto";
+import "cdm/PatientAssessments.proto";
+
+message AnyPatientActionData
+{
+  oneof Action
+  {
+    PatientAssessmentRequestData            Assessment                      = 1;
+    AcuteStressData                         AcuteStress                     = 2;
+    AirwayObstructionData                   AirwayObstruction               = 3;
+    ApneaData                               Apnea                           = 4;
+    AsthmaAttackData                        AsthmaAttack                    = 5;
+    BrainInjuryData                         BrainInjury                     = 6;
+    BronchoconstrictionData                 Bronchoconstriction             = 7;
+    CardiacArrestData                       CardiacArrest                   = 8;
+    ChestCompressionForceData               ChestCompressionForce           = 9;
+    ChestCompressionForceScaleData          ChestCompressionForceScale      = 10;
+    ChestOcclusiveDressingData              ChestOcclusiveDressing          = 11;
+    ConsciousRespirationData                ConsciousRespiration            = 12;
+    ConsumeNutrientsData                    ConsumeNutrients                = 13;
+    ExerciseData                            Exercise                        = 14;
+    HemorrhageData                          Hemorrhage                      = 15;
+    IntubationData                          Intubation                      = 16;
+    MechanicalVentilationData               MechanicalVentilation           = 17;
+    NeedleDecompressionData                 NeedleDecompression             = 18;
+    PericardialEffusionData                 PericardialEffusion             = 19;
+    TensionPneumothoraxData                 TensionPneumothorax             = 20;
+    SubstanceBolusData                      SubstanceBolus                  = 21;
+    SubstanceCompoundInfusionData           SubstanceCompoundInfusion       = 22;
+    SubstanceInfusionData                   SubstanceInfusion               = 23;
+    UrinateData                             Urinate                         = 24;
+  }
+}
+
+message PatientActionData
+{
+  ActionData                                Action                          = 1;
+}
+
+message PatientAssessmentRequestData
+{
+  PatientActionData                         PatientAction                   = 1;
+  PatientAssessmentData.eType               Type                            = 2;
+}
+
+/** @brief Fight or flight.  The body prepares to defend itself. */
+message AcuteStressData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief */
+}
+
+/** @brief A blockage of the Airway leading to no respiration/air flow in or out of the body. */
+message AirwayObstructionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief */
+}
+
+/** @brief Reduction of achieved tidal volume by inhibiting the respiratory breathing mechanism (i.e., muscles of respiration).  Maximum severity will stop breathing completely. */
+message ApneaData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief */
+}
+
+/** @brief A common inflammatory disease of the airways where air flow into the lungs is partially obstructed. 
+           This attack is acute asthma, which is an exacerbation of asthma that does not respond to standard treatments. */
+message AsthmaAttackData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief */
+}
+
+/** @brief A non-localized traumatic brain injury. */
+message BrainInjuryData
+{
+  /** @brief Types of Brain Injury that provided different nervous responses.*/
+  enum eType
+  {
+    Diffuse                                                                 = 0;
+    LeftFocal                                                               = 1;
+    RightFocal                                                              = 2;
+  }
+  
+  PatientActionData                         PatientAction                   = 1;
+  eType                                     Type                            = 2;/**<<@brief */
+  Scalar0To1Data                            Severity                        = 3;/**<<@brief */
+}
+
+/** @brief Constriction of the airways in the lungs due to tightening of surrounding smooth muscle. */
+message BronchoconstrictionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief */
+}
+
+/** @brief Applies a non-specific cardiac arrest. */
+message CardiacArrestData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eSwitch                                   State                           = 2;/**<<@brief */
+}
+
+/** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
+message ChestCompressionForceData
+{
+  PatientActionData                         PatientAction                   = 1;
+  ScalarForceData                           Force                           = 2;/**<<@brief */
+}
+
+/** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
+message ChestCompressionForceScaleData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            ForceScale                      = 2;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
+  ScalarTimeData                            ForcePeriod                     = 3;/**<<@brief The specified length of time the force is applied */
+}
+/** @brief Applies an occlusive dressing to either the left or right side of the chest. An occlusive dressing is an air and water-tight trauma dressing that provides immediate control of pressure and bleeding that occurs with an open pneumothorax. */
+message ChestOcclusiveDressingData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eSwitch                                   State                           = 2;/**<<@brief */
+  eSide                                     Side                            = 3;/**<<@brief */
+}
+
+/** @brief An ordered list of concious breath commands for the patient to preform. */
+message ConsciousRespirationData
+{
+  /** @brief Force air out of the lungs. */
+  message ForcedInhaleData
+  {
+    Scalar0To1Data                          InspiratoryCapacityFraction     = 1;/**<<@brief The fraction of the Inspiratory capacity that will be filled by the breath. */
+    ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the inhale. */
+  }
+  /** @brief Force air into the lungs. */
+  message ForcedExhaleData
+  {
+    Scalar0To1Data                          ExpiratoryReserveVolumeFraction = 1;/**<<@brief The fraction of the Expiratory Reserve Volume that is forced out of the body. */
+    ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the exhale.*/
+  }
+  /** @brief Hold the patients breath. There will be no inflow or out flow of air during the specified period */
+  message BreathHoldData
+  {
+    ScalarTimeData                          Period                          = 1;/**<<@brief Duration of the breath hold. */
+  }
+  /** @brief Administer a substance through an Inhaler. This command will represent a single press of an Inhaler. */
+  message UseInhalerData
+  {
+  }
+  message AnyCommandData
+  {
+    string                                  Comment                         = 1;
+    oneof Command
+    {
+      ForcedInhaleData                      ForcedInhale                    = 2;
+      ForcedExhaleData                      ForcedExhale                    = 3;
+      BreathHoldData                        BreathHold                      = 4;
+      UseInhalerData                        UseInhaler                      = 5;
+    }
+    
+  }
+  PatientActionData                         PatientAction                   = 1;
+  bool                                      AppendToPrevious                = 2;
+  repeated AnyCommandData                   Command                         = 3;
+}
+
+/** @brief Consume nutrients into the body. */
+message ConsumeNutrientsData
+{
+  PatientActionData                         PatientAction                   = 1;
+  oneof Option
+  {
+    NutritionData                           Nutrition                       = 2;/**<<@brief */
+    string                                  NutritionFile                   = 3;/**<<@brief */
+  }
+}
+
+/** @brief Increase the patient's metabolic rate leading to an increase in core temperature, cardiac output, respiration rate and tidal volume. */
+message ExerciseData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Intensity                       = 2;/**<<@brief Fractional representation of the maximum patient exertion */
+}
+
+/** @brief A hemorrhage is the loss of blood escaping from the circulatory system. Typically, a healthy person can endure a loss of 10 to 15 percent of the total blood volume without serious medical difficulties. */
+message HemorrhageData
+{
+  PatientActionData                         PatientAction                   = 1;
+  string                                    Compartment                     = 2;/**<<@brief Compartment where the bleeding is occuring */
+  ScalarVolumePerTimeData                   Rate                            = 3;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
+}
+
+/** @brief Insertion of tube into the patient's airway */
+message IntubationData
+{
+  enum eType
+  {
+    Off                                                                     = 0;
+    Esophageal                                                              = 1;
+    LeftMainstem                                                            = 2;
+    RightMainstem                                                           = 3;
+    Tracheal                                                                = 4;
+  }
+  PatientActionData                         PatientAction                   = 1;
+  eType                                     Type                            = 2;/**<<@brief */
+}
+
+/** @brief Mechanically breathing for the patient, such as with a squeeze bag or other equipment. */
+message MechanicalVentilationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eSwitch                                   State                           = 2;/**<<@brief Turns action procecessing off and on*/
+  ScalarVolumePerTimeData                   Flow                            = 3;/**<<@brief Flow produced */
+  ScalarPressureData                        Pressure                        = 4;/**<<@brief Pressure produced */
+  repeated SubstanceData.FractionAmountData GasFraction                     = 5;/**<<@brief Break down of the gasses in the equipment, fractions must add up to 1 */
+  
+}
+
+/** @brief A 14-16G intravenous caninula is inserted into the second rib-space in the mid-clavcular line. The needle is advanced until air can be aspirated into a connecting syringe. The needle is withdrawn and the caninula is left to allow air flow out of the pleural space. This effectively converts the closed pneumothorax into an open pneumothorax. */
+message NeedleDecompressionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eSwitch                                   State                           = 2;/**<<@brief */
+  eSide                                     Side                            = 3;/**<<@brief */
+}
+
+/** @brief Pericardial effusion ("fluid around the heart") is an abnormal accumulation of fluid in the pericardial cavity. Because of the limited amount of space in the pericardial cavity, fluid accumulation leads to an increased intrapericardial pressure which can negatively affect heart function. A pericardial effusion with enough pressure to adversely affect heart function is called cardiac tamponade. Pericardial effusion usually results from a disturbed equilibrium between the production andre-absorption of pericardial fluid, or from a structural abnormality that allows fluid to enter the pericardial cavity. Normal levels of pericardial fluid are from 15 to 50 mL. */
+message PericardialEffusionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  ScalarVolumePerTimeData                   EffusionRate                    = 2;/**<<@brief */
+}
+
+/** @brief An administration of a substance that is given all at one time to raise its concentration in blood to an effective level. */
+message SubstanceBolusData
+{
+  enum eAdministrationRoute
+  {
+    Intravenous                                                             = 0;/** @brief Injection into a vein */          
+    Epidural                                                                = 1;/** @brief Injection into a epidural space */
+    Intraosseous                                                            = 2;/** @brief Injection into the bone marrow */
+    Intraarterial                                                           = 3;/** @brief Injection into an artery */
+    Intracardiac                                                            = 4;/** @brief Injection into the heart */
+    Intracerebral                                                           = 5;/** @brief Injection into the brain */
+    Intracerebroventricular                                                 = 6;/** @brief Injection into the cerebral ventricles */
+    Intradermal                                                             = 7;/** @brief Injection into the skin */
+    Intramuscular                                                           = 8;/** @brief Injection into the muscle */      
+    Subcutaneous                                                            = 9;/** @brief Injection under the skin */      
+  }
+  message StateData
+  {
+    string                                  Substance                       = 1;
+    ScalarTimeData                          ElapsedTime                     = 2;
+    ScalarVolumeData                        AdministeredDose                = 3;
+  }
+ 
+  PatientActionData                         PatientAction                   = 1;
+  eAdministrationRoute                      AdministrationRoute             = 2;
+  string                                    Substance                       = 3;/**<<@brief */
+  ScalarMassPerVolumeData                   Concentration                   = 4;/**<<@brief */
+  ScalarVolumeData                          Dose                            = 5;/**<<@brief */
+  StateData                                 State                           = 6;
+}
+
+/** @brief Continuous injection of a compound. */
+message SubstanceCompoundInfusionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  string                                    SubstanceCompound               = 2;/**<<@brief */
+  ScalarVolumeData                          BagVolume                       = 3;/**<<@brief */
+  ScalarVolumePerTimeData                   Rate                            = 4;/**<<@brief */
+}
+
+/** @brief Continuous injection of a specific substance. */
+message SubstanceInfusionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  string                                    Substance                       = 2;/**<<@brief */
+  ScalarMassPerVolumeData                   Concentration                   = 3;/**<<@brief */
+  ScalarVolumePerTimeData                   Rate                            = 4;/**<<@brief */
+}
+
+/** @brief A pneumothorax is an abnormal collection of air or gas in the pleural space that separates the lung from the chest wall. Like pleural effusion (liquid buildup in that space), pneumothorax may interfere with normal breathing. */
+message TensionPneumothoraxData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eGate                                     Type                            = 2;/**<<@brief */
+  eSide                                     Side                            = 3;/**<<@brief */
+  Scalar0To1Data                            Severity                        = 4;/**<<@brief */
+}
+
+/** @brief Empty the bladder of its contents */
+message UrinateData
+{
+  PatientActionData                         PatientAction                   = 1;
+}

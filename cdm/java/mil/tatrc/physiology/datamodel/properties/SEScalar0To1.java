@@ -1,21 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.properties;
 
 import mil.tatrc.physiology.utilities.Log;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.Scalar0To1Data;
+import com.kitware.physiology.cdm.Properties.Scalar0To1Data;
 
 /**
  * @author abray
@@ -40,15 +30,21 @@ public class SEScalar0To1 extends SEScalar
     this.setValue(value, "");
   }
   
-
-  public Scalar0To1Data unload()
+  public static void load(Scalar0To1Data src, SEScalar0To1 dst)
   {
-    if(!this.isValid())
+    SEScalar.load(src.getScalar0To1(),dst);
+  }
+  public static Scalar0To1Data unload(SEScalar0To1 src)
+  {
+    if(!src.isValid())
       return null;
-
-    Scalar0To1Data to = CDMSerializer.objFactory.createScalar0To1Data();
-    unload(to);
-    return to;
+    Scalar0To1Data.Builder dst = Scalar0To1Data.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalar0To1 src, Scalar0To1Data.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalar0To1Builder());
   }
 
   public boolean validUnit(String unit)

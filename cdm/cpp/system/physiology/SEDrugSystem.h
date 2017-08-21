@@ -1,40 +1,30 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/DrugSystemData.hxx"
-#include "bind/enumOnOff.hxx"
 #include "system/physiology/SEPupillaryResponse.h"
 
-class DLL_DECL SEDrugSystem : public SESystem
+class CDM_DECL SEDrugSystem : public SESystem
 {
 public:
-
   SEDrugSystem(Logger* logger);
   virtual ~SEDrugSystem();
 
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::DrugSystemData& in);
-  virtual CDM::DrugSystemData* Unload() const;
+
+  static void Load(const cdm::DrugSystemData& src, SEDrugSystem& dst);
+  static cdm::DrugSystemData* Unload(const SEDrugSystem& src);
 protected:
-  virtual void Unload(CDM::DrugSystemData& data) const;
+  static void Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst);
+  static void Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst);
+
 public:
 
   virtual bool HasBronchodilationLevel() const;
-  virtual SEScalarFraction& GetBronchodilationLevel();
+  virtual SEScalarNegative1To1& GetBronchodilationLevel();
   virtual double GetBronchodilationLevel() const;
 
   virtual bool HasHeartRateChange() const;
@@ -46,7 +36,7 @@ public:
   virtual double GetMeanBloodPressureChange(const PressureUnit& unit) const;
 
   virtual bool HasNeuromuscularBlockLevel() const;
-  virtual SEScalarFraction& GetNeuromuscularBlockLevel();
+  virtual SEScalar0To1& GetNeuromuscularBlockLevel();
   virtual double GetNeuromuscularBlockLevel() const;
 
   virtual bool HasPulsePressureChange() const;
@@ -63,7 +53,7 @@ public:
   virtual double GetRespirationRateChange(const FrequencyUnit& unit) const;
 
   virtual bool HasSedationLevel() const;
-  virtual SEScalarFraction& GetSedationLevel();
+  virtual SEScalar0To1& GetSedationLevel();
   virtual double GetSedationLevel() const;
 
   virtual bool HasTidalVolumeChange() const;
@@ -71,19 +61,19 @@ public:
   virtual double GetTidalVolumeChange(const VolumeUnit& unit) const;
 
   virtual bool HasTubularPermeabilityChange() const;
-  virtual SEScalarFraction& GetTubularPermeabilityChange();
+  virtual SEScalarNegative1To1& GetTubularPermeabilityChange();
   virtual double GetTubularPermeabilityChange() const;
 
 protected:
 
-  SEScalarFraction*          m_BronchodilationLevel;
-  SEScalarFrequency*         m_HeartRateChange;
-  SEScalarPressure*          m_MeanBloodPressureChange;
-  SEScalarFraction*          m_NeuromuscularBlockLevel;
-  SEScalarPressure*          m_PulsePressureChange;
-  SEPupillaryResponse*       m_PupillaryResponse;
-  SEScalarFrequency*         m_RespirationRateChange;
-  SEScalarFraction*          m_SedationLevel;
-  SEScalarVolume*            m_TidalVolumeChange;
-  SEScalarFraction*          m_TubularPermeabilityChange;
+  SEScalarNegative1To1*  m_BronchodilationLevel;
+  SEScalarFrequency*     m_HeartRateChange;
+  SEScalarPressure*      m_MeanBloodPressureChange;
+  SEScalar0To1*          m_NeuromuscularBlockLevel;
+  SEScalarPressure*      m_PulsePressureChange;
+  SEPupillaryResponse*   m_PupillaryResponse;
+  SEScalarFrequency*     m_RespirationRateChange;
+  SEScalar0To1*          m_SedationLevel;
+  SEScalarVolume*        m_TidalVolumeChange;
+  SEScalarNegative1To1*  m_TubularPermeabilityChange;
 };

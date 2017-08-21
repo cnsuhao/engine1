@@ -1,16 +1,7 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
-#include "BioGearsEngineHowTo.h"
+#include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
 #include "utils/FileUtils.h"
@@ -21,7 +12,7 @@ specific language governing permissions and limitations under the License.
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// This class derives from Task and implements Run() so it can be used in the TaskRunner.  When run,
-/// this class creates a BioGears engine and runs a scenario.
+/// this class creates a Pulse engine and runs a scenario.
 //--------------------------------------------------------------------------------------------------
 class RunScenarioTask : public Task
 {
@@ -43,38 +34,38 @@ std::mutex RunScenarioTask::ms_constructionMutex;
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// This function is called when the task is executed, it creates a BioGearsEngine and executes the scenario
+/// This function is called when the task is executed, it creates a PulseEngine and executes the scenario
 //--------------------------------------------------------------------------------------------------
 void RunScenarioTask::Run()
 {
   // Set up the log file
   std::string logFile = m_scenarioFile;
-  logFile = Replace(logFile, "verification", "bin");
-  logFile = Replace(logFile, ".xml", ".log");
+  logFile = Replace(logFile, "verification", "");
+  logFile = Replace(logFile, ".pba", ".log");
 
   // Set up the verification output file
   std::string dataFile = m_scenarioFile;
-  dataFile = Replace(dataFile, "verification", "bin");
-  dataFile = Replace(dataFile, ".xml", "Results.txt");
+  dataFile = Replace(dataFile, "verification", "");
+  dataFile = Replace(dataFile, ".pba", "Results.txt");
 
   // Delete any results file that may be there
   remove(dataFile.c_str());
 
-  // Aquire the constrution mutex before we create the BioGearsEngine.  Due to some third-party library
-  // initialization constructs not being thread safe, we must not construct BioGearsEngines simultaneously
+  // Aquire the constrution mutex before we create the PulseEngine.  Due to some third-party library
+  // initialization constructs not being thread safe, we must not construct PulseEngines simultaneously
   // from multiple threads.
   ms_constructionMutex.lock();
-  std::unique_ptr<PhysiologyEngine> bioGears = CreateBioGearsEngine(logFile.c_str());
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine(logFile.c_str());
   ms_constructionMutex.unlock();
         
-  if (!bioGears)
+  if (!pe)
   {
-    std::cerr << "Unable to create BioGearsEngine\n";
+    std::cerr << "Unable to create PulseEngine\n";
     return;
   }
 
   // Run the scenario
-  SEScenarioExec exec(*bioGears);
+  SEScenarioExec exec(*pe);
   exec.Execute(m_scenarioFile.c_str(), dataFile.c_str(), nullptr);
 }
 
@@ -91,9 +82,9 @@ void HowToConcurrentEngines()
     TaskRunner runner;
 
     // Create tasks to be run and give them to the task runner
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("Scenarios/Patient/BasicStandard.xml")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("Scenarios/Patient/BasicStandard.xml")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("Scenarios/Patient/BasicStandard.xml")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.pba")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.pba")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.pba")));
 
     // Run the tasks.  This will launch the desired number of threads which will pull and execute tasks
     // until there are none left.  Run() blocks until all task threads are finished executing.

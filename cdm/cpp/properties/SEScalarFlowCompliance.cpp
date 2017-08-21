@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarFlowCompliance.h"
@@ -17,15 +8,6 @@ const FlowComplianceUnit FlowComplianceUnit::L_Per_cmH2O("L/cmH2O");
 const FlowComplianceUnit FlowComplianceUnit::mL_Per_mmHg("mL/mmHg");
 const FlowComplianceUnit FlowComplianceUnit::mL_Per_cmH2O("mL/cmH2O");
 const FlowComplianceUnit FlowComplianceUnit::m3_Per_Pa("m^3/Pa");
-
-CDM::ScalarFlowComplianceData* SEScalarFlowCompliance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarFlowComplianceData* data(new CDM::ScalarFlowComplianceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool FlowComplianceUnit::IsValidUnit(const std::string& unit)
 {
@@ -53,4 +35,26 @@ const FlowComplianceUnit& FlowComplianceUnit::GetCompoundUnit(const std::string&
  std::stringstream err;
   err << unit << " is not a valid FlowCompliance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarFlowCompliance::Load(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst)
+{
+  SEScalarFlowCompliance::Serialize(src, dst);
+}
+void SEScalarFlowCompliance::Serialize(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst)
+{
+  SEScalarQuantity<FlowComplianceUnit>::Serialize(src.scalarflowcompliance(), dst);
+}
+
+cdm::ScalarFlowComplianceData* SEScalarFlowCompliance::Unload(const SEScalarFlowCompliance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarFlowComplianceData* dst = new cdm::ScalarFlowComplianceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarFlowCompliance::Serialize(const SEScalarFlowCompliance& src, cdm::ScalarFlowComplianceData& dst)
+{
+  SEScalarQuantity<FlowComplianceUnit>::Serialize(src, *dst.mutable_scalarflowcompliance());
 }

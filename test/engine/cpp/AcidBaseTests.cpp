@@ -1,21 +1,13 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
-#include "BioGearsEngineTest.h"
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+#include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "substance/SESubstanceManager.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/SECompartmentManager.h"
 #include "utils/GeneralMath.h"
 #include "utils/DataTrack.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
@@ -30,10 +22,10 @@ specific language governing permissions and limitations under the License.
 
 #define VERBOSE
 
-void BioGearsEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
+void PulseEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
 {
   // This is a unit test of the blood gas calculation methodology.
-  // It isolates the blood gas calculations from any feedback or regulation mechanisms in BioGears.
+  // It isolates the blood gas calculations from any feedback or regulation mechanisms in Pulse.
   // This whole thing will replace in SystemInteraction.cpp:
   // m_data.GetSaturationCalculator().CalculateOxygenSaturation(*node);
   // m_data.GetSaturationCalculator().CalculateCarbonDioxideSaturation(*node);
@@ -43,9 +35,9 @@ void BioGearsEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
 
   DataTrack trk;
 
-  BioGears bg(rptDirectory + "\\AcidBaseMath.log");
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SESubstanceManager& subMgr = bg.GetSubstances();
+  PulseController pc(rptDirectory + "/AcidBaseMath.log");
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SESubstanceManager& subMgr = pc.GetSubstances();
 
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
   SESubstance* Hb = subMgr.GetSubstance("Hemoglobin");
@@ -90,7 +82,7 @@ void BioGearsEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
   //normalDissolvedCO2_gPerL = CO2ppGuess_mmHg*(44.01*0.0314) / 1000.0;
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -108,7 +100,7 @@ void BioGearsEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
   bool compareBeforeAfter = false;
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "\\AcidBaseMath.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseMath.txt";
 
   unsigned int testID = 0;
 
@@ -272,10 +264,10 @@ void BioGearsEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
  }//End O2 loop
 }
 
-void BioGearsEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
+void PulseEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
 {
   // This is a unit test of the blood gas calculation methodology.
-  // It isolates the blood gas calculations from any feedback or regulation mechanisms in BioGears.
+  // It isolates the blood gas calculations from any feedback or regulation mechanisms in Pulse.
   // This whole thing will replace in SystemInteraction.cpp:
   // m_data.GetSaturationCalculator().CalculateOxygenSaturation(*node);
   // m_data.GetSaturationCalculator().CalculateCarbonDioxideSaturation(*node);
@@ -286,9 +278,9 @@ void BioGearsEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   // It’s making sure the solver gives the same answer when it's feed back the previous answer.
 
   DataTrack trk;
-  BioGears bg(rptDirectory + "\\AcidBaseFeedback.log");
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SESubstanceManager& subMgr = bg.GetSubstances();
+  PulseController pc(rptDirectory + "/AcidBaseFeedback.log");
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SESubstanceManager& subMgr = pc.GetSubstances();
 
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
   SESubstance* Hb = subMgr.GetSubstance("Hemoglobin");
@@ -329,7 +321,7 @@ void BioGearsEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   double percentCO2Bound = 0.01;
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -341,7 +333,7 @@ void BioGearsEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "\\AcidBaseFeedback.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseFeedback.txt";
 
   c.SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
 
@@ -391,17 +383,17 @@ void BioGearsEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   }
 }
 
-void BioGearsEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
+void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
 {
   // This is a unit test of the blood gas calculation methodology.
-  // It isolates the blood gas calculations from any feedback or regulation mechanisms in BioGears.
+  // It isolates the blood gas calculations from any feedback or regulation mechanisms in Pulse.
   // This tests the solvers ability to handle all zeros and combinations of zeros as initial conditions.
   // Did not test negatives because the engine already has checks for negative mass and concentrations. 
 
   DataTrack trk;
-  BioGears bg(rptDirectory + "\\AcidBaseLimits.log");
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SESubstanceManager& subMgr = bg.GetSubstances();
+  PulseController pc(rptDirectory + "/AcidBaseLimits.log");
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SESubstanceManager& subMgr = pc.GetSubstances();
 
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
   SESubstance* Hb = subMgr.GetSubstance("Hemoglobin");
@@ -440,7 +432,7 @@ void BioGearsEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   double percentCO2Bound = 0.01;
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -452,7 +444,7 @@ void BioGearsEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "\\AcidBaseLimits.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseLimits.txt";
 
   c.SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
 
@@ -544,7 +536,7 @@ void BioGearsEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
       normalHgb_gPerL = 0.0;
       break;
     default:
-      bg.GetLogger()->Fatal("AcidBaseLimitsTest:: Problem in the switch");
+      pc.GetLogger()->Fatal("AcidBaseLimitsTest:: Problem in the switch");
       break;
     }
     nO2->GetConcentration().SetValue(normalDissolvedO2_gPerL, MassPerVolumeUnit::g_Per_L);
@@ -592,15 +584,15 @@ void BioGearsEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   }
 }
 
-void BioGearsEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
+void PulseEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
 {
   DataTrack trk;
-  BioGears bg(rptDirectory + "\\AcidBaseExtreme.log");
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SESubstanceManager& subMgr = bg.GetSubstances();
+  PulseController pc(rptDirectory + "/AcidBaseExtreme.log");
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SESubstanceManager& subMgr = pc.GetSubstances();
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "\\AcidBaseExtreme.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseExtreme.txt";
 
 
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
@@ -650,7 +642,7 @@ void BioGearsEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
   double percentCO2Bound = 0.01;
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -781,7 +773,7 @@ void BioGearsEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
   }
 }
 
-void BioGearsEngineTest::AcidBaseBloodGasTest(BioGears& bg, bloodType bloodCompartment, SETestSuite& testSuite)
+void PulseEngineTest::AcidBaseBloodGasTest(PulseController& pc, bloodType bloodCompartment, SETestSuite& testSuite)
 {
   TimingProfile timer;
   timer.Start("Test");
@@ -789,10 +781,10 @@ void BioGearsEngineTest::AcidBaseBloodGasTest(BioGears& bg, bloodType bloodCompa
   // within normal range specified in \cite van2013davis and outputs are expected 
   // to also be within normal range.
 
-  DataTrack& trk = bg.GetDataTrack(); 
-  SESubstanceManager& subMgr = bg.GetSubstances();
-  SaturationCalculator& c = bg.GetSaturationCalculator();
-  SECompartmentManager& cmptMgr = bg.GetCompartments();
+  DataTrack& trk = pc.GetDataTrack(); 
+  SESubstanceManager& subMgr = pc.GetSubstances();
+  SaturationCalculator& c = pc.GetSaturationCalculator();
+  SECompartmentManager& cmptMgr = pc.GetCompartments();
   cmptMgr.Clear();
 
   SETestCase& testCase = testSuite.CreateTestCase();
@@ -843,7 +835,7 @@ void BioGearsEngineTest::AcidBaseBloodGasTest(BioGears& bg, bloodType bloodCompa
   cmptMgr.StateChange();
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -1249,26 +1241,26 @@ void BioGearsEngineTest::AcidBaseBloodGasTest(BioGears& bg, bloodType bloodCompa
   testCase.GetDuration().SetValue(timer.GetElapsedTime_s("Test"), TimeUnit::s);
 }
 
-void BioGearsEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
+void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
 {
-  BioGears bg(sOutputDirectory + "\\AcidBaseBloodGasTests.log");
+  PulseController pc(sOutputDirectory + "/AcidBaseBloodGasTests.log");
 
   // Set up our test report
-  SETestReport testReport = SETestReport(bg.GetLogger());
+  SETestReport testReport = SETestReport(pc.GetLogger());
   SETestSuite& testSuite = testReport.CreateTestSuite();
   testSuite.SetName("AcidBaseBloodGasCompartmentTests");
 
-  AcidBaseBloodGasTest(bg, ARTERIAL, testSuite);
-  AcidBaseBloodGasTest(bg, VENOUS, testSuite);
-  AcidBaseBloodGasTest(bg, CAPILLARY, testSuite);
+  AcidBaseBloodGasTest(pc, ARTERIAL, testSuite);
+  AcidBaseBloodGasTest(pc, VENOUS, testSuite);
+  AcidBaseBloodGasTest(pc, CAPILLARY, testSuite);
   /// \todo Do these tests with Strong Ion Differences once we ensure the Sodium, Potassium, and Chloride concentrations are correct and being handled properly
-  //AcidBaseBloodGasTest(bg, RESPIRATORY_ACIDOSIS, testSuite, sOutputDirectory);
-  //AcidBaseBloodGasTest(bg, METABOLIC_ALKALOSIS, testSuite, sOutputDirectory);
-  //AcidBaseBloodGasTest(bg, METABOLIC_ACIDOSIS, testSuite, sOutputDirectory);
-  //AcidBaseBloodGasTest(bg, RESPIRATORY_ALKALOSIS, testSuite, sOutputDirectory);
+  //AcidBaseBloodGasTest(pc, RESPIRATORY_ACIDOSIS, testSuite, sOutputDirectory);
+  //AcidBaseBloodGasTest(pc, METABOLIC_ALKALOSIS, testSuite, sOutputDirectory);
+  //AcidBaseBloodGasTest(pc, METABOLIC_ACIDOSIS, testSuite, sOutputDirectory);
+  //AcidBaseBloodGasTest(pc, RESPIRATORY_ALKALOSIS, testSuite, sOutputDirectory);
 
-  std::string results = sOutputDirectory + "\\AcidBaseBloodGasTests.txt";
-  bg.GetDataTrack().WriteTrackToFile(results.c_str());
+  std::string results = sOutputDirectory + "/AcidBaseBloodGasTests.txt";
+  pc.GetDataTrack().WriteTrackToFile(results.c_str());
 
-  testReport.WriteFile(sOutputDirectory + "\\AcidBaseBloodGasTestsReport.xml");
+  testReport.WriteFile(sOutputDirectory + "/AcidBaseBloodGasTestsReport.pba");
 }

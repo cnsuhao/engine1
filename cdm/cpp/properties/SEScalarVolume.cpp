@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarVolume.h"
@@ -18,15 +9,6 @@ const VolumeUnit VolumeUnit::dL("dL");
 const VolumeUnit VolumeUnit::mL("mL");
 const VolumeUnit VolumeUnit::uL("uL");
 const VolumeUnit VolumeUnit::m3("m^3");
-
-CDM::ScalarVolumeData* SEScalarVolume::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::ScalarVolumeData* data(new CDM::ScalarVolumeData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool VolumeUnit::IsValidUnit(const std::string& unit)
 {
@@ -58,4 +40,26 @@ const VolumeUnit& VolumeUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Volume unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarVolume::Load(const cdm::ScalarVolumeData& src, SEScalarVolume& dst)
+{
+  SEScalarVolume::Serialize(src, dst);
+}
+void SEScalarVolume::Serialize(const cdm::ScalarVolumeData& src, SEScalarVolume& dst)
+{
+  SEScalarQuantity<VolumeUnit>::Serialize(src.scalarvolume(), dst);
+}
+
+cdm::ScalarVolumeData* SEScalarVolume::Unload(const SEScalarVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarVolumeData* dst = new cdm::ScalarVolumeData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarVolume::Serialize(const SEScalarVolume& src, cdm::ScalarVolumeData& dst)
+{
+  SEScalarQuantity<VolumeUnit>::Serialize(src, *dst.mutable_scalarvolume());
 }

@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEPericardialEffusion.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/ScalarVolumePerTimeData.hxx"
 
 SEPericardialEffusion::SEPericardialEffusion() : SEPatientAction()
 {
@@ -41,25 +31,28 @@ bool SEPericardialEffusion::IsActive() const
   return IsValid() ? !m_EffusionRate->IsZero() : false;
 }
 
-bool SEPericardialEffusion::Load(const CDM::PericardialEffusionData& in)
+void SEPericardialEffusion::Load(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst)
 {
-  SEPatientAction::Load(in);
-  GetEffusionRate().Load(in.EffusionRate());
-  return true;
+  SEPericardialEffusion::Serialize(src, dst);
+}
+void SEPericardialEffusion::Serialize(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_effusionrate())
+    SEScalarVolumePerTime::Load(src.effusionrate(), dst.GetEffusionRate());
 }
 
-CDM::PericardialEffusionData* SEPericardialEffusion::Unload() const
+cdm::PericardialEffusionData* SEPericardialEffusion::Unload(const SEPericardialEffusion& src)
 {
-  CDM::PericardialEffusionData*data(new CDM::PericardialEffusionData());
-  Unload(*data);
-  return data;
+  cdm::PericardialEffusionData* dst = new cdm::PericardialEffusionData();
+  SEPericardialEffusion::Serialize(src, *dst);
+  return dst;
 }
-
-void SEPericardialEffusion::Unload(CDM::PericardialEffusionData& data) const
+void SEPericardialEffusion::Serialize(const SEPericardialEffusion& src, cdm::PericardialEffusionData& dst)
 {
-  SEPatientAction::Unload(data);
-  if (m_EffusionRate != nullptr)
-    data.EffusionRate(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_EffusionRate->Unload()));
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasEffusionRate())
+    dst.set_allocated_effusionrate(SEScalarVolumePerTime::Unload(*src.m_EffusionRate));
 }
 
 bool SEPericardialEffusion::HasEffusionRate() const

@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEConsciousRespiration.h"
@@ -16,13 +7,9 @@ specific language governing permissions and limitations under the License.
 #include "substance/SESubstanceManager.h"
 
 #include "patient/actions/SEBreathHold.h"
-#include "bind/BreathHoldData.hxx"
 #include "patient/actions/SEForcedExhale.h"
-#include "bind/ForcedExhaleData.hxx"
 #include "patient/actions/SEForcedInhale.h"
-#include "bind/ForcedInhaleData.hxx"
 #include "patient/actions/SEUseInhaler.h"
-#include "bind/UseInhalerData.hxx"
 
 SEConsciousRespiration::SEConsciousRespiration() : SEPatientAction()
 {
@@ -51,61 +38,81 @@ bool SEConsciousRespiration::IsActive() const
   return SEPatientAction::IsActive();
 }
 
-bool SEConsciousRespiration::Load(const CDM::ConsciousRespirationData& in, const SESubstanceManager& substances)
+void SEConsciousRespiration::Load(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst)
 {
-  // Set this before our super class tells us to Clear if the action wants us to keep our current data
-  m_ClearCommands = !in.AppendToPrevious();
-  SEPatientAction::Load(in);
-  m_ClearCommands = true;
-  CDM::ConsciousRespirationCommandData* command;
-  for (unsigned int i = 0; i<in.Command().size(); i++)
+  SEConsciousRespiration::Serialize(src, dst);
+}
+void SEConsciousRespiration::Serialize(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  dst.m_ClearCommands = true;
+  ;
+  for (int i = 0; i < src.command().size(); i++)
   {
-    command = (CDM::ConsciousRespirationCommandData*)&in.Command()[i];
+    const cdm::ConsciousRespirationData_AnyCommandData& command = src.command()[i];
 
-    CDM::BreathHoldData* bh = dynamic_cast<CDM::BreathHoldData*>(command);
+    switch (command.Command_case())
+    {
+    case cdm::ConsciousRespirationData_AnyCommandData::CommandCase::kBreathHold:
+      SEBreathHold::Load(command.breathhold(), dst.AddBreathHold());
+      break;
+    case cdm::ConsciousRespirationData_AnyCommandData::CommandCase::kForcedExhale:
+      SEForcedExhale::Load(command.forcedexhale(), dst.AddForcedExhale());
+      break;
+    case cdm::ConsciousRespirationData_AnyCommandData::CommandCase::kForcedInhale:
+      SEForcedInhale::Load(command.forcedinhale(), dst.AddForcedInhale());
+      break;
+    case cdm::ConsciousRespirationData_AnyCommandData::CommandCase::kUseInhaler:
+      SEUseInhaler::Load(command.useinhaler(), dst.AddUseInhaler());
+      break;
+    default:
+      dst.Warning("Ignoring unknown Conscious Respiration Command : " + command.Command_case());
+      continue;
+    }
+    dst.m_Commands.back()->SetComment(command.comment());
+  }
+}
+
+cdm::ConsciousRespirationData* SEConsciousRespiration::Unload(const SEConsciousRespiration& src)
+{
+  cdm::ConsciousRespirationData* dst = new cdm::ConsciousRespirationData();
+  SEConsciousRespiration::Serialize(src, *dst);
+  return dst;
+}
+void SEConsciousRespiration::Serialize(const SEConsciousRespiration& src, cdm::ConsciousRespirationData& dst)
+{
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.appendtoprevious();
+  for (SEConsciousRespirationCommand* cmd : src.m_Commands)
+  {
+    cdm::ConsciousRespirationData_AnyCommandData* cmdData = dst.add_command();
+    cmdData->set_comment(cmd->GetComment());
+    SEBreathHold* bh = dynamic_cast<SEBreathHold*>(cmd);
     if (bh != nullptr)
     {
-      AddBreathHold().Load(*bh);
+      cmdData->set_allocated_breathhold(SEBreathHold::Unload(*bh));      
       continue;
     }
-
-    CDM::ForcedInhaleData* fi = dynamic_cast<CDM::ForcedInhaleData*>(command);
-    if (fi != nullptr)
-    {
-      AddForcedInhale().Load(*fi);
-      continue;
-    }
-
-    CDM::ForcedExhaleData* fe = dynamic_cast<CDM::ForcedExhaleData*>(command);
+    SEForcedExhale* fe = dynamic_cast<SEForcedExhale*>(cmd);
     if (fe != nullptr)
     {
-      AddForcedExhale().Load(*fe);
+      cmdData->set_allocated_forcedexhale(SEForcedExhale::Unload(*fe));
       continue;
     }
-
-    CDM::UseInhalerData* si = dynamic_cast<CDM::UseInhalerData*>(command);
-    if (si != nullptr)
+    SEForcedInhale* fi = dynamic_cast<SEForcedInhale*>(cmd);
+    if (fi != nullptr)
     {
-      AddUseInhaler().Load(*si);
+      cmdData->set_allocated_forcedinhale(SEForcedInhale::Unload(*fi));
       continue;
     }
+    SEUseInhaler* ui = dynamic_cast<SEUseInhaler*>(cmd);
+    if (ui != nullptr)
+    {
+      cmdData->set_allocated_useinhaler(SEUseInhaler::Unload(*ui));
+      continue;
+    }
+    src.Warning("The unmapped respiration command in SEConsciousRespiration::Serialize");
   }
-  return true;
-}
-
-CDM::ConsciousRespirationData* SEConsciousRespiration::Unload() const
-{
-  CDM::ConsciousRespirationData*data(new CDM::ConsciousRespirationData());
-  Unload(*data);
-  return data;
-}
-
-void SEConsciousRespiration::Unload(CDM::ConsciousRespirationData& data) const
-{
-  SEPatientAction::Unload(data);
-  data.AppendToPrevious(false);
-  for (SEConsciousRespirationCommand* cmd : m_Commands)
-    data.Command().push_back(std::unique_ptr<CDM::ConsciousRespirationCommandData>(cmd->Unload()));
 }
 
 SEConsciousRespirationCommand* SEConsciousRespiration::GetActiveCommand()

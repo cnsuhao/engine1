@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "utils/DataTrack.h"
@@ -24,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
@@ -127,9 +118,9 @@ void DataTrack::Probe(const SEFluidCircuit& c)
   for (SEFluidCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Probe(p->GetName() + "_Switch", p->GetSwitch() == CDM::enumOpenClosed::Open ? 1 : 0);
+      Probe(p->GetName() + "_Switch", p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Probe(p->GetName() + "_Valve", p->GetValve() == CDM::enumOpenClosed::Closed ? 1 : 0);
+      Probe(p->GetName() + "_Valve", p->GetValve() == cdm::eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -182,9 +173,9 @@ void DataTrack::Probe(const SEThermalCircuit& c)
   for (SEThermalCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Probe(p->GetName() + "_Switch", p->GetSwitch() == CDM::enumOpenClosed::Open ? 1 : 0);
+      Probe(p->GetName() + "_Switch", p->GetSwitch() ==  cdm::eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Probe(p->GetName() + "_Valve", p->GetValve() == CDM::enumOpenClosed::Closed ? 1 : 0);
+      Probe(p->GetName() + "_Valve", p->GetValve() == cdm::eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -237,9 +228,9 @@ void DataTrack::Probe(const SEElectricalCircuit& c)
   for (SEElectricalCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Probe(p->GetName() + "_Switch", p->GetSwitch() == CDM::enumOpenClosed::Open ? 1 : 0);
+      Probe(p->GetName() + "_Switch", p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Probe(p->GetName() + "_Valve", p->GetValve() == CDM::enumOpenClosed::Closed ? 1 : 0);
+      Probe(p->GetName() + "_Valve", p->GetValve() == cdm::eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -406,9 +397,9 @@ void DataTrack::Track(double time_s, const SEElectricalCircuit& c)
   for (SEElectricalCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == CDM::enumOpenClosed::Open ? 1 : 0);
+      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Track(p->GetName() + "_Valve", time_s, p->GetValve() == CDM::enumOpenClosed::Closed ? 1 : 0);
+      Track(p->GetName() + "_Valve", time_s, p->GetValve() == cdm::eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -460,9 +451,9 @@ void DataTrack::Track(double time_s, const SEFluidCircuit& c)
   for (SEFluidCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == CDM::enumOpenClosed::Open ? 1 : 0);
+      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Track(p->GetName() + "_Valve", time_s, p->GetValve() == CDM::enumOpenClosed::Closed ? 1 : 0);
+      Track(p->GetName() + "_Valve", time_s, p->GetValve() == cdm::eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -514,9 +505,9 @@ void DataTrack::Track(double time_s, const SEThermalCircuit& c)
   for (SEThermalCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == CDM::enumOpenClosed::Open ? 1 : 0);
+      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Track(p->GetName() + "_Valve", time_s, p->GetValve() == CDM::enumOpenClosed::Closed ? 1 : 0);
+      Track(p->GetName() + "_Valve", time_s, p->GetValve() == cdm::eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {

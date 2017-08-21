@@ -282,4 +282,4 @@ CDM - Common Data Model
 Data Model Implementation
 -------------------------
 
-BioGears
+Patient

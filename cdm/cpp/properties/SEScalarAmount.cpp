@@ -1,29 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarAmount.h"
 
 const AmountUnit AmountUnit::mol("mol");
 const AmountUnit AmountUnit::pmol("pmol");
-
-CDM::ScalarAmountData* SEScalarAmount::Unload() const
-{
-  if(!IsValid())
-    return nullptr;
-  CDM::ScalarAmountData* data(new CDM::ScalarAmountData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool AmountUnit::IsValidUnit(const std::string& unit)
 {
@@ -42,4 +24,26 @@ const AmountUnit& AmountUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Amount unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarAmount::Load(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
+{
+  SEScalarAmount::Serialize(src, dst);
+}
+void SEScalarAmount::Serialize(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
+{
+  SEScalarQuantity<AmountUnit>::Serialize(src.scalaramount(), dst);
+}
+
+cdm::ScalarAmountData* SEScalarAmount::Unload(const SEScalarAmount& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarAmountData* dst = new cdm::ScalarAmountData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarAmount::Serialize(const SEScalarAmount& src, cdm::ScalarAmountData& dst)
+{
+  SEScalarQuantity<AmountUnit>::Serialize(src, *dst.mutable_scalaramount());
 }

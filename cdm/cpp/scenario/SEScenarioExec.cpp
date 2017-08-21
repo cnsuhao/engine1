@@ -1,34 +1,18 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "scenario/SEScenarioExec.h"
 #include "scenario/SEAction.h"
 #include "scenario/SECondition.h"
 #include "scenario/SEScenario.h"
-#include "bind/ScenarioData.hxx"
 #include "scenario/SEScenarioInitialParameters.h"
 #include "scenario/SEAdvanceTime.h"
-#include "scenario/SEScenarioAutoSerialization.h"
-#include "engine/PhysiologyEngine.h"
-#include "engine/PhysiologyEngineTrack.h"
-#include "engine/PhysiologyEngineConfiguration.h"
-
+#include "PhysiologyEngine.h"
+#include "engine/SEEngineTracker.h"
+#include "engine/SEEngineConfiguration.h"
 #include "patient/SEPatient.h"
-
-#include "Serializer.h"
-
 #include "properties/SEScalarTime.h"
-#include "bind/enumPatientEvent.hxx"
 #include "utils/TimingProfile.h"
 #include "utils/FileUtils.h"
 
@@ -36,6 +20,7 @@ SEScenarioExec::SEScenarioExec(PhysiologyEngine& engine) : Loggable(engine.GetLo
 {
   m_Cancel     = false;
   m_CustomExec = nullptr; 
+  m_EngineConfiguration = nullptr;//Derived class will manage this pointer
 }
 
 SEScenarioExec::~SEScenarioExec()
@@ -51,23 +36,17 @@ bool SEScenarioExec::Execute(const std::string& scenarioFile, const std::string&
     Info(m_ss);
     m_Cancel = false;
     m_CustomExec = cExec;
-    
-    std::unique_ptr<CDM::ObjectData> bind = Serializer::ReadFile(scenarioFile, GetLogger());
-    if (bind == nullptr)
-    {
-      m_ss << "Unable to load scenario file : " << scenarioFile << std::endl;
-      Error(m_ss);
-      return false;
-    }
-    CDM::ScenarioData* sceData = dynamic_cast<CDM::ScenarioData*>(bind.get());    
-    if (sceData == nullptr)
-    {
-      m_ss << "Unable to load scenario file : " << scenarioFile << std::endl;
-      Error(m_ss);
-      return false;
-    }
+
     SEScenario scenario(m_Engine.GetSubstanceManager());
-    scenario.Load(*sceData);
+    try
+    {
+      scenario.LoadFile(scenarioFile);
+    }
+    catch (CommonDataModelException& ex)
+    {
+      Error("Error reading scenario file " + scenarioFile + " " + ex.what());
+      return false;
+    }
     std::string rFile = resultsFile;
     if (rFile.empty())
     {
@@ -103,23 +82,23 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
     // Initialize the engine with a state or initial parameters
     if (scenario.HasEngineStateFile())
     {
-      m_Engine.LoadState(scenario.GetEngineStateFile());
+      m_Engine.LoadStateFile(scenario.GetEngineStateFile());
       // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
-      // Make a copy of the data requests, not this clears out data requests from the engine
-      CDM::DataRequestsData* drData = scenario.GetDataRequestManager().Unload();
-      m_Engine.GetEngineTrack()->GetDataRequestManager().Load(*drData, m_Engine.GetSubstanceManager());
+      // Make a copy of the data requests, note this clears out data requests from the engine
+      cdm::DataRequestManagerData* drData = SEDataRequestManager::Unload(scenario.GetDataRequestManager());
+      SEDataRequestManager::Load(*drData, m_Engine.GetEngineTracker()->GetDataRequestManager(), m_Engine.GetSubstanceManager());
       delete drData;
-      if (!m_Engine.GetEngineTrack()->GetDataRequestManager().HasResultsFilename())
-        m_Engine.GetEngineTrack()->GetDataRequestManager().SetResultsFilename(resultsFile);
+      if (!m_Engine.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
+        m_Engine.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
     }
     else if (scenario.HasInitialParameters())
     {
       // Make a copy of the data requests, not this clears out data requests from the engine
-      CDM::DataRequestsData* drData = scenario.GetDataRequestManager().Unload();
-      m_Engine.GetEngineTrack()->GetDataRequestManager().Load(*drData, m_Engine.GetSubstanceManager());
+      cdm::DataRequestManagerData* drData = SEDataRequestManager::Unload(scenario.GetDataRequestManager());
+      SEDataRequestManager::Load(*drData, m_Engine.GetEngineTracker()->GetDataRequestManager(), m_Engine.GetSubstanceManager());
       delete drData;
-      if (!m_Engine.GetEngineTrack()->GetDataRequestManager().HasResultsFilename())
-        m_Engine.GetEngineTrack()->GetDataRequestManager().SetResultsFilename(resultsFile);
+      if (!m_Engine.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
+        m_Engine.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
 
       const SEScenarioInitialParameters* params = scenario.GetInitialParameters();
       // Do we have any conditions
@@ -132,7 +111,7 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
         // Set up the patient
         std::string pFile = "./patients/";
         pFile += params->GetPatientFile();
-        if (!m_Engine.InitializeEngine(pFile.c_str(), &conditions, params->GetConfiguration()))
+        if (!m_Engine.InitializeEngine(pFile.c_str(), &conditions, m_EngineConfiguration))
         {
           Error("Unable to initialize engine");
           return false;
@@ -140,7 +119,7 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
       }
       else if (params->HasPatient())
       {
-        if (!m_Engine.InitializeEngine(*params->GetPatient(), &conditions, params->GetConfiguration()))
+        if (!m_Engine.InitializeEngine(*params->GetPatient(), &conditions, m_EngineConfiguration))
         {
           Error("Unable to initialize engine");
           return false;
@@ -158,8 +137,6 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
       return false;
     }
 
-    if (scenario.HasAutoSerialization())
-      CreateFilePath(scenario.GetAutoSerialization()->GetDirectory());// Note method assumes you have a file and it ignores it
     return ProcessActions(scenario);
   }
   catch (CommonDataModelException& ex)
@@ -196,37 +173,11 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
     sampleTime_s = 1 / sampleTime_s;
   double currentSampleTime_s = sampleTime_s;//Sample the first step
 
-  // Auto serialization
-  bool serializeAction = false;
-  double serializationTime_s = 0;
-  double serializationPeriod_s = 0;
-  std::string actionName;
-  std::string serializationFileNameBase;
-  std::stringstream serializationFileName;
-  const SEScenarioAutoSerialization* serialization = scenario.GetAutoSerialization();
-  if (serialization != nullptr)
-  {
-    if (!serialization->IsValid())
-      serialization = nullptr;//ignore it
-    else
-    {
-      serializationFileNameBase = serialization->GetFileName();
-      // Strip off the xml if it's there
-      size_t split = serializationFileNameBase.find(".xml");
-      if (split != serializationFileNameBase.npos)
-        serializationFileNameBase = serializationFileNameBase.substr(0, split);
-
-      serializationPeriod_s = serialization->GetPeriod(TimeUnit::s);
-      serializationFileName << serialization->GetDirectory() << "/" << serializationFileNameBase;     
-      serializationFileNameBase = serializationFileName.str();
-    }
-  }
-
   TimingProfile profiler;
   profiler.Start("Total");
   profiler.Start("Status");
 
-  m_Engine.GetEngineTrack()->SetupRequests();
+  m_Engine.GetEngineTracker()->SetupRequests();
 
   bool err=false;
   SEAdvanceTime* adv;
@@ -249,48 +200,13 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
 
         m_Engine.AdvanceModelTime();
 
-        if (serialization!=nullptr)
-        {// Auto Serialize
-          if(serializationPeriod_s > 0)
-          {
-            serializationTime_s += dT_s;
-            if (serializationTime_s > serializationPeriod_s)
-            {
-              serializationTime_s = 0;
-              serializationFileName.str("");
-              serializationFileName << serializationFileNameBase;
-              if (serialization->GetPeriodTimeStamps() == CDM::enumOnOff::On)
-                serializationFileName << "@" << m_Engine.GetSimulationTime(TimeUnit::s);              
-              serializationFileName << ".xml";
-              std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()));
-              if (serialization->GetReloadState() == CDM::enumOnOff::On)
-              {
-                m_Engine.LoadState(*state);
-                std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()+".Reloaded.xml"));
-              }
-            }
-          }
-          if (serializeAction)
-          {
-            serializeAction = false;
-            serializationFileName.str("");
-            serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".xml";
-            std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()));
-            if (serialization->GetReloadState() == CDM::enumOnOff::On)
-            {
-              m_Engine.LoadState(*state);
-              std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()+".Reloaded.xml"));
-            }
-          }          
-        }
-
         // Pull data from the engine
         scenarioTime_s = m_Engine.GetSimulationTime(TimeUnit::s);
         currentSampleTime_s += dT_s;
         if (currentSampleTime_s >= sampleTime_s)
         {
           currentSampleTime_s = 0;
-          m_Engine.GetEngineTrack()->TrackData(scenarioTime_s);
+          m_Engine.GetEngineTracker()->TrackData(scenarioTime_s);
         }       
         // Call any custom callback provided
         if (m_CustomExec!=nullptr)
@@ -304,7 +220,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
           profiler.Reset("Status");
           Info(m_ss);
         }
-        if(m_Engine.GetPatient().IsEventActive(CDM::enumPatientEvent::IrreversibleState))
+        if(m_Engine.GetPatient().IsEventActive(cdm::PatientData_eEvent_IrreversibleState))
           return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
       }
       continue;
@@ -315,28 +231,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
       err=true;
       break;
     }
-    
-    if (serialization != nullptr && serialization->GetAfterActions()==CDM::enumOnOff::On)
-    {// If we are testing force serialization after any action with this
-     // Pull out the action type/name for file naming
-      m_ss << *a;
-      size_t start = m_ss.str().find(": ") + 2;
-      size_t end = m_ss.str().find('\n');
-      actionName = m_ss.str().substr(start, end - start);
-      m_ss.str("");
-
-      serializationFileName.str("");
-      serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".xml";
-      std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()));
-      if (serialization->GetReloadState() == CDM::enumOnOff::On)
-      {
-        m_Engine.LoadState(*state);
-        std::unique_ptr<CDM::PhysiologyEngineStateData> state(m_Engine.SaveState(serializationFileName.str()+".Reloaded.xml"));
-      }
-      serializeAction = true;// Serialize after the next time step
-    }
-   
-    if(m_Engine.GetPatient().IsEventActive(CDM::enumPatientEvent::IrreversibleState))
+    if(m_Engine.GetPatient().IsEventActive(cdm::PatientData_eEvent_IrreversibleState))
       return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
   }
   m_ss << "It took " << profiler.GetElapsedTime_s("Total") << "s to run this simulation";

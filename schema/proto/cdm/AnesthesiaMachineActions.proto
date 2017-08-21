@@ -1,0 +1,128 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+import "cdm/AnesthesiaMachine.proto";
+import "cdm/Actions.proto";
+
+/** @brief Anesthesia machine action container. */
+message AnyAnesthesiaMachineActionData
+{
+  oneof Action
+  {
+    AnesthesiaMachineConfigurationData     Configuration               = 1;
+    ExpiratoryValveLeakData                ExpiratoryValveLeak         = 2;
+    ExpiratoryValveObstructionData         ExpiratoryValveObstruction  = 3;
+    InspiratoryValveLeakData               InspiratoryValveLeak        = 4;
+    InspiratoryValveObstructionData        InspiratoryValveObstruction = 5;
+    MaskLeakData                           MaskLeak                    = 6;
+    SodaLimeFailureData                    SodaLimeFailure             = 7;
+    TubeCuffLeakData                       TubeCuffLeak                = 8;
+    VaporizerFailureData                   VaporizerFailure            = 9;
+    VentilatorPressureLossData             VentilatorPressureLoss      = 10;
+    YPieceDisconnectData                   YPieceDisconnect            = 11;
+    OxygenWallPortPressureLossData         OxygenWallPortPressureLoss  = 12;
+    OxygenTankPressureLossData             OxygenTankPressureLoss      = 13;
+  }
+}
+
+message AnesthesiaMachineActionData
+{
+  ActionData                               Action                      = 1;
+}
+
+/** @brief The configuration of the anesthesia machine to use. */
+message AnesthesiaMachineConfigurationData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  oneof Option
+  {
+    AnesthesiaMachineData                  Configuration               = 2;/**<< @brief An anesthesia machine object with properties to set in the system anesthesia machine. */
+    string                                 ConfigurationFile           = 3;/**<< @brief File containing an anesthesia machine objet with properties to set in the system anesthesia machine. */
+  }
+}
+
+/** @brief A leak in the expiritory valve. */
+message ExpiratoryValveLeakData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
+}
+
+/** @brief An obstruction in the expiritory valve.  */
+message ExpiratoryValveObstructionData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the obstruction from 0 to 1. */
+}
+
+/** @brief A leak in the inspiratory valve.  */
+message InspiratoryValveLeakData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
+}
+
+/** @brief An obstruction in the inspiritory valve. */
+message InspiratoryValveObstructionData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the obstruction from 0 to 1. */
+}
+
+/** @brief A leak in the mask. */
+message MaskLeakData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
+}
+
+/** @brief A soda lime failure. */
+message SodaLimeFailureData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the failure from 0 to 1. */
+}
+
+/** @brief A leak in the tube cuff. */
+message TubeCuffLeakData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
+}
+
+/** @brief The vaporizer fails. */
+message VaporizerFailureData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the failure from 0 to 1. */
+}
+
+/** @brief The ventilator losses pressure. */
+message VentilatorPressureLossData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the loss from 0 to 1. */
+}
+
+/** @brief The Y Piece becomes disconnected. */
+message YPieceDisconnectData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
+}
+
+/** @brief The wall port losses oxygen pressure. */
+message OxygenWallPortPressureLossData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  eSwitch                                  State                       = 2;/**<< @brief Turn the action on or off. */
+}
+
+/** @brief The active oxygen tank losses pressure. */
+message OxygenTankPressureLossData
+{
+  AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
+  eSwitch                                  State                       = 2;/**<< @brief Turn the action on or off. */
+}

@@ -1,19 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarAreaData;
+import com.kitware.physiology.cdm.Properties.ScalarAreaData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.AreaUnit;
 
 /**
@@ -53,6 +44,23 @@ public class SEScalarArea extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarAreaData src, SEScalarArea dst)
+  {
+    SEScalar.load(src.getScalarArea(),dst);
+  }
+  public static ScalarAreaData unload(SEScalarArea src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarAreaData.Builder dst = ScalarAreaData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarArea src, ScalarAreaData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarAreaBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +85,6 @@ public class SEScalarArea extends SEScalar
   public double getValue(AreaUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarAreaData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarAreaData to = CDMSerializer.objFactory.createScalarAreaData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

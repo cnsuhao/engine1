@@ -1,18 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.patient.nutrition;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.MealData;
+import com.kitware.physiology.cdm.PatientNutrition.MealData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
 public class SEMeal extends SENutrition
@@ -39,26 +30,27 @@ public class SEMeal extends SENutrition
       this.getElapsedTime().set(from.getElapsedTime());
   }
   
-  public boolean load(MealData in)
+  public static void load(MealData src, SEMeal dst)
   {
-    super.load(in);
-    if (in.getElapsedTime() != null)
-      getElapsedTime().load(in.getElapsedTime());
-    return true;
+    dst.reset();
+    if(src.hasNutrition())
+      SENutrition.load(src.getNutrition(),dst);
+    if (src.hasElapsedTime())
+      SEScalarTime.load(src.getElapsedTime(),dst.getElapsedTime());
   }
   
-  public MealData unload()
+  public static MealData unload(SEMeal src)
   {
-    MealData data = CDMSerializer.objFactory.createMealData();
-    unload(data);
-    return data;
+    MealData.Builder dst = MealData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(MealData data)
+  protected static void unload(SEMeal src, MealData.Builder dst)
   {
-    super.unload(data);
-    if (elapsedTime != null)
-      data.setElapsedTime(elapsedTime.unload());
+    SENutrition.unload(src,dst.getNutritionBuilder());
+    if (src.hasElapsedTime())
+      dst.setElapsedTime(SEScalarTime.unload(src.elapsedTime));
   }    
   
   public SEScalarTime getElapsedTime()

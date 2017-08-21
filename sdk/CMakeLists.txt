@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Install location")
+
 # Policy to address @foo@ variable expansion
 if(POLICY CMP0053)
   cmake_policy(SET CMP0053 NEW)

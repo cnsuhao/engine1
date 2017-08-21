@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
-import mil.tatrc.physiology.datamodel.properties.SEScalarFraction;
+import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.BreathHoldData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
 public class SEBreathHold extends SEConsciousRespirationCommand
@@ -55,29 +45,25 @@ public class SEBreathHold extends SEConsciousRespirationCommand
     return hasPeriod();
   }
   
-  public boolean load(BreathHoldData in)
+  public static void load(BreathHoldData src, SEBreathHold dst)
   {
-    super.load(in);
-
-    getPeriod().load(in.getPeriod());
-    
-    return isValid();
+    //SEConsciousRespirationCommand.load(src.getConsciousRespirationCommand(), dst);
+    if(src.hasPeriod())
+      SEScalarTime.load(src.getPeriod(),dst.getPeriod());    
   }
   
-  public BreathHoldData unload()
+  public static BreathHoldData unload(SEBreathHold src)
   {
-    BreathHoldData data = CDMSerializer.objFactory.createBreathHoldData();
-    unload(data);
-    
-    return data;
+    BreathHoldData.Builder dst = BreathHoldData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(BreathHoldData data)
+  protected static void unload(SEBreathHold src, BreathHoldData.Builder dst)
   {
-    super.unload(data);
-
-    if (hasPeriod())
-      data.setPeriod(period.unload());
+    //SEConsciousRespirationCommand.unload(src,dst.getConsciousRespirationCommand());
+    if (src.hasPeriod())
+      dst.setPeriod(SEScalarTime.unload(src.period));
   }
   
   public boolean hasPeriod()

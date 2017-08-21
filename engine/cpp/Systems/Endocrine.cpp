@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "Endocrine.h"
@@ -31,7 +22,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalar0To1.h"
 
 
-Endocrine::Endocrine(BioGears& bg) : SEEndocrineSystem(bg.GetLogger()), m_data(bg)
+Endocrine::Endocrine(PulseController& data) : SEEndocrineSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -55,40 +46,44 @@ void Endocrine::Clear()
 //--------------------------------------------------------------------------------------------------
 void Endocrine::Initialize()
 {
-  BioGearsSystem::Initialize();
+  PulseSystem::Initialize();
 }
 
-bool Endocrine::Load(const CDM::BioGearsEndocrineSystemData& in)
+void Endocrine::Load(const pulse::EndocrineSystemData& src, Endocrine& dst)
 {
-  if (!SEEndocrineSystem::Load(in))
-    return false;
-  BioGearsSystem::LoadState();
-  return true;
+  Endocrine::Serialize(src, dst);
+  dst.SetUp();
 }
-CDM::BioGearsEndocrineSystemData* Endocrine::Unload() const
+void Endocrine::Serialize(const pulse::EndocrineSystemData& src, Endocrine& dst)
 {
-  CDM::BioGearsEndocrineSystemData* data = new CDM::BioGearsEndocrineSystemData();
-  Unload(*data);
-  return data;
+  SEEndocrineSystem::Serialize(src.common(), dst);
 }
-void Endocrine::Unload(CDM::BioGearsEndocrineSystemData& data) const
+
+pulse::EndocrineSystemData* Endocrine::Unload(const Endocrine& src)
 {
-  SEEndocrineSystem::Unload(data);
+
+  pulse::EndocrineSystemData* dst = new pulse::EndocrineSystemData();
+  Endocrine::Serialize(src, *dst);
+  return dst;
+}
+void Endocrine::Serialize(const Endocrine& src, pulse::EndocrineSystemData& dst)
+{
+  SEEndocrineSystem::Serialize(src, *dst.mutable_common());
 }
 
 void Endocrine::SetUp()
 {
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  SELiquidCompartment* aorta = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Aorta);
-  SELiquidCompartment* rkidney = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::RightEfferentArteriole);
-  SELiquidCompartment* lkidney = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::LeftEfferentArteriole);
+  SELiquidCompartment* aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
+  SELiquidCompartment* rkidney = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightEfferentArteriole);
+  SELiquidCompartment* lkidney = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftEfferentArteriole);
   m_aortaEpinephrine = aorta->GetSubstanceQuantity(m_data.GetSubstances().GetEpi());
   m_rKidneyEpinephrine = rkidney->GetSubstanceQuantity(m_data.GetSubstances().GetEpi());
   m_lKidneyEpinephrine = lkidney->GetSubstanceQuantity(m_data.GetSubstances().GetEpi());
   m_aortaGlucose = aorta->GetSubstanceQuantity(m_data.GetSubstances().GetGlucose());
   SESubstance* insulin = &m_data.GetSubstances().GetInsulin();
   m_insulinMolarMass_g_Per_mol = insulin->GetMolarMass(MassPerAmountUnit::g_Per_mol);
-  m_splanchnicInsulin = m_data.GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Splanchnic)->GetSubstanceQuantity(*insulin);
+  m_splanchnicInsulin = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Splanchnic)->GetSubstanceQuantity(*insulin);
 }
 
 void Endocrine::AtSteadyState()
@@ -101,7 +96,7 @@ void Endocrine::AtSteadyState()
 /// Endocrine process function
 ///
 /// \details
-/// Currently, only two hormones exists in the BioGears system: epinephrine and insulin. If the metabolic rate 
+/// Currently, only two hormones exists in the Pulse system: epinephrine and insulin. If the metabolic rate 
 /// rises above the basal rate, epinephrine is released. This is meant to simulate a sympathetic 
 /// nervous system response. The masses of the hormones are increased in the kidneys' efferent arterioles. 
 /// The hormones will then circulate using the transport and substances methodology.

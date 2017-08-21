@@ -1,23 +1,15 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
-#include "BioGearsEngineTest.h"
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+#include "EngineTest.h"
 #include "CommonDataModel.h"
+#include "Controller/Controller.h"
 
 #include "substance/SESubstanceManager.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/SECompartmentManager.h"
 #include "utils/GeneralMath.h"
 #include "utils/DataTrack.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
@@ -51,46 +43,46 @@ double TotalHbMols(SELiquidCompartmentGraph& Graph, SESubstance& Hb, SESubstance
   return totalHb_g / Hb_g_Per_mol + totalHbO2_g / HbO2_g_Per_mol + totalHbCO2_g / HbCO2_g_Per_mol + totalHBO2CO2_g / HbO2CO2_g_Per_mol;
 }
 
-void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProductionConsumption, bool usingDiffusion, const std::string& rptDirectory)
+void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProductionConsumption, bool usingDiffusion, const std::string& rptDirectory)
 {
   DataTrack trk;
   std::string outputName;
   if (!usingAcidBase && !usingProductionConsumption && !usingDiffusion)
   {
-    outputName = "\\FourCompartmentTestSimple";
+    outputName = "/FourCompartmentTestSimple";
   }
   else if (usingAcidBase && !usingProductionConsumption && !usingDiffusion)
   {
-    outputName = "\\AcidBaseFourCompartmentTest";
+    outputName = "/AcidBaseFourCompartmentTest";
   }
   else if (!usingAcidBase && !usingProductionConsumption && usingDiffusion)
   {
-    outputName = "\\FiveCompartmentTestWithDiffusion";
+    outputName = "/FiveCompartmentTestWithDiffusion";
   }
   else if (usingAcidBase && usingProductionConsumption && !usingDiffusion)
   {
-    outputName = "\\AcidBaseFourCompartmentTestWithProductionConsumption";
+    outputName = "/AcidBaseFourCompartmentTestWithProductionConsumption";
   }
   else if (usingAcidBase && !usingProductionConsumption && usingDiffusion)
   {
-    outputName = "\\AcidBaseFiveCompartmentTestWithDiffusion";
+    outputName = "/AcidBaseFiveCompartmentTestWithDiffusion";
   }
   else if (usingAcidBase && usingProductionConsumption && usingDiffusion)
   {
-    outputName = "\\AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion";
+    outputName = "/AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion";
   }
   m_Logger->ResetLogFile(rptDirectory + outputName + ".log");
   std::ofstream file;
   SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, m_Logger);
   SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, m_Logger);
-  BioGears bg(m_Logger);
-  Tissue& tsu = (Tissue&)bg.GetTissue();
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
-  bg.GetSubstances().InitializeGasCompartments();
+  PulseController pc(m_Logger);
+  Tissue& tsu = (Tissue&)pc.GetTissue();
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
+  pc.GetSubstances().InitializeGasCompartments();
 
 
   //Create a circuit
@@ -143,29 +135,29 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
   Circuit->SetNextAndCurrentFromBaselines();
   Circuit->StateChange();
 
-  SELiquidCompartment& cPulmonary = bg.GetCompartments().CreateLiquidCompartment("Pulmonary");
+  SELiquidCompartment& cPulmonary = pc.GetCompartments().CreateLiquidCompartment("Pulmonary");
   cPulmonary.MapNode(nPulmonary);
-  SELiquidCompartment& cVeins = bg.GetCompartments().CreateLiquidCompartment("Veins");
+  SELiquidCompartment& cVeins = pc.GetCompartments().CreateLiquidCompartment("Veins");
   cVeins.MapNode(nVeins);
-  SELiquidCompartment& cArteries = bg.GetCompartments().CreateLiquidCompartment("Arteries");
+  SELiquidCompartment& cArteries = pc.GetCompartments().CreateLiquidCompartment("Arteries");
   cArteries.MapNode(nArteries);
-  SELiquidCompartment& cCapillaries = bg.GetCompartments().CreateLiquidCompartment("Capillaries");
+  SELiquidCompartment& cCapillaries = pc.GetCompartments().CreateLiquidCompartment("Capillaries");
   cCapillaries.MapNode(nCapillaries);
 
-  SELiquidCompartment& cTissue = bg.GetCompartments().CreateLiquidCompartment("Tissue");
+  SELiquidCompartment& cTissue = pc.GetCompartments().CreateLiquidCompartment("Tissue");
 
   //Create the links
-  SELiquidCompartmentLink& lPulmonaryToArteries = bg.GetCompartments().CreateLiquidLink(cPulmonary, cArteries, "PulmonaryToArteries");
+  SELiquidCompartmentLink& lPulmonaryToArteries = pc.GetCompartments().CreateLiquidLink(cPulmonary, cArteries, "PulmonaryToArteries");
   lPulmonaryToArteries.MapPath(pPulmonaryToArteries);
-  SELiquidCompartmentLink& lArteriesToCapillaries = bg.GetCompartments().CreateLiquidLink(cArteries, cCapillaries, "ArteriesToCapillaries");
+  SELiquidCompartmentLink& lArteriesToCapillaries = pc.GetCompartments().CreateLiquidLink(cArteries, cCapillaries, "ArteriesToCapillaries");
   lArteriesToCapillaries.MapPath(pArteriesToCapillaries);
-  SELiquidCompartmentLink& lCapillariesToVeins = bg.GetCompartments().CreateLiquidLink(cCapillaries, cVeins, "CapillariesToVeins");
+  SELiquidCompartmentLink& lCapillariesToVeins = pc.GetCompartments().CreateLiquidLink(cCapillaries, cVeins, "CapillariesToVeins");
   lCapillariesToVeins.MapPath(pCapillariesToVeins);
-  SELiquidCompartmentLink& lVeinsToPulmonary = bg.GetCompartments().CreateLiquidLink(cVeins, cPulmonary, "VeinsToPulmonary");
+  SELiquidCompartmentLink& lVeinsToPulmonary = pc.GetCompartments().CreateLiquidLink(cVeins, cPulmonary, "VeinsToPulmonary");
   lVeinsToPulmonary.MapPath(pVeinsToPulmonary);
 
   //Create the graph
-  SELiquidCompartmentGraph& Graph = bg.GetCompartments().CreateLiquidGraph("Graph");
+  SELiquidCompartmentGraph& Graph = pc.GetCompartments().CreateLiquidGraph("Graph");
   Graph.AddCompartment(cPulmonary);
   Graph.AddCompartment(cArteries);
   Graph.AddCompartment(cVeins);
@@ -178,26 +170,26 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
 
 
   //Initialize substances
-  SESubstance& O2 = bg.GetSubstances().GetO2();
-  SESubstance& Hb = bg.GetSubstances().GetHb();
-  SESubstance& HbO2 = bg.GetSubstances().GetHbO2();
-  SESubstance& HbO2CO2 = bg.GetSubstances().GetHbO2CO2();
-  SESubstance& CO2 = bg.GetSubstances().GetCO2();
-  SESubstance& HCO3 = bg.GetSubstances().GetHCO3();
-  SESubstance& HbCO2 = bg.GetSubstances().GetHbCO2();
-  SESubstance& N2 = bg.GetSubstances().GetN2();
+  SESubstance& O2 = pc.GetSubstances().GetO2();
+  SESubstance& Hb = pc.GetSubstances().GetHb();
+  SESubstance& HbO2 = pc.GetSubstances().GetHbO2();
+  SESubstance& HbO2CO2 = pc.GetSubstances().GetHbO2CO2();
+  SESubstance& CO2 = pc.GetSubstances().GetCO2();
+  SESubstance& HCO3 = pc.GetSubstances().GetHCO3();
+  SESubstance& HbCO2 = pc.GetSubstances().GetHbCO2();
+  SESubstance& N2 = pc.GetSubstances().GetN2();
 
-  bg.GetSubstances().AddActiveSubstance(O2);
-  bg.GetSubstances().AddActiveSubstance(Hb);
-  bg.GetSubstances().AddActiveSubstance(HbO2);
-  bg.GetSubstances().AddActiveSubstance(HbO2CO2);
-  bg.GetSubstances().AddActiveSubstance(CO2);
-  bg.GetSubstances().AddActiveSubstance(HCO3);
-  bg.GetSubstances().AddActiveSubstance(HbCO2);
-  bg.GetSubstances().AddActiveSubstance(N2);
+  pc.GetSubstances().AddActiveSubstance(O2);
+  pc.GetSubstances().AddActiveSubstance(Hb);
+  pc.GetSubstances().AddActiveSubstance(HbO2);
+  pc.GetSubstances().AddActiveSubstance(HbO2CO2);
+  pc.GetSubstances().AddActiveSubstance(CO2);
+  pc.GetSubstances().AddActiveSubstance(HCO3);
+  pc.GetSubstances().AddActiveSubstance(HbCO2);
+  pc.GetSubstances().AddActiveSubstance(N2);
 
   SEScalarMassPerVolume   albuminConcentration;
-  SEScalarFraction        hematocrit;
+  SEScalar0To1        hematocrit;
   SEScalarTemperature     bodyTemp;
   SEScalarAmountPerVolume strongIonDifference;
   SEScalarAmountPerVolume phosphate;
@@ -212,7 +204,7 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
   double Hb_total_mM = Hb_total_g_Per_dL / Hb.GetMolarMass(MassPerAmountUnit::g_Per_mmol) * 10.0;
 
   
-  bg.GetSaturationCalculator().SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
+  pc.GetSaturationCalculator().SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
 
   // Highly Oxygenated (Aorta/PulmCaps) (90.5/40 O2/CO2 PP)
   double High_CO2_sat = 0.0282123;
@@ -230,17 +222,17 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
   double Low_O2_mmol_Per_L = 0.0560892;
   double Low_pH = 7.36909;
 
-  bg.GetSubstances().InitializeBloodGases(cPulmonary, Hb_total_mM, High_O2_sat, High_O2_mmol_Per_L, High_CO2_sat, High_CO2_mmol_Per_L, High_HCO3_mmol_Per_L, High_pH, false);
-  bg.GetSubstances().InitializeBloodGases(cArteries, Hb_total_mM, High_O2_sat, High_O2_mmol_Per_L, High_CO2_sat, High_CO2_mmol_Per_L, High_HCO3_mmol_Per_L, High_pH, false);
-  bg.GetSubstances().InitializeBloodGases(cCapillaries, Hb_total_mM, Low_O2_sat, Low_O2_mmol_Per_L, Low_CO2_sat, Low_CO2_mmol_Per_L, Low_HCO3_mmol_Per_L, Low_pH, false);
-  bg.GetSubstances().InitializeBloodGases(cVeins, Hb_total_mM, Low_O2_sat, Low_O2_mmol_Per_L, Low_CO2_sat, Low_CO2_mmol_Per_L, Low_HCO3_mmol_Per_L, Low_pH, false);
+  pc.GetSubstances().InitializeBloodGases(cPulmonary, Hb_total_mM, High_O2_sat, High_O2_mmol_Per_L, High_CO2_sat, High_CO2_mmol_Per_L, High_HCO3_mmol_Per_L, High_pH, false);
+  pc.GetSubstances().InitializeBloodGases(cArteries, Hb_total_mM, High_O2_sat, High_O2_mmol_Per_L, High_CO2_sat, High_CO2_mmol_Per_L, High_HCO3_mmol_Per_L, High_pH, false);
+  pc.GetSubstances().InitializeBloodGases(cCapillaries, Hb_total_mM, Low_O2_sat, Low_O2_mmol_Per_L, Low_CO2_sat, Low_CO2_mmol_Per_L, Low_HCO3_mmol_Per_L, Low_pH, false);
+  pc.GetSubstances().InitializeBloodGases(cVeins, Hb_total_mM, Low_O2_sat, Low_O2_mmol_Per_L, Low_CO2_sat, Low_CO2_mmol_Per_L, Low_HCO3_mmol_Per_L, Low_pH, false);
 
   if (usingAcidBase)
   {
-    bg.GetSaturationCalculator().CalculateBloodGasDistribution(cPulmonary);
-    bg.GetSaturationCalculator().CalculateBloodGasDistribution(cArteries);
-    bg.GetSaturationCalculator().CalculateBloodGasDistribution(cCapillaries);
-    bg.GetSaturationCalculator().CalculateBloodGasDistribution(cVeins);
+    pc.GetSaturationCalculator().CalculateBloodGasDistribution(cPulmonary);
+    pc.GetSaturationCalculator().CalculateBloodGasDistribution(cArteries);
+    pc.GetSaturationCalculator().CalculateBloodGasDistribution(cCapillaries);
+    pc.GetSaturationCalculator().CalculateBloodGasDistribution(cVeins);
   }
 
   //Tissue diffusion values
@@ -350,7 +342,7 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
   {
     for (SELiquidCompartment* cmpt : Graph.GetCompartments())
     {
-      bg.GetSaturationCalculator().CalculateBloodGasDistribution(*cmpt);
+      pc.GetSaturationCalculator().CalculateBloodGasDistribution(*cmpt);
     }
   }
 
@@ -368,7 +360,7 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
     trk.Track(time, Graph);
 
     //Total masses
-    for (SESubstance* sub : bg.GetCompartments().GetLiquidCompartmentSubstances())
+    for (SESubstance* sub : pc.GetCompartments().GetLiquidCompartmentSubstances())
     {
       double totalMass = 0.0;
       std::string name;
@@ -431,27 +423,27 @@ void BioGearsEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProdu
   file.close();
 }
 
-void BioGearsEngineTest::FourCompartmentTestSimple(const std::string& sOutputDirectory)
+void PulseEngineTest::FourCompartmentTestSimple(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(false, false, false, sOutputDirectory);
 }
-void BioGearsEngineTest::AcidBaseFourCompartmentTest(const std::string& sOutputDirectory)
+void PulseEngineTest::AcidBaseFourCompartmentTest(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(true, false, false, sOutputDirectory);
 }
-void BioGearsEngineTest::FiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory)
+void PulseEngineTest::FiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(false, false, true, sOutputDirectory);
 }
-void BioGearsEngineTest::AcidBaseFourCompartmentTestWithProductionConsumption(const std::string& sOutputDirectory)
+void PulseEngineTest::AcidBaseFourCompartmentTestWithProductionConsumption(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(true, true, false, sOutputDirectory);
 }
-void BioGearsEngineTest::AcidBaseFiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory)
+void PulseEngineTest::AcidBaseFiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(true, false, true, sOutputDirectory);
 }
-void BioGearsEngineTest::AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(const std::string& sOutputDirectory)
+void PulseEngineTest::AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(const std::string& sOutputDirectory)
 {
   FourCompartmentTest(true, true, true, sOutputDirectory);
 }

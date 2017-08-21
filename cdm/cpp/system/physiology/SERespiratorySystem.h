@@ -1,21 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/RespiratorySystemData.hxx"
 
 
-class DLL_DECL SERespiratorySystem : public SESystem
+class CDM_DECL SERespiratorySystem : public SESystem
 {
 public:
 
@@ -25,11 +15,13 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::RespiratorySystemData& in); 
-  virtual CDM::RespiratorySystemData* Unload() const;
+
+  static void Load(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst);
+  static cdm::RespiratorySystemData* Unload(const SERespiratorySystem& src);
 protected:
-  virtual void Unload(CDM::RespiratorySystemData& data) const;
+  static void Serialize(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst);
+  static void Serialize(const SERespiratorySystem& src, cdm::RespiratorySystemData& dst);
+
 public:
 
   virtual bool HasAlveolarArterialGradient() const;
@@ -41,7 +33,7 @@ public:
   virtual double GetCarricoIndex(const PressureUnit& unit) const;
 
   virtual bool HasEndTidalCarbonDioxideFraction() const;
-  virtual SEScalarFraction& GetEndTidalCarbonDioxideFraction();
+  virtual SEScalar0To1& GetEndTidalCarbonDioxideFraction();
   virtual double GetEndTidalCarbonDioxideFraction() const;
 
   virtual bool HasEndTidalCarbonDioxidePressure() const;
@@ -113,21 +105,21 @@ protected:
 
   SEScalarPressure*          m_AlveolarArterialGradient;
   SEScalarPressure*          m_CarricoIndex;
-  SEScalarFraction*          m_EndTidalCarbonDioxideFraction;
+  SEScalar0To1*              m_EndTidalCarbonDioxideFraction;
   SEScalarPressure*          m_EndTidalCarbonDioxidePressure;
-  SEScalarVolumePerTime*    m_ExpiratoryFlow;
+  SEScalarVolumePerTime*     m_ExpiratoryFlow;
   SEScalar*                  m_InspiratoryExpiratoryRatio;
-  SEScalarVolumePerTime*    m_InspiratoryFlow;
+  SEScalarVolumePerTime*     m_InspiratoryFlow;
   SEScalarFlowCompliance*    m_PulmonaryCompliance;
   SEScalarFlowResistance*    m_PulmonaryResistance;
-  SEScalarPressure*         m_RespirationDriverPressure;
-  SEScalarPressure*         m_RespirationMusclePressure;
-  SEScalarFrequency*        m_RespirationRate;
+  SEScalarPressure*          m_RespirationDriverPressure;
+  SEScalarPressure*          m_RespirationMusclePressure;
+  SEScalarFrequency*         m_RespirationRate;
   SEScalar*                  m_SpecificVentilation;
   SEScalarVolume*            m_TidalVolume;
-  SEScalarVolumePerTime*    m_TotalAlveolarVentilation;
-  SEScalarVolumePerTime*    m_TotalDeadSpaceVentilation;
+  SEScalarVolumePerTime*     m_TotalAlveolarVentilation;
+  SEScalarVolumePerTime*     m_TotalDeadSpaceVentilation;
   SEScalarVolume*            m_TotalLungVolume;
-  SEScalarVolumePerTime*    m_TotalPulmonaryVentilation;
+  SEScalarVolumePerTime*     m_TotalPulmonaryVentilation;
   SEScalarPressure*          m_TranspulmonaryPressure;
 };

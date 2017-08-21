@@ -1,21 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "substance/SESubstanceTransport.h"
 #include "compartment/SECompartment.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "compartment/SECompartmentNodes.h"
-#include "bind/FluidCompartmentData.hxx"
 
 class SESubstance;
 template<typename EdgeType, typename VertexType, typename CompartmentType> class SEFluidCompartmentLink;
@@ -34,10 +24,9 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::FluidCompartmentData& in, SECircuitManager* circuits = nullptr);
-  virtual CDM::FluidCompartmentData* Unload() = 0;
 protected:
-  virtual void Unload(CDM::FluidCompartmentData& data);
+  static void Serialize(const cdm::FluidCompartmentData& src, SEFluidCompartment& dst, SECircuitManager* circuits=nullptr);
+  static void Serialize(const SEFluidCompartment& src, cdm::FluidCompartmentData& dst);
 
 public:
   virtual std::string GetName() const { return m_Name; }
@@ -51,11 +40,11 @@ public:
   virtual void MapNode(SEFluidCircuitNode& node);
 
   virtual bool HasInFlow() const;
-  virtual const SEScalarVolumePerTime& GetInFlow();
+  virtual const SEScalarVolumePerTime& GetInFlow() const;
   virtual double GetInFlow(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasOutFlow() const;
-  virtual const SEScalarVolumePerTime& GetOutFlow();
+  virtual const SEScalarVolumePerTime& GetOutFlow() const;
   virtual double GetOutFlow(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasPressure() const;
@@ -90,8 +79,8 @@ protected:
 
   virtual std::vector<TransportSubstanceType*>& GetTransportSubstances() { return m_TransportSubstances; }
 
-  SEScalarVolumePerTime* m_InFlow;
-  SEScalarVolumePerTime* m_OutFlow;
+  mutable SEScalarVolumePerTime* m_InFlow;
+  mutable SEScalarVolumePerTime* m_OutFlow;
   SEScalarPressure*      m_Pressure;
   SEScalarVolume*        m_Volume;
 

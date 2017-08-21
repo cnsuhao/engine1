@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEFunctionVolumeVsTime.h"
@@ -33,32 +24,33 @@ void SEFunctionVolumeVsTime::Clear()
   m_VolumeUnit = nullptr;
 }
 
-bool SEFunctionVolumeVsTime::Load(const CDM::FunctionVolumeVsTimeData& in)
+void SEFunctionVolumeVsTime::Load(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
 {
-  if (!SEFunction::Load(in))
-    return false;
-  m_TimeUnit = &TimeUnit::GetCompoundUnit(in.IndependentUnit().get());
-  m_VolumeUnit = &VolumeUnit::GetCompoundUnit(in.DependentUnit().get());
-  return IsValid();
+  SEFunctionVolumeVsTime::Serialize(src, dst);
+}
+void SEFunctionVolumeVsTime::Serialize(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
+{
+  SEFunction::Serialize(src.functionvolumevstime(), dst);
+  dst.m_TimeUnit = &TimeUnit::GetCompoundUnit(src.functionvolumevstime().independentunit());
+  dst.m_VolumeUnit = &VolumeUnit::GetCompoundUnit(src.functionvolumevstime().dependentunit());
 }
 
-CDM::FunctionVolumeVsTimeData*  SEFunctionVolumeVsTime::Unload() const
+cdm::FunctionVolumeVsTimeData* SEFunctionVolumeVsTime::Unload(const SEFunctionVolumeVsTime& src)
 {
-  if (!IsValid())
+  if (!src.IsValid())
     return nullptr;
-  CDM::FunctionVolumeVsTimeData* data(new CDM::FunctionVolumeVsTimeData());
-  Unload(*data);
-  return data;
+  cdm::FunctionVolumeVsTimeData* dst = new cdm::FunctionVolumeVsTimeData();
+  Serialize(src, *dst);
+  return dst;
 }
-
-void SEFunctionVolumeVsTime::Unload(CDM::FunctionVolumeVsTimeData& data) const
+void SEFunctionVolumeVsTime::Serialize(const SEFunctionVolumeVsTime& src, cdm::FunctionVolumeVsTimeData& dst)
 {
-  SEFunction::Unload(data);
-  data.IndependentUnit(m_TimeUnit->GetString());
-  data.DependentUnit(m_VolumeUnit->GetString());
+  SEFunction::Serialize(src, *dst.mutable_functionvolumevstime());
+  dst.mutable_functionvolumevstime()->set_independentunit(src.m_TimeUnit->GetString());
+  dst.mutable_functionvolumevstime()->set_dependentunit(src.m_VolumeUnit->GetString());
 }
 
-double SEFunctionVolumeVsTime::GetTimeValue(unsigned int index, const TimeUnit& unit)
+double SEFunctionVolumeVsTime::GetTimeValue(size_t index, const TimeUnit& unit)
 {
   if (m_TimeUnit == nullptr)
     throw CommonDataModelException("No time units have been set");
@@ -79,7 +71,7 @@ void SEFunctionVolumeVsTime::SetTimeUnit(const TimeUnit& unit)
   m_TimeUnit = &unit;
 }
 
-double SEFunctionVolumeVsTime::GetVolumeValue(unsigned int index, const VolumeUnit& unit)
+double SEFunctionVolumeVsTime::GetVolumeValue(size_t index, const VolumeUnit& unit)
 {
   if (m_VolumeUnit == nullptr)
     throw CommonDataModelException("No volume units have been set");

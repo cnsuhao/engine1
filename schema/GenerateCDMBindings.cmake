@@ -1,142 +1,67 @@
-# There are two ways I generate the bind code:
-# - Per XSD type : These are in the cpp/ folder
-# - Per XSD file : These are in the cpp/min folder
-# There are fewer files in the min folder but they are much larger
-# And in working witn MinGW, they generate obj files with redundent types in them
-# When the linker tries to process them all, it runs out of memory
-# MSVC does not have any issue with these large files, and it is much fast to build the min folder
-# So for MSVC I am going to build the bind DLL with the min generated source to speed up build times
-# Maybe one day I will figure out how to properly get a gcc compiler to digest the min folder as well
-# I tried precompiled headers in MinGW but that did not really work as I expected..
-# Shoot an email if you have any ideas (physiology@kitware.com)
 
-# Look to see if the XSD has changed since our last build
-# and only rebuild if that is the case
-set(XSD_CHANGED FALSE)
-set(_XSD_TOUCH "${CMAKE_BINARY_DIR}/schema/xsd_last_built")
-file(GLOB_RECURSE XSD_FILES "${CMAKE_SOURCE_DIR}/schema/xsd/*.xsd")
+set(from "${SCHEMA_SRC}/proto")
+set(to   "${SCHEMA_DST}")
+set(BINDER "${SCHEMA_DST}/../../protobuf/install/bin/protoc")
 
-foreach(f ${XSD_FILES})
-  message(STATUS "Looking at file ${f}")
-  if(${f} IS_NEWER_THAN ${_XSD_TOUCH})
-    set(XSD_CHANGED TRUE)
-    message(STATUS "This XSD has changed since last build ${f}")
+message(STATUS "Generating Schema Bindings" )
+message(STATUS "Using : ${BINDER}")
+message(STATUS "From ${from}")
+message(STATUS "To ${to}")
+
+file(GLOB_RECURSE _FILES "${from}/*.proto")
+
+set(_RUN_PROTOC OFF)
+foreach(f ${_FILES})
+  if(${f} IS_NEWER_THAN ${SCHEMA_DST}/schema_last_built)
+    message(STATUS "${f} has changed since the last build")
+    set(_RUN_PROTOC ON)
   endif()
 endforeach()
 
-if(NOT XSD_CHANGED AND NOT REBIND)
-  message(STATUS "XSD has not changed since last build, not regenerating")
+if(NOT _RUN_PROTOC)
+  message(STATUS "Not generating bindings, nothing has changed since last build")
   return()
 endif()
-# Touch the file so we don't generate next time
-execute_process(COMMAND ${CMAKE_COMMAND} -E touch ${_XSD_TOUCH})
 
-message(STATUS "Generating Schema Bindings" )
-message(STATUS "Using Code Synthesis XSD : ${XSD_EXECUTABLE}")
-set(bindings_DIR "${CMAKE_BINARY_DIR}/schema/cpp/bind")
-file(GLOB_RECURSE OLD_BINDING_FILES "${bindings_DIR}/*")
-
-foreach(f ${OLD_BINDING_FILES})
-  file(REMOVE $f)
+set(cpp_bindings_DIR "${to}/cpp")
+file(MAKE_DIRECTORY "${cpp_bindings_DIR}/bind")
+file(GLOB_RECURSE _OLD_CPP_FILES "${cpp_bindings_DIR}/*.*")
+if(_OLD_CPP_FILES)
+  file(REMOVE ${_OLD_CPP_FILES})
+endif() 
+foreach(f ${_FILES})
+  message(STATUS "Binding file ${f}")
+  execute_process(COMMAND ${BINDER} --proto_path=${from}
+                                    --cpp_out=${cpp_bindings_DIR}/bind
+                                    # or 
+                                    #--cpp_out=dllexport_decl=_DECL:${cpp_bindings_DIR}/bind
+                                    ${f})
 endforeach()
-file(MAKE_DIRECTORY "${bindings_DIR}/min/cdm")
-file(MAKE_DIRECTORY "${bindings_DIR}/min/biogears")
-file(COPY "cpp/custom-double/" 
-     DESTINATION "${bindings_DIR}"
-     FILES_MATCHING PATTERN "*.hxx" PATTERN "biogears-cdm.cxx")
+message(STATUS "cpp bindings are here : ${cpp_bindings_DIR}" )
 
-if(WIN32)
-  set(EXPORT_SYMBOL --export-symbol "__declspec(dllexport)")
-elseif( CMAKE_COMPILER_IS_GNUCXX AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 4)
-  set(EXPORT_SYMBOL --export-symbol "__attribute__ ((visibility (\"default\")))")
-else()
-  set(EXPORT_SYMBOL)
+
+#Generate the java descriptor file
+execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_DST}/../../protobuf/src/protobuf/src/
+                                  --java_out=${SCHEMA_DST}/../../protobuf/src/protobuf/java/core/src/main/java/
+                                    ${SCHEMA_DST}/../../protobuf/src/protobuf/src/google/protobuf/descriptor.proto)
+execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_DST}/../../protobuf/src/protobuf/src/
+                                  --java_out=${SCHEMA_DST}/../../protobuf/src/protobuf/java/core/src/main/java/
+                                    ${SCHEMA_DST}/../../protobuf/src/protobuf/src/google/protobuf/any.proto)
+set(java_bindings_DIR "${to}/java")
+file(MAKE_DIRECTORY "${java_bindings_DIR}")
+file(GLOB_RECURSE _OLD_FILES "${java_bindings_DIR}/*.*")
+if(_OLD_FILES)
+  file(REMOVE ${_OLD_FILES})
 endif()
-
-#Generate normally, which is a file per type 
-execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
-                                           --std c++11 
-                                           --file-per-type
-                                           --extern-xml-schema data-model-schema.xsd
-                                           --cxx-prologue \#include\"biogears-cdm.hxx\"
-                                           --generate-polymorphic 
-                                           --polymorphic-type-all 
-                                           --generate-serialization 
-                                           --generate-ostream 
-                                           --generate-doxygen 
-                                           --generate-default-ctor 
-                                           --custom-type "double=double"
-                                           --custom-type "decimal=long double"
-                                           --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
-                                           ${EXPORT_SYMBOL}
-                                           ${CMAKE_CURRENT_SOURCE_DIR}/xsd/BioGearsDataModel.xsd
-                WORKING_DIRECTORY "${bindings_DIR}")
-execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
-                                           --std c++11 
-                                           --generate-xml-schema
-                                           --generate-polymorphic 
-                                           --polymorphic-type-all 
-                                           --generate-serialization 
-                                           --generate-ostream 
-                                           --generate-doxygen 
-                                           --generate-default-ctor 
-                                           ${EXPORT_SYMBOL}
-                                           ${bindings_DIR}/data-model-schema.xsd
-                WORKING_DIRECTORY "${bindings_DIR}")
-#Generate cxx/hxx file for each xsd file (faster to build)
-file(GLOB CDM_XSD "${CMAKE_CURRENT_SOURCE_DIR}/xsd/cdm/*.xsd")
-foreach(ITEM ${CDM_XSD})
-  message(STATUS "Processing ${ITEM}")
-  execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
-                                             --std c++11 
-                                             --generate-polymorphic 
-                                             --polymorphic-type-all 
-                                             --generate-serialization 
-                                             --generate-ostream 
-                                             --generate-doxygen 
-                                             --generate-default-ctor 
-                                             --custom-type "double=double"
-                                             --custom-type "decimal=long double"
-                                             --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
-                                             ${EXPORT_SYMBOL}
-                                             ${ITEM}
-                  WORKING_DIRECTORY "${bindings_DIR}/min/cdm")
-endforeach()
-file(GLOB BGE_XSD "${CMAKE_CURRENT_SOURCE_DIR}/xsd/biogears/*.xsd")
-foreach(ITEM ${BGE_XSD})
-  message(STATUS "Processing ${ITEM}")
-  execute_process(COMMAND ${XSD_EXECUTABLE} cxx-tree 
-                                             --std c++11 
-                                             --generate-polymorphic 
-                                             --polymorphic-type-all 
-                                             --generate-serialization 
-                                             --generate-ostream 
-                                             --generate-doxygen 
-                                             --generate-default-ctor 
-                                             --custom-type "double=double"
-                                             --custom-type "decimal=long double"
-                                             --hxx-epilogue-file ${bindings_DIR}/xml-schema-epilogue.hxx
-                                             ${EXPORT_SYMBOL}
-                                             ${ITEM}
-                  WORKING_DIRECTORY "${bindings_DIR}/min/biogears")
-endforeach()
-
-# Generating the Java bindings
-get_filename_component(_JAVA_BIN_DIR "${Java_JAVA_EXECUTABLE}" DIRECTORY)
-find_program(Java_XJC_EXECUTABLE
-    NAMES xjc
-    HINTS ${_JAVA_BIN_DIR}
-    )
-if(NOT Java_XJC_EXECUTABLE)
-  message(FATAL_ERROR "Error can not find xjc.")
+file(MAKE_DIRECTORY "${java_bindings_DIR}/build")
+file(GLOB_RECURSE _OLD_FILES "${java_bindings_DIR}/build/*.*")
+if(_OLD_FILES)
+  file(REMOVE ${_OLD_FILES})
 endif()
-message(STATUS "Java XJC : ${Java_XJC_EXECUTABLE}")
-
-file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/schema/java")
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/schema/java")
-file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/schema/build")
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/schema/build")
-
-execute_process(COMMAND ${Java_XJC_EXECUTABLE} -d ${CMAKE_BINARY_DIR}/schema/java -p mil.tatrc.physiology.datamodel.bind ${CMAKE_SOURCE_DIR}/schema/xsd/BioGearsDataModel.xsd)
-
-message(STATUS "bindings are here : ${bindings_DIR}" )
+foreach(f ${_FILES})
+  message(STATUS "Binding file ${f}")
+  execute_process(COMMAND ${BINDER} --proto_path=${from}
+                                    --java_out=${java_bindings_DIR}
+                                    ${f})
+endforeach()
+message(STATUS "java bindings are here : ${java_bindings_DIR}" )

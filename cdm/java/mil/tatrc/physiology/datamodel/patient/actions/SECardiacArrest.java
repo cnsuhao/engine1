@@ -1,28 +1,18 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.CardiacArrestData;
+import com.kitware.physiology.cdm.PatientActions.CardiacArrestData;
+import com.kitware.physiology.cdm.Properties.eSwitch;
 
 public class SECardiacArrest extends SEPatientAction
 {
-  protected EnumOnOff state;
+  protected eSwitch state;
   
   public SECardiacArrest()
   {
-    state = null;
+    state = eSwitch.Off;
   }
   
   public void copy(SECardiacArrest other)
@@ -36,48 +26,41 @@ public class SECardiacArrest extends SEPatientAction
   public void reset()
   {
     super.reset();
-    state = null;
+    state = eSwitch.Off;
   }
   
   public boolean isValid()
   {
-    return hasState();
+    return true;
   }
   
-  public boolean load(CardiacArrestData in)
+  public static void load(CardiacArrestData src, SECardiacArrest dst)
   {
-    super.load(in);
-    this.state = in.getState();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
+    	dst.state = src.getState();
   }
   
-  public CardiacArrestData unload()
+  public static CardiacArrestData unload(SECardiacArrest src)
   {
-    CardiacArrestData data = CDMSerializer.objFactory.createCardiacArrestData();
-    unload(data);
-    return data;
+    CardiacArrestData.Builder dst = CardiacArrestData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(CardiacArrestData data)
+  protected static void unload(SECardiacArrest src, CardiacArrestData.Builder dst)
   {
-    super.unload(data);
-    if (hasState())
-      data.setState(state);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    dst.setState(src.state);
   }
   
-  public EnumOnOff getState()
+  public eSwitch getState()
   {
     return state;
   }
-  
-  public void setState(EnumOnOff onOrOff)
+  public void setState(eSwitch s)
   {
-    state = onOrOff;
-  }
-  
-  public boolean hasState()
-  {
-    return state == null ? false : true;
+  	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
   
   public String toString()

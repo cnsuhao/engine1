@@ -1,16 +1,8 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "properties/SEScalarFlowCompliance.h"
@@ -22,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarLength.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "utils/DataTrack.h"
@@ -59,26 +51,26 @@ void CalculateMultipliers(double& dsResistanceMultiplier, double& usResistanceMu
 
 }
 
-void BioGearsEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
+void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 {
   std::string tName = "BrainInjuryTest";
 
   DataTrack outTrk;
   std::ofstream file;
 
-  BioGears bg(sTestDirectory + "\\" + tName + ".log");
-  bg.GetLogger()->Info("Running " + tName);
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
+  PulseController pc(sTestDirectory + "/" + tName + ".log");
+  pc.GetLogger()->Info("Running " + tName);
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
 
   //Renal and Tissue are on
-  bg.m_Config->EnableRenal(CDM::enumOnOff::On);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::On);
-  bg.CreateCircuitsAndCompartments();
+  pc.m_Config->EnableRenal(cdm::eSwitch::On);
+  pc.m_Config->EnableTissue(cdm::eSwitch::On);
+  pc.CreateCircuitsAndCompartments();
 
-  Cardiovascular& cv = (Cardiovascular&)bg.GetCardiovascular();
+  Cardiovascular& cv = (Cardiovascular&)pc.GetCardiovascular();
   cv.m_TuneCircuit = true;
-  SEFluidCircuit& cvCircuit = bg.GetCircuits().GetActiveCardiovascularCircuit();
+  SEFluidCircuit& cvCircuit = pc.GetCircuits().GetActiveCardiovascularCircuit();
 
   cv.Initialize();
 
@@ -89,10 +81,10 @@ void BioGearsEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   double usResistanceMultiplier = 1;
   double complianceMultiplier = 1;  //Can change this if we find supporting sources, but note that it will increase "spikiness" of plots
 
-  SEFluidCircuitNode* brain = cvCircuit.GetNode(BGE::CardiovascularNode::Brain1);
-  SEFluidCircuitPath* brainResistanceDownstream = cvCircuit.GetPath(BGE::CardiovascularPath::Brain1ToBrain2);
-  SEFluidCircuitPath* brainResistanceUpstream = cvCircuit.GetPath(BGE::CardiovascularPath::Aorta1ToBrain1);
-  SEFluidCircuitPath* brainCompliance = cvCircuit.GetPath(BGE::CardiovascularPath::Brain1ToGround);
+  SEFluidCircuitNode* brain = cvCircuit.GetNode(pulse::CardiovascularNode::Brain1);
+  SEFluidCircuitPath* brainResistanceDownstream = cvCircuit.GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
+  SEFluidCircuitPath* brainResistanceUpstream = cvCircuit.GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
+  SEFluidCircuitPath* brainCompliance = cvCircuit.GetPath(pulse::CardiovascularPath::Brain1ToGround);
 
   double map_mmHg = cv.GetMeanArterialPressure(PressureUnit::mmHg);
   double cvp_mmHg = cv.GetCentralVenousPressure(PressureUnit::mmHg);
@@ -101,9 +93,9 @@ void BioGearsEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 
   std::stringstream ss;
   ss << "Downstream brain resistance multiplier is: " << dsResistanceMultiplier << ". Upstream resistance multiplier is: " << usResistanceMultiplier;
-  bg.GetLogger()->Info(ss);
+  pc.GetLogger()->Info(ss);
 
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, bg.GetLogger());
+  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, pc.GetLogger());
 
   for (unsigned int i = 0; i < (testTime_s / timeStep_s); i++)
   {
@@ -140,7 +132,7 @@ void BioGearsEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\" + tName + ".txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/" + tName + ".txt").c_str(), file);
     }
 
     time_s += timeStep_s;

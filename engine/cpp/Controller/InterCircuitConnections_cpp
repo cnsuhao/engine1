@@ -1,0 +1,61 @@
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+
+#include "stdafx.h"
+#include "controller/Pulse.h"
+#include "circuit/SECircuit.h"
+#include "circuit/SEInterCircuitConnection.h"
+
+PulseInterCircuitConnections::PulseInterCircuitConnections(Pulse& bg) : SECircuitContainer(bg.GetLogger())
+{
+  m_Data = &bg;
+  m_RespiratoryAnesthesiaMachineInterCircuitConnection = nullptr;
+}
+
+PulseInterCircuitConnections::~PulseInterCircuitConnections()
+{
+  SECircuitContainer::Clear();
+}
+
+void PulseInterCircuitConnections::Clear()
+{
+  SECircuitContainer::Clear();
+  m_RespiratoryAnesthesiaMachineInterCircuitConnection = nullptr;
+}
+
+void PulseInterCircuitConnections::Reset()
+{
+  SECircuitContainer::Reset();
+}
+
+bool PulseInterCircuitConnections::IsValid()
+{
+  return true;
+}
+
+SEInterCircuitConnection* PulseInterCircuitConnections::GetRespiratoryAnesthesiaMachineInterCircuitConnection()
+{
+  if (m_RespiratoryAnesthesiaMachineInterCircuitConnection == nullptr)
+    m_RespiratoryAnesthesiaMachineInterCircuitConnection = CreateInterCircuitConnection();
+  return m_RespiratoryAnesthesiaMachineInterCircuitConnection;
+}
+
+
+
+bool PulseInterCircuitConnections::LoadInterCircuitConnections(const std::string& circuitFile, Serializer& serlializer)
+{
+  Clear();
+
+  m_RespiratoryAnesthesiaMachineInterCircuitConnection = GetRespiratoryAnesthesiaMachineInterCircuitConnection();
+
+  SECircuit* RespiratoryCircuit = m_Data->GetCircuits()->GetRespiratoryCircuit();
+  SECircuit* AnesthesiaMachineCircuit = m_Data->GetCircuits()->GetAnesthesiaCircuit();
+  SECircuitNode* MouthNode = RespiratoryCircuit->GetNode(CDM::enumPulseNode::Mouth);
+  SECircuitNode* ConnectionNode = AnesthesiaMachineCircuit->GetNode(CDM::enumPulseNode::AnesthesiaConnection);
+
+  m_RespiratoryAnesthesiaMachineInterCircuitConnection->CreateInterCircuitConnection("RespiratoryAnesthesiaMachineConnection", AnesthesiaMachineCircuit, ConnectionNode, RespiratoryCircuit, MouthNode);
+  m_RespiratoryAnesthesiaMachineInterCircuitConnection->SetActive(false);
+
+
+  return true;
+}

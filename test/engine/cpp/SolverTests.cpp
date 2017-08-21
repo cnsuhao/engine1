@@ -1,17 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
-#include "BioGearsEngineTest.h"
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+#include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "circuit/fluid/SEFluidCircuit.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "substance/SESubstanceFraction.h"
 #include "utils/TimingProfile.h"
 #include "utils/testing/SETestReport.h"
@@ -31,9 +23,9 @@ std::chrono::microseconds::rep vectorAverage(std::vector<std::chrono::microsecon
     return INT_MAX;
 }
 
-void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
+void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
 {
-  m_Logger->ResetLogFile(rptDirectory + "\\SolverSpeedTest.log");
+  m_Logger->ResetLogFile(rptDirectory + "/SolverSpeedTest.log");
 
   // Set up our test report
   SETestReport testReport = SETestReport(m_Logger);
@@ -45,12 +37,12 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   double deltaT_s = 1.0 / 90.0;
   bool showAllOutput = true; //toggle this to show all Info outputs for all circuits, which will show first-pass solve times and fail rates
 
-  BioGears bg(tsSolverSpeed.GetLogger());
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::On);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::On);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(tsSolverSpeed.GetLogger());
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::On);
+  pc.m_Config->EnableTissue(cdm::eSwitch::On);
+  pc.CreateCircuitsAndCompartments();
 
   SEFluidCircuitCalculator fluidCalc(tsSolverSpeed.GetLogger());
   SEThermalCircuitCalculator thermalCalc(tsSolverSpeed.GetLogger());
@@ -99,7 +91,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     bool failed = false;
 
     //Anesthesia Machine alone
-    SEFluidCircuit* fCircuit = &bg.GetCircuits().GetAnesthesiaMachineCircuit();
+    SEFluidCircuit* fCircuit = &pc.GetCircuits().GetAnesthesiaMachineCircuit();
 
     //Set the solver type
     fluidCalc.SetEigenSolver(solver);
@@ -178,7 +170,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Anesthesia Machine with Respiratory
-    fCircuit = &bg.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
+    fCircuit = &pc.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
     numFails = 0;
 
     timer.Start("AnesthesiaMachineWithRespiratory");
@@ -253,7 +245,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Respiratory Only
-    fCircuit = &bg.GetCircuits().GetRespiratoryCircuit();
+    fCircuit = &pc.GetCircuits().GetRespiratoryCircuit();
 
     numFails = 0;
 
@@ -329,7 +321,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Respiratory with Inhaler
-    fCircuit = &bg.GetCircuits().GetRespiratoryAndInhalerCircuit();
+    fCircuit = &pc.GetCircuits().GetRespiratoryAndInhalerCircuit();
 
     numFails = 0;
 
@@ -405,7 +397,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Cardiovascular
-    fCircuit = &bg.GetCircuits().GetActiveCardiovascularCircuit();
+    fCircuit = &pc.GetCircuits().GetActiveCardiovascularCircuit();
     numFails = 0;
 
     timer.Start("Cardiovascular");
@@ -480,7 +472,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Renal
-    fCircuit = &bg.GetCircuits().GetRenalCircuit();
+    fCircuit = &pc.GetCircuits().GetRenalCircuit();
     numFails = 0;
 
     timer.Start("Renal");
@@ -555,7 +547,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Internal Temp
-    SEThermalCircuit* tCircuit = &bg.GetCircuits().GetInternalTemperatureCircuit();
+    SEThermalCircuit* tCircuit = &pc.GetCircuits().GetInternalTemperatureCircuit();
     thermalCalc.SetEigenSolver(solver);
     numFails = 0;
 
@@ -631,7 +623,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //External Temp
-    tCircuit = &bg.GetCircuits().GetExternalTemperatureCircuit();
+    tCircuit = &pc.GetCircuits().GetExternalTemperatureCircuit();
     numFails = 0;
 
     timer.Start("ExternalTemperature");
@@ -706,7 +698,7 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
       Info(ss);
 
     //Temperature
-    tCircuit = &bg.GetCircuits().GetTemperatureCircuit();
+    tCircuit = &pc.GetCircuits().GetTemperatureCircuit();
     numFails = 0;
 
     timer.Start("Temperature");
@@ -822,6 +814,6 @@ void BioGearsEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   Info(ss);
 
   //What should we write out in the report and/or Track?
-  //testReport.WriteFile(rptDirectory + "\\SolverSpeedTest.xml");
+  //testReport.WriteFile(rptDirectory + "/SolverSpeedTest.pba");
 
 }

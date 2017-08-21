@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
@@ -29,93 +20,99 @@ void SEFluidCircuitPath::Clear()
   SECircuitPath::Clear();
 }
 
-bool SEFluidCircuitPath::Load(const CDM::FluidCircuitPathData& in)
+void SEFluidCircuitPath::Load(const cdm::FluidCircuitPathData& src, SEFluidCircuitPath& dst)
 {
-  SECircuitPath::Load(in);
-  if (in.Resistance().present())
-    GetResistance().Load(in.Resistance().get());
-  if (in.NextResistance().present())
-    GetNextResistance().Load(in.NextResistance().get());
-  if (in.ResistanceBaseline().present())
-    GetResistanceBaseline().Load(in.ResistanceBaseline().get());
-  if (in.Compliance().present())
-    GetCompliance().Load(in.Compliance().get());
-  if (in.NextCompliance().present())
-    GetNextCompliance().Load(in.NextCompliance().get());
-  if (in.ComplianceBaseline().present())
-    GetComplianceBaseline().Load(in.ComplianceBaseline().get());
-  if (in.Inertance().present())
-    GetInertance().Load(in.Inertance().get());
-  if (in.NextInertance().present())
-    GetNextInertance().Load(in.NextInertance().get());
-  if (in.InertanceBaseline().present())
-    GetInertanceBaseline().Load(in.InertanceBaseline().get());
-  if (in.Flow().present())
-    GetFlow().Load(in.Flow().get());
-  if (in.NextFlow().present())
-    GetNextFlow().Load(in.NextFlow().get());
-  if (in.FlowSource().present())
-    GetFlowSource().Load(in.FlowSource().get());
-  if (in.NextFlowSource().present())
-    GetNextFlowSource().Load(in.NextFlowSource().get());
-  if (in.FlowSourceBaseline().present())
-    GetFlowSourceBaseline().Load(in.FlowSourceBaseline().get());
-  if (in.PressureSource().present())
-    GetPressureSource().Load(in.PressureSource().get());
-  if (in.NextPressureSource().present())
-    GetNextPressureSource().Load(in.NextPressureSource().get());
-  if (in.PressureSourceBaseline().present())
-    GetPressureSourceBaseline().Load(in.PressureSourceBaseline().get());
-  if (in.ValveBreakdownPressure().present())
-    GetValveBreakdownPressure().Load(in.ValveBreakdownPressure().get());
+  SEFluidCircuitPath::Serialize(src, dst);
+}
+void SEFluidCircuitPath::Serialize(const cdm::FluidCircuitPathData& src, SEFluidCircuitPath& dst)
+{
+  SECircuitPath::Serialize(src.circuitpath(),dst);
+  if (src.has_resistance())
+    SEScalarFlowResistance::Load(src.resistance(), dst.GetResistance());
+  if (src.has_nextresistance())
+    SEScalarFlowResistance::Load(src.nextresistance(), dst.GetNextResistance());
+  if (src.has_resistancebaseline())
+    SEScalarFlowResistance::Load(src.resistancebaseline(), dst.GetResistanceBaseline());
+  if (src.has_compliance())
+    SEScalarFlowCompliance::Load(src.compliance(), dst.GetCompliance());
+  if (src.has_nextcompliance())
+    SEScalarFlowCompliance::Load(src.nextcompliance(), dst.GetNextCompliance());
+  if (src.has_compliancebaseline())
+    SEScalarFlowCompliance::Load(src.compliancebaseline(), dst.GetComplianceBaseline());
+  if (src.has_inertance())
+    SEScalarFlowInertance::Load(src.inertance(), dst.GetInertance());
+  if (src.has_nextinertance())
+    SEScalarFlowInertance::Load(src.nextinertance(), dst.GetNextInertance());
+  if (src.has_inertancebaseline())
+    SEScalarFlowInertance::Load(src.inertancebaseline(), dst.GetInertanceBaseline());
+  if (src.has_flow())
+    SEScalarVolumePerTime::Load(src.flow(), dst.GetFlow());
+  if (src.has_nextflow())
+    SEScalarVolumePerTime::Load(src.nextflow(), dst.GetNextFlow());
+  if (src.has_flowsource())
+    SEScalarVolumePerTime::Load(src.flowsource(), dst.GetFlowSource());
+  if (src.has_nextflowsource())
+    SEScalarVolumePerTime::Load(src.nextflowsource(), dst.GetNextFlowSource());
+  if (src.has_flowsourcebaseline())
+    SEScalarVolumePerTime::Load(src.flowsourcebaseline(), dst.GetFlowSourceBaseline());
+  if (src.has_pressuresource())
+    SEScalarPressure::Load(src.pressuresource(), dst.GetPressureSource());
+  if (src.has_nextpressuresource())
+    SEScalarPressure::Load(src.nextpressuresource(), dst.GetNextPressureSource());
+  if (src.has_pressuresourcebaseline())
+    SEScalarPressure::Load(src.pressuresourcebaseline(), dst.GetPressureSourceBaseline());
+  if (src.has_valvebreakdownpressure())
+    SEScalarPressure::Load(src.valvebreakdownpressure(), dst.GetValveBreakdownPressure());
 
-  return HasValidElements();
+  if(!dst.HasValidElements())
+    dst.Warning("Path does not have valid elements");
 }
-CDM::FluidCircuitPathData* SEFluidCircuitPath::Unload() const
+
+cdm::FluidCircuitPathData* SEFluidCircuitPath::Unload(const SEFluidCircuitPath& src)
 {
-  CDM::FluidCircuitPathData* data = new CDM::FluidCircuitPathData();
-  Unload(*data);
-  return data;
+  cdm::FluidCircuitPathData* dst = new cdm::FluidCircuitPathData();
+  SEFluidCircuitPath::Serialize(src, *dst);
+  return dst;
 }
-void SEFluidCircuitPath::Unload(CDM::FluidCircuitPathData& data) const
+void SEFluidCircuitPath::Serialize(const SEFluidCircuitPath& src, cdm::FluidCircuitPathData& dst)
 {
-  SECircuitPath::Unload(data);
-  if (HasResistance())
-    data.Resistance(std::unique_ptr<CDM::ScalarFlowResistanceData>(m_Resistance->Unload()));
-  if (HasNextResistance())
-    data.NextResistance(std::unique_ptr<CDM::ScalarFlowResistanceData>(m_NextResistance->Unload()));
-  if (HasResistanceBaseline())
-    data.ResistanceBaseline(std::unique_ptr<CDM::ScalarFlowResistanceData>(m_ResistanceBaseline->Unload()));
-  if (HasCompliance())
-    data.Compliance(std::unique_ptr<CDM::ScalarFlowComplianceData>(m_Capacitance->Unload()));
-  if (HasNextCompliance())
-    data.NextCompliance(std::unique_ptr<CDM::ScalarFlowComplianceData>(m_NextCapacitance->Unload()));
-  if (HasComplianceBaseline())
-    data.ComplianceBaseline(std::unique_ptr<CDM::ScalarFlowComplianceData>(m_CapacitanceBaseline->Unload()));
-  if (HasInertance())
-    data.Inertance(std::unique_ptr<CDM::ScalarFlowInertanceData>(m_Inductance->Unload()));
-  if (HasNextInertance())
-    data.NextInertance(std::unique_ptr<CDM::ScalarFlowInertanceData>(m_NextInductance->Unload()));
-  if (HasInertanceBaseline())
-    data.InertanceBaseline(std::unique_ptr<CDM::ScalarFlowInertanceData>(m_InductanceBaseline->Unload()));
-  if (HasFlow())
-    data.Flow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_Flux->Unload()));
-  if (HasNextFlow())
-    data.NextFlow(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_NextFlux->Unload()));
-  if (HasFlowSource())
-    data.FlowSource(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_FluxSource->Unload()));
-  if (HasNextFlowSource())
-    data.NextFlowSource(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_NextFluxSource->Unload()));
-  if (HasFlowSourceBaseline())
-    data.FlowSourceBaseline(std::unique_ptr<CDM::ScalarVolumePerTimeData>(m_FluxSourceBaseline->Unload()));
-  if (HasPressureSource())
-    data.PressureSource(std::unique_ptr<CDM::ScalarPressureData>(m_PotentialSource->Unload()));
-  if (HasNextPressureSource())
-    data.NextPressureSource(std::unique_ptr<CDM::ScalarPressureData>(m_NextPotentialSource->Unload()));
-  if (HasPressureSourceBaseline())
-    data.PressureSourceBaseline(std::unique_ptr<CDM::ScalarPressureData>(m_PotentialSourceBaseline->Unload()));
-  if (HasValveBreakdownPressure())
-    data.ValveBreakdownPressure(std::unique_ptr<CDM::ScalarPressureData>(m_ValveBreakdownPotential->Unload()));
+  SECircuitPath::Serialize(src,*dst.mutable_circuitpath());
+  if (src.HasResistance())
+    dst.set_allocated_resistance(SEScalarFlowResistance::Unload(*src.m_Resistance));
+  if (src.HasNextResistance())
+    dst.set_allocated_nextresistance(SEScalarFlowResistance::Unload(*src.m_NextResistance));
+  if (src.HasResistanceBaseline())
+    dst.set_allocated_resistancebaseline(SEScalarFlowResistance::Unload(*src.m_ResistanceBaseline));
+  if (src.HasCompliance())
+    dst.set_allocated_compliance(SEScalarFlowCompliance::Unload(*src.m_Capacitance));
+  if (src.HasNextCompliance())
+    dst.set_allocated_nextcompliance(SEScalarFlowCompliance::Unload(*src.m_NextCapacitance));
+  if (src.HasComplianceBaseline())
+    dst.set_allocated_compliancebaseline(SEScalarFlowCompliance::Unload(*src.m_CapacitanceBaseline));
+  if (src.HasInertance())
+    dst.set_allocated_inertance(SEScalarFlowInertance::Unload(*src.m_Inductance));
+  if (src.HasNextInertance())
+    dst.set_allocated_nextinertance(SEScalarFlowInertance::Unload(*src.m_NextInductance));
+  if (src.HasInertanceBaseline())
+    dst.set_allocated_inertancebaseline(SEScalarFlowInertance::Unload(*src.m_InductanceBaseline));
+  if (src.HasFlow())
+    dst.set_allocated_flow(SEScalarVolumePerTime::Unload(*src.m_Flux));
+  if (src.HasNextFlow())
+    dst.set_allocated_nextflow(SEScalarVolumePerTime::Unload(*src.m_NextFlux));
+  if (src.HasFlowSource())
+    dst.set_allocated_flowsource(SEScalarVolumePerTime::Unload(*src.m_FluxSource));
+  if (src.HasNextFlowSource())
+    dst.set_allocated_nextflowsource(SEScalarVolumePerTime::Unload(*src.m_NextFluxSource));
+  if (src.HasFlowSourceBaseline())
+    dst.set_allocated_flowsourcebaseline(SEScalarVolumePerTime::Unload(*src.m_FluxSourceBaseline));
+  if (src.HasPressureSource())
+    dst.set_allocated_pressuresource(SEScalarPressure::Unload(*src.m_PotentialSource));
+  if (src.HasNextPressureSource())
+    dst.set_allocated_nextpressuresource(SEScalarPressure::Unload(*src.m_NextPotentialSource));
+  if (src.HasPressureSourceBaseline())
+    dst.set_allocated_pressuresourcebaseline(SEScalarPressure::Unload(*src.m_PotentialSourceBaseline));
+  if (src.HasValveBreakdownPressure())
+    dst.set_allocated_valvebreakdownpressure(SEScalarPressure::Unload(*src.m_ValveBreakdownPotential));
 }
 
 ////////////////////////////////

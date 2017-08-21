@@ -1,28 +1,17 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 
 #include "compartment/substances/SESubstanceQuantity.h"
-#include "bind/SubstanceQuantityData.hxx"
 #include "substance/SESubstance.h"
 
-bool SESubstanceQuantity::Load(const CDM::SubstanceQuantityData& in)
+void SESubstanceQuantity::Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst)
 {
-  Clear();
-  return true;
+  dst.Clear();
+  // Name will be used to get substance for ctor
 }
-
-void SESubstanceQuantity::Unload(CDM::SubstanceQuantityData& data)
+void SESubstanceQuantity::Serialize(const SESubstanceQuantity& src, cdm::SubstanceQuantityData& dst)
 {
-  data.Substance(m_Substance.GetName());
+  dst.set_substance(src.m_Substance.GetName());
 }

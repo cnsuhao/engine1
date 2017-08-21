@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.testing.csv;
 
@@ -19,8 +10,8 @@ import mil.tatrc.physiology.datamodel.SEEqualOptions;
 import mil.tatrc.physiology.utilities.*;
 import mil.tatrc.physiology.utilities.csv.*;
 import mil.tatrc.physiology.utilities.csv.plots.*;
-import mil.tatrc.physiology.testing.TestReport;
-import mil.tatrc.physiology.testing.TestSuite;
+import mil.tatrc.physiology.testing.SETestReport;
+import mil.tatrc.physiology.testing.SETestSuite;
 
 /**
  * Compare 2 CSV files and create a report on the differences
@@ -28,7 +19,7 @@ import mil.tatrc.physiology.testing.TestSuite;
  * @author abray
  *
  */
-public class CSVComparison extends TestReport
+public class CSVComparison extends SETestReport
 {
   public double limit=2.0;
   public boolean reportDifferences=false;
@@ -102,7 +93,7 @@ public class CSVComparison extends TestReport
     }
     
     String report = computedFilePath.substring(0,computedFilePath.length()-4)+"/"+computedFile.getName();
-    report=report.substring(0, report.length()-4)+"Report.xml";    
+    report=report.substring(0, report.length()-4)+"Report.pba";    
     this.setFullReportPath(report);
         
     Set<String> failures = new HashSet<String>();
@@ -149,9 +140,8 @@ public class CSVComparison extends TestReport
     }
     
     // Create the Test Case
-    TestSuite suite = new TestSuite();
+    SETestSuite suite = createTestSuite();
     suite.setName(this.name);
-    this.addSuite(suite);
     suite.startCase(this.name);
     // Set up the Compare Options
     SEEqualOptions opts = suite.getCaseEqualOptions();
@@ -232,7 +222,7 @@ public class CSVComparison extends TestReport
 
     if(totalErrors>0)
       Log.error(totalErrors+" errors found");
-    if(suite.caseFailed())
+    if(suite.getActiveCase().hasFailures())
       Log.error(computedFilePath +" Comparison failed!!");
     else
       Log.info(computedFilePath + " Comparison SUCCESS!!");

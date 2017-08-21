@@ -1,19 +1,13 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.patient.assessments;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.PulmonaryFunctionTestData;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
+import mil.tatrc.physiology.utilities.FileUtils;
 
 public class SEPulmonaryFunctionTest extends SEPatientAssessment
 {
@@ -84,78 +78,88 @@ public class SEPulmonaryFunctionTest extends SEPatientAssessment
       this.lungVolumePlot.invalidate();
   }
   
-  public boolean load(PulmonaryFunctionTestData in)
+  public void readFile(String fileName) throws ParseException
   {
-    super.load(in);
-    if(in.getExpiratoryReserveVolume()!=null)
-      this.getExpiratoryReserveVolume().load(in.getExpiratoryReserveVolume());
-    if(in.getForcedVitalCapacity()!=null)
-      this.getForcedVitalCapacity().load(in.getForcedVitalCapacity());
-    if(in.getForcedExpiratoryVolume()!=null)
-      this.getForcedExpiratoryVolume().load(in.getForcedExpiratoryVolume());
-    if(in.getForcedExpiratoryFlow()!=null)
-      this.getForcedExpiratoryFlow().load(in.getForcedExpiratoryFlow());
-    if(in.getFunctionalResidualCapacity()!=null)
-      this.getFunctionalResidualCapacity().load(in.getFunctionalResidualCapacity());
-    if(in.getInspiratoryCapacity()!=null)
-      this.getInspiratoryCapacity().load(in.getInspiratoryCapacity());
-    if(in.getInspiratoryReserveVolume()!=null)
-      this.getInspiratoryReserveVolume().load(in.getInspiratoryReserveVolume());
-    if(in.getMaximumVoluntaryVentilation()!=null)
-      this.getMaximumVoluntaryVentilation().load(in.getMaximumVoluntaryVentilation());
-    if(in.getPeakExpiratoryFlow()!=null)
-      this.getPeakExpiratoryFlow().load(in.getPeakExpiratoryFlow());
-    if(in.getResidualVolume()!=null)
-      this.getResidualVolume().load(in.getResidualVolume());
-    if(in.getSlowVitalCapacity()!=null)
-      this.getSlowVitalCapacity().load(in.getSlowVitalCapacity());
-    if(in.getTotalLungCapacity()!=null)
-      this.getTotalLungCapacity().load(in.getTotalLungCapacity());
-    if(in.getVitalCapacity()!=null)
-      this.getVitalCapacity().load(in.getVitalCapacity());
-    if(in.getLungVolumePlot()!=null)
-      this.getLungVolumePlot().load(in.getLungVolumePlot());
-    return true;
+    PulmonaryFunctionTestData.Builder builder = PulmonaryFunctionTestData.newBuilder();
+    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    SEPulmonaryFunctionTest.load(builder.build(), this);
+  }
+  public void writeFile(String fileName)
+  {
+    FileUtils.writeFile(fileName, SEPulmonaryFunctionTest.unload(this).toString());
   }
   
-  public PulmonaryFunctionTestData unload()
+  public static void load(PulmonaryFunctionTestData src, SEPulmonaryFunctionTest dst)
   {
-    PulmonaryFunctionTestData data = CDMSerializer.objFactory.createPulmonaryFunctionTestData();
-    unload(data);
-    return data;
+    SEPatientAssessment.load(src.getPatientAssessment(), dst);
+    if(src.hasExpiratoryReserveVolume())
+      SEScalarVolume.load(src.getExpiratoryReserveVolume(),dst.getExpiratoryReserveVolume());
+    if(src.hasForcedVitalCapacity())
+      SEScalarVolume.load(src.getForcedVitalCapacity(),dst.getForcedVitalCapacity());
+    if(src.hasForcedExpiratoryVolume())
+      SEScalarVolume.load(src.getForcedExpiratoryVolume(),dst.getForcedExpiratoryVolume());
+    if(src.hasForcedExpiratoryFlow())
+      SEScalarVolumePerTime.load(src.getForcedExpiratoryFlow(),dst.getForcedExpiratoryFlow());
+    if(src.hasFunctionalResidualCapacity())
+      SEScalarVolume.load(src.getFunctionalResidualCapacity(),dst.getFunctionalResidualCapacity());
+    if(src.hasInspiratoryCapacity())
+      SEScalarVolume.load(src.getInspiratoryCapacity(),dst.getInspiratoryCapacity());
+    if(src.hasInspiratoryReserveVolume())
+      SEScalarVolume.load(src.getInspiratoryReserveVolume(),dst.getInspiratoryReserveVolume());
+    if(src.hasMaximumVoluntaryVentilation())
+      SEScalarVolume.load(src.getMaximumVoluntaryVentilation(),dst.getMaximumVoluntaryVentilation());
+    if(src.hasPeakExpiratoryFlow())
+      SEScalarVolumePerTime.load(src.getPeakExpiratoryFlow(),dst.getPeakExpiratoryFlow());
+    if(src.hasResidualVolume())
+      SEScalarVolume.load(src.getResidualVolume(),dst.getResidualVolume());
+    if(src.hasSlowVitalCapacity())
+      SEScalarVolume.load(src.getSlowVitalCapacity(),dst.getSlowVitalCapacity());
+    if(src.hasTotalLungCapacity())
+      SEScalarVolume.load(src.getTotalLungCapacity(),dst.getTotalLungCapacity());
+    if(src.hasVitalCapacity())
+      SEScalarVolume.load(src.getVitalCapacity(),dst.getVitalCapacity());
+    if(src.hasLungVolumePlot())
+      SEFunctionVolumeVsTime.load(src.getLungVolumePlot(),dst.getLungVolumePlot());
   }
   
-  protected void unload(PulmonaryFunctionTestData data)
+  public static PulmonaryFunctionTestData unload(SEPulmonaryFunctionTest src)
   {
-    super.unload(data);
-    if (expiratoryReserveVolume != null)
-      data.setExpiratoryReserveVolume(expiratoryReserveVolume.unload());
-    if (forcedVitalCapacity != null)
-      data.setForcedVitalCapacity(forcedVitalCapacity.unload());
-    if (forcedExpiratoryVolume != null)
-      data.setForcedExpiratoryVolume(forcedExpiratoryVolume.unload());
-    if (forcedExpiratoryFlow != null)
-      data.setForcedExpiratoryFlow(forcedExpiratoryFlow.unload());
-    if (functionalResidualCapacity != null)
-      data.setFunctionalResidualCapacity(functionalResidualCapacity.unload());
-    if (inspiratoryCapacity != null)
-      data.setInspiratoryCapacity(inspiratoryCapacity.unload());
-    if (inspiratoryReserveVolume != null)
-      data.setInspiratoryReserveVolume(inspiratoryReserveVolume.unload());
-    if (maximumVoluntaryVentilation != null)
-      data.setMaximumVoluntaryVentilation(maximumVoluntaryVentilation.unload());
-    if (peakExpiratoryFlow != null)
-      data.setPeakExpiratoryFlow(peakExpiratoryFlow.unload());
-    if (residualVolume != null)
-      data.setResidualVolume(residualVolume.unload());
-    if (slowVitalCapacity != null)
-      data.setSlowVitalCapacity(slowVitalCapacity.unload());
-    if (totalLungCapacity != null)
-      data.setTotalLungCapacity(totalLungCapacity.unload());
-    if (vitalCapacity != null)
-      data.setVitalCapacity(vitalCapacity.unload());
-    if (lungVolumePlot != null)
-      data.setLungVolumePlot(lungVolumePlot.unload());
+    PulmonaryFunctionTestData.Builder dst = PulmonaryFunctionTestData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  
+  protected static void unload(SEPulmonaryFunctionTest src, PulmonaryFunctionTestData.Builder dst)
+  {
+    SEPatientAssessment.unload(src, dst.getPatientAssessmentBuilder());
+    if (src.hasExpiratoryReserveVolume())
+      dst.setExpiratoryReserveVolume(SEScalarVolume.unload(src.getExpiratoryReserveVolume()));
+    if (src.hasForcedVitalCapacity())
+      dst.setForcedVitalCapacity(SEScalarVolume.unload(src.getForcedVitalCapacity()));
+    if (src.hasForcedExpiratoryVolume())
+      dst.setForcedExpiratoryVolume(SEScalarVolume.unload(src.getForcedExpiratoryVolume()));
+    if (src.hasForcedExpiratoryFlow())
+      dst.setForcedExpiratoryFlow(SEScalarVolumePerTime.unload(src.getForcedExpiratoryFlow()));
+    if (src.hasFunctionalResidualCapacity())
+      dst.setFunctionalResidualCapacity(SEScalarVolume.unload(src.getFunctionalResidualCapacity()));
+    if (src.hasInspiratoryCapacity())
+      dst.setInspiratoryCapacity(SEScalarVolume.unload(src.getInspiratoryCapacity()));
+    if (src.hasInspiratoryReserveVolume())
+      dst.setInspiratoryReserveVolume(SEScalarVolume.unload(src.getInspiratoryReserveVolume()));
+    if (src.hasMaximumVoluntaryVentilation())
+      dst.setMaximumVoluntaryVentilation(SEScalarVolume.unload(src.getMaximumVoluntaryVentilation()));
+    if (src.hasPeakExpiratoryFlow())
+      dst.setPeakExpiratoryFlow(SEScalarVolumePerTime.unload(src.getPeakExpiratoryFlow()));
+    if (src.hasResidualVolume())
+      dst.setResidualVolume(SEScalarVolume.unload(src.getResidualVolume()));
+    if (src.hasSlowVitalCapacity())
+      dst.setSlowVitalCapacity(SEScalarVolume.unload(src.getSlowVitalCapacity()));
+    if (src.hasTotalLungCapacity())
+      dst.setTotalLungCapacity(SEScalarVolume.unload(src.getTotalLungCapacity()));
+    if (src.hasVitalCapacity())
+      dst.setVitalCapacity(SEScalarVolume.unload(src.getVitalCapacity()));
+    if (src.hasLungVolumePlot())
+      dst.setLungVolumePlot(SEFunctionVolumeVsTime.unload(src.getLungVolumePlot()));
   }
   
   public boolean hasExpiratoryReserveVolume()

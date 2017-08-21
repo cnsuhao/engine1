@@ -1,22 +1,15 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License..
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+See accompanying NOTICE file for details.*/
 
 #pragma once
 class SESubstance;
 class SESubstanceManager;
 class SEEnvironmentalConditions;
-CDM_BIND_DECL(SubstanceFractionData)
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
-class DLL_DECL SESubstanceFraction : public Loggable
+class CDM_DECL SESubstanceFraction : public Loggable
 {
 protected:
   friend SEEnvironmentalConditions;// So it can add substances to the manager
@@ -27,14 +20,16 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::SubstanceFractionData& in);
-  virtual CDM::SubstanceFractionData* Unload() const;
+  static void Load(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst);
+  static cdm::SubstanceData_FractionAmountData* Unload(const SESubstanceFraction& src);
 protected:
-  virtual void Unload(CDM::SubstanceFractionData& data) const;
+  static void Serialize(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst);
+  static void Serialize(const SESubstanceFraction& src, cdm::SubstanceData_FractionAmountData& dst);
+
 public:
 
   virtual bool HasFractionAmount() const;
-  virtual SEScalarFraction& GetFractionAmount();
+  virtual SEScalar0To1& GetFractionAmount();
   virtual double GetFractionAmount() const;
 
   virtual SESubstance& GetSubstance() const;
@@ -42,5 +37,5 @@ public:
 protected:
 
   SESubstance&       m_Substance;
-  SEScalarFraction*  m_FractionAmount;
+  SEScalar0To1*  m_FractionAmount;
 };  

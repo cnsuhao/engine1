@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEFunction.h"
-#include "bind/FunctionElectricPotentialVsTimeData.hxx"
 
-class DLL_DECL SEFunctionElectricPotentialVsTime : public SEFunction
+class CDM_DECL SEFunctionElectricPotentialVsTime : public SEFunction
 {
 public:
 
@@ -23,20 +13,21 @@ public:
 
   virtual void Clear();
 
-  virtual bool Load(const CDM::FunctionElectricPotentialVsTimeData& in);
-  virtual CDM::FunctionElectricPotentialVsTimeData* Unload() const;
+  static void Load(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst);
+  static cdm::FunctionElectricPotentialVsTimeData* Unload(const SEFunctionElectricPotentialVsTime& src);
 protected:
-  virtual void Unload(CDM::FunctionElectricPotentialVsTimeData& data) const;
+  static void Serialize(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst);
+  static void Serialize(const SEFunctionElectricPotentialVsTime& src, cdm::FunctionElectricPotentialVsTimeData& dst);
 public:
 
-  double                               GetIndependentValue(unsigned int index) = delete;
-  virtual double                       GetTimeValue(unsigned int index, const TimeUnit& unit);
+  double                               GetIndependentValue(size_t index) = delete;
+  virtual double                       GetTimeValue(size_t index, const TimeUnit& unit);
   virtual std::vector<double>&         GetTime();
   virtual const TimeUnit*              GetTimeUnit();
   virtual void                         SetTimeUnit(const TimeUnit& unit);
 
-  double                               GetDependentValue(unsigned int index) = delete;
-  virtual double                       GetElectricPotentialValue(unsigned int index, const ElectricPotentialUnit& unit);
+  double                               GetDependentValue(size_t index) = delete;
+  virtual double                       GetElectricPotentialValue(size_t index, const ElectricPotentialUnit& unit);
   virtual std::vector<double>&         GetElectricPotential();
   virtual const ElectricPotentialUnit* GetElectricPotentialUnit();
   virtual void                         SetElectricPotentialUnit(const ElectricPotentialUnit& unit);

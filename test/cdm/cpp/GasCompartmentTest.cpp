@@ -1,17 +1,7 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "CommonDataModelTest.h"
-#include "Serializer.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
 #include "utils/TimingProfile.h"
@@ -27,9 +17,8 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SEFluidCompartment.h"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
 #include "compartment/SECompartmentManager.h"
-#include "engine/PhysiologyEngineConfiguration.h"
 
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTime.h"
@@ -73,7 +62,7 @@ void CommonDataModelTest::TestGasFlows(SETestSuite& testSuite, SESubstanceManage
   right2middle->GetFlow().SetValue(smallInflow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasFlows.pba");
   left = cmptMgr.GetGasCompartment("Left");
   middle = cmptMgr.GetGasCompartment("Middle");
   right = cmptMgr.GetGasCompartment("Right");
@@ -237,7 +226,7 @@ void CommonDataModelTest::TestGasHierarchyFlows(SETestSuite& testSuite, SESubsta
   L1C1->AddChild(*L2C3);
   cmptMgr.StateChange();// Call this, AFTER YOU SET UP YOUR HIERARCHY, to ensure all parent compartments have their link data
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasHierarchyFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasHierarchyFlows.pba");
   L0C0 = cmptMgr.GetGasCompartment("L0C0");
   L1C0 = cmptMgr.GetGasCompartment("L1C0");
   L1C1 = cmptMgr.GetGasCompartment("L1C1");
@@ -414,7 +403,7 @@ void CommonDataModelTest::TestGasHierarchy(SETestSuite& testSuite, SESubstanceMa
   L1C1->AddChild(*L2C3);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasHierarchy.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory+"/TestGasHierarchy.pba");
   L0C0 = cmptMgr.GetGasCompartment("L0C0"); 
   L1C0 = cmptMgr.GetGasCompartment("L1C0");
   L1C1 = cmptMgr.GetGasCompartment("L1C1");
@@ -699,8 +688,8 @@ void CommonDataModelTest::TestGasCircuitVolumesPressuresAndFlows(SETestSuite& te
   TimingProfile pTimer;
   pTimer.Start("Test");
 
-  m_Circuits.Clear();
-  SEFluidCircuit& circuit = m_Circuits.CreateFluidCircuit("TestCircuit");
+  m_Circuits->Clear();
+  SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("TestCircuit");
   // Left Nodes
   SEFluidCircuitNode& l1 = circuit.CreateNode("Left1");
   l1.GetNextPressure().SetValue(10., PressureUnit::mmHg);
@@ -773,7 +762,7 @@ void CommonDataModelTest::TestGasCircuitVolumesPressuresAndFlows(SETestSuite& te
   right2middle->MapPath(p4);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestGasCircuitVolumesPressuresAndFlows.xml");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestGasCircuitVolumesPressuresAndFlows.pba");
   left = cmptMgr.GetGasCompartment("Left");
   middle = cmptMgr.GetGasCompartment("Middle");
   right = cmptMgr.GetGasCompartment("Right");
@@ -1105,7 +1094,7 @@ void CommonDataModelTest::GasCompartmentTest(const std::string& rptDirectory)
   m_PercentTolerance = 2.0;
   m_OutDirectory = rptDirectory;
 
-  m_Logger->ResetLogFile(rptDirectory + "\\GasCompartmentTest.log");
+  m_Logger->ResetLogFile(rptDirectory + "/GasCompartmentTest.log");
   SETestReport testReport(m_Logger);
 
   SESubstanceManager subMgr(m_Logger);
@@ -1131,5 +1120,5 @@ void CommonDataModelTest::GasCompartmentTest(const std::string& rptDirectory)
   UpdateGasLinks.SetName("UpdateGasLinks");
   TestUpdateGasLinks(UpdateGasLinks, subMgr);
 
-  testReport.WriteFile(rptDirectory + "\\GasCompartmentTestReport.xml");
+  testReport.WriteFile(rptDirectory + "/GasCompartmentTestReport.pba");
 }

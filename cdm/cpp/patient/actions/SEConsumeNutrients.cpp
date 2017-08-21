@@ -1,18 +1,8 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEConsumeNutrients.h"
-#include "bind/NutritionData.hxx"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolume.h"
@@ -45,30 +35,32 @@ bool SEConsumeNutrients::IsActive() const
   return IsValid();
 }
 
-bool SEConsumeNutrients::Load(const CDM::ConsumeNutrientsData& in)
+void SEConsumeNutrients::Load(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
 {
-  SEPatientAction::Load(in);
-  if (in.Nutrition().present())
-    GetNutrition().Load(in.Nutrition().get());
-  else if (in.NutritionFile().present())
-    SetNutritionFile(in.NutritionFile().get());
-  return true;
+  SEConsumeNutrients::Serialize(src, dst);
+}
+void SEConsumeNutrients::Serialize(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_nutrition())
+    SENutrition::Load(src.nutrition(), dst.GetNutrition());
+  else
+    dst.SetNutritionFile(src.nutritionfile());
 }
 
-CDM::ConsumeNutrientsData* SEConsumeNutrients::Unload() const
+cdm::ConsumeNutrientsData* SEConsumeNutrients::Unload(const SEConsumeNutrients& src)
 {
-  CDM::ConsumeNutrientsData*data(new CDM::ConsumeNutrientsData());
-  Unload(*data);
-  return data;
+  cdm::ConsumeNutrientsData* dst = new cdm::ConsumeNutrientsData();
+  SEConsumeNutrients::Serialize(src, *dst);
+  return dst;
 }
-
-void SEConsumeNutrients::Unload(CDM::ConsumeNutrientsData& data) const
+void SEConsumeNutrients::Serialize(const SEConsumeNutrients& src, cdm::ConsumeNutrientsData& dst)
 {
-  SEPatientAction::Unload(data);
-  if (HasNutrition())
-    data.Nutrition(std::unique_ptr<CDM::NutritionData>(m_Nutrition->Unload()));
-  if (HasNutritionFile())
-    data.NutritionFile(m_NutritionFile);
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasNutrition())
+    dst.set_allocated_nutrition(SENutrition::Unload(*src.m_Nutrition));
+  else if (src.HasNutritionFile())
+    dst.set_nutritionfile(src.m_NutritionFile);
 }
 
 bool SEConsumeNutrients::HasNutrition() const

@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarHeatConductance.h"
@@ -17,15 +8,6 @@ const HeatConductanceUnit HeatConductanceUnit::W_Per_K("W/K");
 const HeatConductanceUnit HeatConductanceUnit::W_Per_C("W/degC");
 const HeatConductanceUnit HeatConductanceUnit::kcal_Per_K_s("kcal/K s");
 const HeatConductanceUnit HeatConductanceUnit::kcal_Per_C_s("kcal/degC s");
-
-CDM::ScalarHeatConductanceData* SEScalarHeatConductance::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarHeatConductanceData* data(new CDM::ScalarHeatConductanceData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool HeatConductanceUnit::IsValidUnit(const std::string& unit)
 {
@@ -53,4 +35,26 @@ const HeatConductanceUnit& HeatConductanceUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid HeatConductance unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarHeatConductance::Load(const cdm::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
+{
+  SEScalarHeatConductance::Serialize(src, dst);
+}
+void SEScalarHeatConductance::Serialize(const cdm::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
+{
+  SEScalarQuantity<HeatConductanceUnit>::Serialize(src.scalarheatconductance(), dst);
+}
+
+cdm::ScalarHeatConductanceData* SEScalarHeatConductance::Unload(const SEScalarHeatConductance& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarHeatConductanceData* dst = new cdm::ScalarHeatConductanceData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarHeatConductance::Serialize(const SEScalarHeatConductance& src, cdm::ScalarHeatConductanceData& dst)
+{
+  SEScalarQuantity<HeatConductanceUnit>::Serialize(src, *dst.mutable_scalarheatconductance());
 }

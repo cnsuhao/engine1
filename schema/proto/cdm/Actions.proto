@@ -1,0 +1,29 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+
+message ActionData
+{
+  string             Comment  = 1;
+}
+
+message AdvanceTimeData
+{
+  ActionData         Action   = 1;
+  ScalarTimeData     Time     = 2;
+}
+
+message SerializeStateData
+{
+  enum eSerializationType
+  {
+    Save = 0;
+    Load = 1;
+    
+  }
+  ActionData         Action   = 1;
+  eSerializationType Type     = 2;
+  string             Filename = 3;
+}

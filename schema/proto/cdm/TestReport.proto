@@ -1,0 +1,50 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+
+message TestReportData
+{
+
+  message TestErrorStatisticsData
+  {
+  
+    string                            PropertyName                = 1;
+    double                            PercentTolerance            = 2;
+    uint32                            NumberOfErrors              = 3;
+    string                            ComputedPropertyID          = 4;
+    string                            ExpectedPropertyID          = 5;
+  
+    double                            MinimumError                = 6;
+    double                            MaximumError                = 7;
+    double                            AverageError                = 8;
+    double                            StandardDeviation           = 9;
+    FunctionData                      PercentToleranceVsNumErrors = 10;
+    repeated string                   Differences                 = 11;
+  }
+  
+  message TestCaseData
+  {
+    string                            Name                        = 1;
+    ScalarTimeData                    Duration                    = 2;
+    repeated string                   Failure                     = 3;
+    repeated TestErrorStatisticsData  ErrorStats                  = 4;
+  }
+
+  message TestSuiteData
+  {
+    string                            Name                        = 1;
+    bool                              Performed                   = 2;
+    uint32                            Errors                      = 3;
+    uint32                            Tests                       = 4;
+    
+    repeated string                   Requirement                 = 5;
+    repeated TestErrorStatisticsData  ErrorStats                  = 6;
+    repeated TestCaseData             TestCase                    = 7;
+  
+  }
+  
+  repeated TestSuiteData              TestSuite                   = 1;
+
+}

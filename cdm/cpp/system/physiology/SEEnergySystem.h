@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "system/SESystem.h"
-#include "bind/EnergySystemData.hxx"
 
-class DLL_DECL SEEnergySystem : public SESystem
+class CDM_DECL SEEnergySystem : public SESystem
 {
 public:
 
@@ -24,15 +14,17 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  virtual bool Load(const CDM::EnergySystemData& in);
-  virtual CDM::EnergySystemData* Unload() const;
+
+  static void Load(const cdm::EnergySystemData& src, SEEnergySystem& dst);
+  static cdm::EnergySystemData* Unload(const SEEnergySystem& src);
 protected:
-  virtual void Unload(CDM::EnergySystemData& data) const;
+  static void Serialize(const cdm::EnergySystemData& src, SEEnergySystem& dst);
+  static void Serialize(const SEEnergySystem& src, cdm::EnergySystemData& dst);
+
 public:
 
   virtual bool HasAchievedExerciseLevel() const;
-  virtual SEScalarFraction& GetAchievedExerciseLevel();
+  virtual SEScalar0To1& GetAchievedExerciseLevel();
   virtual double GetAchievedExerciseLevel() const;
     
   virtual bool HasCoreTemperature() const;
@@ -48,7 +40,7 @@ public:
   virtual double GetExerciseMeanArterialPressureDelta(const PressureUnit& unit) const;
 
   virtual bool HasFatigueLevel() const;
-  virtual SEScalarFraction& GetFatigueLevel();
+  virtual SEScalar0To1& GetFatigueLevel();
   virtual double GetFatigueLevel() const;
   
   virtual bool HasKetoneProductionRate() const;
@@ -72,21 +64,21 @@ public:
   virtual double GetTotalMetabolicRate(const PowerUnit& unit) const;
 
   virtual bool HasTotalWorkRateLevel() const;
-  virtual SEScalarFraction& GetTotalWorkRateLevel();
+  virtual SEScalar0To1& GetTotalWorkRateLevel();
   virtual double GetTotalWorkRateLevel() const;
 
 protected:
 
-  SEScalarFraction*       m_AchievedExerciseLevel;
+  SEScalar0To1*           m_AchievedExerciseLevel;
   SEScalarTemperature*    m_CoreTemperature;
   SEScalarAmountPerTime*  m_CreatinineProductionRate;
-  SEScalarPressure*        m_ExerciseMeanArterialPressureDelta;
-  SEScalarFraction*        m_FatigueLevel;
+  SEScalarPressure*       m_ExerciseMeanArterialPressureDelta;
+  SEScalar0To1*           m_FatigueLevel;
   SEScalarAmountPerTime*  m_KetoneProductionRate;
   SEScalarAmountPerTime*  m_LactateProductionRate;
   SEScalarTemperature*    m_SkinTemperature;
   SEScalarMassPerTime*    m_SweatRate;
   SEScalarPower*          m_TotalMetabolicRate;
-  SEScalarFraction*        m_TotalWorkRateLevel;
+  SEScalar0To1*           m_TotalWorkRateLevel;
 
 };

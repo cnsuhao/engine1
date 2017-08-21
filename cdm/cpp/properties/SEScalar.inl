@@ -1,17 +1,7 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/ScalarData.hxx"
 #include "utils/GeneralMath.h"
 
 template<typename Unit>
@@ -51,34 +41,25 @@ bool SEScalarQuantity<Unit>::IsValid() const
 }
 
 template<typename Unit>
-void SEScalarQuantity<Unit>::Load(const CDM::ScalarData& in)
+void SEScalarQuantity<Unit>::Serialize(const cdm::ScalarData& src, SEScalarQuantity<Unit>& dst)
 {
-  this->Clear();
-  SEProperty::Load(in);
-  if (in.unit().present())
-    this->SetValue(in.value(), Unit::GetCompoundUnit(in.unit().get()));
+  dst.Clear();
+  if (!src.unit().empty())
+    dst.SetValue(src.value(), Unit::GetCompoundUnit(src.unit()));
   else
     throw CommonDataModelException("ScalarQuantity attempted to load a ScalarData with no unit, must have a unit.");  
-  m_readOnly = in.readOnly();
+  dst.m_readOnly = src.readonly();
 }
 
 template<typename Unit>
-CDM::ScalarData* SEScalarQuantity<Unit>::Unload() const
+void SEScalarQuantity<Unit>::Serialize(const SEScalarQuantity<Unit>& src, cdm::ScalarData& dst)
 {
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarData* data(new CDM::ScalarData());
-  this->Unload(*data);
-  return data;
-}
-
-template<typename Unit>
-void SEScalarQuantity<Unit>::Unload(CDM::ScalarData& data) const
-{
-  SEProperty::Unload(data);
-  data.value(m_value);
-  data.unit(m_unit->GetString());
-  data.readOnly(m_readOnly);
+  dst.set_value(src.m_value);
+  if(src.m_unit!=nullptr)
+    dst.set_unit(src.m_unit->GetString()); 
+  else
+    throw CommonDataModelException("ScalarQuantity attempted to unload a ScalarData with no unit, must have a unit.");
+  dst.set_readonly(src.m_readOnly);
 }
 
 template<typename Unit>
@@ -159,9 +140,27 @@ void SEScalarQuantity<Unit>::SetValue(double d, const Unit& unit)
   m_isinf = (std::isinf(m_value)) ? true : false;
   m_unit = &unit;
 }
+template<typename Unit>
+void SEScalarQuantity<Unit>::ForceValue(double d, const Unit& unit)
+{
+  if (m_readOnly)
+    throw CommonDataModelException("Scalar is marked read-only");
+  m_value = d;
+  m_isnan = (std::isnan(m_value)) ? true : false;
+  m_isinf = (std::isinf(m_value)) ? true : false;
+  m_unit = &unit;
+}
 
 template<typename Unit>
 void SEScalarQuantity<Unit>::SetValue(double d, const CCompoundUnit& unit)
+{
+  const Unit* u = dynamic_cast<const Unit*>(&unit);
+  if (u == nullptr)
+    throw CommonDataModelException("Provided unit is not of proper quantity type");
+  this->SetValue(d, *u);
+}
+template<typename Unit>
+void SEScalarQuantity<Unit>::ForceValue(double d, const CCompoundUnit& unit)
 {
   const Unit* u = dynamic_cast<const Unit*>(&unit);
   if (u == nullptr)

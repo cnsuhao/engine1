@@ -1,0 +1,52 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+import "cdm/Scenario.proto";
+
+message AutoSerializationData
+{
+  string                                      Directory                      = 1;/**<< @brief The location of the state file being written to. */
+  string                                      Filename                       = 2;/**<< @brief The file name of the state file being written to. */
+  eSwitch                                     AfterActions                   = 3;/**<< @brief Save state after an action is added to the action manager, then again after it is processed. (These states are always time stamped.) */
+  ScalarTimeData                              Period                         = 4;/**<< @brief The frequency at which to write a file, 1s would write a file every second. 0 will not save out at all (if you wanted after actions only.) */    
+  eSwitch                                     PeriodTimeStamps               = 5;/**<< @brief Put a time stamp at the end of the period state filename, Off will overwrite the same individual file, On will create new files every period, named with the simulation time. */
+  eSwitch                                     ReloadState                    = 6;/**<< @brief Load the data back into the engine, this is primarily used for testing */
+}
+
+/** @brief Static timed stabilization lengths */
+message TimedStabilizationData
+{
+  eSwitch                                     TrackingStabilization          = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
+  ScalarTimeData                              RestingStabilizationTime       = 2;/**<< @brief */
+  ScalarTimeData                              FeedbackStabilizationTime      = 3;/**<< @brief */
+  map<string,ScalarTimeData>                  ConditionStabilization         = 4;/**<< @brief */
+}
+
+
+/** @brief Dynamic stabilization parameters */
+message DynamicStabilizationData
+{
+
+  /** @brief A properties target percent difference allowed */
+  message PropertyConvergenceData
+  {
+    DataRequestData                           DataRequest                     = 1;/**<< @brief */
+    double                                    PercentDifference               = 2;/**<< @brief */
+  }
+  
+  /** @brief A properties convergence timing */
+  message EngineConvergenceData
+  {
+    ScalarTimeData                            ConvergenceTime                 = 1;/**<< @brief */
+    ScalarTimeData                            MinimumReactionTime             = 2;/**<< @brief */
+    ScalarTimeData                            MaximumAllowedStabilizationTime = 3;/**<< @brief */
+    repeated PropertyConvergenceData          PropertyConvergence             = 4;/**<< @brief */
+  }
+
+  eSwitch                                     TrackingStabilization           = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
+  EngineConvergenceData                       RestingConvergence              = 2;/**<< @brief */
+  EngineConvergenceData                       FeedbackConvergence             = 3;/**<< @brief */
+  map<string,EngineConvergenceData>           ConditionConvergence            = 4;/**<< @brief */
+}

@@ -1,19 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.properties;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.ScalarMassPerMassData;
+import com.kitware.physiology.cdm.Properties.ScalarMassPerMassData;
+
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.MassPerMassUnit;
 
 /**
@@ -53,6 +44,23 @@ public class SEScalarMassPerMass extends SEScalar
     this.setValue(value,unit);
   }
   
+  public static void load(ScalarMassPerMassData src, SEScalarMassPerMass dst)
+  {
+    SEScalar.load(src.getScalarMassPerMass(),dst);
+  }
+  public static ScalarMassPerMassData unload(SEScalarMassPerMass src)
+  {
+    if(!src.isValid())
+      return null;
+    ScalarMassPerMassData.Builder dst = ScalarMassPerMassData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(SEScalarMassPerMass src, ScalarMassPerMassData.Builder dst)
+  {
+    SEScalar.unload(src,dst.getScalarMassPerMassBuilder());
+  }
+  
   /**
    * @param value
    * @param unit - enumeration of commonly used units for this type
@@ -77,18 +85,6 @@ public class SEScalarMassPerMass extends SEScalar
   public double getValue(MassPerMassUnit unit)
   {
     return this.getValue(unit.toString());
-  }
-  
-  
-
-  public ScalarMassPerMassData unload()
-  {
-    if(!this.isValid())
-      return null;
-
-    ScalarMassPerMassData to = CDMSerializer.objFactory.createScalarMassPerMassData();
-    unload(to);
-    return to;
   }
 
   public boolean validUnit(String unit)

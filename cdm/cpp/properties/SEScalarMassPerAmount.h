@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarMassPerAmountData.hxx"
 
-class DLL_DECL MassPerAmountUnit : public CCompoundUnit
+class CDM_DECL MassPerAmountUnit : public CCompoundUnit
 {
 public:
   MassPerAmountUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -36,12 +26,16 @@ public:
   static const MassPerAmountUnit pg_Per_ct;
 };
 
-class DLL_DECL SEScalarMassPerAmount : public SEScalarQuantity<MassPerAmountUnit>
+class CDM_DECL SEScalarMassPerAmount : public SEScalarQuantity<MassPerAmountUnit>
 {
 public:
   SEScalarMassPerAmount() {}
   virtual ~SEScalarMassPerAmount() {}
 
-  CDM::ScalarMassPerAmountData* Unload() const;
+  static void Load(const cdm::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst);
+  static cdm::ScalarMassPerAmountData* Unload(const SEScalarMassPerAmount& src);
+protected:
+  static void Serialize(const cdm::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst);
+  static void Serialize(const SEScalarMassPerAmount& src, cdm::ScalarMassPerAmountData& dst);
 };
 

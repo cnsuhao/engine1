@@ -1,24 +1,13 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
 
-CDM_BIND_DECL(ScalarData)
-
 #define ZERO_APPROX 1e-10
 
-class DLL_DECL NoUnit
+class CDM_DECL NoUnit
 {
 public:
   NoUnit() {}
@@ -27,7 +16,7 @@ public:
   static const NoUnit unitless;
 };
 
-class DLL_DECL SEScalar : public SEProperty
+class CDM_DECL SEScalar : public SEProperty
 {
 protected:
   double m_value;
@@ -47,10 +36,11 @@ public:
   */
   virtual void Invalidate();
 
-  virtual void Load(const CDM::ScalarData& in);
-  virtual CDM::ScalarData* Unload() const;
+  static void Load(const cdm::ScalarData& src, SEScalar& dst);
+  static cdm::ScalarData* Unload(const SEScalar& src);
 protected:
-  virtual void Unload(CDM::ScalarData& s) const;
+  static void Serialize(const cdm::ScalarData& src, SEScalar& dst);
+  static void Serialize(const SEScalar& src, cdm::ScalarData& dst);
 
 public:
   /**
@@ -78,6 +68,7 @@ public:
 
   double GetValue() const;  
   void   SetValue(double d);
+  void   ForceValue(double d);
   
   double Increment(const SEScalar& s);
   double IncrementValue(double d);
@@ -113,14 +104,14 @@ inline std::ostream& operator<< (std::ostream& out, const SEScalar& s)
  * @details - This interface allows you to have a pointer to a scalar with units
  *            but you don't need to now what units it's associated with
  */
-class DLL_DECL SEUnitScalar :  public SEScalar
+class CDM_DECL SEUnitScalar :  public SEScalar
 {
   friend SEGenericScalar;
 public:
 
   SEUnitScalar() : SEScalar() {}
   virtual ~SEUnitScalar() {}
-
+  
   virtual bool IsValid() const = 0;
   virtual void Invalidate() = 0;
   virtual const CCompoundUnit* GetUnit() const = 0;
@@ -129,6 +120,7 @@ public:
   virtual void Copy(const SEScalar& s) = 0;
   virtual double GetValue(const CCompoundUnit& unit) const = 0;
   virtual void   SetValue(double d, const CCompoundUnit& unit) = 0;
+  virtual void   ForceValue(double d, const CCompoundUnit& unit) = 0;
   virtual double IncrementValue(double d, const CCompoundUnit& unit) = 0;
   
 protected:
@@ -146,10 +138,9 @@ public:
   virtual void Invalidate();
   virtual bool IsValid() const;
 
-  virtual void Load(const CDM::ScalarData& in);
-  virtual CDM::ScalarData* Unload() const;
 protected:
-  virtual void Unload(CDM::ScalarData& s) const;
+  static void Serialize(const cdm::ScalarData& src, SEScalarQuantity<Unit>& dst);
+  static void Serialize(const SEScalarQuantity<Unit>& src, cdm::ScalarData& dst);
 
   // We need to support the SEUnitScalar interface,  but make these protected
   // If you want access in a generic unit way, us an SEGenericScalar wrapper
@@ -158,6 +149,7 @@ protected:
 
   virtual double GetValue(const CCompoundUnit& unit) const;
   virtual void   SetValue(double d, const CCompoundUnit& unit);
+  virtual void   ForceValue(double d, const CCompoundUnit& unit);
   virtual double IncrementValue(double d, const CCompoundUnit& unit);
 
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const;
@@ -174,6 +166,9 @@ public:
   
   void SetValue(double d) = delete;// Must provide a unit
   virtual void SetValue(double d, const Unit& unit);
+
+  void ForceValue(double d) = delete;// Must provide a unit
+  virtual void ForceValue(double d, const Unit& unit);
 
   double IncrementValue(double d) = delete;// Must provide a unit
   virtual double IncrementValue(double d, const Unit& unit);
@@ -197,7 +192,7 @@ protected:
  * @details Be aware, I did not really protect this class, I assume you know what you are doing
  * If you use this class without setting the scalar it will produce nullptr errors and other CDM Exceptions, use with caution and smarts.
  */
-class DLL_DECL SEGenericScalar : public Loggable
+class CDM_DECL SEGenericScalar : public Loggable
 {
 public:
   SEGenericScalar(Logger* logger);
@@ -223,8 +218,8 @@ protected:
   const SEUnitScalar* m_UnitScalar;
 };
 
-DLL_DECL double Convert(double d,const CCompoundUnit& from, const CCompoundUnit& to);
-DLL_DECL bool   CompatibleUnits(const CCompoundUnit& u1, const CCompoundUnit& u2);
+CDM_DECL double Convert(double d,const CCompoundUnit& from, const CCompoundUnit& to);
+CDM_DECL bool   CompatibleUnits(const CCompoundUnit& u1, const CCompoundUnit& u2);
 
 inline void Override(const SEScalar& from, SEScalar& to)
 {

@@ -1,16 +1,7 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
-#include "BioGearsEngineHowTo.h"
+#include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
 #include "system/physiology/SECardiovascularSystem.h"
@@ -28,11 +19,11 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarLength.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalar0To1.h"
-#include "engine/PhysiologyEngineTrack.h"
+#include "engine/SEEngineTracker.h"
 #include "compartment/SECompartmentManager.h"
 
 int GlasgowEstimator(double);
@@ -48,141 +39,141 @@ int GlasgowEstimator(double);
 void HowToBrainInjury()
 {
   std::stringstream ss;
-  // Create a BioGears Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> bg = CreateBioGearsEngine("HowToBrainInjury.log");
+  // Create a Pulse Engine and load the standard patient
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToBrainInjury.log");
   
-  bg->GetLogger()->Info("HowToBrainInjury");
-  if (!bg->LoadState("./states/StandardMale@0s.xml"))
+  pe->GetLogger()->Info("HowToBrainInjury");
+  if (!pe->LoadStateFile("./states/StandardMale@0s.pba"))
   {
-    bg->GetLogger()->Error("Could not load state, check the error");
+    pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
   // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*bg);
+  HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   // Physiology System Names are defined on the System Objects 
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("HeartRate", FrequencyUnit::Per_min);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("SystolicArterialPressure", PressureUnit::mmHg);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("DiastolicArterialPressure", PressureUnit::mmHg);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("RespirationRate", FrequencyUnit::Per_min);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("TidalVolume", VolumeUnit::mL);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("TotalLungVolume", VolumeUnit::mL);
-  bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("OxygenSaturation");
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
 
-  bg->GetEngineTrack()->GetDataRequestManager().SetResultsFilename("HowToBrainInjury.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToBrainInjury.txt");
 
-  bg->GetLogger()->Info("The patient is nice and healthy");
-  bg->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << bg->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << bg->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << bg->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << bg->GetBloodChemistrySystem()->GetOxygenSaturation());
-  bg->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << bg->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
-  bg->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << bg->GetCardiovascularSystem()->GetIntracranialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << bg->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << bg->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  bg->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(bg->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));
+  pe->GetLogger()->Info("The patient is nice and healthy");
+  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << pe->GetCardiovascularSystem()->GetIntracranialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << pe->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << pe->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(pe->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));
   // You can get the following pupillary effects
   // Reactivity Change in pupil recation time to light. -1 complete reduction/no response, 0 is normal, and 1 is the fastest reaction time.
   // Pupil size change from normal. -1 is fully constricted, 0 is no change, +1 is fully dilated.   
-  bg->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Size Modifier : " << bg->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetSizeModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Reactivity Modifier : " << bg->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetReactivityModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << bg->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << bg->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetSizeModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetReactivityModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
 
   tracker.AdvanceModelTime(30);
   
   // Create an SEBrainInjury object
   // Set the severity (a fraction between 0 and 1; for maximal injury, use 1.)  
   SEBrainInjury tbi;
-  tbi.SetType(CDM::enumBrainInjuryType::Diffuse);// Can also be LeftFocal or RightFocal, and you will get pupillary effects in only one eye 
+  tbi.SetType(cdm::BrainInjuryData_eType_Diffuse);// Can also be LeftFocal or RightFocal, and you will get pupillary effects in only one eye 
   tbi.GetSeverity().SetValue(0.2);
-  bg->ProcessAction(tbi);
-  bg->GetLogger()->Info("Giving the patient a brain injury.");
+  pe->ProcessAction(tbi);
+  pe->GetLogger()->Info("Giving the patient a brain injury.");
 
   // Advance time to see how the injury affects the patient
   tracker.AdvanceModelTime(90);
 
-  bg->GetLogger()->Info(std::stringstream() << "The patient has had a brain injury for 90s, not doing well...");
-  bg->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << bg->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << bg->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << bg->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << bg->GetBloodChemistrySystem()->GetOxygenSaturation());
-  bg->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << bg->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
-  bg->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << bg->GetCardiovascularSystem()->GetIntracranialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << bg->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << bg->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  bg->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(bg->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));
+  pe->GetLogger()->Info(std::stringstream() << "The patient has had a brain injury for 90s, not doing well...");
+  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << pe->GetCardiovascularSystem()->GetIntracranialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << pe->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << pe->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(pe->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));
   // You can get the following pupillary effects
   // Reactivity Change in pupil recation time to light. -1 complete reduction/no response, 0 is normal, and 1 is the fastest reaction time.
   // Pupil size change from normal. -1 is fully constricted, 0 is no change, +1 is fully dilated. 
-  bg->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Size Modifier : " << bg->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetSizeModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Reactivity Modifier : " << bg->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetReactivityModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << bg->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << bg->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetSizeModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetReactivityModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
 
   // You can remove a brain injury by setting the severity to 0, this will instantly remove the flow resistance in the brain, and the patient will recover.
   tbi.GetSeverity().SetValue(0.0);
-  bg->ProcessAction(tbi);
+  pe->ProcessAction(tbi);
 
-  bg->GetLogger()->Info("Removing the brain injury.");
+  pe->GetLogger()->Info("Removing the brain injury.");
 
   tracker.AdvanceModelTime(90);
 
-  bg->GetLogger()->Info(std::stringstream() << "The patient's brain injury has been removed for 90s; patient is much better");
-  bg->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << bg->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << bg->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << bg->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << bg->GetBloodChemistrySystem()->GetOxygenSaturation());
-  bg->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << bg->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
-  bg->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << bg->GetCardiovascularSystem()->GetIntracranialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << bg->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << bg->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  bg->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(bg->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));// You can get the following pupillary effects
+  pe->GetLogger()->Info(std::stringstream() << "The patient's brain injury has been removed for 90s; patient is much better");
+  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << pe->GetCardiovascularSystem()->GetIntracranialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << pe->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << pe->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(pe->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));// You can get the following pupillary effects
   // Reactivity Change in pupil recation time to light. -1 complete reduction/no response, 0 is normal, and 1 is the fastest reaction time.
   // Pupil size change from normal. -1 is fully constricted, 0 is no change, +1 is fully dilated. 
-  bg->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Size Modifier : " << bg->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetSizeModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Reactivity Modifier : " << bg->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetReactivityModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << bg->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << bg->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetSizeModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetReactivityModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
 
   // A more severe injury has more pronounced effects
   tbi.GetSeverity().SetValue(1);
-  bg->ProcessAction(tbi);
-  bg->GetLogger()->Info("Giving the patient a severe brain injury.");
+  pe->ProcessAction(tbi);
+  pe->GetLogger()->Info("Giving the patient a severe brain injury.");
 
   tracker.AdvanceModelTime(300);
 
   // You can also get information from the compartment rather than the system, in case you want other metrics
-  const SELiquidCompartment* brain = bg->GetCompartments().GetLiquidCompartment(BGE::VascularCompartment::Brain);
+  const SELiquidCompartment* brain = pe->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
 
-  bg->GetLogger()->Info(std::stringstream() << "The patient has had a severe brain injury for 5 minutes");
-  bg->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << bg->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << bg->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << bg->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Heart Rate : " << bg->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << bg->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  bg->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << bg->GetBloodChemistrySystem()->GetOxygenSaturation());
-  bg->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << bg->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
-  bg->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << brain->GetPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << bg->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  bg->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << brain->GetInFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  bg->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(bg->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));// You can get the following pupillary effects
+  pe->GetLogger()->Info(std::stringstream() << "The patient has had a severe brain injury for 5 minutes");
+  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << brain->GetPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << pe->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << brain->GetInFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(pe->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));// You can get the following pupillary effects
   // Reactivity Change in pupil recation time to light. -1 complete reduction/no response, 0 is normal, and 1 is the fastest reaction time.
   // Pupil size change from normal. -1 is fully constricted, 0 is no change, +1 is fully dilated. 
-  bg->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Size Modifier : " << bg->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetSizeModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Reactivity Modifier : " << bg->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetReactivityModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << bg->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
-  bg->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << bg->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetSizeModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Left Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetLeftEyePupillaryResponse()->GetReactivityModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
+  pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
 
-  bg->GetLogger()->Info("Finished");
+  pe->GetLogger()->Info("Finished");
 }
 
 // The Glasgow Coma Scale (GCS) is commonly used to classify patient consciousness after traumatic brain injury.
@@ -212,7 +203,7 @@ void HowToBrainInjury()
 // <628                   13
 // <725                   14
 // 725-943                15
-// Note that in Biogears, CBF is pulsatile
+// Note that in Pulse, CBF is pulsatile
 int GlasgowEstimator(double cbf)
 {
   if (cbf < 116)

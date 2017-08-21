@@ -1,0 +1,64 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+import "cdm/Substance.proto";
+
+message EnvironmentData
+{
+  enum eSurroundingType
+  {
+    NullSurrounding = 0;
+    Air             = 1;
+    Water           = 2;
+  }
+  
+  message ConditionsData
+  {
+    eSurroundingType                          SurroundingType                  = 1; /**<< @brief @copybrief Environment_eSurroundingType */
+
+    ScalarMassPerVolumeData                   AirDensity                       = 2; /**<< @brief Local ambient density of the surrounding atmosphere. */
+    ScalarLengthPerTimeData                   AirVelocity                      = 3; /**<< @brief Velocity of the surrounding air relative to the patient. */
+    ScalarTemperatureData                     AmbientTemperature               = 4; /**<< @brief Local ambient temperature of the surrounding air/fluid (if submerged). */
+    ScalarPressureData                        AtmosphericPressure              = 5; /**<< @brief Local ambient pressure of the surrounding atmosphere. */
+    ScalarHeatResistanceAreaData              ClothingResistance               = 6; /**<< @brief Average thermal resistance of all patient clothing. */
+    Scalar0To1Data                            Emissivity                       = 7; /**<< @brief Efficiency of the patient's surface to emit thermal energy. */
+    ScalarTemperatureData                     MeanRadiantTemperature           = 8; /**<< @brief The uniform temperature of an imaginary enclosure in which the radiant heat transfer from the patient's body is equal to the radiant heat transfer in the actual non-uniform enclosure. */
+    Scalar0To1Data                            RelativeHumidity                 = 9; /**<< @brief Local ambient ratio of the partial pressure of water vapor to the equilibrium vapor pressure of water at the same temperature. */
+    ScalarTemperatureData                     RespirationAmbientTemperature    = 10;/**<< @brief Local ambient temperature of the surrounding air that is inhaled. */
+
+    repeated SubstanceData.FractionAmountData AmbientGas                       = 11;/**<< @brief Break down of the gasses in the environment, fractions must add up to 1. */                  
+    repeated SubstanceData.ConcentrationData  AmbientAerosol                   = 12;/**<< @brief Break down of the aerosolized solid/liquid substances in the environment. */
+  }
+  
+  message ActiveConditioningData
+  {
+    ScalarPowerData                           Power                            = 1; /**<< @brief Heat sink/source power. Set to zero to turn off conditioning. */
+    ScalarAreaData                            SurfaceArea                      = 2; /**<< @brief SurfaceArea of the body that is being affected. */
+    Scalar0To1Data                            SurfaceAreaFraction              = 3; /**<< @brief SurfaceArea Fraction of the body that is being affected. */
+  }
+  
+  message AppliedTemperatureData
+  {
+    eSwitch                                   State                             = 1; /**<< @brief Use Off to remove the applied object from the patient. */
+    ScalarTemperatureData                     Temperature                       = 2; /**<< @brief Temperature of an object held on the patient. */
+    ScalarAreaData                            SurfaceArea                       = 3; /**<< @brief SurfaceArea of the patient that the temperature is being appllied to. */
+    Scalar0To1Data                            SurfaceAreaFraction               = 4; /**<< @brief SurfaceArea Fraction of the body that the temperature is being appllied to */            
+  }
+
+  ConditionsData                              Conditions                        = 1; /**<< @brief @copybrief Environment_EnvironmentalConditionsData */
+  ActiveConditioningData                      ActiveHeating                     = 2; /**<< @brief @copybrief Environment_ActiveHeatingData */
+  ActiveConditioningData                      ActiveCooling                     = 3; /**<< @brief @copybrief Environment_ActiveCoolingData */
+  AppliedTemperatureData                      AppliedTemperature                = 4; /**<< @brief @copybrief Environment_AppliedTemperatureData */
+
+  ScalarPowerData                             ConvectiveHeatLoss                = 5; /**<< @brief Total patient heat loss due to convection. */
+  ScalarHeatConductancePerAreaData            ConvectiveHeatTranferCoefficient  = 6; /**<< @brief The proportionality coefficient between the heat flux and the thermodynamic driving force for the flow of heat due to convection. */
+  ScalarPowerData                             EvaporativeHeatLoss               = 7; /**<< @brief Total patient heat loss due to evaporation. */
+  ScalarHeatConductancePerAreaData            EvaporativeHeatTranferCoefficient = 8; /**<< @brief The proportionality coefficient between the heat flux and the thermodynamic driving force for the flow of heat due to evaporation. */
+  ScalarPowerData                             RadiativeHeatLoss                 = 9; /**<< @brief Total patient heat loss due to radiation.*/
+  ScalarHeatConductancePerAreaData            RadiativeHeatTranferCoefficient   = 10;/**<< @brief The proportionality coefficient between the heat flux and the thermodynamic driving force for the flow of heat due to radiation. */
+  ScalarPowerData                             RespirationHeatLoss               = 11;/**<< @brief Total heat loss from the Respiratory System. */
+  ScalarPowerData                             SkinHeatLoss                      = 12;/**<< @brief Total heat loss from the Respiratory skin. */      
+
+}

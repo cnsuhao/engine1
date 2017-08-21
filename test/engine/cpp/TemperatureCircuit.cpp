@@ -1,15 +1,7 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
-#include "BioGearsEngineTest.h"
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+#include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "Systems/Energy.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "properties/SEScalarFrequency.h"
@@ -23,7 +15,7 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarHeatResistanceArea.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarEnergy.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "circuit/SECircuit.h"
 #include "circuit/SECircuitNode.h"
 #include "circuit/SECircuitPath.h"
@@ -34,27 +26,27 @@ specific language governing permissions and limitations under the License.
 #include "utils/DataTrack.h"
 
 //This test holds EnvironmentSkin and EnvironmentCore sources constant and varies BMR
-void BioGearsEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\InternalTemperatureVariableBMRCircuitTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(sTestDirectory + "/InternalTemperatureVariableBMRCircuitTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
 
-  SEThermalCircuit& m_TCircuit = bg.GetCircuits().GetInternalTemperatureCircuit();
+  SEThermalCircuit& m_TCircuit = pc.GetCircuits().GetInternalTemperatureCircuit();
 
   double testBMR_W = 100;
-  SEThermalCircuitPath* GroundToCore = m_TCircuit.GetPath(BGE::InternalTemperaturePath::GroundToInternalCore);
+  SEThermalCircuitPath* GroundToCore = m_TCircuit.GetPath(pulse::InternalTemperaturePath::GroundToInternalCore);
   GroundToCore->GetHeatSourceBaseline().SetValue(testBMR_W, PowerUnit::W);
-  SEThermalCircuitNode* Core = m_TCircuit.GetNode(BGE::InternalTemperatureNode::InternalCore);
+  SEThermalCircuitNode* Core = m_TCircuit.GetNode(pulse::InternalTemperatureNode::InternalCore);
   Core->GetTemperature().SetValue(36.85, TemperatureUnit::C);
   Core->GetNextTemperature().SetValue(36.85, TemperatureUnit::C);
-  SEThermalCircuitNode* Skin = m_TCircuit.GetNode(BGE::InternalTemperatureNode::InternalSkin);
+  SEThermalCircuitNode* Skin = m_TCircuit.GetNode(pulse::InternalTemperatureNode::InternalSkin);
   Skin->GetTemperature().SetValue(33.0, TemperatureUnit::C);
   Skin->GetNextTemperature().SetValue(33.0, TemperatureUnit::C);
-  SEThermalCircuitNode* Ground = m_TCircuit.GetNode(BGE::InternalTemperatureNode::InternalGround);
+  SEThermalCircuitNode* Ground = m_TCircuit.GetNode(pulse::InternalTemperatureNode::InternalGround);
 
   //Temporary heat source set until environment exists
   SEThermalCircuitPath& CoreToEnvironment = m_TCircuit.CreatePath(*Core, *Ground, "EnvironmentCore");
@@ -68,7 +60,7 @@ void BioGearsEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::st
 
   DataTrack outTrk;
   std::ofstream file;
-  SEThermalCircuitCalculator calc(bg.GetLogger());
+  SEThermalCircuitCalculator calc(pc.GetLogger());
 
   double deltaT_s = 1.0 / 90;
   double inv_deltaT_s = 1.0 / deltaT_s;
@@ -99,7 +91,7 @@ void BioGearsEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::st
     outTrk.Track(time_s, m_TCircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\InternalTemperatureVariableBMRCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableBMRCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -108,28 +100,28 @@ void BioGearsEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::st
 }
 
 //This test holds BMR and EnvironmentCore sources constant and varies EnvironmentSkin
-void BioGearsEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\InternalTemperatureVariableSkinCircuitTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(sTestDirectory + "/InternalTemperatureVariableSkinCircuitTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
 
-  SEThermalCircuit& m_TCircuit = bg.GetCircuits().GetInternalTemperatureCircuit();
+  SEThermalCircuit& m_TCircuit = pc.GetCircuits().GetInternalTemperatureCircuit();
 
   double testBMR = 1700;
 
-  SEThermalCircuitPath* GroundToCore = m_TCircuit.GetPath(BGE::InternalTemperaturePath::GroundToInternalCore);
+  SEThermalCircuitPath* GroundToCore = m_TCircuit.GetPath(pulse::InternalTemperaturePath::GroundToInternalCore);
   GroundToCore->GetHeatSourceBaseline().SetValue(testBMR, PowerUnit::kcal_Per_day);
-  SEThermalCircuitNode* Core = m_TCircuit.GetNode(BGE::InternalTemperatureNode::InternalCore);
+  SEThermalCircuitNode* Core = m_TCircuit.GetNode(pulse::InternalTemperatureNode::InternalCore);
   Core->GetTemperature().SetValue(36.85, TemperatureUnit::C);
   Core->GetNextTemperature().SetValue(36.85, TemperatureUnit::C);
-  SEThermalCircuitNode* Skin = m_TCircuit.GetNode(BGE::InternalTemperatureNode::InternalSkin);
+  SEThermalCircuitNode* Skin = m_TCircuit.GetNode(pulse::InternalTemperatureNode::InternalSkin);
   Skin->GetTemperature().SetValue(33.0, TemperatureUnit::C);
   Skin->GetNextTemperature().SetValue(33.0, TemperatureUnit::C);
-  SEThermalCircuitNode* Ground = m_TCircuit.GetNode(BGE::InternalTemperatureNode::InternalGround);
+  SEThermalCircuitNode* Ground = m_TCircuit.GetNode(pulse::InternalTemperatureNode::InternalGround);
 
   //Temporary heat source set until environment exists
   SEThermalCircuitPath& CoreToEnvironment = m_TCircuit.CreatePath(*Core, *Ground, "EnvironmentCore");
@@ -145,7 +137,7 @@ void BioGearsEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::s
 
   std::ofstream file;
 
-  SEThermalCircuitCalculator calc(bg.GetLogger());
+  SEThermalCircuitCalculator calc(pc.GetLogger());
 
   double deltaT_s = 1.0 / 90;
   double inv_deltaT_s = 1.0 / deltaT_s;
@@ -196,7 +188,7 @@ void BioGearsEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::s
     outTrk.Track(time_s, m_TCircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\InternalTemperatureVariableSkinCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableSkinCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -205,28 +197,28 @@ void BioGearsEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::s
 }
 
 //This test holds BMR and EnvironmentSkin sources constant and varies EnvironmentCore
-void BioGearsEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\InternalTemperatureVariableCoreCircuitTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(sTestDirectory + "/InternalTemperatureVariableCoreCircuitTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
 
-  SEThermalCircuit& m_TCircuit = bg.GetCircuits().GetInternalTemperatureCircuit();
+  SEThermalCircuit& m_TCircuit = pc.GetCircuits().GetInternalTemperatureCircuit();
 
   double testBMR = 1700;
 
-  SEThermalCircuitPath* GroundToCore = m_TCircuit.GetPath(BGE::InternalTemperaturePath::GroundToInternalCore);
+  SEThermalCircuitPath* GroundToCore = m_TCircuit.GetPath(pulse::InternalTemperaturePath::GroundToInternalCore);
   GroundToCore->GetHeatSourceBaseline().SetValue(testBMR, PowerUnit::kcal_Per_day);
-  SEThermalCircuitNode* Core = m_TCircuit.GetNode(BGE::InternalTemperatureNode::InternalCore);
+  SEThermalCircuitNode* Core = m_TCircuit.GetNode(pulse::InternalTemperatureNode::InternalCore);
   Core->GetTemperature().SetValue(36.85, TemperatureUnit::C);
   Core->GetNextTemperature().SetValue(36.85, TemperatureUnit::C);
-  SEThermalCircuitNode* Skin = m_TCircuit.GetNode(BGE::InternalTemperatureNode::InternalSkin);
+  SEThermalCircuitNode* Skin = m_TCircuit.GetNode(pulse::InternalTemperatureNode::InternalSkin);
   Skin->GetTemperature().SetValue(33.0, TemperatureUnit::C);
   Skin->GetNextTemperature().SetValue(33.0, TemperatureUnit::C);
-  SEThermalCircuitNode* Ground = m_TCircuit.GetNode(BGE::InternalTemperatureNode::InternalGround);
+  SEThermalCircuitNode* Ground = m_TCircuit.GetNode(pulse::InternalTemperatureNode::InternalGround);
 
   SEThermalCircuitPath& CoreToEnvironment = m_TCircuit.CreatePath(*Core, *Ground, "EnvironmentCore");
   CoreToEnvironment.GetHeatSourceBaseline().SetValue(0.3*testBMR, PowerUnit::kcal_Per_day);
@@ -241,7 +233,7 @@ void BioGearsEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::s
 
   std::ofstream file;
 
-  SEThermalCircuitCalculator calc(bg.GetLogger());
+  SEThermalCircuitCalculator calc(pc.GetLogger());
 
   double deltaT_s = 1.0 / 90;
   double inv_deltaT_s = 1.0 / deltaT_s;
@@ -292,7 +284,7 @@ void BioGearsEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::s
     outTrk.Track(time_s, m_TCircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\InternalTemperatureVariableCoreCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableCoreCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -301,25 +293,25 @@ void BioGearsEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::s
 }
 
 //This test uses a constant BMR in place of the Energy circuit and varies ambient temperature
-void BioGearsEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\EnvironmentVariableTemperatureCircuitTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(sTestDirectory + "/EnvironmentVariableTemperatureCircuitTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
 
   //Grab the circuit
-  SEThermalCircuit& m_ECircuit = bg.GetCircuits().GetExternalTemperatureCircuit();
+  SEThermalCircuit& m_ECircuit = pc.GetCircuits().GetExternalTemperatureCircuit();
 
   double testBMR = 1700;
 
-  SEThermalCircuitPath* SkinToClothing = m_ECircuit.GetPath(BGE::ExternalTemperaturePath::ExternalSkinToClothing);
-  SEThermalCircuitPath* ClothingToEnclosure = m_ECircuit.GetPath(BGE::ExternalTemperaturePath::ClothingToEnclosure);
-  SEThermalCircuitPath* GroundToEnvironment = m_ECircuit.GetPath(BGE::ExternalTemperaturePath::GroundToEnvironment);
-  SEThermalCircuitPath* ClothingToEnvironment = m_ECircuit.GetPath(BGE::ExternalTemperaturePath::ClothingToEnvironment);
-  SEThermalCircuitPath* GroundToEnclosure = m_ECircuit.GetPath(BGE::ExternalTemperaturePath::GroundToEnclosure);
+  SEThermalCircuitPath* SkinToClothing = m_ECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToClothing);
+  SEThermalCircuitPath* ClothingToEnclosure = m_ECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnclosure);
+  SEThermalCircuitPath* GroundToEnvironment = m_ECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnvironment);
+  SEThermalCircuitPath* ClothingToEnvironment = m_ECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnvironment);
+  SEThermalCircuitPath* GroundToEnclosure = m_ECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnclosure);
 
   //You must initialize these resistors or the circuit won't solve
   //These values were pulled from EnvironmentInput.txt from an older unit test
@@ -329,9 +321,9 @@ void BioGearsEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::st
   ClothingToEnclosure->GetResistanceBaseline().SetValue(0.039, HeatResistanceUnit::K_Per_W); //R Radiation
 
   // Make a new source attached to Environment circuit to take the place of the Energy circuit
-  SEThermalCircuitNode* Core = m_ECircuit.GetNode(BGE::ExternalTemperatureNode::ExternalCore);
-  SEThermalCircuitNode* Skin = m_ECircuit.GetNode(BGE::ExternalTemperatureNode::ExternalSkin);
-  SEThermalCircuitNode* Ground = m_ECircuit.GetNode(BGE::ExternalTemperatureNode::ExternalGround);
+  SEThermalCircuitNode* Core = m_ECircuit.GetNode(pulse::ExternalTemperatureNode::ExternalCore);
+  SEThermalCircuitNode* Skin = m_ECircuit.GetNode(pulse::ExternalTemperatureNode::ExternalSkin);
+  SEThermalCircuitNode* Ground = m_ECircuit.GetNode(pulse::ExternalTemperatureNode::ExternalGround);
 
   SEThermalCircuitNode& MetabolicNode = m_ECircuit.CreateNode("Metabolic");
   SEThermalCircuitPath& MetabolicPath = m_ECircuit.CreatePath(*Ground, MetabolicNode, "GroundToMetabolic");
@@ -345,9 +337,9 @@ void BioGearsEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::st
   //Set some initial temperatures
   Core->GetTemperature().SetValue(37.0, TemperatureUnit::C);
   Skin->GetTemperature().SetValue(33.0, TemperatureUnit::C);
-  SEThermalCircuitNode* Clothing = m_ECircuit.GetNode(BGE::ExternalTemperatureNode::Clothing);
+  SEThermalCircuitNode* Clothing = m_ECircuit.GetNode(pulse::ExternalTemperatureNode::Clothing);
   Clothing->GetTemperature().SetValue(30.0, TemperatureUnit::C);
-  SEThermalCircuitNode* Environment = m_ECircuit.GetNode(BGE::ExternalTemperatureNode::Ambient);
+  SEThermalCircuitNode* Environment = m_ECircuit.GetNode(pulse::ExternalTemperatureNode::Ambient);
   Environment->GetTemperature().SetValue(22.0, TemperatureUnit::C);
   MetabolicNode.GetTemperature().SetValue(22.0, TemperatureUnit::C);
 
@@ -358,7 +350,7 @@ void BioGearsEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::st
 
   std::ofstream file;
 
-  SEThermalCircuitCalculator calc(bg.GetLogger());
+  SEThermalCircuitCalculator calc(pc.GetLogger());
 
   double deltaT_s = 1.0 / 90;
   double inv_deltaT_s = 1.0 / deltaT_s;
@@ -416,7 +408,7 @@ void BioGearsEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::st
     outTrk.Track(time_s, m_ECircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\EnvironmentVariableTemperatureCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/EnvironmentVariableTemperatureCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -425,26 +417,26 @@ void BioGearsEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::st
 }
 
 //This test uses both the Environment and Energy circuits, varying both BMR and ambient temp
-void BioGearsEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
 
-  SEThermalCircuit& m_TECircuit = bg.GetCircuits().GetTemperatureCircuit();
+  SEThermalCircuit& m_TECircuit = pc.GetCircuits().GetTemperatureCircuit();
 
-  SEThermalCircuitPath* MetabolicPath = m_TECircuit.GetPath(BGE::InternalTemperaturePath::GroundToInternalCore);
-  SEThermalCircuitPath* CoreToSkin = m_TECircuit.GetPath(BGE::InternalTemperaturePath::InternalCoreToInternalSkin);
-  SEThermalCircuitPath* EnvCoreToGround = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ExternalCoreToGround);
-  SEThermalCircuitPath* EnvSkinToGround = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ExternalSkinToGround);
-  SEThermalCircuitPath* EnvSkinToClothing = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ExternalSkinToClothing);
-  SEThermalCircuitPath* ClothingToEnclosure = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ClothingToEnclosure);
-  SEThermalCircuitPath* GroundToEnvironment = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::GroundToEnvironment);
-  SEThermalCircuitPath* GroundToEnclosure = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::GroundToEnclosure);
-  SEThermalCircuitPath* ClothingToEnvironment = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ClothingToEnvironment);
+  SEThermalCircuitPath* MetabolicPath = m_TECircuit.GetPath(pulse::InternalTemperaturePath::GroundToInternalCore);
+  SEThermalCircuitPath* CoreToSkin = m_TECircuit.GetPath(pulse::InternalTemperaturePath::InternalCoreToInternalSkin);
+  SEThermalCircuitPath* EnvCoreToGround = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalCoreToGround);
+  SEThermalCircuitPath* EnvSkinToGround = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToGround);
+  SEThermalCircuitPath* EnvSkinToClothing = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToClothing);
+  SEThermalCircuitPath* ClothingToEnclosure = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnclosure);
+  SEThermalCircuitPath* GroundToEnvironment = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnvironment);
+  SEThermalCircuitPath* GroundToEnclosure = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnclosure);
+  SEThermalCircuitPath* ClothingToEnvironment = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnvironment);
 
   //You must initialize these resistors or the circuit won't solve
   //These values were pulled from EnvironmentInput.txt from an older unit test
@@ -466,13 +458,13 @@ void BioGearsEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperature
   MetabolicPath->GetNextHeatSource().SetValue(testBMR, PowerUnit::kcal_Per_day);
 
   //Set some initial temperatures
-  SEThermalCircuitNode* Core = m_TECircuit.GetNode(BGE::InternalTemperatureNode::InternalCore);
+  SEThermalCircuitNode* Core = m_TECircuit.GetNode(pulse::InternalTemperatureNode::InternalCore);
   Core->GetTemperature().SetValue(37.0, TemperatureUnit::C);
-  SEThermalCircuitNode* Skin = m_TECircuit.GetNode(BGE::InternalTemperatureNode::InternalSkin);
+  SEThermalCircuitNode* Skin = m_TECircuit.GetNode(pulse::InternalTemperatureNode::InternalSkin);
   Skin->GetTemperature().SetValue(33.0, TemperatureUnit::C);
-  SEThermalCircuitNode* Clothing = m_TECircuit.GetNode(BGE::ExternalTemperatureNode::Clothing);
+  SEThermalCircuitNode* Clothing = m_TECircuit.GetNode(pulse::ExternalTemperatureNode::Clothing);
   Clothing->GetTemperature().SetValue(30.0, TemperatureUnit::C);
-  SEThermalCircuitNode* Environment = m_TECircuit.GetNode(BGE::ExternalTemperatureNode::Ambient);
+  SEThermalCircuitNode* Environment = m_TECircuit.GetNode(pulse::ExternalTemperatureNode::Ambient);
   Environment->GetTemperature().SetValue(22.0, TemperatureUnit::C);
 
   m_TECircuit.SetNextAndCurrentFromBaselines();
@@ -480,7 +472,7 @@ void BioGearsEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperature
 
   DataTrack outTrk;
   std::ofstream file;
-  SEThermalCircuitCalculator calc(bg.GetLogger());
+  SEThermalCircuitCalculator calc(pc.GetLogger());
 
   double deltaT_s = 1.0 / 90;
   double inv_deltaT_s = 1.0 / deltaT_s;
@@ -570,7 +562,7 @@ void BioGearsEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperature
     outTrk.Track(time_s, m_TECircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -579,28 +571,28 @@ void BioGearsEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperature
 }
 
 //This test verifies that the Skin temperature drops when drastically lowering other values
-void BioGearsEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(const std::string& sTestDirectory)
+void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
+  PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
 
-  SEThermalCircuit& m_TECircuit = bg.GetCircuits().GetTemperatureCircuit();
+  SEThermalCircuit& m_TECircuit = pc.GetCircuits().GetTemperatureCircuit();
 
-  SEThermalCircuitPath* MetabolicPath = m_TECircuit.GetPath(BGE::InternalTemperaturePath::GroundToInternalCore);
-  SEThermalCircuitPath* CoreToSkin = m_TECircuit.GetPath(BGE::InternalTemperaturePath::InternalCoreToInternalSkin);
-  SEThermalCircuitPath* EnvCoreToGround = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ExternalCoreToGround);
-  SEThermalCircuitPath* EnvSkinToGround = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ExternalSkinToGround);
-  SEThermalCircuitPath* EnvSkinToClothing = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ExternalSkinToClothing);
-  SEThermalCircuitPath* ClothingToEnclosure = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ClothingToEnclosure);
-  SEThermalCircuitPath* GroundToEnvironment = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::GroundToEnvironment);
-  SEThermalCircuitPath* GroundToEnclosure = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::GroundToEnclosure);
-  SEThermalCircuitPath* ClothingToEnvironment = m_TECircuit.GetPath(BGE::ExternalTemperaturePath::ClothingToEnvironment);
+  SEThermalCircuitPath* MetabolicPath = m_TECircuit.GetPath(pulse::InternalTemperaturePath::GroundToInternalCore);
+  SEThermalCircuitPath* CoreToSkin = m_TECircuit.GetPath(pulse::InternalTemperaturePath::InternalCoreToInternalSkin);
+  SEThermalCircuitPath* EnvCoreToGround = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalCoreToGround);
+  SEThermalCircuitPath* EnvSkinToGround = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToGround);
+  SEThermalCircuitPath* EnvSkinToClothing = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToClothing);
+  SEThermalCircuitPath* ClothingToEnclosure = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnclosure);
+  SEThermalCircuitPath* GroundToEnvironment = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnvironment);
+  SEThermalCircuitPath* GroundToEnclosure = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnclosure);
+  SEThermalCircuitPath* ClothingToEnvironment = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnvironment);
 
-  SEThermalCircuitNode* Clothing = m_TECircuit.GetNode(BGE::ExternalTemperatureNode::Clothing);
+  SEThermalCircuitNode* Clothing = m_TECircuit.GetNode(pulse::ExternalTemperatureNode::Clothing);
 
   //You must initialize these resistors or the circuit won't solve
   //These values were pulled from EnvironmentInput.txt from an older unit test
@@ -627,7 +619,7 @@ void BioGearsEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(c
 
   DataTrack outTrk;
   std::ofstream file;
-  SEThermalCircuitCalculator calc(bg.GetLogger());
+  SEThermalCircuitCalculator calc(pc.GetLogger());
 
   double deltaT_s = 1.0 / 30;
   double inv_deltaT_s = 1.0 / deltaT_s;
@@ -664,7 +656,7 @@ void BioGearsEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(c
     outTrk.Track(time_s, m_TECircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "\\CombinedInternalAndEnvironmentSkinTempDropCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitOutput.txt").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -673,24 +665,24 @@ void BioGearsEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(c
 }
 
 //This test compares Environment circuit output to ISO data
-void BioGearsEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestDirectory)
+void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestDirectory)
 {
-  BioGears bg(sTestDirectory + "\\EnvironmentTemperatureInput.log");
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
-  Environment &env = (Environment&)bg.GetEnvironment();
+  PulseController pc(sTestDirectory + "/EnvironmentTemperatureInput.log");
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
+  Environment &env = (Environment&)pc.GetEnvironment();
   env.Initialize();
-  env.GetConditions().LoadFile("./environments/Standard.xml");
+  env.GetConditions().LoadFile("./environments/Standard.pba");
   env.StateChange();
 
-  bg.GetEnergy().GetCoreTemperature().SetValue(37.0, TemperatureUnit::C);
-  bg.GetEnergy().GetSweatRate().SetValue(1.5e-5, MassPerTimeUnit::kg_Per_s);
-  bg.GetRespiratory().GetRespirationRate().SetValue(16.0, FrequencyUnit::Per_min);
-  bg.GetRespiratory().GetTotalPulmonaryVentilation().SetValue(16/*RespirationRate*/ * 0.5/*TidalVolume_L*/, VolumePerTimeUnit::L_Per_min);
-  double dSkinSurfaceArea_M2 = bg.GetPatient().GetSkinSurfaceArea(AreaUnit::m2);
+  pc.GetEnergy().GetCoreTemperature().SetValue(37.0, TemperatureUnit::C);
+  pc.GetEnergy().GetSweatRate().SetValue(1.5e-5, MassPerTimeUnit::kg_Per_s);
+  pc.GetRespiratory().GetRespirationRate().SetValue(16.0, FrequencyUnit::Per_min);
+  pc.GetRespiratory().GetTotalPulmonaryVentilation().SetValue(16/*RespirationRate*/ * 0.5/*TidalVolume_L*/, VolumePerTimeUnit::L_Per_min);
+  double dSkinSurfaceArea_M2 = pc.GetPatient().GetSkinSurfaceArea(AreaUnit::m2);
 
   //Inputs
   double dAirTemperature_C[13] = { 22, 27, 27, 23.5, 23.5, 19, 23.5, 23.5, 23, 23, 22, 27, 27 };
@@ -709,11 +701,11 @@ void BioGearsEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTe
 
   double dAmbientTemperature_K = 295.4; //~72F
 
-  SEThermalCircuit &EnvironmentCircuit = bg.GetCircuits().GetExternalTemperatureCircuit();
-  SEThermalCircuitNode* ClothingNode = EnvironmentCircuit.GetNode(BGE::ExternalTemperatureNode::Clothing);  
-  SEThermalCircuitNode* EnvironmentCoreNode = EnvironmentCircuit.GetNode(BGE::ExternalTemperatureNode::ExternalCore);
-  SEThermalCircuitNode* EnvironmentSkinNode = EnvironmentCircuit.GetNode(BGE::ExternalTemperatureNode::ExternalSkin);
-  SEThermalCircuitNode* AbsoluteReferenceNode = EnvironmentCircuit.GetNode(BGE::ExternalTemperatureNode::ExternalGround);
+  SEThermalCircuit &EnvironmentCircuit = pc.GetCircuits().GetExternalTemperatureCircuit();
+  SEThermalCircuitNode* ClothingNode = EnvironmentCircuit.GetNode(pulse::ExternalTemperatureNode::Clothing);  
+  SEThermalCircuitNode* EnvironmentCoreNode = EnvironmentCircuit.GetNode(pulse::ExternalTemperatureNode::ExternalCore);
+  SEThermalCircuitNode* EnvironmentSkinNode = EnvironmentCircuit.GetNode(pulse::ExternalTemperatureNode::ExternalSkin);
+  SEThermalCircuitNode* AbsoluteReferenceNode = EnvironmentCircuit.GetNode(pulse::ExternalTemperatureNode::ExternalGround);
 
   // Create some new stuff in the circuit
   SEThermalCircuitNode& MetabolicNode = EnvironmentCircuit.CreateNode("Metabolic");
@@ -729,7 +721,7 @@ void BioGearsEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTe
   EnvironmentCircuit.StateChange();
 
   double deltaT = 1.0 / 90;
-  SEThermalCircuitCalculator calc(bg.GetLogger());
+  SEThermalCircuitCalculator calc(pc.GetLogger());
 
   for (unsigned int i = 0; i < 13; i++)
   {    
@@ -773,6 +765,6 @@ void BioGearsEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTe
     trk.Track("EvaporativeHeatLoss(W/m^2)", i, dEvaporativeHeatLoss_WPerM2[i]);
   }
 
-  std::string sOutputFile = sTestDirectory + "\\EnvironmentISO7730Comparison.txt";
+  std::string sOutputFile = sTestDirectory + "/EnvironmentISO7730Comparison.txt";
   trk.WriteTrackToFile(sOutputFile.c_str());
 }

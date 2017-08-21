@@ -1,20 +1,11 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 
 SEGasCompartment::SEGasCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {
@@ -25,36 +16,41 @@ SEGasCompartment::~SEGasCompartment()
   
 }
 
-bool SEGasCompartment::Load(const CDM::GasCompartmentData& in, SESubstanceManager& subMgr, SECircuitManager* circuits)
+void SEGasCompartment::Load(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
 {
-  if (!SEFluidCompartment::Load(in, circuits))
-    return false;
-  if (in.Child().empty())
+  SEGasCompartment::Serialize(src, dst, subMgr, circuits);
+}
+void SEGasCompartment::Serialize(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
+{
+  SEFluidCompartment::Serialize(src.fluidcompartment(), dst, circuits);
+
+  if (src.substancequantity_size() > 0)
   {
-    for (const CDM::GasSubstanceQuantityData& d : in.SubstanceQuantity())
+    for (int i=0; i<src.substancequantity_size(); i++)
     {
-      SESubstance* sub = subMgr.GetSubstance(d.Substance());
+      const cdm::GasSubstanceQuantityData& d = src.substancequantity(i);
+      SESubstance* sub = subMgr.GetSubstance(d.substancequantity().substance());
       if (sub == nullptr)
       {
-        Error("Could not find a substance for " + d.Substance());
-        return false;
+        dst.Error("Could not find a substance for " + d.substancequantity().substance());
+        continue;
       }
-      CreateSubstanceQuantity(*sub).Load(d);;
+      SEGasSubstanceQuantity::Load(d,dst.CreateSubstanceQuantity(*sub));
     }
   }
-  return true;
 }
-CDM::GasCompartmentData* SEGasCompartment::Unload()
+
+cdm::GasCompartmentData* SEGasCompartment::Unload(const SEGasCompartment& src)
 {
-  CDM::GasCompartmentData* data = new CDM::GasCompartmentData();
-  Unload(*data);
-  return data;
+  cdm::GasCompartmentData* dst = new cdm::GasCompartmentData();
+  Serialize(src,*dst);
+  return dst;
 }
-void SEGasCompartment::Unload(CDM::GasCompartmentData& data)
+void SEGasCompartment::Serialize(const SEGasCompartment& src, cdm::GasCompartmentData& dst)
 {
-  SEFluidCompartment::Unload(data);
-  for (SEGasSubstanceQuantity* subQ : m_SubstanceQuantities)
-    data.SubstanceQuantity().push_back(std::unique_ptr<CDM::GasSubstanceQuantityData>(subQ->Unload()));
+  SEFluidCompartment::Serialize(src,*dst.mutable_fluidcompartment());
+  for (SEGasSubstanceQuantity* subQ : src.m_SubstanceQuantities)
+    dst.mutable_substancequantity()->AddAllocated(SEGasSubstanceQuantity::Unload(*subQ));
 }
 
 void SEGasCompartment::StateChange()

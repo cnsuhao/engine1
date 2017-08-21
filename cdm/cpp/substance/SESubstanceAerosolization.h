@@ -1,19 +1,12 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(SubstanceAerosolizationData)
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
-class DLL_DECL SESubstanceAerosolization : public Loggable
+class CDM_DECL SESubstanceAerosolization : public Loggable
 {
 public:
 
@@ -25,15 +18,16 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool Load(const CDM::SubstanceAerosolizationData& in);
-  virtual CDM::SubstanceAerosolizationData* Unload() const;
+  static void Load(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst);
+  static cdm::SubstanceData_AerosolizationData* Unload(const SESubstanceAerosolization& src);
 protected:
-  virtual void Unload(CDM::SubstanceAerosolizationData& data) const;
+  static void Serialize(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst);
+  static void Serialize(const SESubstanceAerosolization& src, cdm::SubstanceData_AerosolizationData& dst);
 
 public:
 
   virtual bool HasBronchioleModifier() const;
-  virtual SEScalarNeg1To1& GetBronchioleModifier();
+  virtual SEScalarNegative1To1& GetBronchioleModifier();
   virtual double GetBronchioleModifier() const;
 
   virtual bool HasInflammationCoefficient() const;
@@ -46,7 +40,7 @@ public:
   
 protected: 
 
-  SEScalarNeg1To1*               m_BronchioleModifier;
+  SEScalarNegative1To1*          m_BronchioleModifier;
   SEScalar0To1*                  m_InflammationCoefficient;
   SEHistogramFractionVsLength*   m_ParticulateSizeDistribution;
 };

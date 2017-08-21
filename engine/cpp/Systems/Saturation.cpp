@@ -1,21 +1,12 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include <algorithm>
 #include "Systems/Saturation.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarInversePressure.h"
@@ -121,9 +112,9 @@ public:
   }
 };
 
-SaturationCalculator::SaturationCalculator(BioGears& bg) : Loggable(bg.GetLogger()), m_data(bg)
+SaturationCalculator::SaturationCalculator(PulseController& data) : Loggable(data.GetLogger()), m_data(data)
 {
-  Initialize(bg.GetSubstances());
+  Initialize(data.GetSubstances());
 }
 
 void SaturationCalculator::Initialize(SESubstanceManager& substances)
@@ -172,7 +163,7 @@ SaturationCalculator::~SaturationCalculator()
 
 }
 
-void SaturationCalculator::SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalarFraction& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate)
+void SaturationCalculator::SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalar0To1& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate)
 {
     m_albumin_g_per_L = AlbuminConcentration.GetValue(MassPerVolumeUnit::g_Per_L);
     m_hematocrit = Hematocrit.GetValue();
@@ -213,8 +204,8 @@ void SaturationCalculator::CalculateCarbonMonoxideSpeciesDistribution(SELiquidCo
   // First we need to know the total amount of carbon monoxide (CO) in the compartment
   double dissolvedCO_mM = m_subCOQ->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
   
-  // Recall that in %BioGears when a gas binds to hemoglobin it binds to all four sites, i.e. 4 moles CO per mole Hb.
-  // Note that fractions of hemoglobin are possible in %BioGears, so in practice the actual number of sites bound is an abstraction.
+  // Recall that in %Pulse when a gas binds to hemoglobin it binds to all four sites, i.e. 4 moles CO per mole Hb.
+  // Note that fractions of hemoglobin are possible in %Pulse, so in practice the actual number of sites bound is an abstraction.
   double totalCO_mM = dissolvedCO_mM + 4.0 * HbCO_mM;
 
   // Now we need to know the distribution of oxygen species in order to compute the distribution 

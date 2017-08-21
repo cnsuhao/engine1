@@ -1,28 +1,30 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "CommonDataModelTest.h"
-#include "utils/FileUtils.h"
-#include "Serializer.h"
-#include "compartment/SECompartmentManager.h"
 
-CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger()), m_Circuits(m_Logger)
+#include "circuit/SECircuitManager.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
+#include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SEFluidCompartment.h"
+#include "compartment/thermal/SEThermalCompartment.h"
+#include "compartment/substances/SEGasSubstanceQuantity.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "utils/FileUtils.h"
+#include "utils/testing/SETestCase.h"
+#include "utils/testing/SETestSuite.h"
+
+CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger())
 {
+  m_Circuits = new SECircuitManager(m_Logger);
   myLogger = true;
   FillFunctionMap();
 }
 
-CommonDataModelTest::CommonDataModelTest(Logger* logger) : Loggable(logger), m_Circuits(logger)
+CommonDataModelTest::CommonDataModelTest(Logger* logger) : Loggable(logger)
 {
+  m_Circuits = new SECircuitManager(m_Logger);
   myLogger = false;
   FillFunctionMap();
 }
@@ -259,25 +261,12 @@ void CommonDataModelTest::FillFunctionMap()
 
 }
 
-void CommonDataModelTest::TestCompartmentSerialization(SECompartmentManager& mgr, const std::string& fileName)
+void CommonDataModelTest::TestCompartmentSerialization(SECompartmentManager& mgr, const std::string& filename)
 {
-  ScopedFileSystemLock lock;
-
-  std::ofstream stream(fileName);
-  xml_schema::namespace_infomap map;
-  map[""].name = "uri:/mil/tatrc/physiology/datamodel";
-
-  CDM::CompartmentManager(stream, dynamic_cast<CDM::CompartmentManagerData&>(*mgr.Unload()), map);
-  stream.close();
-  std::unique_ptr<CDM::ObjectData> bind = Serializer::ReadFile(fileName, m_Logger);
-  CDM::CompartmentManagerData* data = dynamic_cast<CDM::CompartmentManagerData*>(bind.get());
-  if (data != nullptr)
+  mgr.SaveFile(filename);
+  if(!mgr.LoadFile(filename, m_Circuits))
   {
-    if (!mgr.Load(*data, &m_Circuits))
-      Error("Could not load Compartment Manager Data");
-  }
-  else
-  {
-    Error("Could not cast loaded Compartment Manager Data");
+    m_Circuits->Clear();
+    m_Circuits->Error("Unable to load file " + filename, "TestCompartmentSerialization");
   }
 }

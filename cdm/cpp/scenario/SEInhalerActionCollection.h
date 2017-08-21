@@ -1,34 +1,19 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 
 #include "substance/SESubstanceManager.h"
-#include "system/equipment/Inhaler/SEInhaler.h"
-#include "system/equipment/Inhaler/actions/SEInhalerConfiguration.h"
+#include "system/equipment/inhaler/SEInhaler.h"
+#include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 
-class DLL_DECL SEInhalerActionCollection : public Loggable
+class CDM_DECL SEInhalerActionCollection : public Loggable
 {
-public:
-
+  friend class SEActionManager;
+protected:
   SEInhalerActionCollection(SESubstanceManager&);
+public:
   ~SEInhalerActionCollection();
-
-  void Clear();
-
-  void Unload(std::vector<CDM::ActionData*>& to);
-
-  bool ProcessAction(const SEInhalerAction& action);
-  bool ProcessAction(const CDM::InhalerActionData& action);
 
   // STATE ACTION
   bool HasConfiguration() const;
@@ -36,10 +21,11 @@ public:
   void RemoveConfiguration();
   
 protected:
-  bool IsValid(const SEInhalerAction& action);
+  void Clear();
+  static void Serialize(const SEInhalerActionCollection& src, cdm::ActionListData& dst);
+  bool ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData& any);
 
   SEInhalerConfiguration*   m_Configuration;
   // General
   SESubstanceManager& m_Substances;
-  std::stringstream m_ss;
 };

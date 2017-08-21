@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarMassPerAmount.h"
@@ -24,15 +15,6 @@ const MassPerAmountUnit MassPerAmountUnit::ug_Per_mmol("ug/mmol");
 const MassPerAmountUnit MassPerAmountUnit::ug_Per_mol("ug/mol");
 const MassPerAmountUnit MassPerAmountUnit::ug_Per_ct("ug/ct");
 const MassPerAmountUnit MassPerAmountUnit::pg_Per_ct("pg/ct");
-
-CDM::ScalarMassPerAmountData* SEScalarMassPerAmount::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarMassPerAmountData* data(new CDM::ScalarMassPerAmountData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool MassPerAmountUnit::IsValidUnit(const std::string& unit)
 {
@@ -88,4 +70,26 @@ const MassPerAmountUnit& MassPerAmountUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid MassPerAmount unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarMassPerAmount::Load(const cdm::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst)
+{
+  SEScalarMassPerAmount::Serialize(src, dst);
+}
+void SEScalarMassPerAmount::Serialize(const cdm::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst)
+{
+  SEScalarQuantity<MassPerAmountUnit>::Serialize(src.scalarmassperamount(), dst);
+}
+
+cdm::ScalarMassPerAmountData* SEScalarMassPerAmount::Unload(const SEScalarMassPerAmount& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarMassPerAmountData* dst = new cdm::ScalarMassPerAmountData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarMassPerAmount::Serialize(const SEScalarMassPerAmount& src, cdm::ScalarMassPerAmountData& dst)
+{
+  SEScalarQuantity<MassPerAmountUnit>::Serialize(src, *dst.mutable_scalarmassperamount());
 }

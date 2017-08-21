@@ -1,21 +1,12 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SECardiacArrest.h"
 
 SECardiacArrest::SECardiacArrest() : SEPatientAction()
 {
-  m_State = CDM::enumOnOff::Off;
+  m_State = cdm::eSwitch::Off;
 }
 
 SECardiacArrest::~SECardiacArrest()
@@ -26,7 +17,7 @@ SECardiacArrest::~SECardiacArrest()
 void SECardiacArrest::Clear()
 {
   SEPatientAction::Clear();
-  m_State = CDM::enumOnOff::Off;
+  m_State = cdm::eSwitch::Off;
 }
 
 bool SECardiacArrest::IsValid() const
@@ -36,32 +27,30 @@ bool SECardiacArrest::IsValid() const
 
 bool SECardiacArrest::IsActive() const
 {
-  return IsValid() && m_State == CDM::enumOnOff::On;
+  return IsValid() && m_State == cdm::eSwitch::On;
 }
 
-void SECardiacArrest::SetActive(bool b)
+void SECardiacArrest::Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
 {
-  m_State = b ? CDM::enumOnOff::On : CDM::enumOnOff::Off;
+  SECardiacArrest::Serialize(src, dst);
+}
+void SECardiacArrest::Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  if (src.state() != cdm::eSwitch::NullSwitch)
+    dst.SetState(src.state());
 }
 
-bool SECardiacArrest::Load(const CDM::CardiacArrestData& in)
+cdm::CardiacArrestData* SECardiacArrest::Unload(const SECardiacArrest& src)
 {
-  SEPatientAction::Load(in);
-  m_State = in.State();
-  return true;
+  cdm::CardiacArrestData* dst = new cdm::CardiacArrestData();
+  SECardiacArrest::Serialize(src, *dst);
+  return dst;
 }
-
-CDM::CardiacArrestData* SECardiacArrest::Unload() const
+void SECardiacArrest::Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst)
 {
-  CDM::CardiacArrestData*data(new CDM::CardiacArrestData());
-  Unload(*data);
-  return data;
-}
-
-void SECardiacArrest::Unload(CDM::CardiacArrestData& data) const
-{
-  SEPatientAction::Unload(data);
-  data.State(m_State);
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_state(src.m_State);
 }
 
 void SECardiacArrest::ToString(std::ostream &str) const
@@ -69,6 +58,6 @@ void SECardiacArrest::ToString(std::ostream &str) const
   str << "Patient Action : Cardiac Arrest";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tState: " << IsActive();
+  str << "\n\tState: " << m_State;
   str << std::flush;
 }

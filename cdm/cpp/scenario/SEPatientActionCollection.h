@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "patient/SEPatient.h"
@@ -41,19 +32,13 @@ specific language governing permissions and limitations under the License.
 
 #include "system/physiology/SEGastrointestinalSystem.h"
 
-class DLL_DECL SEPatientActionCollection : public Loggable
+class CDM_DECL SEPatientActionCollection : public Loggable
 {
-public:
-
+  friend class SEActionManager;
+protected:
   SEPatientActionCollection(SESubstanceManager&);
+public:
   ~SEPatientActionCollection();
-
-  void Clear();
-
-  void Unload(std::vector<CDM::ActionData*>& to);
-
-  bool ProcessAction(const SEPatientAction& action);
-  bool ProcessAction(const CDM::PatientActionData& action);
 
   bool HasAcuteStress() const;
   SEAcuteStress* GetAcuteStress() const;
@@ -168,22 +153,24 @@ public:
   void RemoveUrinate();
 
 protected:
-  bool IsValid(const SEPatientAction& action);
+  void Clear();
+  static void Serialize(const SEPatientActionCollection& src, cdm::ActionListData& dst);
+  bool ProcessAction(const SEPatientAction& action, cdm::AnyPatientActionData& any);
 
   SEAcuteStress*                m_AcuteStress;
   SEAirwayObstruction*          m_AirwayObstruction;
   SEApnea*                      m_Apnea;
-  SEAsthmaAttack*                m_AsthmaAttack;
+  SEAsthmaAttack*               m_AsthmaAttack;
   SEBrainInjury*                m_BrainInjury;
   SEBronchoconstriction*        m_Bronchoconstriction;
   SECardiacArrest*              m_CardiacArrest;
-  SEChestCompression*            m_ChestCompression;
-  SEChestOcclusiveDressing*      m_LeftChestOcclusiveDressing;
-  SEChestOcclusiveDressing*      m_RightChestOcclusiveDressing;
+  SEChestCompression*           m_ChestCompression;
+  SEChestOcclusiveDressing*     m_LeftChestOcclusiveDressing;
+  SEChestOcclusiveDressing*     m_RightChestOcclusiveDressing;
   SEConsciousRespiration*       m_ConsciousRespiration;
   SEConsumeNutrients*           m_ConsumeNutrients;
-  SEExercise*                    m_Exercise;
-  SEIntubation*                  m_Intubation;
+  SEExercise*                   m_Exercise;
+  SEIntubation*                 m_Intubation;
   SEMechanicalVentilation*      m_MechanicalVentilation;
   SENeedleDecompression*        m_LeftNeedleDecompression;
   SENeedleDecompression*        m_RightNeedleDecompression;
@@ -199,8 +186,5 @@ protected:
   std::map<const SESubstance*,SESubstanceInfusion*>                 m_SubstanceInfusions;
   std::map<const SESubstanceCompound*,SESubstanceCompoundInfusion*> m_SubstanceCompoundInfusions;
 
-  bool AdministerSubstance(const CDM::SubstanceAdministrationData& subAdmin);
-
   SESubstanceManager& m_Substances;
-  std::stringstream m_ss;
 };

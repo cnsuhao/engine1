@@ -1,16 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
+#include "Controller/Controller.h"
+#include "utils/TimingProfile.h"
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
@@ -22,7 +15,6 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarFraction.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarFlowCompliance.h"
@@ -31,13 +23,12 @@ specific language governing permissions and limitations under the License.
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEHistogramFractionVsLength.h"
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarNeg1To1.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarLength.h"
 
-void BioGearsEngineTest::AerosolTest(const std::string& sOutputDirectory)
+void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
 {
-  m_Logger->ResetLogFile(sOutputDirectory + "\\AerosolTest.log");
+  m_Logger->ResetLogFile(sOutputDirectory + "/AerosolTest.log");
 
   SETestReport testReport = SETestReport(m_Logger);
 
@@ -201,10 +192,10 @@ void BioGearsEngineTest::AerosolTest(const std::string& sOutputDirectory)
   SizeIndependentDepositionEfficencyCoefficientsTest(zhangDispersion, zhangSubstance, 0.25368, 0.3399, 0.00013825, 0.00022882);
   DepositionFractionTest(zhangDispersion, zhangSubstance, 0.353503, 0.478626, 0.000102784, 8.27909e-05);
 
-  testReport.WriteFile(sOutputDirectory + "\\AerosolTestReport.xml");
+  testReport.WriteFile(sOutputDirectory + "/AerosolTestReport.pba");
 }
 
-void BioGearsEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestSuite& suite, SESubstance& substance, 
+void PulseEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestSuite& suite, SESubstance& substance, 
                                                                             double expectedMouthCoeff, double expectedCarinaCoeff, double expectedDeadSpaceCoeff, double expectedAlveoliCoeff)
 {  
   double PercentTolerance = 0.1;
@@ -214,8 +205,8 @@ void BioGearsEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETe
   SETestCase& tc1 = suite.CreateTestCase();
   tc1.SetName(substance.GetName()+"SIDECo");
   
-  BioGears bg(m_Logger);
-  const SizeIndependentDepositionEfficencyCoefficient& SIDECoeff =  bg.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
+  PulseController pc(m_Logger);
+  const SizeIndependentDepositionEfficencyCoefficient& SIDECoeff =  pc.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
   m_ss << "Mouth: " << SIDECoeff.GetMouth();
   Info(m_ss);
   if (GeneralMath::PercentTolerance(SIDECoeff.GetMouth(), expectedMouthCoeff) > PercentTolerance)
@@ -247,7 +238,7 @@ void BioGearsEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETe
   tc1.GetDuration().SetValue(pTimer.GetElapsedTime_s("Test"), TimeUnit::s); 
 }
 
-void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& substance,
+void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& substance,
   double expectedMouthDepFrac, double expectedCarinaDepFrac, double expectedDeadSpaceDepFrac, double expectedAlveoliDepFrac)
 {
   TimingProfile pTimer;
@@ -256,37 +247,37 @@ void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance&
   SETestCase& tc = suite.CreateTestCase();
   tc.SetName(substance.GetName()+"DepositionFraction");
 
-  BioGears bg(m_Logger);
-  bg.GetPatient().LoadFile("./patients/StandardMale.xml");
-  bg.SetupPatient();
-  bg.m_Config->EnableRenal(CDM::enumOnOff::Off);
-  bg.m_Config->EnableTissue(CDM::enumOnOff::Off);
-  bg.CreateCircuitsAndCompartments();
-  bg.GetSubstances().InitializeGasCompartments();
-  SEEnvironmentalConditions& env = bg.GetEnvironment().GetConditions(); 
-  SELiquidCompartment* ambient = bg.GetCompartments().GetLiquidCompartment(BGE::EnvironmentCompartment::Ambient);
+  PulseController pc(m_Logger);
+  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.SetupPatient();
+  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
+  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.CreateCircuitsAndCompartments();
+  pc.GetSubstances().InitializeGasCompartments();
+  SEEnvironmentalConditions& env = pc.GetEnvironment().GetConditions(); 
+  SELiquidCompartment* ambient = pc.GetCompartments().GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
 
-  SEFluidCircuit* rCircuit = &bg.GetCircuits().GetRespiratoryCircuit();
-  SEGasCompartmentGraph* rGraph = &bg.GetCompartments().GetRespiratoryGraph();
-  SELiquidCompartmentGraph* aGraph = &bg.GetCompartments().GetAerosolGraph();
+  SEFluidCircuit* rCircuit = &pc.GetCircuits().GetRespiratoryCircuit();
+  SEGasCompartmentGraph* rGraph = &pc.GetCompartments().GetRespiratoryGraph();
+  SELiquidCompartmentGraph* aGraph = &pc.GetCompartments().GetAerosolGraph();
 
-  const SizeIndependentDepositionEfficencyCoefficient& SIDECoeff = bg.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
+  const SizeIndependentDepositionEfficencyCoefficient& SIDECoeff = pc.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
   
   
-  SEFluidCircuitPath *driverPath = rCircuit->GetPath(BGE::RespiratoryPath::EnvironmentToRespiratoryMuscle);
-  SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, bg.GetLogger());
-  SELiquidTransporter ltxpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, bg.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, bg.GetLogger());
+  SEFluidCircuitPath *driverPath = rCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
+  SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, pc.GetLogger());
+  SELiquidTransporter ltxpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
+  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
 
   //Set the reference not pressure to the standard environment
   //This is needed because we're not setting the Environment during initialization in this unit test
-  rCircuit->GetNode(BGE::EnvironmentNode::Ambient)->GetNextPressure().Set(env.GetAtmosphericPressure());
-  rCircuit->GetNode(BGE::EnvironmentNode::Ambient)->GetPressure().Set(env.GetAtmosphericPressure());
+  rCircuit->GetNode(pulse::EnvironmentNode::Ambient)->GetNextPressure().Set(env.GetAtmosphericPressure());
+  rCircuit->GetNode(pulse::EnvironmentNode::Ambient)->GetPressure().Set(env.GetAtmosphericPressure());
   //Precharge the stomach to prevent negative volume
-  rCircuit->GetNode(BGE::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());
-  rCircuit->GetNode(BGE::RespiratoryNode::Stomach)->GetPressure().Set(env.GetAtmosphericPressure());
+  rCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());
+  rCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetPressure().Set(env.GetAtmosphericPressure());
 
-  SEFluidCircuitPath* Env2Mouth = rCircuit->GetPath(BGE::RespiratoryPath::EnvironmentToMouth);
+  SEFluidCircuitPath* Env2Mouth = rCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToMouth);
 
   SELiquidSubstanceQuantity* mouthParticulate = nullptr;
   SELiquidSubstanceQuantity* carinaParticulate = nullptr;
@@ -344,8 +335,8 @@ void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance&
     trk.Track("Env2Mouth_mL/s", time, Env2Mouth->GetFlow(VolumePerTimeUnit::mL_Per_s));
     
     trk.Track("TotalMouthPreParticulate_ug", time, mouthParticulate == nullptr ? 0 : mouthParticulate->GetMass(MassUnit::ug));
-    trk.Track("MouthAerosol_mL", time, aGraph->GetCompartment(BGE::PulmonaryCompartment::Mouth)->GetVolume(VolumeUnit::mL));
-    trk.Track("MouthAir_mL", time, rGraph->GetCompartment(BGE::PulmonaryCompartment::Mouth)->GetVolume(VolumeUnit::mL));
+    trk.Track("MouthAerosol_mL", time, aGraph->GetCompartment(pulse::PulmonaryCompartment::Mouth)->GetVolume(VolumeUnit::mL));
+    trk.Track("MouthAir_mL", time, rGraph->GetCompartment(pulse::PulmonaryCompartment::Mouth)->GetVolume(VolumeUnit::mL));
 
     if (i > runTime_s*0.5 / deltaT_s)
     {// Completed a cycle now start tracking Deposition and total inspired Air
@@ -353,16 +344,16 @@ void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance&
       if (mouthParticulate == nullptr)
       {
         double aerosolConcentration_g_Per_m3 = 2.5;
-        bg.GetSubstances().AddActiveSubstance(substance);
+        pc.GetSubstances().AddActiveSubstance(substance);
         ambient->GetSubstanceQuantity(substance)->GetConcentration().SetValue(aerosolConcentration_g_Per_m3, MassPerVolumeUnit::g_Per_m3);
         ambient->Balance(BalanceLiquidBy::Concentration);
 
-        mouthParticulate = aGraph->GetCompartment(BGE::PulmonaryCompartment::Mouth)->GetSubstanceQuantity(substance);
-        carinaParticulate = aGraph->GetCompartment(BGE::PulmonaryCompartment::Carina)->GetSubstanceQuantity(substance);
-        leftDeadSpaceParticulate = aGraph->GetCompartment(BGE::PulmonaryCompartment::LeftDeadSpace)->GetSubstanceQuantity(substance);
-        leftAlveoliParticulate = aGraph->GetCompartment(BGE::PulmonaryCompartment::LeftAlveoli)->GetSubstanceQuantity(substance);
-        rightDeadSpaceParticulate = aGraph->GetCompartment(BGE::PulmonaryCompartment::RightDeadSpace)->GetSubstanceQuantity(substance);
-        rightAlveoliParticulate = aGraph->GetCompartment(BGE::PulmonaryCompartment::RightAlveoli)->GetSubstanceQuantity(substance);
+        mouthParticulate = aGraph->GetCompartment(pulse::PulmonaryCompartment::Mouth)->GetSubstanceQuantity(substance);
+        carinaParticulate = aGraph->GetCompartment(pulse::PulmonaryCompartment::Carina)->GetSubstanceQuantity(substance);
+        leftDeadSpaceParticulate = aGraph->GetCompartment(pulse::PulmonaryCompartment::LeftDeadSpace)->GetSubstanceQuantity(substance);
+        leftAlveoliParticulate = aGraph->GetCompartment(pulse::PulmonaryCompartment::LeftAlveoli)->GetSubstanceQuantity(substance);
+        rightDeadSpaceParticulate = aGraph->GetCompartment(pulse::PulmonaryCompartment::RightDeadSpace)->GetSubstanceQuantity(substance);
+        rightAlveoliParticulate = aGraph->GetCompartment(pulse::PulmonaryCompartment::RightAlveoli)->GetSubstanceQuantity(substance);
 
         // Initialize to the env concentrations
         // aerosolConcentration_g_Per_m3 = 0.; // Or initialize to zero if you want.
@@ -391,12 +382,12 @@ void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance&
       if(true)
       {         
         // Calculate the deposited mass by concentration and flow
-        depositedMouthParticulate_ug = mouthParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(BGE::PulmonaryCompartment::Mouth)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetMouth();
-        depositedCarinaParticulate_ug = carinaParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(BGE::PulmonaryCompartment::Carina)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetCarina();
-        depositedLeftDeadSpaceParticulate_ug = leftDeadSpaceParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(BGE::PulmonaryCompartment::LeftDeadSpace)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetDeadSpace();
-        depositedLeftAlveoliParticulate_ug = leftAlveoliParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(BGE::PulmonaryCompartment::LeftAlveoli)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetAlveoli();
-        depositedRightDeadSpaceParticulate_ug = rightDeadSpaceParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(BGE::PulmonaryCompartment::RightDeadSpace)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetDeadSpace();
-        depositedRightAlveoliParticulate_ug = rightAlveoliParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(BGE::PulmonaryCompartment::RightAlveoli)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetAlveoli();
+        depositedMouthParticulate_ug = mouthParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(pulse::PulmonaryCompartment::Mouth)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetMouth();
+        depositedCarinaParticulate_ug = carinaParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(pulse::PulmonaryCompartment::Carina)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetCarina();
+        depositedLeftDeadSpaceParticulate_ug = leftDeadSpaceParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(pulse::PulmonaryCompartment::LeftDeadSpace)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetDeadSpace();
+        depositedLeftAlveoliParticulate_ug = leftAlveoliParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(pulse::PulmonaryCompartment::LeftAlveoli)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetAlveoli();
+        depositedRightDeadSpaceParticulate_ug = rightDeadSpaceParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(pulse::PulmonaryCompartment::RightDeadSpace)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetDeadSpace();
+        depositedRightAlveoliParticulate_ug = rightAlveoliParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*aGraph->GetCompartment(pulse::PulmonaryCompartment::RightAlveoli)->GetInFlow(VolumePerTimeUnit::mL_Per_s)*deltaT_s*SIDECoeff.GetAlveoli();
         
         // Total deposited
         totalParticulateDeposited_ug += depositedMouthParticulate_ug + depositedCarinaParticulate_ug +
@@ -423,8 +414,8 @@ void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance&
     trk.Track("MouthConcentration_ug_Per_mL", time, mouthParticulate == nullptr ? 0 : mouthParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL));
     trk.Track("CarinaConcentration_ug_Per_mL", time, carinaParticulate == nullptr ? 0 : carinaParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL));
 
-    trk.Track("MouthInFlow_mL_Per_s", time, aGraph->GetCompartment(BGE::PulmonaryCompartment::Mouth)->GetInFlow(VolumePerTimeUnit::mL_Per_s));
-    trk.Track("CarinaInFlow_mL_Per_s", time, aGraph->GetCompartment(BGE::PulmonaryCompartment::Carina)->GetInFlow(VolumePerTimeUnit::mL_Per_s));
+    trk.Track("MouthInFlow_mL_Per_s", time, aGraph->GetCompartment(pulse::PulmonaryCompartment::Mouth)->GetInFlow(VolumePerTimeUnit::mL_Per_s));
+    trk.Track("CarinaInFlow_mL_Per_s", time, aGraph->GetCompartment(pulse::PulmonaryCompartment::Carina)->GetInFlow(VolumePerTimeUnit::mL_Per_s));
 
     trk.Track("TotalInspiredAir_mL", time, totalInspiredAir_mL);
     trk.Track("TotalExspiredAir_mL", time, totalExspiredAir_mL);
@@ -445,7 +436,7 @@ void BioGearsEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance&
     trk.Track("RightAlveoliParticulateDeposited_ug", time, rightAlveoliParticulate == nullptr ? 0 : rightAlveoliParticulate->GetMassDeposited(MassUnit::ug));
 
     if (i == 0)
-      trk.CreateFile(std::string(".\\test_results\\unit_tests\\biogears\\"+substance.GetName()+"DepositionFraction.txt").c_str(), file);
+      trk.CreateFile(std::string("./test_results/unit_tests/Pulse/"+substance.GetName()+"DepositionFraction.txt").c_str(), file);
     trk.StreamTrackToFile(file);
     
     time += deltaT_s;

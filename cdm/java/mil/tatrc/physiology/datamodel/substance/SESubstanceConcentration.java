@@ -1,19 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.substance;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.Substance.SubstanceData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 
 public class SESubstanceConcentration
@@ -34,26 +25,23 @@ public class SESubstanceConcentration
       this.concentration.invalidate();
   }
   
-  public boolean load(SubstanceConcentrationData data)
+  public static void load(SubstanceData.ConcentrationData src, SESubstanceConcentration dst)
   {
-    this.reset();
-    if(data.getConcentration()!=null)
-      this.getConcentration().load(data.getConcentration());
-    return true;
+    dst.reset();
+    if(src.hasConcentration())
+      SEScalarMassPerVolume.load(src.getConcentration(), dst.getConcentration());
   }
-  
-  public SubstanceConcentrationData unload()
+  public static SubstanceData.ConcentrationData unload(SESubstanceConcentration src)
   {
-    SubstanceConcentrationData to = CDMSerializer.objFactory.createSubstanceConcentrationData();
-    unload(to);
-    return to;
+    SubstanceData.ConcentrationData.Builder dst = SubstanceData.ConcentrationData.newBuilder();
+    SESubstanceConcentration.unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(SubstanceConcentrationData to)
+  protected static void unload(SESubstanceConcentration src, SubstanceData.ConcentrationData.Builder dst)
   {
-    if(hasConcentration())
-      to.setConcentration(this.concentration.unload());    
-    to.setName(this.substance.getName());
+    dst.setName(src.substance.getName());
+    if(src.hasConcentration())
+      dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration)); 
   }
   
   public SEScalarMassPerVolume getConcentration() 

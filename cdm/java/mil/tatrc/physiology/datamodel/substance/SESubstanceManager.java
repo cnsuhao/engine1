@@ -1,25 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
- **************************************************************************************/
-
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.substance;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.SubstanceCompoundData;
+import com.google.protobuf.TextFormat.ParseException;
+
 import mil.tatrc.physiology.utilities.Log;
 
 public class SESubstanceManager 
@@ -152,64 +141,43 @@ public class SESubstanceManager
 	public void loadSubstanceDirectory()
 	{
 		clear();
-		Object bind;
-		Object cdm;
-		File dir = new File("./substances").getAbsoluteFile();
-
-		List<SubstanceCompoundData> compoundData = new ArrayList<SubstanceCompoundData>();
-		for(File sFile : dir.listFiles())
+		File sdir = new File("./substances").getAbsoluteFile();
+		for(File sFile : sdir.listFiles())
 		{
-			if(sFile.getName().endsWith(".xml"))
+			if(sFile.getName().endsWith(".pba"))
 			{
 				//Log.info("Processing file "+sFile.getName());
-				bind = CDMSerializer.readFile(sFile.getAbsoluteFile());
-				if(bind instanceof SubstanceCompoundData)
+				try
 				{
-					compoundData.add((SubstanceCompoundData)bind);
-					continue;
-				}        
-				cdm = bind2CDM(bind);
-				if(cdm instanceof SESubstance)
-					addSubstance((SESubstance)cdm);
-				else
-					Log.error("Unable to load file "+sFile.getName());        
+					SESubstance s = new SESubstance();
+					s.readFile(sFile.getAbsolutePath());
+					addSubstance(s);
+				}
+				catch(ParseException ex)
+				{
+					Log.error("Unsupport file contents in "+sFile.getAbsolutePath());
+				}      
 			}
 		}
-		for(SubstanceCompoundData cData : compoundData)
+		
+		File cdir = new File("./substances/compounds/").getAbsoluteFile();
+		File[] files = cdir.listFiles();
+		if(files!=null)
 		{
-			SESubstanceCompound c = new SESubstanceCompound();
-			c.load(cData,this);
-			addCompound(c);
-		}
-	}
-
-	protected Object bind2CDM(Object bind)
-	{
-		String cClassName="";
-		try
-		{
-			String bClassName = bind.getClass().getName();
-			bClassName=bClassName.replace("bind", "substance");
-			int s = bClassName.lastIndexOf(".");
-			int e = bClassName.indexOf("Data", s);
-			cClassName = bClassName.substring(0, s+1) + "SE" + bClassName.substring(s+1,e);
-			Class<?>  c = Class.forName(cClassName);
-			Object o = c.newInstance();
-			for(Method m : c.getMethods())
+			for(File cFile : files)
 			{
-				if(m.getName().equals("load"))
+				try
 				{
-					m.invoke(o, bind);
-					return o;
+					SESubstanceCompound c = new SESubstanceCompound();
+					c.readFile(cFile.getAbsolutePath(),this);
+					addCompound(c);
+				}
+				catch(ParseException ex)
+				{
+					Log.error("Unsupport file contents in "+cFile.getAbsolutePath());
 				}
 			}
-			Log.error("Class not found for "+cClassName);
 		}
-		catch(Exception ex)
-		{
-			Log.error("Class not found for "+cClassName,ex);
-		}
-		return null;
 	}
 
 	public static void main(String[] args)

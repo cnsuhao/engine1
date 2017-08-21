@@ -1,19 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramData;
+
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;
 
@@ -32,24 +23,21 @@ public class SEElectroCardioGram implements SESystem
       lead3ElectricPotential.invalidate();
   }
   
-  public boolean load(ElectroCardioGramData in)
+  public static void load(ElectroCardioGramData src, SEElectroCardioGram dst)
   {
-    if (in.getLead3ElectricPotential() != null)
-      getLead3ElectricPotential().load(in.getLead3ElectricPotential());
-    return true;
+    if (src.hasLead3ElectricPotential())
+      SEScalarElectricPotential.load(src.getLead3ElectricPotential(),dst.getLead3ElectricPotential());
   }
-  
-  public ElectroCardioGramData unload()
+  public static ElectroCardioGramData unload(SEElectroCardioGram src)
   {
-    ElectroCardioGramData data = CDMSerializer.objFactory.createElectroCardioGramData();
-    unload(data);
-    return data;
+    ElectroCardioGramData.Builder dst = ElectroCardioGramData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(ElectroCardioGramData data)
+  protected static void unload(SEElectroCardioGram src, ElectroCardioGramData.Builder dst)
   {
-    if (hasLead3ElectricPotential())
-      data.setLead3ElectricPotential(lead3ElectricPotential.unload());
+    if (src.hasLead3ElectricPotential())
+      dst.setLead3ElectricPotential(SEScalarElectricPotential.unload(src.lead3ElectricPotential));
   }
   
 

@@ -1,36 +1,26 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+#include <iomanip> 
 #include "properties/SEDecimalFormat.h"
-#include "bind/DecimalFormatData.hxx"
-#include "bind/enumDecimalFormat.hxx"
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 {
-  Reset();
+  Clear();
   if (dfault != nullptr) 
     Set(*dfault); 
 }
 
 SEDecimalFormat::~SEDecimalFormat()
 {
-  Reset();
+  Clear();
 }
 
-void SEDecimalFormat::Reset()
+void SEDecimalFormat::Clear()
 {
   m_Precision = 6;
-  m_Notation = DecimalNotation::Default;
+  m_Notation = cdm::DecimalFormatData_eType_SystemFormatting;
 }
 
 void SEDecimalFormat::Set(const SEDecimalFormat& f)
@@ -39,43 +29,27 @@ void SEDecimalFormat::Set(const SEDecimalFormat& f)
   m_Notation = f.m_Notation;
 }
 
-bool SEDecimalFormat::Load(const CDM::DecimalFormatData& in)
+void SEDecimalFormat::Load(const cdm::DecimalFormatData& src, SEDecimalFormat& dst)
 {
-  Reset();
-  if (in.DecimalFormat().present())
-  {
-    if (in.DecimalFormat().get() == CDM::enumDecimalFormat::FixedMantissa)
-      m_Notation = DecimalNotation::Fixed;
-    else if (in.DecimalFormat().get() == CDM::enumDecimalFormat::SignificantDigits)
-      m_Notation = DecimalNotation::Scientific;
-  }
-  if (in.Precision().present())
-    m_Precision = in.Precision().get();
-  return true;
+  SEDecimalFormat::Serialize(src, dst);
 }
-CDM::DecimalFormatData* SEDecimalFormat::Unload()
+void SEDecimalFormat::Serialize(const cdm::DecimalFormatData& src, SEDecimalFormat& dst)
 {
-  CDM::DecimalFormatData* to = new CDM::DecimalFormatData();
-  Unload(*to);
-  return to;
+  dst.Clear();
+  dst.SetNotation(src.type());
+  dst.SetPrecision(src.precision());
 }
-void SEDecimalFormat::Unload(CDM::DecimalFormatData& data) const
+
+cdm::DecimalFormatData* SEDecimalFormat::Unload(const SEDecimalFormat& src)
 {
-  data.Precision(m_Precision);
-  switch (m_Notation)
-  {
-    case DecimalNotation::Default:
-    case DecimalNotation::Fixed:
-    {
-      data.DecimalFormat(CDM::enumDecimalFormat::FixedMantissa);
-      break;
-    }
-    case DecimalNotation::Scientific:
-    {
-      data.DecimalFormat(CDM::enumDecimalFormat::SignificantDigits);
-      break;
-    }
-  }
+  cdm::DecimalFormatData* dst = new cdm::DecimalFormatData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEDecimalFormat::Serialize(const SEDecimalFormat& src, cdm::DecimalFormatData& dst)
+{
+  dst.set_type(src.m_Notation);
+  dst.set_precision((google::protobuf::uint32)src.m_Precision);
 }
 
 void SEDecimalFormat::SetPrecision(std::streamsize p)
@@ -87,11 +61,11 @@ std::streamsize SEDecimalFormat::GetPrecision()
   return m_Precision;
 }
 
-void SEDecimalFormat::SetNotation(DecimalNotation n)
+void SEDecimalFormat::SetNotation(cdm::DecimalFormatData::eType n)
 {
   m_Notation = n;
 }
-DecimalNotation SEDecimalFormat::GetNotation()
+cdm::DecimalFormatData::eType SEDecimalFormat::GetNotation()
 {
   return m_Notation;
 }
@@ -100,13 +74,16 @@ void SEDecimalFormat::SetStream(std::ofstream& s)
 {
   switch (m_Notation)
   {
-  case DecimalNotation::Default:
-    s << std::defaultfloat << std::setprecision(m_Precision);
-    break;
-  case DecimalNotation::Fixed:
+  case cdm::DecimalFormatData_eType_SystemFormatting:
     s << std::fixed << std::setprecision(m_Precision);
     break;
-  case DecimalNotation::Scientific:
+  case cdm::DecimalFormatData_eType_DefaultFloat:
+    s << std::defaultfloat << std::setprecision(m_Precision);
+    break;
+  case cdm::DecimalFormatData_eType_FixedMantissa:
+    s << std::fixed << std::setprecision(m_Precision);
+    break;
+  case cdm::DecimalFormatData_eType_SignificantDigits:
     s << std::scientific << std::setprecision(m_Precision);
   }
 }

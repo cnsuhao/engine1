@@ -1,21 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
-
-#include "../Controller/BioGearsSystem.h"
+#include "Controller/System.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
-#include "bind/BioGearsCardiovascularSystemData.hxx"
 
 class SELiquidCompartmentGraph;
 class SEFluidCircuitCalculator;
@@ -32,13 +21,13 @@ class SEFluidCircuitCalculator;
 * with other systems, if alterations are made to the cardiovascular system then the feedback will be felt in the other physiologic systems.
 *
 */
-class BIOGEARS_API Cardiovascular : public SECardiovascularSystem, public BioGearsSystem
+class PULSE_DECL Cardiovascular : public SECardiovascularSystem, public PulseSystem
 {
-  friend BioGears;
-  friend class BioGearsEngineTest;
+  friend PulseController;
+  friend class PulseEngineTest;
 protected:
-  Cardiovascular(BioGears& bg);
-  BioGears& m_data;
+  Cardiovascular(PulseController& data);
+  PulseController& m_data;
 
 public:
   virtual ~Cardiovascular();
@@ -48,11 +37,11 @@ public:
   // Set members to a stable homeostatic state
   void Initialize();
 
-  // Load a state
-  virtual bool Load(const CDM::BioGearsCardiovascularSystemData& in);
-  virtual CDM::BioGearsCardiovascularSystemData* Unload() const;
+  static void Load(const pulse::CardiovascularSystemData& src, Cardiovascular& dst);
+  static pulse::CardiovascularSystemData* Unload(const Cardiovascular& src);
 protected:
-  virtual void Unload(CDM::BioGearsCardiovascularSystemData& data) const;
+  static void Serialize(const pulse::CardiovascularSystemData& src, Cardiovascular& dst);
+  static void Serialize(const Cardiovascular& src, pulse::CardiovascularSystemData& dst);
 
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();

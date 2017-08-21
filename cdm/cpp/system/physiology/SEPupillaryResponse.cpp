@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "system/physiology/SEPupillaryResponse.h"
-#include "properties/SEScalarNeg1To1.h"
-#include "bind/ScalarNeg1To1Data.hxx"
+#include "properties/SEScalarNegative1To1.h"
 
 SEPupillaryResponse::SEPupillaryResponse(Logger* logger)
 {
@@ -45,42 +35,45 @@ const SEScalar* SEPupillaryResponse::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEPupillaryResponse::Load(const CDM::PupillaryResponseData& in)
+void SEPupillaryResponse::Load(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst)
 {
-  if (in.ReactivityModifier().present())
-    GetReactivityModifier().Load(in.ReactivityModifier().get());
-  if (in.ShapeModifier().present())
-    GetShapeModifier().Load(in.ShapeModifier().get());
-  if (in.SizeModifier().present())
-    GetSizeModifier().Load(in.SizeModifier().get());
-  return true;
+  SEPupillaryResponse::Serialize(src, dst);
+}
+void SEPupillaryResponse::Serialize(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst)
+{
+  dst.Clear();
+  if (src.has_reactivitymodifier())
+    SEScalarNegative1To1::Load(src.reactivitymodifier(), dst.GetReactivityModifier());
+  if (src.has_shapemodifier())
+    SEScalarNegative1To1::Load(src.shapemodifier(), dst.GetShapeModifier());
+  if (src.has_sizemodifier())
+    SEScalarNegative1To1::Load(src.sizemodifier(), dst.GetSizeModifier());
 }
 
-CDM::PupillaryResponseData* SEPupillaryResponse::Unload() const
+cdm::PupillaryResponseData* SEPupillaryResponse::Unload(const SEPupillaryResponse& src)
 {
-  CDM::PupillaryResponseData* data = new CDM::PupillaryResponseData();
-  Unload(*data);
-  return data;
+  cdm::PupillaryResponseData* dst = new cdm::PupillaryResponseData();
+  SEPupillaryResponse::Serialize(src, *dst);
+  return dst;
 }
-
-void SEPupillaryResponse::Unload(CDM::PupillaryResponseData& data) const
+void SEPupillaryResponse::Serialize(const SEPupillaryResponse& src, cdm::PupillaryResponseData& dst)
 {
-  if (m_ReactivityModifier != nullptr)
-    data.ReactivityModifier(std::unique_ptr<CDM::ScalarNeg1To1Data>(m_ReactivityModifier->Unload()));
-  if (m_ShapeModifier != nullptr)
-    data.ShapeModifier(std::unique_ptr<CDM::ScalarNeg1To1Data>(m_ShapeModifier->Unload()));
-  if (m_SizeModifier != nullptr)
-    data.SizeModifier(std::unique_ptr<CDM::ScalarNeg1To1Data>(m_SizeModifier->Unload()));
+  if (src.HasReactivityModifier())
+    dst.set_allocated_reactivitymodifier(SEScalarNegative1To1::Unload(*src.m_ReactivityModifier));
+  if (src.HasShapeModifier())
+    dst.set_allocated_shapemodifier(SEScalarNegative1To1::Unload(*src.m_ShapeModifier));
+  if (src.HasSizeModifier())
+    dst.set_allocated_sizemodifier(SEScalarNegative1To1::Unload(*src.m_SizeModifier));
 }
 
 bool SEPupillaryResponse::HasReactivityModifier() const
 {
   return m_ReactivityModifier == nullptr ? false : m_ReactivityModifier->IsValid();
 }
-SEScalarNeg1To1& SEPupillaryResponse::GetReactivityModifier()
+SEScalarNegative1To1& SEPupillaryResponse::GetReactivityModifier()
 {
   if (m_ReactivityModifier == nullptr)
-    m_ReactivityModifier = new SEScalarNeg1To1();
+    m_ReactivityModifier = new SEScalarNegative1To1();
   return *m_ReactivityModifier;
 }
 double SEPupillaryResponse::GetReactivityModifier() const
@@ -94,10 +87,10 @@ bool SEPupillaryResponse::HasShapeModifier() const
 {
   return m_ShapeModifier == nullptr ? false : m_ShapeModifier->IsValid();
 }
-SEScalarNeg1To1& SEPupillaryResponse::GetShapeModifier()
+SEScalarNegative1To1& SEPupillaryResponse::GetShapeModifier()
 {
   if (m_ShapeModifier == nullptr)
-    m_ShapeModifier = new SEScalarNeg1To1();
+    m_ShapeModifier = new SEScalarNegative1To1();
   return *m_ShapeModifier;
 }
 double SEPupillaryResponse::GetShapeModifier() const
@@ -111,10 +104,10 @@ bool SEPupillaryResponse::HasSizeModifier() const
 {
   return m_SizeModifier == nullptr ? false : m_SizeModifier->IsValid();
 }
-SEScalarNeg1To1& SEPupillaryResponse::GetSizeModifier()
+SEScalarNegative1To1& SEPupillaryResponse::GetSizeModifier()
 {
   if (m_SizeModifier == nullptr)
-    m_SizeModifier = new SEScalarNeg1To1();
+    m_SizeModifier = new SEScalarNegative1To1();
   return *m_SizeModifier;
 }
 double SEPupillaryResponse::GetSizeModifier() const

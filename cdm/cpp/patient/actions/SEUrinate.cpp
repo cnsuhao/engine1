@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEUrinate.h"
@@ -38,22 +29,24 @@ bool SEUrinate::IsActive() const
   return IsValid();
 }
 
-bool SEUrinate::Load(const CDM::UrinateData& in)
+void SEUrinate::Load(const cdm::UrinateData& src, SEUrinate& dst)
 {
-  SEPatientAction::Load(in);
-  return true;
+  SEUrinate::Serialize(src, dst);
+}
+void SEUrinate::Serialize(const cdm::UrinateData& src, SEUrinate& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
 }
 
-CDM::UrinateData* SEUrinate::Unload() const
+cdm::UrinateData* SEUrinate::Unload(const SEUrinate& src)
 {
-  CDM::UrinateData*data(new CDM::UrinateData());
-  Unload(*data);
-  return data;
+  cdm::UrinateData* dst = new cdm::UrinateData();
+  SEUrinate::Serialize(src, *dst);
+  return dst;
 }
-
-void SEUrinate::Unload(CDM::UrinateData& data) const
+void SEUrinate::Serialize(const SEUrinate& src, cdm::UrinateData& dst)
 {
-  SEPatientAction::Unload(data);
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
 }
 
 void SEUrinate::ToString(std::ostream &str) const

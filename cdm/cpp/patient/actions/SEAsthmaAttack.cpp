@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEAsthmaAttack.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/Scalar0To1Data.hxx"
 
 SEAsthmaAttack::SEAsthmaAttack() : SEPatientAction()
 {
@@ -41,25 +31,28 @@ bool SEAsthmaAttack::IsActive() const
   return IsValid() ? !m_Severity->IsZero() : false;
 }
 
-bool SEAsthmaAttack::Load(const CDM::AsthmaAttackData& in)
+void SEAsthmaAttack::Load(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
 {
-  SEPatientAction::Load(in);
-  GetSeverity().Load(in.Severity());
-  return true;
+  SEAsthmaAttack::Serialize(src, dst);
+}
+void SEAsthmaAttack::Serialize(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
+{
+  SEPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_severity())
+    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
 
-CDM::AsthmaAttackData* SEAsthmaAttack::Unload() const
+cdm::AsthmaAttackData* SEAsthmaAttack::Unload(const SEAsthmaAttack& src)
 {
-  CDM::AsthmaAttackData*data(new CDM::AsthmaAttackData());
-  Unload(*data);
-  return data;
+  cdm::AsthmaAttackData* dst = new cdm::AsthmaAttackData();
+  SEAsthmaAttack::Serialize(src, *dst);
+  return dst;
 }
-
-void SEAsthmaAttack::Unload(CDM::AsthmaAttackData& data) const
+void SEAsthmaAttack::Serialize(const SEAsthmaAttack& src, cdm::AsthmaAttackData& dst)
 {
-  SEPatientAction::Unload(data);
-  if(m_Severity!=nullptr)
-    data.Severity(std::unique_ptr<CDM::Scalar0To1Data>(m_Severity->Unload()));
+  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 

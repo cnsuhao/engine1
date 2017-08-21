@@ -1,25 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
-#include "BioGearsEngineHowTo.h"
+#include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
-#include "engine/PhysiologyEngineTrack.h"
+#include "engine/SEEngineTracker.h"
 #include "scenario/SEScenario.h"
 #include "scenario/SEScenarioInitialParameters.h"
 #include "scenario/SEAdvanceTime.h"
 #include "properties/SEScalarTime.h"
-#include "Serializer.h"
-#include "bind/DataRequestsData.hxx"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -31,19 +20,19 @@ specific language governing permissions and limitations under the License.
 void HowToScenarioBase()
 {
   // Create our engine
-  std::unique_ptr<PhysiologyEngine> bg = CreateBioGearsEngine("HowToScenarioBase.log");
-  bg->GetLogger()->Info("HowToScenarioBase");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToScenarioBase.log");
+  pe->GetLogger()->Info("HowToScenarioBase");
   
   
   //Let's read the scenario we want to base this engine on
-  SEScenario sce(bg->GetSubstanceManager());
-  sce.LoadFile("YourScenario.xml");
+  SEScenario sce(pe->GetSubstanceManager());
+  sce.LoadFile("YourScenario.pba");
 
   if (sce.HasEngineStateFile())
   {
-    if (!bg->LoadState(sce.GetEngineStateFile()))
+    if (!pe->LoadStateFile(sce.GetEngineStateFile()))
     {
-      bg->GetLogger()->Error("Could not load state, check the error");
+      pe->GetLogger()->Error("Could not load state, check the error");
       return;
     }
   }
@@ -55,9 +44,9 @@ void HowToScenarioBase()
       std::vector<const SECondition*> conditions;
       for (SECondition* c : sip.GetConditions())
         conditions.push_back(c);// Copy to const
-      if (!bg->InitializeEngine(sip.GetPatientFile(), &conditions, &sip.GetConfiguration()))
+      if (!pe->InitializeEngine(sip.GetPatientFile(), &conditions))
       {
-        bg->GetLogger()->Error("Could not load state, check the error");
+        pe->GetLogger()->Error("Could not load state, check the error");
         return;
       }
     }
@@ -66,33 +55,30 @@ void HowToScenarioBase()
       std::vector<const SECondition*> conditions;
       for (SECondition* c : sip.GetConditions())
         conditions.push_back(c);// Copy to const
-      if (!bg->InitializeEngine(sip.GetPatient(), &conditions, &sip.GetConfiguration()))
+      if (!pe->InitializeEngine(sip.GetPatient(), &conditions))
       {
-        bg->GetLogger()->Error("Could not load state, check the error");
+        pe->GetLogger()->Error("Could not load state, check the error");
         return;
       }
     }
   }
-  CDM::DataRequestsData* drData;
-  // NOTE : You can just make a DataRequests xml file that holds only data requests
+
+  // Make a copy of the data requests, note this clears out data requests from the engine
+  // This will clear out the data requests if any exist in the DataRequestManager
+  pe->GetEngineTracker()->GetDataRequestManager().SaveFile("YourDataRequestsFile.pba");
+
+  // NOTE : You can just make a DataRequests file that holds only data requests
   // And serialize that in instead of a sceanrio file, if all you want is a consistent
-  // set of data requests for all your scenarios
-  std::unique_ptr<CDM::ObjectData> obj = Serializer::ReadFile("YourDataRequestsFile.xml", bg->GetLogger());
-  drData = dynamic_cast<CDM::DataRequestsData*>(obj.get());
-  bg->GetEngineTrack()->GetDataRequestManager().Load(*drData, bg->GetSubstanceManager());
+  // This will clear out any requests already in the object
+  pe->GetEngineTracker()->GetDataRequestManager().LoadFile("YourDataRequestsFile.pba", pe->GetSubstanceManager());
   // Don't need to delete drData as obj is wrapped in a unique_ptr
  
-  // Make a copy of the data requests, not this clears out data requests from the engine
-  // This will clear out the data requests if any exist in the DataRequestManager
-  drData = sce.GetDataRequestManager().Unload();
-  bg->GetEngineTrack()->GetDataRequestManager().Load(*drData, bg->GetSubstanceManager());
-  delete drData;
 
-  if (!bg->GetEngineTrack()->GetDataRequestManager().HasResultsFilename())
-    bg->GetEngineTrack()->GetDataRequestManager().SetResultsFilename("./ResultsFileName.txt");
+  if (!pe->GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
+    pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./ResultsFileName.txt");
 
   // Let's request data do be tracked that is in the scenario  
-  HowToTracker tracker(*bg);
+  HowToTracker tracker(*pe);
   SEAdvanceTime* adv;
   // Now run the scenario actions
   for (SEAction* a : sce.GetActions())
@@ -100,9 +86,9 @@ void HowToScenarioBase()
     // We want the tracker to process an advance time action so it will write each time step of data to our track file
     adv = dynamic_cast<SEAdvanceTime*>(a);
     if (adv != nullptr)
-      tracker.AdvanceModelTime(adv->GetTime(TimeUnit::s));// you could just do bg->AdvanceModelTime without tracking timesteps
+      tracker.AdvanceModelTime(adv->GetTime(TimeUnit::s));// you could just do pe->AdvanceModelTime without tracking timesteps
     else
-      bg->ProcessAction(*a);
+      pe->ProcessAction(*a);
   }
 
   // At this point your engine is where you want it to be

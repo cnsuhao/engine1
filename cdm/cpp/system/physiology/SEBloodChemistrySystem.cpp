@@ -1,32 +1,16 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarAmountPerVolume.h"
-#include "bind/ScalarAmountPerVolumeData.hxx"
-#include "properties/SEScalarFraction.h"
-#include "bind/ScalarFractionData.hxx"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
-#include "bind/ScalarMassData.hxx"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/ScalarMassPerVolumeData.hxx"
 #include "properties/SEScalarVolume.h"
-#include "bind/ScalarVolumeData.hxx"
 #include "properties/SEScalarPressure.h"
-#include "bind/ScalarPressureData.hxx"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
-#include "bind/ScalarHeatCapacitancePerMassData.hxx"
 
 SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger)
 {
@@ -129,7 +113,7 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
   if (name.compare("RedBloodCellCount") == 0)
     return &GetRedBloodCellCount();
   if (name.compare("ShuntFraction") == 0)
-    return &GetShuntFraction();
+    return &GetShuntFraction();  
   if (name.compare("StrongIonDifference") == 0)
     return &GetStrongIonDifference();
   if (name.compare("TotalProteinConcentration") == 0)
@@ -139,8 +123,7 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
   if (name.compare("VolumeFractionNeutralLipidInPlasma") == 0)
     return &GetVolumeFractionNeutralLipidInPlasma();
   if (name.compare("WhiteBloodCellCount") == 0)
-    return &GetWhiteBloodCellCount();
-  
+    return &GetWhiteBloodCellCount();  
   if (name.compare("ArterialCarbonDioxidePressure") == 0)
     return &GetArterialCarbonDioxidePressure();
   if (name.compare("ArterialOxygenPressure") == 0)
@@ -161,135 +144,133 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEBloodChemistrySystem::Load(const CDM::BloodChemistrySystemData& in)
+void SEBloodChemistrySystem::Load(const cdm::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {
-  SESystem::Load(in);
+  SEBloodChemistrySystem::Serialize(src, dst);
+}
+void SEBloodChemistrySystem::Serialize(const cdm::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
+{
+  dst.Clear();
+  if (src.has_blooddensity())
+    SEScalarMassPerVolume::Load(src.blooddensity(), dst.GetBloodDensity());
+  if (src.has_bloodph())
+    SEScalar::Load(src.bloodph(), dst.GetBloodPH());
+  if (src.has_bloodspecificheat())
+    SEScalarHeatCapacitancePerMass::Load(src.bloodspecificheat(), dst.GetBloodSpecificHeat());
+  if (src.has_bloodureanitrogenconcentration())
+    SEScalarMassPerVolume::Load(src.bloodureanitrogenconcentration(), dst.GetBloodUreaNitrogenConcentration());
+  if (src.has_carbondioxidesaturation())
+    SEScalar0To1::Load(src.carbondioxidesaturation(), dst.GetCarbonDioxideSaturation());
+  if (src.has_carbonmonoxidesaturation())
+    SEScalar0To1::Load(src.carbonmonoxidesaturation(), dst.GetCarbonMonoxideSaturation());
+  if (src.has_hematocrit())
+    SEScalar0To1::Load(src.hematocrit(), dst.GetHematocrit());
+  if (src.has_hemoglobincontent())
+    SEScalarMass::Load(src.hemoglobincontent(), dst.GetHemoglobinContent());
+  if (src.has_oxygensaturation())
+    SEScalar0To1::Load(src.oxygensaturation(), dst.GetOxygenSaturation());
+  if (src.has_phosphate())
+    SEScalarAmountPerVolume::Load(src.phosphate(), dst.GetPhosphate());
+  if (src.has_plasmavolume())
+    SEScalarVolume::Load(src.plasmavolume(), dst.GetPlasmaVolume());
+  if (src.has_pulseoximetry())
+    SEScalar0To1::Load(src.pulseoximetry(), dst.GetPulseOximetry());
+  if (src.has_redbloodcellcount())
+    SEScalarAmountPerVolume::Load(src.redbloodcellcount(), dst.GetRedBloodCellCount());
+  if (src.has_shuntfraction())
+    SEScalar0To1::Load(src.shuntfraction(), dst.GetShuntFraction());
+  if (src.has_strongiondifference())
+    SEScalarAmountPerVolume::Load(src.strongiondifference(), dst.GetStrongIonDifference());
+  if (src.has_totalproteinconcentration())
+    SEScalarMassPerVolume::Load(src.totalproteinconcentration(), dst.GetTotalProteinConcentration());
+  if (src.has_volumefractionneutralphospholipidinplasma())
+    SEScalar0To1::Load(src.volumefractionneutralphospholipidinplasma(), dst.GetVolumeFractionNeutralPhospholipidInPlasma());
+  if (src.has_volumefractionneutrallipidinplasma())
+    SEScalar0To1::Load(src.volumefractionneutrallipidinplasma(), dst.GetVolumeFractionNeutralLipidInPlasma());
+  if (src.has_whitebloodcellcount())
+    SEScalarAmountPerVolume::Load(src.whitebloodcellcount(), dst.GetWhiteBloodCellCount());
 
-  if (in.BloodDensity().present())
-    GetBloodDensity().Load(in.BloodDensity().get());
-  if (in.BloodPH().present())
-    GetBloodPH().Load(in.BloodPH().get());
-  if (in.BloodSpecificHeat().present())
-    GetBloodSpecificHeat().Load(in.BloodSpecificHeat().get());
-  if (in.BloodUreaNitrogenConcentration().present())
-    GetBloodUreaNitrogenConcentration().Load(in.BloodUreaNitrogenConcentration().get());
-  if (in.CarbonDioxideSaturation().present())
-    GetCarbonDioxideSaturation().Load(in.CarbonDioxideSaturation().get());
-  if (in.CarbonMonoxideSaturation().present())
-    GetCarbonMonoxideSaturation().Load(in.CarbonMonoxideSaturation().get());
-  if (in.Hematocrit().present())
-    GetHematocrit().Load(in.Hematocrit().get());
-  if(in.HemoglobinContent().present())
-    GetHemoglobinContent().Load(in.HemoglobinContent().get());
-  if(in.OxygenSaturation().present())
-    GetOxygenSaturation().Load(in.OxygenSaturation().get()); 
-  if (in.Phosphate().present())
-    GetPhosphate().Load(in.Phosphate().get());
-  if (in.PlasmaVolume().present())
-    GetPlasmaVolume().Load(in.PlasmaVolume().get());
-  if (in.PulseOximetry().present())
-    GetPulseOximetry().Load(in.PulseOximetry().get());
-  if (in.RedBloodCellCount().present())
-    GetRedBloodCellCount().Load(in.RedBloodCellCount().get());
-  if(in.ShuntFraction().present())
-    GetShuntFraction().Load(in.ShuntFraction().get());
-  if (in.StrongIonDifference().present())
-    GetStrongIonDifference().Load(in.StrongIonDifference().get());
-  if (in.TotalProteinConcentration().present())
-    GetTotalProteinConcentration().Load(in.TotalProteinConcentration().get());
-  if (in.VolumeFractionNeutralPhospholipidInPlasma().present())
-    GetVolumeFractionNeutralPhospholipidInPlasma().Load(in.VolumeFractionNeutralPhospholipidInPlasma().get());
-  if (in.VolumeFractionNeutralLipidInPlasma().present())
-    GetVolumeFractionNeutralLipidInPlasma().Load(in.VolumeFractionNeutralLipidInPlasma().get());
-  if (in.WhiteBloodCellCount().present())
-    GetWhiteBloodCellCount().Load(in.WhiteBloodCellCount().get());
-  
-  if (in.ArterialCarbonDioxidePressure().present())
-    GetArterialCarbonDioxidePressure().Load(in.ArterialCarbonDioxidePressure().get());
-  if (in.ArterialOxygenPressure().present())
-    GetArterialOxygenPressure().Load(in.ArterialOxygenPressure().get());
-  if (in.PulmonaryArterialCarbonDioxidePressure().present())
-    GetPulmonaryArterialCarbonDioxidePressure().Load(in.PulmonaryArterialCarbonDioxidePressure().get());
-  if (in.PulmonaryArterialOxygenPressure().present())
-    GetPulmonaryArterialOxygenPressure().Load(in.PulmonaryArterialOxygenPressure().get());
-  if (in.PulmonaryVenousOxygenPressure().present())
-    GetPulmonaryVenousOxygenPressure().Load(in.PulmonaryVenousOxygenPressure().get());
-  if (in.PulmonaryVenousCarbonDioxidePressure().present())
-    GetPulmonaryVenousCarbonDioxidePressure().Load(in.PulmonaryVenousCarbonDioxidePressure().get());
-  if (in.VenousCarbonDioxidePressure().present())
-    GetVenousCarbonDioxidePressure().Load(in.VenousCarbonDioxidePressure().get());
-  if (in.VenousOxygenPressure().present())
-    GetVenousOxygenPressure().Load(in.VenousOxygenPressure().get());
-
-  return true;
+  if (src.has_arterialcarbondioxidepressure())
+    SEScalarPressure::Load(src.arterialcarbondioxidepressure(), dst.GetArterialCarbonDioxidePressure());
+  if (src.has_arterialoxygenpressure())
+    SEScalarPressure::Load(src.arterialoxygenpressure(), dst.GetArterialOxygenPressure());
+  if (src.has_pulmonaryarterialcarbondioxidepressure())
+    SEScalarPressure::Load(src.pulmonaryarterialcarbondioxidepressure(), dst.GetPulmonaryArterialCarbonDioxidePressure());
+  if (src.has_pulmonaryarterialoxygenpressure())
+    SEScalarPressure::Load(src.pulmonaryarterialoxygenpressure(), dst.GetPulmonaryArterialOxygenPressure());
+  if (src.has_pulmonaryvenousoxygenpressure())
+    SEScalarPressure::Load(src.pulmonaryvenousoxygenpressure(), dst.GetPulmonaryVenousOxygenPressure());
+  if (src.has_pulmonaryvenouscarbondioxidepressure())
+    SEScalarPressure::Load(src.pulmonaryvenouscarbondioxidepressure(), dst.GetPulmonaryVenousCarbonDioxidePressure());
+  if (src.has_venouscarbondioxidepressure())
+    SEScalarPressure::Load(src.venouscarbondioxidepressure(), dst.GetVenousCarbonDioxidePressure());
+  if (src.has_venousoxygenpressure())
+    SEScalarPressure::Load(src.venousoxygenpressure(), dst.GetVenousOxygenPressure());
 }
 
-CDM::BloodChemistrySystemData* SEBloodChemistrySystem::Unload() const
+cdm::BloodChemistrySystemData* SEBloodChemistrySystem::Unload(const SEBloodChemistrySystem& src)
 {
-  CDM::BloodChemistrySystemData* data = new CDM::BloodChemistrySystemData();
-  Unload(*data);
-  return data;
+  cdm::BloodChemistrySystemData* dst = new cdm::BloodChemistrySystemData();
+  SEBloodChemistrySystem::Serialize(src, *dst);
+  return dst;
 }
-
-void SEBloodChemistrySystem::Unload(CDM::BloodChemistrySystemData& data) const
+void SEBloodChemistrySystem::Serialize(const SEBloodChemistrySystem& src, cdm::BloodChemistrySystemData& dst)
 {
-  SESystem::Unload(data);
+  if (src.HasBloodDensity())
+    dst.set_allocated_blooddensity(SEScalarMassPerVolume::Unload(*src.m_BloodDensity));
+  if (src.HasBloodPH())
+    dst.set_allocated_bloodph(SEScalar::Unload(*src.m_BloodPH));
+  if (src.HasBloodSpecificHeat())
+    dst.set_allocated_bloodspecificheat(SEScalarHeatCapacitancePerMass::Unload(*src.m_BloodSpecificHeat));
+  if (src.HasBloodUreaNitrogenConcentration())
+    dst.set_allocated_bloodureanitrogenconcentration(SEScalarMassPerVolume::Unload(*src.m_BloodUreaNitrogenConcentration));
+  if (src.HasCarbonDioxideSaturation())
+    dst.set_allocated_carbondioxidesaturation(SEScalar0To1::Unload(*src.m_CarbonDioxideSaturation));
+  if (src.HasCarbonMonoxideSaturation())
+    dst.set_allocated_carbonmonoxidesaturation(SEScalar0To1::Unload(*src.m_CarbonMonoxideSaturation));
+  if (src.HasHematocrit())
+    dst.set_allocated_hematocrit(SEScalar0To1::Unload(*src.m_Hematocrit));
+  if (src.HasHemoglobinContent())
+    dst.set_allocated_hemoglobincontent(SEScalarMass::Unload(*src.m_HemoglobinContent));
+  if (src.HasOxygenSaturation())
+    dst.set_allocated_oxygensaturation(SEScalar0To1::Unload(*src.m_OxygenSaturation));
+  if (src.HasPhosphate())
+    dst.set_allocated_phosphate(SEScalarAmountPerVolume::Unload(*src.m_Phosphate));
+  if (src.HasPlasmaVolume())
+    dst.set_allocated_plasmavolume(SEScalarVolume::Unload(*src.m_PlasmaVolume));
+  if (src.HasPulseOximetry())
+    dst.set_allocated_pulseoximetry(SEScalar0To1::Unload(*src.m_PulseOximetry));
+  if (src.HasRedBloodCellCount())
+    dst.set_allocated_redbloodcellcount(SEScalarAmountPerVolume::Unload(*src.m_RedBloodCellCount));
+  if (src.HasShuntFraction())
+    dst.set_allocated_shuntfraction(SEScalar0To1::Unload(*src.m_ShuntFraction));
+  if (src.HasStrongIonDifference())
+    dst.set_allocated_strongiondifference(SEScalarAmountPerVolume::Unload(*src.m_StrongIonDifference));
+  if (src.HasTotalProteinConcentration())
+    dst.set_allocated_totalproteinconcentration(SEScalarMassPerVolume::Unload(*src.m_TotalProteinConcentration));
+  if (src.HasVolumeFractionNeutralPhospholipidInPlasma())
+    dst.set_allocated_volumefractionneutralphospholipidinplasma(SEScalar0To1::Unload(*src.m_VolumeFractionNeutralPhospholipidInPlasma));
+  if (src.HasVolumeFractionNeutralLipidInPlasma())
+    dst.set_allocated_volumefractionneutrallipidinplasma(SEScalar0To1::Unload(*src.m_VolumeFractionNeutralLipidInPlasma));
+  if (src.HasWhiteBloodCellCount())
+    dst.set_allocated_whitebloodcellcount(SEScalarAmountPerVolume::Unload(*src.m_WhiteBloodCellCount));
 
-  if (m_BloodDensity != nullptr)
-    data.BloodDensity(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_BloodDensity->Unload()));
-  if (m_BloodPH != nullptr)
-    data.BloodPH(std::unique_ptr<CDM::ScalarData>(m_BloodPH->Unload())); 
-  if (m_BloodSpecificHeat != nullptr)
-    data.BloodSpecificHeat(std::unique_ptr<CDM::ScalarHeatCapacitancePerMassData>(m_BloodSpecificHeat->Unload()));
-  if (m_BloodUreaNitrogenConcentration != nullptr)
-    data.BloodUreaNitrogenConcentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_BloodUreaNitrogenConcentration->Unload()));
-  if (m_CarbonDioxideSaturation != nullptr)
-    data.CarbonDioxideSaturation(std::unique_ptr<CDM::ScalarFractionData>(m_CarbonDioxideSaturation->Unload()));
-  if (m_CarbonMonoxideSaturation != nullptr)
-    data.CarbonMonoxideSaturation(std::unique_ptr<CDM::ScalarFractionData>(m_CarbonMonoxideSaturation->Unload()));
-  if (m_Hematocrit != nullptr)
-    data.Hematocrit(std::unique_ptr<CDM::ScalarFractionData>(m_Hematocrit->Unload())); 
-  if(m_HemoglobinContent!=nullptr)
-    data.HemoglobinContent(std::unique_ptr<CDM::ScalarMassData>(m_HemoglobinContent->Unload()));
-  if(m_OxygenSaturation!=nullptr)
-    data.OxygenSaturation(std::unique_ptr<CDM::ScalarFractionData>(m_OxygenSaturation->Unload())); 
-  if (m_Phosphate != nullptr)
-    data.Phosphate(std::unique_ptr<CDM::ScalarAmountPerVolumeData>(m_Phosphate->Unload()));
-  if (m_PlasmaVolume != nullptr)
-    data.PlasmaVolume(std::unique_ptr<CDM::ScalarVolumeData>(m_PlasmaVolume->Unload()));
-  if (m_PulseOximetry != nullptr)
-    data.PulseOximetry(std::unique_ptr<CDM::ScalarFractionData>(m_PulseOximetry->Unload()));
-  if (m_RedBloodCellCount != nullptr)
-    data.RedBloodCellCount(std::unique_ptr<CDM::ScalarAmountPerVolumeData>(m_RedBloodCellCount->Unload()));
-  if(m_ShuntFraction!=nullptr)
-    data.ShuntFraction(std::unique_ptr<CDM::ScalarFractionData>(m_ShuntFraction->Unload())); 
-  if (m_StrongIonDifference != nullptr)
-    data.StrongIonDifference(std::unique_ptr<CDM::ScalarAmountPerVolumeData>(m_StrongIonDifference->Unload()));
-  if (m_TotalProteinConcentration != nullptr)
-    data.TotalProteinConcentration(std::unique_ptr<CDM::ScalarMassPerVolumeData>(m_TotalProteinConcentration->Unload()));
-  if (m_VolumeFractionNeutralPhospholipidInPlasma != nullptr)
-    data.VolumeFractionNeutralPhospholipidInPlasma(std::unique_ptr<CDM::ScalarFractionData>(m_VolumeFractionNeutralPhospholipidInPlasma->Unload()));
-  if (m_VolumeFractionNeutralLipidInPlasma != nullptr)
-    data.VolumeFractionNeutralLipidInPlasma(std::unique_ptr<CDM::ScalarFractionData>(m_VolumeFractionNeutralLipidInPlasma->Unload()));
-  if (m_WhiteBloodCellCount != nullptr)
-    data.WhiteBloodCellCount(std::unique_ptr<CDM::ScalarAmountPerVolumeData>(m_WhiteBloodCellCount->Unload()));
-
-  if (m_ArterialCarbonDioxidePressure != nullptr)
-    data.ArterialCarbonDioxidePressure(std::unique_ptr<CDM::ScalarPressureData>(m_ArterialCarbonDioxidePressure->Unload()));
-  if (m_ArterialOxygenPressure != nullptr)
-    data.ArterialOxygenPressure(std::unique_ptr<CDM::ScalarPressureData>(m_ArterialOxygenPressure->Unload()));
-  if (m_PulmonaryArterialCarbonDioxidePressure != nullptr)
-    data.PulmonaryArterialCarbonDioxidePressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulmonaryArterialCarbonDioxidePressure->Unload()));
-  if (m_PulmonaryArterialOxygenPressure != nullptr)
-    data.PulmonaryArterialOxygenPressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulmonaryArterialOxygenPressure->Unload()));
-  if (m_PulmonaryVenousCarbonDioxidePressure != nullptr)
-    data.PulmonaryVenousCarbonDioxidePressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulmonaryVenousCarbonDioxidePressure->Unload()));
-  if (m_PulmonaryVenousOxygenPressure != nullptr)
-    data.PulmonaryVenousOxygenPressure(std::unique_ptr<CDM::ScalarPressureData>(m_PulmonaryVenousOxygenPressure->Unload()));
-  if (m_VenousCarbonDioxidePressure != nullptr)
-    data.VenousCarbonDioxidePressure(std::unique_ptr<CDM::ScalarPressureData>(m_VenousCarbonDioxidePressure->Unload()));
-  if (m_VenousOxygenPressure != nullptr)
-    data.VenousOxygenPressure(std::unique_ptr<CDM::ScalarPressureData>(m_VenousOxygenPressure->Unload()));
+  if (src.HasArterialCarbonDioxidePressure())
+    dst.set_allocated_arterialcarbondioxidepressure(SEScalarPressure::Unload(*src.m_ArterialCarbonDioxidePressure));
+  if (src.HasArterialOxygenPressure())
+    dst.set_allocated_arterialoxygenpressure(SEScalarPressure::Unload(*src.m_ArterialOxygenPressure));
+  if (src.HasPulmonaryArterialCarbonDioxidePressure())
+    dst.set_allocated_pulmonaryarterialcarbondioxidepressure(SEScalarPressure::Unload(*src.m_PulmonaryArterialCarbonDioxidePressure));
+  if (src.HasPulmonaryArterialOxygenPressure())
+    dst.set_allocated_pulmonaryarterialoxygenpressure(SEScalarPressure::Unload(*src.m_PulmonaryArterialOxygenPressure));
+  if (src.HasPulmonaryVenousCarbonDioxidePressure())
+    dst.set_allocated_pulmonaryvenouscarbondioxidepressure(SEScalarPressure::Unload(*src.m_PulmonaryVenousCarbonDioxidePressure));
+  if (src.HasPulmonaryVenousOxygenPressure())
+    dst.set_allocated_pulmonaryvenousoxygenpressure(SEScalarPressure::Unload(*src.m_PulmonaryVenousOxygenPressure));
+  if (src.HasVenousCarbonDioxidePressure())
+    dst.set_allocated_venouscarbondioxidepressure(SEScalarPressure::Unload(*src.m_VenousCarbonDioxidePressure));
+  if (src.HasVenousOxygenPressure())
+    dst.set_allocated_venousoxygenpressure(SEScalarPressure::Unload(*src.m_VenousOxygenPressure));
 }
 
 bool SEBloodChemistrySystem::HasBloodDensity() const
@@ -364,10 +345,10 @@ bool SEBloodChemistrySystem::HasCarbonDioxideSaturation() const
 {
   return m_CarbonDioxideSaturation == nullptr ? false : m_CarbonDioxideSaturation->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetCarbonDioxideSaturation()
+SEScalar0To1& SEBloodChemistrySystem::GetCarbonDioxideSaturation()
 {
   if (m_CarbonDioxideSaturation == nullptr)
-    m_CarbonDioxideSaturation = new SEScalarFraction();
+    m_CarbonDioxideSaturation = new SEScalar0To1();
   return *m_CarbonDioxideSaturation;
 }
 double SEBloodChemistrySystem::GetCarbonDioxideSaturation() const
@@ -381,10 +362,10 @@ bool SEBloodChemistrySystem::HasCarbonMonoxideSaturation() const
 {
   return m_CarbonMonoxideSaturation == nullptr ? false : m_CarbonMonoxideSaturation->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetCarbonMonoxideSaturation()
+SEScalar0To1& SEBloodChemistrySystem::GetCarbonMonoxideSaturation()
 {
   if (m_CarbonMonoxideSaturation == nullptr)
-    m_CarbonMonoxideSaturation = new SEScalarFraction();
+    m_CarbonMonoxideSaturation = new SEScalar0To1();
   return *m_CarbonMonoxideSaturation;
 }
 double SEBloodChemistrySystem::GetCarbonMonoxideSaturation() const
@@ -398,10 +379,10 @@ bool SEBloodChemistrySystem::HasHematocrit() const
 {
   return m_Hematocrit==nullptr?false:m_Hematocrit->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetHematocrit()
+SEScalar0To1& SEBloodChemistrySystem::GetHematocrit()
 {
   if(m_Hematocrit==nullptr)
-    m_Hematocrit = new SEScalarFraction();
+    m_Hematocrit = new SEScalar0To1();
   return *m_Hematocrit;
 }
 double SEBloodChemistrySystem::GetHematocrit() const
@@ -432,10 +413,10 @@ bool SEBloodChemistrySystem::HasOxygenSaturation() const
 {
   return m_OxygenSaturation==nullptr?false:m_OxygenSaturation->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetOxygenSaturation()
+SEScalar0To1& SEBloodChemistrySystem::GetOxygenSaturation()
 {
   if(m_OxygenSaturation==nullptr)
-    m_OxygenSaturation=new SEScalarFraction();
+    m_OxygenSaturation=new SEScalar0To1();
   return *m_OxygenSaturation;
 }
 double SEBloodChemistrySystem::GetOxygenSaturation() const
@@ -483,10 +464,10 @@ bool SEBloodChemistrySystem::HasPulseOximetry() const
 {
   return m_PulseOximetry == nullptr ? false : m_PulseOximetry->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetPulseOximetry()
+SEScalar0To1& SEBloodChemistrySystem::GetPulseOximetry()
 {
   if (m_PulseOximetry == nullptr)
-    m_PulseOximetry = new SEScalarFraction();
+    m_PulseOximetry = new SEScalar0To1();
   return *m_PulseOximetry;
 }
 double SEBloodChemistrySystem::GetPulseOximetry() const
@@ -517,10 +498,10 @@ bool SEBloodChemistrySystem::HasShuntFraction() const
 {
   return m_ShuntFraction==nullptr?false:m_ShuntFraction->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetShuntFraction()
+SEScalar0To1& SEBloodChemistrySystem::GetShuntFraction()
 {
   if(m_ShuntFraction==nullptr)
-    m_ShuntFraction=new SEScalarFraction();
+    m_ShuntFraction=new SEScalar0To1();
   return *m_ShuntFraction;
 }
 double SEBloodChemistrySystem::GetShuntFraction() const
@@ -568,10 +549,10 @@ bool SEBloodChemistrySystem::HasVolumeFractionNeutralPhospholipidInPlasma() cons
 {
   return m_VolumeFractionNeutralPhospholipidInPlasma == nullptr ? false : m_VolumeFractionNeutralPhospholipidInPlasma->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetVolumeFractionNeutralPhospholipidInPlasma()
+SEScalar0To1& SEBloodChemistrySystem::GetVolumeFractionNeutralPhospholipidInPlasma()
 {
   if (m_VolumeFractionNeutralPhospholipidInPlasma == nullptr)
-    m_VolumeFractionNeutralPhospholipidInPlasma = new SEScalarFraction();
+    m_VolumeFractionNeutralPhospholipidInPlasma = new SEScalar0To1();
   return *m_VolumeFractionNeutralPhospholipidInPlasma;
 }
 double SEBloodChemistrySystem::GetVolumeFractionNeutralPhospholipidInPlasma() const
@@ -585,10 +566,10 @@ bool SEBloodChemistrySystem::HasVolumeFractionNeutralLipidInPlasma() const
 {
   return m_VolumeFractionNeutralLipidInPlasma == nullptr ? false : m_VolumeFractionNeutralLipidInPlasma->IsValid();
 }
-SEScalarFraction& SEBloodChemistrySystem::GetVolumeFractionNeutralLipidInPlasma()
+SEScalar0To1& SEBloodChemistrySystem::GetVolumeFractionNeutralLipidInPlasma()
 {
   if (m_VolumeFractionNeutralLipidInPlasma == nullptr)
-    m_VolumeFractionNeutralLipidInPlasma = new SEScalarFraction();
+    m_VolumeFractionNeutralLipidInPlasma = new SEScalar0To1();
   return *m_VolumeFractionNeutralLipidInPlasma;
 }
 double SEBloodChemistrySystem::GetVolumeFractionNeutralLipidInPlasma() const

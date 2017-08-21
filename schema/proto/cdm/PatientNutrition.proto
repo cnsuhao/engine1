@@ -1,0 +1,26 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+import "cdm/Properties.proto";
+
+/** @brief Nutritional information for eating */
+message NutritionData
+{
+  ScalarMassData        Carbohydrate              = 1;/**<< @brief */
+  ScalarMassPerTimeData CarbohydrateDigestionRate = 2;/**<< @brief */
+  ScalarMassData        Fat                       = 3;/**<< @brief */
+  ScalarMassPerTimeData FatDigestionRate          = 4;/**<< @brief */
+  ScalarMassData        Protein                   = 5;/**<< @brief */
+  ScalarMassPerTimeData ProteinDigestionRate      = 6;/**<< @brief */
+  ScalarMassData        Calcium                   = 7;/**<< @brief */
+  ScalarMassData        Sodium                    = 8;/**<< @brief */
+  ScalarVolumeData      Water                     = 9;/**<< @brief */
+}
+
+/** @brief Specify an amount of time to digest the specified nutrition information. */
+message MealData
+{
+  NutritionData  Nutrition   = 1;/**<< @brief */
+  ScalarTimeData ElapsedTime = 2;/**<< @brief */
+}

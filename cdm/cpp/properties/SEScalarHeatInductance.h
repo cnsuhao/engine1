@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEScalar.h"
-#include "bind/ScalarHeatInductanceData.hxx"
 
-class DLL_DECL HeatInductanceUnit : public CCompoundUnit
+class CDM_DECL HeatInductanceUnit : public CCompoundUnit
 {
 public:
   HeatInductanceUnit(const std::string& u) : CCompoundUnit(u) {}
@@ -26,11 +16,15 @@ public:
   static const HeatInductanceUnit K_s_Per_W;
 };
 
-class DLL_DECL SEScalarHeatInductance : public SEScalarQuantity<HeatInductanceUnit>
+class CDM_DECL SEScalarHeatInductance : public SEScalarQuantity<HeatInductanceUnit>
 {
 public:
   SEScalarHeatInductance() {}
   virtual ~SEScalarHeatInductance() {}
 
-  CDM::ScalarHeatInductanceData* Unload() const;
+  static void Load(const cdm::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst);
+  static cdm::ScalarHeatInductanceData* Unload(const SEScalarHeatInductance& src);
+protected:
+  static void Serialize(const cdm::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst);
+  static void Serialize(const SEScalarHeatInductance& src, cdm::ScalarHeatInductanceData& dst);
 };

@@ -1,25 +1,15 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "compartment/fluid/SEFluidCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "bind/GasCompartmentData.hxx"
 #include "substance/SESubstanceTransport.h"
 
 enum class BalanceGasBy { Volume, VolumeFraction };
 
-class DLL_DECL SEGasCompartment : public SEFluidCompartment<SEGasCompartmentLink, SEGasTransportVertex, SEGasTransportSubstance, SEGasSubstanceQuantity>
+class CDM_DECL SEGasCompartment : public SEFluidCompartment<SEGasCompartmentLink, SEGasTransportVertex, SEGasTransportSubstance, SEGasSubstanceQuantity>
 {
   friend class SECompartmentManager;
 protected:
@@ -27,10 +17,11 @@ protected:
 public:
   virtual ~SEGasCompartment();
 
-  virtual bool Load(const CDM::GasCompartmentData& in, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  virtual CDM::GasCompartmentData* Unload();
+  static void Load(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
+  static cdm::GasCompartmentData* Unload(const SEGasCompartment& src);
 protected:
-  virtual void Unload(CDM::GasCompartmentData& data);
+  static void Serialize(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SEGasCompartment& src, cdm::GasCompartmentData& dst);
 
 public:
   virtual void StateChange();

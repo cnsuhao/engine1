@@ -1,27 +1,19 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 
-CDM_BIND_DECL(CompartmentManagerData)
 #include "circuit/SECircuitManager.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
-#include "bind/enumCompartmentType.hxx"
+PROTO_PUSH
+#include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 
-class DLL_DECL SECompartmentManager : public Loggable
+class CDM_DECL SECompartmentManager : public Loggable
 {
 public:
   SECompartmentManager(SESubstanceManager& subMgr);
@@ -29,11 +21,14 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool Load(const CDM::CompartmentManagerData& in, SECircuitManager* circuits=nullptr);
-  virtual CDM::CompartmentManagerData* Unload() const;
-protected:
-  void Unload(CDM::CompartmentManagerData& data) const;
+  bool LoadFile(const std::string& filename, SECircuitManager* circuits);
+  void SaveFile(const std::string& filename);
 
+  static void Load(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits = nullptr);
+  static cdm::CompartmentManagerData* Unload(const SECompartmentManager& src);
+protected:
+  static void Serialize(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SECompartmentManager& src, cdm::CompartmentManagerData& dst);
 
 public:
   virtual void                                                StateChange();// Identify leaves and other bookkeeping
@@ -41,9 +36,9 @@ public:
   virtual void                                                UpdateLinks(SEGasCompartmentGraph& graph);
   virtual void                                                UpdateLinks(SELiquidCompartmentGraph& graph);
 
-  virtual bool                                                HasCompartment(CDM::enumCompartmentType::value type, const std::string& name) const;
-  virtual SECompartment*                                      GetCompartment(CDM::enumCompartmentType::value type, const std::string& name);
-  virtual const SECompartment*                                GetCompartment(CDM::enumCompartmentType::value type, const std::string& name) const;
+  virtual bool                                                HasCompartment(cdm::eCompartmentType type, const std::string& name) const;
+  virtual SECompartment*                                      GetCompartment(cdm::eCompartmentType type, const std::string& name);
+  virtual const SECompartment*                                GetCompartment(cdm::eCompartmentType type, const std::string& name) const;
 
   virtual SEGasCompartment&                                   CreateGasCompartment(const std::string& name);
   virtual void                                                DeleteGasCompartment(const std::string& name);

@@ -1,20 +1,10 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.EnumOnOff;
-import mil.tatrc.physiology.datamodel.bind.YPieceDisconnectData;
+import com.kitware.physiology.cdm.AnesthesiaMachineActions.YPieceDisconnectData;
+
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEYPieceDisconnect extends SEAnesthesiaMachineAction
@@ -38,25 +28,23 @@ public class SEYPieceDisconnect extends SEAnesthesiaMachineAction
     return hasSeverity();
   }
   
-  public boolean load(YPieceDisconnectData in)
+  public static void load(YPieceDisconnectData src, SEYPieceDisconnect dst)
   {
-    super.load(in);
-    getSeverity().load(in.getSeverity());
-    return isValid();
+    SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
+    if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
-  
-  public YPieceDisconnectData unload()
+  public static YPieceDisconnectData unload(SEYPieceDisconnect src)
   {
-    YPieceDisconnectData data = CDMSerializer.objFactory.createYPieceDisconnectData();
-    unload(data);
-    return data;
+    YPieceDisconnectData.Builder dst = YPieceDisconnectData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
-  
-  protected void unload(YPieceDisconnectData data)
+  protected static void unload(SEYPieceDisconnect src, YPieceDisconnectData.Builder dst)
   {
-    super.unload(data);
-    if (hasSeverity())
-      data.setSeverity(severity.unload());
+    SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
+    if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   /*

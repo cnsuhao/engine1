@@ -1,19 +1,9 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
-#include "BioGearsEngineTest.h"
+#include "EngineTest.h"
+#include "Controller/Controller.h"
 #include "Systems/Tissue.h"
-
-#include "Serializer.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
 #include "utils/TimingProfile.h"
@@ -24,7 +14,7 @@ specific language governing permissions and limitations under the License.
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/tissue/SETissueCompartment.h"
 #include "compartment/fluid/SEGasCompartment.h"
-#include "properties/SEScalarFraction.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -33,11 +23,11 @@ specific language governing permissions and limitations under the License.
 
 #include "utils/DataTrack.h"
 
-void BioGearsEngineTest::DistributeMass(SETestSuite& testSuite)
+void PulseEngineTest::DistributeMass(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  BioGears bg(testSuite.GetLogger());
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(testSuite.GetLogger());
+  Tissue& tsu = (Tissue&)pc.GetTissue();
   // First test case  
   SETestCase& testCase = testSuite.CreateTestCase();
   testCase.SetName("DistributeMassToHierarchy");
@@ -49,15 +39,15 @@ void BioGearsEngineTest::DistributeMass(SETestSuite& testSuite)
   //           /  \      /  \
   //        L2C0  L2C1 L2C2 L2C3 <-- Only these cmpts have data
 
-  bg.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstanceDirectory();
   
-  SELiquidCompartment& L0C0 = bg.GetCompartments().CreateLiquidCompartment("L0C0");
-  SELiquidCompartment& L1C0 = bg.GetCompartments().CreateLiquidCompartment("L1C0");
-  SELiquidCompartment& L1C1 = bg.GetCompartments().CreateLiquidCompartment("L1C1");
-  SELiquidCompartment& L2C0 = bg.GetCompartments().CreateLiquidCompartment("L2C0");
-  SELiquidCompartment& L2C1 = bg.GetCompartments().CreateLiquidCompartment("L2C1");
-  SELiquidCompartment& L2C2 = bg.GetCompartments().CreateLiquidCompartment("L2C2");
-  SELiquidCompartment& L2C3 = bg.GetCompartments().CreateLiquidCompartment("L2C3");
+  SELiquidCompartment& L0C0 = pc.GetCompartments().CreateLiquidCompartment("L0C0");
+  SELiquidCompartment& L1C0 = pc.GetCompartments().CreateLiquidCompartment("L1C0");
+  SELiquidCompartment& L1C1 = pc.GetCompartments().CreateLiquidCompartment("L1C1");
+  SELiquidCompartment& L2C0 = pc.GetCompartments().CreateLiquidCompartment("L2C0");
+  SELiquidCompartment& L2C1 = pc.GetCompartments().CreateLiquidCompartment("L2C1");
+  SELiquidCompartment& L2C2 = pc.GetCompartments().CreateLiquidCompartment("L2C2");
+  SELiquidCompartment& L2C3 = pc.GetCompartments().CreateLiquidCompartment("L2C3");
 
   // Build up the hierarchy
   L0C0.AddChild(L1C0);
@@ -66,10 +56,10 @@ void BioGearsEngineTest::DistributeMass(SETestSuite& testSuite)
   L1C0.AddChild(L2C1);
   L1C1.AddChild(L2C2);
   L1C1.AddChild(L2C3);
-  bg.GetCompartments().StateChange();// Call this, AFTER YOU SET UP YOUR HIERARCHY, to ensure all parent compartments have their link data
+  pc.GetCompartments().StateChange();// Call this, AFTER YOU SET UP YOUR HIERARCHY, to ensure all parent compartments have their link data
 
-  SESubstance* sub = bg.GetSubstances().GetSubstance("Oxygen");
-  bg.GetSubstances().AddActiveSubstance(*sub);
+  SESubstance* sub = pc.GetSubstances().GetSubstance("Oxygen");
+  pc.GetSubstances().AddActiveSubstance(*sub);
 
   double L2C0_mL = 10;
   double L2C0_g = 10;
@@ -220,14 +210,14 @@ void BioGearsEngineTest::DistributeMass(SETestSuite& testSuite)
 
 }
 
-void BioGearsEngineTest::PerfusionLimitedDiffusionTest(SETestSuite& testSuite)
+void PulseEngineTest::PerfusionLimitedDiffusionTest(SETestSuite& testSuite)
 {
-  BioGears bg(testSuite.GetLogger());
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(testSuite.GetLogger());
+  Tissue& tsu = (Tissue&)pc.GetTissue();
   TimingProfile timer;
   double timestep_s = 1. / 90.;
-  bg.GetSubstances().LoadSubstanceDirectory();
-  SESubstance* sub = bg.GetSubstances().GetSubstance("Ketamine");
+  pc.GetSubstances().LoadSubstanceDirectory();
+  SESubstance* sub = pc.GetSubstances().GetSubstance("Ketamine");
   double bFlow_mL_Per_s = 2.0;
   double PartitionCoeff = 1.52201;
   double matrixVolume_mL = 2.0;
@@ -235,33 +225,33 @@ void BioGearsEngineTest::PerfusionLimitedDiffusionTest(SETestSuite& testSuite)
   double bVol_mL = 10.;
   double bConc_ug_Per_mL = 10.;
 
-  bg.GetSubstances().AddActiveSubstance(*sub);
+  pc.GetSubstances().AddActiveSubstance(*sub);
 
   // First test case  
   SETestCase& testCase1 = testSuite.CreateTestCase();
   testCase1.SetName("PerfusionLimitedDiffusionTest");
   timer.Start("Test");
 
-  SETissueCompartment& tissue = bg.GetCompartments().CreateTissueCompartment(BGE::TissueCompartment::Bone);
-  SELiquidCompartment& extracellular = bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::BoneExtracellular);
-  SELiquidCompartment& intracellular = bg.GetCompartments().CreateLiquidCompartment(BGE::ExtravascularCompartment::BoneIntracellular);
+  SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment(pulse::TissueCompartment::Bone);
+  SELiquidCompartment& extracellular = pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::BoneExtracellular);
+  SELiquidCompartment& intracellular = pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::BoneIntracellular);
   tissue.GetMatrixVolume().SetValue(matrixVolume_mL,VolumeUnit::mL);
   intracellular.GetSubstanceQuantity(*sub)->GetMass().SetValue(tissueMass_ug, MassUnit::ug);
   intracellular.GetVolume().SetValue(1.0, VolumeUnit::mL); //Need fluid volume to balance. 
   extracellular.GetVolume().SetValue(1.0, VolumeUnit::mL); //Should be fine, right? We don't validate and tissue concentrations.
   
-  SELiquidCompartment& vascular = bg.GetCompartments().CreateLiquidCompartment(BGE::VascularCompartment::Bone);
+  SELiquidCompartment& vascular = pc.GetCompartments().CreateLiquidCompartment(pulse::VascularCompartment::Bone);
   vascular.GetVolume().SetValue(bVol_mL, VolumeUnit::mL);
   vascular.GetSubstanceQuantity(*sub)->GetConcentration().SetValue(bConc_ug_Per_mL, MassPerVolumeUnit::ug_Per_mL);
   vascular.GetSubstanceQuantity(*sub)->Balance(BalanceLiquidBy::Concentration);
   intracellular.GetSubstanceQuantity(*sub)->Balance(BalanceLiquidBy::Mass);
 
-  SELiquidCompartmentLink& flow = bg.GetCompartments().CreateLiquidLink(intracellular, vascular, "ExtravascularExchange");
+  SELiquidCompartmentLink& flow = pc.GetCompartments().CreateLiquidLink(intracellular, vascular, "ExtravascularExchange");
   flow.GetFlow().SetValue(bFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   extracellular.AddLink(flow);
   vascular.AddLink(flow);
 
-  bg.GetCompartments().StateChange();
+  pc.GetCompartments().StateChange();
 
   double rtnMassInc_ug = tsu.PerfusionLimitedDiffusion(tissue,vascular,*sub, PartitionCoeff,timestep_s);
 
@@ -279,26 +269,26 @@ void BioGearsEngineTest::PerfusionLimitedDiffusionTest(SETestSuite& testSuite)
   //timer.Start("Test");
 }
 
-void BioGearsEngineTest::AlveolarOxygenDiffusionTest(const std::string& rptDirectory)
+void PulseEngineTest::AlveolarOxygenDiffusionTest(const std::string& rptDirectory)
 {
   //This test examines diffusion of O2 from a gas compartment (like lungs) to a liquid compartment
   //The gas compartment is set to resemble atmospheric conditions, and the liquid compartment is oxygen-poor
   //We should expect to see oxygen diffuse into the liquid compartment
-  BioGears bg(m_Logger);
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(m_Logger);
+  Tissue& tsu = (Tissue&)pc.GetTissue();
 
   double timestep_s = 1.0 / 90;
-  bg.GetSubstances().LoadSubstanceDirectory();
-  SESubstance* O2 = bg.GetSubstances().GetSubstance("Oxygen");
-  SESubstance* N2 = bg.GetSubstances().GetSubstance("Nitrogen");
-  bg.GetSubstances().AddActiveSubstance(*O2);
-  bg.GetSubstances().AddActiveSubstance(*N2);
+  pc.GetSubstances().LoadSubstanceDirectory();
+  SESubstance* O2 = pc.GetSubstances().GetSubstance("Oxygen");
+  SESubstance* N2 = pc.GetSubstances().GetSubstance("Nitrogen");
+  pc.GetSubstances().AddActiveSubstance(*O2);
+  pc.GetSubstances().AddActiveSubstance(*N2);
 
-  SELiquidCompartment& lcmpt = bg.GetCompartments().CreateLiquidCompartment("lcmpt");
-  SEGasCompartment& gcmpt = bg.GetCompartments().CreateGasCompartment("gcmpt");
+  SELiquidCompartment& lcmpt = pc.GetCompartments().CreateLiquidCompartment("lcmpt");
+  SEGasCompartment& gcmpt = pc.GetCompartments().CreateGasCompartment("gcmpt");
 
   DataTrack trk1;
-  std::string rptFile = rptDirectory + "\\AlveolarOxygenDiffusionTest.txt";
+  std::string rptFile = rptDirectory + "/AlveolarOxygenDiffusionTest.txt";
   double time = 0.0;
 
   double liquidVol_mL = 1000.0;
@@ -346,26 +336,26 @@ void BioGearsEngineTest::AlveolarOxygenDiffusionTest(const std::string& rptDirec
   trk1.WriteTrackToFile(rptFile.c_str());
 }
 
-void BioGearsEngineTest::AlveolarCarbonDioxideDiffusionTest(const std::string& rptDirectory)
+void PulseEngineTest::AlveolarCarbonDioxideDiffusionTest(const std::string& rptDirectory)
 {
   //Second test case: High liquid compartment CO2 concentration with a lower gas compartment CO2 concentration
   //We should expect CO2 to diffuse out of the liquid compartment into the gas compartment
-  BioGears bg(m_Logger);
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(m_Logger);
+  Tissue& tsu = (Tissue&)pc.GetTissue();
 
   DataTrack trk2;
-  std::string rptFile = rptDirectory + "\\AlveolarCarbonDioxideDiffusionTest.txt";
+  std::string rptFile = rptDirectory + "/AlveolarCarbonDioxideDiffusionTest.txt";
   
   double timestep_s = 1.0 / 90;
-  bg.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstanceDirectory();
 
-  SESubstance* CO2 = bg.GetSubstances().GetSubstance("CarbonDioxide");
-  SESubstance* N2 = bg.GetSubstances().GetSubstance("Nitrogen");
-  bg.GetSubstances().AddActiveSubstance(*CO2);
-  bg.GetSubstances().AddActiveSubstance(*N2);
+  SESubstance* CO2 = pc.GetSubstances().GetSubstance("CarbonDioxide");
+  SESubstance* N2 = pc.GetSubstances().GetSubstance("Nitrogen");
+  pc.GetSubstances().AddActiveSubstance(*CO2);
+  pc.GetSubstances().AddActiveSubstance(*N2);
 
-  SELiquidCompartment& lcmpt2 = bg.GetCompartments().CreateLiquidCompartment("lcmpt2");
-  SEGasCompartment& gcmpt2 = bg.GetCompartments().CreateGasCompartment("gcmpt2");
+  SELiquidCompartment& lcmpt2 = pc.GetCompartments().CreateLiquidCompartment("lcmpt2");
+  SEGasCompartment& gcmpt2 = pc.GetCompartments().CreateGasCompartment("gcmpt2");
 
   double time = 0.0;
 
@@ -414,26 +404,26 @@ void BioGearsEngineTest::AlveolarCarbonDioxideDiffusionTest(const std::string& r
 
 }
 
-void BioGearsEngineTest::InstantPlusSimpleDiffusionTest(const std::string& rptDirectory)
+void PulseEngineTest::InstantPlusSimpleDiffusionTest(const std::string& rptDirectory)
 {
   // Second test - cmpt2 and cmpt4 are connected by instant diffusion, cmpt2 and cmpt1 by simple and cmpt2 and cmpt3 by simple
   //        cmpt1 <-> cmpt2 <-> cmpt3
   //                    |
   //                  cmpt4
   // Expect cmpt2 and cmpt4 to quickly equilibrate, while the others take more time
-  BioGears bg(m_Logger);
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(m_Logger);
+  Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  bg.GetSubstances().LoadSubstanceDirectory();
-  SESubstance* o2 = bg.GetSubstances().GetSubstance("Oxygen");
-  bg.GetSubstances().AddActiveSubstance(*o2);
-  SELiquidCompartment& cmpt1 = bg.GetCompartments().CreateLiquidCompartment("cmpt1");
-  SELiquidCompartment& cmpt2 = bg.GetCompartments().CreateLiquidCompartment("cmpt2");
-  SELiquidCompartment& cmpt3 = bg.GetCompartments().CreateLiquidCompartment("cmpt3");
-  SELiquidCompartment& cmpt4 = bg.GetCompartments().CreateLiquidCompartment("cmpt4");
+  pc.GetSubstances().LoadSubstanceDirectory();
+  SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
+  pc.GetSubstances().AddActiveSubstance(*o2);
+  SELiquidCompartment& cmpt1 = pc.GetCompartments().CreateLiquidCompartment("cmpt1");
+  SELiquidCompartment& cmpt2 = pc.GetCompartments().CreateLiquidCompartment("cmpt2");
+  SELiquidCompartment& cmpt3 = pc.GetCompartments().CreateLiquidCompartment("cmpt3");
+  SELiquidCompartment& cmpt4 = pc.GetCompartments().CreateLiquidCompartment("cmpt4");
 
   DataTrack trk;
-  std::string rptFile = rptDirectory + "\\InstantPlusSimpleDiffusionTest.txt";
+  std::string rptFile = rptDirectory + "/InstantPlusSimpleDiffusionTest.txt";
   double time = 0.0;
 
   double permeabilityCoefficient21_mL_Per_s = 5.0;
@@ -484,19 +474,19 @@ void BioGearsEngineTest::InstantPlusSimpleDiffusionTest(const std::string& rptDi
   trk.WriteTrackToFile(rptFile.c_str());
 }
 
-void BioGearsEngineTest::InstantDiffusionTest(SETestSuite& testSuite)
+void PulseEngineTest::InstantDiffusionTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  BioGears bg(testSuite.GetLogger());
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(testSuite.GetLogger());
+  Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  bg.GetSubstances().LoadSubstanceDirectory();
-  SESubstance* o2 = bg.GetSubstances().GetSubstance("Oxygen");
-  bg.GetSubstances().AddActiveSubstance(*o2);
-  SELiquidCompartment& cmpt1 = bg.GetCompartments().CreateLiquidCompartment("cmpt1");
-  SELiquidCompartment& cmpt2 = bg.GetCompartments().CreateLiquidCompartment("cmpt2");
-  SELiquidCompartment& cmpt3 = bg.GetCompartments().CreateLiquidCompartment("cmpt3");
-  SELiquidCompartment& cmpt4 = bg.GetCompartments().CreateLiquidCompartment("cmpt4");
+  pc.GetSubstances().LoadSubstanceDirectory();
+  SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
+  pc.GetSubstances().AddActiveSubstance(*o2);
+  SELiquidCompartment& cmpt1 = pc.GetCompartments().CreateLiquidCompartment("cmpt1");
+  SELiquidCompartment& cmpt2 = pc.GetCompartments().CreateLiquidCompartment("cmpt2");
+  SELiquidCompartment& cmpt3 = pc.GetCompartments().CreateLiquidCompartment("cmpt3");
+  SELiquidCompartment& cmpt4 = pc.GetCompartments().CreateLiquidCompartment("cmpt4");
 
   // First test - simple two compartment instant diffusion test
   timer.Start("Test");
@@ -527,23 +517,23 @@ void BioGearsEngineTest::InstantDiffusionTest(SETestSuite& testSuite)
   /// \todo This methodology assumes binary compartments. It works in prototype for multiple compartment instant diffusion, but needs to be tested beyond two compartments.
 }
 
-void BioGearsEngineTest::SimpleDiffusionTwoCompartmentTest(const std::string& rptDirectory)
+void PulseEngineTest::SimpleDiffusionTwoCompartmentTest(const std::string& rptDirectory)
 {
   // Second test case -- 
   // Tests the diffusion between two tissue liquid compartments
   // Calculated permeability coefficient
-  BioGears bg(m_Logger);
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(m_Logger);
+  Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  bg.GetSubstances().LoadSubstanceDirectory();
-  SESubstance* o2 = bg.GetSubstances().GetSubstance("Oxygen");
-  bg.GetSubstances().AddActiveSubstance(*o2);
-  SETissueCompartment& tissue = bg.GetCompartments().CreateTissueCompartment("Tissue");
-  SELiquidCompartment& cmpt1_IC = bg.GetCompartments().CreateLiquidCompartment("cmpt1_IC");
-  SELiquidCompartment& cmpt2_EC = bg.GetCompartments().CreateLiquidCompartment("cmpt2_EC");
+  pc.GetSubstances().LoadSubstanceDirectory();
+  SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
+  pc.GetSubstances().AddActiveSubstance(*o2);
+  SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");
+  SELiquidCompartment& cmpt1_IC = pc.GetCompartments().CreateLiquidCompartment("cmpt1_IC");
+  SELiquidCompartment& cmpt2_EC = pc.GetCompartments().CreateLiquidCompartment("cmpt2_EC");
 
   DataTrack trk2;
-  std::string rptFile = rptDirectory + "\\SimpleDiffusionTwoCompartmentTest.txt";
+  std::string rptFile = rptDirectory + "/SimpleDiffusionTwoCompartmentTest.txt";
   double time = 0.0;
 
   double ecVol_mL = 40.0;
@@ -575,7 +565,7 @@ void BioGearsEngineTest::SimpleDiffusionTwoCompartmentTest(const std::string& rp
   // The tissue mass baseline is a constant property of the tissue - values can be found in the ICRP and other sources
   // We use the tissue mass as a stand-in for surface area, follow the lead of Renkin and Curry
   // Here are the rules for the different types of compartments
-  // Vascular to tissue (in BioGears it is always extracellular, but it doesn't matter)
+  // Vascular to tissue (in Pulse it is always extracellular, but it doesn't matter)
   // The mass is the tissue compartment mass
   // Tissue to tissue
   // The mass is always the smaller of the two (the smaller area will be the max area for diffusion)
@@ -605,7 +595,7 @@ void BioGearsEngineTest::SimpleDiffusionTwoCompartmentTest(const std::string& rp
   trk2.WriteTrackToFile(rptFile.c_str());
 }
 
-void BioGearsEngineTest::SimpleDiffusionFourCompartmentTest(const std::string& rptDirectory)
+void PulseEngineTest::SimpleDiffusionFourCompartmentTest(const std::string& rptDirectory)
 {
   // Now we will add two more compartments and test two things
   // First, that the concentration does not change within a time slice
@@ -614,20 +604,20 @@ void BioGearsEngineTest::SimpleDiffusionFourCompartmentTest(const std::string& r
   //     cmpt4 <->  cmpt2
   //              \ cmpt3                 
   // Artificial permeability coefficient
-  BioGears bg(m_Logger);
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(m_Logger);
+  Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  bg.GetSubstances().LoadSubstanceDirectory();
-  SESubstance* o2 = bg.GetSubstances().GetSubstance("Oxygen");
-  bg.GetSubstances().AddActiveSubstance(*o2);
-  SETissueCompartment& tissue = bg.GetCompartments().CreateTissueCompartment("Tissue");
-  SELiquidCompartment& cmpt1_IC = bg.GetCompartments().CreateLiquidCompartment("cmpt1_IC");
-  SELiquidCompartment& cmpt2_EC = bg.GetCompartments().CreateLiquidCompartment("cmpt2_EC");
-  SELiquidCompartment& cmpt3_LQ = bg.GetCompartments().CreateLiquidCompartment("cmpt3_LQ");
-  SELiquidCompartment& cmpt4_LQ = bg.GetCompartments().CreateLiquidCompartment("cmpt4_LQ");
+  pc.GetSubstances().LoadSubstanceDirectory();
+  SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
+  pc.GetSubstances().AddActiveSubstance(*o2);
+  SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");
+  SELiquidCompartment& cmpt1_IC = pc.GetCompartments().CreateLiquidCompartment("cmpt1_IC");
+  SELiquidCompartment& cmpt2_EC = pc.GetCompartments().CreateLiquidCompartment("cmpt2_EC");
+  SELiquidCompartment& cmpt3_LQ = pc.GetCompartments().CreateLiquidCompartment("cmpt3_LQ");
+  SELiquidCompartment& cmpt4_LQ = pc.GetCompartments().CreateLiquidCompartment("cmpt4_LQ");
 
   DataTrack trk3;
-  std::string rptFile = rptDirectory + "\\SimpleDiffusionFourCompartmentTest.txt";
+  std::string rptFile = rptDirectory + "/SimpleDiffusionFourCompartmentTest.txt";
   double time = 0.0;
 
   // Initialize
@@ -702,7 +692,7 @@ void BioGearsEngineTest::SimpleDiffusionFourCompartmentTest(const std::string& r
   trk3.WriteTrackToFile(rptFile.c_str());
 }
 
-void BioGearsEngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDirectory)
+void PulseEngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDirectory)
 {
   // Tests diffusion with distribution for hierarchical compartments
   //                                       L0C0        <---->        M0C0
@@ -712,28 +702,28 @@ void BioGearsEngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDire
   // Only these cmpts have data--> L2C0  L2C1 L2C2 L2C3
   // Artificial permeability coefficient
 
-  BioGears bg(m_Logger);
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(m_Logger);
+  Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  bg.GetSubstances().LoadSubstanceDirectory();
-  SESubstance* sub = bg.GetSubstances().GetSubstance("Desflurane");
-  bg.GetSubstances().AddActiveSubstance(*sub);
+  pc.GetSubstances().LoadSubstanceDirectory();
+  SESubstance* sub = pc.GetSubstances().GetSubstance("Desflurane");
+  pc.GetSubstances().AddActiveSubstance(*sub);
 
   DataTrack trk4;
-  std::string rptFile = rptDirectory + "\\SimpleDiffusionHierarchyTest.txt";
+  std::string rptFile = rptDirectory + "/SimpleDiffusionHierarchyTest.txt";
   double time = 0.0;
 
-  SELiquidCompartment& L0C0 = bg.GetCompartments().CreateLiquidCompartment("L0C0");
-  SELiquidCompartment& L1C0 = bg.GetCompartments().CreateLiquidCompartment("L1C0");
-  SELiquidCompartment& L1C1 = bg.GetCompartments().CreateLiquidCompartment("L1C1");
-  SELiquidCompartment& L2C0 = bg.GetCompartments().CreateLiquidCompartment("L2C0");
-  SELiquidCompartment& L2C1 = bg.GetCompartments().CreateLiquidCompartment("L2C1");
-  SELiquidCompartment& L2C2 = bg.GetCompartments().CreateLiquidCompartment("L2C2");
-  SELiquidCompartment& L2C3 = bg.GetCompartments().CreateLiquidCompartment("L2C3");
-  SELiquidCompartment& M0C0 = bg.GetCompartments().CreateLiquidCompartment("M0C0");
-  SELiquidCompartment& M1C0 = bg.GetCompartments().CreateLiquidCompartment("M1C0");
-  SELiquidCompartment& M1C1 = bg.GetCompartments().CreateLiquidCompartment("M1C1");
-  SELiquidCompartment& M1C2 = bg.GetCompartments().CreateLiquidCompartment("M1C2");
+  SELiquidCompartment& L0C0 = pc.GetCompartments().CreateLiquidCompartment("L0C0");
+  SELiquidCompartment& L1C0 = pc.GetCompartments().CreateLiquidCompartment("L1C0");
+  SELiquidCompartment& L1C1 = pc.GetCompartments().CreateLiquidCompartment("L1C1");
+  SELiquidCompartment& L2C0 = pc.GetCompartments().CreateLiquidCompartment("L2C0");
+  SELiquidCompartment& L2C1 = pc.GetCompartments().CreateLiquidCompartment("L2C1");
+  SELiquidCompartment& L2C2 = pc.GetCompartments().CreateLiquidCompartment("L2C2");
+  SELiquidCompartment& L2C3 = pc.GetCompartments().CreateLiquidCompartment("L2C3");
+  SELiquidCompartment& M0C0 = pc.GetCompartments().CreateLiquidCompartment("M0C0");
+  SELiquidCompartment& M1C0 = pc.GetCompartments().CreateLiquidCompartment("M1C0");
+  SELiquidCompartment& M1C1 = pc.GetCompartments().CreateLiquidCompartment("M1C1");
+  SELiquidCompartment& M1C2 = pc.GetCompartments().CreateLiquidCompartment("M1C2");
 
   // Build up the hierarchy
   L0C0.AddChild(L1C0);
@@ -745,7 +735,7 @@ void BioGearsEngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDire
   M0C0.AddChild(M1C0);
   M0C0.AddChild(M1C1);
   M0C0.AddChild(M1C2);
-  bg.GetCompartments().StateChange();// Call this, AFTER YOU SET UP YOUR HIERARCHY, to ensure all parent compartments have their link data
+  pc.GetCompartments().StateChange();// Call this, AFTER YOU SET UP YOUR HIERARCHY, to ensure all parent compartments have their link data
 
   double Lvol_mL = 10.0;
   double Mvol_mL = 8.0;
@@ -839,20 +829,20 @@ void BioGearsEngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDire
   trk4.WriteTrackToFile(rptFile.c_str());
 }
 
-void BioGearsEngineTest::FacilitatedDiffusionTest(const std::string& rptDirectory)
+void PulseEngineTest::FacilitatedDiffusionTest(const std::string& rptDirectory)
 {
-  BioGears bg(m_Logger);
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(m_Logger);
+  Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  bg.GetSubstances().LoadSubstanceDirectory();
-  SESubstance* sub = bg.GetSubstances().GetSubstance("Glucose");
-  bg.GetSubstances().AddActiveSubstance(*sub);
-  SETissueCompartment& tissue = bg.GetCompartments().CreateTissueCompartment("Tissue");  
-  SELiquidCompartment& tissueExtracellular = bg.GetCompartments().CreateLiquidCompartment("Extracellular");
-  SELiquidCompartment& vascular = bg.GetCompartments().CreateLiquidCompartment("Vascular");
+  pc.GetSubstances().LoadSubstanceDirectory();
+  SESubstance* sub = pc.GetSubstances().GetSubstance("Glucose");
+  pc.GetSubstances().AddActiveSubstance(*sub);
+  SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");  
+  SELiquidCompartment& tissueExtracellular = pc.GetCompartments().CreateLiquidCompartment("Extracellular");
+  SELiquidCompartment& vascular = pc.GetCompartments().CreateLiquidCompartment("Vascular");
 
   DataTrack trk1;
-  std::string   rptFile = rptDirectory + "\\FacilitatedDiffusionTest.txt";
+  std::string   rptFile = rptDirectory + "/FacilitatedDiffusionTest.txt";
   double time = 0.0;
 
   tissueExtracellular.GetVolume().SetValue(45.0, VolumeUnit::mL);
@@ -886,18 +876,18 @@ void BioGearsEngineTest::FacilitatedDiffusionTest(const std::string& rptDirector
   trk1.WriteTrackToFile(rptFile.c_str());
 }
 
-void BioGearsEngineTest::ActiveTransportTest(SETestSuite& testSuite)
+void PulseEngineTest::ActiveTransportTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  BioGears bg(testSuite.GetLogger());
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(testSuite.GetLogger());
+  Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1. / 90.;
-  bg.GetSubstances().LoadSubstanceDirectory();
-  SESubstance* sub = bg.GetSubstances().GetSubstance("Desflurane");
-  bg.GetSubstances().AddActiveSubstance(*sub);
-  SETissueCompartment& tissue = bg.GetCompartments().CreateTissueCompartment("Tissue");
-  SELiquidCompartment& extracellular = bg.GetCompartments().CreateLiquidCompartment("Extracellular");
-  SELiquidCompartment& intracellular = bg.GetCompartments().CreateLiquidCompartment("Intracellular");
+  pc.GetSubstances().LoadSubstanceDirectory();
+  SESubstance* sub = pc.GetSubstances().GetSubstance("Desflurane");
+  pc.GetSubstances().AddActiveSubstance(*sub);
+  SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");
+  SELiquidCompartment& extracellular = pc.GetCompartments().CreateLiquidCompartment("Extracellular");
+  SELiquidCompartment& intracellular = pc.GetCompartments().CreateLiquidCompartment("Intracellular");
 
   // First test case - pump some substance from one cmpt to another to another
   SETestCase& testCase1 = testSuite.CreateTestCase();
@@ -922,11 +912,11 @@ void BioGearsEngineTest::ActiveTransportTest(SETestSuite& testSuite)
   // Second test should check bounds.
 }
 
-void BioGearsEngineTest::GenericClearanceTest(SETestSuite& testSuite)
+void PulseEngineTest::GenericClearanceTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  BioGears bg(testSuite.GetLogger());
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(testSuite.GetLogger());
+  Tissue& tsu = (Tissue&)pc.GetTissue();
 
   // First test case
   SETestCase& testCase1 = testSuite.CreateTestCase();
@@ -948,11 +938,11 @@ void BioGearsEngineTest::GenericClearanceTest(SETestSuite& testSuite)
   // Subsequent test cases
 }
 
-void BioGearsEngineTest::GenericExcretionTest(SETestSuite& testSuite)
+void PulseEngineTest::GenericExcretionTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  BioGears bg(testSuite.GetLogger());
-  Tissue& tsu = (Tissue&)bg.GetTissue();
+  PulseController pc(testSuite.GetLogger());
+  Tissue& tsu = (Tissue&)pc.GetTissue();
 
   // First test case
   SETestCase& testCase1 = testSuite.CreateTestCase();
@@ -965,10 +955,10 @@ void BioGearsEngineTest::GenericExcretionTest(SETestSuite& testSuite)
 }
 
 //Set-up the test suite
-void BioGearsEngineTest::DiffusionClearanceExcretionTests(const std::string& rptDirectory)
+void PulseEngineTest::DiffusionClearanceExcretionTests(const std::string& rptDirectory)
 {
 
-  m_Logger->ResetLogFile(rptDirectory + "\\DiffusionClearanceExcretionTests.log");
+  m_Logger->ResetLogFile(rptDirectory + "/DiffusionClearanceExcretionTests.log");
   // Set up our test report
   
   SETestReport testReport = SETestReport(m_Logger);
@@ -997,5 +987,5 @@ void BioGearsEngineTest::DiffusionClearanceExcretionTests(const std::string& rpt
   //ts7.SetName("GenericExcretionTest");
   //GenericExcretionTest(ts8);
 
-  //testReport.WriteFile(rptDirectory + "\\GasCompartmentTest.xml");
+  //testReport.WriteFile(rptDirectory + "/GasCompartmentTest.pba");
 }

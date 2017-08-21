@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #pragma once
 
@@ -20,7 +11,7 @@ specific language governing permissions and limitations under the License.
 
 class Logger;
 class SEScalarTime;
-class DLL_DECL Loggable
+class CDM_DECL Loggable
 {
 public:
   static const std::string empty;
@@ -30,8 +21,6 @@ public:
   virtual ~Loggable();
 
   virtual Logger* GetLogger() const;
-
-protected:
 
   virtual void Debug(const std::string&  msg, const std::string&  origin = empty) const;
   virtual void Debug(std::stringstream &msg, const std::string&  origin = empty) const;
@@ -54,12 +43,13 @@ protected:
   virtual void Fatal(std::stringstream &msg, const std::string&  origin = empty) const;
   virtual void Fatal(std::ostream &msg, const std::string&  origin = empty) const;
 
+protected:
   Logger* m_Logger;
 };
 
 #pragma warning(push)
 #pragma warning(disable:4100)
-class DLL_DECL LoggerForward
+class CDM_DECL LoggerForward
 {
 public:
   virtual void ForwardDebug(const std::string&  msg, const std::string&  origin){};
@@ -71,7 +61,7 @@ public:
 
 #pragma warning(pop)
 
-class DLL_DECL Logger
+class CDM_DECL Logger
 {
   friend Loggable;
 public:

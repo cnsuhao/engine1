@@ -1,14 +1,5 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarPower.h"
@@ -19,15 +10,6 @@ const PowerUnit PowerUnit::kcal_Per_hr("kcal/hr");
 const PowerUnit PowerUnit::kcal_Per_day("kcal/day");
 const PowerUnit PowerUnit::J_Per_s("J/s");
 const PowerUnit PowerUnit::BTU_Per_hr("BTU/hr");
-
-CDM::ScalarPowerData* SEScalarPower::Unload() const
-{
-  if (!IsValid())
-    return nullptr;
-  CDM::ScalarPowerData* data(new CDM::ScalarPowerData());
-  SEScalarQuantity::Unload(*data);
-  return data;
-}
 
 bool PowerUnit::IsValidUnit(const std::string& unit)
 {
@@ -63,4 +45,26 @@ const PowerUnit& PowerUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Power unit";
   throw CommonDataModelException(err.str());
+}
+
+void SEScalarPower::Load(const cdm::ScalarPowerData& src, SEScalarPower& dst)
+{
+  SEScalarPower::Serialize(src, dst);
+}
+void SEScalarPower::Serialize(const cdm::ScalarPowerData& src, SEScalarPower& dst)
+{
+  SEScalarQuantity<PowerUnit>::Serialize(src.scalarpower(), dst);
+}
+
+cdm::ScalarPowerData* SEScalarPower::Unload(const SEScalarPower& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarPowerData* dst = new cdm::ScalarPowerData();
+  Serialize(src, *dst);
+  return dst;
+}
+void SEScalarPower::Serialize(const SEScalarPower& src, cdm::ScalarPowerData& dst)
+{
+  SEScalarQuantity<PowerUnit>::Serialize(src, *dst.mutable_scalarpower());
 }

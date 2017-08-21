@@ -1,23 +1,14 @@
-/**************************************************************************************
-Copyright 2015 Applied Research Associates, Inc.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the License
-at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-**************************************************************************************/
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.patient.actions;
 
-import mil.tatrc.physiology.datamodel.CDMSerializer;
-import mil.tatrc.physiology.datamodel.bind.*;
+import com.kitware.physiology.cdm.PatientActions.IntubationData;
+import com.kitware.physiology.cdm.PatientActions.IntubationData.eType;
 
 public  class SEIntubation extends SEPatientAction
 {
-  protected EnumIntubationType type;
+  protected eType type;
   
   public SEIntubation()
   {
@@ -43,32 +34,32 @@ public  class SEIntubation extends SEPatientAction
     return hasType();
   }
   
-  public boolean load(IntubationData in)
+  public static void load(IntubationData src, SEIntubation dst)
   {
-    super.load(in);
-    this.type = in.getType();
-    return isValid();
+    SEPatientAction.load(src.getPatientAction(), dst);
+    if(src.getType()!=eType.UNRECOGNIZED)
+    	dst.type = src.getType();
   }
   
-  public IntubationData unload()
+  public static IntubationData unload(SEIntubation src)
   {
-    IntubationData data = CDMSerializer.objFactory.createIntubationData();
-    unload(data);
-    return data;
+    IntubationData.Builder dst = IntubationData.newBuilder();
+    unload(src,dst);
+    return dst.build();
   }
   
-  protected void unload(IntubationData data)
+  protected static void unload(SEIntubation src, IntubationData.Builder dst)
   {
-    super.unload(data);
-    if (hasType())
-      data.setType(type);
+    SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasType())
+      dst.setType(src.type);
   }
   
-  public EnumIntubationType getType()
+  public eType getType()
   {
     return type;
   }
-  public void setType(EnumIntubationType t)
+  public void setType(eType t)
   {
     type = t;
   }
