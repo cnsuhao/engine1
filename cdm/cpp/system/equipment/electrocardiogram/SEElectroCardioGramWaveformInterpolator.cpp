@@ -83,7 +83,9 @@ void SEElectroCardioGramWaveformInterpolator::Interpolate(const SEScalarTime& ti
 }
 void SEElectroCardioGramWaveformInterpolator::Interpolate(SEElectroCardioGramWaveform& w, const SEScalarTime& timeStep)
 {
-    SEFunctionElectricPotentialVsTime& data = w.GetData();
+  //If the wavefore has a time-step, use it
+  //The default waveform that is deployed does not have a time-step specified
+  SEFunctionElectricPotentialVsTime& data = w.GetData();
     SEScalarTime* waveformTimeStep = nullptr;
     if (w.HasTimeStep())
       waveformTimeStep = &w.GetTimeStep();

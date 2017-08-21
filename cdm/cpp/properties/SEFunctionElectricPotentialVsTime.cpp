@@ -127,26 +127,37 @@ SEFunctionElectricPotentialVsTime*  SEFunctionElectricPotentialVsTime::Interpola
   //m_Independent;// Original X (Time)
   //m_Dependent;// Original Y (ElectricPotential)
   double x1, x2, y1, y2, xPrime, yPrime;
-  size_t newTimeIterator = 0;
-  for (size_t i = 0; i < m_Independent.size(); i++)
-  {
-    x1 = GetTimeValue(i,unit); // get the points needed for interpolation.
-    x2 = GetTimeValue(i + 1, unit);
-    y1 = m_Dependent[i];
-    y2 = m_Dependent[i + 1];
+  unsigned int x1Index = 0;
 
-    while (newTime[newTimeIterator] >= x1 && newTime[newTimeIterator] < x2)
+  for (unsigned int newTimeIterator = 0; newTimeIterator < newTime.size(); newTimeIterator++)
+  {
+    xPrime = newTime[newTimeIterator]; // new time point
+    
+    //find x1
+    while (x1Index < m_Independent.size() - 2 &&
+      GetTimeValue(x1Index + 1, unit) <= xPrime)
     {
-      xPrime = newTime[newTimeIterator]; // new time point
-      yPrime = GeneralMath::LinearInterpolator(x1, x2, y1, y2, xPrime); // call general math function LinearInterpolator to find yPrime at xPrime, xPrime must be between x1 and x2
-      fEleP.push_back(yPrime); // populate the voltage vector
-      newTimeIterator++;
-      if (newTimeIterator >= newTime.size())
-        break;
+      x1Index++;
     }
-    if (newTimeIterator >= newTime.size())
-      break;
+
+    // get the points needed for interpolation.
+    x1 = GetTimeValue(x1Index, unit);
+    x2 = GetTimeValue(x1Index + 1, unit);
+    y1 = m_Dependent[x1Index];
+    y2 = m_Dependent[x1Index + 1];
+
+    //Shouldn't need this, but just to be sure we don't go beyond the data
+    if (xPrime > x2)
+    {
+      xPrime = x2;
+    }
+
+    // call general math function LinearInterpolator to find yPrime at xPrime, xPrime must be between x1 and x2
+    yPrime = GeneralMath::LinearInterpolator(x1, x2, y1, y2, xPrime);
+    // populate the voltage vector
+    fEleP.push_back(yPrime);
   }
+
   newFunction->SetElectricPotentialUnit(*m_ElectricPotentialUnit); // 
 
   if (!newFunction->IsValid())

@@ -62,7 +62,7 @@ void ECG::Initialize()
     Original.Track("Original_ECG",original_s[i], original_mV[i]);
   Original.WriteTrackToFile("OriginalECG.txt");
 */
-  // jbw m_interpolator.Interpolate(m_data.GetTimeStep());
+  m_interpolator.Interpolate(m_data.GetTimeStep());
 /* Code to write out the Interpolated ECG data in a format easy to view in plotting tools
   std::vector<double> interpolated_s = m_interpolator.GetWaveform(3, CDM::enumHeartRhythm::NormalSinus).GetData().GetTime();
   std::vector<double> interpolated_mV = m_interpolator.GetWaveform(3, CDM::enumHeartRhythm::NormalSinus).GetData().GetElectricPotential();
