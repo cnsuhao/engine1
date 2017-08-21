@@ -103,7 +103,7 @@ message CardiovascularSystemData
     Totals are from all active drugs in the body.*/
 message DrugSystemData
 {
-  Scalar0To1Data                      BronchodilationLevel                           = 1; /**<< @brief */
+  ScalarNegative1To1Data              BronchodilationLevel                           = 1; /**<< @brief */
   ScalarFrequencyData                 HeartRateChange                                = 2; /**<< @brief */
   ScalarPressureData                  MeanBloodPressureChange                        = 3; /**<< @brief */
   Scalar0To1Data                      NeuromuscularBlockLevel                        = 4; /**<< @brief */
@@ -112,7 +112,7 @@ message DrugSystemData
   ScalarFrequencyData                 RespirationRateChange                          = 7; /**<< @brief */
   Scalar0To1Data                      SedationLevel                                  = 8; /**<< @brief */
   ScalarVolumeData                    TidalVolumeChange                              = 9; /**<< @brief */
-  Scalar0To1Data                      TubularPermeabilityChange                      = 10;/**<< @brief */
+  ScalarNegative1To1Data              TubularPermeabilityChange                      = 10;/**<< @brief */
 }
 
 /** @brief Releases hormones to maintain homeostasis and regulate body functions, including metabolism and behavior.

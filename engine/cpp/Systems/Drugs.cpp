@@ -570,9 +570,9 @@ void Drugs::CalculateDrugEffects()
 
   //Bound things that are fractions
   sedationLevel = LIMIT(sedationLevel, 0.0, 1.0);
-  bronchodilationLevel = LIMIT(bronchodilationLevel, 0.0, 1.0);
+  bronchodilationLevel = LIMIT(bronchodilationLevel, -1.0, 1.0);
   neuromuscularBlockLevel = LIMIT(neuromuscularBlockLevel, 0.0, 1.0);
-  deltaTubularPermeability = LIMIT(deltaTubularPermeability, 0.0, 1.0);
+  deltaTubularPermeability = LIMIT(deltaTubularPermeability, -1.0, 1.0);
 
   //Set values on the CDM System Values
   GetHeartRateChange().SetValue(deltaHeartRate_Per_min, FrequencyUnit::Per_min);

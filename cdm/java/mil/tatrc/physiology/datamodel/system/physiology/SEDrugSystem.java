@@ -9,16 +9,16 @@ import mil.tatrc.physiology.datamodel.system.SESystem;
 
 public class SEDrugSystem extends SEPhysiologySystem implements SESystem
 {
-  protected SEScalar0To1        bronchodilationLevel;
-  protected SEScalarFrequency   heartRateChange;
-  protected SEScalarPressure    meanBloodPressureChange;
-  protected SEScalar0To1        neuromuscularBlockLevel;
-  protected SEScalarPressure    pulsePressureChange;
-  protected SEPupillaryResponse pupillaryResponse;
-  protected SEScalarFrequency   respirationRateChange;
-  protected SEScalar0To1        sedationLevel;
-  protected SEScalarVolume      tidalVolumeChange;
-  protected SEScalar0To1        tubularPermeabilityChange;
+  protected SEScalarNegative1To1 bronchodilationLevel;
+  protected SEScalarFrequency    heartRateChange;
+  protected SEScalarPressure     meanBloodPressureChange;
+  protected SEScalar0To1         neuromuscularBlockLevel;
+  protected SEScalarPressure     pulsePressureChange;
+  protected SEPupillaryResponse  pupillaryResponse;
+  protected SEScalarFrequency    respirationRateChange;
+  protected SEScalar0To1         sedationLevel;
+  protected SEScalarVolume       tidalVolumeChange;
+  protected SEScalarNegative1To1 tubularPermeabilityChange;
 
   public SEDrugSystem()
   {
@@ -61,7 +61,7 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
   public static void load(DrugSystemData src, SEDrugSystem dst)
   {
     if (src.hasBronchodilationLevel())
-      SEScalar0To1.load(src.getBronchodilationLevel(),dst.getBronchodilationLevel());
+    	SEScalarNegative1To1.load(src.getBronchodilationLevel(),dst.getBronchodilationLevel());
     if (src.hasHeartRateChange())
       SEScalarFrequency.load(src.getHeartRateChange(),dst.getHeartRateChange());
     if (src.hasMeanBloodPressureChange())
@@ -79,7 +79,7 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
     if (src.hasTidalVolumeChange())
       SEScalarVolume.load(src.getTidalVolumeChange(),dst.getTidalVolumeChange());
     if (src.hasTubularPermeabilityChange())
-      SEScalar0To1.load(src.getTubularPermeabilityChange(),dst.getTubularPermeabilityChange());
+    	SEScalarNegative1To1.load(src.getTubularPermeabilityChange(),dst.getTubularPermeabilityChange());
   }
 
   public static DrugSystemData unload(SEDrugSystem src)
@@ -92,7 +92,7 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
   protected static void unload(SEDrugSystem src, DrugSystemData.Builder dst)
   {
     if (src.hasBronchodilationLevel())
-      dst.setBronchodilationLevel(SEScalar0To1.unload(src.getBronchodilationLevel()));
+      dst.setBronchodilationLevel(SEScalarNegative1To1.unload(src.getBronchodilationLevel()));
     if (src.hasHeartRateChange())
       dst.setHeartRateChange(SEScalarFrequency.unload(src.getHeartRateChange()));
     if (src.hasMeanBloodPressureChange())
@@ -110,13 +110,13 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
     if (src.hasTidalVolumeChange())
       dst.setTidalVolumeChange(SEScalarVolume.unload(src.getTidalVolumeChange()));
     if (src.hasTubularPermeabilityChange())
-      dst.setTubularPermeabilityChange(SEScalar0To1.unload(src.getTubularPermeabilityChange()));
+      dst.setTubularPermeabilityChange(SEScalarNegative1To1.unload(src.getTubularPermeabilityChange()));
   }
   
-  public SEScalar0To1 getBronchodilationLevel()
+  public SEScalarNegative1To1 getBronchodilationLevel()
   {
     if (bronchodilationLevel == null)
-      bronchodilationLevel = new SEScalar0To1();
+      bronchodilationLevel = new SEScalarNegative1To1();
     return bronchodilationLevel;
   }
   public boolean hasBronchodilationLevel()
@@ -212,10 +212,10 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
     return tidalVolumeChange == null ? false : tidalVolumeChange.isValid();
   }
   
-  public SEScalar0To1 getTubularPermeabilityChange()
+  public SEScalarNegative1To1 getTubularPermeabilityChange()
   {
     if (tubularPermeabilityChange == null)
-      tubularPermeabilityChange = new SEScalar0To1();
+      tubularPermeabilityChange = new SEScalarNegative1To1();
     return tubularPermeabilityChange;
   }
   public boolean hasTubularPermeabilityChange()
