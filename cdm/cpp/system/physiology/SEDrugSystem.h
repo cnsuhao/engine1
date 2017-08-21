@@ -24,7 +24,7 @@ protected:
 public:
 
   virtual bool HasBronchodilationLevel() const;
-  virtual SEScalar0To1& GetBronchodilationLevel();
+  virtual SEScalarNegative1To1& GetBronchodilationLevel();
   virtual double GetBronchodilationLevel() const;
 
   virtual bool HasHeartRateChange() const;
@@ -61,12 +61,12 @@ public:
   virtual double GetTidalVolumeChange(const VolumeUnit& unit) const;
 
   virtual bool HasTubularPermeabilityChange() const;
-  virtual SEScalar0To1& GetTubularPermeabilityChange();
+  virtual SEScalarNegative1To1& GetTubularPermeabilityChange();
   virtual double GetTubularPermeabilityChange() const;
 
 protected:
 
-  SEScalar0To1*          m_BronchodilationLevel;
+  SEScalarNegative1To1*  m_BronchodilationLevel;
   SEScalarFrequency*     m_HeartRateChange;
   SEScalarPressure*      m_MeanBloodPressureChange;
   SEScalar0To1*          m_NeuromuscularBlockLevel;
@@ -75,5 +75,5 @@ protected:
   SEScalarFrequency*     m_RespirationRateChange;
   SEScalar0To1*          m_SedationLevel;
   SEScalarVolume*        m_TidalVolumeChange;
-  SEScalar0To1*          m_TubularPermeabilityChange;
+  SEScalarNegative1To1*  m_TubularPermeabilityChange;
 };

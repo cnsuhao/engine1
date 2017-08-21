@@ -26,12 +26,12 @@ bool SEPatientCondition::IsValid() const
 
 void SEPatientCondition::Serialize(const cdm::PatientConditionData& src, SEPatientCondition& dst)
 {
-  dst.Clear();
+  SECondition::Serialize(src.condition(), dst);
 }
 
 void SEPatientCondition::Serialize(const SEPatientCondition& src, cdm::PatientConditionData& dst)
 {
-
+  SECondition::Serialize(src, *dst.mutable_condition());
 }
 
 #include "substance/SESubstanceManager.h"

@@ -14,6 +14,7 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalar0To1.h"
+#include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarArea.h"

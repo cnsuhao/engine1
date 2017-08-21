@@ -85,18 +85,18 @@ message SubstanceData
   /** @brief  */
   message PharmacodynamicsData
   {
-    Scalar0To1Data                      Bronchodilation                = 1; /**<< @brief */
-    Scalar0To1Data                      DiastolicPressureModifier      = 2; /**<< @brief */
+    ScalarNegative1To1Data              Bronchodilation                = 1; /**<< @brief */
+    ScalarNegative1To1Data              DiastolicPressureModifier      = 2; /**<< @brief */
     ScalarMassPerVolumeData             EC50                           = 3; /**<< @brief */
     ScalarData                          EMaxShapeParameter             = 4; /**<< @brief This used to create a sigmoid shape response. i.e. the steepness parameter in the EMax equation. */
-    Scalar0To1Data                      HeartRateModifier              = 5; /**<< @brief A modifier representing the effect of the drug on the heart rate. */
-    Scalar0To1Data                      NeuromuscularBlock             = 6; /**<< @brief */
+    ScalarNegative1To1Data              HeartRateModifier              = 5; /**<< @brief A modifier representing the effect of the drug on the heart rate. */
+    ScalarNegative1To1Data              NeuromuscularBlock             = 6; /**<< @brief */
     PupillaryResponseData               PupillaryResponse              = 7; /**<< @brief */
-    Scalar0To1Data                      RespirationRateModifier        = 8; /**<< @brief */
-    Scalar0To1Data                      Sedation                       = 9; /**<< @brief */
-    Scalar0To1Data                      SystolicPressureModifier       = 10;/**<< @brief */
-    Scalar0To1Data                      TidalVolumeModifier            = 11;/**<< @brief */
-    Scalar0To1Data                      TubularPermeabilityModifier    = 12;/**<< @brief */
+    ScalarNegative1To1Data              RespirationRateModifier        = 8; /**<< @brief */
+    ScalarNegative1To1Data              Sedation                       = 9; /**<< @brief */
+    ScalarNegative1To1Data              SystolicPressureModifier       = 10;/**<< @brief */
+    ScalarNegative1To1Data              TidalVolumeModifier            = 11;/**<< @brief */
+    ScalarNegative1To1Data              TubularPermeabilityModifier    = 12;/**<< @brief */
   }
   
   /** @brief  */

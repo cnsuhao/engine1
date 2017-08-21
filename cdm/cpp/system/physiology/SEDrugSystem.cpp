@@ -6,6 +6,7 @@
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar.h"
 #include "properties/SEScalar0To1.h"
+#include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
@@ -54,7 +55,7 @@ void SEDrugSystem::Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst)
 {
   dst.Clear();
   if (src.has_bronchodilationlevel())
-    SEScalar0To1::Load(src.bronchodilationlevel(), dst.GetBronchodilationLevel());
+    SEScalarNegative1To1::Load(src.bronchodilationlevel(), dst.GetBronchodilationLevel());
   if (src.has_heartratechange())
     SEScalarFrequency::Load(src.heartratechange(), dst.GetHeartRateChange());
   if (src.has_meanbloodpressurechange())
@@ -72,7 +73,7 @@ void SEDrugSystem::Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst)
   if (src.has_tidalvolumechange())
     SEScalarVolume::Load(src.tidalvolumechange(), dst.GetTidalVolumeChange());
   if (src.has_tubularpermeabilitychange())
-    SEScalar0To1::Load(src.tubularpermeabilitychange(), dst.GetTubularPermeabilityChange());
+    SEScalarNegative1To1::Load(src.tubularpermeabilitychange(), dst.GetTubularPermeabilityChange());
 }
 
 cdm::DrugSystemData* SEDrugSystem::Unload(const SEDrugSystem& src)
@@ -84,7 +85,7 @@ cdm::DrugSystemData* SEDrugSystem::Unload(const SEDrugSystem& src)
 void SEDrugSystem::Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst)
 {
   if (src.HasBronchodilationLevel())
-    dst.set_allocated_bronchodilationlevel(SEScalar0To1::Unload(*src.m_BronchodilationLevel));
+    dst.set_allocated_bronchodilationlevel(SEScalarNegative1To1::Unload(*src.m_BronchodilationLevel));
   if (src.HasHeartRateChange())
     dst.set_allocated_heartratechange(SEScalarFrequency::Unload(*src.m_HeartRateChange));
   if (src.HasMeanBloodPressureChange())
@@ -102,7 +103,7 @@ void SEDrugSystem::Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst)
   if (src.HasTidalVolumeChange())
     dst.set_allocated_tidalvolumechange(SEScalarVolume::Unload(*src.m_TidalVolumeChange));
   if (src.HasTubularPermeabilityChange())
-    dst.set_allocated_tubularpermeabilitychange(SEScalar0To1::Unload(*src.m_TubularPermeabilityChange));
+    dst.set_allocated_tubularpermeabilitychange(SEScalarNegative1To1::Unload(*src.m_TubularPermeabilityChange));
 }
 
 const SEScalar* SEDrugSystem::GetScalar(const std::string& name)
@@ -142,10 +143,10 @@ bool SEDrugSystem::HasBronchodilationLevel() const
 {
   return m_BronchodilationLevel == nullptr ? false : m_BronchodilationLevel->IsValid();
 }
-SEScalar0To1& SEDrugSystem::GetBronchodilationLevel()
+SEScalarNegative1To1& SEDrugSystem::GetBronchodilationLevel()
 {
   if (m_BronchodilationLevel == nullptr)
-    m_BronchodilationLevel = new SEScalar0To1();
+    m_BronchodilationLevel = new SEScalarNegative1To1();
   return *m_BronchodilationLevel;
 }
 double SEDrugSystem::GetBronchodilationLevel() const
@@ -298,10 +299,10 @@ bool SEDrugSystem::HasTubularPermeabilityChange() const
 {
   return m_TubularPermeabilityChange == nullptr ? false : m_TubularPermeabilityChange->IsValid();
 }
-SEScalar0To1& SEDrugSystem::GetTubularPermeabilityChange()
+SEScalarNegative1To1& SEDrugSystem::GetTubularPermeabilityChange()
 {
   if (m_TubularPermeabilityChange == nullptr)
-    m_TubularPermeabilityChange = new SEScalar0To1();
+    m_TubularPermeabilityChange = new SEScalarNegative1To1();
   return *m_TubularPermeabilityChange;
 }
 double SEDrugSystem::GetTubularPermeabilityChange() const
