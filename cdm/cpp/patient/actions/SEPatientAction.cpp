@@ -26,12 +26,12 @@ bool SEPatientAction::IsValid() const
 
 void SEPatientAction::Serialize(const cdm::PatientActionData& src, SEPatientAction& dst)
 {
-  dst.Clear();
+  SEAction::Serialize(src.action(), dst);
 }
 
 void SEPatientAction::Serialize(const SEPatientAction& src, cdm::PatientActionData& dst)
 {
-  
+  SEAction::Serialize(src, *dst.mutable_action());
 }
 
 #include "substance/SESubstanceManager.h"

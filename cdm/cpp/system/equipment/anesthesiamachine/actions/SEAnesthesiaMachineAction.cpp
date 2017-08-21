@@ -25,12 +25,12 @@ bool SEAnesthesiaMachineAction::IsValid() const
 
 void SEAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineActionData& src, SEAnesthesiaMachineAction& dst)
 {
-  dst.Clear();
+  SEAction::Serialize(src.action(), dst);
 }
 
 void SEAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineAction& src, cdm::AnesthesiaMachineActionData& dst)
 {
-
+  SEAction::Serialize(src, *dst.mutable_action());
 }
 
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
