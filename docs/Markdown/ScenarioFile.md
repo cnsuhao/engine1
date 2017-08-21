@@ -178,6 +178,7 @@ AnyCondition{
           Sodium { ScalarMass {Value: 1.5 Unit: "g"} }
           Water { ScalarVolume {Value: 3.7 Unit: "L"} }
         }
+        ElapsedTime { ScalarTime {value: 2.0 Unit: "hr"} }
       }
     }
   }
