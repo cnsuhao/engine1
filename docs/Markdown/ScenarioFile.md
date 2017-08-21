@@ -16,7 +16,7 @@ An example of a basic scenario file is shown below.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Name: "BasicScenario"
 Description: "Examples of the DataRequest structure."
-InitialParameters { PatientFile:"StandardMale.pba" }
+AnyCondition{  { PatientFile:"StandardMale.pba" }
 
 # Base system data required for all scenario verification
 DataRequestManager
@@ -75,7 +75,7 @@ EngineStateFile :"./states/StandardMale@0s.pba"
 
 ## Patient File and optional conditions
 
-While it is recommened to use an Engine State when running a scenario, you do have the option to initialize the engine with a Patient File and optional conditions.
+While it is recommended to use an Engine State when running a scenario, you do have the option to initialize the engine with a Patient File and optional conditions.
 The specified patient file refers to a file containing @ref Patient_PatientData information.
 Replace the EngineStateFile section with an InitialParameters like this:
 
@@ -115,10 +115,12 @@ AnyCondition{
 #### COPD
 @copybrief PatientConditions_ChronicObstructivePulmonaryDiseaseData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientCondition {
-  ChronicObstructivePulmonaryDisease {
-    BronchitisSeverity { Scalar0To1 {Value: 0.3} }
-    EmphysemaSeverity { Scalar0To1 {Value: 0.3} }
+AnyCondition{ 
+  PatientCondition {
+    ChronicObstructivePulmonaryDisease {
+      BronchitisSeverity { Scalar0To1 {Value: 0.3} }
+      EmphysemaSeverity { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,9 +128,11 @@ PatientCondition {
 #### Chronic Pericardial Effusion
 @copybrief PatientConditions_ChronicPericardialEffusionData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientCondition {
-  ChronicPericardialEffusion {
-    AccumulatedVolume { ScalarVolume {Value: 500 Unit: "mL"} }
+AnyCondition{ 
+  PatientCondition {
+    ChronicPericardialEffusion {
+      AccumulatedVolume { ScalarVolume {Value: 500 Unit: "mL"} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,10 +140,12 @@ PatientCondition {
 #### Chronic %Renal Stenosis
 @copybrief PatientConditions_ChronicRenalStenosisData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientCondition {
-  ChronicRenalStenosis {
-    LeftKidneySeverity { Scalar0To1 {Value: 0.9} }
-    RightKidneySeverity { Scalar0To1 {Value: 0.9} }
+AnyCondition{ 
+  PatientCondition {
+    ChronicRenalStenosis {
+      LeftKidneySeverity { Scalar0To1 {Value: 0.9} }
+      RightKidneySeverity { Scalar0To1 {Value: 0.9} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -147,27 +153,31 @@ PatientCondition {
 #### Chronic Ventricular Systolic Dysfunction
 @copybrief PatientConditions_ChronicVentricularSystolicDysfunctionData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientCondition {
-  ChronicVentricularSystolicDysfunction {}
+AnyCondition{ 
+  PatientCondition {
+    ChronicVentricularSystolicDysfunction {}
+  }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Consume Meal
 @copybrief PatientConditions_ConsumeMealData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientCondition {
-  ConsumeMeal {
-    Meal {
-      Nutrition {
-        Carbohydrate { ScalarMass {Value: 390.0 Unit: "g"} }
-        CarbohydrateDigestionRate { ScalarMassPerTime {Value: 0.5 Unit: "g/min"} }
-        Fat { ScalarMass {Value: 90.0 Unit: "g"} }
-        FatDigestionRate { ScalarMassPerTime {Value: 0.055 Unit: "g/min"} }
-        Protein { ScalarMass {Value: 56.0 Unit: "g"} }
-        ProteinDigestionRate { ScalarMassPerTime {Value: 0.071 Unit: "g/min"} }
-        Calcium { ScalarMass {Value: 1.0 Unit: "g"} }
-        Sodium { ScalarMass {Value: 1.5 Unit: "g"} }
-        Water { ScalarVolume {Value: 3.7 Unit: "L"} }
+AnyCondition{ 
+  PatientCondition {
+    ConsumeMeal {
+      Meal {
+        Nutrition {
+          Carbohydrate { ScalarMass {Value: 390.0 Unit: "g"} }
+          CarbohydrateDigestionRate { ScalarMassPerTime {Value: 0.5 Unit: "g/min"} }
+          Fat { ScalarMass {Value: 90.0 Unit: "g"} }
+          FatDigestionRate { ScalarMassPerTime {Value: 0.055 Unit: "g/min"} }
+          Protein { ScalarMass {Value: 56.0 Unit: "g"} }
+          ProteinDigestionRate { ScalarMassPerTime {Value: 0.071 Unit: "g/min"} }
+          Calcium { ScalarMass {Value: 1.0 Unit: "g"} }
+          Sodium { ScalarMass {Value: 1.5 Unit: "g"} }
+          Water { ScalarVolume {Value: 3.7 Unit: "L"} }
+        }
       }
     }
   }
@@ -176,10 +186,12 @@ PatientCondition {
 #or
 
 # file must be in the ./bin/nutrition directory
-PatientCondition {
-  ConsumeMeal {
-    Meal {
-      NutritionFile { "Soylent.pba" }
+AnyCondition{
+  PatientCondition {
+    ConsumeMeal {
+      Meal {
+        NutritionFile { "./nutrition/Soylent.pba" }
+      }
     }
   }
 }
@@ -189,17 +201,21 @@ PatientCondition {
 #### Impaired Alveolar Exchange
 @copybrief PatientConditions_ImpairedAlveolarExchangeData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientCondition {
-  ImpairedAlveolarExchange {
-    ImpairedSurfaceArea { ScalarArea {Value: 0.3 Unit: "m^2"} }
+AnyCondition{ 
+  PatientCondition {
+    ImpairedAlveolarExchange {
+      ImpairedSurfaceArea { ScalarArea {Value: 0.3 Unit: "m^2"} }
+    }
   }
 }
 
 or
 
-PatientCondition {
-  ImpairedAlveolarExchange {
-    ImpairedFraction { Scalar0To1 {Value: 0.3} }
+AnyCondition{ 
+  PatientCondition {
+    ImpairedAlveolarExchange {
+      ImpairedFraction { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -207,11 +223,13 @@ PatientCondition {
 #### Lobar Pneumonia
 @copybrief PatientConditions_LobarPneumoniaData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientCondition {
-  LobarPneumonia {
-    Severity  { Scalar0To1 {Value: 0.7} }
-    LeftLungAffected  { Scalar0To1 {Value: 0.0} }
-    RightLungAffected  { Scalar0To1 {Value: 0.67} }
+AnyCondition{ 
+  PatientCondition {
+    LobarPneumonia {
+      Severity  { Scalar0To1 {Value: 0.7} }
+      LeftLungAffected  { Scalar0To1 {Value: 0.0} }
+      RightLungAffected  { Scalar0To1 {Value: 0.67} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -219,23 +237,23 @@ PatientCondition {
 #### Initial %Environment
 @copybrief EnvironmentConditions_InitialEnvironmentData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-EnvironmentCondition {
-  InitialEnvironmentConditions {
-    Conditions {
-      SurroundingType: Air
-      AirVelocity { ScalarLengthPerTime {Value: 1.0 Unit: "m/s"} }
-      AmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
-      AtmosphericPressure { ScalarPressure {Value: 542.0 Unit: "mmHg"} }
-      ClothingResistance { ScalarHeatResistanceArea {Value: 2.0 Unit: "clo"} }
-      Emissivity { Scalar0To1 {Value: 0.9} }
-      MeanRadiantTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
-      RelativeHumidity { Scalar0To1 {Value: 0.1} }
-      RespirationAmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
-      AmbientGas { Name: "Nitrogen" Amount { Scalar0To1 {Value: 0.79008} } }
-      AmbientGas { Name: "Oxygen" Amount {Scalar0To1 {Value: 0.2095} } }
-      AmbientGas { Name: "CarbonDioxide" Amount {Scalar0To1 {Value: 4.0E-4} } }
-      AmbientGas { Name: "CarbonMonoxide" Amount {Scalar0To1 {Value: 2.0E-5} } }
-      AmbientAerosol { Name: "ForestFireParticulate" Concentration { ScalarMassPerVolume {Value: 2.9 Unit: "mg/m^3"} } } 
+AnyCondition{
+  EnvironmentCondition {
+    InitialEnvironmentConditions {
+      Conditions {
+        SurroundingType: Air
+        AirVelocity { ScalarLengthPerTime {Value: 0.0 Unit: "m/s"} }
+        AmbientTemperature { ScalarTemperature {Value: 22.0 Unit: "degC"} }
+        AtmosphericPressure { ScalarPressure {Value: 525.0 Unit: "mmHg"} }
+        ClothingResistance { ScalarHeatResistanceArea {Value: 0.5 Unit: "clo"} }
+        Emissivity { Scalar0To1 {Value: 0.9} }
+        MeanRadiantTemperature { ScalarTemperature {Value: 22.0 Unit: "degC"} }
+        RelativeHumidity { Scalar0To1 {Value: 0.5} }
+        RespirationAmbientTemperature { ScalarTemperature {Value: 22.0 Unit: "degC"} }
+        AmbientGas { Name: "Nitrogen" Amount { Scalar0To1 {Value: 0.7896} } }
+        AmbientGas { Name: "Oxygen" Amount {Scalar0To1 {Value: 0.21} } }
+        AmbientGas { Name: "CarbonDioxide" Amount {Scalar0To1 {Value: 4.0E-4} } }
+      }
     }
   }
 }
@@ -243,11 +261,9 @@ EnvironmentCondition {
 #or
 
 #File must be in the ./bin/environments directory 
-EnvironmentCondition {
-  InitialEnvironmentConditions {
-    Conditions {
-      ConditionsFile {"Hypobaric3000m.pba"}
-    }
+AnyCondition{
+  EnvironmentCondition {
+    InitialEnvironmentConditions { ConditionsFile: "./environments/Hypobaric3000m.pba" }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -343,10 +359,13 @@ The following are links to the Action class specification along with XML example
 
 @copybrief Scenario_AdvanceTimeData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AdvanceTime 
+AnyAction
 {
-  Time { ScalarTime {Value: 20.0  Unit: "s"} }
-}    
+  AdvanceTime 
+  {
+    Time { ScalarTime {Value: 5.0  Unit: "s"} }
+  }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Serialize State
@@ -376,9 +395,12 @@ Patient Insults
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  AcuteStress {
-    Severity { Scalar0To1 {Value: 0.3} }
+AnyAction
+  {
+  PatientAction {
+    AcuteStress {
+      Severity { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -390,9 +412,12 @@ PatientAction {
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  Apnea {
-    Severity { Scalar0To1 {Value: 0.3} }
+AnyAction
+{
+  PatientAction {
+    Apnea {
+      Severity { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -404,9 +429,12 @@ PatientAction {
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  AirwayObstruction {
-    Severity { Scalar0To1 {Value: 0.3} }
+AnyAction
+{
+  PatientAction {
+    AirwayObstruction {
+      Severity { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -418,9 +446,12 @@ PatientAction {
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  AsthmaAttack {
-    Severity { Scalar0To1 {Value: 0.3} }
+AnyAction
+{
+  PatientAction {
+    AsthmaAttack {
+      Severity { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -433,10 +464,13 @@ Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.<br>
 Types : Diffuse, LeftFocal, RightFocal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  BrainInjury {
-    Type: LeftFocal
-    Severity { Scalar0To1 {Value: 0.3} }
+AnyAction
+{
+  PatientAction {
+    BrainInjury {
+      Type: LeftFocal
+      Severity { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -448,9 +482,12 @@ PatientAction {
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  Bronchoconstriction {
-    Severity { Scalar0To1 {Value: 0.3} }
+AnyAction
+{
+  PatientAction {
+    Bronchoconstriction {
+      Severity { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -460,18 +497,21 @@ PatientAction {
 #### Consume Nutrients 
 @copybrief PatientActions_ConsumeNutrientsData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  ConsumeNutrients {
-    Nutrition {
-      Carbohydrate { ScalarMass {Value: 390.0 Unit: "g"} }
-      CarbohydrateDigestionRate { ScalarMassPerTime {Value: 0.5 Unit: "g/min"} }
-      Fat { ScalarMass {Value: 90.0 Unit: "g"} }
-      FatDigestionRate { ScalarMassPerTime {Value: 0.055 Unit: "g/min"} }
-      Protein { ScalarMass {Value: 56.0 Unit: "g"} }
-      ProteinDigestionRate { ScalarMassPerTime {Value: 0.071 Unit: "g/min"} }
-      Calcium { ScalarMass {Value: 1.0 Unit: "g"} }
-      Sodium { ScalarMass {Value: 1.5 Unit: "g"} }
-      Water { ScalarVolume {Value: 3.7 Unit: "L"} }
+AnyAction
+{
+  PatientAction {
+    ConsumeNutrients {
+      Nutrition {
+        Carbohydrate { ScalarMass {Value: 390.0 Unit: "g"} }
+        CarbohydrateDigestionRate { ScalarMassPerTime {Value: 0.5 Unit: "g/min"} }
+        Fat { ScalarMass {Value: 90.0 Unit: "g"} }
+        FatDigestionRate { ScalarMassPerTime {Value: 0.055 Unit: "g/min"} }
+        Protein { ScalarMass {Value: 56.0 Unit: "g"} }
+        ProteinDigestionRate { ScalarMassPerTime {Value: 0.071 Unit: "g/min"} }
+        Calcium { ScalarMass {Value: 1.0 Unit: "g"} }
+        Sodium { ScalarMass {Value: 1.5 Unit: "g"} }
+        Water { ScalarVolume {Value: 3.7 Unit: "L"} }
+      }
     }
   }
 }
@@ -479,9 +519,12 @@ PatientAction {
 #or
 
 # File must be in the ./bin/nutrition directory -->
-PatientAction {
-  ConsumeNutrients {
-    NutritionFile { "Soylent.pba" }
+AnyAction
+{
+  PatientAction {
+    ConsumeNutrients {
+      NutritionFile { "./nutrition/Soylent.pba" }
+      }
     }
   }
 }
@@ -493,20 +536,26 @@ PatientAction {
 #### Cardiac Arrest 
 @copybrief PatientActions_CardiacArrestData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  CardiacArrest {State: On}
+AnyAction
+{
+  PatientAction {
+    CardiacArrest {State: On}
+  }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Exercise 
 @copybrief PatientActions_ExerciseData <br>
 An intensity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  Exercise {
-    Intensity { Scalar0To1 {Value: 0.3} }
+AnyAction
+{
+  PatientAction {
+    Exercise {
+      Intensity { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -518,9 +567,12 @@ PatientAction {
 The Compartment attribute can be any of the enumerations defined in the enumAnatomy enumeration.<br>
 FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  Hemorrhage { Compartment: "RightLegVascular"
-    Rate { ScalarVolumePerTime {Value: 250.0 Unit: "mL/min"} }
+AnyAction
+{
+  PatientAction {
+    Hemorrhage { Compartment: "RightLegVascular"
+      Rate { ScalarVolumePerTime {Value: 250.0 Unit: "mL/min"} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -531,9 +583,12 @@ PatientAction {
 @copybrief PatientActions_PericardialEffusionData <br>
 EffusionRate of the liquid
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  PericardialEffusion {
-    EffusionRate { ScalarVolumePerTime {Value: 0.1 Unit: "mL/s"} }
+AnyAction
+{
+  PatientAction {
+    PericardialEffusion {
+      EffusionRate { ScalarVolumePerTime {Value: 0.1 Unit: "mL/s"} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -547,11 +602,14 @@ The Side attribute can be "Left" or "Right"<br>
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  TensionPneumothorax {
-    Type: Open
-    Side: Right
-    Severity { Scalar0To1 {Value: 0.3} }
+AnyAction
+{
+  PatientAction {
+    TensionPneumothorax {
+      Type: Open
+      Side: Right
+      Severity { Scalar0To1 {Value: 0.3} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -568,9 +626,12 @@ Patient Interventions
 Force is the specific magnitude to perform a compression with.<br>
 Note, that patient should be in Cardiac Arrest before performing CPR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  ChestCompressionForce {
-    Force { ScalarForce {Value: 100.0 Unit: "N"} }
+AnyAction
+{
+  PatientAction {
+    ChestCompressionForce {
+      Force { ScalarForce {Value: 100.0 Unit: "N"} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -582,26 +643,32 @@ PatientAction {
 ForceScale value must be >=0.0 and <=1.0<br>
 Note, that patient should be in Cardiac Arrest before performing CPR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  ChestCompressionForceScale {
-    ForceScale { Scalar0To1 {Value: 0.73} }
-....ForcePeriod { ScalarTime {Value: 0.2 Unit: "s"} }
+AnyAction
+{
+  PatientAction {
+    ChestCompressionForceScale {
+      ForceScale { Scalar0To1 {Value: 0.73} }
+      ForcePeriod { ScalarTime {Value: 0.2 Unit: "s"} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-		
+
 #### Chest Occlusive Dressing 
 @copybrief PatientActions_ChestOcclusiveDressingData <br>
 The State attribute can be "On" or "Off" <br>
 Side is either Left or Right<br>
 FATAL: If the side specified does not have a pnumothorax 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  ChestOcclusiveDressing {
-    State: On
-    Side: Right
+AnyAction
+{
+  PatientAction {
+    ChestOcclusiveDressing {
+      State: On
+      Side: Right
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -628,32 +695,33 @@ command periods to ensure the body is doing what you
 expect it to.. Or not, depending on how you want 
 the system to react.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  ConsciousRespiration {
-    Command {
-      ForcedExhale {
-        ExpiratoryCapacityFraction { Scalar0To1 {Value: 1.0} }
-        Period { ScalarTime {Value: 3.0 Unit: "s"} }
+AnyAction
+{
+  PatientAction {
+    ConsciousRespiration {
+      Command {
+        ForcedExhale {
+          ExpiratoryReserveVolumeFraction { Scalar0To1 {Value: 1.0} }
+          Period { ScalarTime {Value: 3.0 Unit: "s"} }
+        }
       }
-    }
-    Command {
-      ForcedInhale {
-        InspiratoryCapacityFraction { Scalar0To1 {Value: 0.5} }
-        Period { ScalarTime {Value: 5.0 Unit: "s"} }
+      Command {
+        UseInhaler {}
       }
-    }
-    Command {
-      UseInhaler {}
-    }
-    Command {
-      BreathHold {
-        Period { ScalarTime {Value: 10.0 Unit: "s"} }
+      Command {
+        ForcedInhale {
+          InspiratoryCapacityFraction { Scalar0To1 {Value: 1.0} }
+          Period { ScalarTime {Value: 5.0 Unit: "s"} }
+        }
+      }
+      Command {
+        BreathHold {
+          Period { ScalarTime {Value: 10.0 Unit: "s"} }
+        }
       }
     }
   }
 }
-
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -663,8 +731,11 @@ PatientAction {
 Note: In order to 'turn off' an intubation, use'Off' as the Type  <br>
 Types : Off, Esophageal, LeftMainstem, RightMainstem, Tracheal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  Intubation {Type: Tracheal}
+AnyAction
+{
+  PatientAction {
+    Intubation {Type: Tracheal}
+  }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -676,16 +747,19 @@ You may provide Pressure and/or Flow. <br>
 If you do not provide GasFractions, the environment gas fractions will be used. <br>
 If you do provide Gas Fractions, they must add up to 1.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  MechanicalVentilation { State: On
-    Flow { ScalarVolumePerTime {Value: 1.0 Unit: "mL/s"} }
-    Pressure { ScalarPressure {Value: 10.0 Unit: "cmH2O"} }
-    GasFraction { Name: "Oxygen"
-      Amount { Scalar0To1 {Value: 0.3} } }
-    GasFraction { Name: "CarbonDioxide"
-      Amount { Scalar0To1 {Value: 0.1} } }
-    GasFraction { Name: "Nitrogen"
-      Amount { Scalar0To1 {Value: 0.6} } }
+AnyAction
+{
+  PatientAction {
+    MechanicalVentilation { State: On
+      Flow { ScalarVolumePerTime {Value: 1.0 Unit: "mL/s"} }
+      Pressure { ScalarPressure {Value: 10.0 Unit: "cmH2O"} }
+      GasFraction { Name: "Oxygen"
+        Amount { Scalar0To1 {Value: 0.3} } }
+      GasFraction { Name: "CarbonDioxide"
+        Amount { Scalar0To1 {Value: 0.1} } }
+      GasFraction { Name: "Nitrogen"
+        Amount { Scalar0To1 {Value: 0.6} } }
+    }
   }
 }
 
@@ -699,10 +773,13 @@ The Side attribute can be "Left" or "Right"<br>
 The State attribute can be "On" or "Off"
 FATAL: If the side specified does not have a pnumothorax 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  NeedleDecompression {
-    State: On
-    Side: Right
+AnyAction
+{
+  PatientAction {
+    NeedleDecompression {
+      State: On
+      Side: Right
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -712,13 +789,16 @@ PatientAction {
 Action to empty the bladder. if not emptied, 
 it will empty and throw an event.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  Urinate {}
+AnyAction
+{
+  PatientAction {
+    Urinate {}
+  }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Substance Bolus  
 @copybrief PatientActions_SubstanceBolusData
 
@@ -732,44 +812,53 @@ The AdminRoute can be one of:
 
 The Substance element should be set to a name of any of the %Substances.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  SubstanceBolus {
-    AdministrationRoute: Intravenous
-    Substance: "Succinylcholine"
-    Concentration { ScalarMassPerVolume {Value: 4820.0 Unit: "ug/mL"} }
-    Dose { ScalarVolume {Value: 30.0 Unit: "mL"} }
+AnyAction
+{
+  PatientAction {
+    SubstanceBolus {
+      AdministrationRoute: Intravenous
+      Substance: "Succinylcholine"
+      Concentration { ScalarMassPerVolume {Value: 4820.0 Unit: "ug/mL"} }
+      Dose { ScalarVolume {Value: 30.0 Unit: "mL"} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Substance Compound Infusion Fluids 
 @copybrief PatientActions_SubstanceCompoundInfusionData <br>
 The Substance Compound element should be set to a name of any of the %Substances Compounds. <br>
 Set Rate to 0 to remove Action
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  SubstanceCompoundInfusion {
-    SubstanceCompound: "Saline"
-    BagVolume { ScalarVolume {Value: 500.0 Unit: "mL"} }
-    Rate { ScalarVolumePerTime {Value: 100.0 Unit: "mL/min"} }
+AnyAction
+{
+  PatientAction {
+    SubstanceCompoundInfusion {
+      SubstanceCompound: "Saline"
+      BagVolume { ScalarVolume {Value: 500.0 Unit: "mL"} }
+      Rate { ScalarVolumePerTime {Value: 100.0 Unit: "mL/min"} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Substance Infusion 
 @copybrief PatientActions_SubstanceInfusionData <br>
 The Substance element should be set to a name of any of the %Substances. <br>
 Set Rate to 0 to remove Action
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PatientAction {
-  SubstanceInfusion { 
-   Substance: "Succinylcholine"
-    Concentration { ScalarMassPerVolume {Value: 5000.0 Unit: "ug/mL"} }
-    Rate { ScalarVolumePerTime {Value: 100.0 Unit: "mL/min"} }
+AnyAction
+{
+  PatientAction {
+    SubstanceInfusion { 
+     Substance: "Succinylcholine"
+      Concentration { ScalarMassPerVolume {Value: 5000.0 Unit: "ug/mL"} }
+      Rate { ScalarVolumePerTime {Value: 100.0 Unit: "mL/min"} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -823,31 +912,33 @@ AnyAction {
     }
   }
 }
-
-jbw - file?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  Configuration {
+AnyAction {
+  AnesthesiaMachineAction {
     Configuration {
-      Connection: Off
+      Configuration {
+        Connection: Off
+      }
     }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-AnesthesiaMachineAction {
-  Configuration {
+AnyAction {
+  AnesthesiaMachineAction {
     Configuration {
-      RightChamber {
-        State: On
-        SubstanceFraction { Scalar0To1 {Value="0.04"} }
-        Substance: "Desflurane"
-      }
-      LeftChamber {
-        State: Off
-        SubstanceFraction { Scalar0To1 {Value="0.01"} }
-        Substance: "Desflurane"
+      Configuration {
+        RightChamber {
+          State: On
+          SubstanceFraction { Scalar0To1 {Value="0.04"} }
+          Substance: "Desflurane"
+        }
+        LeftChamber {
+          State: Off
+          SubstanceFraction { Scalar0To1 {Value="0.01"} }
+          Substance: "Desflurane"
+        }
       }
     }
   }
@@ -860,24 +951,28 @@ Anesthesia Machine Incidents
 ----------------------------
 
 - - -
-	
+
 #### Oxygen TankPressure Loss 
 @copybrief AnesthesiaActions_OxygenTankPressureLossData <br>
 The State attribute can be "On" or "Off"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  OxygenTankPressureLoss {State: On}
+AnyAction {
+  AnesthesiaMachineAction {
+    OxygenTankPressureLoss {State: On}
+  }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Oxygen Wall Port Pressure Loss 
 @copybrief AnesthesiaActions_OxygenWallPortPressureLossData <br>
 The State attribute can be "On" or "Off"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  OxygenWallPortPressureLoss {State: On}
+AnyAction {
+  AnesthesiaMachineAction {
+    OxygenWallPortPressureLoss {State: On}
+  }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -887,141 +982,161 @@ Anesthesia Machine Failures
 ---------------------------
 
 - - -
-	
+
 #### Expiratory Valve Leak 
 @copybrief AnesthesiaActions_ExpiratoryValveLeakData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  ExpiratoryValveLeak {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    ExpiratoryValveLeak {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Expiratory Valve Obstruction 
 @copybrief AnesthesiaActions_ExpiratoryValveObstructionData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  ExpiratoryValveObstruction {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    ExpiratoryValveObstruction {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Inspiratory Valve Leak 
 @copybrief AnesthesiaActions_InspiratoryValveLeakData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  InspiratoryValveLeak {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    InspiratoryValveLeak {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Inspiratory Valve Obstruction 
 @copybrief AnesthesiaActions_InspiratoryValveObstructionData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  InspiratoryValveObstruction {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    InspiratoryValveObstruction {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Mask Leak 
 @copybrief AnesthesiaActions_MaskLeakData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  MaskLeak {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    MaskLeak {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Soda Lime Failure 
 @copybrief AnesthesiaActions_SodaLimeFailureData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  SodaLimeFailure {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    SodaLimeFailure {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Tube Cuff Leak 
 @copybrief AnesthesiaActions_TubeCuffLeakData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  TubeCuffLeak {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    TubeCuffLeak {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Vaporizer Failure 
 @copybrief AnesthesiaActions_VaporizerFailureData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  VaporizerFailure {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    VaporizerFailure {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Ventilator Pressure Loss 
 @copybrief AnesthesiaActions_VentilatorPressureLossData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  VentilatorPressureLoss {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    VentilatorPressureLoss {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Y Piece Disconnect 
 @copybrief AnesthesiaActions_YPieceDisconnectData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-AnesthesiaMachineAction {
-  YPieceDisconnect {
-    Severity { Scalar0To1 {Value: 0.5} }
+AnyAction {
+  AnesthesiaMachineAction {
+    YPieceDisconnect {
+      Severity { Scalar0To1 {Value: 0.5} }
+    }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1035,18 +1150,19 @@ AnesthesiaMachineAction {
 @copybrief InhalerActions_InhalerConfigurationData <br>
 FATAL: Cannot have inhaler and anesthesia machine on at the same time
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-InhalerAction {
-  Configuration {
+AnyAction
+{
+  InhalerAction {
     Configuration {
-      Substance: "Albuterol"
-      MeteredDose { ScalarMass {Value: 90.0 Unit: "ug"} }
-      NozzleLoss { Scalar0To1 {Value: 0.04} }
-      SpacerVolume { ScalarVolume {Value: 0.1 Unit: "L"} }
+      Configuration {
+        Substance: "Albuterol"
+        MeteredDose { ScalarMass {Value: 90.0 Unit: "ug"} }
+        NozzleLoss { Scalar0To1 {Value: 0.04} }
+        SpacerVolume { ScalarVolume {Value: 500.0 Unit: "mL"} }
+      }
     }
   }
 }
-
-jbw - file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -1055,29 +1171,32 @@ jbw - file
 ------------------------
 
 - - -
-	
+
 #### %Environment Configuration State <br>
 @copybrief EnvironmentActions_EnvironmentChangeData <br>
 NOTE: Each field is optional.
-jbw - mention CO and particulates (e.g., smoke)
+You can also add particulates to the surrounding atmosphere
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-EnvironmentAction {
-  Conditions {
+AnyAction
+{
+  EnvironmentAction {
     Conditions {
-      SurroundingType: Air
-      AirVelocity { ScalarLengthPerTime {Value: 1.0 Unit: "m/s"} }
-      AmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
-      AtmosphericPressure { ScalarPressure {Value: 542.0 Unit: "mmHg"} }
-      ClothingResistance { ScalarHeatResistanceArea {Value: 2.0 Unit: "clo"} }
-      Emissivity { Scalar0To1 {Value: 0.9} }
-      MeanRadiantTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
-      RelativeHumidity { Scalar0To1 {Value: 0.1} }
-      RespirationAmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
-      AmbientGas { Name: "Nitrogen" Amount { Scalar0To1 {Value: 0.79008} } }
-      AmbientGas { Name: "Oxygen" Amount {Scalar0To1 {Value: 0.2095} } }
-      AmbientGas { Name: "CarbonDioxide" Amount {Scalar0To1 {Value: 4.0E-4} } }
-      AmbientGas { Name: "CarbonMonoxide" Amount {Scalar0To1 {Value: 2.0E-5} } }
-      AmbientAerosol { Name: "ForestFireParticulate" Concentration { ScalarMassPerVolume {Value: 2.9 Unit: "mg/m^3"} } } 
+      Conditions {
+        SurroundingType: Air
+        AirVelocity { ScalarLengthPerTime {Value: 1.0 Unit: "m/s"} }
+        AmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
+        AtmosphericPressure { ScalarPressure {Value: 542.0 Unit: "mmHg"} }
+        ClothingResistance { ScalarHeatResistanceArea {Value: 2.0 Unit: "clo"} }
+        Emissivity { Scalar0To1 {Value: 0.9} }
+        MeanRadiantTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
+        RelativeHumidity { Scalar0To1 {Value: 0.1} }
+        RespirationAmbientTemperature { ScalarTemperature {Value: 25.0 Unit: "degC"} }
+        AmbientGas { Name: "Nitrogen" Amount { Scalar0To1 {Value: 0.79008} } }
+        AmbientGas { Name: "Oxygen" Amount {Scalar0To1 {Value: 0.2095} } }
+        AmbientGas { Name: "CarbonDioxide" Amount {Scalar0To1 {Value: 4.0E-4} } }
+        AmbientGas { Name: "CarbonMonoxide" Amount {Scalar0To1 {Value: 2.0E-5} } }
+        AmbientAerosol { Name: "ForestFireParticulate" Concentration { ScalarMassPerVolume {Value: 2.9 Unit: "mg/m^3"} } } 
+      }
     }
   }
 }
@@ -1085,12 +1204,10 @@ EnvironmentAction {
 or
 
 <!-- file must be in the ./bin/environments directory -->
-jbw
-EnvironmentCondition {
-  InitialEnvironmentConditions {
-    Conditions {
-      ConditionsFile {"Hypobaric3000m.pba"}
-    }
+AnyAction
+{
+  EnvironmentAction { 
+    Conditions { ConditionsFile: "./environments/Hypobaric3000m.pba"}
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1102,20 +1219,23 @@ EnvironmentCondition {
 You must provide at least 1 activity, but up can also 
 apply up-to all 3 in one action.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-EnvironmentAction {
-  ThermalApplication {
-    ActiveHeating {
-      Power { ScalarPower {Value: 500.0 Unit: "BTU/hr"} }
-      SurfaceAreaFraction { Scalar0To1 {Value: 0.2} }
-    }
-    ActiveCooling {
-      Power { ScalarPower {Value: 500.0 Unit: "BTU/hr"} }
-      SurfaceArea { ScalarArea {Value: 0.1 Unit: "m^2"} }
-    }
-    AppliedTemperature { 
-      State: On
-      Temperature { ScalarTemperature {Value: 30.0 Unit: "degF"} }
-      SurfaceAreaFraction { Scalar0To1 {Value: 1.0} }
+AnyAction
+{
+  EnvironmentAction {
+    ThermalApplication {
+      ActiveHeating {
+        Power { ScalarPower {Value: 500.0 Unit: "BTU/hr"} }
+        SurfaceAreaFraction { Scalar0To1 {Value: 0.2} }
+      }
+      ActiveCooling {
+        Power { ScalarPower {Value: 500.0 Unit: "BTU/hr"} }
+        SurfaceArea { ScalarArea {Value: 0.1 Unit: "m^2"} }
+      }
+      AppliedTemperature { 
+        State: On
+        Temperature { ScalarTemperature {Value: 30.0 Unit: "degF"} }
+        SurfaceAreaFraction { Scalar0To1 {Value: 1.0} }
+      }
     }
   }
 }
