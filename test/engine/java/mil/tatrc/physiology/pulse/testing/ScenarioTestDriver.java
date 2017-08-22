@@ -92,6 +92,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     	pBuilder.getConfigurationBuilder().setAutoSerialization(SEAutoSerialization.unload(job.autoSerialization)); 
 
     pba = pBuilder.toString();
+    //System.out.println(pba);
     PulseScenarioExec pse = new PulseScenarioExec();
     pse.setListener(job);      
     pse.runScenario(log, pba, results);

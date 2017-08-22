@@ -135,7 +135,7 @@ void SEThermalApplication::ToString(std::ostream &str) const
     str << "\n\tComment: " << m_Comment;
   if (HasActiveHeating())
   {
-    str << "\n\t";
+    str << "\n\t Active Heating : ";
     m_ActiveHeating->ToString(str);
   }
   else
@@ -143,7 +143,7 @@ void SEThermalApplication::ToString(std::ostream &str) const
 
   if (HasActiveCooling())
   {
-    str << "\n\t";
+    str << "\n\t Active Cooling : ";
     m_ActiveCooling->ToString(str);
   }
   else

@@ -307,6 +307,8 @@ void SEPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
 
   if (src.HasBasalMetabolicRate())
     dst.set_allocated_basalmetabolicrate(SEScalarPower::Unload(*src.m_BasalMetabolicRate));
+  if (src.HasBloodVolumeBaseline())
+    dst.set_allocated_bloodvolumebaseline(SEScalarVolume::Unload(*src.m_BloodVolumeBaseline));
   if (src.HasDiastolicArterialPressureBaseline())
     dst.set_allocated_diastolicarterialpressurebaseline(SEScalarPressure::Unload(*src.m_DiastolicArterialPressureBaseline));
   if (src.HasHeartRateBaseline())
@@ -324,6 +326,7 @@ void SEPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
     dst.set_allocated_heartratemaximum(SEScalarFrequency::Unload(*src.m_HeartRateMaximum));
   if (src.HasHeartRateMinimum())
     dst.set_allocated_heartrateminimum(SEScalarFrequency::Unload(*src.m_HeartRateMinimum));
+  
   if (src.HasExpiratoryReserveVolume())
     dst.set_allocated_expiratoryreservevolume(SEScalarVolume::Unload(*src.m_ExpiratoryReserveVolume));
   if (src.HasFunctionalResidualCapacity())
@@ -332,10 +335,10 @@ void SEPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
     dst.set_allocated_inspiratorycapacity(SEScalarVolume::Unload(*src.m_InspiratoryCapacity));
   if (src.HasInspiratoryReserveVolume())
     dst.set_allocated_inspiratoryreservevolume(SEScalarVolume::Unload(*src.m_InspiratoryReserveVolume));
+  if (src.HasResidualVolume())
+    dst.set_allocated_residualvolume(SEScalarVolume::Unload(*src.m_ResidualVolume));
   if (src.HasTotalLungCapacity())
     dst.set_allocated_totallungcapacity(SEScalarVolume::Unload(*src.m_TotalLungCapacity));
-  if (src.HasBloodVolumeBaseline())
-    dst.set_allocated_bloodvolumebaseline(SEScalarVolume::Unload(*src.m_BloodVolumeBaseline));
   if (src.HasVitalCapacity())
     dst.set_allocated_vitalcapacity(SEScalarVolume::Unload(*src.m_VitalCapacity));
 

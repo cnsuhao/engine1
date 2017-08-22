@@ -34,7 +34,7 @@ void SEElectroCardioGramWaveformInterpolator::Load(const cdm::ElectroCardioGramW
 void SEElectroCardioGramWaveformInterpolator::Serialize(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst)
 {
   dst.Clear();
-  for (int i = 0; i<src.waveform_size(); i++)
+  for (int i = 0; i < src.waveform_size(); i++)
   {
     SEElectroCardioGramWaveform* waveform = new SEElectroCardioGramWaveform(dst.GetLogger());
     SEElectroCardioGramWaveform::Load(src.waveform()[i], *waveform);
@@ -77,8 +77,8 @@ bool SEElectroCardioGramWaveformInterpolator::LoadFile(const std::string& file, 
 void SEElectroCardioGramWaveformInterpolator::Interpolate(const SEScalarTime& timeStep)
 {
   for (auto& l : m_Waveforms)
-    for(auto& w : l.second)
-      if (w.second!=nullptr)
+    for (auto& w : l.second)
+      if (w.second != nullptr)
         Interpolate(*w.second, timeStep);
 }
 void SEElectroCardioGramWaveformInterpolator::Interpolate(SEElectroCardioGramWaveform& w, const SEScalarTime& timeStep)
@@ -86,36 +86,36 @@ void SEElectroCardioGramWaveformInterpolator::Interpolate(SEElectroCardioGramWav
   //If the wavefore has a time-step, use it
   //The default waveform that is deployed does not have a time-step specified
   SEFunctionElectricPotentialVsTime& data = w.GetData();
-    SEScalarTime* waveformTimeStep = nullptr;
-    if (w.HasTimeStep())
-      waveformTimeStep = &w.GetTimeStep();
+  SEScalarTime* waveformTimeStep = nullptr;
+  if (w.HasTimeStep())
+    waveformTimeStep = &w.GetTimeStep();
 
-    bool interpolate = true; // now we need to make the data correspond to our time step.      
-    if (waveformTimeStep != nullptr)
+  bool interpolate = true; // now we need to make the data correspond to our time step.      
+  if (waveformTimeStep != nullptr)
+  {
+    if (waveformTimeStep->Equals(timeStep)) // if the data is already sampled at the engine's time step, no interpolation is needed
+      interpolate = false;
+  }
+  if (interpolate)
+  {
+    // NOTE: This assumes that the data is a SINGLE waveform
+    std::vector<double>  iTime;
+    std::vector<double>& wTime = data.GetTime();
+    std::vector<double>& wEleP = data.GetElectricPotential();
+    double currentTime_s = 0;
+    double timeStep_s = timeStep.GetValue(TimeUnit::s);
+    double endTime_s = wTime[wTime.size() - 1];
+    while (currentTime_s <= endTime_s) // figure out how many data points are needed and populate the new time vector
     {
-      if (waveformTimeStep->Equals(timeStep)) // if the data is already sampled at the engine's time step, no interpolation is needed
-        interpolate = false;
+      iTime.push_back(currentTime_s);
+      currentTime_s += timeStep_s;
     }
-    if (interpolate)
-    {
-      // NOTE: This assumes that the data is a SINGLE waveform
-      std::vector<double>  iTime;
-      std::vector<double>& wTime = data.GetTime();
-      std::vector<double>& wEleP = data.GetElectricPotential();
-      double currentTime_s = 0;
-      double timeStep_s = timeStep.GetValue(TimeUnit::s);
-      double endTime_s = wTime[wTime.size()-1];
-      while (currentTime_s <= endTime_s) // figure out how many data points are needed and populate the new time vector
-      {
-        iTime.push_back(currentTime_s);
-        currentTime_s += timeStep_s;
-      }
-      SEFunctionElectricPotentialVsTime* iWaveForm = data.InterpolateToTime(iTime, TimeUnit::s); // creates the new waveform data
-      cdm::FunctionElectricPotentialVsTimeData* wfData = SEFunctionElectricPotentialVsTime::Unload(*iWaveForm);
-      SEFunctionElectricPotentialVsTime::Load(*wfData, data);
-      delete wfData;
-      delete iWaveForm;
-    }
+    SEFunctionElectricPotentialVsTime* iWaveForm = data.InterpolateToTime(iTime, TimeUnit::s); // creates the new waveform data
+    cdm::FunctionElectricPotentialVsTimeData* wfData = SEFunctionElectricPotentialVsTime::Unload(*iWaveForm);
+    SEFunctionElectricPotentialVsTime::Load(*wfData, data);
+    delete wfData;
+    delete iWaveForm;
+  }
 }
 
 bool SEElectroCardioGramWaveformInterpolator::CanInterpolateLeadPotential(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const
@@ -124,7 +124,7 @@ bool SEElectroCardioGramWaveformInterpolator::CanInterpolateLeadPotential(cdm::E
     return false;
   auto l = m_Leads.find(lead);
   if (l == m_Leads.end())
-    return false;  
+    return false;
   return l->second != nullptr;
 }
 void SEElectroCardioGramWaveformInterpolator::SetLeadElectricPotential(cdm::ElectroCardioGramWaveformData_eLead lead, SEScalarElectricPotential& ep)
@@ -136,7 +136,7 @@ bool SEElectroCardioGramWaveformInterpolator::StartNewCycle(cdm::eHeartRhythm rh
 {
   for (auto l2rw : m_Waveforms)
   {
-    if (m_Leads.find(l2rw.first)==m_Leads.end() && !HasWaveform(l2rw.first, rhythm))
+    if (m_Leads.find(l2rw.first) == m_Leads.end() && !HasWaveform(l2rw.first, rhythm))
     {
       std::stringstream ss;
       ss << "Waveform not provided for Lead " << l2rw.first << " rhythm " << rhythm;
@@ -157,7 +157,7 @@ bool SEElectroCardioGramWaveformInterpolator::StartNewCycle(cdm::eHeartRhythm rh
 /// the unit of millivolts to the output. If there are no active iterators, the output defaults to 0.
 //--------------------------------------------------------------------------------------------------
 void SEElectroCardioGramWaveformInterpolator::CalculateWaveformsElectricPotential()
-{ 
+{
   // Pull Data from our iterators
   int idx;
   double val;
@@ -187,7 +187,7 @@ void SEElectroCardioGramWaveformInterpolator::CalculateWaveformsElectricPotentia
       }
     }
   }
-    
+
 }
 
 bool SEElectroCardioGramWaveformInterpolator::HasWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const

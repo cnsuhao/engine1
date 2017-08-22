@@ -494,7 +494,7 @@ public abstract class ValidationTool
   
   protected boolean buildExpectedHeader(ValidationRow vRow)
   {
-    if(vRow.name.startsWith("EndTidalCarbonDioxideFraction"))
+    if(vRow.name.startsWith("ResidualVolume"))
      Log.info("Here");
     if(vRow.name.contains("*"))
     {
@@ -657,7 +657,7 @@ public abstract class ValidationTool
 
   protected boolean validate(ValidationRow vRow)
   {
-    if(vRow.name.startsWith("EndTidalCarbonDioxideFraction"))
+    if(vRow.name.startsWith("ResidualVolume"))
       Log.info("Break");
     if(!getResult(vRow))
     {
