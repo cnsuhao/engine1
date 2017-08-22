@@ -9,7 +9,7 @@ ExternalData_Add_Test(ExternalData
 ExternalData_Add_Target(ExternalData)
 set(ExternalData_LINK_CONTENT SHA512)
 
-add_custom_target(UpdateVerification)
+add_custom_target(UpdateVerification ALL)
 add_dependencies(UpdateVerification ExternalData)
 add_custom_command(TARGET UpdateVerification POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory   ${CMAKE_INSTALL_PREFIX}/bin/verification)
