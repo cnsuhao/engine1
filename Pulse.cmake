@@ -8,6 +8,9 @@ set(_VERSION_MINOR 0)
 set(_VERSION_PATCH 0)
 set(_VERSION "${_VERSION_MAJOR}.${_VERSION_MINOR}.${_VERSION_PATCH}")
 
+# Build the core libraries as shared or static (DataModel, CDM, Engine)
+set(BUILD_SHARED_LIBS OFF)
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CONFIGURATION_TYPES Debug Release RelWithDebInfo CACHE TYPE INTERNAL FORCE )
 if(MSVC)  
@@ -30,9 +33,6 @@ if(UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
 endif()
-
-# Build the core libraries as shared or static (DataModel, CDM, Engine)
-set(BUILD_SHARED_LIBS OFF)
 
 message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
@@ -80,6 +80,8 @@ list(APPEND CMAKE_PREFIX_PATH ${log4cpp_INSTALL})
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_BINARY_DIR}/schema")
 
+set(protobuf_BUILD_SHARED_LIBS OFF CACHE TYPE INTERNAL FORCE)
+set(protobuf_MSVC_STATIC_RUNTIME OFF CACHE TYPE INTERNAL FORCE)#Use our MSVC runtime settings (/MD or /MT)
 set(protobuf_BUILD_TESTS OFF CACHE TYPE INTERNAL FORCE)
 set(protobuf_BUILD_EXAMPLES OFF CACHE TYPE INTERNAL FORCE)
 add_subdirectory("${protobuf_DIR}/cmake" "${protobuf_DIR}-build" EXCLUDE_FROM_ALL)
