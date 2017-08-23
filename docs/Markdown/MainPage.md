@@ -27,7 +27,7 @@ The latest code base includes the following notable updates:
   - See a description <a href="https://cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F">here</a>
 - Full CMake Builds
   - Replaced all ant and scripts (.sh and .bat) with CMake
-    - Improves build support across all target platforms (requested by AMM)
+    - Improves build support across all target platforms
       - Currently supporting Windows, Mac, UNIX (including aarch64) devices
     - More multi-platform/compiler compliance
       - Currently supporting MSVC (2015+), GCC (4.8.1+), and Clang (3.3+)
@@ -46,7 +46,7 @@ The latest code base includes the following notable updates:
 
 - - -
 
-## Planned Improvements
+## Planned Software Improvements
 
 - C# interface support
 - Integration with CTest

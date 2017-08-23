@@ -1,6 +1,6 @@
 ## What is the Pulse Physiology Engine?
 
-The physiology engine is a C++ based, open source, multi-platform (Windows, Mac, and Linux), comprehensive human physiology
+The Pulse Physiology Engine is a C++ based, open source, multi-platform (Windows, Mac, and Linux), comprehensive human physiology
 simulator that will drive medical education, research, and training technologies. 
 The engine enables accurate and consistent physiology simulation across the medical community. 
 The engine can be used as a standalone application or integrated with simulators, sensor interfaces, and models of all fidelities.
@@ -19,11 +19,11 @@ High-level objectives include:
 This physiology engine is a fork of the %BioGears project, version 6.1.1, began at Applied Research Associates, Inc. (ARA) 
 with oversight from the Telemedicine and Advanced Technology Research Center (TATRC) under award W81XWH-13-2-0068. 
 
-The %BioGears original core technical team is now at Kitware and is leveraging the company's expertise in medical computing
-and its history of maintaining and caring for open-source projects. We are working to create a stable environment for the engine
-to thrive and be active. With our fork, the code bases has diverged quickly from the %BioGears codebase to support our current
-architectural plan. We hope to continue collaborating with %BioGears.
+With the Pulse Physiology Engine we are addressing several limitations we uncovered with the BioGears Engine. We have established an public repository and issue tracker to encourage community collaboration and contribution, fixed licensing issues that ensure an Aphache 2.0 license, added complete cross-platform builds and support, increased our compiler support, added built in support for our verification test suite, and improved/streamlined the build process. 
 
+The %BioGears original core technical team is now at Kitware and is leveraging the company's expertise in medical computing
+and its history of maintaining and caring for open-source projects to further advance the engine and explore new avenues of research, such as pediatrics, patient-specific modeling and virtual surgery planning/rehearsal. We are working to create a stable environment for the engine
+to encourage community collaboration and contribution through the public repository. The code base has diverged quickly from the %BioGears codebase to support these needs; however, we hope to continue collaborating with %BioGears to benefit both projects in the future.
 
 ## How do I get the physiology engine?
 
@@ -37,6 +37,7 @@ An instance of an engine models a single patient's physiology.
 - You can modify the patients external environmental conditions (weather, submerge in water, etc.)
 - You can apply various actions (acute insults/injuries, interventions, conscious breathing, exercise, etc.) to be applied to the patient.
 - The patient can also interact with equipment models, such as an Anesthesia and/or an %ECG Machine as well as an %Inhaler via actions.
+- You can integrate the engine into your applications.
 
 ## What kind of data can I get from the physiology engine?
 
@@ -45,31 +46,29 @@ Available data is defined within the engine in three major ways:
 	-	Analogous to system vitals
 	  -	Examples: heart rate, oxygen consumption, mean arterial pressure, etc.
 -	Compartment data
-	-	Flow, pressure, and volume related to specific part of the body or component of equipment
-	  - Examples: Blood flow to the brain, Right Lung Volume, Right Heart Pressure
+	-	Flow, pressure, and volume related to specific region of the body or component of equipment
+	  - Examples: Cerebral Blood Flow, Right Lung Volume, Right Heart Pressure
 	- Substance specific data related to a specific part of the body or component of equipment
 	  -	Examples: The Extracellular concentration of succinylcholine in the brain tissue, anesthesia machine gas inlet oxygen volume fraction
 -	Assessments
-	-	Formed at the level of a clinician's report, Intended to give general patient overviews
+	-	Formed at the level of a clinician's report, Intended to mimic test results
 	  -	Example: Pulmonary Function Test
     
 ## What are your models and how did you validate them?
 
-The engine is a closed loop total body physiology model that combines physics-based lumped parameter models 
-and control system feedback mechanisms to model real-time system-level 
-physiologic behaviors. Lumped parameter models use electrical circuit analogs 
+The engine is a closed-loop whole body physiology model that combines physics-based lumped-parameter models 
+and control system feedback mechanisms to model real-time system level 
+physiologic behaviors. Lumped-parameter models use electrical circuit analogs 
 to represent the major physiologic systems. 
 
-For validation, our team uses a combination of peer-reviewed publications 
-and subject matter expert judgment. Our team has:
-- Defined key parameters for each system for validation
-- Collected published data in the form of waveforms, and max, min, and mean values
-- Used custom written tools to compare data, perform analysis, and generate plots and tables of results
+Models/results are validated using a combination of peer-reviewed publications 
+and subject matter expertise. The validation process includes:
+- Defining key parameters for system validation
+- Performing literature reviews to gather published data in the form of waveforms, and max, min, and mean values
+- Using custom developed tools to compare data, perform analysis, and generate plots and tables of results
 
-A primary purpose of model validation is to ensure that the model has an appropriate domain of validity 
-given the goals of the modeling process. Our validation effort is driven by the goals of the project.
-For that reason, we do not have the resources to perform a rigorous sensitivity analysis or some of the other 
-tools associated with a general validation protocol. We are not aware of any existing third-party validation effort. 
+The primary purpose of model validation is to ensure that the model has an appropriate domain of validity 
+given the goals of the modeling process. In the future, we plan to investigate sensitivity and uncertainty analyses to further quantify the validity of our models.
 We would welcome and support, in as much as we are able, any validation or uncertainty quantification effort by the community.
 
 We provide reports for each @ref SystemMethodology included in the physiology engine.
@@ -102,9 +101,9 @@ These documents cover the design, implementation, assumptions, limitations, and 
  @refitem SubstanceTransportMethodology "Substance Transport"
 @endsecreflist 
 
-## How do I code with the physiology engine?
+## How do I work integrate the physiology engine into my application?
 
-The engine has developed a modular architecture to reduce costs for applications that need a physiology engine as well as want to develop or extend a physiology model.
+The engine has a modular architecture to reduce costs for applications that need a physiology engine and want to develop or extend a physiology model.
 
 This architecture contains :
 - A @ref CDM containing set of classes and generic algorithms for lumped parameter physiology modeling 
@@ -118,7 +117,7 @@ interfaces (APIs) provide full control over the engine to execute
 various actions and retrieve a range of calculated physiological
 outputs.
 
-## How can I modify the physiology engine, or integrate my model?
+## How can I modify or extend the models in the physiology engine?
 
 The engine uses an extensible architecture to promote integration with external
 models with varying levels of fidelity. System-level model fidelity can be 
