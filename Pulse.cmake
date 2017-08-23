@@ -38,12 +38,21 @@ message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 
-find_package(Dirent REQUIRED)
+list(APPEND CMAKE_PREFIX_PATH ${eigen_INSTALL})
 find_package(Eigen3 REQUIRED)
+
+if(WIN32)
+  if(NOT dirent_INSTALL)
+    set(dirent_INSTALL ${CMAKE_BINARY_DIR}/../dirent/install)
+  endif()
+  list(APPEND CMAKE_PREFIX_PATH ${dirent_INSTALL})
+  find_package(Dirent REQUIRED)
+endif()
+
 # The outer build does some custom installing of dependent libraries
 # Instead of using find_package, I will make sure things are where expected
 if(NOT protobuf_DIR)
-  set(protobuf_DIR ${CMAKE_BINARY_DIR}/..//protobuf/src/protobuf)
+  set(protobuf_DIR ${CMAKE_BINARY_DIR}/../protobuf/src/protobuf)
   set(protobuf_Header ${protobuf_DIR}/src/google/protobuf/package_info.h)
   # Proto headers should have been installed here by the outer build
   if(NOT EXISTS ${protobuf_Header})
@@ -64,8 +73,7 @@ if(NOT LOG4CPP_INCLUDE_DIR)
   set(LOG4CPP_INCLUDE_DIR ${log4cpp_DIR}/include)
 endif()
 
-list(APPEND CMAKE_PREFIX_PATH ${eigen_INSTALL})
-list(APPEND CMAKE_PREFIX_PATH ${dirent_INSTALL})
+
 list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
 list(APPEND CMAKE_PREFIX_PATH ${log4cpp_INSTALL})
 
