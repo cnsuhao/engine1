@@ -85,13 +85,16 @@ cd builds
 # Note you need to provide cmake the source directory at the end (relative or absolute)
 # Run CMake (it will use the system default compiler if you don't provide options or use the CMake GUI)
 cmake -DCMAKE_BUILD_TYPE:STRING=Release ../src
+# If you want the build to pull the V&V scenarios and baselines run this (or check the DOWNLOAD_BASELINES option in the CMake GUI)
+# You can always pull these later if you want (See Running and Testing)
+cmake -DCMAKE_BUILD_TYPE:STRING=Release -DDOWNLOAD_BASELINES:BOOL=ON ../src
 # Build the install target/project
 # On Linux/OSX/MinGW 
-make && make install 
+make install 
 # For MSVC
 # Open the OuterBuild.sln and build the INSTALL project (It will build everything!)
 # When the build is complete, MSVC users can close the OuterBuild solution, and open the Pulse.sln located in the Pulse directory.
-# Unix based systems should also cd into this directory for building
+# Unix based systems should also cd into this directory for building any changes to the Pulse code base
 cd Pulse
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -100,6 +103,29 @@ cd Pulse
 The code base provides a few driver programs to execute the physiology libraries built.
 
 <b> !! NOTE : The 'bin' directory being refered to below is the bin directory in your <build directory>/install/bin NOT the src/bin directory !! </b>
+
+As part of running and testing Pulse, you will need to download the testing scenarios and their baseline result files.
+These files are not part of the standard build. 
+If you would like to have these files downloaded during the build, enable the DOWNLOAD_BASELINES option when configuring the CMake super build
+
+To download the verificaiton scenarios and baseline results run this command from a bash/cmd prompt from <build directory>/install/bin
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+cmake -DTYPE:STRING=updateBaselines -P run.cmake 
+# There is also .bat and .sh scripts to make this a little easier
+# You can type
+run updateBaselines
+# or, on Linux
+./run.sh updateBaselines
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This script will download the scenarios and baselines associated with your code version and place them in <build directory>/install/bin/verification 
+
+If you would like to manually pull the verification files you can get them <a href="https://data.kitware.com/#collection/59849c788d777f7d33e9c084/folder/598c95d88d777f7d33e9c1fa">here</a>
+
+Note that each folder will be tied to a git hash where it was introduced, you can search a history of the sourc/verificaiton/verification.zip/sha512 to see all baseline commits hashes.
+
+Simply unzip the archive in the <build directory>/install/bin/verification directory
 
 ### Scenario Driver
 
@@ -167,7 +193,8 @@ The physiology engine includes functionality to generate html documentation.  Th
 To generate the documentation, perform the following steps:
 - Install Doxygen, which can be found <a href="http://www.stack.nl/~dimitri/doxygen/download.html">here</a>
 - Install Ghostscript, which can be found <a href="https://www.ghostscript.com/download/">here</a>
-- Install MiKTeX, which can be found <a href="https://miktex.org/download">here</a>
+- Install a LaTeX generator
+  - For windows, use MiKTeX, which can be found <a href="https://miktex.org/download">here</a>
 - Execute SystemValidation and PatientValidation as described above
 - Execute the doxygen tool using build/install/bin/run.cmake in your cmd/bash shell in the following way :
 
