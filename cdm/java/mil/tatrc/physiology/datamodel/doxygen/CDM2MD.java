@@ -201,7 +201,23 @@ public class CDM2MD
 			if(c.isEnum())
 				writer.println("## "+prefix+tableName);
 			else
-			writer.println("## "+StringUtils.spaceCamelCase(tableName));
+			{
+				String tName = StringUtils.spaceCamelCase(tableName);
+				
+				String[] words = tName.split(" ");
+				if(words.length>0)
+				{
+					tName = "";
+					for(String word : words)
+						tName += "%"+word+" ";
+				}
+				else if(!tName.trim().isEmpty())
+				{
+					tName = "%"+tName;
+				}
+				// Put a % before each word, so it does not link to classes
+				writer.println("## "+tName);
+			}
 			writer.println(descPrepend+"");
 
 			if(!bagMethods.isEmpty())
