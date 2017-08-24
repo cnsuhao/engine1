@@ -84,7 +84,7 @@ list(APPEND CMAKE_PREFIX_PATH ${log4cpp_INSTALL})
 ###################################################
 
 message( STATUS "External project - protobuf" )
-set(protobuf_VERSION "3.4.0rc2" )
+set(protobuf_VERSION "3.4.0" )
 set(protobuf_MD5 "ca583ee8bfc9e23b257e8724d5aae180" )
 set(protobuf_DIR "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 set(protobuf_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/protobuf/install")
