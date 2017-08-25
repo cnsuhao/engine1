@@ -314,9 +314,9 @@ DataRequest { Category:LiquidCompartment CompartmentName:"Aorta"                
 DataRequest { Category:LiquidCompartment CompartmentName:"Aorta" SubstanceName:"Oxygen" PropertyName:"PartialPressure" Unit:"mmHg" }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-### Environment Data
+### %Environment Data
 
-Environment System data refers to all the data specified by @ref Environment_EnvironmentData and its derived types.
+%Environment System data refers to all the data specified by @ref Environment_EnvironmentData and its derived types.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DataRequest { Category:Environment PropertyName:"AirDensity"                      Unit:"g/mL" }
