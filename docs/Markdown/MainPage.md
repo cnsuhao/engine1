@@ -8,12 +8,14 @@ See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/mast
 
 ### Events
 
-Pulse team members will be attending the (<a href="https://mhsrs.amedd.army.mil/SitePages/Home.aspx">Military Health System Research Symposium (MHSRS)</a>) in Kissimmee, FL 27-30 August. Please email physiology@kitware.com if you are interested in meeting.
+Pulse team members will be attending the <a href="https://mhsrs.amedd.army.mil/SitePages/Home.aspx">Military Health System Research Symposium (MHSRS)</a> in Kissimmee, FL 27-30 August. Please email physiology@kitware.com if you are interested in meeting.
 
 ### Blog Posts
 
 <a href="https://blog.kitware.com/visualizing-an-anaphylaxis-physiology-simulation-using-paraview/">Visualizing an Anaphylaxis Physiology Simulation Using ParaView</a>
+
 <a href="https://blog.kitware.com/kitware-team-attending-military-health-services-research-symposium/">Kitware Team Attending Military Health System Research Symposium</a>
+
 <a href="https://blog.kitware.com/toward-patient-specific-surgical-planning-including-individualized-physiology-modeling/">Toward Patient-Specific Surgical Planning Including Individualized Physiology Modeling</a>
 
 @insert ./docs/markdown/MainPageFAQ.md
