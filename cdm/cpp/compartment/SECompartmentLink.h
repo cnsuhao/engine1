@@ -3,9 +3,7 @@
 
 #pragma once
 class SECircuitManager;
-PROTO_PUSH
-#include "bind/cdm/Compartment.pb.h"
-PROTO_POP
+CDM_BIND_DECL(CompartmentLinkData);
 
 class CDM_DECL SECompartmentLink : public Loggable
 {

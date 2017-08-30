@@ -3,7 +3,7 @@
 package mil.tatrc.physiology.datamodel.system.environment;
 
 import com.kitware.physiology.cdm.Environment.EnvironmentData.AppliedTemperatureData;
-import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Enums.eSwitch;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.properties.SEScalarArea;

@@ -4,7 +4,7 @@
 package mil.tatrc.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.CardiacArrestData;
-import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Enums.eSwitch;
 
 public class SECardiacArrest extends SEPatientAction
 {

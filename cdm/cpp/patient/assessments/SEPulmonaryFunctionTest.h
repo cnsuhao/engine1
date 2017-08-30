@@ -5,6 +5,7 @@
 #include "patient/assessments/SEPatientAssessment.h"
 class SEPatient;
 class SERespiratorySystem;
+CDM_BIND_DECL(PulmonaryFunctionTestData)
 
 class CDM_DECL SEPulmonaryFunctionTest : public SEPatientAssessment
 {

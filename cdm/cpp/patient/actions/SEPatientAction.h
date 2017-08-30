@@ -3,9 +3,7 @@
 
 #pragma once
 #include "scenario/SEAction.h"
-PROTO_PUSH
-#include "bind/cdm/PatientActions.pb.h"
-PROTO_POP
+CDM_BIND_DECL(PatientActionData)
 
 class CDM_DECL SEPatientAction : public SEAction
 {

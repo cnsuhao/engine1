@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "patient/actions/SEHemorrhage.h"
 #include "properties/SEScalarVolumePerTime.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEHemorrhage::SEHemorrhage() : SEPatientAction()
 {

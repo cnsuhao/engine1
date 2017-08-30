@@ -4,6 +4,7 @@
 #include "compartment/SECompartment.h"
 #include "compartment/SECompartmentNodes.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
+CDM_BIND_DECL(ThermalCompartmentData);
 class SEThermalCompartmentLink;
 
 class CDM_DECL SEThermalCompartment : public SECompartment

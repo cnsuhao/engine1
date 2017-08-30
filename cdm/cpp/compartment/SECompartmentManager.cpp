@@ -7,6 +7,9 @@
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
+PROTO_PUSH
+#include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SECompartmentManager::SECompartmentManager(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_subMgr(subMgr)
@@ -287,7 +290,7 @@ void SECompartmentManager::Serialize(const SECompartmentManager& src, cdm::Compa
 }
 
 
-bool SECompartmentManager::HasCompartment(cdm::eCompartmentType type, const std::string& name) const
+bool SECompartmentManager::HasCompartment(const cdm::eCompartmentType& type, const std::string& name) const
 {
   switch (type)
   {
@@ -302,7 +305,7 @@ bool SECompartmentManager::HasCompartment(cdm::eCompartmentType type, const std:
   }
   return false;
 }
-SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartmentType type, const std::string& name)
+SECompartment* SECompartmentManager::GetCompartment(const cdm::eCompartmentType& type, const std::string& name)
 {
   switch (type)
   {
@@ -317,7 +320,7 @@ SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartmentType type, 
   }
   return nullptr;
 }
-const SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartmentType type, const std::string& name) const
+const SECompartment* SECompartmentManager::GetCompartment(const cdm::eCompartmentType& type, const std::string& name) const
 {
   switch (type)
   {

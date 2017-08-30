@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
-#include "bind/cdm/Circuit.pb.h"
-PROTO_POP
+CDM_BIND_DECL(CircuitNodeData)
 
 #define CIRCUIT_NODE_TEMPLATE typename PotentialScalar, typename QuantityScalar
 #define CIRCUIT_NODE_TYPES PotentialScalar,QuantityScalar

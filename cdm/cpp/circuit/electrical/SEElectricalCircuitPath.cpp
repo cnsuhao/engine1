@@ -3,6 +3,9 @@ See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "circuit/electrical/SEElectricalCircuitPath.h"
+PROTO_PUSH
+#include "bind/cdm/Circuit.pb.h"
+PROTO_POP
 
 SEElectricalCircuitPath::SEElectricalCircuitPath(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt, const std::string& name) :
   SECircuitPath<SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge>(src,tgt,name),

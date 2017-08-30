@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
+CDM_BIND_DECL(ExerciseData)
 
 class CDM_DECL SEExercise : public SEPatientAction
 {

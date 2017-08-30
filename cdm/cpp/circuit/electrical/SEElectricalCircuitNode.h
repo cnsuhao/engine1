@@ -5,6 +5,7 @@
 #include "circuit/SECircuitNode.h"
 #include "properties/SEScalarElectricCharge.h"
 #include "properties/SEScalarElectricPotential.h"
+CDM_BIND_DECL(ElectricalCircuitNodeData)
 
 class CDM_DECL SEElectricalCircuitNode : public SECircuitNode<SEScalarElectricPotential, SEScalarElectricCharge>
 {

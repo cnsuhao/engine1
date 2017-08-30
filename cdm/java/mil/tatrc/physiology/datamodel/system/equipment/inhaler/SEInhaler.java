@@ -3,7 +3,7 @@
 package mil.tatrc.physiology.datamodel.system.equipment.inhaler;
 
 import com.kitware.physiology.cdm.Inhaler.InhalerData;
-import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Enums.eSwitch;
 
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;

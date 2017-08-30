@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "patient/actions/SEAcuteStress.h"
 #include "properties/SEScalar0To1.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEAcuteStress::SEAcuteStress() : SEPatientAction()
 {

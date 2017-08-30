@@ -7,6 +7,9 @@
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "substance/SESubstance.h"
+PROTO_PUSH
+#include "bind/cdm/SubstanceQuantity.pb.h" 
+PROTO_POP
 
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalar0To1.h"

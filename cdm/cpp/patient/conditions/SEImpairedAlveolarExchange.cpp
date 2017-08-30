@@ -4,6 +4,9 @@
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalar0To1.h"
+PROTO_PUSH
+#include "bind/cdm/PatientConditions.pb.h"
+PROTO_POP
 
 SEImpairedAlveolarExchange::SEImpairedAlveolarExchange() : SEPatientCondition()
 {

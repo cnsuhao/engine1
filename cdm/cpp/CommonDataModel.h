@@ -112,6 +112,10 @@ struct CommonDataModelException : public std::runtime_error
 #include "Macros.h"
 #include "utils/Logger.h"
 
+PROTO_PUSH
+#include "bind/cdm/Enums.pb.h"
+PROTO_POP
+
 class CCompoundUnit;
 
 class SEScalar; class SEUnitScalar; class SEGenericScalar; class NoUnit;

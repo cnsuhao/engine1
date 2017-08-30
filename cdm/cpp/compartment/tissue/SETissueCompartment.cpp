@@ -6,13 +6,15 @@
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "substance/SESubstanceManager.h"
-
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerMass.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
+PROTO_PUSH
+#include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 
 SETissueCompartment::SETissueCompartment(const std::string& name, Logger* logger) : SECompartment(name, logger)
 {

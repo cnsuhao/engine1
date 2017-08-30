@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
+CDM_BIND_DECL(ChestOcclusiveDressingData)
 
 class CDM_DECL SEChestOcclusiveDressing : public SEPatientAction
 {

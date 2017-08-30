@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
+PROTO_PUSH
+#include "bind/cdm/Circuit.pb.h"
+PROTO_POP
 
 SEFluidCircuitPath::SEFluidCircuitPath(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt, const std::string& name) :
   SECircuitPath<SEScalarVolumePerTime, SEScalarFlowResistance, SEScalarFlowCompliance, SEScalarFlowInertance, SEScalarPressure, SEScalarVolume>(src, tgt, name),

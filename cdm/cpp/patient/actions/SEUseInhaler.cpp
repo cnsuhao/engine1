@@ -6,6 +6,9 @@
 #include "substance/SESubstance.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEUseInhaler::SEUseInhaler() : SEConsciousRespirationCommand()
 {

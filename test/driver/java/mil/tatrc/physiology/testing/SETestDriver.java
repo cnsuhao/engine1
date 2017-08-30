@@ -10,7 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Enums.eSwitch;
 
 import mil.tatrc.physiology.datamodel.engine.SEAutoSerialization;
 import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;

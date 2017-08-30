@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
+CDM_BIND_DECL(MechanicalVentilationData)
 class Serializer;
 class SESubstance;
 class SESubstanceFraction;

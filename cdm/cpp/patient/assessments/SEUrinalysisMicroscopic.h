@@ -3,6 +3,9 @@
 
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
+PROTO_PUSH
+#include "bind/cdm/PatientAssessments.pb.h"
+PROTO_POP
 
 class CDM_DECL SEUrinalysisMicroscopic : public Loggable
 {

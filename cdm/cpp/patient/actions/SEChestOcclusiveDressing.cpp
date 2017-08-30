@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEChestOcclusiveDressing.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEChestOcclusiveDressing::SEChestOcclusiveDressing() : SEPatientAction()
 {

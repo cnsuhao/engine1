@@ -5,7 +5,7 @@
 #include "patient/actions/SESubstanceAdministration.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarTime.h"
-
+CDM_BIND_DECL(SubstanceBolusData_StateData)
 class SESubstance;
 
 class CDM_DECL SESubstanceBolusState

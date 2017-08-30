@@ -7,7 +7,7 @@ import java.util.*;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.Engine.TimedStabilizationData;
-import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Enums.eSwitch;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 import mil.tatrc.physiology.utilities.FileUtils;

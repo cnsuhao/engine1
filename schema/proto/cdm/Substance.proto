@@ -2,6 +2,7 @@ syntax = "proto3";
 package cdm;
 option java_package = "com.kitware.physiology.cdm";
 
+import "cdm/Enums.proto";
 import "cdm/Properties.proto";
 import "cdm/Physiology.proto";
 

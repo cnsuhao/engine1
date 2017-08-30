@@ -3,6 +3,9 @@
 
 #include "stdafx.h" 
 #include "circuit/fluid/SEFluidCircuitNode.h"
+PROTO_PUSH
+#include "bind/cdm/Circuit.pb.h"
+PROTO_POP
 
 SEFluidCircuitNode::SEFluidCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<SEScalarPressure,SEScalarVolume>(name,logger)
 {

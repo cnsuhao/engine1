@@ -11,6 +11,9 @@
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceManager.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEMechanicalVentilation::SEMechanicalVentilation() : SEPatientAction()
 {

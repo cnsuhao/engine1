@@ -5,10 +5,12 @@
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "circuit/SECircuitManager.h"
-
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarTemperature.h"
+PROTO_PUSH
+#include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 
 SEThermalCompartment::SEThermalCompartment(const std::string& name, Logger* logger) : SECompartment(name, logger), m_Nodes(logger)
 {

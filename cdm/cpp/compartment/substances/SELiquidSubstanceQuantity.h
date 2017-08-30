@@ -4,6 +4,7 @@
 #pragma once
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
+CDM_BIND_DECL(LiquidSubstanceQuantityData)
 class SELiquidCompartment;
 
 enum class BalanceLiquidBy { Mass, Concentration, Molarity, PartialPressure };

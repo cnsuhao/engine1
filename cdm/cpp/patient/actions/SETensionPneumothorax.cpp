@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "patient/actions/SETensionPneumothorax.h"
 #include "properties/SEScalar0To1.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SETensionPneumothorax::SETensionPneumothorax() : SEPatientAction()
 {

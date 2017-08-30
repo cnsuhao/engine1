@@ -6,9 +6,6 @@ class SECondition;
 class SEEngineTrack;
 class PhysiologyEngine;
 class SEEngineConfiguration;
-PROTO_PUSH
-#include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 class CDM_DECL SEEngineStabilization : public Loggable
 {

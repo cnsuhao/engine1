@@ -10,6 +10,7 @@
 #include "properties/SEScalarElectricPotential.h"
 #include "properties/SEScalarElectricCharge.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
+CDM_BIND_DECL(ElectricalCircuitPathData)
 
 class CDM_DECL SEElectricalCircuitPath : public SECircuitPath<SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge>
 {

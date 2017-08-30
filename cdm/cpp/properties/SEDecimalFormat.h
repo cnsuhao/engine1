@@ -5,7 +5,6 @@
 PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
 PROTO_PUSH
-
 class CDM_DECL SEDecimalFormat
 {
 public:

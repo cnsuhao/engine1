@@ -3,9 +3,7 @@
 
 #pragma once
 #include "scenario/SECondition.h"
-PROTO_PUSH
-#include "bind/cdm/PatientConditions.pb.h"
-PROTO_POP
+CDM_BIND_DECL(AnyPatientConditionData)
 
 class CDM_DECL SEPatientCondition : public SECondition
 {

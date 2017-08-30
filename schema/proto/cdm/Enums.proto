@@ -1,0 +1,32 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+enum eSide
+{
+  NullSide = 0;
+  Left     = 1;
+  Right    = 2;
+}
+
+enum eGate
+{
+  NullGate = 0;
+  Open     = 1;
+  Closed   = 2;
+}
+
+enum eSwitch
+{
+  NullSwitch = 0;
+  Off        = 1;
+  On         = 2;
+}
+
+enum eCharge
+{
+  NullCharge = 0;/** @brief Not provided */
+  Negative   = 1;
+  Neutral    = 2;
+  Positive   = 3;
+}

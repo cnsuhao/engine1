@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "patient/assessments/SEPatientAssessment.h"
+PROTO_PUSH
+#include "bind/cdm/PatientAssessments.pb.h"
+PROTO_POP
 
 SEPatientAssessment::SEPatientAssessment(Logger* logger) : Loggable(logger)
 {

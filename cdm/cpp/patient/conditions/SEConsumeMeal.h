@@ -4,6 +4,7 @@
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
 #include "patient/SEMeal.h"
+CDM_BIND_DECL(ConsumeMealData)
 
 class CDM_DECL SEConsumeMeal : public SEPatientCondition
 {

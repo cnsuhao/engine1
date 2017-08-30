@@ -10,6 +10,9 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEFunctionVolumeVsTime.h"
+PROTO_PUSH
+#include "bind/cdm/PatientAssessments.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SEPulmonaryFunctionTest::SEPulmonaryFunctionTest(Logger* logger) : SEPatientAssessment(logger)

@@ -3,10 +3,7 @@
 
 #pragma once
 #include "substance/SESubstance.h"
-//#include "bind/cdm/SubstanceQuantity.pb.h"
-PROTO_PUSH 
-#include "bind/cdm/SubstanceQuantity.pb.h" 
-PROTO_POP
+CDM_BIND_DECL(SubstanceQuantityData)
 
 class CDM_DECL SESubstanceQuantity : public Loggable
 {

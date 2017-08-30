@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/assessments/SEUrinalysis.h"
+#include "patient/assessments/SEUrinalysisMicroscopic.h"
 #include "patient/SEPatient.h"
 #include "system/physiology/SERenalSystem.h"
 #include "properties/SEScalarTime.h"
@@ -14,6 +15,9 @@
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarOsmolarity.h"
 #include "properties/SEScalarOsmolality.h"
+PROTO_PUSH
+#include "bind/cdm/PatientAssessments.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SEUrinalysis::SEUrinalysis(Logger* logger) : SEPatientAssessment(logger)

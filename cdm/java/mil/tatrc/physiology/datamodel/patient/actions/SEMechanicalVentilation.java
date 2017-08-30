@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.kitware.physiology.cdm.PatientActions.MechanicalVentilationData;
-import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Enums.eSwitch;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
 
 import mil.tatrc.physiology.utilities.Log;

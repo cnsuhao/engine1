@@ -19,6 +19,9 @@
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarFlowElastance.h"
+PROTO_PUSH
+#include "bind/cdm/PatientNutrition.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SEPatient::SEPatient(Logger* logger) : Loggable(logger)

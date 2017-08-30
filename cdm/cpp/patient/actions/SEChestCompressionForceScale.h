@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEChestCompression.h"
+CDM_BIND_DECL(ChestCompressionForceScaleData)
 
 class CDM_DECL SEChestCompressionForceScale : public SEChestCompression
 {

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 package mil.tatrc.physiology.datamodel.substance;
-import com.kitware.physiology.cdm.Properties.eCharge;
+import com.kitware.physiology.cdm.Enums.eCharge;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
 import com.kitware.physiology.cdm.Substance.SubstanceData.RenalClearanceData.DynamicsCase;
 

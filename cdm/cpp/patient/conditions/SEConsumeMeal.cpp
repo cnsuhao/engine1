@@ -6,6 +6,9 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolume.h"
+PROTO_PUSH
+#include "bind/cdm/PatientConditions.pb.h"
+PROTO_POP
 
 SEConsumeMeal::SEConsumeMeal() : SEPatientCondition()
 {

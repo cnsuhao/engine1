@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
+CDM_BIND_DECL(LobarPneumoniaData)
 
 class CDM_DECL SELobarPneumonia : public SEPatientCondition
 {

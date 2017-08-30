@@ -4,8 +4,8 @@
 package mil.tatrc.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.TensionPneumothoraxData;
-import com.kitware.physiology.cdm.Properties.eGate;
-import com.kitware.physiology.cdm.Properties.eSide;
+import com.kitware.physiology.cdm.Enums.eGate;
+import com.kitware.physiology.cdm.Enums.eSide;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 

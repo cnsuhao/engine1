@@ -6,6 +6,9 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolume.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEConsumeNutrients::SEConsumeNutrients() : SEPatientAction()
 {

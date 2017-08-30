@@ -5,6 +5,9 @@
 #include "patient/actions/SESubstanceBolus.h"
 #include "substance/SESubstance.h"
 #include "properties/SEScalarMassPerVolume.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SESubstanceBolus::SESubstanceBolus(const SESubstance& substance) : SESubstanceAdministration(), m_Substance(substance), m_State(substance)
 {

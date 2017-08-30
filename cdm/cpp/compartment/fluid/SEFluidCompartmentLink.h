@@ -6,6 +6,7 @@
 #include "substance/SESubstanceTransport.h"
 #include "compartment/fluid/SEFluidCompartment.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
+CDM_BIND_DECL(FluidCompartmentLinkData);
 
 #define FLUID_COMPARTMENT_LINK_TEMPLATE typename EdgeType, typename VertexType, typename CompartmentType
 #define FLUID_COMPARTMENT_LINK_TYPES EdgeType, VertexType, CompartmentType

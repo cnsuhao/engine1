@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "patient/conditions/SEChronicRenalStenosis.h"
 #include "properties/SEScalar0To1.h"
+PROTO_PUSH
+#include "bind/cdm/PatientConditions.pb.h"
+PROTO_POP
 
 SEChronicRenalStenosis::SEChronicRenalStenosis() : SEPatientCondition()
 {

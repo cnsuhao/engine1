@@ -6,6 +6,9 @@
 #include "substance/SESubstanceCompound.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolume.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompound& compound) : SESubstanceAdministration(), m_Compound(compound)
 {

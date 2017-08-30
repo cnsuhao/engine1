@@ -10,6 +10,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
+CDM_BIND_DECL(FluidCircuitPathData)
 
 class CDM_DECL SEFluidCircuitPath : public SECircuitPath<FLUID_CIRCUIT_PATH>
 {

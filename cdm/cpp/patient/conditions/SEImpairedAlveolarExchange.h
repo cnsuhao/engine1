@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
+CDM_BIND_DECL(ImpairedAlveolarExchangeData)
 
 class CDM_DECL SEImpairedAlveolarExchange : public SEPatientCondition
 {

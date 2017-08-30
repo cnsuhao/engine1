@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/SENutrition.h"
+CDM_BIND_DECL(MealData)
 
 class CDM_DECL SEMeal : public SENutrition
 {

@@ -5,7 +5,7 @@ package mil.tatrc.physiology.datamodel.engine;
 
 
 import com.kitware.physiology.cdm.Engine.AutoSerializationData;
-import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Enums.eSwitch;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 

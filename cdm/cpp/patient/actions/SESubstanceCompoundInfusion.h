@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SESubstanceAdministration.h"
+CDM_BIND_DECL(SubstanceCompoundInfusionData)
 class SESubstanceCompound;
 
 class CDM_DECL SESubstanceCompoundInfusion : public SESubstanceAdministration

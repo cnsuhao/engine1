@@ -5,6 +5,7 @@
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "compartment/SECompartmentTransportGraph.h"
+CDM_BIND_DECL(LiquidCompartmentGraphData);
 class SECompartmentManager;
 
 class CDM_DECL SELiquidCompartmentGraph : public SECompartmentTransportGraph<SELiquidTransportGraph, SELiquidTransportVertex, SELiquidTransportEdge, SELiquidCompartment, SELiquidCompartmentLink>

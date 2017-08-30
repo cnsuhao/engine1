@@ -4,8 +4,10 @@
 #include "stdafx.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "circuit/SECircuitManager.h"
-
 #include "properties/SEScalarPower.h"
+PROTO_PUSH
+#include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 
 SEThermalCompartmentLink::SEThermalCompartmentLink(SEThermalCompartment& src, SEThermalCompartment & tgt, const std::string& name) : SECompartmentLink(name,src.GetLogger()), m_SourceCmpt(src), m_TargetCmpt(tgt)
 {

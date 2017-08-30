@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
-#include "bind/cdm/PatientAssessments.pb.h"
-PROTO_POP
+CDM_BIND_DECL(PatientAssessmentData)
 
 /**
  * @brief

@@ -3,6 +3,9 @@ See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
+PROTO_PUSH
+#include "bind/cdm/Circuit.pb.h"
+PROTO_POP
 
 SEThermalCircuitPath::SEThermalCircuitPath(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt, const std::string& name) :
   SECircuitPath<SEScalarPower, SEScalarHeatResistance, SEScalarHeatCapacitance, SEScalarHeatInductance, SEScalarTemperature, SEScalarEnergy>(src, tgt ,name), 

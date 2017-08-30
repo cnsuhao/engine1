@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "compartment/SECompartment.h"
 #include "circuit/SECircuitManager.h"
+PROTO_PUSH
+#include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 
 
 SECompartment::SECompartment(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)

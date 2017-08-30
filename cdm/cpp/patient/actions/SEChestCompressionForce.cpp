@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "patient/actions/SEChestCompressionForce.h"
 #include "properties/SEScalarForce.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEChestCompressionForce::SEChestCompressionForce() : SEChestCompression()
 {

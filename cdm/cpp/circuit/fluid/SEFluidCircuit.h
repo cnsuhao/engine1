@@ -5,6 +5,7 @@
 #include "circuit/SECircuit.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
+CDM_BIND_DECL(FluidCircuitData)
 
 class SECircuitManager;
 

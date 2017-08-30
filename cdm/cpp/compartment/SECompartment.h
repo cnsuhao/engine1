@@ -8,9 +8,7 @@ class SEThermalCompartment;
 class SETissueCompartment;
 class SESubstance;
 class SECircuitManager;
-PROTO_PUSH
-#include "bind/cdm/Compartment.pb.h"
-PROTO_POP
+CDM_BIND_DECL(CompartmentData);
 
 class CDM_DECL SECompartment : public Loggable
 {

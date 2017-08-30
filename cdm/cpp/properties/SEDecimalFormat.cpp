@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include <iomanip> 
 #include "properties/SEDecimalFormat.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_PUSH
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 {

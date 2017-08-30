@@ -4,7 +4,7 @@
 #pragma once
 #include "compartment/fluid/SEFluidCompartmentLink.h"
 #include "compartment/fluid/SEGasCompartment.h"
-
+CDM_BIND_DECL(GasCompartmentLinkData);
 class SEGasCompartment;
 
 class CDM_DECL SEGasCompartmentLink : public SEFluidCompartmentLink<SEGasTransportEdge, SEGasTransportVertex, SEGasCompartment>

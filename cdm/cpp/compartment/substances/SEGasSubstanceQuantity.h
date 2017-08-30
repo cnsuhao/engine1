@@ -4,6 +4,7 @@
 #pragma once
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
+CDM_BIND_DECL(GasSubstanceQuantityData)
 class SEGasCompartment;
 
 class CDM_DECL SEGasSubstanceQuantity : public SESubstanceQuantity, public SEGasTransportSubstance

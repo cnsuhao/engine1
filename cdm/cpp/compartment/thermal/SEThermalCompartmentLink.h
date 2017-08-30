@@ -6,6 +6,7 @@
 #include "substance/SESubstanceTransport.h"
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
+CDM_BIND_DECL(ThermalCompartmentLinkData);
 
 class CDM_DECL SEThermalCompartmentLink : public SECompartmentLink
 {

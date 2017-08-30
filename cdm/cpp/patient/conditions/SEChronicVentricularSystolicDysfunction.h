@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/conditions/SEChronicHeartFailure.h"
+CDM_BIND_DECL(ChronicVentricularSystolicDysfunctionData)
 
 class CDM_DECL SEChronicVentricularSystolicDysfunction : public SEChronicHeartFailure
 {

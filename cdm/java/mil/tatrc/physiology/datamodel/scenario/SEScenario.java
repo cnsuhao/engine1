@@ -14,8 +14,8 @@ import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eConne
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eOxygenSource;
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.ePrimaryGas;
 import com.kitware.physiology.cdm.PatientAssessments.PatientAssessmentData.eType;
-import com.kitware.physiology.cdm.Properties.eSide;
-import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Enums.eSide;
+import com.kitware.physiology.cdm.Enums.eSwitch;
 import com.kitware.physiology.cdm.Scenario.AnyActionData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
 import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;

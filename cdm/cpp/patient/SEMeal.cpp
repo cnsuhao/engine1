@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "patient/SEMeal.h"
 #include "properties/SEScalarTime.h"
+PROTO_PUSH
+#include "bind/cdm/PatientNutrition.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SEMeal::SEMeal(Logger* logger) : SENutrition(logger)

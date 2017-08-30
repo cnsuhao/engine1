@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEIntubation.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEIntubation::SEIntubation() : SEPatientAction()
 {

@@ -5,6 +5,9 @@
 #include "patient/actions/SEForcedExhale.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarTime.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEForcedExhale::SEForcedExhale() : SEConsciousRespirationCommand()
 {

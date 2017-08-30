@@ -4,7 +4,7 @@
 package mil.tatrc.physiology.datamodel.system.equipment.anesthesia.actions;
 
 import com.kitware.physiology.cdm.AnesthesiaMachineActions.OxygenWallPortPressureLossData;
-import com.kitware.physiology.cdm.Properties.eSwitch;
+import com.kitware.physiology.cdm.Enums.eSwitch;
 
 public class SEOxygenWallPortPressureLoss extends SEAnesthesiaMachineAction
 {

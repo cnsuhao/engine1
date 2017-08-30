@@ -6,6 +6,7 @@
 #include "compartment/fluid/SEFluidCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
+CDM_BIND_DECL(LiquidCompartmentData);
 
 class CDM_DECL SELiquidCompartment : public SEFluidCompartment<SELiquidCompartmentLink, SELiquidTransportVertex, SELiquidTransportSubstance, SELiquidSubstanceQuantity>
 {

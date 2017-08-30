@@ -2,6 +2,7 @@ syntax = "proto3";
 package pulse;
 option java_package = "com.kitware.physiology.pulse";
 
+import "cdm/Enums.proto";
 import "cdm/Properties.proto";
 import "cdm/Engine.proto";
 import "cdm/Environment.proto";

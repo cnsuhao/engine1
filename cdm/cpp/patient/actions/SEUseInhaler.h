@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEConsciousRespirationCommand.h"
+CDM_BIND_DECL(ConsciousRespirationData_UseInhalerData)
 class SESubstance;
 
 class CDM_DECL SEUseInhaler : public SEConsciousRespirationCommand

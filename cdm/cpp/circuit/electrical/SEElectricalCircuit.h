@@ -5,6 +5,7 @@
 #include "circuit/SECircuit.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
 #include "circuit/electrical/SEElectricalCircuitPath.h"
+CDM_BIND_DECL(ElectricalCircuitData)
 class SECircuitManager;
 
 class CDM_DECL SEElectricalCircuit : public SECircuit<cdm::ElectricalCircuitData, SEElectricalCircuitNode, cdm::ElectricalCircuitNodeData, SEElectricalCircuitPath, cdm::ElectricalCircuitPathData>

@@ -5,6 +5,10 @@
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
+
+PROTO_PUSH
+#include "bind/cdm/Circuit.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SECircuitManager::SECircuitManager(Logger* logger) : Loggable(logger)

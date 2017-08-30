@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
+PROTO_PUSH
+#include "bind/cdm/PatientConditions.pb.h"
+PROTO_POP
 
 SEChronicVentricularSystolicDysfunction::SEChronicVentricularSystolicDysfunction() : SEChronicHeartFailure()
 {

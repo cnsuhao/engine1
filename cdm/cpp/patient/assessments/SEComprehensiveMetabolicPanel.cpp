@@ -9,6 +9,9 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
+PROTO_PUSH
+#include "bind/cdm/PatientAssessments.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
 

@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
+CDM_BIND_DECL(ChronicAnemiaData)
 
 class CDM_DECL SEChronicAnemia : public SEPatientCondition
 {

@@ -10,6 +10,7 @@
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarEnergy.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
+CDM_BIND_DECL(ThermalCircuitPathData)
 
 class CDM_DECL SEThermalCircuitPath : public SECircuitPath<THERMAL_CIRCUIT_PATH>
 {

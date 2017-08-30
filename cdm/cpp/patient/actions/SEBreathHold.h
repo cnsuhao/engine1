@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEConsciousRespirationCommand.h"
+CDM_BIND_DECL(ConsciousRespirationData_BreathHoldData)
 
 class CDM_DECL SEBreathHold : public SEConsciousRespirationCommand
 {

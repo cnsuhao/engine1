@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
+CDM_BIND_DECL(UrinateData)
 
 class CDM_DECL SEUrinate : public SEPatientAction
 {

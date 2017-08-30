@@ -8,6 +8,9 @@
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "substance/SESubstanceTransport.h"
 #include "substance/SESubstance.h"
+PROTO_PUSH
+#include "bind/cdm/SubstanceQuantity.pb.h" 
+PROTO_POP
 
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"

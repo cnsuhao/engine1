@@ -5,6 +5,9 @@
 
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstance.h"
+PROTO_PUSH
+#include "bind/cdm/SubstanceQuantity.pb.h" 
+PROTO_POP
 
 void SESubstanceQuantity::Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst)
 {

@@ -6,6 +6,9 @@
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
+PROTO_PUSH
+#include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 
 SEGasCompartment::SEGasCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {

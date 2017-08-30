@@ -16,7 +16,7 @@ import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformDat
 import com.kitware.physiology.cdm.Environment.EnvironmentData.eSurroundingType;
 import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
-import com.kitware.physiology.cdm.Properties.eCharge;
+import com.kitware.physiology.cdm.Enums.eCharge;
 import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
 

@@ -5,6 +5,7 @@
 
 #include "patient/actions/SEPatientAction.h"
 #include "patient/SENutrition.h"
+CDM_BIND_DECL(ConsumeNutrientsData)
 
 class CDM_DECL SEConsumeNutrients : public SEPatientAction
 {

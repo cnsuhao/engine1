@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
+CDM_BIND_DECL(TensionPneumothoraxData)
 
 class CDM_DECL SETensionPneumothorax : public SEPatientAction
 {

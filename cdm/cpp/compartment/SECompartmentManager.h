@@ -9,9 +9,8 @@
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
-PROTO_PUSH
-#include "bind/cdm/Compartment.pb.h"
-PROTO_POP
+CDM_BIND_DECL(CompartmentManagerData); 
+namespace cdm { enum eCompartmentType; }
 
 class CDM_DECL SECompartmentManager : public Loggable
 {
@@ -36,9 +35,9 @@ public:
   virtual void                                                UpdateLinks(SEGasCompartmentGraph& graph);
   virtual void                                                UpdateLinks(SELiquidCompartmentGraph& graph);
 
-  virtual bool                                                HasCompartment(cdm::eCompartmentType type, const std::string& name) const;
-  virtual SECompartment*                                      GetCompartment(cdm::eCompartmentType type, const std::string& name);
-  virtual const SECompartment*                                GetCompartment(cdm::eCompartmentType type, const std::string& name) const;
+  virtual bool                                                HasCompartment(const cdm::eCompartmentType& type, const std::string& name) const;
+  virtual SECompartment*                                      GetCompartment(const cdm::eCompartmentType& type, const std::string& name);
+  virtual const SECompartment*                                GetCompartment(const cdm::eCompartmentType& type, const std::string& name) const;
 
   virtual SEGasCompartment&                                   CreateGasCompartment(const std::string& name);
   virtual void                                                DeleteGasCompartment(const std::string& name);

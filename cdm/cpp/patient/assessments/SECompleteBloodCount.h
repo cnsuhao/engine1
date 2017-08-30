@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
+CDM_BIND_DECL(CompleteBloodCountData)
 class SEBloodChemistrySystem;
 
 class CDM_DECL SECompleteBloodCount : public SEPatientAssessment

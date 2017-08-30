@@ -3,6 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
+CDM_BIND_DECL(BrainInjuryData)
 
 class CDM_DECL SEBrainInjury : public SEPatientAction
 {

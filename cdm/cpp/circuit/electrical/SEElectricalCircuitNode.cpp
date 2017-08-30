@@ -3,6 +3,9 @@
 
 #include "stdafx.h" 
 #include "circuit/electrical/SEElectricalCircuitNode.h"
+PROTO_PUSH
+#include "bind/cdm/Circuit.pb.h"
+PROTO_POP
 
 SEElectricalCircuitNode::SEElectricalCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<SEScalarElectricPotential, SEScalarElectricCharge>(name, logger)
 {

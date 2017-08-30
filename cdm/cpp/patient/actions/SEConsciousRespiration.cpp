@@ -10,6 +10,9 @@
 #include "patient/actions/SEForcedExhale.h"
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEUseInhaler.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActions.pb.h"
+PROTO_POP
 
 SEConsciousRespiration::SEConsciousRespiration() : SEPatientAction()
 {
