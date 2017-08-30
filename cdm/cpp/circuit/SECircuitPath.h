@@ -3,7 +3,6 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
-CDM_BIND_DECL(CircuitPathData)
 
 #define CIRCUIT_PATH_TEMPLATE typename FluxScalar, typename ResistanceScalar, typename CapacitanceScalar, typename InductanceScalar, typename PotentialScalar, typename QuantityScalar
 #define CIRCUIT_PATH_TYPES FluxScalar,ResistanceScalar,CapacitanceScalar,InductanceScalar,PotentialScalar,QuantityScalar
