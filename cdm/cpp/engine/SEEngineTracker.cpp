@@ -11,6 +11,7 @@
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentLink.h"
+#include "compartment/thermal/SEThermalCompartment.h"
 // Substances
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceTissuePharmacokinetics.h"

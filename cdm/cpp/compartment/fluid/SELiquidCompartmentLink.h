@@ -3,7 +3,7 @@
 
 #pragma once
 #include "compartment/fluid/SEFluidCompartmentLink.h"
-CDM_BIND_DECL(LiquidCompartmentLinkData);
+
 class SELiquidCompartment;
 
 class CDM_DECL SELiquidCompartmentLink : public SEFluidCompartmentLink<SELiquidTransportEdge, SELiquidTransportVertex, SELiquidCompartment>

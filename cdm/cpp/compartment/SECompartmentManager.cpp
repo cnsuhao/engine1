@@ -3,6 +3,12 @@
 
 #include "stdafx.h"
 #include "compartment/SECompartmentManager.h"
+#include "circuit/SECircuitManager.h"
+#include "compartment/fluid/SEGasCompartmentGraph.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "compartment/thermal/SEThermalCompartment.h"
+#include "compartment/thermal/SEThermalCompartmentLink.h"
+#include "compartment/tissue/SETissueCompartment.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -290,7 +296,7 @@ void SECompartmentManager::Serialize(const SECompartmentManager& src, cdm::Compa
 }
 
 
-bool SECompartmentManager::HasCompartment(const cdm::eCompartmentType& type, const std::string& name) const
+bool SECompartmentManager::HasCompartment(cdm::eCompartmentType type, const std::string& name) const
 {
   switch (type)
   {
@@ -305,7 +311,7 @@ bool SECompartmentManager::HasCompartment(const cdm::eCompartmentType& type, con
   }
   return false;
 }
-SECompartment* SECompartmentManager::GetCompartment(const cdm::eCompartmentType& type, const std::string& name)
+SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartmentType type, const std::string& name)
 {
   switch (type)
   {
@@ -320,7 +326,7 @@ SECompartment* SECompartmentManager::GetCompartment(const cdm::eCompartmentType&
   }
   return nullptr;
 }
-const SECompartment* SECompartmentManager::GetCompartment(const cdm::eCompartmentType& type, const std::string& name) const
+const SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartmentType type, const std::string& name) const
 {
   switch (type)
   {

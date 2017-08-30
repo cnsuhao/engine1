@@ -6,7 +6,6 @@
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
-CDM_BIND_DECL(GasCompartmentData);
 
 enum class BalanceGasBy { Volume, VolumeFraction };
 

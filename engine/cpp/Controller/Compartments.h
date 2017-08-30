@@ -3,8 +3,6 @@
 
 #pragma once
 class PulseController;
-class SEGasCompartmentGraph;
-class SELiquidCompartmentGraph;
 #include "compartment/SECompartmentManager.h"
 
 /**

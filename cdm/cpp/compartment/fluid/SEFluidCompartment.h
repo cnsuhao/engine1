@@ -6,7 +6,9 @@
 #include "compartment/SECompartment.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "compartment/SECompartmentNodes.h"
-CDM_BIND_DECL(FluidCompartmentData);
+PROTO_PUSH
+#include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 
 class SESubstance;
 template<typename EdgeType, typename VertexType, typename CompartmentType> class SEFluidCompartmentLink;

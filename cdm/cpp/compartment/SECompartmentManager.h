@@ -3,14 +3,22 @@
 
 #pragma once
 
-#include "circuit/SECircuitManager.h"
-#include "compartment/fluid/SEGasCompartmentGraph.h"
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/thermal/SEThermalCompartmentLink.h"
-#include "compartment/tissue/SETissueCompartment.h"
-CDM_BIND_DECL(CompartmentManagerData); 
-namespace cdm { enum eCompartmentType; }
+class SESubstance;
+class SESubstanceManager;
+class SECircuitManager;
+class SECompartment;
+class SEGasCompartment;
+class SEGasCompartmentLink;
+class SEGasCompartmentGraph;
+class SELiquidCompartment;
+class SELiquidCompartmentLink;
+class SELiquidCompartmentGraph;
+class SEThermalCompartment;
+class SEThermalCompartmentLink;
+class SETissueCompartment;
+PROTO_PUSH
+#include "bind/cdm/Compartment.pb.h"
+PROTO_POP
 
 class CDM_DECL SECompartmentManager : public Loggable
 {
@@ -35,9 +43,9 @@ public:
   virtual void                                                UpdateLinks(SEGasCompartmentGraph& graph);
   virtual void                                                UpdateLinks(SELiquidCompartmentGraph& graph);
 
-  virtual bool                                                HasCompartment(const cdm::eCompartmentType& type, const std::string& name) const;
-  virtual SECompartment*                                      GetCompartment(const cdm::eCompartmentType& type, const std::string& name);
-  virtual const SECompartment*                                GetCompartment(const cdm::eCompartmentType& type, const std::string& name) const;
+  virtual bool                                                HasCompartment(cdm::eCompartmentType type, const std::string& name) const;
+  virtual SECompartment*                                      GetCompartment(cdm::eCompartmentType type, const std::string& name);
+  virtual const SECompartment*                                GetCompartment(cdm::eCompartmentType type, const std::string& name) const;
 
   virtual SEGasCompartment&                                   CreateGasCompartment(const std::string& name);
   virtual void                                                DeleteGasCompartment(const std::string& name);
@@ -60,7 +68,7 @@ public:
   virtual const std::vector<SEGasCompartmentGraph*>&          GetGasGraphs();
   virtual void                                                AddGasCompartmentSubstance(SESubstance& sub);
   virtual const std::vector<SESubstance*>&                    GetGasCompartmentSubstances() const;
-  
+
   virtual SELiquidCompartment&                                CreateLiquidCompartment(const std::string& name);
   virtual void                                                DeleteLiquidCompartment(const std::string& name);
   virtual bool                                                HasLiquidCompartment(const std::string& name) const;

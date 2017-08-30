@@ -5,7 +5,6 @@
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/SECompartmentTransportGraph.h"
-CDM_BIND_DECL(GasCompartmentGraphData);
 class SECompartmentManager;
 
 class CDM_DECL SEGasCompartmentGraph : public SECompartmentTransportGraph<SEGasTransportGraph, SEGasTransportVertex, SEGasTransportEdge, SEGasCompartment, SEGasCompartmentLink>

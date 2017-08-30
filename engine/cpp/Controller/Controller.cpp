@@ -14,6 +14,16 @@
 #include "../Systems/Environment.h"
 #include "../Systems/Gastrointestinal.h"
 
+#include "compartment/fluid/SEGasCompartment.h"
+#include "compartment/fluid/SEGasCompartmentLink.h"
+#include "compartment/fluid/SEGasCompartmentGraph.h"
+#include "compartment/fluid/SELiquidCompartment.h"
+#include "compartment/fluid/SELiquidCompartmentLink.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "compartment/thermal/SEThermalCompartment.h"
+#include "compartment/thermal/SEThermalCompartmentLink.h"
+#include "compartment/tissue/SETissueCompartment.h"
+
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
@@ -31,16 +41,10 @@
 #include "properties/SEScalarFlowElastance.h"
 #include <google/protobuf/text_format.h>
 
-#if defined(_MSC_VER)
-  #pragma warning( push )
-  #pragma warning( disable : 4267)
-#endif
 PROTO_PUSH
 #include "bind/engine/Engine.pb.h"
 PROTO_POP
-#if defined(_MSC_VER)
-  #pragma warning( pop )
-#endif
+
 
 PulseController::PulseController(const std::string& logFileName) : PulseController(new Logger(logFileName))
 {
@@ -449,7 +453,7 @@ bool PulseController::SetupPatient()
     }
   }
 
-  //Tanaka H, Monahan KD, Seals DR (January 2001). "Age-predicted maximal heart rate revisited". J. Am. Coll. Cardiol. 37(1): 153–6. doi:10.1016/S0735-1097(00)01054-8.PMID 11153730.
+  //Tanaka H, Monahan KD, Seals DR (January 2001). "Age-predicted maximal heart rate revisited". J. Am. Coll. Cardiol. 37(1): 153ï¿½6. doi:10.1016/S0735-1097(00)01054-8.PMID 11153730.
   double computedHeartRateMaximum_bpm = 208.0 - (0.7*m_Patient->GetAge(TimeUnit::yr));
   if (!m_Patient->HasHeartRateMaximum())
   {    
@@ -753,7 +757,7 @@ bool PulseController::SetupPatient()
   /// \cite roberts2000gaseous
   double standardAlveoliSurfaceArea_m2 = 70.0;
   double alveoliSurfaceArea_m2;
-  //Scale the alveoli surface area based on the size of the patient’s lungs  
+  //Scale the alveoli surface area based on the size of the patientï¿½s lungs  
   /// cite ganong1995review
   double standardTotalLungCapacity_L = 6.17; //This is the Total Lung Capacity of our standard patient  
   double computedAlveoliSurfaceArea_m2 = totalLungCapacity_L / standardTotalLungCapacity_L * standardAlveoliSurfaceArea_m2;
@@ -2827,7 +2831,7 @@ void PulseController::SetupTissue()
   SkinTissueMass = SkinTissueMass * patientSkinArea_m2 / typicalSkinSurfaceArea_m2;
     
   //Modify most based on lean body mass
-  //Hume, R (Jul 1966). "Prediction of lean body mass from height and weight." Journal of clinical pathology. 19 (4): 389–91. doi:10.1136/jcp.19.4.389. PMC 473290. PMID 5929341.
+  //Hume, R (Jul 1966). "Prediction of lean body mass from height and weight." Journal of clinical pathology. 19 (4): 389ï¿½91. doi:10.1136/jcp.19.4.389. PMC 473290. PMID 5929341.
   //double typicalLeanBodyMass_kg = 0.32810 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.33929 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 29.5336; //Male
   //if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
   //{

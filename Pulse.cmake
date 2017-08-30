@@ -38,6 +38,9 @@ message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 
+if(NOT eigen_INSTALL)
+  set(eigen_INSTALL ${CMAKE_BINARY_DIR}/../install/include)
+endif()
 list(APPEND CMAKE_PREFIX_PATH ${eigen_INSTALL})
 find_package(Eigen3 REQUIRED)
 
