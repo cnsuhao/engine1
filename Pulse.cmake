@@ -3,10 +3,10 @@ project(Pulse)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # Policy to address @foo@ variable expansion
-set(_VERSION_MAJOR 1)
-set(_VERSION_MINOR 0)
-set(_VERSION_PATCH 0)
-set(_VERSION "${_VERSION_MAJOR}.${_VERSION_MINOR}.${_VERSION_PATCH}")
+set(PULSE_VERSION_MAJOR 1)
+set(PULSE_VERSION_MINOR 0)
+set(PULSE_VERSION_PATCH 0)
+set(PULSE_VERSION "${PULSE_VERSION_MAJOR}.${PULSE_VERSION_MINOR}.${PULSE_VERSION_PATCH}")
 
 # Build the core libraries as shared or static (DataModel, CDM, Engine)
 set(BUILD_SHARED_LIBS OFF)
@@ -107,6 +107,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_INSTALL_PREFIX}/bin/run.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_INSTALL_PREFIX}/bin/run.config @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/PulseConfig.cmake.in ${CMAKE_INSTALL_PREFIX}/PulseConfig.cmake @ONLY)
 
 # Install the proto libs to the right locations
 if(WIN32)

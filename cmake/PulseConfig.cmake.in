@@ -1,0 +1,51 @@
+#
+#    FIND_PACKAGE(Pulse REQUIRED)
+#
+#    This file will define the following variables:
+#      - Pulse_LIBS                     : The list of libraries to link against.
+#      - Pulse_LIB_DIR                  : The directory(es) where lib files are. Calling LINK_DIRECTORIES
+#                                         with this path is NOT needed.
+#      - Pulse_INCLUDE_DIRS             : The Pulse include directories.
+#      - Pulse_VERSION                  : The version of this Pulse build. Example: "2.4.0"
+#      - Pulse_VERSION_MAJOR            : Major version part of Pulse_VERSION. Example: "2"
+#      - Pulse_VERSION_MINOR            : Minor version part of Pulse_VERSION. Example: "4"
+#      - Pulse_VERSION_PATCH            : Patch version part of Pulse_VERSION. Example: "0"
+#
+# ===================================================================================
+
+
+set(Pulse_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include"
+                       "@CMAKE_INSTALL_PREFIX@/include/bind"
+                       "@CMAKE_INSTALL_PREFIX@/include/cdm"
+                       )
+if(MSVC)
+  set( Pulse_LIB_DIR "@CMAKE_INSTALL_PREFIX@/lib/$(Configuration)" )
+else()#TODO XCode might need a conditional
+  set( Pulse_LIB_DIR "@CMAKE_INSTALL_PREFIX@/lib/${CMAKE_BUILD_TYPE}" )
+endif()
+
+if(MSVC)
+ set(LOG4CPP_LIB "log4cpp")
+else()
+ set(LOG4CPP_LIB "liblog4cpp")
+endif()
+
+if (WIN32)
+  set(LIB_ENDING "lib")
+elseif (APPLE)
+  set(LIB_ENDING "a")
+else()
+  set(LIB_ENDING "a")
+endif()
+
+set(Pulse_LIBS ${Pulse_LIB_DIR}/PulseEngine.${LIB_ENDING} 
+               ${Pulse_LIB_DIR}/CommonDataModel.${LIB_ENDING} 
+               ${Pulse_LIB_DIR}/DataModelBindings.${LIB_ENDING}
+               ${Pulse_LIB_DIR}/${LOG4CPP_LIB}.${LIB_ENDING}
+               ${Pulse_LIB_DIR}/libprotobuf.${LIB_ENDING}
+   )# TODO, in debug it's libprotobufd
+
+set( Pulse_VERSION_MAJOR "@PULSE_VERSION_MAJOR@" )
+set( Pulse_VERSION_MINOR "@PULSE_VERSION_MINOR@" )
+set( Pulse_VERSION_PATCH "@PULSE_VERSION_PATCH@" )
+set( Pulse_VERSION_PATCH "@PULSE_VERSION@" )
