@@ -18,11 +18,11 @@ endif()
 
 message( STATUS "External project - Eigen" )
 set(Eigen_VERSION "3.3.3" )
-set(Eigen_DIR "${CMAKE_BINARY_DIR}/Eigen/src/Eigen")
+set(Eigen_DIR "${CMAKE_BINARY_DIR}/eigen/src/eigen")
 set(Eigen_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/eigen/install")
 
-ExternalProject_Add( Eigen
-  PREFIX Eigen
+ExternalProject_Add( eigen
+  PREFIX eigen
   URL "http://bitbucket.org/eigen/eigen/get/${Eigen_VERSION}.tar.gz"
   URL_HASH MD5=f21cee193e15e55cfd15ebbc16fc00a7
   INSTALL_DIR "${Eigen_INSTALL}"
@@ -31,7 +31,7 @@ ExternalProject_Add( Eigen
         -DCMAKE_INSTALL_PREFIX:STRING=${Eigen_INSTALL}
         -DINCLUDE_INSTALL_DIR:STRING=${Eigen_INSTALL}/include
 )
-list(APPEND Pulse_DEPENDENCIES Eigen)
+list(APPEND Pulse_DEPENDENCIES eigen)
 # Install Headers
 install(DIRECTORY ${Eigen_INSTALL}/include
         DESTINATION ${CMAKE_INSTALL_PREFIX})

@@ -9,6 +9,7 @@
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
 #include "utils/GeneralMath.h"
+#include "circuit/SECircuitManager.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
 #include "circuit/thermal/SEThermalCircuit.h"

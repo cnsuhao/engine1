@@ -13,6 +13,7 @@
 #include "substance/SESubstanceFraction.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
