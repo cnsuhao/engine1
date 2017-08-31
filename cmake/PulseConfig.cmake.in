@@ -21,7 +21,8 @@ set(Pulse_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include"
 if(MSVC)
   set( Pulse_LIB_DIR "@CMAKE_INSTALL_PREFIX@/lib/$(Configuration)" )
 else()#TODO XCode might need a conditional
-  set( Pulse_LIB_DIR "@CMAKE_INSTALL_PREFIX@/lib/${CMAKE_BUILD_TYPE}" )
+  string(TOLOWER "${CMAKE_BUILD_TYPE}" lower_build_type)
+  set( Pulse_LIB_DIR "@CMAKE_INSTALL_PREFIX@/lib/${lower_build_type}" )
 endif()
 
 if(MSVC)
