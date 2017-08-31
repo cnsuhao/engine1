@@ -315,6 +315,54 @@ void SECircuitManager::SetReadOnlyThermal(bool b)
   }
 }
 
+SEElectricalCircuitNode&       SECircuitManager::CreateElectricalNode(const std::string& name) { return CreateNode<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+void                           SECircuitManager::DeleteElectricalNode(const std::string& name) { DeleteNode<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+bool                           SECircuitManager::HasElectricalNode(const std::string& name) const { return HasNode<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+SEElectricalCircuitNode*       SECircuitManager::GetElectricalNode(const std::string& name) { return GetNode<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+const SEElectricalCircuitNode* SECircuitManager::GetElectricalNode(const std::string& name) const { return GetNode<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+SEElectricalCircuitPath&       SECircuitManager::CreateElectricalPath(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt, const std::string& name) { return CreatePath<ELECTRICAL_LEDGER_TYPES>(src, tgt, name, m_ElectricalLedger); }
+void                           SECircuitManager::DeleteElectricalPath(const std::string& name) { DeletePath<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+bool                           SECircuitManager::HasElectricalPath(const std::string& name) const { return HasPath<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+SEElectricalCircuitPath*       SECircuitManager::GetElectricalPath(const std::string& name) { return GetPath<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+const SEElectricalCircuitPath* SECircuitManager::GetElectricalPath(const std::string& name) const { return GetPath<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+SEElectricalCircuit&           SECircuitManager::CreateElectricalCircuit(const std::string& name) { return CreateCircuit<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+void                           SECircuitManager::DeleteElectricalCircuit(const std::string& name) { DeleteCircuit<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+bool                           SECircuitManager::HasElectricalCircuit(const std::string& name) const { return HasCircuit<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+SEElectricalCircuit*           SECircuitManager::GetElectricalCircuit(const std::string& name) { return GetCircuit<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+const SEElectricalCircuit*     SECircuitManager::GetElectricalCircuit(const std::string& name) const { return GetCircuit<ELECTRICAL_LEDGER_TYPES>(name, m_ElectricalLedger); }
+
+SEFluidCircuitNode&            SECircuitManager::CreateFluidNode(const std::string& name) { return CreateNode<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+void                           SECircuitManager::DeleteFluidNode(const std::string& name) { DeleteNode<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+bool                           SECircuitManager::HasFluidNode(const std::string& name) const { return HasNode<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+SEFluidCircuitNode*            SECircuitManager::GetFluidNode(const std::string& name) { return GetNode<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+const SEFluidCircuitNode*      SECircuitManager::GetFluidNode(const std::string& name) const { return GetNode<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+SEFluidCircuitPath&            SECircuitManager::CreateFluidPath(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt, const std::string& name) { return CreatePath<FLUID_LEDGER_TYPES>(src, tgt, name, m_FluidLedger); }
+void                           SECircuitManager::DeleteFluidPath(const std::string& name) { DeletePath<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+bool                           SECircuitManager::HasFluidPath(const std::string& name) const { return HasPath<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+SEFluidCircuitPath*            SECircuitManager::GetFluidPath(const std::string& name) { return GetPath<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+const SEFluidCircuitPath*      SECircuitManager::GetFluidPath(const std::string& name) const { return GetPath<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+SEFluidCircuit&                SECircuitManager::CreateFluidCircuit(const std::string& name) { return CreateCircuit<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+void                           SECircuitManager::DeleteFluidCircuit(const std::string& name) { DeleteCircuit<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+bool                           SECircuitManager::HasFluidCircuit(const std::string& name) const { return HasCircuit<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+SEFluidCircuit*                SECircuitManager::GetFluidCircuit(const std::string& name) { return GetCircuit<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+const SEFluidCircuit*          SECircuitManager::GetFluidCircuit(const std::string& name) const { return GetCircuit<FLUID_LEDGER_TYPES>(name, m_FluidLedger); }
+
+SEThermalCircuitNode&          SECircuitManager::CreateThermalNode(const std::string& name) { return CreateNode<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+void                           SECircuitManager::DeleteThermalNode(const std::string& name) { DeleteNode<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+bool                           SECircuitManager::HasThermalNode(const std::string& name) const { return HasNode<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+SEThermalCircuitNode*          SECircuitManager::GetThermalNode(const std::string& name) { return GetNode<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+const SEThermalCircuitNode*    SECircuitManager::GetThermalNode(const std::string& name) const { return GetNode<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+SEThermalCircuitPath&          SECircuitManager::CreateThermalPath(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt, const std::string& name) { return CreatePath<THERMAL_LEDGER_TYPES>(src, tgt, name, m_ThermalLedger); }
+void                           SECircuitManager::DeleteThermalPath(const std::string& name) { DeletePath<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+bool                           SECircuitManager::HasThermalPath(const std::string& name) const { return HasPath<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+SEThermalCircuitPath*          SECircuitManager::GetThermalPath(const std::string& name) { return GetPath<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+const SEThermalCircuitPath*    SECircuitManager::GetThermalPath(const std::string& name) const { return GetPath<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+SEThermalCircuit&              SECircuitManager::CreateThermalCircuit(const std::string& name) { return CreateCircuit<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+void                           SECircuitManager::DeleteThermalCircuit(const std::string& name) { DeleteCircuit<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+bool                           SECircuitManager::HasThermalCircuit(const std::string& name) const { return HasCircuit<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+SEThermalCircuit*              SECircuitManager::GetThermalCircuit(const std::string& name) { return GetCircuit<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+const SEThermalCircuit*        SECircuitManager::GetThermalCircuit(const std::string& name) const { return GetCircuit<THERMAL_LEDGER_TYPES>(name, m_ThermalLedger); }
+
 template<CIRCUIT_LEDGER_TEMPLATE> NodeType&          SECircuitManager::CreateNode(const std::string& name, SECircuitLedger<CIRCUIT_LEDGER_TYPES>& ledger)
 {
   NodeType* node = ledger.nodes[name];
