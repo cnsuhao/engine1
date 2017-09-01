@@ -138,6 +138,7 @@ if(WIN32)
   ExternalProject_Add( dirent
     PREFIX dirent
     GIT_REPOSITORY "https://github.com/tronkko/dirent.git"
+    GIT_TAG 1.22
     GIT_SHALLOW 1
     INSTALL_DIR "${dirent_INSTALL}"
     CMAKE_ARGS
