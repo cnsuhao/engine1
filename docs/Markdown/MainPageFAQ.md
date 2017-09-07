@@ -4,31 +4,57 @@ The Pulse Physiology Engine is a C++ based, open source, multi-platform (Windows
 simulator that will drive medical education, research, and training technologies. 
 The engine enables accurate and consistent physiology simulation across the medical community. 
 The engine can be used as a standalone application or integrated with simulators, sensor interfaces, and models of all fidelities.
+We plan to further advance the engine and explore new avenues of research, such as pediatrics, patient-specific modeling and virtual surgery planning/rehearsal. 
 
-High-level objectives include:
--   Create a publicly available physiology research platform that
-    enables accurate and consistent simulated physiology across training
-    applications
--   Lower the barrier to create medical training content
--   Engage the community to develop and extend physiology models
--   Expand the body of knowledge regarding the use of simulated
-    physiology for medical education
--   Meet the training needs of the military
+The Pulse Physiology Engine is a fork of the BioGears Physiology Engine.
+This fork was driven by several community needs, including:
 
-## What is your relationship with %BioGears?
-This physiology engine is a fork of the %BioGears project, version 6.1.1, began at Applied Research Associates, Inc. (ARA) 
-with oversight from the Telemedicine and Advanced Technology Research Center (TATRC) under award W81XWH-13-2-0068. 
+#### 1. Active, Publicly Available Repository
+The <a href="https://gitlab.kitware.com/physiology/engine">Pulse git repository</a> was created with the BioGears 6.1.1 code archive. 
+The Pulse team actively develops on this repository with contributions from other community members. 
+The public repository  provides a central location for the community to view and test active development, 
+report issues and contribute to the Pulse Physiology Engine. This is a truly open and community-driven project.
 
-With the Pulse Physiology Engine we are addressing several limitations we uncovered with the BioGears Engine. We have established an public repository and issue tracker to encourage community collaboration and contribution, fixed licensing issues that ensure an Aphache 2.0 license, added complete cross-platform builds and support, increased our compiler support, added built in support for our verification test suite, and improved/streamlined the build process. 
 
-The %BioGears original core technical team is now at Kitware and is leveraging the company's expertise in medical computing
-and its history of maintaining and caring for open-source projects to further advance the engine and explore new avenues of research, such as pediatrics, patient-specific modeling and virtual surgery planning/rehearsal. We are working to create a stable environment for the engine
-to encourage community collaboration and contribution through the public repository. The code base has diverged quickly from the %BioGears codebase to support these needs; however, we hope to continue collaborating with %BioGears to benefit both projects in the future.
+#### 2. Cross-Platform Build Process Improvements
+Pulse has refactored the build process to require only <a href="https://cmake.org/">CMake</a>, a cross-platform family of tools designed to build, test and package software. 
+This removes the need for any platform and compiler customized build scripts, which has greatly simplified the process for 3rd party users
+ to build and integrate Pulse into their applications. 
+With this change, Pulse can easily be built with the GCC, Clang, MSVC, and Ninja compilers on any of our supported platforms (Windows, Mac, Linux, and AArch64).
+
+
+#### 3. License Updates
+The licensing goal of the engine is to maintain a permissive Apache 2.0 license (free to use with no restrictions) 
+to encourage use of the open-source software in academic, government and commercial products. 
+Several open-source libraries are used by the engine and have permissive licences that do not affect the use of the engine in future products and applications. 
+However, the Code Synthesis XSD <a href="http://www.codesynthesis.com/licenses/gpl-2.txt">GNU General Public License</a> with <a href="http://www.codesynthesis.com/projects/xsd/FLOSSE">FLOSS exception</a>
+ created a significant open-source licensing limitation, which restricts any proprietary extensions of the physiology engine.
+
+Any use of the engine, without modification, is exempt from the GPL license and does not need to be made public (open-source). 
+Any extensions to the engine must be made publicly available without cost, or a Proprietary License for Code Synthesis
+ must be <a href="http://www.codesynthesis.com/contact/">purchased</a> for the product/application using the modified engine to comply with the license terms for Code Synthesis.
+
+To resolve this license issue, Pulse has replaced the Xerces and Code Synthesis libraries with the <a href="https://developers.google.com/protocol-buffers/">Google Protocol Buffer</a> library. 
+This library is licensed under <a href="https://opensource.org/licenses/BSD-3-Clause">BSD 3-clause</a> and allows anyone to modify the Pulse Physiology Engine in anyway without any requirement
+ to make their project code base publicly available.
+
+#### 4. Improved Data Management and Test Suite Reporting
+The provided test suite executes scenarios and compares the generated results file to the "gold standard" data file for the same scenario. 
+Pulse removed the SMTP requirement for viewing the test report, and instead generates a summary on disk that can be viewed by a user. 
+This change reduces the required infrastructure needed to perform unit, verification and validation testing. 
+The set of "gold standard" data files  for the physiology engine is very large (~500MB). 
+Keeping these files in the git repository can easily bloat the repository. 
+Pulse has addressed this issue by hosting all verification sets in <a href="https://data.kitware.com/#collection/59849c788d777f7d33e9c084/folder/598c95d88d777f7d33e9c1fa">a publicly available data server</a>, 
+associating different versions to the git repository history though a collection of hash files in the git repository. 
+CMake is then used to provide management between the data server and the specific code version from the git repository. 
+This separation provides a repository with a small footprint to allow for quick pulling and branching, 
+while maintaining a historical associations with the large data set needed for testing.
+
 
 ## How do I get the physiology engine?
 
 The physiology engine lives in a GitLab public repository <a href="https://gitlab.kitware.com/physiology/engine">here</a>.
-	
+
 ## What can the physiology engine do?
 
 An instance of an engine models a single patient's physiology.
