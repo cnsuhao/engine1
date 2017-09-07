@@ -1,9 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
 #include "compartment/SECompartmentGraph.h"
-
 
 template<COMPARTMENT_GRAPH_TEMPLATE>
 SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::SECompartmentGraph(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)
