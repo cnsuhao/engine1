@@ -6,6 +6,8 @@ See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/mast
 
 For the latest new visit our <a href="https://blog.kitware.com/tag/pulse/">blog</a>
 
+You can get Pulse from this <a href="https://gitlab.kitware.com/physiology/engine">GitLab repository</a>.
+
 @insert ./docs/markdown/MainPageFAQ.md
 
 ## Have more questions?

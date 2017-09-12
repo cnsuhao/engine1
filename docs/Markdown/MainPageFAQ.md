@@ -50,11 +50,6 @@ CMake is then used to provide management between the data server and the specifi
 This separation provides a repository with a small footprint to allow for quick pulling and branching, 
 while maintaining a historical associations with the large data set needed for testing.
 
-
-## How do I get the physiology engine?
-
-The physiology engine lives in a GitLab public repository <a href="https://gitlab.kitware.com/physiology/engine">here</a>.
-
 ## What can the physiology engine do?
 
 An instance of an engine models a single patient's physiology.
