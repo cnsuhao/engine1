@@ -1,10 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
 #include "circuit/SECircuitPath.h"
 #include "circuit/SECircuitNode.h"
-
 
 template<CIRCUIT_PATH_TEMPLATE>
 SECircuitPath<CIRCUIT_PATH_TYPES>::SECircuitPath(SECircuitNode<PotentialScalar,QuantityScalar>& src, SECircuitNode<PotentialScalar, QuantityScalar>& tgt, const std::string& name) : Loggable(src.GetLogger()), m_SourceNode(src), m_TargetNode(tgt), m_Name(name)

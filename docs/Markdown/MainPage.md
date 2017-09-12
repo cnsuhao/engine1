@@ -6,6 +6,8 @@ See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/mast
 
 For the latest new visit our <a href="https://blog.kitware.com/tag/pulse/">blog</a>
 
+You can get Pulse from this <a href="https://gitlab.kitware.com/physiology/engine">GitLab repository</a>.
+
 @insert ./docs/markdown/MainPageFAQ.md
 
 ## Have more questions?
@@ -20,7 +22,7 @@ Visit and post an <a href="https://gitlab.kitware.com/physiology/engine/issues">
 
 - - -
 
-## Updates
+## What's new in Pulse v1.0 (September 1st, 2017)
 
 The latest code base includes the following notable updates:
 - Fixed multiplatform compiling bugs
@@ -30,7 +32,7 @@ The latest code base includes the following notable updates:
 - Full CMake Builds
   - Replaced all ant and scripts (.sh and .bat) with CMake
     - Improves build support across all target platforms
-      - Currently supporting Windows, Mac, UNIX (including aarch64) devices
+      - Currently supporting Windows, Mac, UNIX (including AArch64) devices
     - More multi-platform/compiler compliance
       - Currently supporting MSVC (2015+), GCC (4.8.1+), and Clang (3.3+)
       - Supports the Ninja build system 
@@ -39,10 +41,9 @@ The latest code base includes the following notable updates:
     - Turnkey build process
 - Converted reporting from emailing to write html reports to the test directory
   - Removes SMTP server requirement
-  - Will help with external automated testing
-- Moved the verification data set (very large) from source repository to a data server integrated with CMake
+- Moved the verification data sets (very large) from source repository to a data server integrated with CMake
 - Updates to ensure no 3rd party software license compliance issues for certain commercial applications
-- Conversion of the data model from XML to google protocol buffers
+- Conversion of the data model from XML to Google Protocol Buffers
 
 (Interested in a previous @ref version?)
 

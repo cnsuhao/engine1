@@ -1,9 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
 #include "compartment/SECompartmentTransportGraph.h"
-
 
 template<COMPARTMENT_TRANSPORT_GRAPH_TEMPLATE>
 SECompartmentTransportGraph<COMPARTMENT_TRANSPORT_GRAPH_TYPES>::SECompartmentTransportGraph(const std::string& name, Logger* logger) : SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>(name,logger)
