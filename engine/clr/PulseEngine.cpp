@@ -12,7 +12,7 @@ PulseEngineRef::PulseEngineRef() : _pulse(CreatePulseEngine("").release())
 {
 
 }
-PulseEngineRef::PulseEngineRef(const std::string& log) : _pulse(CreatePulseEngine(log).release())
+PulseEngineRef::PulseEngineRef(System::String^ log) : _pulse(CreatePulseEngine(MarshalString(log)).release())
 {
 
 }
@@ -22,9 +22,9 @@ PulseEngineRef::~PulseEngineRef()
 }
 
 
-bool PulseEngineRef::LoadStateFile(const std::string& filename)
+bool PulseEngineRef::LoadStateFile(System::String^ filename)
 {
-  return _pulse->LoadStateFile(filename);
+  return _pulse->LoadStateFile(MarshalString(filename));
 }
 
 void PulseEngineRef::AdvanceModelTime(double time_s)
@@ -35,4 +35,14 @@ void PulseEngineRef::AdvanceModelTime(double time_s)
 double PulseEngineRef::GetLungVolume()
 {
   return _pulse->GetRespiratorySystem()->GetTotalLungVolume(VolumeUnit::mL);
+}
+
+std::string PulseEngineRef::MarshalString(System::String^ s)
+{
+  using namespace System::Runtime::InteropServices;
+  const char* chars =
+    (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
+  std::string os = chars;
+  Marshal::FreeHGlobal(System::IntPtr((void*)chars));
+  return os;
 }

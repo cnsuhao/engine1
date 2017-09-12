@@ -96,7 +96,7 @@ add_subdirectory(test)
 add_subdirectory(sdk)
 add_subdirectory(verification)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCSharp.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
 # Take some projects out of the build
 set_target_properties(HowToDriver libprotobuf-lite libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
 

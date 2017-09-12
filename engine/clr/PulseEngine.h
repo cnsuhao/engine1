@@ -11,11 +11,11 @@ public ref class PulseEngineRef
 public:
 
   PulseEngineRef();
-  PulseEngineRef(const std::string& logfile);
+  PulseEngineRef(System::String^ logfile);
   //PulseEngineRef(Logger*);
   virtual ~PulseEngineRef();
 
-  bool LoadStateFile(const std::string& filename);
+  bool LoadStateFile(System::String^ filename);
 
   void AdvanceModelTime(double time_s);
 
@@ -24,4 +24,5 @@ public:
 
 internal: // Should be hidden from C#, which is what we want for these.
   PhysiologyEngine* _pulse;
+  std::string MarshalString(System::String^ s);
 };
