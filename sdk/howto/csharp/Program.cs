@@ -6,20 +6,23 @@ using System.Threading.Tasks;
 
 namespace HowToCSharp
 {
-  class Program
+
+
+    class Program
   {
-    static void Main(string[] args)
-    {
-      PulseEngineRef pulse = new PulseEngineRef("csharp.log");
-      pulse.LoadStateFile("./states/StandardMale@0s.pba");
-      pulse.AdvanceModelTime(5);
-      Console.WriteLine("Lung Volume(mL) : " + pulse.GetLungVolume());
-      pulse.AdvanceModelTime(1);
-      Console.WriteLine("Lung Volume(mL) : " + pulse.GetLungVolume());
-      pulse.AdvanceModelTime(1);
-      Console.WriteLine("Lung Volume(mL) : " + pulse.GetLungVolume());
-      pulse.AdvanceModelTime(1);
-      Console.WriteLine("Lung Volume(mL) : " + pulse.GetLungVolume());
+
+        private static System.Threading.Timer Timer;
+        static public int smallesttimestep = 200;
+        public double e = 0.01;
+        static void Main(string[] args)
+         {
+            test T = new test();
+
+            while (true)
+            {
+
+            }
+         }
+
     }
-  }
 }

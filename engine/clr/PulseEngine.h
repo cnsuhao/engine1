@@ -21,6 +21,17 @@ public:
 
   double GetLungVolume();
 
+  double GetMusclePressure();
+
+  double GetRespiratoryRate();
+
+  double GetPulmonaryResistance();
+
+  double GetPulmonaryCompliance();
+
+  double GetInspTime();
+
+  double GetExpTime();
 
 internal: // Should be hidden from C#, which is what we want for these.
   PhysiologyEngine* _pulse;
