@@ -53,8 +53,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PulseCLR">
-      <HintPath>..\..\..\..\build\engine15\install\bin\debug\PulseCLR.dll</HintPath>
+    <Reference Include="PulseCLR, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\builds\csharp\install\bin\release\PulseCLR.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -68,7 +69,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="test.cs" />
+    <Compile Include="RealTimePulse.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
