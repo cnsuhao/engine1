@@ -182,6 +182,7 @@ private:
   //Circuits
   SEFluidCircuit*            m_RespiratoryCircuit;
   //Nodes
+  SEFluidCircuitNode*        m_Mouth;
   SEFluidCircuitNode*        m_LeftAlveoli;
   SEFluidCircuitNode*        m_LeftDeadSpace;
   SEFluidCircuitNode*        m_LeftPleural;
