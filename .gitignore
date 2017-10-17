@@ -5,5 +5,9 @@
 /test/build/
 /sdk/howto/build/
 
-
-
+# This is for the C# how to
+/sdk/howto/csharp/.vs
+/sdk/howto/csharp/bin
+/sdk/howto/csharp/obj
+/sdk/howto/csharp/HowToCSharp.csproj.user
+/sdk/howto/csharp/HowToCSharp.sdf

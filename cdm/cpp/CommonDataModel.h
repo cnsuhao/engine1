@@ -3,7 +3,6 @@
  
 #pragma once
 
-#define CDM_DECL
 #ifdef SHARED_CDM
   #if defined (__clang__)
       #define CDM_DECL
@@ -16,6 +15,8 @@
         #define CDM_DECL __declspec(dllimport)
       #endif
   #endif
+#else
+  #define CDM_DECL
 #endif
 
 #if (0)
