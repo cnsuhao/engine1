@@ -8,6 +8,7 @@ ExternalData_Add_Test(ExternalData
   )
 ExternalData_Add_Target(ExternalData)
 set(ExternalData_LINK_CONTENT SHA512)
+set(ExternalData_TIMEOUT_ABSOLUTE 0)
 
 set(INC_DOWNLOAD)
 if(DOWNLOAD_BASELINES)
