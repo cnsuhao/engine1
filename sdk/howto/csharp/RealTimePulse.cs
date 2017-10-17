@@ -68,7 +68,6 @@ namespace HowToCSharp
 
     public void StartBreath()
     {
-      Console.WriteLine("I'M CALLBACK RICK BITCH!!!!");
       _max_muscle_pressure_cmH2O = _working_max_muscle_pressure_cmH2O;
       _working_max_muscle_pressure_cmH2O = 0;
       _min_muscle_pressure_cmH2O = _working_min_muscle_pressure_cmH2O;
