@@ -10,11 +10,30 @@ using System.Diagnostics;
 
 namespace HowToCSharp
 {
+  // Connect events we get from pulse to csharp methods
+  public class PulseEventHandler : PulseEventsRef
+  {
+    public PulseEventHandler(RealTimePulse pulse) { _pulse = pulse; }
+    protected override void OnStartOfInhale() { _pulse.StartBreath(); }
+    protected RealTimePulse _pulse;
+  }
+
+  public class PulseLogHandler : PulseLoggerRef
+  {
+    protected override void OnFatal(string msg) { Console.WriteLine("[Fatal] "+ msg); }
+    protected override void OnError(string msg) { Console.WriteLine("[Error] " + msg); }
+    protected override void OnWarn(string msg) { Console.WriteLine("[Warn] " + msg); }
+    protected override void OnInfo(string msg) { Console.WriteLine("[Info] " + msg); }
+    protected override void OnDebug(string msg) { Console.WriteLine("[Debug] " + msg); }
+  }
+
   public class RealTimePulse
   {
     protected bool _alive = true;
     protected bool _paused = false;
     protected PulseEngineRef _pulse;
+    protected PulseEventHandler _events;
+    protected PulseLogHandler _logger;
     private Object _lock = new Object();
 
     protected double _lung_volume_mL;
@@ -32,6 +51,11 @@ namespace HowToCSharp
     {
       _pulse = new PulseEngineRef(log_file);
       _pulse.LoadStateFile(state_file);
+      _events = new PulseEventHandler(this);
+      _events.SetupEventHandler(_pulse);
+      _logger = new PulseLogHandler();
+      _logger.SetupCallbacks(_pulse);
+
     }
 
     public double GetLungVolume_mL() { lock(_lock) { return _lung_volume_mL; } }
@@ -44,6 +68,7 @@ namespace HowToCSharp
 
     public void StartBreath()
     {
+      Console.WriteLine("I'M CALLBACK RICK BITCH!!!!");
       _max_muscle_pressure_cmH2O = _working_max_muscle_pressure_cmH2O;
       _working_max_muscle_pressure_cmH2O = 0;
       _min_muscle_pressure_cmH2O = _working_min_muscle_pressure_cmH2O;
