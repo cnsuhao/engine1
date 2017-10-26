@@ -6,7 +6,19 @@ See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/mast
 
 For the latest new visit our <a href="https://blog.kitware.com/tag/pulse/">blog</a>
 
+There are @ref published papers and abstracts on several systems and clinical scenarios. 
+
 You can get Pulse from this <a href="https://gitlab.kitware.com/physiology/engine">GitLab repository</a>.
+
+Use this <a href="https://discourse.kitware.com/c/pulse-physiology-engine">discourse channel</a> 
+to ask or share anything and everything about building, using, or understanding the Pulse engine.
+
+Visit and post an <a href="https://gitlab.kitware.com/physiology/engine/issues">issue</a> at the repository if you have any problems with the codebase.
+
+If you have any other questions or concerns email: physiology@kitware.com
+
+And welcome to our community!!
+
 
 @insert ./docs/markdown/MainPageFAQ.md
 
@@ -14,11 +26,6 @@ You can get Pulse from this <a href="https://gitlab.kitware.com/physiology/engin
 
 Check out the @ref ExtraFAQ for more insight.
 
-There are @ref published papers and abstracts on several systems and clinical scenarios. 
-
-If you have any questions or concerns email: physiology@kitware.com
-
-Visit and post an <a href="https://gitlab.kitware.com/physiology/engine/issues">issue</a> at the repository if you have any trouble or other questions.
 
 - - -
 
