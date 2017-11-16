@@ -6,7 +6,7 @@ Circuit Methodology {#CircuitMethodology}
 
 ## Abstract
 
-The BioGear&reg; Circuit Solver was created to extract the lumped parameter
+The Circuit Solver was created to extract the lumped parameter
 physics calculations from within the individual systems and centralize the generic calculations.  Closed loop
 circuits can be defined easily within the Common Data Model (CDM).  They
 are fully dynamic, and can be manipulated and modified at each time
