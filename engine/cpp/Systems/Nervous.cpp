@@ -52,8 +52,10 @@ void Nervous::Initialize()
   GetBaroreceptorResistanceScale().SetValue(1.0);
   GetBaroreceptorComplianceScale().SetValue(1.0);
   GetLeftEyePupillaryResponse().GetSizeModifier().SetValue(0);
+  GetLeftEyePupillaryResponse().GetShapeModifier().SetValue(0);
   GetLeftEyePupillaryResponse().GetReactivityModifier().SetValue(0);
   GetRightEyePupillaryResponse().GetSizeModifier().SetValue(0);
+  GetRightEyePupillaryResponse().GetShapeModifier().SetValue(0);
   GetRightEyePupillaryResponse().GetReactivityModifier().SetValue(0);
 
   // Set when feedback is turned on

@@ -88,6 +88,7 @@ void Respiratory::Clear()
 
   m_RespiratoryCircuit = nullptr;
 
+  m_Mouth = nullptr;
   m_LeftAlveoli = nullptr;
   m_LeftDeadSpace = nullptr;
   m_LeftPleural = nullptr;

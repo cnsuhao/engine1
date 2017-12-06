@@ -88,9 +88,9 @@ cd builds
 # Note you need to provide cmake the source directory at the end (relative or absolute)
 # Run CMake (it will use the system default compiler if you don't provide options or use the CMake GUI)
 cmake -DCMAKE_BUILD_TYPE:STRING=Release ../src
-# If you want the build to pull the V&V scenarios and baselines run this (or check the DOWNLOAD_BASELINES option in the CMake GUI)
+# If you want the build to pull the V&V scenarios and baselines run this (or check the PULSE_DOWNLOAD_BASELINES option in the CMake GUI)
 # You can always pull these later if you want (See Running and Testing)
-cmake -DCMAKE_BUILD_TYPE:STRING=Release -DDOWNLOAD_BASELINES:BOOL=ON ../src
+cmake -DCMAKE_BUILD_TYPE:STRING=Release -DPULSE_DOWNLOAD_BASELINES:BOOL=ON ../src
 # Build the install target/project
 # On Linux/OSX/MinGW 
 make install 
@@ -109,7 +109,7 @@ The code base provides a few driver programs to execute the physiology libraries
 
 As part of running and testing Pulse, you will need to download the testing scenarios and their baseline result files.
 These files are not part of the standard build. 
-If you would like to have these files downloaded during the build, enable the DOWNLOAD_BASELINES option when configuring the CMake super build
+If you would like to have these files downloaded during the build, enable the PULSE_DOWNLOAD_BASELINES option when configuring the CMake super build
 
 To download the verificaiton scenarios and baseline results run this command from a bash/cmd prompt from <build directory>/install/bin
 

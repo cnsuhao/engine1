@@ -63,7 +63,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 set (SUPERBUILD ON CACHE BOOL "Initial pull and build of all dependent libraries/executables")
-set (DOWNLOAD_BASELINES OFF CACHE BOOL "Download all V&V Scenarios and their baseline result files")
+set (PULSE_DOWNLOAD_BASELINES OFF CACHE BOOL "Download all V&V Scenarios and their baseline result files")
 if(SUPERBUILD)
   include(SuperBuild.cmake)
 else()

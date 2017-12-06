@@ -17,7 +17,7 @@ if(MSVC)
 # Using MD as that seems to be what I run into alot, you could change these to /MT and /MTd if you want...
   set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1" CACHE TYPE INTERNAL FORCE)
   set(CMAKE_CXX_FLAGS_RELEASE "/MD" CACHE TYPE INTERNAL FORCE)
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MDd" CACHE TYPE INTERNAL FORCE)
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MDd /Zi" CACHE TYPE INTERNAL FORCE)
 endif()
 
 if(MINGW)
