@@ -145,7 +145,7 @@ message EnergySystemData
     @details Balances out the fluid and substances lost through other functionalities such as urination, sweating, and water loss from breathing.*/
 message GastrointestinalSystemData
 {
-  ScalarVolumePerTimeData             ChymeAbsorbtionRate                            = 1; /**<< @brief Rate of the absorbtion of nutrients from chyme into the blood stream*/
+  ScalarVolumePerTimeData             ChymeAbsorptionRate                            = 1; /**<< @brief Rate of the absorption of nutrients from chyme into the blood stream*/
   NutritionData                       StomachContents                                = 2; /**<< @brief The contents in the stomach*/
 }
 

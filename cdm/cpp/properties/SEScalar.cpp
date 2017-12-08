@@ -251,7 +251,7 @@ bool SEGenericScalar::IsInfinity()
 
 bool SEGenericScalar::HasUnit()
 {
-  return m_UnitScalar != nullptr;
+  return m_UnitScalar != nullptr && m_UnitScalar->HasUnit();
 }
 const CCompoundUnit* SEGenericScalar::GetUnit()
 {

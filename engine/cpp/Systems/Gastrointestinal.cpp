@@ -515,7 +515,7 @@ void Gastrointestinal::AbsorbNutrients(double duration_s)
     }
   }
  
-  GetChymeAbsorbtionRate().SetValue(absorptionRate_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
+  GetChymeAbsorptionRate().SetValue(absorptionRate_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
   //This will move substances
   m_GItoCVPath->GetNextFlowSource().SetValue(absorptionRate_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
   //Need to manually remove volume, since there isn't a compliance

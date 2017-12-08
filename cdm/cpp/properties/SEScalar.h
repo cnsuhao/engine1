@@ -1,5 +1,5 @@
 /* Distributed under the Apache License, Version 2.0.
-   See accompanying NOTICE file for details.*/
+See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEProperty.h"
@@ -20,11 +20,11 @@ class CDM_DECL SEScalar : public SEProperty
 {
 protected:
   double m_value;
-  
+
   bool   m_isnan;
   bool   m_isinf;
   bool   m_readOnly;
-  
+
 public:
   SEScalar();
   virtual ~SEScalar();
@@ -44,16 +44,16 @@ protected:
 
 public:
   /**
-   * Copies ONLY the value and unit
-   * ONLY if the provided scalar is valid.
-   */
+  * Copies ONLY the value and unit
+  * ONLY if the provided scalar is valid.
+  */
   bool Set(const SEScalar& s);
 
   /**
-   * Copies the entire contents
-   * of the provided scalar to this.
-   * Even if s is invalid.
-   */
+  * Copies the entire contents
+  * of the provided scalar to this.
+  * Even if s is invalid.
+  */
   void Copy(const SEScalar& s);
 
   virtual bool IsValid() const;
@@ -66,15 +66,15 @@ public:
   void SetReadOnly(bool b);
   bool IsReadOnly() const;
 
-  double GetValue() const;  
+  double GetValue() const;
   void   SetValue(double d);
   void   ForceValue(double d);
-  
+
   double Increment(const SEScalar& s);
   double IncrementValue(double d);
 
   void Average(int cnt);
-  
+
   bool Equals(const SEScalar& to) const;
 
   virtual void ToString(std::ostream &str) const;
@@ -87,7 +87,7 @@ public:
 
 inline std::ostream& operator<< (std::ostream& out, const SEScalar* s)
 {
-  if (s==nullptr)
+  if (s == nullptr)
     out << SEScalar::NaN << std::flush;
   else
     (*s).ToString(out);
@@ -95,25 +95,26 @@ inline std::ostream& operator<< (std::ostream& out, const SEScalar* s)
 }
 inline std::ostream& operator<< (std::ostream& out, const SEScalar& s)
 {
-    s.ToString(out);
-    return out;
+  s.ToString(out);
+  return out;
 }
 
 /**
- * @brief - An interface to be used for gaining access to a scalar with any unit type
- * @details - This interface allows you to have a pointer to a scalar with units
- *            but you don't need to now what units it's associated with
- */
-class CDM_DECL SEUnitScalar :  public SEScalar
+* @brief - An interface to be used for gaining access to a scalar with any unit type
+* @details - This interface allows you to have a pointer to a scalar with units
+*            but you don't need to now what units it's associated with
+*/
+class CDM_DECL SEUnitScalar : public SEScalar
 {
   friend SEGenericScalar;
 public:
 
   SEUnitScalar() : SEScalar() {}
   virtual ~SEUnitScalar() {}
-  
+
   virtual bool IsValid() const = 0;
   virtual void Invalidate() = 0;
+  virtual bool HasUnit() const = 0;
   virtual const CCompoundUnit* GetUnit() const = 0;
 
   virtual bool Set(const SEScalar& s) = 0;
@@ -122,7 +123,7 @@ public:
   virtual void   SetValue(double d, const CCompoundUnit& unit) = 0;
   virtual void   ForceValue(double d, const CCompoundUnit& unit) = 0;
   virtual double IncrementValue(double d, const CCompoundUnit& unit) = 0;
-  
+
 protected:
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const = 0;
 };
@@ -155,15 +156,16 @@ protected:
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const;
 
 public:
-  
+
   virtual bool Set(const SEScalarQuantity<Unit>& s);
   virtual void Copy(const SEScalarQuantity<Unit>& s);
 
+  virtual bool HasUnit() const;
   virtual const Unit* GetUnit() const;
 
   double GetValue() const = delete;// Must provide a unit
   virtual double GetValue(const Unit& unit) const;
-  
+
   void SetValue(double d) = delete;// Must provide a unit
   virtual void SetValue(double d, const Unit& unit);
 
@@ -188,10 +190,10 @@ protected:
 
 // I created this class for use in connecting DataRequests to SEScalars for the PhysiologyEngineTrack class
 /**
- * @brief If you want to querry what a scalar is and don't know what scalar type you have...
- * @details Be aware, I did not really protect this class, I assume you know what you are doing
- * If you use this class without setting the scalar it will produce nullptr errors and other CDM Exceptions, use with caution and smarts.
- */
+* @brief If you want to querry what a scalar is and don't know what scalar type you have...
+* @details Be aware, I did not really protect this class, I assume you know what you are doing
+* If you use this class without setting the scalar it will produce nullptr errors and other CDM Exceptions, use with caution and smarts.
+*/
 class CDM_DECL SEGenericScalar : public Loggable
 {
 public:
@@ -218,7 +220,7 @@ protected:
   const SEUnitScalar* m_UnitScalar;
 };
 
-CDM_DECL double Convert(double d,const CCompoundUnit& from, const CCompoundUnit& to);
+CDM_DECL double Convert(double d, const CCompoundUnit& from, const CCompoundUnit& to);
 CDM_DECL bool   CompatibleUnits(const CCompoundUnit& u1, const CCompoundUnit& u2);
 
 inline void Override(const SEScalar& from, SEScalar& to)

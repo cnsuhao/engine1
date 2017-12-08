@@ -173,6 +173,8 @@ How to utilize this functionality is demonstrated in all the HowTo files provide
 
 Once the engine is initialized, it is ready to accept direction.
 The engine does not advance time on its own, you must explictly tell the engine to simulate a specific amount of time.
+It is recommended to not to pull data from or provide actions to the engine during simulation.
+It is the responsibility of the end user to ensure that a multithreaded system adheres to this practice as the Pulse engine does not block I/O access during simulation.
 There is a HowTo example that shows how to encapsulate the engine in a thread class that automatically advances time and processes actions.
 How you decide to drive the simulation is up to you, but you must explicitly advance time inorder for the models to simulate physiology.
 
@@ -333,7 +335,7 @@ Look at the SDK HowTo-UseEngine.cpp for a full example in using both of these me
 ### Patient Assessments
 
 Patient assessments are intended to give general patient overviews, formed at the level of a clinician's report.
-The following assessments are availiable :
+The following assessments are available  :
 
 @secreflist
   @refitem CompleteBloodCountTable "Complete Blood Count"
@@ -343,7 +345,7 @@ The following assessments are availiable :
 @endsecreflist 
 
 You must create and provide an assessment object to the physiology engine via this method:<br>
-*Note that assessments could add extra comupation time to gather and format data for the assessment.*
+*Note that assessments could add extra computation  time to gather and format data for the assessment.*
 
 @code
   //--------------------------------------------------------------------------------------------------
@@ -384,12 +386,12 @@ The engine supports the following systems:
 ### Compartments
 
 A compartment represents the fluid dynamics of an anatomical organ or equipment component. 
-Comparments can represent various fidelities of data for these compoenents, such as:
+Compartments can represent various fidelities of data for these components, such as:
 	- An anatomical space, such as the body's skin, muscles
 	- An organ, such as the liver
 	- An organ substructure, such as the Left Heart
 	- Extravascular tissue of an organ
-	- A component of a piece of equipment, such as an anesthesia machine ventillator
+	- A component of a piece of equipment, such as an anesthesia machine ventilator
   
 The following compartment types are used to represent various anatomical structures for both physiology and equipment:
 
@@ -400,9 +402,9 @@ The following compartment types are used to represent various anatomical structu
  @refitem TissueCompartmentTable "Tissue Compartment"
 @endsecreflist 
 
-Various comparments can be used to represent a parent/child hierarcical structure, and comparments can be a parent for one or more child compartments.
-Parent compartments agregate data from their children, such as the parent compartment volume is simply the sum of each of its childrens' volume.<br>
-For eample, the heart has the following hierarchy :
+Various compartments  can be used to represent a parent/child hierarchical  structure, and compartments can be a parent for one or more child compartments.
+Parent compartments aggregate  data from their children, such as the parent compartment volume is simply the sum of each of its childrens' volume.<br>
+For example, the heart has the following hierarchy :
 
   - Heart
     - Myocardium

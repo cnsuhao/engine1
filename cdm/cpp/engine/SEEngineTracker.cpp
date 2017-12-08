@@ -126,6 +126,14 @@ DataTrack& SEEngineTracker::GetDataTrack()
   return m_DataTrack;
 }
 
+const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
+{
+  auto found = m_Request2Scalar.find(&dr);
+  if (found == m_Request2Scalar.end())
+    return nullptr;
+  return found->second;
+}
+
 void SEEngineTracker::SetupRequests()
 {
   bool isOpen = m_ResultsStream.is_open();
@@ -497,10 +505,20 @@ void SEDataRequestScalar::SetScalar(const SEScalar* s, SEDataRequest& dr)
     return;
   }
   SEGenericScalar::SetScalar(*s);  
-  if (HasUnit())
+  if (m_UnitScalar != nullptr)
   {
     if (!dr.HasRequestedUnit())// Use set unit if none provide
-      dr.SetUnit(*GetUnit());
+    {
+      if (!dr.HasUnit())//use the unit it has if there is no requested unit
+      {
+        if(HasUnit())
+          dr.SetUnit(*GetUnit());
+        else
+        {
+          Error("I have no idea what unit you want this data request in : " + dr.GetPropertyName());
+        }
+      }
+    }
     else
     {
       const CCompoundUnit* unit = GetCompoundUnit(dr.GetRequestedUnit());

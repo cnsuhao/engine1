@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
-   See accompanying NOTICE file for details.*/
+See accompanying NOTICE file for details.*/
 
 #include "utils/GeneralMath.h"
 
 template<typename Unit>
 SEScalarQuantity<Unit>::SEScalarQuantity() : SEUnitScalar()
 {
-
+  Clear();
 }
 
 template<typename Unit>
@@ -46,7 +46,7 @@ void SEScalarQuantity<Unit>::Serialize(const cdm::ScalarData& src, SEScalarQuant
   if (!src.unit().empty())
     dst.SetValue(src.value(), Unit::GetCompoundUnit(src.unit()));
   else
-    throw CommonDataModelException("ScalarQuantity attempted to load a ScalarData with no unit, must have a unit.");  
+    throw CommonDataModelException("ScalarQuantity attempted to load a ScalarData with no unit, must have a unit.");
   dst.m_readOnly = src.readonly();
 }
 
@@ -54,8 +54,8 @@ template<typename Unit>
 void SEScalarQuantity<Unit>::Serialize(const SEScalarQuantity<Unit>& src, cdm::ScalarData& dst)
 {
   dst.set_value(src.m_value);
-  if(src.m_unit!=nullptr)
-    dst.set_unit(src.m_unit->GetString()); 
+  if (src.m_unit != nullptr)
+    dst.set_unit(src.m_unit->GetString());
   else
     throw CommonDataModelException("ScalarQuantity attempted to unload a ScalarData with no unit, must have a unit.");
   dst.set_readonly(src.m_readOnly);
@@ -123,6 +123,11 @@ double SEScalarQuantity<Unit>::GetValue(const CCompoundUnit& unit) const
   return this->GetValue(*u);
 }
 
+template<typename Unit>
+bool SEScalarQuantity<Unit>::HasUnit() const
+{
+  return m_unit != nullptr;
+}
 template<typename Unit>
 const Unit* SEScalarQuantity<Unit>::GetUnit() const
 {
@@ -224,7 +229,7 @@ const CCompoundUnit* SEScalarQuantity<Unit>::GetCompoundUnit(const std::string& 
 template<typename Unit>
 void SEScalarQuantity<Unit>::ToString(std::ostream &str) const
 {
-  if(m_isnan || m_isinf)
+  if (m_isnan || m_isinf)
     str << m_value << std::flush;
   else
     str << m_value << "(" << *m_unit << ")" << std::flush;

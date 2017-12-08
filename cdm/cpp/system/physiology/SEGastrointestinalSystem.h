@@ -23,9 +23,9 @@ protected:
   static void Serialize(const SEGastrointestinalSystem& src, cdm::GastrointestinalSystemData& dst);
   
 public:
-  virtual bool HasChymeAbsorbtionRate() const;
-  virtual SEScalarVolumePerTime& GetChymeAbsorbtionRate();
-  virtual double GetChymeAbsorbtionRate(const VolumePerTimeUnit& unit) const;
+  virtual bool HasChymeAbsorptionRate() const;
+  virtual SEScalarVolumePerTime& GetChymeAbsorptionRate();
+  virtual double GetChymeAbsorptionRate(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasStomachContents() const;
   virtual SENutrition& GetStomachContents();
@@ -34,6 +34,6 @@ public:
 
 protected:
 
-  SEScalarVolumePerTime* m_ChymeAbsorbtionRate;
-  SENutrition* m_StomachContents;
+  SEScalarVolumePerTime* m_ChymeAbsorptionRate;
+  SENutrition*           m_StomachContents;
 };

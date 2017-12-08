@@ -72,6 +72,7 @@ public:
 
   bool ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds);
 
+  const SEDataRequestScalar* GetScalar(const SEDataRequest& dr) const;
 
   virtual void SetupRequests();
   virtual void TrackData(double currentTime_s);

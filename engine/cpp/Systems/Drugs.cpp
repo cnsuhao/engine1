@@ -496,7 +496,6 @@ void Drugs::CalculatePartitionCoefficients()
 //--------------------------------------------------------------------------------------------------
 void Drugs::CalculateDrugEffects()
 {
-
   double deltaHeartRate_Per_min = 0;
   double deltaDiastolicBP_mmHg = 0;
   double deltaSystolicBP_mmHg = 0;
@@ -520,13 +519,13 @@ void Drugs::CalculateDrugEffects()
     if (!sub->HasPD())
       continue;
 
-    SESubstancePharmacodynamics& pd = sub->GetPD();
+    const SESubstancePharmacodynamics& pd = sub->GetPD();
     plasmaConcentration_ug_Per_mL = sub->GetPlasmaConcentration(MassPerVolumeUnit::ug_Per_mL);
-    shapeParameter = pd.GetEMaxShapeParameter().GetValue();
+    shapeParameter = pd.GetEMaxShapeParameter();
     if(shapeParameter == 1) // Avoiding using pow if we don't have to. I don't know if this is good practice or not, but seems legit.
-      concentrationEffects_unitless = plasmaConcentration_ug_Per_mL / (pd.GetEC50().GetValue(MassPerVolumeUnit::ug_Per_mL) + plasmaConcentration_ug_Per_mL);
+      concentrationEffects_unitless = plasmaConcentration_ug_Per_mL / (pd.GetEC50(MassPerVolumeUnit::ug_Per_mL) + plasmaConcentration_ug_Per_mL);
     else
-      concentrationEffects_unitless = pow(plasmaConcentration_ug_Per_mL, shapeParameter) / (pow(pd.GetEC50().GetValue(MassPerVolumeUnit::ug_Per_mL), shapeParameter) + pow(plasmaConcentration_ug_Per_mL, shapeParameter));
+      concentrationEffects_unitless = pow(plasmaConcentration_ug_Per_mL, shapeParameter) / (pow(pd.GetEC50(MassPerVolumeUnit::ug_Per_mL), shapeParameter) + pow(plasmaConcentration_ug_Per_mL, shapeParameter));
     /// \todo The drug effect is being applied to the baseline, so if the baseline changes the delta heart rate changes.
     // This would be a problem for something like a continuous infusion of a drug or an environmental drug
     // where we need to establish a new homeostatic point. Once the patient stabilizes with the drug effect included, a new baseline is
@@ -534,33 +533,33 @@ void Drugs::CalculateDrugEffects()
     // stabilization and restrict drugs to post-feedback stabilization. Alternatively, we could base the drug effect on a baseline
     // concentration which is normally zero but which gets set to a new baseline concentration at the end of feedback (see chemoreceptor
     // and the blood gas setpoint reset for example).
-    deltaHeartRate_Per_min += HRBaseline_per_min * pd.GetHeartRateModifier().GetValue() * concentrationEffects_unitless;
+    deltaHeartRate_Per_min += HRBaseline_per_min * pd.GetHeartRateModifier() * concentrationEffects_unitless;
 
-    deltaDiastolicBP_mmHg += patient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg) * pd.GetDiastolicPressureModifier().GetValue() * concentrationEffects_unitless;
+    deltaDiastolicBP_mmHg += patient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg) * pd.GetDiastolicPressureModifier() * concentrationEffects_unitless;
 
-    deltaSystolicBP_mmHg += patient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg) * pd.GetSystolicPressureModifier().GetValue() * concentrationEffects_unitless;
+    deltaSystolicBP_mmHg += patient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg) * pd.GetSystolicPressureModifier() * concentrationEffects_unitless;
 
-    sedationLevel += pd.GetSedation().GetValue() * concentrationEffects_unitless;
+    sedationLevel += pd.GetSedation() * concentrationEffects_unitless;
 
-    deltaTubularPermeability += (pd.GetTubularPermeabilityModifier().GetValue())*concentrationEffects_unitless;
+    deltaTubularPermeability += (pd.GetTubularPermeabilityModifier())*concentrationEffects_unitless;
 
     if (sedationLevel > 0.15)
     {
-      deltaRespirationRate_Per_min += patient.GetRespirationRateBaseline(FrequencyUnit::Per_min) * pd.GetRespirationRateModifier().GetValue();
-      deltaTidalVolume_mL += patient.GetTidalVolumeBaseline(VolumeUnit::mL) * pd.GetTidalVolumeModifier().GetValue();
+      deltaRespirationRate_Per_min += patient.GetRespirationRateBaseline(FrequencyUnit::Per_min) * pd.GetRespirationRateModifier();
+      deltaTidalVolume_mL += patient.GetTidalVolumeBaseline(VolumeUnit::mL) * pd.GetTidalVolumeModifier();
     }
     else
     {
-      deltaRespirationRate_Per_min += patient.GetRespirationRateBaseline(FrequencyUnit::Per_min) * pd.GetRespirationRateModifier().GetValue() * concentrationEffects_unitless;
-      deltaTidalVolume_mL += patient.GetTidalVolumeBaseline(VolumeUnit::mL) * pd.GetTidalVolumeModifier().GetValue() * concentrationEffects_unitless;
+      deltaRespirationRate_Per_min += patient.GetRespirationRateBaseline(FrequencyUnit::Per_min) * pd.GetRespirationRateModifier() * concentrationEffects_unitless;
+      deltaTidalVolume_mL += patient.GetTidalVolumeBaseline(VolumeUnit::mL) * pd.GetTidalVolumeModifier() * concentrationEffects_unitless;
     }
       
-    neuromuscularBlockLevel += pd.GetNeuromuscularBlock().GetValue() * concentrationEffects_unitless;
+    neuromuscularBlockLevel += pd.GetNeuromuscularBlock() * concentrationEffects_unitless;
+    bronchodilationLevel += pd.GetBronchodilation() * concentrationEffects_unitless;
 
-    bronchodilationLevel += pd.GetBronchodilation().GetValue() * concentrationEffects_unitless;
-
-    pupilSizeResponseLevel += pd.GetPupillaryResponse().GetSizeModifier().GetValue() * concentrationEffects_unitless;
-    pupilReactivityResponseLevel += pd.GetPupillaryResponse().GetReactivityModifier().GetValue() * concentrationEffects_unitless;
+    const SEPupillaryResponse* pr = pd.GetPupillaryResponse();
+    pupilSizeResponseLevel += pr->GetSizeModifier() * concentrationEffects_unitless;
+    pupilReactivityResponseLevel += pr->GetReactivityModifier() * concentrationEffects_unitless;
   }
 
   //Translate Diastolic and Systolic Pressure to pulse pressure and mean pressure
