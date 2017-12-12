@@ -1,5 +1,4 @@
-Pulse Physiology Engine 
-======================
+<img src="./docs/Images/pulse_logo_512.png" alt="Pulse Physiology Engine" width="256" height="106">
 
 The Pulse Physiology engine is a C++ based simulation engine for human and animal physiology.
 It is intended to provide accurate and consistent physiology data to medical education, research, and training technologies. 
