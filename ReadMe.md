@@ -1,5 +1,4 @@
-Pulse Physiology Engine 
-======================
+<img src="./docs/Images/pulse_logo_512.png" alt="Pulse Physiology Engine" width="256" height="106">
 
 The Pulse Physiology engine is a C++ based simulation engine for human and animal physiology.
 It is intended to provide accurate and consistent physiology data to medical education, research, and training technologies. 
@@ -19,7 +18,7 @@ The code provided utilizes C++11, here is a list of popular compilers and their 
 - Clang 3.3 and later
 - MSVC 2015 and later
 
-If you have any questions\comments, don't hesitate to email physiology@kitware.com.
+If you have any questions\comments, don't hesitate to email kitware@kitware.com.
 
 While the provided cmake superbuild automatically pulls many libraries it needs to compile, 
 you will still need to have the following tools installed (along with your choice of C++ compiler) :
