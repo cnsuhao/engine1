@@ -15,7 +15,7 @@ to ask or share anything and everything about building, using, or understanding 
 
 Visit and post an <a href="https://gitlab.kitware.com/physiology/engine/issues">issue</a> at the repository if you have any problems with the codebase.
 
-If you have any other questions or concerns email: physiology@kitware.com
+If you have any other questions or concerns email: kitware@kitware.com
 
 And welcome to our community!!
 

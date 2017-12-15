@@ -97,7 +97,7 @@ template class __declspec(dllexport) std::vector<std::string>;
 // But since we are releasing source, you can build
 // the project necessary to ensure proper linkage
 // If anyone else has opinions on this, let us know
-// physiology@kitware.com
+// kitware@kitware.com
 #pragma warning(disable : 4251)
 //Utilities
 

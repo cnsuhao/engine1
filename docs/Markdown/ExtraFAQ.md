@@ -45,7 +45,7 @@ The community at large is contributing to the advancement of the Pulse Physiolog
 
 ## Can I contact the physiology team to work on my current or upcoming project?
 Absolutely. We always welcome new and challenging opportunities to 
-work with research partners and sponsors. Please email us at physiology@kitware.com.
+work with research partners and sponsors. Please email us at kitware@kitware.com.
 
 ## What is the long-term plan for the physiology engine?
 Our team's goal is to first and foremost develop the most advanced, 
