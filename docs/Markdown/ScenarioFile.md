@@ -73,7 +73,7 @@ EngineStateFile :"./states/StandardMale@0s.pba"
 # Next comes data requests (See Below)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-## Patient File and optional conditions
+## Patient File and optional conditions 
 
 While it is recommended to use an Engine State when running a scenario, you do have the option to initialize the engine with a Patient File and optional conditions.
 The specified patient file refers to a file containing @ref Patient_PatientData information.
@@ -97,7 +97,7 @@ InitialParameters { PatientFile:"StandardMale.pba"
 
 ## Patient Conditions
 
-Conditions give instructions to the engine to apply certian changes to the engine to simulate the specified conditions.
+Conditions give instructions to the engine to apply certain changes to the engine to simulate the specified conditions.
 The following are links to the Condition class specification along with XML examples of conditions that can be used in making your own scenarios.
 
 #### Chronic Anemia
@@ -686,7 +686,7 @@ This action can contain 1 or more commands :
 
 <br>
 Commands will be processed in order.
-The first commands will be proceesed instantly
+The first commands will be processed instantly
 When it has completed (run through it's Period),
 the next command will be processed.
 Other actions will be processed while these commands
@@ -875,9 +875,9 @@ Anesthesia Machine State
 NOTE: Each field is optional. <br>
 Connection can be one of : Off, Mask, Tube <br>
 Patient must be intubated to be connected as Tube <br>
-Anesthesia machine will be disconneted if intubation is removed. <br>
+Anesthesia machine will be disconnected if intubation is removed. <br>
 Patient cannot be intubated to be connected as Mask <br>
-Anesthesia machine will be disconneted if patient is then intubated. <br>
+Anesthesia machine will be disconnected if patient is then intubated. <br>
 Cannot have inhaler and anesthesia machine on at the same time <br>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 AnyAction {

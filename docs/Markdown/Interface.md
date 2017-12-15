@@ -1,8 +1,8 @@
 Physiology Engine Interface {#physeng}
 ===========================
 
-The following infomation is a method by method walk through of the %PhysiologyEngine.h class that everything revolves around.
-Reading this in parrallel with the HowTo-EngineUse.cpp provided in the SDK will give you a firm understanding of using the engine.
+The following information is a method by method walk through of the %PhysiologyEngine.h class that everything revolves around.
+Reading this in parallel with the HowTo-EngineUse.cpp provided in the SDK will give you a firm understanding of using the engine.
 
 When you create an instance of an engine, you will be returned a pointer to a PhysiologyEngine object.
 This generic interface is the controlling class for a physiology engine modeling a single patient.
@@ -36,7 +36,7 @@ There are two ways to initialize the engine once created.
 #### Engine State
 
 An engine state file is the exact state of the engine written into an xml file. 
-Once loaded, the engine is instatly ready to process instructions.
+Once loaded, the engine is instantly ready to process instructions.
 You can specify an xml file on disk, or a state object held in memory.
 You can optionally specify a specific simulation time for the engine to use as its initial simulation time.
 If no time is provided, the simulation time that is in the state file will be used.
@@ -108,7 +108,7 @@ you will need to initialize the engine with a patient definition.
 @anchor ConditionsInterface
 When a patient definition is provided, the engine will go through an initialization algorithm that will take several minutes
 as to tune the engine to model the specific state requested of the patient. 
-This initalization method is also the only way to specify any conditions (chronic/disease states).
+This initialization method is also the only way to specify any conditions (chronic/disease states).
 
 #### Patient Conditions
 @secreflist
@@ -138,7 +138,7 @@ The SDK provides multiple tested patient files for use in the bin/patients direc
 
 You can provide an engine configuration to the initialize methods. 
 This configuration is used to tweek various variables associated in the engine methodology.
-Configuration modification requires a very indepth knowledge of the engine.
+Configuration modification requires a very in-depth knowledge of the engine.
 It is not recommended to provide another configuration unless you know what effects it will have.
 There are some useful configuration options that may be of interest, such as writing data to a csv file while the initialization algorithm executes.
 Come visit us on the forums if this is something you want to know more about.
@@ -172,16 +172,16 @@ How to utilize this functionality is demonstrated in all the HowTo files provide
 ### Advancing The Simulation In Time
 
 Once the engine is initialized, it is ready to accept direction.
-The engine does not advance time on its own, you must explictly tell the engine to simulate a specific amount of time.
+The engine does not advance time on its own, you must explicitly tell the engine to simulate a specific amount of time.
 It is recommended to not to pull data from or provide actions to the engine during simulation.
-It is the responsibility of the end user to ensure that a multithreaded system adheres to this practice as the Pulse engine does not block I/O access during simulation.
+It is the responsibility of the end user to ensure that a multi-threaded system adheres to this practice as the Pulse engine does not block I/O access during simulation.
 There is a HowTo example that shows how to encapsulate the engine in a thread class that automatically advances time and processes actions.
-How you decide to drive the simulation is up to you, but you must explicitly advance time inorder for the models to simulate physiology.
+How you decide to drive the simulation is up to you, but you must explicitly advance time in order for the models to simulate physiology.
 
 @code
   //--------------------------------------------------------------------------------------------------
 	/// \brief
-	/// executes one pass through the time loop of the engine at the fixed timestep
+	/// executes one pass through the time loop of the engine at the fixed time step
 	///
 	/// Events, errors, and warning as are logged to file not errors are returned
 	/// through the API at this time. 
@@ -191,7 +191,7 @@ How you decide to drive the simulation is up to you, but you must explicitly adv
 
 	//--------------------------------------------------------------------------------------------------
 	/// \brief
-	/// executes one pass through the time loop of the engine at the fixed timestep
+	/// executes one pass through the time loop of the engine at the fixed time step
 	///
 	/// Events, errors, and warning as are logged to file not errors are returned
 	/// through the API at this time. 
@@ -421,8 +421,8 @@ The following types are used to hold compartment substance information
 @endsecreflist
 
 The enumerations for compartments available is found in the PulsePhysiologyEngine.h file.
-As these are programatic enumerations, you can use the auto-complete feature of your favorite programming IDE to view these enumerations as you code.
-The engine discritizes it's compartments into enumerations based on fluid type and equipment. Here is a list of the various enumerated compartment names:
+As these are programmatic enumerations, you can use the auto-complete feature of your favorite programming IDE to view these enumerations as you code.
+The engine discretizes it's compartments into enumerations based on fluid type and equipment. Here is a list of the various enumerated compartment names:
 
 @secreflist
  @refitem LiquidCompartmentTable  "Chyme"

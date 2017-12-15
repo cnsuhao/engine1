@@ -26,7 +26,7 @@ With this change, Pulse can easily be built with the GCC, Clang, MSVC, and Ninja
 #### 3. License Updates
 The licensing goal of the engine is to maintain a permissive Apache 2.0 license (free to use with no restrictions) 
 to encourage use of the open-source software in academic, government and commercial products. 
-Several open-source libraries are used by the engine and have permissive licences that do not affect the use of the engine in future products and applications. 
+Several open-source libraries are used by the engine and have permissive licenses that do not affect the use of the engine in future products and applications. 
 However, the Code Synthesis XSD <a href="http://www.codesynthesis.com/licenses/gpl-2.txt">GNU General Public License</a> with <a href="http://www.codesynthesis.com/projects/xsd/FLOSSE">FLOSS exception</a>
  created a significant open-source licensing limitation, which restricts any proprietary extensions of the physiology engine.
 
@@ -127,7 +127,7 @@ These documents cover the design, implementation, assumptions, limitations, and 
 The engine has a modular architecture to reduce costs for applications that need a physiology engine and want to develop or extend a physiology model.
 
 This architecture contains :
-- A @ref CDM containing set of classes and generic algorithms for lumped parameter physiology modeling 
+- A @ref CDM containing a library of classes and generic algorithms for lumped parameter physiology modeling 
 - A standard @ref physeng for controlling a physiology engine via these CDM objects
 
 We created a @ref SDK (SDK) to help developers integrate
@@ -150,7 +150,7 @@ The deliberate identification of data requirements must precede any model modifi
 if an extension of the Common Data Model is required. If the existing data model is sufficient to meet your modeling needs, 
 you may be able to implement changes satisfactorily just by modifying the source code for the physiologic system 
 of interest. If a Common Data Model extension is necessary, modification of the source code becomes more complicated. The 
-quickest and easiest way to modify the engine to meet your needs is to work with Kitware - email: physiology@kitware.com.
+quickest and easiest way to modify the engine to meet your needs is to work with Kitware - email: kitware@kitware.com.
 
 We can help with requirements definition, provide development support, and/or make modifications for you.
 

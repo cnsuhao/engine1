@@ -9,7 +9,7 @@ The SDK is a set of file you will need in order to develop software with the eng
 -   Library files to link your application against
   - Located in the build/install/lib directory
 
-Along with these files, there is a seperate executable projet that provids examples of using the engine.
+Along with these files, there is a separate executable project that provides examples of using the engine.
 There are sample C++ methods as well as Java methods that can be compiled and executed to demonstrate how to use the API. 
 To execute the C++ examples, simply run the HowTo project from the bin directory.
 Each cpp and java file is well-commented and should help explain how and why one would exercise functionality.

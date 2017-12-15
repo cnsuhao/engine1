@@ -1,5 +1,5 @@
 
-# The Pulse Physiology Engine
+<img src="./Images/PulseLogo.png" alt="Pulse Physiology Engine">
 
 Distributed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
 See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/master/NOTICE">NOTICE</a> file for details.
@@ -15,7 +15,7 @@ to ask or share anything and everything about building, using, or understanding 
 
 Visit and post an <a href="https://gitlab.kitware.com/physiology/engine/issues">issue</a> at the repository if you have any problems with the codebase.
 
-If you have any other questions or concerns email: physiology@kitware.com
+If you have any other questions or concerns email: kitware@kitware.com
 
 And welcome to our community!!
 
@@ -32,7 +32,7 @@ Check out the @ref ExtraFAQ for more insight.
 ## What's new in Pulse v1.0 (September 1st, 2017)
 
 The latest code base includes the following notable updates:
-- Fixed multiplatform compiling bugs
+- Fixed multi-platform compiling bugs
 - Moved from an in-source to out-of-source build
   - src tree is treated as read only
   - See a description <a href="https://cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F">here</a>
