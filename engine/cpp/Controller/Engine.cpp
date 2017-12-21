@@ -81,21 +81,44 @@ bool PulseEngine::LoadStateFile(const std::string& filename, const SEScalarTime*
 
 bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
-  m_ss.str("");
-  
-  // We could preserve the tracker, but I think I want to force the user to set it up
-  // again, they should have the data tracks (or easily get them), and they should
-  // Set it back up, and set or reset the results file they are using
   m_State = EngineState::NotReady;
-
   const pulse::StateData* peState = dynamic_cast<const pulse::StateData*>(&state);
   if (peState == nullptr)
   {
     Error("State data is not a Pulse StateData object");
     return false;
   }
+  m_ss.str("");
 
- 
+  // First Get the substances reset and ready
+  m_Substances->Reset();
+  // Substances //
+  for (int i = 0; i<peState->activesubstance_size(); i++)
+  {
+    const cdm::SubstanceData& subData = peState->activesubstance()[i];
+    SESubstance* sub = m_Substances->GetSubstance(subData.name());
+    if (sub == nullptr)
+    {
+      sub = new SESubstance(GetLogger());
+      m_Substances->AddSubstance(*sub);
+    }
+    SESubstance::Load(subData, *sub);
+    m_Substances->AddActiveSubstance(*sub);
+  }
+  // Compounds //
+  for (int i = 0; i<peState->activecompound_size(); i++)
+  {
+    const cdm::SubstanceData_CompoundData& cmpdData = peState->activecompound()[i];
+    SESubstanceCompound* cmpd = m_Substances->GetCompound(cmpdData.name());
+    if (cmpd == nullptr)
+      cmpd = new SESubstanceCompound(GetLogger());
+    SESubstanceCompound::Load(cmpdData, *cmpd, *m_Substances);
+    m_Substances->AddActiveCompound(*cmpd);
+  }
+
+  // We could preserve the tracker, but I think I want to force the user to set it up
+  // again, they should have the data tracks (or easily get them), and they should
+  // Set it back up, and set or reset the results file they are using
   if (peState->has_datarequestmanager())
   {
     m_EngineTrack.GetDataRequestManager().Clear();
@@ -153,29 +176,7 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
       delete a;
     }
   }
-  // Substances //
-  for (int i=0; i<peState->activesubstance_size(); i++)
-  {
-    const cdm::SubstanceData& subData = peState->activesubstance()[i];
-    SESubstance* sub = m_Substances->GetSubstance(subData.name());
-    if (sub == nullptr)
-    {
-      sub = new SESubstance(GetLogger());
-      m_Substances->AddSubstance(*sub);
-    }
-    SESubstance::Load(subData, *sub);
-    m_Substances->AddActiveSubstance(*sub);
-  }
-  // Compounds //
-  for (int i=0; i<peState->activecompound_size(); i++)
-  {
-    const cdm::SubstanceData_CompoundData& cmpdData = peState->activecompound()[i];
-    SESubstanceCompound* cmpd = m_Substances->GetCompound(cmpdData.name());
-    if (cmpd == nullptr)
-      cmpd = new SESubstanceCompound(GetLogger());
-    SESubstanceCompound::Load(cmpdData, *cmpd, *m_Substances);
-    m_Substances->AddActiveCompound(*cmpd);
-  }
+  
   // Circuit Manager //
   if (!peState->has_circuitmanager())
     m_ss << "PulseState must have a circuit manager" << std::endl;

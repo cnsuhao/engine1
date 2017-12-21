@@ -120,6 +120,6 @@ void SETensionPneumothorax::ToString(std::ostream &str) const
     str<<"\n\tComment: "<<m_Comment;
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
   str  << "\n\tType: "; HasType()? str << cdm::eGate_Name(GetType()) : str << "Not Set";
-  str  << "\n\tSide: "; HasSide()? str << GetSide() : str << "Not Set";
+  str  << "\n\tSide: "; HasSide()? str << cdm::eSide_Name(GetSide()) : str << "Not Set";
   str  << std::flush;
 }

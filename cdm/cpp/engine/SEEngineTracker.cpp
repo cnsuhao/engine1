@@ -113,6 +113,7 @@ void SEEngineTracker::Clear()
   ResetFile();
   m_ForceConnection = false;
   DELETE_MAP_SECOND(m_Request2Scalar);
+  m_DataRequestMgr.Clear();
 }
 
 void SEEngineTracker::ResetFile()

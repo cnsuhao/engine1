@@ -39,12 +39,21 @@ else()
   set(LIB_ENDING "a")
 endif()
 
-set(Pulse_LIBS ${Pulse_LIB_DIR}/PulseEngine.${LIB_ENDING} 
-               ${Pulse_LIB_DIR}/CommonDataModel.${LIB_ENDING} 
-               ${Pulse_LIB_DIR}/DataModelBindings.${LIB_ENDING}
-               ${Pulse_LIB_DIR}/${LOG4CPP_LIB}.${LIB_ENDING}
-               ${Pulse_LIB_DIR}/libprotobuf.${LIB_ENDING}
-   )# TODO, in debug it's libprotobufd
+set(Pulse_INSTALL "@CMAKE_INSTALL_PREFIX@")
+
+set(Pulse_LIBS "${Pulse_LIB_DIR}/PulseEngine.${LIB_ENDING}" 
+               "${Pulse_LIB_DIR}/CommonDataModel.${LIB_ENDING}"
+               "${Pulse_LIB_DIR}/DataModelBindings.${LIB_ENDING}"
+               "${Pulse_LIB_DIR}/${LOG4CPP_LIB}.${LIB_ENDING}"
+               "${Pulse_LIB_DIR}/libprotobuf.${LIB_ENDING}"
+   )
+   
+set(Pulse_DEBUG_LIBS "${Pulse_LIB_DIR}/PulseEngine.${LIB_ENDING}"
+               "${Pulse_LIB_DIR}/CommonDataModel.${LIB_ENDING}"
+               "${Pulse_LIB_DIR}/DataModelBindings.${LIB_ENDING}"
+               "${Pulse_LIB_DIR}/${LOG4CPP_LIB}.${LIB_ENDING}"
+               "${Pulse_LIB_DIR}/libprotobufd.${LIB_ENDING}"
+   )
 
 set( Pulse_VERSION_MAJOR "@PULSE_VERSION_MAJOR@" )
 set( Pulse_VERSION_MINOR "@PULSE_VERSION_MINOR@" )
