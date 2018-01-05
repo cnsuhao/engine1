@@ -64,15 +64,6 @@ engine can provide a realistic training experience by producing real-time
 results to trauma and treatment. A physiology engine can enhance the user experience of applications 
 by providing a comprehensive physiological response to insults and interventions.
 
-## What are some possible physiology engine applications?
-There is a wide range of potential applications, a few include:
-- Powering serious games for medical education and training
-- Producing responsive physiology in real time for manikin training
-- Integrating a single-system model into the engine to understand full-body physiologic response
-- Providing inputs and outputs for sensor systems
-- Teaching and education
-- Pairing with virtual surgery planning/rehearsal
-	
 ## Where do I log a bug for the physiology engine?
 Logging bugs helps us improve the engine and we appreciate your 
 feedback. You can report issues in <a href="https://gitlab.kitware.com/physiology/engine/issues">gitlab</a>.

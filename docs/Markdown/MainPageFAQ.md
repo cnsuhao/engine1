@@ -6,6 +6,8 @@ The engine enables accurate and consistent physiology simulation across the medi
 The engine can be used as a standalone application or integrated with simulators, sensor interfaces, and models of all fidelities.
 We plan to further advance the engine and explore new avenues of research, such as pediatrics, patient-specific modeling and virtual surgery planning/rehearsal. 
 
+<img src="./Images/PulseRunner.png" width="550">
+
 The Pulse Physiology Engine is a fork of the BioGears Physiology Engine.
 This fork was driven by several community needs, including:
 
@@ -50,7 +52,32 @@ CMake is then used to provide management between the data server and the specifi
 This separation provides a repository with a small footprint to allow for quick pulling and branching, 
 while maintaining a historical associations with the large data set needed for testing.
 
+## What are some possible physiology engine applications?
+<center>
+<table border="0">
+<tr>
+    <td><center><b>Virtual Environments</b></center></td>
+    <td><center><b>Manikin-Based Simulations</b></center></td>
+	<td><center><b>Clinical Explorations</b></center></td>
+</tr>
+<tr>
+    <td><img src="./Images/PulseVR.png" width="365"></td>
+    <td><img src="./Images/PulseClinician.png" width="365"></td>
+	<td><img src="./Images/PulseProgrammer.png" width="365"></td>
+</tr>
+</table>
+</center>
+
+There is a wide range of potential applications, a few include:
+- Powering serious games for medical education and training
+- Producing responsive physiology in real time for manikin training
+- Integrating a single-system model into the engine to understand full-body physiologic response
+- Providing inputs and outputs for sensor systems
+- Teaching and education
+- Pairing with virtual surgery planning/rehearsal
+
 ## What can the physiology engine do?
+<img src="./Images/PulseMontage.png" width="365">
 
 An instance of an engine models a single patient's physiology.
 - The patient is defined by parameters, such as height, weight, systolic and diastolic pressure.
