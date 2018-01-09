@@ -149,7 +149,7 @@ These documents cover the design, implementation, assumptions, limitations, and 
  @refitem SubstanceTransportMethodology "Substance Transport"
 @endsecreflist 
 
-## How do I work integrate the physiology engine into my application?
+## How do I integrate the physiology engine into my application?
 
 The engine has a modular architecture to reduce costs for applications that need a physiology engine and want to develop or extend a physiology model.
 
