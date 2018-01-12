@@ -118,13 +118,13 @@ message ConfigurationData
       cdm.NutritionData                                InitialStomachContents                               = 1;/**<< @brief An stomach contents object with properties to set in the system. */
       string                                           InitialStomachContentsFile                           = 2;/**<< @brief File containing an stomach contents objet with properties to set in the. */
     }
-    cdm.Scalar0To1Data                                 CalciumAbsorbtionFraction                            = 3;
+    cdm.Scalar0To1Data                                 CalciumAbsorptionFraction                            = 3;
     cdm.ScalarMassPerTimeData                          CalciumDigestionRate                                 = 4;
-    cdm.Scalar0To1Data                                 CarbohydrateAbsorbtionFraction                       = 5;
+    cdm.Scalar0To1Data                                 CarbohydrateAbsorptionFraction                       = 5;
     cdm.ScalarMassPerTimeData                          DefaultCarbohydrateDigestionRate                     = 6;
     cdm.ScalarMassPerTimeData                          DefaultFatDigestionRate                              = 7;
     cdm.ScalarMassPerTimeData                          DefaultProteinDigestionRate                          = 8;
-    cdm.Scalar0To1Data                                 FatAbsorbtionFraction                                = 9;
+    cdm.Scalar0To1Data                                 FatAbsorptionFraction                                = 9;
     cdm.Scalar0To1Data                                 ProteinToUreaFraction                                = 10;
     cdm.ScalarVolumePerTimeData                        WaterDigestionRate                                   = 11;
   }

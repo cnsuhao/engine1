@@ -22,6 +22,7 @@ PROTO_POP
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "substance/SESubstanceCompound.h"
 #include <google/protobuf/text_format.h>
+#include <google/protobuf/stubs/logging.h>
 
 #include <memory>
 
@@ -64,11 +65,18 @@ SEEngineTracker* PulseEngine::GetEngineTracker()
   return &m_EngineTrack;
 }
 
+
+void MyLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
+{
+  std::cout << message;
+}
+
 bool PulseEngine::LoadStateFile(const std::string& filename, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
   pulse::StateData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  google::protobuf::SetLogHandler(MyLogHandler);
   if (fmsg.empty() || !google::protobuf::TextFormat::ParseFromString(fmsg, &src))
     return false;
   LoadState(src, simTime);

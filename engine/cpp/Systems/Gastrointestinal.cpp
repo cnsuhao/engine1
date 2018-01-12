@@ -374,7 +374,7 @@ void Gastrointestinal::DigestStomachNutrients(double duration_s)
   if (m_StomachContents->HasCarbohydrate())
   {
     digestedAmount = DigestNutrient(m_StomachContents->GetCarbohydrate(), m_StomachContents->GetCarbohydrateDigestionRate(), true, duration_s);
-    digestedAmount *= m_data.GetConfiguration().GetCarbohydrateAbsorbtionFraction(); // Take off percent that usually passes through the body
+    digestedAmount *= m_data.GetConfiguration().GetCarbohydrateAbsorptionFraction(); // Take off percent that usually passes through the body
     if (digestedAmount != 0)
     {
 #ifdef logDigest
@@ -388,7 +388,7 @@ void Gastrointestinal::DigestStomachNutrients(double duration_s)
   if (m_StomachContents->HasFat())
   {
     digestedAmount = DigestNutrient(m_StomachContents->GetFat(), m_StomachContents->GetFatDigestionRate(), true, duration_s);
-    digestedAmount *= m_data.GetConfiguration().GetFatAbsorbtionFraction(); // Take off percent that usually passes through the body
+    digestedAmount *= m_data.GetConfiguration().GetFatAbsorptionFraction(); // Take off percent that usually passes through the body
     if (digestedAmount != 0)
     {
 #ifdef logDigest
@@ -419,7 +419,7 @@ void Gastrointestinal::DigestStomachNutrients(double duration_s)
   if (m_StomachContents->HasCalcium())
   {
     digestedAmount = DigestNutrient(m_StomachContents->GetCalcium(), m_CalciumDigestionRate, true, duration_s);
-    digestedAmount *= m_data.GetConfiguration().GetCalciumAbsorbtionFraction(); // Take off percent that usually passes through the body
+    digestedAmount *= m_data.GetConfiguration().GetCalciumAbsorptionFraction(); // Take off percent that usually passes through the body
     if (digestedAmount != 0)
     {
 #ifdef logDigest
@@ -537,7 +537,7 @@ void Gastrointestinal::AbsorbMeal(double duration_min)
   if (duration_min <= 0)
     return;
 
-  // We use the default healthy flow rate throughout this absorbtion
+  // We use the default healthy flow rate throughout this absorption
   // We could step wise this and see if we can figure out how pH is changing
   // in order to change the flow rate, but that is a bit much for this model implementation
   double flowRate_mL_Per_min = 3.3;
@@ -550,9 +550,9 @@ void Gastrointestinal::AbsorbMeal(double duration_min)
 #ifdef logMeal
   double totVol_mL = m_data.GetBloodChemistry()->GetExtravascularFluidVolume()->GetValue(VolumeUnit::mL);
   totVol_mL += m_data.GetCardiovascular()->GetBloodVolume()->GetValue(VolumeUnit::mL);
-  m_ss << "Blood Volume before absorbtion " << totVol_mL << "(mL)";
+  m_ss << "Blood Volume before absorption " << totVol_mL << "(mL)";
   Info(m_ss);
-  m_ss << "Gut Volume before absorbtion: " << m_GutChyme->GetVolume();
+  m_ss << "Gut Volume before absorption: " << m_GutChyme->GetVolume();
   Info(m_ss);
   m_ss << "Absorbed Volume : " << absorbedVolume_mL << "(mL)";
   Info(m_ss);
@@ -565,9 +565,9 @@ void Gastrointestinal::AbsorbMeal(double duration_min)
 #ifdef logMeal
   double newtotVol_mL = m_data.GetBloodChemistry()->GetExtravascularFluidVolume()->GetValue(VolumeUnit::mL);
   newtotVol_mL += m_data.GetCardiovascular()->GetBloodVolume()->GetValue(VolumeUnit::mL);
-  m_ss << "Blood Volume after absorbtion " << newtotVol_mL << "(mL), body absorbed : " << newtotVol_mL - totVol_mL;
+  m_ss << "Blood Volume after absorption " << newtotVol_mL << "(mL), body absorbed : " << newtotVol_mL - totVol_mL;
   Info(m_ss);
-  m_ss << "Gut Volume after absorbtion: " << m_GutChyme->GetVolume();
+  m_ss << "Gut Volume after absorption: " << m_GutChyme->GetVolume();
   Info(m_ss);
   if (newtotVol_mL - totVol_mL != absorbedVolume_mL)
     Error("Water volume is NOT conserved");
@@ -609,7 +609,7 @@ void Gastrointestinal::AbsorbMeal(double duration_min)
     i.first->Balance(BalanceLiquidBy::Mass);
     m_InitialSubstanceMasses_ug[i.first] = i.first->GetMass(MassUnit::ug);
 #ifdef logMeal
-    m_ss << "Postabsorbtion Gut mass for " << i.first->GetSubstance().GetName() << " " << i.first->GetMass();
+    m_ss << "Postabsorption Gut mass for " << i.first->GetSubstance().GetName() << " " << i.first->GetMass();
     Info(m_ss);
 
     // Add mass to the tissue

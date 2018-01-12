@@ -121,13 +121,13 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
 
   // Gastrointestinal
   m_CalciumDigestionRate = nullptr;
-  m_CalciumAbsorbtionFraction = nullptr;
-  m_CarbohydrateAbsorbtionFraction = nullptr;
+  m_CalciumAbsorptionFraction = nullptr;
+  m_CarbohydrateAbsorptionFraction = nullptr;
   m_DefaultCarbohydrateDigestionRate = nullptr;
   m_DefaultFatDigestionRate = nullptr;
   m_DefaultProteinDigestionRate = nullptr;
   m_DefaultStomachContents = nullptr;
-  m_FatAbsorbtionFraction = nullptr;
+  m_FatAbsorptionFraction = nullptr;
   m_ProteinToUreaFraction = nullptr;
   m_WaterDigestionRate = nullptr;
 
@@ -252,13 +252,13 @@ void PulseConfiguration::Clear()
 
   // Gastrointestinal
   SAFE_DELETE(m_CalciumDigestionRate);
-  SAFE_DELETE(m_CalciumAbsorbtionFraction); 
-  SAFE_DELETE(m_CarbohydrateAbsorbtionFraction);
+  SAFE_DELETE(m_CalciumAbsorptionFraction); 
+  SAFE_DELETE(m_CarbohydrateAbsorptionFraction);
   SAFE_DELETE(m_DefaultCarbohydrateDigestionRate);
   SAFE_DELETE(m_DefaultFatDigestionRate);
   SAFE_DELETE(m_DefaultProteinDigestionRate);
   SAFE_DELETE(m_DefaultStomachContents);
-  SAFE_DELETE(m_FatAbsorbtionFraction);
+  SAFE_DELETE(m_FatAbsorptionFraction);
   SAFE_DELETE(m_ProteinToUreaFraction);
   SAFE_DELETE(m_WaterDigestionRate);
 
@@ -379,14 +379,14 @@ void PulseConfiguration::Initialize()
   GetWaterDensity().SetValue(1000, MassPerVolumeUnit::kg_Per_m3);
 
   // Gastrointestinal
-  GetCalciumAbsorbtionFraction().SetValue(0.25);// Net fractional calcium absorption is 24.9 ± 12.4% (Hunt and Johnson 2007)
+  GetCalciumAbsorptionFraction().SetValue(0.25);// Net fractional calcium absorption is 24.9 ± 12.4% (Hunt and Johnson 2007)
   GetCalciumDigestionRate().SetValue(2.7, MassPerTimeUnit::mg_Per_min);// Wasserman1992Intestinal
-  GetCarbohydrateAbsorbtionFraction().SetValue(0.80);// Guyton p790
+  GetCarbohydrateAbsorptionFraction().SetValue(0.80);// Guyton p790
   GetDefaultCarbohydrateDigestionRate().SetValue(0.5, MassPerTimeUnit::g_Per_min);// Guyton (About 4.25hr to digest the carbs in default meal)
   GetDefaultFatDigestionRate().SetValue(0.055, MassPerTimeUnit::g_Per_min);// Guyton (About 8hr to digest the fat in the default meal)
   GetDefaultProteinDigestionRate().SetValue(0.071, MassPerTimeUnit::g_Per_min);// Dangin2001Digestion (About 5hr to digest the protein in the default meal)
   GetDefaultStomachContents().LoadFile("./nutrition/Standard.pba");// Refs are in the data spreadsheet
-  GetFatAbsorbtionFraction().SetValue(0.248);// Guyton p797 and the recommended daily value for saturated fat intake according to the AHA //TODO: Add this reference
+  GetFatAbsorptionFraction().SetValue(0.248);// Guyton p797 and the recommended daily value for saturated fat intake according to the AHA //TODO: Add this reference
   // We should be making 30 grams of urea per 100 grams of protein haussinger1990nitrogen
   GetProteinToUreaFraction().SetValue(0.405);// BUT, We should excrete 24.3 g/day on average. Guyton p 328. With an average intake of 60 g/day, that works out to approximately 40%. 
   GetWaterDigestionRate().SetValue(0.417, VolumePerTimeUnit::mL_Per_s);// Peronnet2012Pharmacokinetic, Estimated from 300mL H20 being absorbed in 9.5-12m
@@ -647,12 +647,12 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
   if (src.has_gastrointestinalconfiguration())
   {
     const pulse::ConfigurationData_GastrointestinalConfigurationData& config = src.gastrointestinalconfiguration();
-    if (config.has_calciumabsorbtionfraction())
-      SEScalar0To1::Load(config.calciumabsorbtionfraction(),dst.GetCalciumAbsorbtionFraction());
+    if (config.has_calciumabsorptionfraction())
+      SEScalar0To1::Load(config.calciumabsorptionfraction(),dst.GetCalciumAbsorptionFraction());
     if (config.has_calciumdigestionrate())
       SEScalarMassPerTime::Load(config.calciumdigestionrate(),dst.GetCalciumDigestionRate());
-    if (config.has_carbohydrateabsorbtionfraction())
-      SEScalar0To1::Load(config.carbohydrateabsorbtionfraction(),dst.GetCarbohydrateAbsorbtionFraction());
+    if (config.has_carbohydrateabsorptionfraction())
+      SEScalar0To1::Load(config.carbohydrateabsorptionfraction(),dst.GetCarbohydrateAbsorptionFraction());
     if (config.has_defaultcarbohydratedigestionrate())
       SEScalarMassPerTime::Load(config.defaultcarbohydratedigestionrate(),dst.GetDefaultCarbohydrateDigestionRate());
     if (config.has_defaultfatdigestionrate())
@@ -679,8 +679,8 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
       if (dst.m_DefaultStomachContents->HasProtein() && !dst.m_DefaultStomachContents->HasProteinDigestionRate())
         dst.m_DefaultStomachContents->GetProteinDigestionRate().Set(dst.GetDefaultProteinDigestionRate());
     }
-    if (config.has_fatabsorbtionfraction())
-      SEScalar0To1::Load(config.fatabsorbtionfraction(),dst.GetFatAbsorbtionFraction());
+    if (config.has_fatabsorptionfraction())
+      SEScalar0To1::Load(config.fatabsorptionfraction(),dst.GetFatAbsorptionFraction());
     if (config.has_proteintoureafraction())
       SEScalar0To1::Load(config.proteintoureafraction(),dst.GetProteinToUreaFraction());
     if (config.has_waterdigestionrate())
@@ -915,12 +915,12 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
 
   // Gastrointestinal
   pulse::ConfigurationData_GastrointestinalConfigurationData* gi = dst.mutable_gastrointestinalconfiguration();
-  if (src.HasCalciumAbsorbtionFraction())
-    gi->set_allocated_calciumabsorbtionfraction(SEScalar0To1::Unload(*src.m_CalciumAbsorbtionFraction));
+  if (src.HasCalciumAbsorptionFraction())
+    gi->set_allocated_calciumabsorptionfraction(SEScalar0To1::Unload(*src.m_CalciumAbsorptionFraction));
   if (src.HasCalciumDigestionRate())
     gi->set_allocated_calciumdigestionrate(SEScalarMassPerTime::Unload(*src.m_CalciumDigestionRate));
-  if (src.HasCarbohydrateAbsorbtionFraction())
-    gi->set_allocated_carbohydrateabsorbtionfraction(SEScalar0To1::Unload(*src.m_CarbohydrateAbsorbtionFraction));
+  if (src.HasCarbohydrateAbsorptionFraction())
+    gi->set_allocated_carbohydrateabsorptionfraction(SEScalar0To1::Unload(*src.m_CarbohydrateAbsorptionFraction));
   if (src.HasDefaultCarbohydrateDigestionRate())
     gi->set_allocated_defaultcarbohydratedigestionrate(SEScalarMassPerTime::Unload(*src.m_DefaultCarbohydrateDigestionRate));
   if (src.HasDefaultFatDigestionRate())
@@ -929,8 +929,8 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
     gi->set_allocated_defaultproteindigestionrate(SEScalarMassPerTime::Unload(*src.m_DefaultProteinDigestionRate));
   if (src.HasDefaultStomachContents())
     gi->set_allocated_initialstomachcontents(SENutrition::Unload(*src.m_DefaultStomachContents));
-  if (src.HasFatAbsorbtionFraction())
-    gi->set_allocated_fatabsorbtionfraction(SEScalar0To1::Unload(*src.m_FatAbsorbtionFraction));
+  if (src.HasFatAbsorptionFraction())
+    gi->set_allocated_fatabsorptionfraction(SEScalar0To1::Unload(*src.m_FatAbsorptionFraction));
   if (src.HasProteinToUreaFraction())
     gi->set_allocated_proteintoureafraction(SEScalar0To1::Unload(*src.m_ProteinToUreaFraction));
   if (src.HasWaterDigestionRate())
@@ -2053,38 +2053,38 @@ double PulseConfiguration::GetCalciumDigestionRate(const MassPerTimeUnit& unit) 
   return m_CalciumDigestionRate->GetValue(unit);
 }
 
-bool PulseConfiguration::HasCalciumAbsorbtionFraction() const
+bool PulseConfiguration::HasCalciumAbsorptionFraction() const
 {
-  return m_CalciumAbsorbtionFraction == nullptr ? false : m_CalciumAbsorbtionFraction->IsValid();
+  return m_CalciumAbsorptionFraction == nullptr ? false : m_CalciumAbsorptionFraction->IsValid();
 }
-SEScalar0To1& PulseConfiguration::GetCalciumAbsorbtionFraction()
+SEScalar0To1& PulseConfiguration::GetCalciumAbsorptionFraction()
 {
-  if (m_CalciumAbsorbtionFraction == nullptr)
-    m_CalciumAbsorbtionFraction = new SEScalar0To1();
-  return *m_CalciumAbsorbtionFraction;
+  if (m_CalciumAbsorptionFraction == nullptr)
+    m_CalciumAbsorptionFraction = new SEScalar0To1();
+  return *m_CalciumAbsorptionFraction;
 }
-double PulseConfiguration::GetCalciumAbsorbtionFraction() const
+double PulseConfiguration::GetCalciumAbsorptionFraction() const
 {
-  if (m_CalciumAbsorbtionFraction == nullptr)
+  if (m_CalciumAbsorptionFraction == nullptr)
     return SEScalar::dNaN();
-  return m_CalciumAbsorbtionFraction->GetValue();
+  return m_CalciumAbsorptionFraction->GetValue();
 }
 
-bool PulseConfiguration::HasCarbohydrateAbsorbtionFraction() const
+bool PulseConfiguration::HasCarbohydrateAbsorptionFraction() const
 {
-  return m_CarbohydrateAbsorbtionFraction == nullptr ? false : m_CarbohydrateAbsorbtionFraction->IsValid();
+  return m_CarbohydrateAbsorptionFraction == nullptr ? false : m_CarbohydrateAbsorptionFraction->IsValid();
 }
-SEScalar0To1& PulseConfiguration::GetCarbohydrateAbsorbtionFraction()
+SEScalar0To1& PulseConfiguration::GetCarbohydrateAbsorptionFraction()
 {
-  if (m_CarbohydrateAbsorbtionFraction == nullptr)
-    m_CarbohydrateAbsorbtionFraction = new SEScalar0To1();
-  return *m_CarbohydrateAbsorbtionFraction;
+  if (m_CarbohydrateAbsorptionFraction == nullptr)
+    m_CarbohydrateAbsorptionFraction = new SEScalar0To1();
+  return *m_CarbohydrateAbsorptionFraction;
 }
-double PulseConfiguration::GetCarbohydrateAbsorbtionFraction() const
+double PulseConfiguration::GetCarbohydrateAbsorptionFraction() const
 {
-  if (m_CarbohydrateAbsorbtionFraction == nullptr)
+  if (m_CarbohydrateAbsorptionFraction == nullptr)
     return SEScalar::dNaN();
-  return m_CarbohydrateAbsorbtionFraction->GetValue();
+  return m_CarbohydrateAbsorptionFraction->GetValue();
 }
 
 bool PulseConfiguration::HasDefaultCarbohydrateDigestionRate() const
@@ -2153,21 +2153,21 @@ const SENutrition* PulseConfiguration::GetDefaultStomachContents() const
   return m_DefaultStomachContents;
 }
 
-bool PulseConfiguration::HasFatAbsorbtionFraction() const
+bool PulseConfiguration::HasFatAbsorptionFraction() const
 {
-  return m_FatAbsorbtionFraction == nullptr ? false : m_FatAbsorbtionFraction->IsValid();
+  return m_FatAbsorptionFraction == nullptr ? false : m_FatAbsorptionFraction->IsValid();
 }
-SEScalar0To1& PulseConfiguration::GetFatAbsorbtionFraction()
+SEScalar0To1& PulseConfiguration::GetFatAbsorptionFraction()
 {
-  if (m_FatAbsorbtionFraction == nullptr)
-    m_FatAbsorbtionFraction = new SEScalar0To1();
-  return *m_FatAbsorbtionFraction;
+  if (m_FatAbsorptionFraction == nullptr)
+    m_FatAbsorptionFraction = new SEScalar0To1();
+  return *m_FatAbsorptionFraction;
 }
-double PulseConfiguration::GetFatAbsorbtionFraction() const
+double PulseConfiguration::GetFatAbsorptionFraction() const
 {
-  if (m_FatAbsorbtionFraction == nullptr)
+  if (m_FatAbsorptionFraction == nullptr)
     return SEScalar::dNaN();
-  return m_FatAbsorbtionFraction->GetValue();
+  return m_FatAbsorptionFraction->GetValue();
 }
 
 bool PulseConfiguration::HasProteinToUreaFraction() const
