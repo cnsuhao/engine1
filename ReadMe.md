@@ -6,7 +6,9 @@ The libraries built (*.dll/*.so) can be integrated with standalone applications,
 
 All files are released under the Apache 2.0 license
 
-For detailed information read our <a href="https://physiology.kitware.com/">documentation</a>
+Along with the build instrcutions below, we provide more technical discussions using Pulse on our <a href="https://gitlab.kitware.com/physiology/engine/wikis/home">wiki</a>
+
+For detailed information about our design and methodology read our <a href="https://physiology.kitware.com/">documentation</a>
 
 Use this <a href="https://discourse.kitware.com/c/pulse-physiology-engine">discourse channel</a> 
 to ask or share anything and everything about building, using, or understanding the Pulse engine and welcome to our community!!
