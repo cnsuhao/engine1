@@ -98,7 +98,7 @@ add_subdirectory(verification)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
 # Take some projects out of the build
-set_target_properties(HowToDriver libprotobuf-lite libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+set_target_properties(libprotobuf-lite libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc js_embed PROPERTIES FOLDER protobufs)

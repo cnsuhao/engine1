@@ -1,53 +1,34 @@
 project(PulseSDK)
 
+# If you want to build your own CMake project for your code that uses Pulse
+# Check out this wiki article to get started : 
+# https://gitlab.kitware.com/physiology/engine/wikis/how-to-connect-to-pulse
+
 
 file(GLOB SRC_FILES
   "howto/cpp/*.h"
   "howto/cpp/*.cpp"
 )
-
 source_group("" FILES ${SRC_FILES})
 set(SOURCE ${SRC_FILES})
-add_executable(HowToDriver EXCLUDE_FROM_ALL ${SOURCE})
+add_executable(HowToDriver ${SOURCE})
 
 # Preprocessor Definitions and Include Paths
-set(FLAGS)
-target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include)
-target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include/cdm)
-target_include_directories(HowToDriver PRIVATE ${CMAKE_INSTALL_PREFIX}/include/bind)
-set_target_properties(HowToDriver PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")
+target_include_directories(HowToDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../engine/cpp)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
+target_include_directories(HowToDriver PRIVATE ${EIGEN3_INCLUDE_DIR})
+target_include_directories(HowToDriver PRIVATE ${LOG4CPP_INCLUDE_DIR})
+target_include_directories(HowToDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
+
 # Dependent Libraries
-
-if(WIN32)
-  set(lib_ext "lib")
-  set(log4cpp_prefix "")
-else()
-  set(lib_ext "a")
-  set(log4cpp_prefix "lib")
-endif()
-
-set(D_LIB_FILES
-  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/PulseEngine.${lib_ext}
-  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/CommonDataModel.${lib_ext}
-  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/DataModelBindings.${lib_ext}
-  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/${log4cpp_prefix}log4cpp.${lib_ext}
-  ${CMAKE_INSTALL_PREFIX}/lib/debug${EX_CONFIG}/libprotobufd.${lib_ext}
-)
-set(O_LIB_FILES
-  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/PulseEngine.${lib_ext}
-  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/CommonDataModel.${lib_ext}
-  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/DataModelBindings.${lib_ext}
-  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/${log4cpp_prefix}log4cpp.${lib_ext}
-  ${CMAKE_INSTALL_PREFIX}/lib/release${EX_CONFIG}/libprotobuf.${lib_ext}
-)
+target_link_libraries(HowToDriver PulseEngine)
 
 
-foreach(file ${D_LIB_FILES})
-	target_link_libraries(HowToDriver debug ${file})
-endforeach()
-foreach(file ${O_LIB_FILES})
-	target_link_libraries(HowToDriver optimized ${file})
-endforeach()
+IF(UNIX)
+    SET(CMAKE_INSTLL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
+ENDIF()
 
 add_custom_command(TARGET HowToDriver POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}

@@ -4,7 +4,6 @@
 #include "compartment/SECompartment.h"
 class SESubstance;
 class SESubstanceManager;
-class SELiquidCompartment;
 CDM_BIND_DECL(TissueCompartmentData);
 
 class CDM_DECL SETissueCompartment : public SECompartment

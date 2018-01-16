@@ -11,6 +11,7 @@ class SESubstanceManager;
 class SEAnesthesiaMachineChamber;
 class SEAnesthesiaMachineOxygenBottle;
 class SEAnesthesiaMachineConfiguration;
+class SEGasSubstanceQuantity;
 class Serializer;
 
 class CDM_DECL SEAnesthesiaMachine : public SESystem

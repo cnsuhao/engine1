@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "substance/SESubstanceTransport.h"
 #include "compartment/SECompartment.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "compartment/SECompartmentNodes.h"
+#include "substance/SESubstanceTransport.h"
 PROTO_PUSH
 #include "bind/cdm/Compartment.pb.h"
 PROTO_POP

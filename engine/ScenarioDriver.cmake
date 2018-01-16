@@ -15,8 +15,6 @@ target_include_directories(PulseScenarioDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 # Dependent Libraries
 target_link_libraries(PulseScenarioDriver PulseEngine)
-# Generate cxx/hxx files from xsd
-# Copy to the bin
 
 IF(UNIX)
     SET(CMAKE_INSTLL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")

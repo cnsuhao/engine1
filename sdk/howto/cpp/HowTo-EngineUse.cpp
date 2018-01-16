@@ -4,12 +4,9 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "compartment/SECompartmentManager.h"
 #include "patient/SEPatient.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/SECompartmentManager.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SEEnergySystem.h"

@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "compartment/fluid/SEFluidCompartment.h"
+#include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
 
